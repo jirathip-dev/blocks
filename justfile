@@ -26,7 +26,7 @@ test:
 
 # The hard perf gate in release: each budget is in crates/blocks/tests/perf.rs.
 perf:
-    cargo test --release --locked -p blocks --test perf -- --nocapture --test-threads=1
+    cargo test --release --locked -p blocks --test perf -- --ignored --nocapture --test-threads=1
 
 # A stream's memory stays flat over 200,000 frames and 400 reconnects.
 soak:

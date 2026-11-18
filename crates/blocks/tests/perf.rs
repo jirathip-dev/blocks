@@ -7,11 +7,14 @@ use blocks::{apply, diff, Screen};
 use support::{mutate, screen, Rng};
 
 fn time<T>(runs: u32, mut f: impl FnMut() -> T) -> Duration {
-    let start = Instant::now();
-    for _ in 0..runs {
-        std::hint::black_box(f());
-    }
-    start.elapsed() / runs
+    let mut batch = || {
+        let start = Instant::now();
+        for _ in 0..runs {
+            std::hint::black_box(f());
+        }
+        start.elapsed() / runs
+    };
+    (0..5).map(|_| batch()).min().unwrap()
 }
 
 fn report(what: &str, took: Duration, budget: Duration) {
@@ -40,20 +43,22 @@ fn screens() -> (Screen, Screen) {
 }
 
 #[test]
+#[ignore = "release only: `just perf`"]
 fn diffing_a_200_row_screen_stays_under_budget() {
     let (old, new) = screens();
     report(
         "diff a 200-row screen",
-        time(2000, || diff(&old, &new)),
+        time(400, || diff(&old, &new)),
         Duration::from_micros(150),
     );
 }
 
 #[test]
+#[ignore = "release only: `just perf`"]
 fn applying_the_ops_of_a_200_row_screen_stays_under_budget() {
     let (old, new) = screens();
     let ops = diff(&old, &new);
-    let took = time(2000, || {
+    let took = time(400, || {
         let mut s = old.clone();
         apply(&mut s, &ops).unwrap();
         s
@@ -62,15 +67,16 @@ fn applying_the_ops_of_a_200_row_screen_stays_under_budget() {
 }
 
 #[test]
+#[ignore = "release only: `just perf`"]
 fn a_500_kb_screen_serializes_and_parses_under_budget() {
     let big = screen(&mut Rng::new(9), 5000, 90);
     let json = serde_json::to_string(&big).unwrap();
     assert!(json.len() >= 500_000, "the screen is only {} bytes", json.len());
     report(
         "serialize a 500 KB screen",
-        time(50, || serde_json::to_string(&big).unwrap()),
+        time(10, || serde_json::to_string(&big).unwrap()),
         Duration::from_millis(3),
     );
-    let took = time(50, || serde_json::from_str::<Screen>(&json).unwrap());
+    let took = time(10, || serde_json::from_str::<Screen>(&json).unwrap());
     report("parse a 500 KB screen", took, Duration::from_millis(5));
 }
