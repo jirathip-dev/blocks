@@ -1,0 +1,14 @@
+Decided: blocks are the ADR's `type`-tagged objects: cooee's 21 kinds plus `composer`, every field the apps' fixtures carry, any other `type` an app kind kept whole
+Because: "One superset of both apps' block and op sets, including `composer`, `dot`, and `insert` with optional `before` / `after`."
+Decided: word sets (tone, styles, card kind) keep a value they do not know
+Because: drover's goldens send `tone: ""`, `style: "bad"` and card kinds `sys`, `you`; see crates/blocks/src/screen.rs:35
+Decided: a core kind of the wrong shape is refused, by the types and by the schema's `not` on AppBlock's type
+Because: crates/blocks/src/screen.rs:741
+Decided: the diff works on the root's list and falls back to one `screen` op when that does not reach the new screen
+Because: crates/blocks/src/ops.rs:184
+Rejected: the ADR's whole B1 (Expr, Built::check, kind! macro, content kinds, island, hooks.ts) — the issue asks for the apps' superset, its schema and types; later slices carry the rest
+Rejected: a jsonschema crate for the AC check — a new dependency needs the owner; the test's small validator runs the generated file
+Decided: the soak's generator stops inserting at 256 blocks, so it measures the stream, not a random walk of the screen's size
+Because: crates/blocks/tests/support/mod.rs:65
+Check: fixtures/screens are verbatim copies (cooee 8ca09a316, drover dd475fcf0) and every one validates, round-trips in Rust and decodes in Swift
+Owner: both apps' screens now have one typed definition with generated schema, TS and Swift; CI refuses a hand-edited copy
