@@ -18,4 +18,6 @@ jobs:
         with:
           tool: just
       - name: "2000 random seeds from a nightly offset (a failure prints its seed and replay line; add it to SEEDS in crates/blocks/tests/sim.rs with the fix)"
-        run: BLOCKS_SIM_FROM=$(( $(date +%s) / 86400 * 2000 )) just sim 2000
+        run: |
+          day=$(( $(date +%s) / 86400 ))
+          BLOCKS_SIM_FROM=$(( day * 2000 )) just sim 2000

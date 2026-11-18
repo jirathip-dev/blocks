@@ -49,10 +49,6 @@ jobs:
         run: just deps
       - name: "deny (licences, advisories, duplicate versions, sources; deny.toml)"
         run: just deny
-      - name: "line cap (ci/cap.toml; .drover/rules.md at most 30 lines)"
-        env:
-          BASE: ${{ github.event.pull_request.base.sha }}
-        run: just cap
       - name: "arch-check (layers, bans, sizes, frozen and generated files, comments, docs; .drover/arch.toml)"
         env:
           BODY: ${{ github.event.pull_request.body }}
@@ -63,6 +59,10 @@ jobs:
             export BASE=HEAD^1 PR_BODY="$RUNNER_TEMP/pr-body.md"
           fi
           just arch
+      - name: "line cap (ci/cap.toml; .drover/rules.md at most 30 lines)"
+        env:
+          BASE: ${{ github.event.pull_request.base.sha }}
+        run: just cap
 
   web:
     runs-on: ubuntu-latest
