@@ -1,0 +1,34 @@
+[
+  {
+    "seq": 1,
+    "ops": [
+      {
+        "op": "screen",
+        "screen": {
+          "type": "screen",
+          "id": "s",
+          "title": "Rows",
+          "blocks": [
+            {
+              "type": "list",
+              "id": "l",
+              "rows": [
+                { "type": "row", "id": "a", "title": "a" },
+                { "type": "row", "id": "b", "title": "b" }
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "seq": 2,
+    "ops": [
+      { "op": "insert", "into": "l", "block": { "type": "row", "id": "c", "title": "c" } },
+      { "op": "insert", "into": "l", "before": "a", "block": { "type": "row", "id": "d", "title": "d" } },
+      { "op": "insert", "into": "l", "after": "a", "block": { "type": "row", "id": "e", "title": "e" } },
+      { "op": "dot", "on": true }
+    ]
+  }
+]
