@@ -21,13 +21,13 @@ Moving the pin is one PR in the app: the three lines above, the lock files, and 
 ## A server builds a screen (drover and cooee, Rust)
 
 ```rust
-use blocks::kind::{Block, Card, Row, Screen, Text};
+use blocks::kind::{AppBlock, Fallback, Row, Screen, Tap, Toned};
 
 let screen = Screen::new("queue", "Queue").blocks(vec![
     Row::new("12", "#12 fix the gate").badge(Toned::bad("needs you")).tap(Tap::open("/screens/issue?issue=12")).into(),
-    Herd { weather, repos }.into(),                 // drover's own kind: any `Serialize` with a `type` the app declared
-]);
-let built = Built::new(serde_json::to_value(&screen)?);
+    AppBlock::new("herd", &Herd { weather, repos }, Fallback::new("3 lanes working")).into(),   // drover's own kind:
+]);                                                 // its typed fields, and what a client with no view for it draws
+let built = Built::of(&screen);                     // typed in, never `json!`; every other fallback is written here
 assert_eq!(built.check(&["herd"]), []);             // in the app's fixture test: no unknown kind, field or shape
 ```
 
@@ -36,6 +36,67 @@ The diff, the stream and both ends' bookkeeping are drover #1318's (`screen-hub/
 ```rust
 match shelf.put(&key, &key.path, &built) { Put::Changed(delta) => holders.for_each(|q| q.push(&delta.frame)), _ => {} }
 ```
+
+The format and the version are one media type, wherever the app's transport carries it (q2063):
+
+```rust
+let media = MediaType::pick(accept)?;               // `application/vnd.blocks+json;v=1`; Err: more than one version apart
+respond(media.to_string(), media.write(&built));    // version 1 or the one before; CBOR later is one more `Format`
+```
+
+## Local behaviour, with no round trip (q2067)
+
+```rust
+use blocks::expr::{get, lit};
+
+Screen::new("signup", "Sign up").state("more", lit(false)).blocks(vec![
+    Chips::new("plan", ["free", "team"]).selected("free").into(),                 // a control's name is its state key
+    Form::new("join").fields(vec![
+        Field::text("email").check(get("email").is(Pattern::Email), "Enter an email address"),
+        Field::text("seats").show(get("plan").eq(lit("team"))),                   // drawn only for the team plan
+    ]).into(),
+    Button::new("What is included?").tap(Tap::set("more", lit(true))).into(),     // changes state, sends nothing
+    Prose::new().para("Unlimited screens on every renderer.").show(get("more")).into(),
+]);
+```
+
+`get("email").is(…)` builds an `Expr` tree. The page, the Swift app and the static writer evaluate that tree; none
+of them parses a string, and the server checks the form again when it is sent.
+
+## An island (q2067)
+
+```rust
+Island::new("spend", "x-chart", &Chart { points }, Fallback::new("Spend this week: $41"))    // typed props, a fallback
+    .events(["pick"]).size(Size::aspect(16, 9)).into()
+```
+```ts
+customElements.define('x-chart', class extends HTMLElement {                   // in the app's own bundle
+  set props(p: Chart) { draw(this, p); }
+  pick(day: string) { this.dispatchEvent(new CustomEvent('blocks-event', { bubbles: true, detail: { name: 'pick', values: { day } } })); }
+});
+```
+```swift
+BlocksView(screen, …).islands(["x-chart": { props, send in ChartView(props: props) { day in send("pick", ["day": .string(day)]) } }])
+```
+
+The server receives `pick` as an ordinary action on block `spend` and answers with ops.
+
+## A website (q2060)
+
+```rust
+use blocks::site::{self, Head, Live, Site};
+
+let page = site::page(&built, &Site {
+    head: Head { title: "Pricing", description: "…", canonical: "https://example.org/pricing", image: Some("/og.png"), lang: "en" },
+    look: &look,                                    // schemes for both modes and a style: CSS variables in the head
+    css: &["/app.css"],                             // the app's own stylesheet, after blocks.css
+    action: "/act",                                 // where a form posts; `Action::from_form` reads it
+    live: Some(Live { js: "/blocks.js", stream: "/stream" }),      // None: no script at all
+});
+```
+
+The page reads, links and posts with no JS. With `live`, `blocks.js` adopts the same elements and the stream patches
+them; nothing is redrawn.
 
 ## A server checks a layout and a scheme
 
@@ -68,13 +129,15 @@ mount({
   layout: LAYOUT,
   url: (source, path) => new URL(path.slice(1), document.baseURI).href,
   blocks: { herd },                                  // drover's own kind; a core kind's name here does not compile
+  css: ['./drover.css'],                             // its style layer: rules on `.b-row`, `[data-variant]`, … (q2061)
   theme: board,                                      // `figure` and `word`: drover's art, until it moves to swag's packs/
   on: { unpaired: pairing, settings: [alerts], timing: timings },
 });
 ```
 
 `mount` owns what `main.ts` owns today and is not drover's: the tabs and their strip, the sheet and its back stack,
-the kept copies, the one stream and its patcher, an action's `POST` and its toast, the confirm box, the look sheet.
+the kept copies, the one stream and its patcher, an action's `POST` and its toast, the confirm box, the look sheet,
+local state and its expressions, islands, and adopting a static page when the root already holds one.
 
 ## cooee's app (Swift)
 
@@ -84,7 +147,8 @@ import BlocksUI
 
 BlocksView(screen, poster: slot.source, act: { store.send(.act($0)) }, open: { store.send(.open($0)) })
     .appBlocks(Cooee.blocks)                         // ["pinned": { PinnedBlock($0) }, "chats": …, "account": …]
-    .look(look)                                      // the palette from a `Scheme`, the `Style`, the pack's art
+    .look(look)                                      // the tokens: the palette from a `Scheme`, the `Style`, the art
+    .blockStyle(.card, Raised())                     // cooee's style layer: a `BlockStyle` wraps a card's content
 
 SlotView(layout.resolved(for: size)) { component in  // a node whose type is cooee's: chat, sidebar, scanner, settings…
     CooeeComponent(component, store: store)
@@ -107,34 +171,57 @@ route("/blocks.js", || js(JS)); route("/blocks.css", || css(CSS));
 <script type="module">import { mount } from './blocks.js'; mount({ root, layout, url, blocks: {}, theme: packs(look) });</script>
 ```
 
+## Headless: a verify lane, a perf gate, a test (q2058)
+
+```sh
+npx blocks-shot --screen queue.json --size 390x844 --css web/src/drover.css --script tap-first-row.json --check --out shots/
+swift run blocks-snap --screen queue.json --size 402x874 --scheme paper --script tap-first-row.json --check --out shots/
+```
+```json
+[{ "tap": { "id": "12" } }, { "answer": { "ops": [], "open": "/screens/issue?issue=12" } }, { "shot": { "name": "opened" } }]
+```
+
+Each writes `shots/opened.png`, `shots/opened.tree.json` and `report.json` (the actions sent, the timings) and exits
+1 when a block is missing, drawn as a fallback where a view was expected, empty, off the screen or over its sibling.
+The same in a test, where an app's SwiftUI styles and islands can be passed:
+
+```swift
+let run = try await Snapshot(screen, size: .phone).blockStyle(.card, Raised()).run([.tap(id: "12"), .shot("opened")])
+#expect(run.sent == [Action(screen: "queue", block: "12", action: "open")])
+```
+
 ## An app adds a block kind of its own
 
 Three registrations, one per language the app uses. No file in this repo changes.
 
 | Where | What the app writes | A clash with a core kind |
 |---|---|---|
-| its server | `built.check(&["herd"])` in its fixture test | `Fault::Clash { kind }` fails the test |
+| its server | `AppBlock::new("herd", &fields, fallback)`; `built.check(&["herd"])` in its fixture test | `Fault::Clash { kind }` fails the test |
 | its page | `mount({ blocks: { herd } })` | does not compile |
 | its Swift app | `.appBlocks(["pinned": …])` | `AppBlocks.init` throws; the app's test calls it |
 
-A client with no renderer for an app kind draws that block's children, else nothing: the same as for a core kind it
-is too old to know.
+A client with no view for an app kind draws its fallback: the other app, the static page, an older build.
 
 ## A new core kind (a PR in this repo)
 
-One file per language, no shared file edited by hand:
+One file per renderer, no shared file edited by hand:
 
 ```
-crates/blocks/src/kind/gauge.rs      the struct; `just gen` adds it to the enum, the schema, types.ts and Blocks.swift
-fixtures/blocks/gauge.json           every field set; the Rust, TS and Swift tests read it
+crates/blocks/src/kind/gauge.rs      the fields, `plain()`, its hooks and a typed sample; `just gen` adds it to the enum,
+                                     the schema, types.ts, Blocks.swift and writes fixtures/{blocks,trees,html}/gauge.*
+crates/blocks/src/site/gauge.rs      without it the crate does not build: `site` matches every `Block`
 web/src/render/gauge.ts              without it `tsc` fails: the renderers are a `Record<Kind, …>`
 swift/Sources/BlocksUI/Kinds/Gauge.swift     without it `swift build` fails: the switch over `Kind` is exhaustive
+docs/…                               nothing: older clients draw its fallback, so no version changes
 ```
 
 ## The tests, per repo
 
 - blocks: `apply(a, ops(a, b)) == b` on every fixture pair and in `just sim`; every `fixtures/blocks/*.json` parses
-  with no fault, validates against the schema, decodes in Swift and is drawn by both renderers; every bad fixture in
-  `fixtures/layouts`, `schemes` and `styles` is refused by the Rust and the Swift reader with the same reason.
+  with no fault, validates against the schema, decodes in Swift and is drawn by all three renderers into the tree
+  `fixtures/trees/` expects; the two HTML writers give the same element; `fixtures/behave/` has one value in Rust,
+  TS and Swift; the fixture site is equal before and after it is taken over; every bad fixture in
+  `fixtures/layouts`, `schemes` and `styles` is refused by the Rust and the Swift reader with the same reason; the
+  last release's renderers draw today's fixtures (`compat.yml`).
 - drover and cooee: the pin test; `no_fixture_screen_has_a_fault`; their own goldens and snapshot frames, unchanged
   by each move.
