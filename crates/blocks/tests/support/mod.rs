@@ -1,4 +1,4 @@
-use blocks::{Block, Row, Screen};
+use blocks::{Block, Button, Screen, Text};
 
 pub struct Rng(u64);
 
@@ -21,54 +21,60 @@ impl Rng {
     }
 }
 
-pub fn block(rng: &mut Rng, size: usize) -> Block {
+pub fn block(rng: &mut Rng, id: String, size: usize) -> Block {
     let text: String = (0..size)
         .map(|_| char::from(b'a' + u8::try_from(rng.below(26)).unwrap()))
         .collect();
     if rng.below(4) == 0 {
-        Block::Button {
+        Block::Button(Box::new(Button {
+            id: Some(id),
             label: text,
-            action: format!("act-{}", rng.below(10)),
-        }
+            action: Some(format!("act-{}", rng.below(10))),
+            ..Button::default()
+        }))
     } else {
-        Block::Text { text }
+        Block::Text(Box::new(Text {
+            id: Some(id),
+            markdown: Some(text),
+            ..Text::default()
+        }))
     }
 }
 
-pub fn screen(rng: &mut Rng, rows: usize, size: usize) -> Screen {
-    Screen {
-        rows: (0..rows)
-            .map(|i| Row {
-                id: format!("r{i}"),
-                block: block(rng, size),
-            })
-            .collect(),
-    }
+pub fn screen(rng: &mut Rng, rows: usize, size: usize) -> Block {
+    Block::Screen(Box::new(Screen {
+        id: Some("s".into()),
+        title: Some("sim".into()),
+        blocks: Some((0..rows).map(|i| block(rng, format!("r{i}"), size)).collect()),
+        ..Screen::default()
+    }))
 }
 
-pub fn mutate(rng: &mut Rng, s: &Screen, fresh: &mut usize, edits: usize) -> Screen {
-    let mut rows = s.rows.clone();
+pub fn mutate(rng: &mut Rng, s: &Block, fresh: &mut usize, edits: usize) -> Block {
+    let mut next = s.clone();
+    let Block::Screen(screen) = &mut next else {
+        panic!("not a screen")
+    };
+    let rows = screen.blocks.get_or_insert_with(Vec::new);
     for _ in 0..edits {
         let n = rows.len();
-        match rng.below(5) {
-            0 if n > 0 => {
+        match rng.below(12) {
+            0 | 1 if n > 0 => {
                 rows.remove(rng.below(n));
             }
-            1 => {
+            2 | 3 if n < 256 => {
                 *fresh += 1;
-                let row = Row {
-                    id: format!("n{fresh}"),
-                    block: block(rng, 8),
-                };
-                rows.insert(rng.below(n + 1), row);
+                let b = block(rng, format!("n{fresh}"), 8);
+                rows.insert(rng.below(n + 1), b);
             }
-            2 if n > 1 => rows.swap(rng.below(n), rng.below(n)),
+            4 | 5 if n > 1 => rows.swap(rng.below(n), rng.below(n)),
+            6 => screen.title = Some(format!("sim {}", rng.below(3))),
             _ if n > 0 => {
                 let i = rng.below(n);
-                rows[i].block = block(rng, 8);
+                rows[i] = block(rng, rows[i].id().unwrap().into(), 8);
             }
             _ => {}
         }
     }
-    Screen { rows }
+    next
 }

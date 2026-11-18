@@ -1,15 +1,27 @@
 use std::path::Path;
 
-use serde_json::{json, Value};
+use serde_json::{Map, Value};
 
-use crate::{Block, Body, Frame, Op, Row, Screen, SCHEMA_VERSION};
+use crate::{
+    Block, Card, Child, Composer, ComposerChip, Frame, List, Op, Queued, Row, Screen, Text, Tone, SCHEMA_VERSION,
+};
 
-/// The JSON Schema of a `Frame`, the stream's one message type.
+/// The JSON Schema of a `Frame`, the stream's one message type; its `$defs` hold `Block` and `Op`.
 pub fn schema() -> Value {
     let mut v = schemars::schema_for!(Frame).to_value();
     if let Some(o) = v.as_object_mut() {
         let id = format!("https://github.com/jirathip-dev/blocks/schema/v{SCHEMA_VERSION}");
-        o.insert("$id".into(), json!(id));
+        o.insert("$id".into(), Value::String(id));
+    }
+    if let Some(kind) = v
+        .pointer_mut("/$defs/AppBlock/properties/type")
+        .and_then(Value::as_object_mut)
+    {
+        let core = Block::KINDS.iter().map(|k| Value::String((*k).into())).collect();
+        kind.insert(
+            "not".into(),
+            Value::Object(Map::from_iter([("enum".into(), Value::Array(core))])),
+        );
     }
     v
 }
@@ -37,46 +49,168 @@ pub fn write(root: &Path) -> std::io::Result<()> {
     Ok(())
 }
 
+fn row(id: &str, title: &str) -> Block {
+    Block::Row(Box::new(Row {
+        id: Some(id.into()),
+        title: title.into(),
+        ..Row::default()
+    }))
+}
+
 fn sample() -> Vec<Frame> {
-    let row = |id: &str, block| Row { id: id.into(), block };
-    let text = |t: &str| Block::Text { text: t.into() };
+    let say = Composer {
+        id: Some("say".into()),
+        action: "thread-say".into(),
+        placeholder: Some("message the orchestrator".into()),
+        chips: Some(vec![ComposerChip {
+            name: "effort".into(),
+            cur: None,
+            all: vec!["low".into(), "high".into()],
+        }]),
+        queued: Some(vec![Queued {
+            q: 1,
+            text: "and the tests".into(),
+        }]),
+        ..Composer::default()
+    };
+    let note = Text {
+        id: Some("note".into()),
+        markdown: Some("**Hello**".into()),
+        ..Text::default()
+    };
+    let list = List {
+        id: Some("l".into()),
+        rows: vec![row("a", "first"), row("b", "second")],
+        ..List::default()
+    };
     let screen = Screen {
-        rows: vec![row("title", text("Hello"))],
+        id: Some("s".into()),
+        title: Some("Thread".into()),
+        blocks: Some(vec![
+            Block::Text(Box::new(note)),
+            Block::List(Box::new(list)),
+            Block::Composer(Box::new(say)),
+        ]),
+        ..Screen::default()
     };
-    let button = Block::Button {
-        label: "Go".into(),
-        action: "go".into(),
+    let card = Card {
+        id: Some("c".into()),
+        tone: Some(Tone::Warn),
+        title: Some("q1".into()),
+        ..Card::default()
     };
+    let insert = |before: Option<&str>, after: Option<&str>, b: Block| Op::Insert {
+        into: "l".into(),
+        before: before.map(Into::into),
+        after: after.map(Into::into),
+        block: Child::Block(b),
+    };
+    let fields = Map::from_iter([("subtitle".into(), Value::String("now".into()))]);
+    let ops = vec![
+        insert(Some("a"), None, row("c", "before a")),
+        insert(None, Some("a"), row("d", "after a")),
+        Op::Merge { id: "b".into(), fields },
+        Op::Move {
+            id: "b".into(),
+            into: "l".into(),
+            before: Some("c".into()),
+        },
+        Op::Replace {
+            id: "note".into(),
+            block: Block::Card(Box::new(card)),
+        },
+        Op::Remove { id: "d".into() },
+        Op::Badge { count: 2 },
+        Op::Dot { on: true },
+    ];
     vec![
         Frame {
             seq: 0,
-            body: Body::Snapshot { screen },
+            ops: vec![Op::Screen {
+                screen: Block::Screen(Box::new(screen)),
+            }],
         },
-        Frame {
-            seq: 1,
-            body: Body::Ops {
-                ops: vec![
-                    Op::Insert {
-                        at: 1,
-                        row: row("go", button),
-                    },
-                    Op::Update {
-                        row: row("title", text("Hi")),
-                    },
-                    Op::Remove { id: "go".into() },
-                ],
-            },
-        },
+        Frame { seq: 1, ops },
     ]
 }
 
-fn types(s: &Value) -> Vec<(&str, &Value)> {
-    let root = s.get("title").and_then(Value::as_str).map(|t| (t, s));
-    let defs = s.get("$defs").and_then(Value::as_object).into_iter().flatten();
-    root.into_iter().chain(defs.map(|(k, v)| (k.as_str(), v))).collect()
+enum Ty<'a> {
+    Str,
+    Bool,
+    Int(&'a str),
+    Num,
+    Json,
+    List(Box<Ty<'a>>),
+    Map(Box<Ty<'a>>),
+    Named(&'a str),
 }
 
-fn fields(o: &Value) -> Result<Vec<(&str, &Value)>, String> {
+struct Prop<'a> {
+    name: &'a str,
+    ty: Ty<'a>,
+    opt: bool,
+}
+
+enum Case<'a> {
+    Ref(&'a str),
+    Props(Vec<Prop<'a>>),
+}
+
+enum Def<'a> {
+    Struct(Vec<Prop<'a>>),
+    Words(Vec<&'a str>),
+    Tagged {
+        tag: &'a str,
+        cases: Vec<(&'a str, Case<'a>)>,
+        rest: Option<&'a str>,
+    },
+    Union(Vec<Ty<'a>>),
+}
+
+type Out = Result<String, String>;
+
+fn alts(v: &Value) -> Option<&Vec<Value>> {
+    v.get("oneOf").or_else(|| v.get("anyOf"))?.as_array()
+}
+
+fn named(v: &Value) -> Option<&str> {
+    v.get("$ref")?.as_str()?.strip_prefix("#/$defs/")
+}
+
+fn ty(p: &Value) -> Result<(Ty<'_>, bool), String> {
+    if p == &Value::Bool(true) {
+        return Ok((Ty::Json, false));
+    }
+    if let Some(n) = named(p) {
+        return Ok((Ty::Named(n), false));
+    }
+    if let Some([x, null]) = alts(p).map(Vec::as_slice) {
+        if null.get("type").and_then(Value::as_str) == Some("null") {
+            return Ok((ty(x)?.0, true));
+        }
+    }
+    let types: Vec<&str> = match p.get("type") {
+        Some(Value::String(t)) => vec![t],
+        Some(Value::Array(ts)) => ts.iter().filter_map(Value::as_str).collect(),
+        _ => return Err(format!("no generated type for {p}")),
+    };
+    let null = types.contains(&"null");
+    let t = match types.iter().find(|t| **t != "null") {
+        Some(&"string") => Ty::Str,
+        Some(&"boolean") => Ty::Bool,
+        Some(&"number") => Ty::Num,
+        Some(&"integer") => Ty::Int(p.get("format").and_then(Value::as_str).unwrap_or("")),
+        Some(&"array") => Ty::List(Box::new(ty(p.get("items").ok_or("an array without items")?)?.0)),
+        Some(&"object") => Ty::Map(Box::new(match p.get("additionalProperties") {
+            Some(a @ Value::Object(_)) => ty(a)?.0,
+            _ => Ty::Json,
+        })),
+        _ => return Err(format!("no generated type for {p}")),
+    };
+    Ok((t, null))
+}
+
+fn props<'a>(o: &'a Value, skip: &str) -> Result<Vec<Prop<'a>>, String> {
     let req: Vec<&str> = o
         .get("required")
         .and_then(Value::as_array)
@@ -84,126 +218,314 @@ fn fields(o: &Value) -> Result<Vec<(&str, &Value)>, String> {
         .flatten()
         .filter_map(Value::as_str)
         .collect();
-    let props = o
-        .get("properties")
-        .and_then(Value::as_object)
-        .ok_or(format!("no properties in {o}"))?;
-    props
-        .iter()
+    let all = o.get("properties").and_then(Value::as_object).into_iter().flatten();
+    all.filter(|(k, _)| k.as_str() != skip)
         .map(|(k, v)| {
-            if req.contains(&k.as_str()) {
-                Ok((k.as_str(), v))
-            } else {
-                Err(format!("optional field `{k}`"))
-            }
+            let (ty, null) = ty(v)?;
+            let opt = null || !req.contains(&k.as_str());
+            Ok(Prop { name: k, ty, opt })
         })
         .collect()
 }
 
-type Variant<'a> = (&'a str, Vec<(&'a str, &'a Value)>);
+fn tag_of(alt: &Value) -> Option<(&str, &str)> {
+    let ps = alt.get("properties")?.as_object()?;
+    ps.iter()
+        .find_map(|(k, v)| Some((k.as_str(), v.get("const")?.as_str()?)))
+}
 
-fn variant(v: &Value) -> Result<Variant<'_>, String> {
-    let one = fields(v)?;
-    let [(name, body)] = one.as_slice() else {
-        return Err(format!("variant with {} keys", one.len()));
+fn def(v: &Value) -> Result<Def<'_>, String> {
+    if let Some(words) = v.get("enum").and_then(Value::as_array) {
+        return Ok(Def::Words(words.iter().filter_map(Value::as_str).collect()));
+    }
+    let Some(alts) = alts(v) else {
+        return Ok(Def::Struct(props(v, "")?));
     };
-    Ok((*name, fields(body)?))
-}
-
-fn variants(s: &Value) -> Option<Result<Vec<Variant<'_>>, String>> {
-    Some(s.get("oneOf")?.as_array()?.iter().map(variant).collect())
-}
-
-fn kind(p: &Value) -> Result<Kind<'_>, String> {
-    if let Some(r) = p.get("$ref").and_then(Value::as_str) {
-        return Ok(Kind::Named(r.trim_start_matches("#/$defs/")));
+    if let [w, s] = alts.as_slice() {
+        if w.get("enum").is_some() && s.get("type").and_then(Value::as_str) == Some("string") {
+            return def(w);
+        }
     }
-    match (
-        p.get("type").and_then(Value::as_str),
-        p.get("format").and_then(Value::as_str),
-    ) {
-        (Some("string"), _) => Ok(Kind::String),
-        (Some("boolean"), _) => Ok(Kind::Bool),
-        (Some("integer"), Some("uint64")) => Ok(Kind::U64),
-        (Some("integer"), _) => Ok(Kind::Int),
-        (Some("array"), _) => Ok(Kind::Array(Box::new(kind(
-            p.get("items").ok_or("array without items")?,
-        )?))),
-        _ => Err(format!("no generated type for {p}")),
+    let Some(tag) = alts.iter().find_map(tag_of).map(|t| t.0) else {
+        return Ok(Def::Union(
+            alts.iter().map(|a| ty(a).map(|t| t.0)).collect::<Result<_, _>>()?,
+        ));
+    };
+    let (mut cases, mut rest) = (vec![], None);
+    for a in alts {
+        match (tag_of(a), named(a)) {
+            (Some((_, c)), Some(n)) => cases.push((c, Case::Ref(n))),
+            (Some((_, c)), None) => cases.push((c, Case::Props(props(a, tag)?))),
+            (None, Some(n)) => rest = Some(n),
+            (None, None) => return Err(format!("an untagged case in {v}")),
+        }
     }
+    Ok(Def::Tagged { tag, cases, rest })
 }
 
-enum Kind<'a> {
-    Named(&'a str),
-    String,
-    Bool,
-    U64,
-    Int,
-    Array(Box<Kind<'a>>),
+fn defs(s: &Value) -> Result<Vec<(&str, Def<'_>)>, String> {
+    let root = s.get("title").and_then(Value::as_str).map(|t| (t, s));
+    let all = s.get("$defs").and_then(Value::as_object).into_iter().flatten();
+    root.into_iter()
+        .chain(all.map(|(k, v)| (k.as_str(), v)))
+        .map(|(k, v)| Ok((k, def(v)?)))
+        .collect()
 }
 
-impl Kind<'_> {
+fn camel(s: &str, upper: bool) -> String {
+    let mut out = String::new();
+    for (i, part) in s.split(['-', '_']).enumerate() {
+        let mut cs = part.chars();
+        if let Some(c) = cs.next() {
+            let up = upper || i > 0;
+            out.extend(if up {
+                c.to_uppercase().collect::<Vec<_>>()
+            } else {
+                c.to_lowercase().collect()
+            });
+            out.extend(cs);
+        }
+    }
+    out
+}
+
+impl Ty<'_> {
     fn ts(&self) -> String {
         match self {
-            Self::Named(n) => (*n).into(),
-            Self::String => "string".into(),
+            Self::Str => "string".into(),
             Self::Bool => "boolean".into(),
-            Self::U64 | Self::Int => "number".into(),
-            Self::Array(k) => format!("{}[]", k.ts()),
+            Self::Int(_) | Self::Num => "number".into(),
+            Self::Json => "unknown".into(),
+            Self::List(t) => format!("{}[]", t.ts()),
+            Self::Map(t) => format!("Record<string, {}>", t.ts()),
+            Self::Named(n) => (*n).into(),
         }
     }
 
     fn swift(&self) -> String {
         match self {
-            Self::Named(n) => (*n).into(),
-            Self::String => "String".into(),
+            Self::Str => "String".into(),
             Self::Bool => "Bool".into(),
-            Self::U64 => "UInt64".into(),
-            Self::Int => "Int".into(),
-            Self::Array(k) => format!("[{}]", k.swift()),
+            Self::Int("uint64") => "UInt64".into(),
+            Self::Int("uint32") => "UInt32".into(),
+            Self::Int("uint8") => "UInt8".into(),
+            Self::Int("int64") => "Int64".into(),
+            Self::Int(_) => "Int".into(),
+            Self::Num => "Double".into(),
+            Self::Json => "JSONValue".into(),
+            Self::List(t) => format!("[{}]", t.swift()),
+            Self::Map(t) => format!("[String: {}]", t.swift()),
+            Self::Named(n) => (*n).into(),
+        }
+    }
+
+    fn case(&self) -> String {
+        match self {
+            Self::Str => "string".into(),
+            Self::Bool => "bool".into(),
+            Self::Int(_) => "int".into(),
+            Self::Num => "number".into(),
+            Self::Json => "json".into(),
+            Self::List(_) => "list".into(),
+            Self::Map(_) => "map".into(),
+            Self::Named(n) => camel(n, false),
         }
     }
 }
 
-type Out = Result<String, String>;
-
-fn each<T>(items: &[T], f: impl Fn(&T) -> Out, sep: &str) -> Out {
-    Ok(items.iter().map(f).collect::<Result<Vec<String>, String>>()?.join(sep))
+fn ts_props(ps: &[Prop<'_>], tag: Option<String>) -> String {
+    let fs = ps.iter().map(|p| {
+        let (q, null) = if p.opt { ("?", " | null") } else { ("", "") };
+        format!("{}{q}: {}{null}", p.name, p.ty.ts())
+    });
+    format!(
+        "{{ {} }}",
+        tag.into_iter().chain(fs).collect::<Vec<String>>().join("; ")
+    )
 }
 
 fn ts(s: &Value) -> Out {
-    let obj = |fs: &Vec<(&str, &Value)>| -> Out {
-        let f = each(fs, |(k, v)| Ok(format!("{k}: {}", kind(v)?.ts())), "; ")?;
-        Ok(format!("{{ {f} }}"))
-    };
     let mut out = format!("export const schemaVersion = {SCHEMA_VERSION};\n");
-    for (name, t) in types(s) {
-        let body = if let Some(vs) = variants(t) {
-            each(&vs?, |(v, fs)| Ok(format!("{{ {v}: {} }}", obj(fs)?)), " | ")?
-        } else {
-            obj(&fields(t)?)?
+    for (name, d) in defs(s)? {
+        let body = match &d {
+            Def::Struct(ps) => ts_props(ps, None),
+            Def::Words(ws) => ws.iter().map(|w| format!("\"{w}\"")).collect::<Vec<_>>().join(" | "),
+            Def::Union(ts) => ts.iter().map(Ty::ts).collect::<Vec<_>>().join(" | "),
+            Def::Tagged { tag, cases, rest } => {
+                let case = |(c, p): &(&str, Case<'_>)| match p {
+                    Case::Ref(n) => format!("({{ {tag}: \"{c}\" }} & {n})"),
+                    Case::Props(ps) => ts_props(ps, Some(format!("{tag}: \"{c}\""))),
+                };
+                let rest = rest.map(|r| format!("({r} & {{ [key: string]: unknown }})"));
+                cases.iter().map(case).chain(rest).collect::<Vec<_>>().join(" | ")
+            }
         };
         out.push_str(&format!("\nexport type {name} = {body};\n"));
     }
     Ok(out)
 }
 
-fn swift(s: &Value) -> Out {
-    let arg = |(k, v): &(&str, &Value)| Ok(format!("{k}: {}", kind(v)?.swift()));
-    let mut out = format!("public let blocksSchemaVersion = {SCHEMA_VERSION}\n");
-    for (name, t) in types(s) {
-        let (what, body) = if let Some(vs) = variants(t) {
-            let case = |(v, fs): &Variant<'_>| Ok(format!("    case {v}({})", each(fs, arg, ", ")?));
-            ("enum", each(&vs?, case, "\n")?)
-        } else {
-            (
-                "struct",
-                each(&fields(t)?, |f| Ok(format!("    public let {}", arg(f)?)), "\n")?,
+const SWIFT_WORDS: &[&str] = &[
+    "as",
+    "break",
+    "case",
+    "catch",
+    "class",
+    "continue",
+    "default",
+    "defer",
+    "do",
+    "else",
+    "enum",
+    "extension",
+    "false",
+    "for",
+    "func",
+    "guard",
+    "if",
+    "import",
+    "in",
+    "init",
+    "internal",
+    "is",
+    "let",
+    "nil",
+    "operator",
+    "private",
+    "protocol",
+    "public",
+    "repeat",
+    "return",
+    "self",
+    "static",
+    "struct",
+    "subscript",
+    "switch",
+    "throw",
+    "true",
+    "try",
+    "typealias",
+    "var",
+    "where",
+    "while",
+];
+
+fn word(name: &str) -> String {
+    if SWIFT_WORDS.contains(&name) {
+        format!("`{name}`")
+    } else {
+        name.into()
+    }
+}
+
+const CODABLE: &str = "Codable, Equatable, Sendable";
+
+fn swift_struct(name: &str, ps: &[Prop<'_>]) -> String {
+    let fs = ps.iter().map(|p| {
+        let q = if p.opt { "?" } else { "" };
+        format!("    public var {}: {}{q}\n", word(p.name), p.ty.swift())
+    });
+    format!("\npublic struct {name}: {CODABLE} {{\n{}}}\n", fs.collect::<String>())
+}
+
+fn swift_words(name: &str, ws: &[&str]) -> String {
+    let lets = ws.iter().map(|w| {
+        format!(
+            "    public static let {} = Self(rawValue: \"{w}\")\n",
+            word(&camel(w, false))
+        )
+    });
+    format!(
+        "\npublic struct {name}: RawRepresentable, Hashable, {CODABLE} {{\n    public let rawValue: String\n    \
+         public init(rawValue: String) {{ self.rawValue = rawValue }}\n{}}}\n",
+        lets.collect::<String>()
+    )
+}
+
+fn swift_union(name: &str, ts: &[Ty<'_>]) -> String {
+    let cases: String = ts
+        .iter()
+        .map(|t| format!("    case {}({})\n", word(&t.case()), t.swift()))
+        .collect();
+    let tries: Vec<String> = ts
+        .iter()
+        .map(|t| {
+            format!(
+                "if let v = try? {}(from: decoder) {{ self = .{}(v) }}",
+                t.swift(),
+                word(&t.case())
             )
-        };
-        out.push_str(&format!(
-            "\npublic {what} {name}: Codable, Equatable, Sendable {{\n{body}\n}}\n"
+        })
+        .collect();
+    let encodes: String = ts
+        .iter()
+        .map(|t| format!("        case .{}(let v): try v.encode(to: encoder)\n", word(&t.case())))
+        .collect();
+    format!(
+        "\npublic enum {name}: {CODABLE} {{\n{cases}\n    public init(from decoder: any Decoder) throws {{\n        {} \
+         else {{ throw DecodingError.dataCorrupted(.init(codingPath: decoder.codingPath, debugDescription: \"no {name}\")) }}\n    }}\n\n    \
+         public func encode(to encoder: any Encoder) throws {{\n        switch self {{\n{encodes}        }}\n    }}\n}}\n",
+        tries.join(" else ")
+    )
+}
+
+fn swift_tagged(name: &str, tag: &str, cases: &[(&str, Case<'_>)], rest: Option<&str>) -> String {
+    let mut out = String::new();
+    let payload = |c: &str, p: &Case<'_>| match p {
+        Case::Ref(n) => (*n).to_string(),
+        Case::Props(_) => format!("{name}{}", camel(c, true)),
+    };
+    for (c, p) in cases {
+        if let Case::Props(ps) = p {
+            out.push_str(&swift_struct(&payload(c, p), ps));
+        }
+    }
+    let other = rest.map_or("unknown".into(), |r| camel(r, false));
+    let mut decl = String::new();
+    let (mut dec, mut enc) = (String::new(), String::new());
+    for (c, p) in cases {
+        let (case, ty) = (word(&camel(c, false)), payload(c, p));
+        decl.push_str(&format!("    case {case}({ty})\n"));
+        dec.push_str(&format!(
+            "        case \"{c}\": self = .{case}(try {ty}(from: decoder))\n"
         ));
+        enc.push_str(&format!(
+            "        case .{case}(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); \
+             try c.encode(\"{c}\", forKey: .tag)\n"
+        ));
+    }
+    let (rest_decl, rest_dec, rest_enc) = if rest.is_some() {
+        (
+            format!("    case {other}(JSONValue)\n"),
+            format!("self = .{other}(try JSONValue(from: decoder))"),
+            format!("        case .{other}(let v): try v.encode(to: encoder)\n"),
+        )
+    } else {
+        (
+            "    case unknown\n".into(),
+            "self = .unknown".into(),
+            "        case .unknown: var c = encoder.container(keyedBy: Tag.self); try c.encode(\"unknown\", forKey: .tag)\n".into(),
+        )
+    };
+    out.push_str(&format!(
+        "\npublic enum {name}: {CODABLE} {{\n{decl}{rest_decl}\n    private enum Tag: String, CodingKey {{ case tag = \"{tag}\" }}\n\n    \
+         public init(from decoder: any Decoder) throws {{\n        \
+         switch try decoder.container(keyedBy: Tag.self).decode(String.self, forKey: .tag) {{\n{dec}        \
+         default: {rest_dec}\n        }}\n    }}\n\n    public func encode(to encoder: any Encoder) throws {{\n        \
+         switch self {{\n{enc}{rest_enc}        }}\n    }}\n}}\n"
+    ));
+    out
+}
+
+fn swift(s: &Value) -> Out {
+    let mut out = format!("public let blocksSchemaVersion = {SCHEMA_VERSION}\n");
+    for (name, d) in defs(s)? {
+        out.push_str(&match &d {
+            Def::Struct(ps) => swift_struct(name, ps),
+            Def::Words(ws) => swift_words(name, ws),
+            Def::Union(ts) => swift_union(name, ts),
+            Def::Tagged { tag, cases, rest } => swift_tagged(name, tag, cases, *rest),
+        });
     }
     Ok(out)
 }

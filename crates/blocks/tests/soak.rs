@@ -36,7 +36,7 @@ fn a_streams_memory_stays_flat() {
                 replica.receive(&frame).unwrap();
             }
         }
-        assert_eq!(replica.screen, truth);
+        assert_eq!(replica.screen.as_ref(), Some(&truth));
         samples.push(rss_kb());
         eprintln!("round {round}: rss {} KB", rss_kb());
     }

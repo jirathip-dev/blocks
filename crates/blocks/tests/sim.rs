@@ -50,7 +50,7 @@ fn run(seed: u64) -> Result<(), String> {
     for f in stream.resume(replica.seq) {
         replica.receive(&f).map_err(|e| format!("final resume: {e}"))?;
     }
-    if replica.screen != truth {
+    if replica.screen.as_ref() != Some(&truth) {
         return Err("the replica did not converge to the stream's screen".into());
     }
     Ok(())
