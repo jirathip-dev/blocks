@@ -3,7 +3,7 @@ use std::path::Path;
 use serde_json::{Map, Value};
 
 use crate::{
-    Block, Card, Child, Composer, ComposerChip, Frame, List, Op, Queued, Row, Screen, Text, Tone, SCHEMA_VERSION,
+    theme, Block, Card, Child, Composer, ComposerChip, Frame, List, Op, Queued, Row, Screen, Text, Tone, SCHEMA_VERSION,
 };
 
 /// The JSON Schema of a `Frame`, the stream's one message type; its `$defs` hold `Block` and `Op`.
@@ -42,11 +42,56 @@ pub fn write(root: &Path) -> std::io::Result<()> {
             "swift/Sources/Blocks/Gen/Blocks.swift",
             swift(&s).map_err(std::io::Error::other)?,
         ),
+        ("web/src/gen/schemes.ts", schemes_ts()?),
+        ("swift/Sources/Blocks/Gen/Schemes.swift", schemes_swift()?),
     ];
     for (path, text) in files {
         std::fs::write(root.join(path), text)?;
     }
     Ok(())
+}
+
+fn schemes_ts() -> serde_json::Result<String> {
+    let all: std::collections::BTreeMap<_, _> = theme::schemes().iter().map(|(n, s)| (*n, s)).collect();
+    let tokens = theme::schemes()
+        .first()
+        .map(|(_, s)| s.tokens.all().map(|(k, _)| format!("\"{k}\"")).join(" | "))
+        .unwrap_or_default();
+    Ok(format!(
+        "export type Mode = \"dark\" | \"light\";\n\nexport type Token = {tokens};\n\n\
+         export type Scheme = {{ label: string; \"color-scheme\": Mode; tokens: Record<Token, string> }};\n\n\
+         export const schemes: Record<string, Scheme> = {};\n",
+        serde_json::to_string_pretty(&all)?
+    ))
+}
+
+fn schemes_swift() -> serde_json::Result<String> {
+    let q = |s: &str| serde_json::to_string(s);
+    let mut out = String::from(
+        "public enum SchemeMode: String, Codable, Equatable, Sendable {\n    case dark, light\n}\n\n\
+         public struct Scheme: Equatable, Sendable {\n    public let label: String\n    public let mode: SchemeMode\n    \
+         public let tokens: [String: String]\n}\n\npublic let blocksSchemes: [String: Scheme] = [\n",
+    );
+    for (name, s) in theme::schemes() {
+        let mode = match s.mode {
+            theme::Mode::Dark => "dark",
+            theme::Mode::Light => "light",
+        };
+        let tokens = s
+            .tokens
+            .all()
+            .iter()
+            .map(|(k, v)| Ok(format!("{}: {}", q(k)?, q(v.as_str())?)))
+            .collect::<serde_json::Result<Vec<_>>>()?
+            .join(", ");
+        out.push_str(&format!(
+            "    {}: Scheme(label: {}, mode: .{mode}, tokens: [{tokens}]),\n",
+            q(name)?,
+            q(&s.label)?
+        ));
+    }
+    out.push_str("]\n");
+    Ok(out)
 }
 
 fn row(id: &str, title: &str) -> Block {

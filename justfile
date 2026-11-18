@@ -8,6 +8,10 @@ check: fmt clippy fixtures test perf soak deps deny web arch cap actionlint swif
 gen:
     cargo run -q --locked -p blocks --features schema --bin blocks-codegen
 
+# `just swag <sha>`: vendor swag's packs/ at that commit into theme/packs/, with SOURCE and SHA256SUMS.
+swag sha:
+    scripts/swag.sh {{sha}}
+
 fmt:
     cargo fmt --check
 

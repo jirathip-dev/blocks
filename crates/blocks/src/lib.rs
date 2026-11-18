@@ -1,6 +1,7 @@
 mod ops;
 mod screen;
 mod stream;
+pub mod theme;
 
 #[cfg(feature = "schema")]
 pub mod codegen;
