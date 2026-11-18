@@ -1,0 +1,15 @@
+Decided: Package.swift moves to the repo root; SwiftPM consumes a package by URL only from a root manifest.
+Because: "Cooee can depend on it by tag (the SwiftPM consumption rule from the ADR)"
+Decided: views stay cooee's JSONValue readers; BlocksView takes the generated Block and converts it once.
+Because: docs/architecture/blocks/adr.md:109
+Decided: Block.apply goes through JSONValue and decodes once at the end, so a failed op leaves the screen unchanged.
+Because: "Op apply covers the full op set, including `dot` and `insert` with `before` / `after`"
+Decided: the receiver is Replica, as in the crate; Mirror would shadow Swift's own Mirror type.
+Because: crates/blocks/src/stream.rs:78
+Decided: AppBlocks.isCore asks the generated decoder, so the core-kind list cannot drift from Blocks.swift.
+Because: swift/Sources/BlocksUI/AppBlocks.swift:16
+Rejected: ImageRenderer for the render tests — it skips AppKit-backed views (scroll views, web), so chips and images came out blank.
+Rejected: porting SlotView, Layout and theme packs now — they wait on the layout and theme slices, which are not in this repo yet.
+Check: RenderTests renders one fixture sample per core kind through NSHostingView and fails on a blank one.
+Check: the swift CI job on macos-latest has Swift tools 6.2 and the macOS 26 SDK (WebPage, glassEffect).
+Owner: cooee can now pin blocks by commit and draw its screens with the shared SwiftUI views, adding its own blocks on top.
