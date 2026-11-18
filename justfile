@@ -63,9 +63,9 @@ cap:
 actionlint:
     actionlint -color
 
-# The generated Swift types decode and re-encode the Rust sample; macOS only (CI's swift job).
+# The Swift package's tests, warnings as errors; macOS only (CI's swift job).
 swift:
     #!/usr/bin/env bash
     set -euo pipefail
     if [ "$(uname)" != Darwin ]; then echo "swift: macOS only, skipped (CI's swift job runs it)"; exit 0; fi
-    cd swift && swift test
+    BLOCKS_STRICT=1 swift test

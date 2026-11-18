@@ -52,6 +52,11 @@ comments = true
 ignore_case = true
 
 [[ban]]
+pattern = "import SwiftUI"
+paths = ["swift/Sources/Blocks/**"]
+reason = "Blocks is Foundation only: the views live in BlocksUI"
+
+[[ban]]
 pattern = "tokio"
 paths = ["Cargo.toml", "crates/*/Cargo.toml", "crates/*/src/**"]
 reason = "no transport here: streams are carried by drover and cooee"
