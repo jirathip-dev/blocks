@@ -1,0 +1,49 @@
+{
+  "why": "a client at 3 told v 1 is too far ahead: update the server, no sync",
+  "v": 3,
+  "steps": [
+    {
+      "open": "/screens/queue"
+    },
+    {
+      "hello": {
+        "v": 1,
+        "sid": "s1",
+        "epoch": "e1",
+        "keys": 16
+      },
+      "outdated": "server"
+    },
+    {
+      "have": []
+    },
+    {
+      "frame": {
+        "k": "/screens/queue",
+        "rev": 1,
+        "screen": {
+          "type": "screen",
+          "id": "s",
+          "title": "Queue",
+          "blocks": [
+            {
+              "type": "list",
+              "id": "l",
+              "rows": [
+                {
+                  "type": "row",
+                  "id": "a",
+                  "title": "A"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "took": "old"
+    }
+  ],
+  "screens": {
+    "/screens/queue": null
+  }
+}

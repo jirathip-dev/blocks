@@ -1,6 +1,6 @@
-import type { Frame } from "./types.ts";
+import type { OldFrame } from "./types.ts";
 
-export const sample: Frame[] = [
+export const sample: OldFrame[] = [
   {
     "seq": 0,
     "ops": [

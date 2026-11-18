@@ -67,7 +67,6 @@ pub enum ApplyError {
     NoList(String),
     Shape(String),
     Unknown,
-    Gap { want: u64, got: u64 },
 }
 
 impl fmt::Display for ApplyError {
@@ -77,7 +76,6 @@ impl fmt::Display for ApplyError {
             Self::NoList(id) => write!(f, "block `{id}` holds no list to insert into"),
             Self::Shape(why) => write!(f, "the edit does not fit: {why}"),
             Self::Unknown => write!(f, "an op this version does not know: ask for the whole screen"),
-            Self::Gap { want, got } => write!(f, "frame {got} where {want} was due"),
         }
     }
 }
@@ -158,6 +156,20 @@ impl Block {
                 .collect(),
             _ => vec![],
         }
+    }
+
+    pub(crate) fn get(&self, id: &str) -> Option<&Block> {
+        if self.id() == Some(id) {
+            return Some(self);
+        }
+        let mut kids: Vec<&Block> = self.kids().into_iter().flatten().collect();
+        if let Self::Card(c) = self {
+            kids.extend(c.buttons.iter().flatten());
+        }
+        if let Self::Row(r) = self {
+            kids.extend(r.rounds.iter().flatten().filter_map(|x| x.blocks.as_ref()).flatten());
+        }
+        kids.into_iter().find_map(|b| b.get(id))
     }
 
     fn find(&mut self, id: &str) -> Option<&mut Block> {

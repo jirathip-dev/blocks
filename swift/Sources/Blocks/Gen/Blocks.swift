@@ -1,8 +1,11 @@
 public let blocksSchemaVersion = 1
 
 public struct Frame: Codable, Equatable, Sendable {
-    public var ops: [Op]
-    public var seq: UInt64
+    public var from: UInt64?
+    public var k: String
+    public var ops: [Op]?
+    public var rev: UInt64
+    public var screen: Block?
 }
 
 public struct Accessory: RawRepresentable, Hashable, Codable, Equatable, Sendable {
@@ -129,6 +132,10 @@ public struct ButtonStyle: RawRepresentable, Hashable, Codable, Equatable, Senda
     public static let primary = Self(rawValue: "primary")
     public static let plain = Self(rawValue: "plain")
     public static let destructive = Self(rawValue: "destructive")
+}
+
+public struct Bye: Codable, Equatable, Sendable {
+    public var why: Why
 }
 
 public struct Card: Codable, Equatable, Sendable {
@@ -339,6 +346,18 @@ public struct Form: Codable, Equatable, Sendable {
     public var submit: Submit?
 }
 
+public struct Have: Codable, Equatable, Sendable {
+    public var k: String
+    public var rev: UInt64?
+}
+
+public struct Hello: Codable, Equatable, Sendable {
+    public var epoch: String
+    public var keys: Int
+    public var sid: String
+    public var v: UInt8
+}
+
 public struct Hunk: Codable, Equatable, Sendable {
     public var at: String
     public var lines: [String]
@@ -361,6 +380,14 @@ public struct Images: Codable, Equatable, Sendable {
     public var id: String?
     public var items: [Image]
     public var size: ImageSize?
+}
+
+public struct KeyState: Codable, Equatable, Sendable {
+    public var gone: Int?
+    public var k: String
+    public var ops: [Op]?
+    public var rev: UInt64?
+    public var screen: Block?
 }
 
 public struct Keyboard: RawRepresentable, Hashable, Codable, Equatable, Sendable {
@@ -420,6 +447,11 @@ public struct Node: Codable, Equatable, Sendable {
     public var state: Tone?
     public var tap: Tap?
     public var value: String?
+}
+
+public struct OldFrame: Codable, Equatable, Sendable {
+    public var ops: [Op]
+    public var seq: UInt64
 }
 
 public struct OpMerge: Codable, Equatable, Sendable {
@@ -666,6 +698,15 @@ public struct Submit: Codable, Equatable, Sendable {
     public var values: [String: JSONValue]?
 }
 
+public struct Sync: Codable, Equatable, Sendable {
+    public var close: [String]?
+    public var open: [Have]
+}
+
+public struct Synced: Codable, Equatable, Sendable {
+    public var keys: [KeyState]
+}
+
 public struct Tap: Codable, Equatable, Sendable {
     public var action: String?
     public var copy: String?
@@ -747,4 +788,12 @@ public struct Web: Codable, Equatable, Sendable {
     public var height: UInt32
     public var id: String?
     public var src: String
+}
+
+public struct Why: RawRepresentable, Hashable, Codable, Equatable, Sendable {
+    public let rawValue: String
+    public init(rawValue: String) { self.rawValue = rawValue }
+    public static let evicted = Self(rawValue: "evicted")
+    public static let unpaired = Self(rawValue: "unpaired")
+    public static let handover = Self(rawValue: "handover")
 }

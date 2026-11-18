@@ -1,0 +1,162 @@
+{
+  "why": "a hello from a new epoch forgets every rev and keeps the screens; the same epoch keeps them",
+  "v": 1,
+  "steps": [
+    {
+      "hello": {
+        "v": 1,
+        "sid": "s1",
+        "epoch": "e1",
+        "keys": 16
+      },
+      "outdated": null
+    },
+    {
+      "open": "/screens/queue"
+    },
+    {
+      "sent": [
+        {
+          "k": "/screens/queue"
+        }
+      ],
+      "synced": {
+        "keys": [
+          {
+            "k": "/screens/queue",
+            "rev": 5,
+            "screen": {
+              "type": "screen",
+              "id": "s",
+              "title": "Queue",
+              "blocks": [
+                {
+                  "type": "list",
+                  "id": "l",
+                  "rows": [
+                    {
+                      "type": "row",
+                      "id": "a",
+                      "title": "A"
+                    },
+                    {
+                      "type": "row",
+                      "id": "b",
+                      "title": "B"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "took": [
+        "replaced"
+      ]
+    },
+    {
+      "hello": {
+        "v": 1,
+        "sid": "s1",
+        "epoch": "e1",
+        "keys": 16
+      },
+      "outdated": null
+    },
+    {
+      "have": [
+        {
+          "k": "/screens/queue",
+          "rev": 5
+        }
+      ]
+    },
+    {
+      "hello": {
+        "v": 1,
+        "sid": "s1",
+        "epoch": "e2",
+        "keys": 16
+      },
+      "outdated": null
+    },
+    {
+      "have": [
+        {
+          "k": "/screens/queue"
+        }
+      ]
+    },
+    {
+      "frame": {
+        "k": "/screens/queue",
+        "from": 5,
+        "rev": 6,
+        "ops": [
+          {
+            "op": "remove",
+            "id": "b"
+          }
+        ]
+      },
+      "took": "old"
+    },
+    {
+      "sent": [
+        {
+          "k": "/screens/queue"
+        }
+      ],
+      "synced": {
+        "keys": [
+          {
+            "k": "/screens/queue",
+            "rev": 1,
+            "screen": {
+              "type": "screen",
+              "id": "s",
+              "title": "Queue",
+              "blocks": [
+                {
+                  "type": "list",
+                  "id": "l",
+                  "rows": [
+                    {
+                      "type": "row",
+                      "id": "a",
+                      "title": "A2"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "took": [
+        "replaced"
+      ]
+    }
+  ],
+  "screens": {
+    "/screens/queue": {
+      "type": "screen",
+      "id": "s",
+      "title": "Queue",
+      "blocks": [
+        {
+          "type": "list",
+          "id": "l",
+          "rows": [
+            {
+              "type": "row",
+              "id": "a",
+              "title": "A2"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

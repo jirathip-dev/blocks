@@ -39,10 +39,22 @@ mods = ["crate::ops"]
 may_use = ["screen"]
 
 [[layer]]
-name = "stream"
-paths = ["crates/blocks/src/stream.rs"]
-mods = ["crate::stream"]
+name = "wire"
+paths = ["crates/blocks/src/wire.rs"]
+mods = ["crate::wire", "blocks::wire"]
 may_use = ["screen", "ops"]
+
+[[layer]]
+name = "shelf"
+paths = ["crates/blocks/src/shelf.rs"]
+mods = ["crate::shelf"]
+may_use = ["screen", "ops", "wire"]
+
+[[layer]]
+name = "mirror"
+paths = ["crates/blocks/src/mirror.rs"]
+mods = ["crate::mirror"]
+may_use = ["screen", "ops", "wire"]
 
 [[layer]]
 name = "theme"
@@ -53,7 +65,7 @@ mods = ["crate::theme"]
 name = "codegen"
 paths = ["crates/blocks/src/codegen.rs", "crates/blocks/src/bin/**"]
 mods = ["crate::codegen", "blocks::codegen"]
-may_use = ["screen", "ops", "stream", "theme"]
+may_use = ["screen", "ops", "wire", "shelf", "mirror", "theme"]
 
 [[ban]]
 pattern = "drover"
@@ -98,6 +110,22 @@ reason = "the library is pure: no clock; time is the caller's"
 pattern = "SystemTime::now"
 paths = ["crates/*/src/**"]
 reason = "the library is pure: no clock; time is the caller's"
+
+[[ban]]
+pattern = "fetch("
+paths = ["web/src/patch.ts"]
+reason = "the patcher draws what it is handed; the stream does the network"
+
+[[ban]]
+pattern = "new EventSource"
+paths = ["web/src/**"]
+except = ["web/src/stream.ts"]
+reason = "one stream per device, opened by stream.ts"
+
+[[ban]]
+pattern = "document."
+paths = ["web/src/stream.ts"]
+reason = "the stream touches no DOM; the patcher does"
 
 [[size]]
 paths = ["crates/*/src/**/*.rs"]
