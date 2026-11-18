@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 cd "$(dirname "$0")/.."
-allowed=$(grep -oE '^- `[a-z0-9_-]+`' docs/deps.md | tr -d '`- ' | paste -sd'|' -)
+allowed=$(sed -nE 's/^- `([a-z0-9_-]+)`.*/\1/p' docs/deps.md | paste -sd'|' -)
 test -n "$allowed" || { echo "::error::no allow-list in docs/deps.md"; exit 1; }
 direct=$(for f in Cargo.toml crates/*/Cargo.toml; do
   sed -n '/^\[\(workspace\.\)\{0,1\}\(dev-\|build-\)\{0,1\}dependencies\]/,/^\[/p' "$f"
