@@ -54,9 +54,11 @@ web: web-install
 arch:
     {{drover}} arch-check ${BASE:+--base "$BASE"} ${PR_BODY:+--pr-body "$PR_BODY"}
 
-# The src/ line cap and the 30-line rules file.
+# The line cap in ci/cap.toml (non-test, non-generated Rust, TS and Swift; CI's cap workflow) and the 30-line rules file.
 cap:
-    {{drover}} cap-check --config ci/cap.toml ${BASE:+--base "$BASE"}
+    sh scripts/line-cap.sh
+    sh scripts/line-cap.test.sh
+    test "$(wc -l < .drover/rules.md)" -le 30 || { echo ".drover/rules.md is over 30 lines"; exit 1; }
 
 actionlint:
     actionlint -color

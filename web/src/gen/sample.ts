@@ -1,4 +1,4 @@
-import type { Frame } from "./blocks.ts";
+import type { Frame } from "./types.ts";
 
 export const sample: Frame[] = [
   {

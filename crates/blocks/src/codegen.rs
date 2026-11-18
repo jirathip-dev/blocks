@@ -21,13 +21,13 @@ pub fn write(root: &Path) -> std::io::Result<()> {
     let files = [
         ("schema/blocks.schema.json", serde_json::to_string_pretty(&s)? + "\n"),
         ("schema/sample.json", format!("{sample}\n")),
-        ("web/src/blocks.ts", ts(&s).map_err(std::io::Error::other)?),
+        ("web/src/gen/types.ts", ts(&s).map_err(std::io::Error::other)?),
         (
-            "web/src/sample.ts",
-            format!("import type {{ Frame }} from \"./blocks.ts\";\n\nexport const sample: Frame[] = {sample};\n"),
+            "web/src/gen/sample.ts",
+            format!("import type {{ Frame }} from \"./types.ts\";\n\nexport const sample: Frame[] = {sample};\n"),
         ),
         (
-            "swift/Sources/Blocks/Blocks.swift",
+            "swift/Sources/Blocks/Gen/Blocks.swift",
             swift(&s).map_err(std::io::Error::other)?,
         ),
     ];

@@ -26,7 +26,7 @@ embeds and the shared theme package. drover and cooee depend on this crate.
 - `just sim 2000`: random op sequences on random screens, also run nightly (`.github/workflows/sim.yml`)
 - `just deps`, `just deny`: the allow-list in `docs/deps.md`, then licences, advisories, duplicates and sources
 - `just web`: strict tsc and `web/lint.mjs` on the generated TS
-- `just arch`, `just cap`: drover's arch-check (`.drover/arch.toml`) and the line cap
+- `just arch`, `just cap`: drover's arch-check (`.drover/arch.toml`), and the line cap in `ci/cap.toml` (`scripts/line-cap.sh`)
 - `just actionlint`, `just swift`: the workflows, and the Swift types on macOS
 
 ## Licence

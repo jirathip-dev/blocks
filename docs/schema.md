@@ -5,8 +5,8 @@ The Rust types in `crates/blocks/src/` (`Screen`, `Row`, `Block`, `Op`, `Frame`,
 
 - `schema/blocks.schema.json`: the JSON Schema of a `Frame`, the stream's one message
 - `schema/sample.json`: frames serialized by the Rust code, which the Swift test decodes
-- `web/src/blocks.ts` and `web/src/sample.ts`: the TS types, and the sample type-checked against them
-- `swift/Sources/Blocks/Blocks.swift`: the Swift `Codable` types
+- `web/src/gen/types.ts` and `web/src/gen/sample.ts`: the TS types, and the sample type-checked against them
+- `swift/Sources/Blocks/Gen/Blocks.swift`: the Swift `Codable` types
 
 Enums are externally tagged (`{"text": {"text": "Hi"}}`), so Swift's synthesized `Codable` reads them with no hand
 code.

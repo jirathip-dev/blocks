@@ -2,9 +2,9 @@ frozen = ["ci/cap.toml"]
 generated = [
     "schema/blocks.schema.json",
     "schema/sample.json",
-    "web/src/blocks.ts",
-    "web/src/sample.ts",
-    "swift/Sources/Blocks/Blocks.swift",
+    "web/src/gen/types.ts",
+    "web/src/gen/sample.ts",
+    "swift/Sources/Blocks/Gen/Blocks.swift",
 ]
 generate = "just gen"
 shared = ["crates/blocks/src/lib.rs", "crates/*/tests/support/**"]
@@ -18,7 +18,7 @@ policy = "strict"
 except = ["ci/lint-fixtures/**", "web/lint-fixtures/**"]
 
 [docs]
-paths = ["docs/**/*.md", "README.md"]
+paths = ["docs/*.md", "README.md"]
 skip = [".drover/**"]
 
 [[layer]]
