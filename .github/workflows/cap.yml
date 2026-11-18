@@ -5,10 +5,16 @@ on:
   push:
     branches: [main, staging]
 
+permissions:
+  contents: read
+
 jobs:
   line-cap:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - run: sh scripts/line-cap.sh
-      - run: sh scripts/line-cap.test.sh
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: just
+      - name: "line cap (ci/cap.toml; .drover/rules.md at most 30 lines)"
+        run: just cap

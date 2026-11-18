@@ -1,0 +1,4 @@
+- `README.md`: what the repo is for, its non-goals, and how to run the gates
+- `docs/schema.md`: the wire schema, its generated outputs and the versioning rule
+- `docs/deps.md`: the direct dependency allow-list
+- `.drover/rules.md`: the "don't" lines and what enforces each

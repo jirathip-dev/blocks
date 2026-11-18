@@ -1,0 +1,13 @@
+{
+  "name": "blocks-web",
+  "private": true,
+  "type": "module",
+  "description": "The generated TS types of the blocks schema; strict tsc and lint.mjs hold them",
+  "scripts": {
+    "check": "tsc --noEmit",
+    "lint": "node --no-warnings lint.mjs src"
+  },
+  "devDependencies": {
+    "typescript": "7.0.2"
+  }
+}
