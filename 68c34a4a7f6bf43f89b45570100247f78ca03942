@@ -1,0 +1,10 @@
+Decided: ship cooee's 12 schemes as the union; drover's 10 are the same files with longer labels
+Because: "The union of both apps' schemes"
+Decided: cooee's short labels for all 8, paper "Paper"
+Because: q2090
+Decided: tokens are a typed 19-field struct, so a missing or unknown token fails to parse
+Because: "A test checks each scheme defines every required token"
+Rejected: a BTreeMap of tokens as cooee has — a missing token would only show at the gate
+Rejected: Style and check_pack now — no AC needs them; cooee#622 ports them with look.rs
+Check: crates/blocks/tests/theme.rs lists the 12 names and refuses fixtures/schemes/missing-token.json
+Owner: paper is labelled "Paper" as you picked; its colours were already the same in both apps
