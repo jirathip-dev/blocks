@@ -1,0 +1,90 @@
+name: ci
+on:
+  push:
+    branches: [main, staging]
+  pull_request:
+
+permissions:
+  contents: read
+
+env:
+  DROVER_BUILD: build-staging-9ea69d9
+  DROVER_SHA256: 39a24079dfe39d2ca196bb61f75a7f8735f5f6eba74d84784ad82895f3e5a1be
+
+jobs:
+  rust:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: dtolnay/rust-toolchain@1.99.1
+        with:
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: just,cargo-deny
+      - name: "drover (pinned release build: arch-check and cap-check)"
+        run: |
+          curl -sSfL -o "$RUNNER_TEMP/drover" "https://github.com/jirathip-dev/drover/releases/download/$DROVER_BUILD/drover-x86_64-unknown-linux-gnu"
+          echo "$DROVER_SHA256  $RUNNER_TEMP/drover" | sha256sum -c -
+          chmod +x "$RUNNER_TEMP/drover"
+          echo "DROVER=$RUNNER_TEMP/drover" >> "$GITHUB_ENV"
+      - name: fmt
+        run: just fmt
+      - name: "clippy (pedantic; unwrap, expect, panic, todo, indexing, as casts, prints denied outside tests)"
+        run: just clippy
+      - name: "lint fixtures (each ci/lint-fixtures/rust/<lint>.rs fails clippy)"
+        run: scripts/lint-fixtures.sh rust
+      - name: "test (the sim's fixed seeds included)"
+        run: just test
+      - name: "perf in release (hard budgets in crates/blocks/tests/perf.rs; numbers in the job summary)"
+        run: |
+          { echo "### perf (release)"; echo; echo "| case | took | budget |"; echo "|---|---|---|"; } >> "$GITHUB_STEP_SUMMARY"
+          just perf
+      - name: "soak (a stream's RSS stays flat)"
+        run: just soak
+      - name: "deps gate (direct dependencies in docs/deps.md)"
+        run: just deps
+      - name: "deny (licences, advisories, duplicate versions, sources; deny.toml)"
+        run: just deny
+      - name: "line cap (ci/cap.toml; .drover/rules.md at most 30 lines)"
+        env:
+          BASE: ${{ github.event.pull_request.base.sha }}
+        run: just cap
+      - name: "arch-check (layers, bans, sizes, frozen and generated files, comments, docs; .drover/arch.toml)"
+        env:
+          BODY: ${{ github.event.pull_request.body }}
+          EVENT: ${{ github.event_name }}
+        run: |
+          if [ "$EVENT" = pull_request ]; then
+            printf '%s' "$BODY" > "$RUNNER_TEMP/pr-body.md"
+            export BASE=HEAD^1 PR_BODY="$RUNNER_TEMP/pr-body.md"
+          fi
+          just arch
+
+  web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: just
+      - name: "typecheck (tsc --strict) and lint.mjs on web/src"
+        run: just web
+      - name: "lint fixtures (each web/lint-fixtures/<name>.ts fails lint.mjs; clean.ts passes)"
+        run: scripts/lint-fixtures.sh ts
+
+  actionlint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: just,actionlint
+      - name: actionlint (.github/workflows/**)
+        run: just actionlint

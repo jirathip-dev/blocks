@@ -1,0 +1,19 @@
+name: swift
+on:
+  push:
+    branches: [main, staging]
+    paths: ["swift/**", "schema/sample.json", ".github/workflows/swift.yml"]
+  pull_request:
+    paths: ["swift/**", "schema/sample.json", ".github/workflows/swift.yml"]
+
+permissions:
+  contents: read
+
+jobs:
+  swift:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: "the generated Swift types build, and decode and re-encode the Rust sample"
+        working-directory: swift
+        run: swift test

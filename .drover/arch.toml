@@ -1,0 +1,93 @@
+frozen = ["ci/cap.toml"]
+generated = [
+    "schema/blocks.schema.json",
+    "schema/sample.json",
+    "web/src/blocks.ts",
+    "web/src/sample.ts",
+    "swift/Sources/Blocks/Blocks.swift",
+]
+generate = "just gen"
+shared = ["crates/blocks/src/lib.rs", "crates/*/tests/support/**"]
+
+[[collect]]
+dir = "ci/cap.d"
+glob = "*.toml"
+
+[comments]
+policy = "strict"
+except = ["ci/lint-fixtures/**", "web/lint-fixtures/**"]
+
+[docs]
+paths = ["docs/**/*.md", "README.md"]
+skip = [".drover/**"]
+
+[[layer]]
+name = "screen"
+paths = ["crates/blocks/src/screen.rs"]
+mods = ["crate::screen"]
+
+[[layer]]
+name = "ops"
+paths = ["crates/blocks/src/ops.rs"]
+mods = ["crate::ops"]
+may_use = ["screen"]
+
+[[layer]]
+name = "stream"
+paths = ["crates/blocks/src/stream.rs"]
+mods = ["crate::stream"]
+may_use = ["screen", "ops"]
+
+[[layer]]
+name = "codegen"
+paths = ["crates/blocks/src/codegen.rs", "crates/blocks/src/bin/**"]
+mods = ["crate::codegen", "blocks::codegen"]
+may_use = ["screen", "ops", "stream"]
+
+[[ban]]
+pattern = "drover"
+paths = ["Cargo.toml", "crates/*/Cargo.toml", "crates/*/src/**", "web/src/**", "swift/Sources/**"]
+reason = "drover depends on blocks, never the other way: no drover import or type here"
+comments = true
+ignore_case = true
+
+[[ban]]
+pattern = "tokio"
+paths = ["Cargo.toml", "crates/*/Cargo.toml", "crates/*/src/**"]
+reason = "no transport here: streams are carried by drover and cooee"
+comments = true
+
+[[ban]]
+pattern = "std::net"
+paths = ["crates/*/src/**"]
+reason = "no transport here: streams are carried by drover and cooee"
+
+[[ban]]
+pattern = "std::process"
+paths = ["crates/*/src/**"]
+reason = "the library is pure: it starts no process"
+
+[[ban]]
+pattern = "std::fs"
+paths = ["crates/*/src/**"]
+except = ["crates/blocks/src/codegen.rs"]
+reason = "the library is pure: only codegen writes files"
+
+[[ban]]
+pattern = "Instant::now"
+paths = ["crates/*/src/**"]
+reason = "the library is pure: no clock; time is the caller's"
+
+[[ban]]
+pattern = "SystemTime::now"
+paths = ["crates/*/src/**"]
+reason = "the library is pure: no clock; time is the caller's"
+
+[[size]]
+paths = ["crates/*/src/**/*.rs"]
+max_file_lines = 1000
+max_fn_lines = 80
+
+[[size]]
+paths = ["crates/*/tests/**/*.rs"]
+max_file_lines = 1000

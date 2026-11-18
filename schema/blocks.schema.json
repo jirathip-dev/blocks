@@ -1,0 +1,222 @@
+{
+  "$defs": {
+    "Block": {
+      "description": "What a row draws.",
+      "oneOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "text": {
+              "properties": {
+                "text": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "text"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "text"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "button": {
+              "properties": {
+                "action": {
+                  "type": "string"
+                },
+                "label": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "label",
+                "action"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "button"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "Body": {
+      "description": "A whole screen, or the ops from the frame before.",
+      "oneOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "snapshot": {
+              "properties": {
+                "screen": {
+                  "$ref": "#/$defs/Screen"
+                }
+              },
+              "required": [
+                "screen"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "snapshot"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "ops": {
+              "properties": {
+                "ops": {
+                  "items": {
+                    "$ref": "#/$defs/Op"
+                  },
+                  "type": "array"
+                }
+              },
+              "required": [
+                "ops"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "ops"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "Op": {
+      "description": "One edit to a screen's rows.",
+      "oneOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "insert": {
+              "properties": {
+                "at": {
+                  "format": "uint",
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "row": {
+                  "$ref": "#/$defs/Row"
+                }
+              },
+              "required": [
+                "at",
+                "row"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "insert"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "remove": {
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "remove"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "update": {
+              "properties": {
+                "row": {
+                  "$ref": "#/$defs/Row"
+                }
+              },
+              "required": [
+                "row"
+              ],
+              "type": "object"
+            }
+          },
+          "required": [
+            "update"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "Row": {
+      "description": "One row: a stable id and the block it draws.",
+      "properties": {
+        "block": {
+          "$ref": "#/$defs/Block"
+        },
+        "id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "block"
+      ],
+      "type": "object"
+    },
+    "Screen": {
+      "description": "The rows a device draws, top to bottom; each row id is unique.",
+      "properties": {
+        "rows": {
+          "items": {
+            "$ref": "#/$defs/Row"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "rows"
+      ],
+      "type": "object"
+    }
+  },
+  "$id": "https://github.com/jirathip-dev/blocks/schema/v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "One message on a device stream: its sequence number and what it carries.",
+  "properties": {
+    "body": {
+      "$ref": "#/$defs/Body"
+    },
+    "seq": {
+      "format": "uint64",
+      "minimum": 0,
+      "type": "integer"
+    }
+  },
+  "required": [
+    "seq",
+    "body"
+  ],
+  "title": "Frame",
+  "type": "object"
+}

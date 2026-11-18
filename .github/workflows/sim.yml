@@ -1,0 +1,21 @@
+name: sim
+on:
+  schedule:
+    - cron: "37 3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sim:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@1.99.1
+      - uses: Swatinem/rust-cache@v2
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: just
+      - name: "2000 random seeds from a nightly offset (a failure prints its seed and replay line; add it to SEEDS in crates/blocks/tests/sim.rs with the fix)"
+        run: BLOCKS_SIM_FROM=$(( $(date +%s) / 86400 * 2000 )) just sim 2000

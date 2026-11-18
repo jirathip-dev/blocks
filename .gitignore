@@ -1,0 +1,9 @@
+target*/
+node_modules/
+swift/.build/
+swift/.swiftpm/
+.brief.md
+.mcp.lane.json
+CLAUDE.local.md
+why.md
+.claude/
