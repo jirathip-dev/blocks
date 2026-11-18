@@ -1,0 +1,10 @@
+{
+  "format": 1,
+  "type": "mono",
+  "radius": 0,
+  "surface": "dashed",
+  "fills": "outline",
+  "marks": "text",
+  "sections": "quiet",
+  "labels": { "kind": { "prefix": "[", "suffix": "]", "case": "lower" }, "said": { "prefix": "> " } }
+}

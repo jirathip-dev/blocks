@@ -1,0 +1,25 @@
+{
+  "format": 2,
+  "type": "default",
+  "space": 1,
+  "radius": 1,
+  "motion": 1,
+  "surface": "neon",
+  "fills": "tint",
+  "marks": "symbols",
+  "sections": "title",
+  "labels": {
+    "kind": {
+      "case": "upper"
+    },
+    "header": {
+      "case": "upper"
+    },
+    "group": {
+      "case": "upper"
+    },
+    "back": {
+      "prefix": "‹ "
+    }
+  }
+}

@@ -7,6 +7,7 @@ The Rust types in `crates/blocks/src/` (`Block` and its kinds, `Op`, `Frame`) ar
 - `schema/sample.json`: frames serialized by the Rust code, which the Swift test decodes
 - `web/src/gen/types.ts` and `web/src/gen/sample.ts`: the TS types, and the sample type-checked against them
 - `swift/Sources/Blocks/Gen/Blocks.swift`: the Swift `Codable` types (`JSONValue.swift` beside it is kept by hand)
+- `swift/Sources/Blocks/Gen/Style.swift`: `theme::Style`, an app's `style.json`, which `fixtures/styles/` holds good and bad
 
 ## Blocks
 

@@ -44,6 +44,10 @@ pub fn write(root: &Path) -> std::io::Result<()> {
         ),
         ("web/src/gen/schemes.ts", schemes_ts()?),
         ("swift/Sources/Blocks/Gen/Schemes.swift", schemes_swift()?),
+        (
+            "swift/Sources/Blocks/Gen/Style.swift",
+            style_swift().map_err(std::io::Error::other)?,
+        ),
     ];
     for (path, text) in files {
         std::fs::write(root.join(path), text)?;
@@ -92,6 +96,11 @@ fn schemes_swift() -> serde_json::Result<String> {
     }
     out.push_str("]\n");
     Ok(out)
+}
+
+fn style_swift() -> Out {
+    let style = swift_defs(&schemars::schema_for!(theme::Style).to_value())?;
+    Ok(style + &swift_defs(&schemars::schema_for!(theme::LabelRole).to_value())?)
 }
 
 fn row(id: &str, title: &str) -> Block {
@@ -563,7 +572,14 @@ fn swift_tagged(name: &str, tag: &str, cases: &[(&str, Case<'_>)], rest: Option<
 }
 
 fn swift(s: &Value) -> Out {
-    let mut out = format!("public let blocksSchemaVersion = {SCHEMA_VERSION}\n");
+    Ok(format!(
+        "public let blocksSchemaVersion = {SCHEMA_VERSION}\n{}",
+        swift_defs(s)?
+    ))
+}
+
+fn swift_defs(s: &Value) -> Out {
+    let mut out = String::new();
     for (name, d) in defs(s)? {
         out.push_str(&match &d {
             Def::Struct(ps) => swift_struct(name, ps),

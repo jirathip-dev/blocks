@@ -1,6 +1,6 @@
 use std::path::{Path, PathBuf};
 
-use blocks::theme::{css, gate, packs, schemes, PerMode, Scheme, Theme};
+use blocks::theme::{check_pack, css, gate, packs, schemes, PerMode, Scheme, Style, Surface, Theme};
 
 const EXPECTED: [&str; 12] = [
     "dracula",
@@ -93,11 +93,16 @@ fn paper_has_one_set_of_values() {
 
 #[test]
 fn css_sets_every_token_for_both_modes() {
-    let out = css(&PerMode {
+    let mut style = style("fixtures/styles/still.json").unwrap();
+    let pair = PerMode {
         dark: scheme("github-dark").clone(),
         light: scheme("paper").clone(),
-    });
+    };
+    let out = css(&pair, &style);
     let (light, dark) = out.split_once("@media (prefers-color-scheme: dark)").unwrap();
+    assert!(light.contains("--space:1.25;--motion:0;"), "{light}");
+    style = style_of(r#""format": 1, "type": "mono", "radius": 0"#);
+    assert!(css(&pair, &style).contains("--space:1;--motion:1;"));
     for (k, v) in scheme("paper").tokens.all() {
         assert!(light.contains(&format!("{k}:{};", v.as_str())), "{k}");
     }
@@ -126,4 +131,94 @@ fn the_vendored_packs_match_their_sums_and_name_built_in_schemes() {
         assert!(EXPECTED.contains(&t.scheme.dark.as_str()), "{}", p.name);
         assert!(EXPECTED.contains(&t.scheme.light.as_str()), "{}", p.name);
     }
+}
+
+fn style(path: &str) -> Result<Style, String> {
+    serde_json::from_str(&std::fs::read_to_string(root().join(path)).unwrap()).map_err(|e| e.to_string())
+}
+
+fn style_of(head: &str) -> Style {
+    let rest = r#""surface": "glass", "fills": "tint", "marks": "symbols", "sections": "title", "labels": {}"#;
+    serde_json::from_str(&format!("{{{head}, {rest}}}")).unwrap()
+}
+
+#[test]
+fn every_good_style_fixture_reads_and_format_1_gets_the_default_space_and_motion() {
+    for name in ["modern", "still", "terminal"] {
+        style(&format!("fixtures/styles/{name}.json")).unwrap();
+    }
+    let t = style("fixtures/styles/terminal.json").unwrap();
+    assert_eq!((f64::from(t.space), f64::from(t.motion)), (1.0, 1.0));
+    assert_eq!(t.surface, Surface::Dashed);
+}
+
+#[test]
+fn each_bad_style_fixture_is_refused_with_its_reason() {
+    let cases = [
+        ("newer-format", "format 3: this reader takes 1 and 2"),
+        ("unknown-key", "unknown field `shadow`"),
+        ("unknown-surface", "unknown variant `neon`"),
+        ("unknown-role", "unknown variant `footer`"),
+        ("word-affix", "punctuation and spaces only, at most 4"),
+        ("negative-space", "-1: a scale is from 0 to 4"),
+        ("fast-motion", "10: a scale is from 0 to 4"),
+        ("missing-radius", "missing field `radius`"),
+    ];
+    let mut files: Vec<String> = std::fs::read_dir(root().join("fixtures/styles/bad"))
+        .unwrap()
+        .map(|e| e.unwrap().file_name().to_string_lossy().replace(".json", ""))
+        .collect();
+    files.sort();
+    let mut names: Vec<&str> = cases.iter().map(|(n, _)| *n).collect();
+    names.sort_unstable();
+    assert_eq!(files, names);
+    for (name, why) in cases {
+        let err = style(&format!("fixtures/styles/bad/{name}.json")).unwrap_err();
+        assert!(err.contains(why) && err.contains("line"), "{name}: {err}");
+    }
+}
+
+#[test]
+fn every_vendored_pack_passes_check_pack() {
+    for p in packs() {
+        assert_eq!(check_pack(p.files), Vec::<String>::new(), "{}", p.name);
+    }
+}
+
+#[test]
+fn check_pack_refuses_a_broken_pack_with_each_reason() {
+    let farm = packs()[0].files;
+    let json = String::from_utf8(farm[0].1.to_vec()).unwrap();
+    let theme = json
+        .replace(r#""dark": "farm""#, r#""dark": "paper""#)
+        .replace(r#""light": "farm-light""#, r#""light": "solarized""#)
+        .replace(r#""idle": "grazing""#, r#""napping": "grazing""#)
+        .replace(r#""fail": "refused""#, r#""fail": """#);
+    let big = vec![b'<'; 300 * 1024];
+    let files: Vec<(&str, &[u8])> = vec![
+        ("theme.json", theme.as_bytes()),
+        ("sprites.svg", b"not svg"),
+        ("scene.svg", &big),
+    ];
+    let misses = check_pack(&files);
+    for why in [
+        "lacks icon.png",
+        "sprites.svg: not an SVG",
+        "scene.svg: 307200 bytes, over 262144",
+        "words: lacks \"idle\"",
+        "words: \"napping\" is no word a renderer shows",
+        "words.fail: \"\" is empty or over 24 characters",
+        "scheme.dark: \"paper\" is not a dark scheme",
+        "scheme.light: \"solarized\" is no built-in scheme",
+    ] {
+        assert!(misses.iter().any(|m| m == why), "{why}: {misses:?}");
+    }
+    assert_eq!(misses.len(), 8, "{misses:?}");
+    let icon: Vec<(&str, &[u8])> = farm
+        .iter()
+        .map(|(n, b)| if *n == "icon.png" { (*n, &b[..20]) } else { (*n, *b) })
+        .collect();
+    assert_eq!(check_pack(&icon), ["icon.png: not a 192×192 PNG"]);
+    let broken: Vec<(&str, &[u8])> = vec![("theme.json", b"{")];
+    assert!(check_pack(&broken).iter().any(|m| m.starts_with("theme.json: EOF")));
 }
