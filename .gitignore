@@ -1,7 +1,7 @@
 target*/
 node_modules/
-swift/.build/
-swift/.swiftpm/
+.build/
+.swiftpm/
 .brief.md
 .mcp.lane.json
 CLAUDE.local.md
