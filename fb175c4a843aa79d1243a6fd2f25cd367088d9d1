@@ -1,0 +1,11 @@
+Decided: ci/cap.toml line_cap 10000, warn_within 500, counted by scripts/line-cap.sh across Rust, TypeScript and Swift
+Because: q2070
+Because: "counts non-test lines of Rust, TypeScript and Swift together and excludes generated files"
+Rejected: relying on drover cap-check alone — it counts only Rust under crates/*/src
+Rejected: editing ci.yml or the justfile — #3 owns them; a separate cap.yml avoids the conflict
+Decided: skip the strict comment policy, #3 already sets it
+Because: "Skip this if blocks#1 already sets it"
+Decided: add a numeric Cap: 0 → 10000 trailer beside the spec's Cap: none → 10000
+Because: "blocks#1 needs `ci/cap.toml` and the cap check"
+Check: scripts/line-cap.test.sh fails one line over the cap and skips gen/Gen, tests and *.test.ts
+Owner: blocks has its first line cap, 10000 lines, enforced in CI
