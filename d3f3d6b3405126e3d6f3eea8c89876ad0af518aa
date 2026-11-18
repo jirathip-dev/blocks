@@ -1,0 +1,6 @@
+Decided: ship the approved ADR in docs/architecture/blocks with no .drover/arch.toml lines; each slice adds its own
+Because: docs/architecture/blocks/adr.md:229
+Because: q2073
+Rejected: adding the B1 and later lines now — they name files no slice has created yet and replace blocks#1's layers, which are not on staging
+Check: the ADR covers every amendment (README.md table) and migration.md maps the slices onto blocks#4, #5, #6
+Owner: The approved blocks design lands as docs; the code comes in the follow-up slice issues.
