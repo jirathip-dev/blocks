@@ -1,0 +1,14 @@
+name: cap
+
+on:
+  pull_request:
+  push:
+    branches: [main, staging]
+
+jobs:
+  line-cap:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - run: sh scripts/line-cap.sh
+      - run: sh scripts/line-cap.test.sh
