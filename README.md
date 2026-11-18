@@ -27,7 +27,14 @@ embeds and the shared theme package. drover and cooee depend on this crate.
 - `just deps`, `just deny`: the allow-list in `docs/deps.md`, then licences, advisories, duplicates and sources
 - `just web`: strict tsc and `web/lint.mjs` on the generated TS
 - `just arch`, `just cap`: drover's arch-check (`.drover/arch.toml`), and the line cap in `ci/cap.toml` (`scripts/line-cap.sh`)
-- `just actionlint`, `just swift`: the workflows, and the Swift types on macOS
+- `just actionlint`, `just swift`: the workflows, and the Swift package on macOS (op apply, the generated types, a
+  render test per core kind), warnings as errors
+
+## The Swift package
+
+The root `Package.swift` ships `Blocks` (the generated types, `JSONValue`, op `apply`, `Replica`) and `BlocksUI`
+(`BlocksView`, `.appBlocks` for an app's own kinds, `.blockStyle`). An app pins one commit, never a tag:
+`.package(url: "https://github.com/jirathip-dev/blocks", revision: "<40 hex>")`.
 
 ## Licence
 

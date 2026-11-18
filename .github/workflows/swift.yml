@@ -2,9 +2,9 @@ name: swift
 on:
   push:
     branches: [main, staging]
-    paths: ["swift/**", "schema/sample.json", ".github/workflows/swift.yml"]
+    paths: ["Package.swift", "swift/**", "schema/sample.json", "fixtures/screens/**", ".github/workflows/swift.yml"]
   pull_request:
-    paths: ["swift/**", "schema/sample.json", ".github/workflows/swift.yml"]
+    paths: ["Package.swift", "swift/**", "schema/sample.json", "fixtures/screens/**", ".github/workflows/swift.yml"]
 
 permissions:
   contents: read
@@ -14,6 +14,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
-      - name: "the generated Swift types build, and decode and re-encode the Rust sample"
-        working-directory: swift
+      - name: "the Swift package: op apply, the generated types, a render test per core kind"
+        env:
+          BLOCKS_STRICT: "1"
         run: swift test
