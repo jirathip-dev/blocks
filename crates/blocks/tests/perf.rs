@@ -3,7 +3,7 @@ mod support;
 use std::io::Write;
 use std::time::{Duration, Instant};
 
-use blocks::{apply, diff, Screen};
+use blocks::{apply, diff, Block};
 use support::{mutate, screen, Rng};
 
 fn time<T>(runs: u32, mut f: impl FnMut() -> T) -> Duration {
@@ -35,7 +35,7 @@ fn report(what: &str, took: Duration, budget: Duration) {
     assert!(took <= budget, "{what}: {took:?} is over its budget of {budget:?}");
 }
 
-fn screens() -> (Screen, Screen) {
+fn screens() -> (Block, Block) {
     let mut rng = Rng::new(7);
     let old = screen(&mut rng, 200, 40);
     let new = mutate(&mut rng, &old, &mut 0, 40);
@@ -77,6 +77,6 @@ fn a_500_kb_screen_serializes_and_parses_under_budget() {
         time(10, || serde_json::to_string(&big).unwrap()),
         Duration::from_millis(3),
     );
-    let took = time(10, || serde_json::from_str::<Screen>(&json).unwrap());
+    let took = time(10, || serde_json::from_str::<Block>(&json).unwrap());
     report("parse a 500 KB screen", took, Duration::from_millis(5));
 }

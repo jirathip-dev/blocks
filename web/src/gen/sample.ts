@@ -3,61 +3,120 @@ import type { Frame } from "./types.ts";
 export const sample: Frame[] = [
   {
     "seq": 0,
-    "body": {
-      "snapshot": {
+    "ops": [
+      {
+        "op": "screen",
         "screen": {
-          "rows": [
+          "type": "screen",
+          "id": "s",
+          "title": "Thread",
+          "blocks": [
             {
-              "id": "title",
-              "block": {
-                "text": {
-                  "text": "Hello"
+              "type": "text",
+              "id": "note",
+              "markdown": "**Hello**"
+            },
+            {
+              "type": "list",
+              "id": "l",
+              "rows": [
+                {
+                  "type": "row",
+                  "id": "a",
+                  "title": "first"
+                },
+                {
+                  "type": "row",
+                  "id": "b",
+                  "title": "second"
                 }
-              }
+              ]
+            },
+            {
+              "type": "composer",
+              "id": "say",
+              "action": "thread-say",
+              "placeholder": "message the orchestrator",
+              "chips": [
+                {
+                  "name": "effort",
+                  "cur": null,
+                  "all": [
+                    "low",
+                    "high"
+                  ]
+                }
+              ],
+              "queued": [
+                {
+                  "q": 1,
+                  "text": "and the tests"
+                }
+              ]
             }
           ]
         }
       }
-    }
+    ]
   },
   {
     "seq": 1,
-    "body": {
-      "ops": {
-        "ops": [
-          {
-            "insert": {
-              "at": 1,
-              "row": {
-                "id": "go",
-                "block": {
-                  "button": {
-                    "label": "Go",
-                    "action": "go"
-                  }
-                }
-              }
-            }
-          },
-          {
-            "update": {
-              "row": {
-                "id": "title",
-                "block": {
-                  "text": {
-                    "text": "Hi"
-                  }
-                }
-              }
-            }
-          },
-          {
-            "remove": {
-              "id": "go"
-            }
-          }
-        ]
+    "ops": [
+      {
+        "op": "insert",
+        "into": "l",
+        "before": "a",
+        "block": {
+          "type": "row",
+          "id": "c",
+          "title": "before a"
+        }
+      },
+      {
+        "op": "insert",
+        "into": "l",
+        "after": "a",
+        "block": {
+          "type": "row",
+          "id": "d",
+          "title": "after a"
+        }
+      },
+      {
+        "op": "merge",
+        "id": "b",
+        "fields": {
+          "subtitle": "now"
+        }
+      },
+      {
+        "op": "move",
+        "id": "b",
+        "into": "l",
+        "before": "c"
+      },
+      {
+        "op": "replace",
+        "id": "note",
+        "block": {
+          "type": "card",
+          "id": "c",
+          "tone": "warn",
+          "title": "q1"
+        }
+      },
+      {
+        "op": "remove",
+        "id": "d"
+      },
+      {
+        "op": "badge",
+        "count": 2
+      },
+      {
+        "op": "dot",
+        "on": true
       }
-    }
+    ]
   }
 ];

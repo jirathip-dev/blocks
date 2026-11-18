@@ -1,31 +1,750 @@
 public let blocksSchemaVersion = 1
 
 public struct Frame: Codable, Equatable, Sendable {
-    public let body: Body
-    public let seq: UInt64
+    public var ops: [Op]
+    public var seq: UInt64
+}
+
+public struct Accessory: RawRepresentable, Hashable, Codable, Equatable, Sendable {
+    public let rawValue: String
+    public init(rawValue: String) { self.rawValue = rawValue }
+    public static let chevron = Self(rawValue: "chevron")
+    public static let none = Self(rawValue: "none")
+}
+
+public struct Act: Codable, Equatable, Sendable {
+    public var action: String?
+    public var confirm: Confirm?
+    public var icon: String?
+    public var label: String
+    public var menu: [Act]?
+    public var tap: Tap?
+    public var tone: Tone?
+    public var values: [String: JSONValue]?
+}
+
+public struct AppBlock: Codable, Equatable, Sendable {
+    public var fallback: Fallback?
+    public var id: String?
+    public var type: String
 }
 
 public enum Block: Codable, Equatable, Sendable {
-    case text(text: String)
-    case button(action: String, label: String)
+    case screen(Screen)
+    case sheet(Sheet)
+    case section(Section)
+    case list(List)
+    case row(Row)
+    case card(Card)
+    case choice(Choice)
+    case form(Form)
+    case config(Form)
+    case secret(Secret)
+    case run(Run)
+    case button(Button)
+    case chips(Chips)
+    case stat(Stat)
+    case text(Text)
+    case images(Images)
+    case web(Web)
+    case diff(Diff)
+    case editor(Editor)
+    case scene(Scene)
+    case diagram(Diagram)
+    case composer(Composer)
+    case appBlock(JSONValue)
+
+    private enum Tag: String, CodingKey { case tag = "type" }
+
+    public init(from decoder: any Decoder) throws {
+        switch try decoder.container(keyedBy: Tag.self).decode(String.self, forKey: .tag) {
+        case "screen": self = .screen(try Screen(from: decoder))
+        case "sheet": self = .sheet(try Sheet(from: decoder))
+        case "section": self = .section(try Section(from: decoder))
+        case "list": self = .list(try List(from: decoder))
+        case "row": self = .row(try Row(from: decoder))
+        case "card": self = .card(try Card(from: decoder))
+        case "choice": self = .choice(try Choice(from: decoder))
+        case "form": self = .form(try Form(from: decoder))
+        case "config": self = .config(try Form(from: decoder))
+        case "secret": self = .secret(try Secret(from: decoder))
+        case "run": self = .run(try Run(from: decoder))
+        case "button": self = .button(try Button(from: decoder))
+        case "chips": self = .chips(try Chips(from: decoder))
+        case "stat": self = .stat(try Stat(from: decoder))
+        case "text": self = .text(try Text(from: decoder))
+        case "images": self = .images(try Images(from: decoder))
+        case "web": self = .web(try Web(from: decoder))
+        case "diff": self = .diff(try Diff(from: decoder))
+        case "editor": self = .editor(try Editor(from: decoder))
+        case "scene": self = .scene(try Scene(from: decoder))
+        case "diagram": self = .diagram(try Diagram(from: decoder))
+        case "composer": self = .composer(try Composer(from: decoder))
+        default: self = .appBlock(try JSONValue(from: decoder))
+        }
+    }
+
+    public func encode(to encoder: any Encoder) throws {
+        switch self {
+        case .screen(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("screen", forKey: .tag)
+        case .sheet(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("sheet", forKey: .tag)
+        case .section(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("section", forKey: .tag)
+        case .list(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("list", forKey: .tag)
+        case .row(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("row", forKey: .tag)
+        case .card(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("card", forKey: .tag)
+        case .choice(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("choice", forKey: .tag)
+        case .form(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("form", forKey: .tag)
+        case .config(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("config", forKey: .tag)
+        case .secret(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("secret", forKey: .tag)
+        case .run(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("run", forKey: .tag)
+        case .button(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("button", forKey: .tag)
+        case .chips(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("chips", forKey: .tag)
+        case .stat(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("stat", forKey: .tag)
+        case .text(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("text", forKey: .tag)
+        case .images(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("images", forKey: .tag)
+        case .web(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("web", forKey: .tag)
+        case .diff(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("diff", forKey: .tag)
+        case .editor(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("editor", forKey: .tag)
+        case .scene(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("scene", forKey: .tag)
+        case .diagram(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("diagram", forKey: .tag)
+        case .composer(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("composer", forKey: .tag)
+        case .appBlock(let v): try v.encode(to: encoder)
+        }
+    }
 }
 
-public enum Body: Codable, Equatable, Sendable {
-    case snapshot(screen: Screen)
-    case ops(ops: [Op])
+public struct Button: Codable, Equatable, Sendable {
+    public var action: String?
+    public var confirm: Confirm?
+    public var id: String?
+    public var label: String
+    public var style: ButtonStyle?
+    public var tap: Tap?
+    public var values: [String: JSONValue]?
+}
+
+public struct ButtonStyle: RawRepresentable, Hashable, Codable, Equatable, Sendable {
+    public let rawValue: String
+    public init(rawValue: String) { self.rawValue = rawValue }
+    public static let primary = Self(rawValue: "primary")
+    public static let plain = Self(rawValue: "plain")
+    public static let destructive = Self(rawValue: "destructive")
+}
+
+public struct Card: Codable, Equatable, Sendable {
+    public var badge: Label?
+    public var blocks: [Block]?
+    public var buttons: [Block]?
+    public var fold: Fold?
+    public var id: String?
+    public var kind: CardKind?
+    public var menu: [Act]?
+    public var meta: String?
+    public var push: Bool?
+    public var subtitle: String?
+    public var tap: Tap?
+    public var title: String?
+    public var tone: Tone?
+}
+
+public struct CardKind: RawRepresentable, Hashable, Codable, Equatable, Sendable {
+    public let rawValue: String
+    public init(rawValue: String) { self.rawValue = rawValue }
+    public static let ask = Self(rawValue: "ask")
+    public static let run = Self(rawValue: "run")
+    public static let secret = Self(rawValue: "secret")
+    public static let config = Self(rawValue: "config")
+    public static let proposal = Self(rawValue: "proposal")
+}
+
+public enum Child: Codable, Equatable, Sendable {
+    case block(Block)
+    case lane(Lane)
+    case round(Round)
+
+    public init(from decoder: any Decoder) throws {
+        if let v = try? Block(from: decoder) { self = .block(v) } else if let v = try? Lane(from: decoder) { self = .lane(v) } else if let v = try? Round(from: decoder) { self = .round(v) } else { throw DecodingError.dataCorrupted(.init(codingPath: decoder.codingPath, debugDescription: "no Child")) }
+    }
+
+    public func encode(to encoder: any Encoder) throws {
+        switch self {
+        case .block(let v): try v.encode(to: encoder)
+        case .lane(let v): try v.encode(to: encoder)
+        case .round(let v): try v.encode(to: encoder)
+        }
+    }
+}
+
+public struct ChipOption: Codable, Equatable, Sendable {
+    public var label: String
+    public var value: String
+}
+
+public struct Chips: Codable, Equatable, Sendable {
+    public var action: String?
+    public var id: String?
+    public var multi: Bool?
+    public var name: String
+    public var options: [ChipOption]
+    public var selected: [String]?
+}
+
+public struct Choice: Codable, Equatable, Sendable {
+    public var action: String
+    public var `default`: ChoiceDefault?
+    public var id: String?
+    public var options: [ChoiceOption]
+    public var other: Other?
+    public var question: String?
+    public var recommended: String?
+    public var values: [String: JSONValue]?
+}
+
+public struct ChoiceDefault: Codable, Equatable, Sendable {
+    public var label: String?
+    public var until: String
+    public var value: String
+}
+
+public struct ChoiceOption: Codable, Equatable, Sendable {
+    public var confirm: Confirm?
+    public var label: String
+    public var value: String
+    public var values: [String: JSONValue]?
+}
+
+public struct Composer: Codable, Equatable, Sendable {
+    public var action: String
+    public var acts: [String: String]?
+    public var chips: [ComposerChip]?
+    public var id: String?
+    public var label: String?
+    public var placeholder: String?
+    public var queued: [Queued]?
+    public var values: [String: JSONValue]?
+}
+
+public struct ComposerChip: Codable, Equatable, Sendable {
+    public var all: [String]
+    public var cur: String?
+    public var name: String
+}
+
+public struct Confirm: Codable, Equatable, Sendable {
+    public var destructive: Bool?
+    public var message: String?
+    public var ok: String?
+    public var title: String
+}
+
+public struct Diagram: Codable, Equatable, Sendable {
+    public var counts: [String: Double]?
+    public var id: String?
+    public var nodes: [String: Node]?
+    public var selected: String?
+    public var source: String
+    public var title: String?
+}
+
+public struct Diff: Codable, Equatable, Sendable {
+    public var file: String
+    public var hunks: [Hunk]
+    public var id: String?
+    public var summary: String?
+}
+
+public struct Editor: Codable, Equatable, Sendable {
+    public var action: String
+    public var errors: [LineError]?
+    public var first: UInt32?
+    public var id: String?
+    public var name: String
+    public var text: String
+}
+
+public struct Fallback: Codable, Equatable, Sendable {
+    public var subtitle: String?
+    public var tap: Tap?
+    public var title: String
+}
+
+public struct Field: Codable, Equatable, Sendable {
+    public var doc: String?
+    public var error: String?
+    public var keyboard: Keyboard?
+    public var label: String?
+    public var name: String
+    public var open: Bool?
+    public var options: [String]?
+    public var placeholder: String?
+    public var set: Bool?
+    public var type: FieldKind
+    public var value: FieldValue?
+    public var was: String?
+}
+
+public struct FieldKind: RawRepresentable, Hashable, Codable, Equatable, Sendable {
+    public let rawValue: String
+    public init(rawValue: String) { self.rawValue = rawValue }
+    public static let text = Self(rawValue: "text")
+    public static let toggle = Self(rawValue: "toggle")
+    public static let picker = Self(rawValue: "picker")
+    public static let secret = Self(rawValue: "secret")
+}
+
+public enum FieldValue: Codable, Equatable, Sendable {
+    case string(String)
+    case number(Double)
+    case bool(Bool)
+
+    public init(from decoder: any Decoder) throws {
+        if let v = try? String(from: decoder) { self = .string(v) } else if let v = try? Double(from: decoder) { self = .number(v) } else if let v = try? Bool(from: decoder) { self = .bool(v) } else { throw DecodingError.dataCorrupted(.init(codingPath: decoder.codingPath, debugDescription: "no FieldValue")) }
+    }
+
+    public func encode(to encoder: any Encoder) throws {
+        switch self {
+        case .string(let v): try v.encode(to: encoder)
+        case .number(let v): try v.encode(to: encoder)
+        case .bool(let v): try v.encode(to: encoder)
+        }
+    }
+}
+
+public struct Figure: Codable, Equatable, Sendable {
+    public var avatar: String?
+    public var coat: String?
+    public var grow: String?
+    public var icon: String?
+    public var state: Tone?
+    public var tool: String?
+}
+
+public struct Fold: Codable, Equatable, Sendable {
+    public var line: String
+    public var main: FoldMain?
+}
+
+public struct FoldMain: Codable, Equatable, Sendable {
+    public var action: String
+    public var block: String?
+    public var label: String
+    public var value: String?
+    public var values: [String: JSONValue]?
+}
+
+public struct Form: Codable, Equatable, Sendable {
+    public var action: String?
+    public var fields: [Field]
+    public var id: String?
+    public var submit: Submit?
+}
+
+public struct Hunk: Codable, Equatable, Sendable {
+    public var at: String
+    public var lines: [String]
+}
+
+public struct Image: Codable, Equatable, Sendable {
+    public var alt: String?
+    public var caption: String?
+    public var src: String
+}
+
+public struct ImageSize: RawRepresentable, Hashable, Codable, Equatable, Sendable {
+    public let rawValue: String
+    public init(rawValue: String) { self.rawValue = rawValue }
+    public static let small = Self(rawValue: "small")
+    public static let large = Self(rawValue: "large")
+}
+
+public struct Images: Codable, Equatable, Sendable {
+    public var id: String?
+    public var items: [Image]
+    public var size: ImageSize?
+}
+
+public struct Keyboard: RawRepresentable, Hashable, Codable, Equatable, Sendable {
+    public let rawValue: String
+    public init(rawValue: String) { self.rawValue = rawValue }
+    public static let `default` = Self(rawValue: "default")
+    public static let url = Self(rawValue: "url")
+    public static let number = Self(rawValue: "number")
+}
+
+public struct Label: Codable, Equatable, Sendable {
+    public var text: String
+    public var tone: Tone?
+}
+
+public struct Lane: Codable, Equatable, Sendable {
+    public var id: String
+    public var since: String?
+    public var stage: String?
+    public var state: LaneState
+    public var tap: Tap?
+    public var title: String
+    public var tool: String?
+}
+
+public struct LaneState: RawRepresentable, Hashable, Codable, Equatable, Sendable {
+    public let rawValue: String
+    public init(rawValue: String) { self.rawValue = rawValue }
+    public static let working = Self(rawValue: "working")
+    public static let needs = Self(rawValue: "needs")
+    public static let done = Self(rawValue: "done")
+    public static let idle = Self(rawValue: "idle")
+    public static let fail = Self(rawValue: "fail")
+    public static let merged = Self(rawValue: "merged")
+}
+
+public struct LineError: Codable, Equatable, Sendable {
+    public var line: Int64
+    public var message: String
+}
+
+public struct Link: Codable, Equatable, Sendable {
+    public var label: String
+    public var tap: Tap
+}
+
+public struct List: Codable, Equatable, Sendable {
+    public var id: String?
+    public var reorder: Reorder?
+    public var rows: [Block]
+}
+
+public struct Node: Codable, Equatable, Sendable {
+    public var coat: String?
+    public var label: String?
+    public var limit: String?
+    public var state: Tone?
+    public var tap: Tap?
+    public var value: String?
+}
+
+public struct OpMerge: Codable, Equatable, Sendable {
+    public var fields: [String: JSONValue]
+    public var id: String
+}
+
+public struct OpInsert: Codable, Equatable, Sendable {
+    public var after: String?
+    public var before: String?
+    public var block: Child
+    public var into: String
+}
+
+public struct OpMove: Codable, Equatable, Sendable {
+    public var before: String?
+    public var id: String
+    public var into: String
+}
+
+public struct OpRemove: Codable, Equatable, Sendable {
+    public var id: String
+}
+
+public struct OpReplace: Codable, Equatable, Sendable {
+    public var block: Block
+    public var id: String
+}
+
+public struct OpBadge: Codable, Equatable, Sendable {
+    public var count: UInt64
+}
+
+public struct OpDot: Codable, Equatable, Sendable {
+    public var on: Bool
+}
+
+public struct OpScreen: Codable, Equatable, Sendable {
+    public var screen: Block
 }
 
 public enum Op: Codable, Equatable, Sendable {
-    case insert(at: Int, row: Row)
-    case remove(id: String)
-    case update(row: Row)
+    case merge(OpMerge)
+    case insert(OpInsert)
+    case move(OpMove)
+    case remove(OpRemove)
+    case replace(OpReplace)
+    case badge(OpBadge)
+    case dot(OpDot)
+    case screen(OpScreen)
+    case unknown
+
+    private enum Tag: String, CodingKey { case tag = "op" }
+
+    public init(from decoder: any Decoder) throws {
+        switch try decoder.container(keyedBy: Tag.self).decode(String.self, forKey: .tag) {
+        case "merge": self = .merge(try OpMerge(from: decoder))
+        case "insert": self = .insert(try OpInsert(from: decoder))
+        case "move": self = .move(try OpMove(from: decoder))
+        case "remove": self = .remove(try OpRemove(from: decoder))
+        case "replace": self = .replace(try OpReplace(from: decoder))
+        case "badge": self = .badge(try OpBadge(from: decoder))
+        case "dot": self = .dot(try OpDot(from: decoder))
+        case "screen": self = .screen(try OpScreen(from: decoder))
+        default: self = .unknown
+        }
+    }
+
+    public func encode(to encoder: any Encoder) throws {
+        switch self {
+        case .merge(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("merge", forKey: .tag)
+        case .insert(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("insert", forKey: .tag)
+        case .move(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("move", forKey: .tag)
+        case .remove(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("remove", forKey: .tag)
+        case .replace(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("replace", forKey: .tag)
+        case .badge(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("badge", forKey: .tag)
+        case .dot(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("dot", forKey: .tag)
+        case .screen(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("screen", forKey: .tag)
+        case .unknown: var c = encoder.container(keyedBy: Tag.self); try c.encode("unknown", forKey: .tag)
+        }
+    }
+}
+
+public struct Other: Codable, Equatable, Sendable {
+    public var `for`: String?
+    public var placeholder: String?
+}
+
+public struct Pending: Codable, Equatable, Sendable {
+    public var count: String
+    public var discard: Tap
+    public var review: Tap
+    public var text: String
+}
+
+public struct Queued: Codable, Equatable, Sendable {
+    public var q: UInt64
+    public var text: String
+}
+
+public struct Reorder: Codable, Equatable, Sendable {
+    public var action: String
+    public var name: String
+}
+
+public struct Round: Codable, Equatable, Sendable {
+    public var blocks: [Block]?
+    public var id: String
+    public var lane: RoundLane?
+    public var links: [Link]?
+    public var name: String
+    public var since: String?
+    public var state: LaneState
+    public var summary: String?
+    public var tap: Tap?
+}
+
+public struct RoundLane: Codable, Equatable, Sendable {
+    public var harness: String?
+    public var host: String?
+    public var lines: [String]?
+    public var model: String?
+    public var name: String?
 }
 
 public struct Row: Codable, Equatable, Sendable {
-    public let block: Block
-    public let id: String
+    public var accessory: Accessory?
+    public var badge: Label?
+    public var button: Act?
+    public var changed: Bool?
+    public var figure: Figure?
+    public var handle: Bool?
+    public var id: String?
+    public var indent: UInt8?
+    public var lifted: Bool?
+    public var menu: [Act]?
+    public var rounds: [Round]?
+    public var sticky: Bool?
+    public var style: RowStyle?
+    public var subtitle: Toned?
+    public var swipe: [Act]?
+    public var tap: Tap?
+    public var title: String
+    public var value: Shown?
+}
+
+public struct RowStyle: RawRepresentable, Hashable, Codable, Equatable, Sendable {
+    public let rawValue: String
+    public init(rawValue: String) { self.rawValue = rawValue }
+    public static let link = Self(rawValue: "link")
+    public static let destructive = Self(rawValue: "destructive")
+}
+
+public struct Run: Codable, Equatable, Sendable {
+    public var action: String
+    public var command: String
+    public var dir: String?
+    public var id: String?
+    public var sha: String
+    public var touches: String?
+    public var until: String?
+}
+
+public struct Scene: Codable, Equatable, Sendable {
+    public var id: String?
+    public var label: String?
+    public var lanes: [Lane]?
 }
 
 public struct Screen: Codable, Equatable, Sendable {
-    public let rows: [Row]
+    public var actions: [Act]?
+    public var back: String?
+    public var badge: UInt64?
+    public var blocks: [Block]?
+    public var done: Submit?
+    public var focus: Bool?
+    public var id: String?
+    public var large: Bool?
+    public var pending: Pending?
+    public var refresh: Bool?
+    public var source: String?
+    public var stream: String?
+    public var title: String?
+    public var url: String?
+}
+
+public struct Secret: Codable, Equatable, Sendable {
+    public var action: String
+    public var id: String?
+    public var label: String?
+    public var name: String
+    public var placeholder: String?
+    public var set: Bool?
+    public var values: [String: JSONValue]?
+}
+
+public struct Section: Codable, Equatable, Sendable {
+    public var blocks: [Block]
+    public var footer: String?
+    public var header: String?
+    public var id: String?
+}
+
+public struct Sheet: Codable, Equatable, Sendable {
+    public var blocks: [Block]
+    public var cancel: String?
+    public var done: Submit?
+    public var id: String?
+    public var title: String
+}
+
+public enum Shown: Codable, Equatable, Sendable {
+    case string(String)
+    case number(Double)
+    case time(Time)
+
+    public init(from decoder: any Decoder) throws {
+        if let v = try? String(from: decoder) { self = .string(v) } else if let v = try? Double(from: decoder) { self = .number(v) } else if let v = try? Time(from: decoder) { self = .time(v) } else { throw DecodingError.dataCorrupted(.init(codingPath: decoder.codingPath, debugDescription: "no Shown")) }
+    }
+
+    public func encode(to encoder: any Encoder) throws {
+        switch self {
+        case .string(let v): try v.encode(to: encoder)
+        case .number(let v): try v.encode(to: encoder)
+        case .time(let v): try v.encode(to: encoder)
+        }
+    }
+}
+
+public struct Stat: Codable, Equatable, Sendable {
+    public var id: String?
+    public var items: [Tile]?
+    public var label: String?
+    public var spark: [Double]?
+    public var tone: Tone?
+    public var unit: String?
+    public var value: Shown?
+}
+
+public struct Submit: Codable, Equatable, Sendable {
+    public var action: String
+    public var label: String
+    public var off: Bool?
+    public var values: [String: JSONValue]?
+}
+
+public struct Tap: Codable, Equatable, Sendable {
+    public var action: String?
+    public var copy: String?
+    public var focus: String?
+    public var open: String?
+    public var sheet: String?
+    public var thread: String?
+    public var url: String?
+    public var values: [String: JSONValue]?
+}
+
+public struct Text: Codable, Equatable, Sendable {
+    public var center: Bool?
+    public var font: String?
+    public var id: String?
+    public var markdown: String?
+    public var size: Double?
+    public var style: TextStyle?
+    public var text: String?
+    public var tone: Tone?
+    public var top: Double?
+    public var until: String?
+    public var weight: String?
+}
+
+public struct TextStyle: RawRepresentable, Hashable, Codable, Equatable, Sendable {
+    public let rawValue: String
+    public init(rawValue: String) { self.rawValue = rawValue }
+    public static let body = Self(rawValue: "body")
+    public static let footnote = Self(rawValue: "footnote")
+}
+
+public struct Tile: Codable, Equatable, Sendable {
+    public var label: String
+    public var spark: [Double]?
+    public var tone: Tone?
+    public var unit: String?
+    public var value: Shown
+}
+
+public struct Time: Codable, Equatable, Sendable {
+    public var since: String?
+    public var until: String?
+}
+
+public struct Tone: RawRepresentable, Hashable, Codable, Equatable, Sendable {
+    public let rawValue: String
+    public init(rawValue: String) { self.rawValue = rawValue }
+    public static let ok = Self(rawValue: "ok")
+    public static let warn = Self(rawValue: "warn")
+    public static let bad = Self(rawValue: "bad")
+    public static let info = Self(rawValue: "info")
+    public static let mute = Self(rawValue: "mute")
+    public static let accent = Self(rawValue: "accent")
+    public static let working = Self(rawValue: "working")
+    public static let needs = Self(rawValue: "needs")
+    public static let done = Self(rawValue: "done")
+    public static let fail = Self(rawValue: "fail")
+    public static let idle = Self(rawValue: "idle")
+}
+
+public enum Toned: Codable, Equatable, Sendable {
+    case string(String)
+    case label(Label)
+
+    public init(from decoder: any Decoder) throws {
+        if let v = try? String(from: decoder) { self = .string(v) } else if let v = try? Label(from: decoder) { self = .label(v) } else { throw DecodingError.dataCorrupted(.init(codingPath: decoder.codingPath, debugDescription: "no Toned")) }
+    }
+
+    public func encode(to encoder: any Encoder) throws {
+        switch self {
+        case .string(let v): try v.encode(to: encoder)
+        case .label(let v): try v.encode(to: encoder)
+        }
+    }
+}
+
+public struct Web: Codable, Equatable, Sendable {
+    public var height: UInt32
+    public var id: String?
+    public var src: String
 }
