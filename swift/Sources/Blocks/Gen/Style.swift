@@ -76,7 +76,8 @@ public struct TypeDesign: RawRepresentable, Hashable, Codable, Equatable, Sendab
     public init(rawValue: String) { self.rawValue = rawValue }
     public static let `default` = Self(rawValue: "default")
     public static let mono = Self(rawValue: "mono")
-    public static let all: [Self] = [.`default`, .mono]
+    public static let serif = Self(rawValue: "serif")
+    public static let all: [Self] = [.`default`, .mono, .serif]
 }
 
 public struct LabelRole: RawRepresentable, Hashable, Codable, Equatable, Sendable {

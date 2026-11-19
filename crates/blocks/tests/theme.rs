@@ -1,7 +1,8 @@
 use std::path::{Path, PathBuf};
 
 use blocks::theme::{
-    check_pack, css, default, gate, Easing, Fills, Mode, PerMode, Scheme, Style, Surface, Theme, DEFAULT_STYLE,
+    check_pack, css, default, gate, Easing, Fills, Mode, PerMode, Scheme, Style, Surface, Theme, TypeDesign,
+    DEFAULT_STYLE,
 };
 
 const TOKENS: [&str; 19] = [
@@ -115,6 +116,25 @@ fn css_sets_every_token_for_both_modes() {
 }
 
 #[test]
+fn a_serif_style_sets_labels_in_a_serif_system_stack_and_the_others_set_no_font() {
+    let serif = style_of(r#""format": 2, "type": "serif", "radius": 0"#);
+    assert_eq!(serde_json::to_value(serif.type_).unwrap(), "serif");
+    assert!(css(default(), &serif).contains(":root{font-family:ui-serif,Georgia,Cambria,serif}"));
+    for t in ["default", "mono"] {
+        let out = css(
+            default(),
+            &style_of(&format!(r#""format": 1, "type": "{t}", "radius": 0"#)),
+        );
+        assert!(!out.contains("serif,"), "{t}");
+    }
+    assert_eq!(TypeDesign::default(), TypeDesign::Default);
+    assert!(serde_json::from_str::<Style>(r#"{"format": 1, "type": "sans"}"#)
+        .unwrap_err()
+        .to_string()
+        .contains("expected one of `default`, `mono`, `serif`"));
+}
+
+#[test]
 fn css_writes_each_fixtures_css_file_for_the_default_pair_and_each_scheme_in_its_mode() {
     let mut want = vec![(
         "default".to_owned(),
@@ -124,6 +144,10 @@ fn css_writes_each_fixtures_css_file_for_the_default_pair_and_each_scheme_in_its
         let s = style(&format!("fixtures/styles/{name}.json")).unwrap();
         want.push((format!("default-{name}"), css(default(), &s)));
     }
+    want.push((
+        "default-serif".to_owned(),
+        css(default(), &style_of(r#""format": 1, "type": "serif", "radius": 0"#)),
+    ));
     let mut schemes: Vec<PathBuf> = std::fs::read_dir(root().join("fixtures/schemes"))
         .unwrap()
         .map(|e| e.unwrap().path())

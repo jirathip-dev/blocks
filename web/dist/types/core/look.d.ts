@@ -10,7 +10,7 @@ export type Scale = {
     motion?: number;
     easing?: "standard" | "calm" | "bouncy";
     radius?: number;
-    type?: "default" | "mono";
+    type?: "default" | "mono" | "serif";
     surface?: "glass" | "dashed" | "solid";
     fills?: "tint" | "outline" | "solid";
     marks?: "symbols" | "text";

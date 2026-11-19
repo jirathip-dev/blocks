@@ -7,7 +7,7 @@ export type Scale = {
   motion?: number;
   easing?: "standard" | "calm" | "bouncy";
   radius?: number;
-  type?: "default" | "mono";
+  type?: "default" | "mono" | "serif";
   surface?: "glass" | "dashed" | "solid";
   fills?: "tint" | "outline" | "solid";
   marks?: "symbols" | "text";
@@ -30,6 +30,7 @@ const quote = (t: string) => `"${t.replace(/[\\"]/g, "\\$&")}"`;
 
 function axes(s: Scale): string {
   let out = s.type === "default" ? ':root{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}' : "";
+  if (s.type === "serif") out += ":root{font-family:ui-serif,Georgia,Cambria,serif}";
   if (s.surface === "dashed") out += `${TILES}{border-style:dashed}`;
   if (s.surface === "solid") out += `${TILES}{border-width:2px}`;
   if (s.fills === "outline") out += ".chips button.on,.spi.done .spm{background:none;color:var(--l);box-shadow:inset 0 0 0 1px var(--l)}";
