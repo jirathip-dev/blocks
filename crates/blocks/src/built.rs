@@ -55,12 +55,12 @@ const DRAWN: [&str; 3] = ["row", "text", "island"];
 const LINKS: [&str; 4] = ["url", "href", "link", "open"];
 
 pub(crate) fn linkable(url: &str) -> bool {
-    let bare: String = url.chars().filter(|c| *c > ' ' && !c.is_control()).collect();
-    let head = bare.split(['/', '?', '#']).next().unwrap_or_default();
+    let head = url.split(['/', '?', '#']).next().unwrap_or_default();
     head.split_once(':').is_none_or(|(scheme, _)| {
+        let bare = scheme.chars().filter(|c| *c > ' ' && !c.is_control());
         ["http", "https", "mailto"]
             .iter()
-            .any(|s| scheme.eq_ignore_ascii_case(s))
+            .any(|s| bare.clone().map(|c| c.to_ascii_lowercase()).eq(s.chars()))
     })
 }
 
