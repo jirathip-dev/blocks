@@ -4,4 +4,4 @@ export type Miss = {
     got: number;
     min: number;
 };
-export declare function gate(s: Scheme): Miss[];
+export declare function gate(s: Scheme, fills: "tint" | "outline" | "solid"): Miss[];

@@ -99,7 +99,8 @@ pub(super) fn table(w: &mut W<'_>, b: &Value) {
         return fallback(w, b);
     };
     let n = t.rows.iter().filter(|r| !r.is_group()).count();
-    w.open_block("div", "tbl", b, &[]);
+    let ed = t.edit.is_some() || t.reorder.is_some();
+    w.open_block("div", if ed { "tbl ed" } else { "tbl" }, b, &[]);
     w.open("div", "tbh", &[]);
     if let Some(title) = &t.title {
         w.el("b", "tbt", title);

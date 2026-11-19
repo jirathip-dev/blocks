@@ -1,0 +1,2 @@
+.b-text{position:relative}
+.b-text + .b-text{top:-30px}

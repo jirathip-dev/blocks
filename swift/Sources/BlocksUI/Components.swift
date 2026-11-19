@@ -26,9 +26,9 @@ internal struct CardButton: View {
         let palette = look.palette
         let tint = tint ?? palette.link
         Text(look.label(.button, title)).ui(15, primary ? .semibold : .regular, look)
-            .foregroundStyle(primary ? (palette.dark ? Color.black : .white) : tint)
+            .foregroundStyle(primary ? (palette.dark ? Color.black : .white) : look.solid ? palette.background : tint)
             .padding(.horizontal, 14).frame(height: 36).frame(maxWidth: .infinity)
-            .background(primary ? tint : tint.opacity(look.outline ? 0 : 0.12), in: look.pill)
+            .background(primary || look.solid ? tint : tint.opacity(look.outline ? 0 : 0.12), in: look.pill)
             .accessibilityLabel(title)
     }
 }
@@ -83,11 +83,12 @@ internal struct RelativeText: View {
 
 internal struct Pill: View {
     @Environment(\.look) private var look
+    @Environment(\.behaved) private var behaved
     internal let badge: Blocks.Label
 
     internal var body: some View {
         let tint = look.palette.tone(badge.tone?.rawValue) ?? look.palette.mute
-        Text(badge.text).ui(11, .bold, look).foregroundStyle(tint)
+        RelativeValue { badge.text.text(at: $0, behaved.view.values) }.ui(11, .bold, look).foregroundStyle(tint)
             .padding(.horizontal, 8).padding(.vertical, 3)
             .background(tint.opacity(0.15), in: look.pill)
     }

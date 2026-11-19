@@ -1,6 +1,42 @@
 {
+  "badge": {
+    "text": {
+      "label": "lapses in {rel}",
+      "until": "2026-11-09T09:53:00Z"
+    }
+  },
+  "blocks": [
+    {
+      "id": "card-row",
+      "subtitle": {
+        "text": {
+          "label": "decides in {rel}",
+          "until": "2026-11-09T09:53:00Z"
+        }
+      },
+      "title": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+      "type": "row",
+      "value": {
+        "label": "{} ago",
+        "since": "2026-11-09T09:35:00Z"
+      }
+    },
+    {
+      "id": "card-up",
+      "label": "up",
+      "type": "stat",
+      "value": {
+        "label": "{}",
+        "since": "2026-11-09T09:35:00Z"
+      }
+    }
+  ],
   "id": "card",
   "kind": "ask",
+  "meta": {
+    "label": "as of {} ago",
+    "since": "2026-11-09T09:35:00Z"
+  },
   "subtitle": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
   "title": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
   "type": "card"

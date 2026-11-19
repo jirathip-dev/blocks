@@ -8,6 +8,9 @@ extension Column {
         kind == .money ? currency.map { ["THB": "฿", "USD": "$", "EUR": "€"][$0] ?? $0 } : unit
     }
 
+    /// A cell as drawn text, a label's time as of now; `thai` writes a Buddhist-Era date's month in Thai.
+    internal func shown(_ c: Cell?, thai: Bool) -> String { shown(c, thai: thai) { $0.text(at: Date(), [:]) } }
+
     internal func before(_ a: Cell, _ b: Cell) -> Bool {
         if numeric, case .number(let x) = a, case .number(let y) = b { return x < y }
         let key = { (c: Cell) in

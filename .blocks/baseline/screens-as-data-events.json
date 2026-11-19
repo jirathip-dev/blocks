@@ -1,0 +1,13 @@
+{
+  "guard": 2,
+  "known": [
+    {
+      "rule": "render/contrast",
+      "at": "screen#events/section~0/list#ev/row#e-910"
+    },
+    {
+      "rule": "render/tap-target",
+      "at": "screen#events/chips#kind"
+    }
+  ]
+}

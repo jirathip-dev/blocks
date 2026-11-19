@@ -29,7 +29,7 @@ public struct CellEdit: Equatable, Sendable {
             switch value {
             case .number(let n): .number(n)
             case .string(let s): .string(s)
-            case .label(let l): .string(l.text)
+            case .label(let l): Column.plain(l.text).map(JSONValue.string) ?? .null
             }
         return .object(["row": .string(row), "column": .string(column), "value": v])
     }
@@ -76,11 +76,20 @@ extension Column {
         kind == .money ? Self.grouped(v, 2, fixed: true) : Self.grouped(v, Int(digits ?? 2), fixed: false)
     }
 
-    /// A cell as drawn text; `thai` writes a Buddhist-Era date's month in Thai.
-    public func shown(_ c: Cell?, thai: Bool) -> String {
+    /// A label's text with no clock and no state: a string or a number, else nothing.
+    public static func plain(_ s: Shown) -> String? {
+        switch s {
+        case .string(let t): t
+        case .number(let n): Expr.cat([.lit(.number(n))]).eval([:]).json.string
+        default: nil
+        }
+    }
+
+    /// A cell as drawn text, a label's by `label`; `thai` writes a Buddhist-Era date's month in Thai.
+    public func shown(_ c: Cell?, thai: Bool, label: (Shown) -> String) -> String {
         switch c {
         case nil: ""
-        case .label(let l): l.text
+        case .label(let l): label(l.text)
         case .number(let n): number(n)
         case .string(let s) where kind == .date: date(s, thai: thai)
         case .string(let s): s
@@ -124,7 +133,7 @@ extension Table {
     /// A row's name: its first column's cell as drawn, else its id.
     public func name(_ r: TableRow) -> String {
         guard let c = columns.first else { return r.id }
-        let s = c.shown(r.cells[c.id], thai: false)
+        let s = c.shown(r.cells[c.id], thai: false) { Column.plain($0) ?? "" }
         return s.isEmpty ? r.id : s
     }
 
@@ -138,7 +147,7 @@ extension Table {
                 switch v {
                 case .number(let n): .number(n)
                 case .string(let s): .string(s)
-                case .label(let l): .string(l.text)
+                case .label(let l): Column.plain(l.text).map(Lit.string) ?? .null
                 }
             }
             switch e.eval(state) {
@@ -263,7 +272,7 @@ extension Table: Rules {
         case (.row(let id), .order(let o)): return place(id, o)
         case (_, .cell(let e)):
             let c = column(e.column)
-            return "\(c?.label ?? e.column), \(row(e.row).map(name) ?? e.row), \(c?.shown(e.value, thai: false) ?? "")"
+            return "\(c?.label ?? e.column), \(row(e.row).map(name) ?? e.row), \(c?.shown(e.value, thai: false) { Column.plain($0) ?? "" } ?? "")"
         default: return ""
         }
     }

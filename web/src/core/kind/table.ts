@@ -22,7 +22,7 @@ const THAI = "ม.ค. ก.พ. มี.ค. เม.ย. พ.ค. มิ.ย. ก
 /// A cell as drawn text, as the crate's `Column::shown`; `thai` writes a Buddhist-Era date's month in Thai.
 export function shown(c: Column, v: Cell | undefined, thai = false): string {
   if (v === undefined) return "";
-  if (typeof v === "object") return v.text;
+  if (typeof v === "object") return typeof v.text === "string" ? v.text : typeof v.text === "number" ? String(v.text) : "";
   if (typeof v === "number") return number(c, v);
   const d = /^(\d+)-(\d+)-(\d+)$/.exec(v);
   if (c.kind !== "date" || !d) return v;
@@ -56,7 +56,7 @@ export function worked(b: Table, r: TableRow): TableRow {
   for (const c of b.columns) {
     const e = b.calc[c.id];
     if (e == null) continue;
-    const s = Object.fromEntries(Object.entries(cells).map(([k, v]) => [k, typeof v === "object" ? v.text : v]));
+    const s = Object.fromEntries(Object.entries(cells).map(([k, v]) => [k, typeof v !== "object" ? v : typeof v.text === "string" || typeof v.text === "number" ? v.text : null]));
     const v = evaluate(e, s);
     if (typeof v === "number" || typeof v === "string") cells[c.id] = v;
     else delete cells[c.id];

@@ -886,9 +886,13 @@
           ]
         },
         "meta": {
-          "type": [
-            "string",
-            "null"
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Shown"
+            },
+            {
+              "type": "null"
+            }
           ]
         },
         "push": {
@@ -2708,7 +2712,7 @@
       "description": "A short text and its tone: a badge, or a toned subtitle.",
       "properties": {
         "text": {
-          "type": "string"
+          "$ref": "#/$defs/Shown"
         },
         "tone": {
           "anyOf": [
@@ -3630,6 +3634,77 @@
         }
       ]
     },
+    "Plan": {
+      "description": "What a harness draws: each run in one process, its shots under `<out>/<run>/` and every `Seen` in `<out>/seen.json`.",
+      "properties": {
+        "out": {
+          "type": "string"
+        },
+        "runs": {
+          "items": {
+            "$ref": "#/$defs/PlanRun"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "out",
+        "runs"
+      ],
+      "type": "object"
+    },
+    "PlanRun": {
+      "description": "One screen drawn at one size with the app's CSS, scripts and kinds; the probes run when `probes` is set.",
+      "properties": {
+        "css": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "kinds": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "name": {
+          "type": "string"
+        },
+        "probes": {
+          "type": "boolean"
+        },
+        "screen": {
+          "type": "string"
+        },
+        "scripts": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "size": {
+          "type": "string"
+        },
+        "steps": {
+          "items": {
+            "$ref": "#/$defs/Step"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "name",
+        "screen",
+        "size",
+        "css",
+        "scripts",
+        "kinds",
+        "steps",
+        "probes"
+      ],
+      "type": "object"
+    },
     "Prose": {
       "additionalProperties": true,
       "description": "Text as a tree of headings, paragraphs, lists, quotes and code.",
@@ -4515,7 +4590,7 @@
           "$ref": "#/$defs/Time"
         }
       ],
-      "description": "A row's or a tile's value: a string, a number, a state key's value, or a time."
+      "description": "A shown value (a row's or tile's value, a card's meta, a label's text): a string, a number, a state key's value, or a time."
     },
     "SortDir": {
       "anyOf": [
@@ -5381,8 +5456,14 @@
       "type": "object"
     },
     "Time": {
-      "description": "A moment a value counts from or to.",
+      "description": "A moment a value counts from or to; `label` shows it, `{}` the age since `since`, `{rel}` what is left until `until`.",
       "properties": {
+        "label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "since": {
           "type": [
             "string",

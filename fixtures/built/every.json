@@ -113,12 +113,51 @@
       "value": "2m"
     },
     {
+      "badge": {
+        "text": {
+          "label": "lapses in {rel}",
+          "until": "2026-11-09T09:53:00Z"
+        }
+      },
+      "blocks": [
+        {
+          "id": "card-row",
+          "subtitle": {
+            "text": {
+              "label": "decides in {rel}",
+              "until": "2026-11-09T09:53:00Z"
+            }
+          },
+          "title": "Review",
+          "type": "row",
+          "value": {
+            "label": "{} ago",
+            "since": "2026-11-09T09:35:00Z"
+          }
+        },
+        {
+          "fallback": {
+            "title": "up"
+          },
+          "id": "card-up",
+          "label": "up",
+          "type": "stat",
+          "value": {
+            "label": "{}",
+            "since": "2026-11-09T09:35:00Z"
+          }
+        }
+      ],
       "fallback": {
         "subtitle": "waiting",
         "title": "q1"
       },
       "id": "card",
       "kind": "ask",
+      "meta": {
+        "label": "as of {} ago",
+        "since": "2026-11-09T09:35:00Z"
+      },
       "subtitle": "waiting",
       "title": "q1",
       "type": "card"

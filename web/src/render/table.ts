@@ -1,5 +1,5 @@
 import type { Cell, Column, SortDir, Table, TableRow, TableSort } from "../gen/types.ts";
-import { btn, type Ctx, el, h } from "./index.ts";
+import { btn, type Ctx, el, h, value } from "./index.ts";
 import { at, total, unit } from "../core/table.ts";
 import { type CellEdit, chunks, editable, grid as rules, named, shown as text, worked } from "../core/kind/table.ts";
 import { edited, gestured, held } from "../gesture.ts";
@@ -13,7 +13,7 @@ const states = new Map<string, St>();
 const numeric = (c: Column) => c.kind === "number" || c.kind === "money" || c.kind === "bar";
 const end = (c: Column) => (c.align ?? (numeric(c) ? "end" : "start")) === "end";
 const thai = () => document.documentElement.lang.startsWith("th");
-const shown = (c: Column, v: Cell | undefined) => text(c, v, thai());
+const shown = (c: Column, v: Cell | undefined) => (typeof v === "object" ? value(v.text) : text(c, v, thai()));
 const pk = (p: Pos) => `${p.row}\n${p.col}`;
 const isIds = (v: unknown): v is string[] => Array.isArray(v) && v.every((x) => typeof x === "string");
 const isEdit = (v: unknown): v is CellEdit => typeof v === "object" && v !== null && !Array.isArray(v) && "value" in v;
@@ -443,10 +443,10 @@ export function table(b: Table, c: Ctx): HTMLElement {
   const v: View = { b, c, st, q, box, draw: () => {} };
   v.draw = () => {
     const focused = document.activeElement === q;
-    const inside = document.activeElement instanceof HTMLTableCellElement && box.contains(document.activeElement);
+    const inside = document.activeElement?.tagName === "TD" && box.contains(document.activeElement);
     const d = shows(v);
     box.classList.toggle("bulk", d.sel > 0);
-    box.classList.toggle("ed", d.ed || d.handles);
+    box.classList.toggle("ed", !!b.edit || !!b.reorder);
     const tb = body(v, d);
     const t = h("table", "", h("caption", "", b.title ?? "Table"), head(v, d), tb, ...foot(v, d));
     if (d.ed) {

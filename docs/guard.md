@@ -23,7 +23,15 @@ Then `.blocks/guard.json`, by hand. Unknown keys are refused (exit 2), so a typo
 
 - `screens`: folders, not searched below. Each `*.json` whose root is a `screen` or a `sheet` is a fixture; any other
   file is listed in `skipped`. A fixture is named by its file name without `.json`, so two folders may not share one.
-- `kinds`: the app's own kinds, as `Built::check` takes them.
+- `kinds`: the app's own kinds, as `Built::check` takes them, and the kinds a harness expects drawn natively.
+- `css`: the app's stylesheets, loaded after `blocks.css`; the `css/` rules read them.
+- `scripts`: run in the harness page before the screen is drawn: define island elements, set
+  `window.blocksApps.<kind>` to an app kind's renderer.
+- `harness`: each a command that takes `--plan <file>`, such as
+  `["node", "--no-warnings", "node_modules/@jirathip-dev/blocks/web/shot/cli.ts"]`; with none, `--render` and `--shot`
+  are refused.
+- `inputs`: files or folders whose change, like one in `css` or `scripts`, has `--render` in a PR draw every fixture.
+- `examples`: fixture names `blocks skill` adds to the usage skill as examples; each must have no finding.
 
 Write each screen as `<screen>.<seed>.json` from the app's own builders over fixed data, and fail a test when a file
 is not what the builder writes today; then a changed builder is a changed file. On the adopting PR, run
@@ -36,7 +44,10 @@ is not what the builder writes today; then a changed builder is a changed file. 
 | `blocks check` | every fixture; exit 1 on an error no ignore or baseline covers |
 | `blocks check --base origin/staging` | only the fixtures the branch changed (the fixture, its ignore or its baseline, committed or not); baselines held against the merge base |
 | `blocks check --all --base <ref>` | every fixture, still held against base |
-| `blocks check --tighten` | rewrite `.blocks/baseline/`: drop what is fixed, then judge again |
+| `blocks check --render` | also draw each fixture in scope at 390x844 in one harness run and judge what its probes saw (`render/`, `css/`) |
+| `blocks check --tighten` | rewrite `.blocks/baseline/`: drop what is fixed, then judge again; with `--render` the drawn rules too |
+| `blocks check --shot <fixture>` | draw it at 390 and 1440 into `shots/<width>/<fixture>/`, with no probe and no verdict; repeatable |
+| `blocks skill --to <dir>` | write the usage skill of this pin (`skill/blocks/` in the blocks repo) into `<dir>`, plus a page per `examples` fixture; exit 1 when one has a finding |
 | `--format text\|json\|sarif`, `--out <file>` | the report: text (default), one `Outcome` as JSON, or SARIF 2.1.0; to stdout unless `--out` |
 
 Exit 0 clean, 1 a new error, 2 a broken setup (no config, a file that does not parse, an unknown flag, an ignore
@@ -60,7 +71,10 @@ In scope, each error is ignored, known or new; a warning is printed and never fa
 | `guard/unused-ignore` | an ignore matches no finding | delete the ignore |
 | `guard/baseline-grew` | with `--base`, a baseline gained an entry whose rule is not newer than base's file | fix the finding, or add an ignore with a reason |
 
-A fixture new on the branch has no base baseline, so it may record nothing: a new screen starts clean. A base with no
+A `render/` or `css/` entry or ignore goes stale only in a run with `--render`, and a tighten without it keeps them.
+A stylesheet's finding is not baselined: it is new until the rule is fixed. A fixture new on the branch has no base
+baseline, so it may record nothing: a new screen starts clean; one on base with no baseline there was clean at the
+newest `guard` base's baselines record. A base with no
 `.blocks/guard.json` is adopting, and its first baselines are taken as written. When a pin move brings a rule newer
 than a fixture's baseline, `--tighten` may record that rule's findings once.
 
@@ -72,7 +86,17 @@ than a fixture's baseline, `--tighten` may record that rule's findings once.
 ```
 
 This repo checks itself: `.blocks/guard.json` points at `fixtures/screens/` and `fixtures/guard/ok/`, `just guard`
-runs in `just check`, and the `ci` job runs it with `BASE=HEAD^1` on a pull request.
+runs in `just check`, and the `ci` job runs it with `BASE=HEAD^1` on a pull request. `guard.yml` sweeps every fixture
+with `--all --render` each night on macOS, the WebKit the committed baselines were drawn in.
+
+## The harness
+
+`blocks-shot --plan <file>` draws every run of a `Plan` in one WebKit launch, writes `<out>/<run>/<shot>.png`,
+`.tree.json` and `report.json`, and every `Seen` in `<out>/seen.json`; it exits 0 when it drew every run, 2 when it
+could not. A probe is one file in `web/shot/probe/`, named for its rule, found by reading the folder; each has a bad
+fixture in `fixtures/guard/bad/render/` (a screen and its CSS) or `fixtures/guard/bad/css/`. `--check` draws one
+screen and prints the `Seen`s of the rules it has always held (`render/tree` against `--expect`, `no-size`,
+`overflow`, `overlap`, `no-name`) as lines.
 
 ## A raw-UI ban, to copy
 

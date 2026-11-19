@@ -217,7 +217,7 @@ public struct Card: Codable, Equatable, Sendable {
     public var id: String?
     public var kind: CardKind?
     public var menu: [Act]?
-    public var meta: String?
+    public var meta: Shown?
     public var push: Bool?
     public var show: Expr?
     public var subtitle: String?
@@ -675,7 +675,7 @@ public struct Keyboard: RawRepresentable, Hashable, Codable, Equatable, Sendable
 }
 
 public struct Label: Codable, Equatable, Sendable {
-    public var text: String
+    public var text: Shown
     public var tone: Tone?
 }
 
@@ -981,6 +981,22 @@ public struct PhonePart: RawRepresentable, Hashable, Codable, Equatable, Sendabl
     public static let meta = Self(rawValue: "meta")
     public static let hide = Self(rawValue: "hide")
     public static let all: [Self] = [.title, .tag, .value, .meta, .hide]
+}
+
+public struct Plan: Codable, Equatable, Sendable {
+    public var out: String
+    public var runs: [PlanRun]
+}
+
+public struct PlanRun: Codable, Equatable, Sendable {
+    public var css: [String]
+    public var kinds: [String]
+    public var name: String
+    public var probes: Bool
+    public var screen: String
+    public var scripts: [String]
+    public var size: String
+    public var steps: [Step]
 }
 
 public struct Prose: Codable, Equatable, Sendable {
@@ -1382,6 +1398,7 @@ public struct Tile: Codable, Equatable, Sendable {
 }
 
 public struct Time: Codable, Equatable, Sendable {
+    public var label: String?
     public var since: String?
     public var until: String?
 }

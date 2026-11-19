@@ -34,9 +34,9 @@ fn ticked(w: &mut W<'_>, tag: &str, cls: &str, v: Option<&Value>) {
 
 fn badge(w: &mut W<'_>, cls: &str, v: Option<&Value>) {
     if let Some(b) = v.filter(|v| !v.is_null()) {
-        let (text, tone) = toned(Some(b));
+        let text = if b.is_object() { b.get("text") } else { Some(b) };
         w.raw(" ");
-        w.el("span", &format!("tag {cls} {tone}"), &text);
+        ticked(w, "span", &format!("tag {cls} {}", toned(Some(b)).1), text);
     }
 }
 
