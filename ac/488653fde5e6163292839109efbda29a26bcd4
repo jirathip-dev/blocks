@@ -1,0 +1,7 @@
+Decided: merge origin/staging; the two conflicting files, web/dist/blocks.css and web/dist/blocks.js, are rebuilt with npm run build, not hand-merged
+Because: web/package.json:7
+Decided: the red swift check at e46a859 was a cancel with no runner and no steps; swift test and blocks-snap pass locally, so no code change for it
+Because: .github/workflows/swift.yml:14
+Rejected: hand-merge the minified dist conflicts — build output, the build decides it
+Check: arch-check with a just-gen shim reports 0 violations, so dist and generated files match their sources
+Owner: The planner branch now carries staging's latest changes; nothing about the planner changed.
