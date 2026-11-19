@@ -1,0 +1,9 @@
+Decided: this PR is slice F0, the ADR folder only; no product code
+Because: docs/architecture/form-v2/README.md:43
+Decided: the .drover/arch.toml lines wait for F1 and F4, which the ADR names as their owners
+Because: docs/architecture/form-v2/adr.md:186
+Rejected: adding the generated entries now — just gen cannot write those files until F1 builds the folders
+Decided: the ADR's open questions now read as decided, with the amendment's answers
+Because: q2301
+Check: adr.md's decided section matches the q2301 amendment text
+Owner: the form v2 plan is approved and recorded; the new inputs come in the follow-up slices
