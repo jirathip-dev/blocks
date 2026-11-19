@@ -1,0 +1,5 @@
+Decided: merged origin/staging (table #176, styling ladder #190) where only web/dist conflicted; rebuilt web/dist/blocks.js and blocks.css from the merged sources with the just gen lines
+Because: "generated files come from `just gen`, never hand-edited"
+Rejected: picking either side of the dist conflict by hand — dist is build output of the merged sources
+Check: web/dist matches npm run build at the head; arch-check shows no generated drift
+Owner: Brought the diff view up to date with the latest shared branch; nothing changes for users beyond the diff view itself.
