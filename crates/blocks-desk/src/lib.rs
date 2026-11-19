@@ -1,16 +1,21 @@
 mod fit;
+mod png;
+mod raster;
 mod stopwatch;
 
 use blocks::tree::{expect, Node, Report, Step, Timings};
 use blocks::{apply, Block, Built, Op};
 use blocks_desktop::{kinds, Event, Kit, Stage};
 use egui::emath::Numeric;
-use egui::{Context, Modifiers, PointerButton, Pos2, RawInput, Rect, Vec2, ViewportId};
+use egui::epaint::text::{FontData, FontInsert, FontPriority, InsertFontFamily};
+use egui::{Context, FontFamily, Modifiers, PointerButton, Pos2, RawInput, Rect, Vec2, ViewportId};
 use serde::Deserialize;
 
+use crate::raster::{Canvas, Textures};
 use crate::stopwatch::Stopwatch;
 
 const PASSES: usize = 8;
+const FRAME_MS: f64 = 1000.0 / 60.0;
 
 /// The block and action ids a shot drew, in order: a `fixtures/ids` file.
 #[derive(Clone, Debug, Default, PartialEq, Eq, Deserialize)]
@@ -19,10 +24,11 @@ pub struct Ids {
     pub actions: Vec<String>,
 }
 
-/// One shot of a run: its name, the tree drawn with rects, and the ids.
+/// One shot of a run: its name, the PNG, the tree drawn with rects, and the ids.
 #[derive(Clone, Debug, PartialEq)]
 pub struct Shot {
     pub name: String,
+    pub png: Vec<u8>,
     pub tree: Node,
     pub ids: Ids,
 }
@@ -64,6 +70,7 @@ pub struct Desk {
     width: u16,
     height: u16,
     kit: Kit,
+    font: Option<Vec<u8>>,
 }
 
 struct Live {
@@ -73,6 +80,9 @@ struct Live {
     screen: Block,
     size: Vec2,
     run: Run,
+    textures: Textures,
+    canvas: Canvas,
+    frames: Option<Vec<f64>>,
 }
 
 impl Desk {
@@ -83,6 +93,7 @@ impl Desk {
             width: 390,
             height: 844,
             kit: Kit::default(),
+            font: None,
         }
     }
 
@@ -98,15 +109,33 @@ impl Desk {
         Self { kit, ..self }
     }
 
+    /// A font every text falls back to for a glyph egui's own fonts lack, such as Thai.
+    #[must_use]
+    pub fn font(self, data: Vec<u8>) -> Self {
+        Self {
+            font: Some(data),
+            ..self
+        }
+    }
+
     /// Paints the screen, then runs `steps` in turn.
     pub fn run(self, steps: &[Step]) -> Run {
         let clock = Stopwatch::start();
         let mut live = Live::new(self);
         live.run.report.timings.first_paint_ms = clock.ms();
+        let mut frames = vec![];
         for s in steps {
+            live.frames = matches!(s, Step::Frame(_)).then(Vec::new);
             let clock = Stopwatch::start();
             live.step(s);
             live.run.report.timings.steps_ms.push(clock.ms());
+            frames.extend(live.frames.take().unwrap_or_default());
+        }
+        let t = &mut live.run.report.timings;
+        if !frames.is_empty() {
+            t.longest_frame_ms = Some(frames.iter().copied().fold(0.0, f64::max));
+            let over = frames.iter().filter(|f| **f > FRAME_MS).count();
+            t.frames_over_budget = Some(u32::try_from(over).unwrap_or(u32::MAX));
         }
         live.run
     }
@@ -116,6 +145,13 @@ impl Live {
     fn new(d: Desk) -> Self {
         let ctx = Context::default();
         ctx.global_style_mut(|s| s.animation_time = 0.0);
+        if let Some(data) = d.font {
+            let families = [FontFamily::Proportional, FontFamily::Monospace].map(|family| InsertFontFamily {
+                family,
+                priority: FontPriority::Lowest,
+            });
+            ctx.add_font(FontInsert::new("extra", FontData::from_owned(data), families.into()));
+        }
         let report = Report {
             shots: vec![],
             sent: vec![],
@@ -143,6 +179,9 @@ impl Live {
             screen: d.screen,
             size,
             run,
+            textures: Textures::default(),
+            canvas: Canvas::new(d.width, d.height),
+            frames: None,
         };
         live.land();
         live
@@ -155,9 +194,17 @@ impl Live {
                 events: std::mem::take(&mut events),
                 ..RawInput::default()
             };
+            let clock = Stopwatch::start();
             let mut did = vec![];
             let mut full = self.ctx.run_ui(input, |ui| did = self.stage.show(ui, &self.kit, 0.0));
+            self.textures.update(&full.textures_delta);
+            let prims = self.ctx.tessellate(full.shapes, full.pixels_per_point);
+            self.canvas.paint(&prims, &self.textures);
+            self.textures.free(&full.textures_delta);
             full.textures_delta.clear();
+            if let Some(f) = &mut self.frames {
+                f.push(clock.ms());
+            }
             for e in did {
                 match e {
                     Event::Act(a) => self.run.report.sent.push(a),
@@ -178,10 +225,14 @@ impl Live {
     }
 
     fn ops(&mut self, ops: &[Op]) {
+        let clock = Stopwatch::start();
         if let Err(e) = apply(&mut self.screen, ops) {
             self.run.faults.push(format!("ops: {e}"));
         }
         self.land();
+        let took = clock.ms();
+        let longest = &mut self.run.report.timings.longest_patch_ms;
+        *longest = Some(longest.map_or(took, |l| l.max(took)));
     }
 
     fn step(&mut self, s: &Step) {
@@ -228,6 +279,7 @@ impl Live {
         self.run.plans.push(expect(&built, &kinds(), self.stage.state()));
         self.run.shots.push(Shot {
             name: name.into(),
+            png: self.canvas.png(),
             tree: d.tree.clone(),
             ids: Ids {
                 blocks: d.blocks.clone(),
