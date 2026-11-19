@@ -16,6 +16,9 @@ class El {
   hasAttribute(k) {
     return this.attrs.has(k);
   }
+  querySelector() {
+    return null;
+  }
   get nextElementSibling() {
     const p = this.parentElement;
     return p ? (p.children[p.children.indexOf(this) + 1] ?? null) : null;

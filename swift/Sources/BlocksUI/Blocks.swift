@@ -5,7 +5,7 @@ public struct BlocksView: View {
     /// The padding a host puts around the blocks; a full-bleed block cancels it.
     public static let inset: CGFloat = 16
 
-    private let block: JSONValue
+    private let block: Block
     private let source: LayoutSource?
     private let act: @MainActor (BlockAction) -> Void
     private let open: @MainActor (String) -> Void
@@ -13,7 +13,7 @@ public struct BlocksView: View {
     private let refresh: (@MainActor () -> Void)?
     private let focus: String?
     private let picked: String?
-    private let beside: JSONValue?
+    private let beside: Block?
 
     public var body: some View {
         Group {
@@ -43,14 +43,14 @@ public struct BlocksView: View {
         refresh: (@MainActor () -> Void)? = nil
     ) {
         self.refresh = refresh
-        self.block = (try? JSONValue(block)) ?? .null
+        self.block = block
         self.source = source
         self.act = act
         self.open = open
         self.openThread = openThread
         self.focus = focus
         self.picked = picked
-        self.beside = beside.flatMap { try? JSONValue($0) }
+        self.beside = beside
     }
 }
 
@@ -118,27 +118,38 @@ extension Palette {
 }
 
 internal struct BlockNode: View {
-    internal let block: JSONValue
+    internal let block: Block
 
     internal var body: some View {
         Group {
-            switch block.type {
-            case "screen", "sheet", "section", "list": GroupBlock(block: block)
-            case "card": CardBlock(block: block)
-            case "row", "text", "stat", "chips", "button", "web": LeafBlock(block: block)
-            case "choice", "secret", "run": AnswerBlock(block: block)
-            case "form", "config": FieldsBlock(block: block)
-            case "images": ImagesBlock(block: block)
-            case "scene": LaneStage(block: block)
-            case "diff": DiffBlock(block: block)
-            case "editor": EditorBlock(block: block)
-            case "diagram": DiagramBlock(block: block)
-            case "composer": ComposerBlock(block: block)
-            case "prose": ProseBlock(block: block)
-            case "media": MediaBlock(block: block)
-            case "hero": HeroBlock(block: block)
-            case "nav": NavBlock(block: block)
-            default: AppBlockView(block: block)
+            switch block {
+            case .screen(let screen): ScreenBlock(block: screen)
+            case .sheet(let sheet): SheetBlock(block: sheet)
+            case .section(let section): SectionBlock(block: section)
+            case .list(let list): ListBlock(block: list)
+            case .row(let row): RowView(row: row)
+            case .card(let card): CardBlock(block: card)
+            case .choice(let choice): ChoiceBlock(block: choice)
+            case .form(let form), .config(let form): FieldsBlock(block: form)
+            case .secret(let secret): SecretBlock(block: secret)
+            case .run(let run): RunBlock(block: run)
+            case .button(let button): ButtonBlock(block: button)
+            case .chips(let chips): ChipsBlock(block: chips)
+            case .stat(let stat): StatBlock(block: stat)
+            case .text(let text): TextBlock(block: text)
+            case .images(let images): ImagesBlock(block: images)
+            case .web(let web): WebBlock(block: web)
+            case .diff(let diff): DiffBlock(block: diff)
+            case .editor(let editor): EditorBlock(block: editor)
+            case .scene(let scene): LaneStage(block: scene)
+            case .diagram(let diagram): DiagramBlock(block: diagram)
+            case .composer(let composer): ComposerBlock(block: composer)
+            case .prose(let prose): ProseBlock(block: prose)
+            case .hero(let hero): HeroBlock(block: hero)
+            case .media(let media): MediaBlock(block: media)
+            case .nav(let nav): NavBlock(block: nav)
+            case .island(let island): FallbackRow(fallback: island.fallback)
+            case .appBlock(let block): AppBlockView(block: block)
             }
         }
         .modifier(Styled(type: block.type)).modifier(Reported(block: block))
@@ -147,7 +158,7 @@ internal struct BlockNode: View {
 
 internal struct BlockStack: View {
     @Environment(\.look) private var look
-    internal let blocks: [JSONValue]
+    internal let blocks: [Block]
     internal var spacing: CGFloat?
 
     internal var body: some View {
@@ -168,35 +179,26 @@ internal struct RelativeText: View {
     }
 }
 
-internal struct GroupBlock: View {
+internal struct ScreenBlock: View {
     @Environment(\.look) private var look
     @Environment(\.refresh) private var refresh
-    internal let block: JSONValue
+    internal let block: Screen
 
     internal var body: some View {
-        switch block.type {
-        case "screen": screen
-        case "sheet": SheetBlock(block: block)
-        case "section": section
-        default: ListBlock(block: block)
-        }
-    }
-
-    private var screen: some View {
         VStack(alignment: .leading, spacing: 14) {
             HStack(spacing: 8) {
-                Text(block.string("title") ?? "").ui(block["large"]?.bool == false ? 17 : 30, .bold, look)
+                Text(block.title ?? "").ui(block.large == false ? 17 : 30, .bold, look)
                 Spacer(minLength: 4)
-                ForEach(Array(block.list("actions").enumerated()), id: \.offset) { _, item in
+                ForEach(Array((block.actions ?? []).enumerated()), id: \.offset) { _, item in
                     ToolbarItemView(item: item)
                 }
-                if block["refresh"]?.bool == true, let refresh {
+                if block.refresh == true, let refresh {
                     Button(action: refresh) { RoundButton(symbol: "arrow.clockwise", ascii: "r", size: 36) }
                         .buttonStyle(.plain).accessibilityLabel("Refresh")
                 }
-                if let done = block["done"] { DoneButton(done: done) }
+                if let done = block.done { DoneButton(done: done) }
             }
-            BlockStack(blocks: block.list("blocks"), spacing: look.tiles.map { $0.dotGap * 2 } ?? 14)
+            BlockStack(blocks: block.blocks ?? [], spacing: look.tiles.map { $0.dotGap * 2 } ?? 14)
         }
         .background {
             if let tiles = look.tiles {
@@ -205,45 +207,49 @@ internal struct GroupBlock: View {
         }
         .modifier(BuildsUp())
     }
+}
 
-    private var section: some View {
+internal struct SectionBlock: View {
+    @Environment(\.look) private var look
+    internal let block: Blocks.Section
+
+    internal var body: some View {
         let palette = look.palette
-        return VStack(alignment: .leading, spacing: 6) {
-            if let header = block.string("header") {
+        VStack(alignment: .leading, spacing: 6) {
+            if let header = block.header {
                 Text(look.label(.header, header)).ui(12, .semibold, look)
                     .foregroundStyle(palette.mute)
             }
-            BlockStack(blocks: block.list("blocks"))
-            if let footer = block.string("footer") { Text(footer).ui(12, .regular, look).foregroundStyle(palette.mute) }
+            BlockStack(blocks: block.blocks)
+            if let footer = block.footer { Text(footer).ui(12, .regular, look).foregroundStyle(palette.mute) }
         }
     }
 }
 
 internal struct ToolbarItemView: View {
-    internal let item: JSONValue
+    internal let item: Act
 
     private var symbol: String {
         let symbols = [
             "plus": "plus", "gear": "gearshape", "share": "square.and.arrow.up", "info": "info.circle",
             "filter": "line.3.horizontal.decrease", "more": "ellipsis",
         ]
-        return symbols[item.string("icon") ?? ""] ?? "ellipsis"
+        return symbols[item.icon ?? ""] ?? "ellipsis"
     }
 
     internal var body: some View {
-        let icon = RoundButton(symbol: symbol, ascii: item.string("label") ?? "", size: 36)
-            .accessibilityLabel(item.string("label") ?? "")
-        if item["menu"] == nil {
-            ActButton(source: item) { icon }
-        } else {
+        let icon = RoundButton(symbol: symbol, ascii: item.label, size: 36).accessibilityLabel(item.label)
+        if let menu = item.menu {
             Menu {
-                ForEach(Array(item.list("menu").enumerated()), id: \.offset) { _, entry in
-                    ActButton(source: entry) { Text(entry.string("label") ?? "") }
+                ForEach(Array(menu.enumerated()), id: \.offset) { _, entry in
+                    ActButton(source: Source(entry)) { Text(entry.label) }
                 }
             } label: {
                 icon
             }
             .buttonStyle(.plain)
+        } else {
+            ActButton(source: Source(item)) { icon }
         }
     }
 }
@@ -251,19 +257,21 @@ internal struct ToolbarItemView: View {
 internal struct SheetBlock: View {
     @Environment(\.look) private var look
     @State private var values: [String: JSONValue] = [:]
-    internal let block: JSONValue
+    internal let block: Sheet
 
     internal var body: some View {
         let palette = look.palette
         VStack(alignment: .leading, spacing: 14) {
             HStack {
-                Text(block.string("cancel") ?? "").ui(16, .regular, look).foregroundStyle(palette.link)
+                Text(block.cancel ?? "").ui(16, .regular, look).foregroundStyle(palette.link)
                 Spacer()
-                Text(block.string("title") ?? "").ui(16, .semibold, look)
+                Text(block.title).ui(16, .semibold, look)
                 Spacer()
-                if let done = block["done"] { DoneButton(done: done, values: block.fieldValues.merging(values) { $1 }) }
+                if let done = block.done {
+                    DoneButton(done: done, values: block.blocks.fieldValues.merging(values) { $1 })
+                }
             }
-            BlockStack(blocks: block.list("blocks"), spacing: 14).environment(\.form, $values)
+            BlockStack(blocks: block.blocks, spacing: 14).environment(\.form, $values)
         }
     }
 }

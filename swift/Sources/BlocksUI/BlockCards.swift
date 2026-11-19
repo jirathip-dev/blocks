@@ -7,15 +7,15 @@ internal struct ActButton<Label: View>: View {
     @Environment(\.openThread) private var openThread
     @Environment(\.open) private var open
     @Environment(\.openBeside) private var openBeside
-    @State private var pending: JSONValue?
+    @State private var pending: Source?
     internal var action: String?
-    internal let source: JSONValue
+    internal let source: Source
     internal var values: [String: JSONValue] = [:]
     @ViewBuilder internal let label: Label
 
     internal var body: some View {
         Button {
-            if Confirmation(for: source) == nil { fire() } else { pending = source }
+            if source.confirm == nil { fire() } else { pending = source }
         } label: {
             label
         }
@@ -24,26 +24,27 @@ internal struct ActButton<Label: View>: View {
     }
 
     private func fire() {
-        if let url = source["tap"]?.string("url").flatMap(URL.init(string:)) {
+        let tap = source.tap
+        if let url = tap?.url.flatMap(URL.init(string:)) {
             openURL(url)
-        } else if let thread = source["tap"]?.string("thread") {
+        } else if let thread = tap?.thread {
             openThread(thread)
-        } else if let path = source["tap"]?.string("open"), let openBeside {
+        } else if let path = tap?.open, let openBeside {
             openBeside(path)
-        } else if let tap = source["tap"], let path = tap.string("sheet") ?? tap.string("open") {
-            open(tap.string("focus").map { "\(path)#\($0)" } ?? path)
-        } else if let action = BlockAction(action: action, source: source, values: values) {
+        } else if let tap, let path = tap.sheet ?? tap.open {
+            open(tap.focus.map { "\(path)#\($0)" } ?? path)
+        } else if let action = source.sent(action, values: values) {
             act(action)
         }
     }
 }
 
 internal struct Confirming: ViewModifier {
-    @Binding internal var pending: JSONValue?
-    internal let run: (JSONValue) -> Void
+    @Binding internal var pending: Source?
+    internal let run: (Source) -> Void
 
     internal func body(content: Content) -> some View {
-        let confirm = pending.flatMap(Confirmation.init(for:))
+        let confirm = pending?.confirm
         content.confirmationDialog(
             confirm?.title ?? "",
             isPresented: Binding(get: { pending != nil }, set: { if !$0 { pending = nil } }),
@@ -61,7 +62,7 @@ internal struct Confirming: ViewModifier {
 internal struct CardBlock: View {
     @Environment(\.look) private var look
     @Environment(\.card) private var context
-    internal let block: JSONValue
+    internal let block: Card
 
     private struct Kind {
         fileprivate let label: String
@@ -73,7 +74,7 @@ internal struct CardBlock: View {
         let palette = look.palette
         let poster =
             if case .plugin(let name) = context.poster { " · \(name)" } else { "" }
-        switch block.string("kind") {
+        switch block.kind?.rawValue {
         case "ask": return Kind(label: "ask\(poster)", symbol: "hand.raised.fill", tint: palette.red)
         case "config": return Kind(label: "config\(poster)", symbol: "slider.horizontal.3", tint: palette.cyan)
         case "proposal":
@@ -88,31 +89,31 @@ internal struct CardBlock: View {
     }
 
     internal var body: some View {
-        if CardTrust.draws(block.string("kind"), from: context.poster) {
+        if CardTrust.draws(block.kind?.rawValue, from: context.poster) {
             card
         } else {
-            MissingPoster(kind: block.string("kind") ?? "")
+            MissingPoster(kind: block.kind?.rawValue ?? "")
         }
     }
 
     @ViewBuilder private var card: some View {
-        let tint = kind?.tint ?? look.palette.tone(block.string("tone")) ?? look.palette.lead
+        let tint = kind?.tint ?? look.palette.tone(block.tone?.rawValue) ?? look.palette.lead
         VStack(alignment: .leading, spacing: 10) {
             header(tint)
-            if let title = block.string("title") {
+            if let title = block.title {
                 Text(title).ui(16, .semibold, look).foregroundStyle(look.palette.foreground)
             }
-            if let subtitle = block.string("subtitle") {
+            if let subtitle = block.subtitle {
                 Text(subtitle).ui(13, .regular, look).foregroundStyle(look.palette.mute).lineLimit(2)
             }
-            if !block.list("buttons").isEmpty {
+            if let buttons = block.buttons, !buttons.isEmpty {
                 HStack(spacing: 8) {
-                    ForEach(Array(block.list("buttons").enumerated()), id: \.offset) { _, button in
+                    ForEach(Array(buttons.enumerated()), id: \.offset) { _, button in
                         BlockNode(block: button)
                     }
                 }
             }
-            BlockStack(blocks: block.list("blocks")).environment(
+            BlockStack(blocks: block.blocks ?? []).environment(
                 \.card, CardContext(poster: context.poster, tint: tint))
         }
         .padding(14)
@@ -122,13 +123,13 @@ internal struct CardBlock: View {
                 RoundedRectangle(cornerRadius: look.radius(2)).fill(tint).frame(width: 3).padding(.vertical, 16)
             }
         }
-        .modifier(BlockActs(block: block))
+        .modifier(BlockActs(menu: block.menu ?? []))
     }
 
     @ViewBuilder
     private func header(_ tint: Color) -> some View {
-        let meta = block.string("meta")
-        let badge = block["badge"]
+        let meta = block.meta
+        let badge = block.badge
         if kind != nil || meta != nil || badge != nil {
             HStack(spacing: 6) {
                 if let kind {
@@ -158,73 +159,64 @@ internal struct MissingPoster: View {
 
 internal struct Pill: View {
     @Environment(\.look) private var look
-    internal let badge: JSONValue
+    internal let badge: Blocks.Label
 
     internal var body: some View {
-        let tint = look.palette.tone(badge.string("tone")) ?? look.palette.mute
-        Text(badge.string("text") ?? "").ui(11, .bold, look).foregroundStyle(tint)
+        let tint = look.palette.tone(badge.tone?.rawValue) ?? look.palette.mute
+        Text(badge.text).ui(11, .bold, look).foregroundStyle(tint)
             .padding(.horizontal, 8).padding(.vertical, 3)
             .background(tint.opacity(0.15), in: look.pill)
-    }
-}
-
-internal struct AnswerBlock: View {
-    internal let block: JSONValue
-
-    internal var body: some View {
-        switch block.type {
-        case "choice": ChoiceBlock(block: block)
-        case "secret": SecretBlock(block: block)
-        default: RunBlock(block: block)
-        }
     }
 }
 
 internal struct ChoiceBlock: View {
     @Environment(\.look) private var look
     @State private var other = ""
-    internal let block: JSONValue
+    internal let block: Choice
 
-    private var options: [JSONValue] {
-        let all = block.list("options")
-        let recommended = block.string("recommended")
-        return all.filter { $0.string("value") == recommended } + all.filter { $0.string("value") != recommended }
+    private var options: [ChoiceOption] {
+        let recommended = block.recommended
+        return block.options.filter { $0.value == recommended } + block.options.filter { $0.value != recommended }
     }
 
     internal var body: some View {
         let palette = look.palette
         VStack(alignment: .leading, spacing: 8) {
-            if let question = block.string("question") { Text(question).ui(15, .semibold, look) }
+            if let question = block.question { Text(question).ui(15, .semibold, look) }
             ForEach(Array(options.enumerated()), id: \.offset) { index, option in
-                ActButton(action: block.string("action"), source: option, values: values(option)) {
+                let source = Source(values: option.values, confirm: Confirmation(option.confirm, label: option.label))
+                ActButton(action: block.action, source: source, values: values(option)) {
                     CardButton(
                         title: title(option),
-                        primary: option.string("value") == block.string("recommended"),
+                        primary: option.value == block.recommended,
                         tint: index == options.count - 1 && options.count > 1 ? palette.red : nil
                     )
                 }
             }
-            if let box = block["other"] {
-                TextField(box.string("placeholder") ?? "", text: $other).ui(14, .regular, look)
+            if let box = block.other {
+                TextField(box.placeholder ?? "", text: $other).ui(14, .regular, look)
                     .padding(.horizontal, 12).frame(height: 38)
                     .background(palette.background.opacity(0.5), in: .rect(cornerRadius: look.radius(10)))
             }
-            if let fallback = block["default"] {
-                RelativeText(template: fallback.string("label") ?? "", until: fallback["until"]?.date)
+            if let fallback = block.default {
+                RelativeText(template: fallback.label ?? "", until: fallback.until.date)
                     .ui(12, .regular, look).foregroundStyle(palette.amber)
             }
         }
     }
 
-    private func title(_ option: JSONValue) -> String {
-        let label = option.string("label") ?? ""
-        let recommended = option.string("value") == block.string("recommended") && !look.textMarks
-        return recommended ? "\(label) · recommended" : label
+    private func title(_ option: ChoiceOption) -> String {
+        let recommended = option.value == block.recommended && !look.textMarks
+        return recommended ? "\(option.label) · recommended" : option.label
     }
 
-    private func values(_ option: JSONValue) -> [String: JSONValue] {
-        let tied = block["other"]?.string("for")
-        let text = tied == nil || tied == option.string("value") ? other : ""
-        return ["choice": option["value"] ?? .null, "other": .string(text)]
+    private func values(_ option: ChoiceOption) -> [String: JSONValue] {
+        let tied = block.other?.for
+        let text = tied == nil || tied == option.value ? other : ""
+        return ["choice": .string(option.value), "other": .string(text)]
     }
+}
+
+extension String {
+    internal var date: Date? { try? Date(self, strategy: .iso8601) }
 }

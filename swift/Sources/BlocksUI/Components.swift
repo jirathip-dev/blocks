@@ -38,14 +38,34 @@ internal struct Confirmation: Sendable, Equatable {
     internal let message: String?
     internal let accept: String
     internal let destructive: Bool
+}
 
-    internal init?(for source: JSONValue) {
-        let destructive = source.string("style") == "destructive" || source.string("tone") == "bad"
-        guard let confirm = source["confirm"] ?? (destructive ? .object([:]) : nil) else { return nil }
-        let label = source.string("label")
-        title = confirm.string("title") ?? label ?? ""
-        message = confirm.string("message")
-        accept = confirm.string("ok") ?? label ?? "OK"
-        self.destructive = destructive || confirm["destructive"]?.bool == true
+extension Confirmation {
+    internal init?(_ confirm: Confirm?, label: String?, destructive: Bool = false) {
+        guard confirm != nil || destructive else { return nil }
+        self.init(
+            title: confirm?.title ?? label ?? "", message: confirm?.message, accept: confirm?.ok ?? label ?? "OK",
+            destructive: destructive || confirm?.destructive == true)
+    }
+}
+
+internal struct Source {
+    internal var action: String?
+    internal var tap: Tap?
+    internal var values: [String: JSONValue]?
+    internal var confirm: Confirmation?
+
+    internal func sent(_ action: String? = nil, values: [String: JSONValue] = [:]) -> BlockAction? {
+        guard let name = action ?? self.action ?? tap?.action else { return nil }
+        let own = tap?.values?.merging(self.values ?? [:]) { $1 } ?? self.values ?? [:]
+        return BlockAction(action: name, values: own.merging(values) { $1 })
+    }
+}
+
+extension Source {
+    internal init(_ act: Act) {
+        self.init(
+            action: act.action, tap: act.tap, values: act.values,
+            confirm: Confirmation(act.confirm, label: act.label, destructive: act.tone?.rawValue == "bad"))
     }
 }

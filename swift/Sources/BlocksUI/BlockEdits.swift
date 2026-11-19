@@ -3,13 +3,13 @@ import SwiftUI
 
 internal struct DoneButton: View {
     @Environment(\.look) private var look
-    internal let done: JSONValue
+    internal let done: Submit
     internal var values: [String: JSONValue] = [:]
 
     internal var body: some View {
-        let off = done["off"]?.bool == true
-        ActButton(source: done, values: values) {
-            Text(done.string("label") ?? "").ui(16, .semibold, look)
+        let off = done.off == true
+        ActButton(source: Source(action: done.action, values: done.values), values: values) {
+            Text(done.label).ui(16, .semibold, look)
                 .foregroundStyle(off ? look.palette.mute : look.palette.link)
         }
         .disabled(off)
@@ -18,21 +18,21 @@ internal struct DoneButton: View {
 
 internal struct DiffBlock: View {
     @Environment(\.look) private var look
-    internal let block: JSONValue
+    internal let block: Diff
 
     internal var body: some View {
         let palette = look.palette
         VStack(alignment: .leading, spacing: 0) {
             HStack {
-                Text(block.string("file") ?? "").fontWeight(.semibold)
+                Text(block.file).fontWeight(.semibold)
                 Spacer(minLength: 4)
-                if let summary = block.string("summary") { Text(summary).foregroundStyle(palette.mute) }
+                if let summary = block.summary { Text(summary).foregroundStyle(palette.mute) }
             }
             .padding(.horizontal, 10).padding(.bottom, 4)
-            ForEach(Array(block.list("hunks").enumerated()), id: \.offset) { _, hunk in
-                Text(hunk.string("at") ?? "").foregroundStyle(palette.link).padding(.horizontal, 10).padding(
+            ForEach(Array(block.hunks.enumerated()), id: \.offset) { _, hunk in
+                Text(hunk.at).foregroundStyle(palette.link).padding(.horizontal, 10).padding(
                     .vertical, 4)
-                ForEach(Array(hunk.list("lines").compactMap(\.string).enumerated()), id: \.offset) { _, line in
+                ForEach(Array(hunk.lines.enumerated()), id: \.offset) { _, line in
                     DiffLine(line: line)
                 }
             }
@@ -64,15 +64,13 @@ internal struct EditorBlock: View {
     @Environment(\.look) private var look
     @Environment(\.act) private var act
     @State private var draft: String?
-    internal let block: JSONValue
+    internal let block: Editor
 
-    private var text: String { block.string("text") ?? "" }
-    private var first: Int { Int(block["first"]?.number ?? 1) }
+    private var text: String { block.text }
+    private var first: Int { Int(block.first ?? 1) }
 
     private var errors: [Int: String] {
-        let pairs = block.list("errors").compactMap { error in
-            error["line"]?.number.map { (Int($0), error.string("message") ?? "") }
-        }
+        let pairs = (block.errors ?? []).map { (Int($0.line), $0.message) }
         return Dictionary(pairs) { kept, _ in kept }
     }
 
@@ -103,10 +101,10 @@ internal struct EditorBlock: View {
     }
 
     private func check() async {
-        guard let draft, draft != text, let action = block.string("action") else { return }
+        guard let draft, draft != text else { return }
         try? await Task.sleep(for: .milliseconds(400))
         guard !Task.isCancelled else { return }
-        act(BlockAction(action: action, values: [block.string("name") ?? "": .string(draft)]))
+        act(BlockAction(action: block.action, values: [block.name: .string(draft)]))
     }
 }
 
@@ -143,19 +141,27 @@ internal struct ErrorNote: View {
 
 internal struct Reordering: ViewModifier {
     @Environment(\.act) private var act
-    internal let list: JSONValue
-    internal let row: JSONValue
+    internal let list: Blocks.List
+    internal let row: Row
 
     @ViewBuilder
     internal func body(content: Content) -> some View {
-        if let reorder = list["reorder"], let id = row.id, row["handle"]?.bool == true {
+        if let reorder = list.reorder, let id = row.id, row.handle == true {
             content.draggable(id).dropDestination(for: String.self) { dropped, _ in
-                guard let moved = dropped.first, let action = reorder.string("action") else { return }
-                let order = list.rowOrder(moving: moved, onto: id).map(JSONValue.string)
-                act(BlockAction(action: action, values: [reorder.string("name") ?? "": .array(order)]))
+                guard let moved = dropped.first else { return }
+                let order = self.order(moving: moved, onto: id).map(JSONValue.string)
+                act(BlockAction(action: reorder.action, values: [reorder.name: .array(order)]))
             }
         } else {
             content
         }
+    }
+
+    private func order(moving moved: String, onto target: String) -> [String] {
+        var ids = list.rows.compactMap(\.id)
+        guard let from = ids.firstIndex(of: moved), let place = ids.firstIndex(of: target) else { return ids }
+        ids.remove(at: from)
+        ids.insert(moved, at: place)
+        return ids
     }
 }
