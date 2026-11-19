@@ -11,7 +11,7 @@ an app can adopt the static ratchet; G4 adds the render; the rest is independent
 | **G2** the lint | `guard/shape.rs` (`Rule`, `Severity`, `Seen`, `Finding`); `guard/rules/<name>.rs` for the 16 `lint/` rules and the table rows of the others; the collector in codegen that writes `guard/rules/mod.rs`; `guard::lint`, `guard::finding`; `fixtures/guard/bad/<rule>.json` and `fixtures/guard/ok/*.json`; the shapes in the schema, TS and Swift; the rules line | the table test: every rule has a `what`, a `fix`, a unique id and a bad fixture that fires only it; no ok fixture fires; lint of the 42 goldens under 50 ms in `perf.rs` | G1 |
 | **G3** `blocks check` and the ratchet | `crates/blocks-cli` (`blocks check`, `--base`, `--all`, `--tighten`, `--format text\|json\|sarif`, `--out`); `Config`, `Ignore`, `Baseline`, `Outcome`; `guard::judge`, `tighten`, `sarif`; this repo's `.blocks/` over `fixtures/screens` and `fixtures/guard/ok`, with its first baseline; `just guard` in `just check` and a step in `ci`; `docs/guard.md`; the `blocks` line in `docs/deps.md`; the rules line | in a temp git repo: a new error in a changed fixture exits 1 and in an unchanged one exits 0; a grown baseline, a stale entry and an unused ignore each exit 1; an ignore with no reason exits 2; the SARIF validates against the 2.1.0 schema (a fixture) | G2 |
 | **G4** render at 390 | `blocks-shot --plan`; `web/shot/probe/<rule>.ts` for the `render/` and `css/` rules, with today's `fit` moved into them; `seen.json`; `scripts` in the page; `check --render` and `check --shot`; `guard.yml` here (nightly sweep) | a bad fixture per probe fires only it in WebKit; every `fixtures/blocks` file still passes `--check`; the 27 fixtures draw in one launch; `--shot` writes both sizes | G3 |
-| **G5** the skill | `codegen/skill.rs` writes `skill/blocks/` from the schema, the rule table and `fixtures/guard/ok`; `blocks skill --to`, with the app's `examples`; the rules line | arch-check on `skill/`; codegen fails on an example with a finding; `skill --to` on this repo equals `skill/blocks/` plus its examples | G3 |
+| **G5** the skill | `codegen/skill.rs` writes `skill/blocks/` from the schema, the rule table and `fixtures/guard/ok`; `blocks skill --to`, with the app's `examples`; the rules line; README.md's one-line agent prompt (q2270) | arch-check on `skill/`; codegen fails on an example with a finding; `skill --to` on this repo equals `skill/blocks/` plus its examples | G3 |
 | **G6** SwiftUI | `blocks-snap --plan`, the four tree rules as `Seen`, a public plan runner in `BlocksSnapshot` for an app's own bin | on every `fixtures/blocks` file `seen.json` is empty, and equal to `blocks-shot`'s for the four rules on the bad fixtures | G4 |
 | **G7** explore | `guard/explore.rs` (declared steps, the walk, the shrinker); the answerer protocol; `check --explore`, `--seed`, `--minutes`, `--replay`; the `explore/` rules; `render/console` and the sent-actions compare in both harnesses; the nightly job here | fixed seeds in `just test`: a seeded bad fixture is found and shrunk to its known shortest steps; a replay of the written `steps.json` fails the same way; the same seed gives the same walk | G4 |
 | **G8** the kind folders (`--refactor`) | each kind's struct and sample in `kind/core/<kind>.rs`, its static writer in `site/core/<kind>.rs`, its CSS in `web/src/css/<kind>.css`; `just gen` writes the lists (`kind/core/mod.rs`, `site/core/mod.rs`, `web/src/gen/renderers.ts`, `BlocksUI/Gen/Kinds.swift`) and the build joins the CSS; the skill's kind pages gain the sample's Rust source | the schema, `web/dist` and every fixture are byte-identical before and after | G1 |
@@ -39,10 +39,10 @@ Against `ci/cap.toml`, measured at `ede5416` on 2026-11-19:
 
 - The cap is 15,000 (`ci/cap.d/2026-11-19-15000.toml`); the tree counts 14,154, so 846 lines are free.
 - `drover cap blocks` projects 15,991 with the open PRs, before this kit and before the nine queued issues with no PR.
-- G1 fits today. G2 alone (520) fits only if nothing else merges first. The whole kit needs the cap near 18,500 with
-  today's queue (15,991 + 2,360, plus margin): one raise, filed by the orchestrator, before G2 (open question 1).
-- If the raise is smaller, the order in which slices wait: G7, then G8 and G9, then G6. G2 to G5 are the guard the
-  issue asks for first.
+- G1 fits today. G2 alone (520) fits only if nothing else merges first. The whole kit needs about 18,500 with
+  today's queue (15,991 + 2,360, plus margin). Decided (q2269): one raise to 19,000, filed by the orchestrator,
+  before G2.
+- Queue order: G1 to G7, then G8 and G9 last (q2269).
 
 ## The apps, after G3
 

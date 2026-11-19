@@ -7,7 +7,8 @@ files, has the existing harnesses draw them at 390 and only measure, and fails o
 against a per-screen baseline that can only shrink. Every finding carries its fix.
 Slices: nine in blocks (codegen folder, lint, command and ratchet, render at 390, skill, SwiftUI, explore, kind
 folders, new-kind scaffold), then drover's hook and one adopting issue each in drover, cooee and synergy.
-Open questions: the line cap (about +2,400 lines); cooee's render per UI PR or nightly; kind folders now or later.
+Decided (q2269): one cap raise to 19,000 before G2; cooee's SwiftUI render nightly first; kind folders queued last;
+`render/no-name` joins the rules once #91 lands. README.md's agent prompt (q2270) lands with G5.
 
 ## Read in this order
 

@@ -142,6 +142,7 @@ Limits come from the 26 golden screens (their largest value in brackets). `fix` 
 | `render/clipped-text` | error | text is cut by its box with no ellipsis | Let the text wrap, or shorten it. |
 | `render/tap-target` | error | a control under 44 by 44 px; a link inside running text is exempt | Give the control at least 44 px each way: use the kind's own button, or drop the app rule that shrinks it. |
 | `render/contrast` | error | text under 4.5:1 against what is drawn behind it (3:1 from 24 px, or 18.66 px bold); text over an image is skipped and counted | Use a token pair the scheme gate passes: `--fg` on `--bg`, or a tone's own pair. |
+| `render/no-name` | error | an actionable element or image with no accessible name (after #91) | Give it a label, or an `alt` for an image. |
 | `render/console` | error | a console error or an uncaught exception | Fix the script error; the message is in the finding. |
 | `render/truncated` | warn | a title or label ends in an ellipsis | Shorten it, or let it take two lines. |
 | `render/frame-budget` | warn | first paint over 300 ms, or a frame over 16.7 ms | Draw fewer blocks at first: page the list, or fold the rest. |
@@ -193,20 +194,23 @@ In this repo: one static step in `ci` (about 1 s) and a nightly `guard.yml`; no 
 - Rust builder source in the skill's examples waits for G8, when each kind's sample sits in the kind's own file.
   Until then a kind's page shows its constructor line and its JSON.
 
-## Open questions
+## Open questions, decided (q2269)
 
-1. **The cap.** The kit is about +2,360 counted lines (`slices.md`). Today: 14,154 of 15,000, and `drover cap blocks`
-   projects 15,991 with the open PRs. One raise to about 18,500 before G2, or the order in which slices wait
-   (suggested: G7 explore, then G8 and G9).
-2. **cooee's SwiftUI render.** On every UI-path PR as decided, on a macOS runner at ten times the minute price, or
-   static on PRs and the SwiftUI render nightly until its real time is measured? Recommended: nightly first.
-3. **G8, the kind folders.** `blocks new kind` as five files needs the 27 kinds moved out of six shared files, a large
-   `--refactor`. Queue it with this kit (recommended, last), or leave `new kind` out until a kind is next added?
+1. **The cap.** The kit is about +2,360 counted lines (`slices.md`). Decided: one raise to 19,000, filed by the
+   orchestrator before G2.
+2. **cooee's SwiftUI render.** Decided: static on PRs and the SwiftUI render nightly first; it moves onto UI-path PRs
+   once its real time is measured.
+3. **G8, the kind folders.** Decided: queued with this kit, last (after G7), then G9.
+4. **`render/no-name`.** Added to rule list v1 once #91 lands (q2269): its row is in the table above, built in the
+   first slice after #91 merges that has the probes (G4, or a follow-up if G4 merged first).
 
 ## `.drover/rules.md` lines, by slice
 
 - G2: `don't add a guard rule without its fix text and a fixture that fails it (enforced by: CI test, the rule table test in crates/blocks/tests/guard.rs)`
 - G3: the "start a process, read a clock or write a file outside codegen" line becomes "outside codegen and `crates/blocks-cli`".
+- G5: README.md gains the one-line agent prompt (q2270) next to the usage skill and `blocks check`: start a screen
+  with the skill `skill/blocks/`, from an example screen in `skill/blocks/examples/`, and check it headlessly with
+  `blocks check --shot`. It lands in G5, the first slice where all three exist.
 - G5: `don't hand-edit skill/: rerun `just gen`; prose goes in docs/guard.md (enforced by: CI arch-check, `generated`)`
 
 ## `.drover/arch.toml` lines, by slice
