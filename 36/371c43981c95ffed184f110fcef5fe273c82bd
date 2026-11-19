@@ -1,0 +1,13 @@
+Decided: marks are fields on media with one Rules impl per language, held equal by fixtures/gesture/media.json
+Because: "Built on the approved gesture-to-action ADR from #136, with no new gesture rules outside it."
+Decided: a grab is a mark's body, start, end, remove, or a draw pen; a reach is {from, to} in picture fractions
+Because: crates/blocks/src/kind/media.rs:62
+Decided: the web driver passes the press point to reach and returns its named-step runner; delete and tap-to-place use it
+Because: web/src/gesture.ts:126
+Rejected: a view sending its own remove or pin action — it would bypass the one gesture machine the ADR's boundaries require
+Decided: staging merged: timeline (#137) beside the marks; Swift reach reads translation; marks raw values baselined per #180
+Because: swift/Sources/BlocksSnapshot/Snapshot.swift:200
+Rejected: [Number; 2] places — codegen maps lists only, so places are Vec<Number> pairs
+Check: the three WebKit tests in web/test/gesture.test.ts send one equal action by pointer, keys and named action
+Check: site.test compares the read-only media fixture's static HTML and web render, element by element
+Owner: photos and scans can now carry marks the app keeps as data, drawn and edited on web and Apple
