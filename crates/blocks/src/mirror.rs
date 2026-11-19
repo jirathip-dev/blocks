@@ -1,8 +1,8 @@
 use std::collections::BTreeMap;
 
-use crate::ops::{apply, Op};
-use crate::screen::Block;
-use crate::wire::{Frame, Have, Hello, KeyState, Outdated, Synced};
+use crate::kind::Block;
+use crate::patch::apply;
+use crate::wire::{Frame, Have, Hello, KeyState, Op, Outdated, Synced};
 use crate::SCHEMA_VERSION;
 
 /// What a frame or a key's state did to the key: patched, replaced, dropped, or open the key again (`have`).

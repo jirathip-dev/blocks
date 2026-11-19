@@ -1,0 +1,6 @@
+{
+  "type": "button",
+  "id": "save",
+  "label": "Save",
+  "action": "save"
+}

@@ -1,0 +1,6 @@
+{
+  "type": "composer",
+  "id": "say",
+  "action": "say",
+  "placeholder": "message the team"
+}

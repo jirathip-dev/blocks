@@ -3,13 +3,15 @@ use std::path::Path;
 use serde_json::{Map, Value};
 
 use crate::{
-    theme, Block, Bye, Card, Child, Composer, ComposerChip, Frame, Hello, List, OldFrame, Op, Queued, Row, Screen,
-    Sync, Synced, Text, Tone, SCHEMA_VERSION,
+    theme, Action, Answer, Block, Bye, Card, Child, Composer, ComposerChip, Frame, Hello, List, OldFrame, Op, Queued,
+    Row, Screen, Sync, Synced, Text, Tone, SCHEMA_VERSION,
 };
 
 /// The JSON Schema of a `Frame`; its `$defs` hold `Block`, `Op` and the stream's other messages.
 pub fn schema() -> Value {
     let mut g = schemars::SchemaGenerator::default();
+    g.subschema_for::<Action>();
+    g.subschema_for::<Answer>();
     g.subschema_for::<Hello>();
     g.subschema_for::<Bye>();
     g.subschema_for::<Sync>();
@@ -49,6 +51,7 @@ pub fn write(root: &Path) -> std::io::Result<()> {
             "swift/Sources/Blocks/Gen/Blocks.swift",
             swift(&s).map_err(std::io::Error::other)?,
         ),
+        ("web/src/gen/hooks.ts", hooks(&s).map_err(std::io::Error::other)?),
         ("web/src/gen/schemes.ts", schemes_ts()?),
         ("swift/Sources/Blocks/Gen/Schemes.swift", schemes_swift()?),
         (
@@ -59,7 +62,53 @@ pub fn write(root: &Path) -> std::io::Result<()> {
     for (path, text) in files {
         std::fs::write(root.join(path), text)?;
     }
+    std::fs::create_dir_all(root.join("fixtures/blocks"))?;
+    for (kind, b) in crate::samples() {
+        let text = serde_json::to_string_pretty(&b)? + "\n";
+        std::fs::write(root.join(format!("fixtures/blocks/{kind}.json")), text)?;
+    }
     Ok(())
+}
+
+const PARTS: [&str; 5] = ["title", "subtitle", "badge", "value", "figure"];
+const ACTIONS: [&str; 4] = ["actions", "buttons", "menu", "swipe"];
+const VARIANTS: [(&str, &str); 5] = [
+    ("row", "style"),
+    ("card", "kind"),
+    ("button", "style"),
+    ("text", "style"),
+    ("images", "size"),
+];
+
+fn hooks(s: &Value) -> Out {
+    let all = defs(s)?;
+    let Some((_, Def::Tagged { cases, .. })) = all.iter().find(|(k, _)| *k == "Block") else {
+        return Err("no Block in the schema".into());
+    };
+    let mut out = String::from(
+        "import type { Kind } from \"./types.ts\";\n\nexport type Hook = { variant: string | null; parts: readonly string[] };\n\n\
+         export const hooks: Record<Kind, Hook> = {\n",
+    );
+    for (kind, case) in cases {
+        let Case::Ref(n) = case else { continue };
+        let props = all.iter().find(|(k, _)| k == n).map(|(_, d)| d);
+        let names: Vec<&str> = match props {
+            Some(Def::Struct(ps)) => ps.iter().map(|p| p.name).collect(),
+            _ => vec![],
+        };
+        let mut parts: Vec<&str> = PARTS.into_iter().filter(|p| names.contains(p)).collect();
+        if ACTIONS.iter().any(|a| names.contains(a)) {
+            parts.push("actions");
+        }
+        let variant = VARIANTS
+            .iter()
+            .find(|(k, _)| k == kind)
+            .map_or("null".into(), |(_, v)| format!("\"{v}\""));
+        let parts = parts.iter().map(|p| format!("\"{p}\"")).collect::<Vec<_>>().join(", ");
+        out.push_str(&format!("    {kind}: {{ variant: {variant}, parts: [{parts}] }},\n"));
+    }
+    out.push_str("};\n");
+    Ok(out)
 }
 
 fn schemes_ts() -> serde_json::Result<String> {
@@ -196,6 +245,7 @@ fn sample() -> Vec<OldFrame> {
 }
 
 enum Ty<'a> {
+    Null,
     Str,
     Bool,
     Int(&'a str),
@@ -226,6 +276,27 @@ enum Def<'a> {
         rest: Option<&'a str>,
     },
     Union(Vec<Ty<'a>>),
+    Keyed(Vec<(&'a str, Ty<'a>)>, Option<&'a str>),
+}
+
+fn keyed(a: &Value) -> Option<(&str, &Value)> {
+    let ps = a.get("properties")?.as_object()?;
+    match (ps.iter().next(), a.get("additionalProperties")) {
+        (Some((k, v)), Some(Value::Bool(false))) if ps.len() == 1 => Some((k.as_str(), v)),
+        _ => None,
+    }
+}
+
+fn keyed_def(alts: &[Value]) -> Result<Option<Def<'_>>, String> {
+    let (mut cases, mut rest) = (vec![], None);
+    for a in alts {
+        match (keyed(a), named(a)) {
+            (Some((k, v)), _) => cases.push((k, ty(v)?.0)),
+            (None, Some(n)) if rest.is_none() => rest = Some(n),
+            _ => return Ok(None),
+        }
+    }
+    Ok(Some(Def::Keyed(cases, rest)))
 }
 
 type Out = Result<String, String>;
@@ -257,6 +328,7 @@ fn ty(p: &Value) -> Result<(Ty<'_>, bool), String> {
     };
     let null = types.contains(&"null");
     let t = match types.iter().find(|t| **t != "null") {
+        None if null => return Ok((Ty::Null, false)),
         Some(&"string") => Ty::Str,
         Some(&"boolean") => Ty::Bool,
         Some(&"number") => Ty::Num,
@@ -308,6 +380,9 @@ fn def(v: &Value) -> Result<Def<'_>, String> {
         }
     }
     let Some(tag) = alts.iter().find_map(tag_of).map(|t| t.0) else {
+        if let Some(k) = keyed_def(alts)? {
+            return Ok(k);
+        }
         return Ok(Def::Union(
             alts.iter().map(|a| ty(a).map(|t| t.0)).collect::<Result<_, _>>()?,
         ));
@@ -353,6 +428,7 @@ fn camel(s: &str, upper: bool) -> String {
 impl Ty<'_> {
     fn ts(&self) -> String {
         match self {
+            Self::Null => "null".into(),
             Self::Str => "string".into(),
             Self::Bool => "boolean".into(),
             Self::Int(_) | Self::Num => "number".into(),
@@ -373,7 +449,7 @@ impl Ty<'_> {
             Self::Int("int64") => "Int64".into(),
             Self::Int(_) => "Int".into(),
             Self::Num => "Double".into(),
-            Self::Json => "JSONValue".into(),
+            Self::Null | Self::Json => "JSONValue".into(),
             Self::List(t) => format!("[{}]", t.swift()),
             Self::Map(t) => format!("[String: {}]", t.swift()),
             Self::Named(n) => (*n).into(),
@@ -382,6 +458,7 @@ impl Ty<'_> {
 
     fn case(&self) -> String {
         match self {
+            Self::Null => "null".into(),
             Self::Str => "string".into(),
             Self::Bool => "bool".into(),
             Self::Int(_) => "int".into(),
@@ -412,6 +489,10 @@ fn ts(s: &Value) -> Out {
             Def::Struct(ps) => ts_props(ps, None),
             Def::Words(ws) => ws.iter().map(|w| format!("\"{w}\"")).collect::<Vec<_>>().join(" | "),
             Def::Union(ts) => ts.iter().map(Ty::ts).collect::<Vec<_>>().join(" | "),
+            Def::Keyed(cases, rest) => {
+                let cases = cases.iter().map(|(k, t)| format!("{{ {k}: {} }}", t.ts()));
+                cases.chain(rest.map(String::from)).collect::<Vec<_>>().join(" | ")
+            }
             Def::Tagged { tag, cases, rest } => {
                 let case = |(c, p): &(&str, Case<'_>)| match p {
                     Case::Ref(n) => format!("({{ {tag}: \"{c}\" }} & {n})"),
@@ -423,10 +504,17 @@ fn ts(s: &Value) -> Out {
         };
         out.push_str(&format!("\nexport type {name} = {body};\n"));
     }
+    let kinds = Block::KINDS
+        .iter()
+        .map(|k| format!("\"{k}\""))
+        .collect::<Vec<_>>()
+        .join(" | ");
+    out.push_str(&format!("\nexport type Kind = {kinds};\n"));
     Ok(out)
 }
 
 const SWIFT_WORDS: &[&str] = &[
+    "any",
     "as",
     "break",
     "case",
@@ -506,21 +594,28 @@ fn swift_words(name: &str, ws: &[&str]) -> String {
 fn swift_union(name: &str, ts: &[Ty<'_>]) -> String {
     let cases: String = ts
         .iter()
-        .map(|t| format!("    case {}({})\n", word(&t.case()), t.swift()))
+        .map(|t| match t {
+            Ty::Null => "    case null\n".into(),
+            _ => format!("    case {}({})\n", word(&t.case()), t.swift()),
+        })
         .collect();
     let tries: Vec<String> = ts
         .iter()
-        .map(|t| {
-            format!(
+        .map(|t| match t {
+            Ty::Null => "if (try? decoder.singleValueContainer().decodeNil()) == true { self = .null }".into(),
+            _ => format!(
                 "if let v = try? {}(from: decoder) {{ self = .{}(v) }}",
                 t.swift(),
                 word(&t.case())
-            )
+            ),
         })
         .collect();
     let encodes: String = ts
         .iter()
-        .map(|t| format!("        case .{}(let v): try v.encode(to: encoder)\n", word(&t.case())))
+        .map(|t| match t {
+            Ty::Null => "        case .null: var c = encoder.singleValueContainer(); try c.encodeNil()\n".into(),
+            _ => format!("        case .{}(let v): try v.encode(to: encoder)\n", word(&t.case())),
+        })
         .collect();
     format!(
         "\npublic enum {name}: {CODABLE} {{\n{cases}\n    public init(from decoder: any Decoder) throws {{\n        {} \
@@ -578,6 +673,46 @@ fn swift_tagged(name: &str, tag: &str, cases: &[(&str, Case<'_>)], rest: Option<
     out
 }
 
+fn swift_keyed(name: &str, cases: &[(&str, Ty<'_>)], rest: Option<&str>) -> String {
+    let (mut decl, mut dec, mut enc) = (String::new(), String::new(), String::new());
+    for (k, t) in cases {
+        let case = word(k);
+        decl.push_str(&format!("    case {case}({})\n", t.swift()));
+        dec.push_str(&format!(
+            "            case \"{k}\": self = .{case}(try c.decode({}.self, forKey: k)); return\n",
+            t.swift()
+        ));
+        enc.push_str(&format!(
+            "        case .{case}(let v): var c = encoder.container(keyedBy: Key.self); try c.encode(v, forKey: Key(\"{k}\"))\n"
+        ));
+    }
+    let (rest_decl, rest_dec, rest_enc) = match rest {
+        Some(r) => (
+            format!("    case {}({r})\n", word(&camel(r, false))),
+            format!("self = .{}(try {r}(from: decoder))", word(&camel(r, false))),
+            format!(
+                "        case .{}(let v): try v.encode(to: encoder)\n",
+                word(&camel(r, false))
+            ),
+        ),
+        None => (
+            String::new(),
+            "self = .unknown(try JSONValue(from: decoder))".into(),
+            String::new(),
+        ),
+    };
+    format!(
+        "\npublic indirect enum {name}: {CODABLE} {{\n{decl}{rest_decl}    case unknown(JSONValue)\n\n    \
+         private struct Key: CodingKey {{\n        let stringValue: String\n        var intValue: Int? {{ nil }}\n        \
+         init(_ s: String) {{ stringValue = s }}\n        init?(stringValue: String) {{ self.init(stringValue) }}\n        \
+         init?(intValue: Int) {{ nil }}\n    }}\n\n    public init(from decoder: any Decoder) throws {{\n        \
+         if let c = try? decoder.container(keyedBy: Key.self), c.allKeys.count == 1, let k = c.allKeys.first {{\n            \
+         switch k.stringValue {{\n{dec}            default: self = .unknown(try JSONValue(from: decoder)); return\n            }}\n        \
+         }}\n        {rest_dec}\n    }}\n\n    public func encode(to encoder: any Encoder) throws {{\n        switch self {{\n\
+         {enc}{rest_enc}        case .unknown(let v): try v.encode(to: encoder)\n        }}\n    }}\n}}\n"
+    )
+}
+
 fn swift(s: &Value) -> Out {
     Ok(format!(
         "public let blocksSchemaVersion = {SCHEMA_VERSION}\n{}",
@@ -592,6 +727,7 @@ fn swift_defs(s: &Value) -> Out {
             Def::Struct(ps) => swift_struct(name, ps),
             Def::Words(ws) => swift_words(name, ws),
             Def::Union(ts) => swift_union(name, ts),
+            Def::Keyed(cases, rest) => swift_keyed(name, cases, *rest),
             Def::Tagged { tag, cases, rest } => swift_tagged(name, tag, cases, *rest),
         });
     }

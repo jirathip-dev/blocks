@@ -3,11 +3,13 @@ generated = [
     "schema/blocks.schema.json",
     "schema/sample.json",
     "web/src/gen/types.ts",
+    "web/src/gen/hooks.ts",
     "web/src/gen/sample.ts",
     "swift/Sources/Blocks/Gen/Blocks.swift",
     "web/src/gen/schemes.ts",
     "swift/Sources/Blocks/Gen/Schemes.swift",
     "swift/Sources/Blocks/Gen/Style.swift",
+    "fixtures/blocks/*.json",
 ]
 generate = "just gen"
 shared = ["crates/blocks/src/lib.rs", "crates/*/tests/support/**"]
@@ -29,33 +31,51 @@ paths = ["docs/*.md", "README.md"]
 skip = [".drover/**"]
 
 [[layer]]
-name = "screen"
-paths = ["crates/blocks/src/screen.rs"]
-mods = ["crate::screen"]
+name = "expr"
+paths = ["crates/blocks/src/expr.rs"]
+mods = ["crate::expr", "blocks::expr"]
 
 [[layer]]
-name = "ops"
-paths = ["crates/blocks/src/ops.rs"]
-mods = ["crate::ops"]
-may_use = ["screen"]
+name = "kind"
+paths = ["crates/blocks/src/kind/**"]
+mods = ["crate::kind"]
+may_use = ["expr"]
+
+[[layer]]
+name = "built"
+paths = ["crates/blocks/src/built.rs"]
+mods = ["crate::built"]
+may_use = ["kind"]
 
 [[layer]]
 name = "wire"
 paths = ["crates/blocks/src/wire.rs"]
 mods = ["crate::wire", "blocks::wire"]
-may_use = ["screen", "ops"]
+may_use = ["kind"]
+
+[[layer]]
+name = "patch"
+paths = ["crates/blocks/src/patch.rs"]
+mods = ["crate::patch"]
+may_use = ["kind", "wire"]
+
+[[layer]]
+name = "diff"
+paths = ["crates/blocks/src/diff.rs"]
+mods = ["crate::diff"]
+may_use = ["kind", "wire", "patch"]
 
 [[layer]]
 name = "shelf"
 paths = ["crates/blocks/src/shelf.rs"]
 mods = ["crate::shelf"]
-may_use = ["screen", "ops", "wire"]
+may_use = ["kind", "wire", "diff", "patch"]
 
 [[layer]]
 name = "mirror"
 paths = ["crates/blocks/src/mirror.rs"]
 mods = ["crate::mirror"]
-may_use = ["screen", "ops", "wire"]
+may_use = ["kind", "wire", "patch"]
 
 [[layer]]
 name = "theme"
@@ -66,7 +86,7 @@ mods = ["crate::theme"]
 name = "codegen"
 paths = ["crates/blocks/src/codegen.rs", "crates/blocks/src/bin/**"]
 mods = ["crate::codegen", "blocks::codegen"]
-may_use = ["screen", "ops", "wire", "shelf", "mirror", "theme"]
+may_use = ["expr", "kind", "built", "wire", "patch", "diff", "shelf", "mirror", "theme"]
 
 [[ban]]
 pattern = "drover"
@@ -79,6 +99,11 @@ ignore_case = true
 pattern = "import SwiftUI"
 paths = ["swift/Sources/Blocks/**"]
 reason = "Blocks is Foundation only: the views live in BlocksUI"
+
+[[ban]]
+pattern = "json!"
+paths = ["crates/*/src/**"]
+reason = "q2063: no hand-written JSON; build the typed value and serialize it"
 
 [[ban]]
 pattern = "tokio"

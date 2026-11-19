@@ -1,27 +1,41 @@
 # The wire schema
 
-The Rust types in `crates/blocks/src/` (`Block` and its kinds, `Op`, and the stream's messages in `wire`) are the one source.
+The Rust types in `crates/blocks/src/` (`Block` and its kinds in `kind/`, `Expr` in `expr.rs`, `Op`, `Action`,
+`Answer` and the stream's messages in `wire`) are the one source.
 `just gen` derives the rest, and CI's arch-check fails a PR whose generated files differ from what it writes:
 
 - `schema/blocks.schema.json`: the JSON Schema of a `Frame`; `$defs` hold `Block`, `Op`, `Hello`, `Bye`, `Sync`, `Synced`
   and the old per-screen `OldFrame`
 - `schema/sample.json`: old per-screen frames serialized by the Rust code, which the Swift test decodes
 - `web/src/gen/types.ts` and `web/src/gen/sample.ts`: the TS types, and the sample type-checked against them
+- `web/src/gen/hooks.ts`: each kind's style hooks, its `variant` field and its `parts`
 - `swift/Sources/Blocks/Gen/Blocks.swift`: the Swift `Codable` types (`JSONValue.swift` beside it is kept by hand)
 - `swift/Sources/Blocks/Gen/Style.swift`: `theme::Style`, an app's `style.json`, which `fixtures/styles/` holds good and bad
+- `fixtures/blocks/<kind>.json`: each kind's typed sample (`blocks::samples()`), one file per kind
 
 ## Blocks
 
 A block is a JSON object whose `type` names its kind, as drover and cooee send it: `{"type": "row", "title": "Hi"}`.
 The core kinds are the superset of both apps': cooee's 21 (`screen`, `sheet`, `section`, `list`, `row`, `card`,
 `choice`, `form`, `config`, `secret`, `run`, `button`, `chips`, `stat`, `text`, `images`, `web`, `diff`, `editor`,
-`scene`, `diagram`) and drover's `composer`, with every field either app sends. Any other `type` is an app's own
-kind (`AppBlock`): it is kept whole, and may carry a `fallback` row. A core kind of the wrong shape is refused, by
-the types and by the schema.
+`scene`, `diagram`), drover's `composer`, the content kinds `prose`, `hero`, `media`, `nav` and the `island`, 27
+in all, with every field either app sends. Each kind has `new(<its required fields>)` and a setter per optional
+one; a server builds its blocks so, never with `json!`. Any other `type` is an app's own kind (`AppBlock`): it is
+kept whole, and may carry a `fallback` row. A core kind of the wrong shape is refused, by the types and by the
+schema. `Built::of` writes a server's own screen with the fallback of each kind a client may not draw, and
+`Built::check` lists its faults: an id twice, an unknown kind, a wrong shape, a field its kind lacks, an app kind
+named like a core one or with no fallback, a state key read but not declared.
+
+Every kind takes `show`, an `Expr`: `{"get": "key"}`, `not`, `all`, `any`, `eq`, `lt`, `len`, `has`, `is` (a named
+pattern), `add`, `sub`, `cat`, `pick`, or a bare value. `eval` is total: a wrong type gives `null`, and `null` is
+false. `fixtures/behave/` holds its cases (state, expression, value), and an operation a reader does not know
+evaluates to `null`.
 
 `fixtures/screens/` holds both apps' screens as they sent them, copied verbatim (cooee at `8ca09a316`, drover at
 `dd475fcf0`), and `cooee/screen-tests-insert.json`, cooee's `ScreenTests` inserts written out as frames. Each
-parses into the Rust types and serializes back equal, fits the schema, and decodes in Swift.
+parses into the Rust types and serializes back equal, fits the schema, and decodes in Swift. None has a fault a
+reader sees (a wrong shape, an unknown field or kind) but drover's `scene` of the herd, its own shape, which
+becomes drover's app kind `herd`.
 
 ## Ops and the stream
 

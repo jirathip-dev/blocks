@@ -1,0 +1,14 @@
+{
+  "type": "nav",
+  "id": "nav",
+  "brand": {
+    "label": "Blocks",
+    "href": "/"
+  },
+  "links": [
+    {
+      "label": "Docs",
+      "href": "/docs"
+    }
+  ]
+}

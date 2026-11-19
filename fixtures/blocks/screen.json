@@ -1,0 +1,18 @@
+{
+  "type": "screen",
+  "id": "home",
+  "title": "Home",
+  "state": {
+    "ready": true
+  },
+  "blocks": [
+    {
+      "type": "text",
+      "id": "hint",
+      "markdown": "Ready",
+      "show": {
+        "get": "ready"
+      }
+    }
+  ]
+}
