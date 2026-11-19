@@ -5,6 +5,7 @@ export type Shape = boolean | { type?: string | string[]; $ref?: string; propert
 export const kinds: Record<string, string> = {
   "button": "Button",
   "card": "Card",
+  "chart": "Chart",
   "chips": "Chips",
   "choice": "Choice",
   "composer": "Composer",
@@ -196,6 +197,7 @@ export const defs: Record<string, Shape> = {
             "island",
             "table",
             "steps",
+            "chart",
             "toast"
           ]
         },
@@ -633,6 +635,19 @@ export const defs: Record<string, Shape> = {
         "type": "object"
       },
       {
+        "$ref": "#/$defs/Chart",
+        "properties": {
+          "type": {
+            "const": "chart",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      {
         "$ref": "#/$defs/Toast",
         "properties": {
           "type": {
@@ -932,6 +947,133 @@ export const defs: Record<string, Shape> = {
       },
       {
         "$ref": "#/$defs/Label"
+      }
+    ]
+  },
+  "Chart": {
+    "additionalProperties": true,
+    "properties": {
+      "chart": {
+        "$ref": "#/$defs/ChartKind"
+      },
+      "empty": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "era": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Era"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "format": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/ChartFormat"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "id": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "lang": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "selected": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "series": {
+        "items": {
+          "$ref": "#/$defs/Series"
+        },
+        "type": "array"
+      },
+      "show": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "tap": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Tap"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "title": {
+        "type": "string"
+      },
+      "x": {
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      }
+    },
+    "required": [
+      "title",
+      "chart",
+      "x",
+      "series"
+    ],
+    "type": "object"
+  },
+  "ChartFormat": {
+    "anyOf": [
+      {
+        "enum": [
+          "count",
+          "thb",
+          "thb_m",
+          "percent"
+        ],
+        "type": "string"
+      },
+      {
+        "type": "string"
+      }
+    ]
+  },
+  "ChartKind": {
+    "anyOf": [
+      {
+        "enum": [
+          "bar",
+          "stacked",
+          "line",
+          "combo",
+          "donut"
+        ],
+        "type": "string"
+      },
+      {
+        "type": "string"
       }
     ]
   },
@@ -3838,6 +3980,64 @@ export const defs: Record<string, Shape> = {
       "blocks"
     ],
     "type": "object"
+  },
+  "Series": {
+    "properties": {
+      "as": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/SeriesMark"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "dash": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "name": {
+        "type": "string"
+      },
+      "tone": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Tone"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "values": {
+        "items": {
+          "type": "number"
+        },
+        "type": "array"
+      }
+    },
+    "required": [
+      "name",
+      "values"
+    ],
+    "type": "object"
+  },
+  "SeriesMark": {
+    "anyOf": [
+      {
+        "enum": [
+          "bar",
+          "line"
+        ],
+        "type": "string"
+      },
+      {
+        "type": "string"
+      }
+    ]
   },
   "SetState": {
     "properties": {

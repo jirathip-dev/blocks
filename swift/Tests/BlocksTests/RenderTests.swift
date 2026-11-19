@@ -136,6 +136,27 @@ final class RenderTests: XCTestCase {
         XCTAssertGreaterThan(try pixels(BlocksView(block(busy), source: .core), red), 0)
     }
 
+    private func near(_ colour: Color) throws -> (UInt8, UInt8, UInt8, UInt8) -> Bool {
+        let rgb = try XCTUnwrap(NSColor(colour).usingColorSpace(.sRGB))
+        let want = [rgb.redComponent, rgb.greenComponent, rgb.blueComponent].map { Int($0 * 255) }
+        return { r, g, b, a in a > 200 && zip([r, g, b].map(Int.init), want).allSatisfy { abs($0 - $1) < 12 } }
+    }
+
+    func testAChartDrawsItsBarsInInkAndItsWarnLineInAmberAndAnEmptyOneNeither() throws {
+        let palette = Look(still: true).palette
+        let (ink, amber) = (try near(palette.lead), try near(palette.amber))
+        let chart = BlocksView(try fixture("chart"), source: .core)
+        XCTAssertGreaterThan(try pixels(chart, ink), 2000, "six revenue bars")
+        XCTAssertGreaterThan(try pixels(chart, amber), 150, "the target line")
+        let empty = try block(
+            #"{"type": "chart", "title": "Revenue", "chart": "combo", "x": [], "series": [], "empty": "None yet"}"#)
+        XCTAssertLessThan(try pixels(BlocksView(empty, source: .core), ink), 300, "no bars, text only")
+        XCTAssertEqual(try pixels(BlocksView(empty, source: .core), amber), 0)
+        let donut = try block(
+            #"{"type": "chart", "title": "Spend", "chart": "donut", "x": ["a", "b"], "series": [{"name": "s", "values": [3, 1]}]}"#)
+        XCTAssertGreaterThan(try pixels(BlocksView(donut, source: .core), ink), 2000, "the biggest slice in ink")
+    }
+
     func testAToastTicksItsToneCutsLongTextAtThreeLinesAndDrawsDoneWhenEmpty() throws {
         let palette = Look(still: true).palette
         func near(_ color: Color) throws -> (UInt8, UInt8, UInt8, UInt8) -> Bool {

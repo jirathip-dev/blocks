@@ -16,11 +16,12 @@ pub(crate) const VARIANTS: [(&str, &str); 5] = [
     ("images", "size"),
 ];
 
-pub(crate) const ROLES: [(&str, &str); 5] = [
+pub(crate) const ROLES: [(&str, &str); 6] = [
     ("section", "region"),
     ("form", "form"),
     ("config", "form"),
     ("nav", "navigation"),
+    ("chart", "figure"),
     ("toast", "status"),
 ];
 pub(crate) const NAMES: [&str; 9] = [

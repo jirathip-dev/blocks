@@ -1,10 +1,10 @@
 use super::{
-    Act, Block, BulkAction, Button, Card, CardKind, Cell, ChipOption, Chips, Choice, ChoiceOption, Column, ColumnKind,
-    Composer, Diagram, Diff, Editor, Era, ExportFormat, Fallback, Field, FieldKind, Form, Gesture, Hero, Hunk, Image,
-    Images, Island, Keyboard, Label, Lane, LaneState, LineItem, Lines, Link, List, Media, Nav, NavLink, Part,
-    PhonePart, Prose, Round, RoundLane, Row, RowError, Run, Scene, Screen, Secret, Section, Sheet, Shown, SortDir,
-    Span, Stage, Stat, Steps, Submit, Table, TableRow, TableSelect, TableSort, Tap, Text, Time, Toast, Tone, Toned,
-    Total, Undo, Web,
+    Act, Block, BulkAction, Button, Card, CardKind, Cell, Chart, ChartFormat, ChartKind, ChipOption, Chips, Choice,
+    ChoiceOption, Column, ColumnKind, Composer, Diagram, Diff, Editor, Era, ExportFormat, Fallback, Field, FieldKind,
+    Form, Gesture, Hero, Hunk, Image, Images, Island, Keyboard, Label, Lane, LaneState, LineItem, Lines, Link, List,
+    Media, Nav, NavLink, Part, PhonePart, Prose, Round, RoundLane, Row, RowError, Run, Scene, Screen, Secret, Section,
+    Series, SeriesMark, Sheet, Shown, SortDir, Span, Stage, Stat, Steps, Submit, Table, TableRow, TableSelect,
+    TableSort, Tap, Text, Time, Toast, Tone, Toned, Total, Undo, Web,
 };
 use crate::expr::{Expr, Lit, State};
 
@@ -302,7 +302,36 @@ fn views() -> Vec<Block> {
         Block::Diff(Box::new(Diff::new("src/lib.rs", vec![hunk]).id("change"))),
         Block::Scene(Box::new(Scene::new().id("scene").label("lanes").lanes(vec![lane]))),
         Block::Diagram(Box::new(Diagram::new("[*] --> a\na --> b").id("flow").title("Flow"))),
+        Block::Chart(Box::new(chart())),
     ]
+}
+
+fn chart() -> Chart {
+    let months = ["2024-01", "2024-02", "2024-03", "2024-04", "2024-05", "2024-06"];
+    let series = |name: &str, values: [u32; 6]| Series {
+        name: name.into(),
+        values: values.map(|v| (v * 100_000).into()).to_vec(),
+        ..Series::default()
+    };
+    let target = Series {
+        tone: Some(Tone::Warn),
+        mark: Some(SeriesMark::Line),
+        ..series("Target", [110, 110, 120, 120, 120, 125])
+    };
+    Chart::new(
+        "Revenue and target",
+        ChartKind::Combo,
+        months.map(String::from).to_vec(),
+        vec![series("Revenue", [111, 106, 129, 118, 122, 114]), target],
+    )
+    .id("revenue")
+    .era(Era::Be)
+    .format(ChartFormat::ThbM)
+    .selected("2024-03")
+    .tap(Tap {
+        action: Some("sales.month".into()),
+        ..Tap::default()
+    })
 }
 
 fn stepper() -> Vec<Block> {
