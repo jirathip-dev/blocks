@@ -92,5 +92,5 @@ fn expect_fields_lists_each_forms_fields_native_plain_or_hidden_and_check_compar
     let mut drew = want.clone();
     drew.children[0].fields.as_mut().unwrap()[0].drawn = FieldDrawn::Plain;
     assert_eq!(check(Some(&drew), &want, "").len(), 1);
-    assert!(check(Some(&want), &want, "").is_empty());
+    assert_eq!(check(Some(&want), &want, ""), Vec::<String>::new());
 }
