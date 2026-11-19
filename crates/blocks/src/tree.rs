@@ -141,3 +141,38 @@ fn node(v: &Value, kinds: &[&str], hide: &BTreeSet<String>) -> Node {
         children: under.into_iter().map(|c| node(c, kinds, hide)).collect(),
     }
 }
+
+fn who(n: &Node) -> String {
+    n.id.as_ref()
+        .map_or_else(|| n.kind.clone(), |id| format!("{}#{id}", n.kind))
+}
+
+/// Where `got` differs from `want` in kind, id, drawn or child count, each as `at/…: what`; empty when it matches.
+pub fn check(got: Option<&Node>, want: &Node, at: &str) -> Vec<String> {
+    let Some(got) = got.filter(|g| g.kind == want.kind && g.id == want.id && g.drawn == want.drawn) else {
+        let drew = got.map_or_else(|| "nothing".into(), |g| format!("{} {}", who(g), drawn(g.drawn)));
+        return vec![format!(
+            "{at}: drew {drew}, expected {} {}",
+            who(want),
+            drawn(want.drawn)
+        )];
+    };
+    let here = format!("{at}/{}", who(got));
+    let mut out = Vec::new();
+    if got.children.len() != want.children.len() {
+        let (g, w) = (got.children.len(), want.children.len());
+        out.push(format!("{here}: {g} children, expected {w}"));
+    }
+    for (i, c) in want.children.iter().enumerate() {
+        out.extend(check(got.children.get(i), c, &here));
+    }
+    out
+}
+
+fn drawn(d: Drawn) -> &'static str {
+    match d {
+        Drawn::Native => "native",
+        Drawn::Fallback => "fallback",
+        Drawn::Hidden => "hidden",
+    }
+}
