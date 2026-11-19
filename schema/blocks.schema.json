@@ -197,7 +197,8 @@
               "hero",
               "media",
               "nav",
-              "island"
+              "island",
+              "steps"
             ]
           },
           "type": "string"
@@ -205,6 +206,41 @@
       },
       "required": [
         "type"
+      ],
+      "type": "object"
+    },
+    "Bar": {
+      "description": "One progress bar: its value from 0 to 100 and its tone.",
+      "properties": {
+        "label": {
+          "type": "string"
+        },
+        "sub": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "tone": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Tone"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "value": {
+          "format": "uint8",
+          "maximum": 255,
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "label",
+        "value"
       ],
       "type": "object"
     },
@@ -566,6 +602,19 @@
           "properties": {
             "type": {
               "const": "island",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/Steps",
+          "properties": {
+            "type": {
+              "const": "steps",
               "type": "string"
             }
           },
@@ -4106,6 +4155,38 @@
       ],
       "type": "object"
     },
+    "Stage": {
+      "description": "One step of a stepper: a done one with a tap can be pressed.",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "sub": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "tap": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Tap"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "label"
+      ],
+      "type": "object"
+    },
     "Stat": {
       "additionalProperties": true,
       "description": "Figures: a list of tiles, or one tile inline.",
@@ -4294,6 +4375,75 @@
         "id",
         "text"
       ],
+      "type": "object"
+    },
+    "Steps": {
+      "additionalProperties": true,
+      "description": "A stepper of named steps with its current one, or progress bars.",
+      "properties": {
+        "bars": {
+          "items": {
+            "$ref": "#/$defs/Bar"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "current": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "done": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "fallback": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Fallback"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "steps": {
+          "items": {
+            "$ref": "#/$defs/Stage"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "title": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
       "type": "object"
     },
     "Submit": {

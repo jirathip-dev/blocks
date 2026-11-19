@@ -1,4 +1,4 @@
-import { type State, view } from "../behave.ts";
+import { type State, view } from "../core/eval.ts";
 import type { Field, Form } from "../gen/types.ts";
 import { btn, type Ctx, draft, el, h, sent, type Store } from "./index.ts";
 

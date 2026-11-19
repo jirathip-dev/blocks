@@ -220,6 +220,62 @@ font:12px/18px ui-monospace,SFMono-Regular,Menlo,monospace;tab-size:4}
 .ln.fail .lns{color:var(--r)}
 .lnx{color:var(--mute);font-size:var(--fs-meta);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 @container (width < 600px){.scl>li{flex:1 1 100%;min-width:0}.scl>li>.ln{width:100%}.lnb{flex:1}.lnh{justify-content:space-between}.lnt{max-width:none}}
+.sp,.pg{container-type:inline-size;margin:var(--seam) 0;padding:var(--s2) var(--s3) var(--s3);background:var(--card);border:1px solid var(--edge);border-radius:var(--radius)}
+.sp>.sh,.pg>.sh{margin:0 0 var(--s2)}
+.spl{display:flex;margin:0;padding:0;list-style:none}
+.spi{flex:1 1 0;min-width:0;display:flex}
+.spi:last-child{flex:0 1 auto;max-width:34%}
+.spc{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;min-height:var(--hit);color:inherit;text-decoration:none}
+.spc.tap{cursor:pointer}
+.spc.tap:focus-visible{outline:none}
+.spc.tap:focus-visible .spm{outline:2px solid var(--l);outline-offset:2px}
+.spc.tap:focus-visible .spn{text-decoration-thickness:2px}
+.spr{display:flex;align-items:center;height:22px;margin-bottom:var(--s1)}
+.spm{flex:none;box-sizing:border-box;display:grid;place-items:center;width:22px;height:22px;border:1px solid var(--edge);border-radius:var(--radius);background:var(--bg);color:var(--mute);font:600 var(--fs-meta)/1 inherit;font-style:normal;font-variant-numeric:tabular-nums}
+.spk{flex:1;height:0;margin:0 var(--s2);border-top:1px solid var(--edge)}
+.spi:last-child .spk{display:none}
+.spn{padding-right:var(--s3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sps{padding-right:var(--s3);color:var(--mute);font-size:var(--fs-meta);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.spi.done .spm{border-color:var(--l);background:var(--l);color:var(--bg)}
+.spi.done .spk{border-top:2px solid var(--l)}
+.spi.done .spc.tap .spn{color:var(--link);text-decoration:underline;text-underline-offset:2px}
+.spi.now .spm{border:2px solid var(--l);color:var(--fg)}
+.spi.now .spn{font-weight:700}
+.spi.now .sps{color:var(--fg)}
+.spi.todo .spn{color:var(--mute)}
+.spx{display:none}
+@container (width < 600px){
+.spi .sps{display:none}.spi.now .sps{display:block}
+.spl:has(>:nth-child(5)) .spn,.spl:has(>:nth-child(5)) .sps{display:none}
+.spl:has(>:nth-child(5))+.spx{display:flex;gap:var(--s2);align-items:baseline;margin-top:var(--s1)}
+.spl:has(>:nth-child(5)) .spi:last-child{flex:none}
+.spl:has(>:nth-child(5)) .spk{margin:0 var(--s1)}
+.spl:has(>:nth-child(5)) .spc{min-width:var(--hit)}
+}
+.spx b{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.spx .m{flex:none;font-size:var(--fs-meta)}
+.pgl{display:flex;flex-direction:column;gap:var(--s3)}
+.pgr{overflow-x:clip;display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:var(--s3);row-gap:var(--s1);align-items:baseline;--tk:transparent;--tx:var(--fg)}
+.pgn{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pgv{font-weight:700;font-variant-numeric:tabular-nums;color:var(--tx)}
+.pgt{position:relative;grid-column:1/-1;height:8px;background:var(--line);border-radius:var(--radius)}
+.pgt>b{display:block;height:100%;background:var(--l);border-radius:var(--radius);transform:scaleX(calc(var(--v) / 100));transform-origin:left;transition:transform calc(var(--enter) * var(--motion,1)) var(--ease)}
+.pgt::after{content:"";position:absolute;top:-3px;left:0;width:100%;height:14px;background:linear-gradient(var(--tk),var(--tk)) 0 0/3px 100% no-repeat;transform:translateX(calc(var(--v) * 1% - var(--v) * .03px));transition:transform calc(var(--enter) * var(--motion,1)) var(--ease)}
+.pgs{grid-column:1/-1;color:var(--mute);font-size:var(--fs-meta);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pgr.zero .pgv{color:var(--mute);font-weight:500}
+.pgr:is(.ok,.working){--tk:var(--g);--tx:var(--fk-g)}
+.pgr:is(.warn,.needs){--tk:var(--a);--tx:var(--fk-a)}
+.pgr:is(.bad,.fail){--tk:var(--r);--tx:var(--r)}
+.pgr.info{--tk:var(--c);--tx:var(--fk-c)}
+.pgr.accent{--tk:var(--p);--tx:var(--fk-p)}
+.pgr:is(.warn,.needs,.bad,.fail) .pgs{color:var(--tx)}
+@container (width >= 600px){
+.pgl.rows{gap:0}
+.pgl.rows>.pgr{grid-template-columns:minmax(0,2fr) minmax(0,3fr) 5ch;align-items:center;min-height:var(--hit);row-gap:0;padding:var(--s2) 0;border-bottom:1px solid var(--line)}
+.pgl.rows>.pgr:last-child{border-bottom:0}
+.pgl.rows .pgn{grid-row:1}.pgl.rows .pgt{grid-column:2;grid-row:1/3}.pgl.rows .pgv{grid-column:3;grid-row:1/3;text-align:right}
+.pgl.rows .pgs{grid-column:1;grid-row:2}
+}
 .rr>.row .rc{flex:none;width:var(--s4);color:var(--mute);text-align:center;font-weight:700}
 .rr.open>.row .rc{transform:rotate(90deg)}
 .rr.open>.row{border-bottom:0}

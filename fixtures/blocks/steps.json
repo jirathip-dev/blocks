@@ -1,0 +1,24 @@
+{
+  "type": "steps",
+  "id": "stop",
+  "title": "Stop 3 of 8",
+  "steps": [
+    {
+      "id": "stop",
+      "label": "Stop",
+      "sub": "arrived 09:42",
+      "tap": {
+        "open": "stop"
+      }
+    },
+    {
+      "id": "lines",
+      "label": "Lines",
+      "sub": "6 checked",
+      "tap": {
+        "open": "lines"
+      }
+    }
+  ],
+  "done": true
+}

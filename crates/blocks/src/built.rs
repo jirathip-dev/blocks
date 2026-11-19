@@ -2,7 +2,7 @@ use std::collections::{BTreeMap, BTreeSet};
 
 use serde_json::{Map, Value};
 
-use crate::kind::{Block, Fallback, Fields, Screen, Tap};
+use crate::kind::{Block, Fallback, Fields, Screen, Steps, Tap};
 
 /// What makes a screen unfit to send: a server checks its own before it serves it.
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -136,6 +136,21 @@ fn shallow(o: &Fields) -> Value {
     Value::Object(top)
 }
 
+fn unplaced(s: &Steps) -> Option<&'static str> {
+    let steps = s.steps.as_deref().unwrap_or_default();
+    let at = s.current.as_ref().map(|c| steps.iter().any(|x| &x.id == c));
+    if steps.is_empty() {
+        return None;
+    }
+    match (s.bars.is_some(), at, s.done == Some(true)) {
+        (true, ..) => Some("a steps block with both steps and bars"),
+        (false, Some(false), _) => Some("a stepper whose current names no step"),
+        (false, Some(true), true) => Some("a stepper both done and at a current step"),
+        (false, None, false) => Some("a stepper with neither a current step nor done"),
+        (false, Some(true), false) | (false, None, true) => None,
+    }
+}
+
 struct Walk<'a> {
     app: &'a [&'a str],
     ids: BTreeMap<String, String>,
@@ -238,6 +253,12 @@ impl Walk<'_> {
                     field: f.clone(),
                 });
                 self.out.extend(faults.collect::<Vec<_>>());
+                if let Block::Steps(s) = &b {
+                    self.out.extend(unplaced(s).map(|why| Fault::Shape {
+                        kind: k.into(),
+                        why: why.into(),
+                    }));
+                }
             }
         }
         let chip = o.get("name").and_then(Value::as_str);
