@@ -1,0 +1,7 @@
+Decided: merge origin/staging, route both chart and diff in the site writer, and regenerate web/dist rather than hand-merge it.
+Because: .drover/arch.toml:9
+Decided: the TS check() skips a block's fallback when counting senders of an action, matching Built::check.
+Because: crates/blocks/src/built.rs:271
+Rejected: none
+Check: npm --prefix web run test passes check.test.ts over fixtures/check with the chart fixture.
+Owner: The chart branch now carries staging's diff view and its web screen check, with no behaviour changes.
