@@ -1,0 +1,3 @@
+.tabh{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s4) var(--s4);margin:var(--s3) 0 var(--s2);padding:0 var(--s2)}
+.tabh>.tw{margin-right:auto}
+.scr>.msgs{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding-bottom:var(--s2)}
