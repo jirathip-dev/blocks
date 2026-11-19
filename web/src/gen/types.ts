@@ -86,6 +86,8 @@ export type FieldValue = string | number | boolean;
 
 export type Figure = { avatar?: string | null; coat?: string | null; grow?: string | null; icon?: string | null; state?: Tone | null; tool?: string | null };
 
+export type Finding = { at: string; file: string; fix: string; line?: number | null; message: string; rule: string; severity: Severity; steps?: string | null };
+
 export type Fold = { line: string; main?: FoldMain | null };
 
 export type FoldMain = { action: string; block?: string | null; label: string; value?: string | null; values?: Record<string, unknown> | null };
@@ -184,11 +186,15 @@ export type Secret = { action: string; id?: string | null; label?: string | null
 
 export type Section = { blocks: Block[]; footer?: string | null; header?: string | null; id?: string | null; show?: Expr | null };
 
+export type Seen = { at: string; detail: string; file?: string | null; line?: number | null; rule: string; run?: string | null; shot?: string | null };
+
 export type Series = { as?: SeriesMark | null; dash?: boolean | null; name: string; tone?: Tone | null; values: number[] };
 
 export type SeriesMark = "bar" | "line";
 
 export type SetState = { key: string; to: Expr };
+
+export type Severity = "error" | "warn";
 
 export type Sheet = { blocks: Block[]; cancel?: string | null; done?: Submit | null; id?: string | null; show?: Expr | null; title: string };
 
