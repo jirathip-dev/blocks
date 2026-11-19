@@ -1,0 +1,4 @@
+Decided: kept both sides of the .drover/arch.toml conflict: slice 0's shared list and size limits plus staging's codegen/mod.rs entry
+Because: .drover/arch.toml:28
+Rejected: none
+Owner: The branch is brought up to date with the latest shared changes; nothing else changes.
