@@ -4,7 +4,7 @@ import BlocksUI
 import Foundation
 
 let usage =
-    "usage: blocks-snap --screen <file> [--size 390x844] [--scheme <name>] [--script <steps.json>]"
+    "usage: blocks-snap --screen <file> [--size 390x844] [--scheme light|dark] [--script <steps.json>]"
     + " [--expect <tree.json>] [--check] --out <dir>\n"
 
 func fail(_ text: String, _ code: Int32) -> Never {
@@ -38,7 +38,7 @@ func read<T: Decodable>(_ type: T.Type, _ path: String) -> T {
 
 var look = Look(still: true)
 if let name = options["scheme"] {
-    guard let scheme = blocksSchemes[name], let palette = Palette(tokens: scheme.tokens, dark: scheme.mode == .dark)
+    guard let scheme = ["light": blocksDefaultLight, "dark": blocksDefaultDark][name], let palette = Palette(tokens: scheme.tokens, dark: scheme.mode == .dark)
     else { fail("blocks-snap: no scheme \(name)\n", 2) }
     look.palette = palette
 }
