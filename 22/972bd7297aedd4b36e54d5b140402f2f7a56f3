@@ -1,0 +1,36 @@
+Decided: `table` is a core kind with typed cells (text, number, label); a blank cell is a missing key, never null.
+Because: "The kind in the crate with generated schema, TS and Swift; a fixture in `fixtures/blocks`"
+Decided: formatting, sort, totals and phone roles live in the crate's kind layer, shared by the static writer and the fallback.
+Because: docs/design/table/README.md:13
+Decided: row ops: insert a Child::TableRow, merge and remove name a row by id, and diff sends a table's changed rows so.
+Because: "a fallback, the static site writer's element, and the row diff working on its rows"
+Rejected: a per-row DOM patch in the HTML patcher — a row op redraws its table from the keyed state, so the filter, sort, ticks and edges stay with less code.
+Decided: the SwiftUI grid has no pinned header; a header outside a Grid loses column alignment.
+Because: q2274
+Check: blocks-shot --check for fixtures/blocks/table.json at 1440x900 and 390x844, and web/test/table.test.ts in WebKit.
+Owner: Screens can show a sortable, filterable data table with totals, bulk actions and export, in HTML and SwiftUI, and stacked rows on a phone.
+
+Decided: merge origin/staging and rebuild the generated web/dist/blocks.js instead of hand-merging it.
+Because: "a fallback, the static site writer's element, and the row diff working on its rows" stays as built; justfile:10 builds the bundle
+Rejected: none
+Owner: The table branch is brought up to date with the latest shared work; nothing changes in how tables look or behave.
+
+Decided: merge origin/staging again and rebuild the generated web/dist/blocks.js instead of hand-merging it.
+Because: "a fallback, the static site writer's element, and the row diff working on its rows" stays as built; justfile:10 builds the bundle
+Rejected: none
+Owner: The table branch is brought up to date with the latest shared work; nothing changes in how tables look or behave.
+
+Decided: merge origin/staging keeping both sides: table sits beside lines and steps, kind counts go to 30, and the generated files are rebuilt by the gen steps.
+Because: "a fallback, the static site writer's element, and the row diff working on its rows" stays as built; justfile:9 lists the gen steps
+Decided: the table lines of docs/schema.md move into staging's docs/schema/blocks.md and docs/schema/stream.md.
+Because: docs/schema.md:9 now points the blocks text to docs/schema/blocks.md
+Rejected: none
+Owner: The table branch is brought up to date with the latest shared work; nothing changes in how tables look or behave.
+
+Decided: the showcase test expects 36 pages, since the table kind adds kind-table.html to the site.
+Because: site/src/kinds.rs:531
+Decided: merge origin/staging (#181, docs only) before pushing.
+Because: "a fallback, the static site writer's element, and the row diff working on its rows" stays as built
+Rejected: none
+Check: the Pages build job's showcase test passes at the new head.
+Owner: The showcase site's check now counts the new table page; nothing changes in how tables look or behave.
