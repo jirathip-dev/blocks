@@ -1,0 +1,14 @@
+Decided: one `chart` kind with `chart` = bar|stacked|line|combo|donut and one `format` per chart, so a combo never has a second axis.
+Because: q2294
+Decided: the static writer and the HTML renderer write the same element; site.test compares every mark, label and table cell.
+Because: "the static writer's element"
+Decided: `Built::check` skips a block's fallback when counting senders of an action.
+Because: crates/blocks/src/built.rs:241
+Rejected: dropping `tap` from a chart's fallback only — the same false fault hit any card with an action tap.
+Decided: staging build fix in `children()`: a table's rows are not child blocks, as `placed()` already says.
+Because: crates/blocks/src/built.rs:86
+Decided: reuse the table's `Era` type; `thb_m` keeps its underscore through a per-variant rename in `words!`.
+Because: crates/blocks/src/kind/chart.rs:17
+Rejected: a React adapter view — #81 has only its ADR and core entry, no adapter to wire.
+Check: a line chart's axis is fitted to its data; bars and combos start at zero (tests/site.rs).
+Owner: Charts now draw in the web page, the static site and the Apple app, with baht amounts and Buddhist-Era months.
