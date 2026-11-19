@@ -1,0 +1,4 @@
+Decided: merged origin/staging (secret #74, swift harness #59) and kept both sides: the diff and secret tests in render.test.ts, gaps list without diff or secret; rebuilt web/dist from the merged sources
+Because: web/test/render.test.ts:17
+Rejected: none
+Owner: Brought the diff view up to date with the latest shared branch; nothing changes for users beyond the diff view itself.
