@@ -1,0 +1,8 @@
+Decided: merge origin/staging, then trim the pages code to fit the line cap with no behaviour change
+Because: ci/cap.toml:2
+Decided: the static PDF link uses the shared btn, whose empty class no longer leaves a trailing space
+Because: crates/blocks/src/site/mod.rs:330
+Rejected: asking for a cap raise — the PR fits at 28998 / 29000 after trimming, so a raise is not needed yet
+Rejected: ariaLabel and role by property — the node test DOM does not reflect them, so setAttribute stays
+Check: sh scripts/line-cap.sh reports 28998 / 29000 at this head; web, Rust and Swift tests pass
+Owner: The document view was trimmed so the repo stays under its line limit; it works the same as before.
