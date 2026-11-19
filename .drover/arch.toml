@@ -15,6 +15,7 @@ generated = [
     "web/dist/blocks.css",
     "fixtures/blocks/*.json",
     "fixtures/trees/*.json",
+    "fixtures/trees/swift/*.json",
 ]
 generate = "just gen"
 shared = ["crates/blocks/src/lib.rs", "crates/*/tests/support/**"]

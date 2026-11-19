@@ -165,7 +165,8 @@ pub fn expect(screen: &Built, kinds: &[&str], state: &State) -> Node;      // th
 - **Input** is by block id. WebKit gets real events on the element; SwiftUI calls the handler or binding the block
   registered with the same wrapper. The harness answers actions from the script and never opens a network.
 - **`--check`**: the tree equals `--expect` in kind, id, order and `drawn`; every drawn node has a size; none leaves
-  the screen's width; no two siblings overlap. `fixtures/trees/` holds the expected tree of every fixture.
+  the screen's width; no two siblings overlap. `fixtures/trees/` holds the expected tree of every fixture
+  for HTML, `fixtures/trees/swift/` for SwiftUI (#19: its native kinds differ until B14 and B15).
 - **Test API**, the same thing in process: `shot({ screen, steps })` from `web/shot`, `Snapshot(screen).run(steps)`
   from `BlocksSnapshot`. An app with SwiftUI styles or islands uses the API, since a CLI cannot load its views.
 - **Who calls it**: this repo's `web.yml` and `swift.yml` for every fixture; `compat.yml` (the last release's

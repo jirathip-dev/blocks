@@ -78,14 +78,26 @@ pub fn write(root: &Path) -> std::io::Result<()> {
     trees(root)
 }
 
+const SWIFT_FALLBACKS: [&str; 6] = ["composer", "prose", "hero", "media", "nav", "island"];
+
 fn trees(root: &Path) -> std::io::Result<()> {
     let mut drawn = vec![];
     for f in std::fs::read_dir(root.join("web/src/render"))? {
         let name = f?.file_name().to_string_lossy().into_owned();
         drawn.extend(name.strip_suffix(".ts").filter(|k| *k != "index").map(String::from));
     }
-    let kinds: Vec<&str> = drawn.iter().map(String::as_str).collect();
-    std::fs::create_dir_all(root.join("fixtures/trees"))?;
+    let web: Vec<&str> = drawn.iter().map(String::as_str).collect();
+    let swift: Vec<&str> = Block::KINDS
+        .iter()
+        .copied()
+        .filter(|k| !SWIFT_FALLBACKS.contains(k))
+        .collect();
+    expected(root, "fixtures/trees", &web)?;
+    expected(root, "fixtures/trees/swift", &swift)
+}
+
+fn expected(root: &Path, dir: &str, kinds: &[&str]) -> std::io::Result<()> {
+    std::fs::create_dir_all(root.join(dir))?;
     for (kind, b) in crate::samples() {
         let v = serde_json::to_value(&b)?;
         let state = v
@@ -94,9 +106,9 @@ fn trees(root: &Path) -> std::io::Result<()> {
             .map(serde_json::from_value)
             .transpose()?
             .unwrap_or_default();
-        let t = tree::expect(&Built::new(v), &kinds, &state);
+        let t = tree::expect(&Built::new(v), kinds, &state);
         let text = serde_json::to_string_pretty(&t)? + "\n";
-        std::fs::write(root.join(format!("fixtures/trees/{kind}.json")), text)?;
+        std::fs::write(root.join(format!("{dir}/{kind}.json")), text)?;
     }
     Ok(())
 }

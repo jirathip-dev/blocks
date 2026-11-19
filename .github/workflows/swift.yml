@@ -2,9 +2,9 @@ name: swift
 on:
   push:
     branches: [main, staging]
-    paths: ["Package.swift", "swift/**", "schema/sample.json", "fixtures/screens/**", ".github/workflows/swift.yml"]
+    paths: ["Package.swift", "swift/**", "schema/sample.json", "fixtures/screens/**", "fixtures/blocks/**", "fixtures/trees/**", ".github/workflows/swift.yml"]
   pull_request:
-    paths: ["Package.swift", "swift/**", "schema/sample.json", "fixtures/screens/**", ".github/workflows/swift.yml"]
+    paths: ["Package.swift", "swift/**", "schema/sample.json", "fixtures/screens/**", "fixtures/blocks/**", "fixtures/trees/**", ".github/workflows/swift.yml"]
 
 permissions:
   contents: read
@@ -18,3 +18,13 @@ jobs:
         env:
           BLOCKS_STRICT: "1"
         run: swift test
+      - name: "blocks-snap --check on every fixtures/blocks file against its fixtures/trees/swift tree"
+        env:
+          BLOCKS_STRICT: "1"
+        run: |
+          swift build --product blocks-snap
+          snap="$(swift build --show-bin-path)/blocks-snap"
+          for f in fixtures/blocks/*.json; do
+            k=$(basename "$f" .json)
+            "$snap" --screen "$f" --expect "fixtures/trees/swift/$k.json" --check --out "shots/swift/$k"
+          done

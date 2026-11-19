@@ -53,7 +53,7 @@ internal struct ListBlock: View {
         let rows = block.list("rows")
         VStack(spacing: 0) {
             ForEach(Array(rows.enumerated()), id: \.offset) { index, row in
-                RowView(row: row).modifier(Reordering(list: block, row: row))
+                RowView(row: row).modifier(Reordering(list: block, row: row)).modifier(Reported(block: row))
                 if index < rows.count - 1 {
                     Rectangle().fill(look.palette.line).frame(height: 0.5).padding(.leading, 12)
                 }
