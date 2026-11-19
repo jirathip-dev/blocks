@@ -1,0 +1,11 @@
+Decided: `table` is a core kind with typed cells (text, number, label); a blank cell is a missing key, never null.
+Because: "The kind in the crate with generated schema, TS and Swift; a fixture in `fixtures/blocks`"
+Decided: formatting, sort, totals and phone roles live in the crate's kind layer, shared by the static writer and the fallback.
+Because: docs/design/table/README.md:13
+Decided: row ops: insert a Child::TableRow, merge and remove name a row by id, and diff sends a table's changed rows so.
+Because: "a fallback, the static site writer's element, and the row diff working on its rows"
+Rejected: a per-row DOM patch in the HTML patcher — a row op redraws its table from the keyed state, so the filter, sort, ticks and edges stay with less code.
+Decided: the SwiftUI grid has no pinned header; a header outside a Grid loses column alignment.
+Because: q2274
+Check: blocks-shot --check for fixtures/blocks/table.json at 1440x900 and 390x844, and web/test/table.test.ts in WebKit.
+Owner: Screens can show a sortable, filterable data table with totals, bulk actions and export, in HTML and SwiftUI, and stacked rows on a phone.
