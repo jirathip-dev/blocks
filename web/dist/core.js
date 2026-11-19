@@ -426,6 +426,7 @@ var CASE = { "as-is": "none", lower: "lowercase", upper: "uppercase" };
 var quote = (t) => `"${t.replace(/[\\"]/g, "\\$&")}"`;
 function axes(s) {
   let out = s.type === "default" ? ':root{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}' : "";
+  if (s.type === "serif") out += ":root{font-family:ui-serif,Georgia,Cambria,serif}";
   if (s.surface === "dashed") out += `${TILES}{border-style:dashed}`;
   if (s.surface === "solid") out += `${TILES}{border-width:2px}`;
   if (s.fills === "outline") out += ".chips button.on,.spi.done .spm{background:none;color:var(--l);box-shadow:inset 0 0 0 1px var(--l)}";

@@ -18,7 +18,7 @@ macro_rules! pick {
 
 pick!(
     /// The font design every label is set in.
-    pub TypeDesign { Default, Mono }
+    pub TypeDesign { Default, Mono, Serif }
 );
 pick!(
     /// How a card's surface is drawn.

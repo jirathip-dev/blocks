@@ -269,8 +269,12 @@ const TILES: &str = ":is(.card,.st,.list>.row,.list>.rw,.form:not(.say),.choice,
 
 fn axes(style: &Style) -> String {
     let mut out = String::new();
-    if style.type_ == TypeDesign::Default {
-        out.push_str(":root{font-family:system-ui,-apple-system,\"Segoe UI\",Roboto,sans-serif}");
+    match style.type_ {
+        TypeDesign::Default => {
+            out.push_str(":root{font-family:system-ui,-apple-system,\"Segoe UI\",Roboto,sans-serif}");
+        }
+        TypeDesign::Mono => {}
+        TypeDesign::Serif => out.push_str(":root{font-family:ui-serif,Georgia,Cambria,serif}"),
     }
     match style.surface {
         Surface::Glass => {}
