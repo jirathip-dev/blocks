@@ -1,0 +1,13 @@
+Decided: Step's struct variants hold named structs (StepOn, StepType, StepShot) and the tree node is TreeNode in the schema; the JSON is the spec's
+Because: crates/blocks/src/tree.rs:67
+Rejected: inline struct variants — codegen turns an inline object into an untyped map in types.ts and Blocks.swift; plain Node clashes with the diagram's Node
+Decided: the kinds a tree expects drawn natively are the files in web/src/render (index.ts aside); every other core kind expects its fallback
+Because: "every `fixtures/blocks` file passes `--check` in WebKit"
+Decided: a fallback-drawn block expects only its `blocks` children, as the HTML fallback draws them
+Because: web/src/render/index.ts:126
+Decided: a gap kind with no fallback field draws its kind name, so it has a size
+Because: web/src/render/index.ts:124
+Decided: the harness draws with the bundle's render, apply and dump and a harness Ctx; actions are recorded, answers and frames apply ops
+Rejected: mounting a layout through the stream — needs a fake SSE server in the harness, over the line budget
+Check: npm --prefix web test runs blocks-shot --check over all 27 fixtures, a negative --check, a scripted tap and the 200-row first paint
+Owner: Blocks screens can be drawn and checked headless in WebKit, with a screenshot, the drawn tree and timings.
