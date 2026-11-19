@@ -7,7 +7,7 @@
 - don't add a crate with a licence outside deny.toml, a known advisory, a second version or an unknown source (enforced by: CI deny, `cargo deny --locked check`)
 - don't add a direct dependency outside docs/deps.md's allow-list (enforced by: CI deps gate, scripts/deps-gate.sh)
 - don't import drover or a transport (tokio, HTTP, std::net) here, or start a process, read a clock or write a file outside codegen (enforced by: CI arch-check bans, deny.toml bans)
-- don't break .drover/arch.toml's layers (screen <- ops <- stream <- codegen), size limits or frozen files (enforced by: CI arch-check)
+- don't break .drover/arch.toml's layers (expr <- kind <- wire <- patch <- diff <- shelf, mirror <- codegen), size limits or frozen files (enforced by: CI arch-check)
 - don't hand-edit a generated file (the schema, its sample, the TS and Swift types): rerun `just gen` (enforced by: CI arch-check, `generated`)
 - don't change the wire types against docs/schema.md's versioning rule (enforced by: none)
 - don't push with a failing test, a sim seed that fails or a perf budget overrun (enforced by: CI test, CI perf in release)

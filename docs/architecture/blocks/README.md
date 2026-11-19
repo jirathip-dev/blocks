@@ -6,6 +6,7 @@ Decision: one Rust crate is the source for blocks, ops, the stream, layout and t
 are generated. Three renderers draw them: live HTML, SwiftUI, and static HTML for websites, which the live one takes
 over. Every block carries a fallback; apps add kinds, styles, local behaviours and islands; all of it runs headless.
 Slices: 16 in blocks (blocks#4, #5, #6 kept; 13 to file), then 7 drover and 7 cooee issues; desktop and wasm later.
+The slices split out after the ADR (B1b, B4b, B9b, B16b) and every slice's issue number are in `migration.md`.
 Open questions: the plan fills about 9,900 of the 10,000 lines, so what waits if it runs over; Playwright and esbuild
 as dev tools; where cooee embeds the HTML renderer; drover's art onto swag's shared packs.
 

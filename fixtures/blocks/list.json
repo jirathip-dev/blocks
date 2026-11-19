@@ -1,0 +1,13 @@
+{
+  "type": "list",
+  "id": "rows",
+  "rows": [
+    {
+      "type": "row",
+      "id": "row",
+      "title": "Build",
+      "subtitle": "green",
+      "value": "2m"
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 use std::path::{Path, PathBuf};
 
-use blocks::{apply, Block, OldFrame, Op};
+use blocks::{apply, Block, Built, Fault, OldFrame, Op};
 use serde_json::Value;
 
 fn root() -> PathBuf {
@@ -289,4 +289,230 @@ fn the_queue_stream_patches_the_queue_by_id_as_cooee_reads_it() {
         (root["type"].as_str(), root["title"].as_str()),
         (Some("screen"), Some("Queue"))
     );
+}
+
+fn blocks_in(v: &Value, out: &mut Vec<Value>) {
+    match v {
+        Value::Array(a) => a.iter().for_each(|x| blocks_in(x, out)),
+        Value::Object(o) if o.contains_key("type") => out.push(v.clone()),
+        Value::Object(o) => {
+            for op in o.get("ops").and_then(Value::as_array).into_iter().flatten() {
+                out.extend(
+                    op.get("screen")
+                        .or(op.get("block"))
+                        .filter(|b| b.get("type").is_some())
+                        .cloned(),
+                );
+            }
+            out.extend(o.get("block").filter(|b| b.get("type").is_some()).cloned());
+        }
+        _ => {}
+    }
+}
+
+const COOEE: &[&str] = &[
+    "pinned",
+    "chats",
+    "account",
+    "group",
+    "step",
+    "spacer",
+    "mark",
+    "ways",
+    "header",
+    "scanner",
+    "found",
+    "buttons",
+    "nearby",
+    "address",
+    "symbol",
+    "word",
+    "countdown",
+    "avatars",
+    "terminal",
+    "workflow",
+    "routines",
+    "places",
+    "skills",
+    "memory",
+    "edit",
+    "confirm",
+];
+
+fn herd_scene(name: &str, f: &Fault) -> bool {
+    let field = |x: &str| matches!(f, Fault::Extra { kind, field } if kind == "scene" && field == x);
+    name == "drover/herd.json" && (field("weather") || field("repos"))
+}
+
+#[test]
+fn every_golden_parses_with_no_fault() {
+    let (mut bad, mut seen, mut herd) = (vec![], 0, 0);
+    for (name, v) in fixtures() {
+        let app = if name.starts_with("cooee/") { COOEE } else { &[] };
+        let mut found = vec![];
+        blocks_in(&v, &mut found);
+        seen += found.len();
+        for b in found {
+            for f in Built::new(b).check(app) {
+                match f {
+                    _ if herd_scene(&name, &f) => herd += 1,
+                    Fault::Shape { .. } | Fault::Extra { .. } | Fault::Unknown { .. } => {
+                        bad.push(format!("{name}: {f:?}"));
+                    }
+                    _ => {}
+                }
+            }
+        }
+    }
+    assert!(seen >= 40, "only {seen} blocks in the goldens");
+    assert!(bad.is_empty(), "{}", bad.join("\n"));
+    assert_eq!(
+        herd, 2,
+        "drover's herd scene: its own shape, drover's app kind `herd` once it moves"
+    );
+}
+
+const KINDS_27: [&str; 27] = [
+    "screen", "sheet", "section", "list", "row", "card", "choice", "form", "config", "secret", "run", "button",
+    "chips", "stat", "text", "images", "web", "diff", "editor", "scene", "diagram", "composer", "prose", "hero",
+    "media", "nav", "island",
+];
+
+#[test]
+fn the_27_kinds_each_have_a_typed_sample_that_is_its_fixture() {
+    let mut kinds: Vec<&str> = Block::KINDS.iter().copied().chain(["island"]).collect();
+    kinds.sort_unstable();
+    kinds.dedup();
+    let mut want = KINDS_27.to_vec();
+    want.sort_unstable();
+    assert_eq!(kinds, want);
+    let samples = blocks::samples();
+    let named: Vec<&str> = samples.iter().map(|(k, _)| *k).collect();
+    assert_eq!(named, Block::KINDS);
+    let dir = root().join("fixtures/blocks");
+    assert_eq!(std::fs::read_dir(&dir).unwrap().count(), Block::KINDS.len());
+    let s = schema();
+    for (kind, b) in samples {
+        let file = read(&dir.join(format!("{kind}.json")));
+        assert_eq!(
+            file,
+            serde_json::to_value(&b).unwrap(),
+            "fixtures/blocks/{kind}.json: rerun `just gen`"
+        );
+        assert_eq!(file["type"], kind);
+        assert_eq!(serde_json::from_value::<Block>(file.clone()).unwrap(), b);
+        valid(&s, &file).unwrap_or_else(|e| panic!("{kind}: {e}"));
+        assert_eq!(Built::new(file).check(&[]), vec![], "{kind}");
+    }
+}
+
+fn parse(s: &str) -> Value {
+    serde_json::from_str(s).unwrap()
+}
+
+#[test]
+fn built_of_writes_a_fallback_for_each_kind_a_client_may_not_draw() {
+    let card = Block::Card(Box::new(blocks::Card::new().id("c").title("q1").subtitle("waiting")));
+    let row = Block::Row(Box::new(blocks::Row::new("Build").id("r")));
+    let media = Block::Media(Box::new(blocks::Media::new("/a.png", "a chart", 4_u32, 3_u32).id("m")));
+    let screen = blocks::Screen::new()
+        .id("s")
+        .title("Home")
+        .blocks(vec![card, row, media]);
+    let built = Built::of(&screen);
+    let v = built.value();
+    assert_eq!(v["fallback"]["title"], "Home");
+    assert_eq!(
+        v["blocks"][0]["fallback"],
+        parse(r#"{"title": "q1", "subtitle": "waiting"}"#)
+    );
+    assert!(v["blocks"][1].get("fallback").is_none(), "a row is drawn as itself");
+    assert_eq!(v["blocks"][2]["fallback"]["title"], "/a.png");
+    assert_eq!(built.check(&[]), vec![]);
+}
+
+#[test]
+fn check_finds_each_fault() {
+    let screen = parse(
+        r#"{"type": "screen", "id": "s", "state": {"email": ""}, "blocks": [
+            {"type": "row", "id": "a", "title": "one", "colour": "red"},
+            {"type": "row", "id": "a", "title": "two"},
+            {"type": "row", "id": "b"},
+            {"type": "text", "id": "", "markdown": "x", "show": {"get": "nope"}},
+            {"type": "gauge", "id": "g"},
+            {"type": "herd", "id": "h"},
+            {"type": "island", "name": "x-map", "fallback": {"title": ""}},
+            {"type": "form", "id": "f", "fields": [{"type": "text", "name": "email"}]}
+        ]}"#,
+    );
+    let mut got = Built::new(screen).check(&["herd", "row"]);
+    got.sort_by_key(|f| format!("{f:?}"));
+    let s = String::from;
+    let shape = got.iter().find(|f| matches!(f, Fault::Shape { .. })).cloned();
+    assert!(
+        matches!(&shape, Some(Fault::Shape { kind, .. }) if kind == "row"),
+        "{got:?}"
+    );
+    let mut want = vec![
+        Fault::Twice { id: s("a") },
+        Fault::Unnamed { kind: s("text") },
+        Fault::Unnamed { kind: s("island") },
+        Fault::Unknown { kind: s("gauge") },
+        Fault::Extra {
+            kind: s("row"),
+            field: s("colour"),
+        },
+        Fault::Clash { kind: s("row") },
+        Fault::Bare {
+            kind: s("herd"),
+            id: s("h"),
+        },
+        Fault::Bare {
+            kind: s("island"),
+            id: s(""),
+        },
+        Fault::State { key: s("email") },
+        Fault::State { key: s("nope") },
+        shape.unwrap(),
+    ];
+    want.sort_by_key(|f| format!("{f:?}"));
+    assert_eq!(got, want);
+}
+
+#[test]
+fn apply_of_the_diff_is_the_new_screen_for_every_pair_of_goldens() {
+    let mut screens = vec![];
+    for (_, v) in fixtures() {
+        let mut found = vec![];
+        blocks_in(&v, &mut found);
+        screens.extend(found.into_iter().filter(|b| b["type"] == "screen"));
+    }
+    let screens: Vec<Block> = screens
+        .into_iter()
+        .map(|v| serde_json::from_value(v).unwrap())
+        .collect();
+    assert!(screens.len() >= 20, "only {} screens", screens.len());
+    for a in &screens {
+        for b in &screens {
+            let mut got = a.clone();
+            blocks::apply(&mut got, &blocks::diff(a, b)).unwrap();
+            assert_eq!(&got, b);
+        }
+    }
+}
+
+#[test]
+fn an_action_and_its_answer_travel_as_both_apps_send_them() {
+    let action = parse(r#"{"screen": "queue", "block": "q-1", "action": "approve", "values": {"n": 1}}"#);
+    let a: blocks::Action = serde_json::from_value(action.clone()).unwrap();
+    assert_eq!((a.screen.as_str(), a.values["n"].as_u64()), ("queue", Some(1)));
+    assert_eq!(serde_json::to_value(&a).unwrap(), action);
+    let answer = parse(r#"{"ops": [{"op": "remove", "id": "a"}], "toast": "Approved", "close": true}"#);
+    let got: blocks::Answer = serde_json::from_value(answer.clone()).unwrap();
+    assert_eq!(got.ops, vec![Op::Remove { id: "a".into() }]);
+    assert_eq!(serde_json::to_value(&got).unwrap(), answer);
+    let s = schema();
+    for (def, v) in [("Action", &action), ("Answer", &answer)] {
+        check(&s, &parse(&format!(r##"{{"$ref": "#/$defs/{def}"}}"##)), v, def).unwrap();
+    }
 }

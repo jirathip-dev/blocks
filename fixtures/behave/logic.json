@@ -1,0 +1,22 @@
+{
+  "state": { "on": true, "off": false, "name": "Ada", "zero": 0 },
+  "cases": [
+    { "expr": true, "want": true },
+    { "expr": null, "want": null },
+    { "expr": { "get": "on" }, "want": true },
+    { "expr": { "get": "missing" }, "want": null },
+    { "expr": { "not": { "get": "on" } }, "want": false },
+    { "expr": { "not": { "get": "missing" } }, "want": true },
+    { "expr": { "not": { "get": "name" } }, "want": null },
+    { "expr": { "all": [{ "get": "on" }, true] }, "want": true },
+    { "expr": { "all": [{ "get": "on" }, { "get": "off" }] }, "want": false },
+    { "expr": { "all": [] }, "want": true },
+    { "expr": { "all": [true, { "get": "zero" }] }, "want": null },
+    { "expr": { "any": [{ "get": "off" }, { "get": "on" }] }, "want": true },
+    { "expr": { "any": [] }, "want": false },
+    { "expr": { "pick": [{ "get": "on" }, "yes", "no"] }, "want": "yes" },
+    { "expr": { "pick": [{ "get": "missing" }, "yes", "no"] }, "want": "no" },
+    { "expr": { "pick": [{ "get": "name" }, "yes", "no"] }, "want": null },
+    { "expr": { "fold": [1, 2] }, "want": null }
+  ]
+}

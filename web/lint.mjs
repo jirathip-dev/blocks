@@ -5,7 +5,7 @@ import { join } from "node:path";
 const typed = [
   [/^as\s+(?!const\b)/, "an `as` cast (only `as const`)"],
   [/^!/, "a non-null `!`"],
-  [/\bany\b/, "`any`"],
+  [/\bany\b(?!\??\s*:)/, "`any`"],
 ];
 const code = [
   [/@ts-(ignore|expect-error)\b/, "`@ts-ignore` / `@ts-expect-error`"],

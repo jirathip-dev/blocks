@@ -1,9 +1,9 @@
 use std::collections::{BTreeMap, VecDeque};
 use std::sync::Arc;
 
-use crate::ops::{diff, Op};
-use crate::screen::Block;
-use crate::wire::{Broken, Frame, KeyState};
+use crate::diff::diff;
+use crate::kind::Block;
+use crate::wire::{Broken, Frame, KeyState, Op};
 
 const RING_DELTAS: usize = 16;
 const RING_BYTES: usize = 64 * 1024;

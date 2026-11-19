@@ -1,0 +1,14 @@
+{
+  "state": { "n": 3, "half": 1.5, "big": 9007199254740991 },
+  "cases": [
+    { "expr": { "add": [{ "get": "n" }, 2] }, "want": 5 },
+    { "expr": { "add": [{ "get": "half" }, { "get": "half" }] }, "want": 3 },
+    { "expr": { "add": [0.1, 0.2] }, "want": 0.30000000000000004 },
+    { "expr": { "sub": [{ "get": "n" }, 5] }, "want": -2 },
+    { "expr": { "sub": [{ "get": "half" }, 1] }, "want": 0.5 },
+    { "expr": { "add": [{ "get": "n" }, "2"] }, "want": null },
+    { "expr": { "sub": [{ "get": "missing" }, 1] }, "want": null },
+    { "expr": { "add": [1e308, 1e308] }, "want": null },
+    { "expr": { "cat": [{ "add": [{ "get": "n" }, 0.5] }] }, "want": "3.5" }
+  ]
+}
