@@ -1,0 +1,47 @@
+rust	perf in release (hard budgets in crates/blocks/tests/perf.rs; numbers in the job summary)	﻿2026-11-19T09:44:19.1628260Z ##[group]Run { echo "### perf (release)"; echo; echo "| case | took | budget |"; echo "|---|---|---|"; } >> "$GITHUB_STEP_SUMMARY"
+rust	perf in release (hard budgets in crates/blocks/tests/perf.rs; numbers in the job summary)	2026-11-19T09:44:19.1630002Z ^[[36;1m{ echo "### perf (release)"; echo; echo "| case | took | budget |"; echo "|---|---|---|"; } >> "$GITHUB_STEP_SUMMARY"^[[0m
+rust	perf in release (hard budgets in crates/blocks/tests/perf.rs; numbers in the job summary)	2026-11-19T09:44:19.1631220Z ^[[36;1mjust perf^[[0m
+rust	perf in release (hard budgets in crates/blocks/tests/perf.rs; numbers in the job summary)	2026-11-19T09:44:19.1679137Z shell: /usr/bin/bash -e {0}
+rust	perf in release (hard budgets in crates/blocks/tests/perf.rs; numbers in the job summary)	2026-11-19T09:44:19.1679821Z env:
+rust	perf in release (hard budgets in crates/blocks/tests/perf.rs; numbers in the job summary)	2026-11-19T09:44:19.1680322Z   DROVER_BUILD: build-staging-9ea69d9
+rust	perf in release (hard budgets in crates/blocks/tests/perf.rs; numbers in the job summary)	2026-11-19T09:44:19.1681378Z   DROVER_SHA256: 39a24079dfe39d2ca196bb61f75a7f8735f5f6eba74d84784ad82895f3e5a1be
+rust	perf in release (hard budgets in crates/blocks/tests/perf.rs; numbers in the job summary)	2026-11-19T09:44:19.1682273Z   CARGO_HOME: /home/runner/.cargo
+rust	perf in release (hard budgets in crates/blocks/tests/perf.rs; numbers in the job summary)	2026-11-19T09:44:19.1682961Z   CARGO_INCREMENTAL: 0
+rust	perf in release (hard budgets in crates/blocks/tests/perf.rs; numbers in the job summary)	2026-11-19T09:44:19.1683469Z   CARGO_TERM_COLOR: always
+rust	perf in release (hard budgets in crates/blocks/tests/perf.rs; numbers in the job summary)	2026-11-19T09:44:19.1684011Z   CACHE_ON_FAILURE: false
+rust	perf in release (hard budgets in crates/blocks/tests/perf.rs; numbers in the job summary)	2026-11-19T09:44:19.1684628Z   DROVER: /home/runner/work/_temp/drover
+rust	perf in release (hard budgets in crates/blocks/tests/perf.rs; numbers in the job summary)	2026-11-19T09:44:19.1685260Z ##[endgroup]
+rust	perf in release (hard budgets in crates/blocks/tests/perf.rs; numbers in the job summary)	2026-11-19T09:44:19.1787327Z cargo test --release --locked -p blocks --test perf -- --ignored --nocapture --test-threads=1
+rust	perf in release (hard budgets in crates/blocks/tests/perf.rs; numbers in the job summary)	2026-11-19T09:44:19.2265809Z ^[[1m^[[92m   Compiling^[[0m blocks v0.1.0 (/home/runner/work/blocks/blocks/crates/blocks)
+rust	perf in release (hard budgets in crates/blocks/tests/perf.rs; numbers in the job summary)	2026-11-19T09:45:12.1333251Z ^[[1m^[[92m    Finished^[[0m `release` profile [optimized] target(s) in 52.92s
+rust	perf in release (hard budgets in crates/blocks/tests/perf.rs; numbers in the job summary)	2026-11-19T09:45:12.1343432Z ^[[1m^[[92m     Running^[[0m tests/perf.rs (target/release/deps/perf-c0854c037a7e62e6)
+rust	perf in release (hard budgets in crates/blocks/tests/perf.rs; numbers in the job summary)	2026-11-19T09:45:12.1356412Z 
+rust	perf in release (hard budgets in crates/blocks/tests/perf.rs; numbers in the job summary)	2026-11-19T09:45:12.1356836Z running 6 tests
+rust	perf in release (hard budgets in crates/blocks/tests/perf.rs; numbers in the job summary)	2026-11-19T09:45:12.1704143Z test a_500_kb_screen_serializes_and_parses_under_budget ... | serialize a 500 KB screen | 568.0 µs | 3000.0 µs |
+rust	perf in release (hard budgets in crates/blocks/tests/perf.rs; numbers in the job summary)	2026-11-19T09:45:12.3408175Z | parse a 500 KB screen | 3345.2 µs | 5000.0 µs |
+rust	perf in release (hard budgets in crates/blocks/tests/perf.rs; numbers in the job summary)	2026-11-19T09:45:12.3414939Z ok
+rust	perf in release (hard budgets in crates/blocks/tests/perf.rs; numbers in the job summary)	2026-11-19T09:45:12.4485055Z test applying_the_ops_of_a_200_row_screen_stays_under_budget ... | apply the ops to a 200-row screen | 53.0 µs | 150.0 µs |
+rust	perf in release (hard budgets in crates/blocks/tests/perf.rs; numbers in the job summary)	2026-11-19T09:45:12.4486573Z ok
+rust	perf in release (hard budgets in crates/blocks/tests/perf.rs; numbers in the job summary)	2026-11-19T09:45:12.6802170Z test checking_a_200_node_layout_stays_under_budget ... | check a 200-node layout | 230.0 µs | 300.0 µs |
+rust	perf in release (hard budgets in crates/blocks/tests/perf.rs; numbers in the job summary)	2026-11-19T09:45:12.6803269Z ok
+rust	perf in release (hard budgets in crates/blocks/tests/perf.rs; numbers in the job summary)	2026-11-19T09:45:12.7314258Z test diffing_a_200_row_screen_stays_under_budget ... | diff a 200-row screen | 25.3 µs | 150.0 µs |
+rust	perf in release (hard budgets in crates/blocks/tests/perf.rs; numbers in the job summary)	2026-11-19T09:45:12.7315550Z ok
+rust	perf in release (hard budgets in crates/blocks/tests/perf.rs; numbers in the job summary)	2026-11-19T09:45:13.5857622Z test viewing_a_200_row_screen_with_a_show_on_every_block_stays_under_budget ... | behave::view of a 200-row screen | 423.5 µs | 1000.0 µs |
+rust	perf in release (hard budgets in crates/blocks/tests/perf.rs; numbers in the job summary)	2026-11-19T09:45:13.5858866Z ok
+rust	perf in release (hard budgets in crates/blocks/tests/perf.rs; numbers in the job summary)	2026-11-19T09:45:14.1589004Z 
+rust	perf in release (hard budgets in crates/blocks/tests/perf.rs; numbers in the job summary)	2026-11-19T09:45:14.1590946Z test writing_a_500_kb_screen_as_a_site_fragment_stays_under_budget ... | write a 500 KB screen as HTML | 11250.8 µs | 10000.0 µs |
+rust	perf in release (hard budgets in crates/blocks/tests/perf.rs; numbers in the job summary)	2026-11-19T09:45:14.1593237Z thread 'writing_a_500_kb_screen_as_a_site_fragment_stays_under_budget' (3655) panicked at crates/blocks/tests/perf.rs:36:5:
+rust	perf in release (hard budgets in crates/blocks/tests/perf.rs; numbers in the job summary)	2026-11-19T09:45:14.1594271Z write a 500 KB screen as HTML: 11.250815ms is over its budget of 10ms
+rust	perf in release (hard budgets in crates/blocks/tests/perf.rs; numbers in the job summary)	2026-11-19T09:45:14.1595029Z note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+rust	perf in release (hard budgets in crates/blocks/tests/perf.rs; numbers in the job summary)	2026-11-19T09:45:14.1603452Z FAILED
+rust	perf in release (hard budgets in crates/blocks/tests/perf.rs; numbers in the job summary)	2026-11-19T09:45:14.1609166Z 
+rust	perf in release (hard budgets in crates/blocks/tests/perf.rs; numbers in the job summary)	2026-11-19T09:45:14.1609562Z failures:
+rust	perf in release (hard budgets in crates/blocks/tests/perf.rs; numbers in the job summary)	2026-11-19T09:45:14.1609779Z 
+rust	perf in release (hard budgets in crates/blocks/tests/perf.rs; numbers in the job summary)	2026-11-19T09:45:14.1609882Z failures:
+rust	perf in release (hard budgets in crates/blocks/tests/perf.rs; numbers in the job summary)	2026-11-19T09:45:14.1610251Z     writing_a_500_kb_screen_as_a_site_fragment_stays_under_budget
+rust	perf in release (hard budgets in crates/blocks/tests/perf.rs; numbers in the job summary)	2026-11-19T09:45:14.1610541Z 
+rust	perf in release (hard budgets in crates/blocks/tests/perf.rs; numbers in the job summary)	2026-11-19T09:45:14.1610969Z test result: FAILED. 5 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.03s
+rust	perf in release (hard budgets in crates/blocks/tests/perf.rs; numbers in the job summary)	2026-11-19T09:45:14.1611353Z 
+rust	perf in release (hard budgets in crates/blocks/tests/perf.rs; numbers in the job summary)	2026-11-19T09:45:14.1613529Z ^[[1m^[[91merror^[[0m: test failed, to rerun pass `-p blocks --test perf`
+rust	perf in release (hard budgets in crates/blocks/tests/perf.rs; numbers in the job summary)	2026-11-19T09:45:14.1634468Z error: recipe `perf` failed on line 32 with exit code 101
+rust	perf in release (hard budgets in crates/blocks/tests/perf.rs; numbers in the job summary)	2026-11-19T09:45:14.1653111Z ##[error]Process completed with exit code 101.
