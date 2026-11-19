@@ -1,0 +1,9 @@
+{
+  "kind": "editor",
+  "id": "editor",
+  "variant": null,
+  "drawn": "fallback",
+  "role": "button",
+  "name": "notes",
+  "children": []
+}
