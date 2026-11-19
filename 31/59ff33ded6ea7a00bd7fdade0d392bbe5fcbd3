@@ -1,0 +1,4 @@
+Decided: merge origin/staging; take its web/dist/blocks.js and rebuild it with the web build instead of merging by hand
+Because: web/package.json:7
+Rejected: none
+Owner: The document view now sits on the latest staging with the guard explore work; nothing changes in how it works.
