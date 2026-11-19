@@ -375,6 +375,23 @@ wire! {
 }
 
 wire! {
+    /// One row of a `lines` block: its id and its values by column name.
+    pub struct LineItem {
+        id: String,
+        values: Fields,
+    }
+}
+
+wire! {
+    /// An app's check on a `lines` block: on a row and a column, or on the whole block.
+    pub struct RowError {
+        row: Option<String>,
+        name: Option<String>,
+        message: String,
+    }
+}
+
+wire! {
     /// A composer's picker: its name, current value and choices.
     pub struct ComposerChip {
         name: String,

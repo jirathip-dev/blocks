@@ -1,0 +1,83 @@
+{
+  "type": "lines",
+  "id": "journal",
+  "name": "lines",
+  "label": "journal lines",
+  "action": "check-journal",
+  "columns": [
+    {
+      "type": "picker",
+      "name": "account",
+      "label": "Account",
+      "options": [
+        "6100 Rent",
+        "6200 Utilities",
+        "2100 Payables"
+      ]
+    },
+    {
+      "type": "text",
+      "name": "memo",
+      "label": "Description"
+    },
+    {
+      "type": "text",
+      "name": "debit",
+      "label": "Debit",
+      "keyboard": "number"
+    },
+    {
+      "type": "text",
+      "name": "credit",
+      "label": "Credit",
+      "keyboard": "number"
+    }
+  ],
+  "items": [
+    {
+      "id": "l1",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    }
+  ],
+  "sum": [
+    "debit",
+    "credit"
+  ],
+  "balance": [
+    "debit",
+    "credit"
+  ],
+  "min": 2,
+  "add": "add line",
+  "errors": [
+    {
+      "row": "l2",
+      "name": "account",
+      "message": "pick an account for line 2"
+    }
+  ],
+  "submit": {
+    "label": "post entry",
+    "action": "post-journal"
+  }
+}

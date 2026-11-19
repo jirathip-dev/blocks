@@ -203,6 +203,7 @@ fn expr(rng: &mut Rng, depth: usize) -> Expr {
     match rng.below(15) {
         0 => Expr::Get(key(rng)),
         1 => Expr::Not(Box::new(e(rng))),
+        2 => Expr::Mul(Box::new([e(rng), e(rng)])),
         3 => Expr::All((0..rng.below(4)).map(|_| e(rng)).collect()),
         4 => Expr::Any((0..rng.below(4)).map(|_| e(rng)).collect()),
         5 => Expr::Eq(Box::new([e(rng), e(rng)])),

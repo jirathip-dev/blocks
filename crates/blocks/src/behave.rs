@@ -54,6 +54,33 @@ fn fields(o: &serde_json::Map<String, Value>) -> impl Iterator<Item = (&str, &Va
     all.filter_map(|f| Some((f.get("name")?.as_str()?, f)))
 }
 
+fn plain(s: &str) -> Option<f64> {
+    let t: String = s.chars().filter(|c| *c != ',' && !c.is_whitespace()).collect();
+    let body = t.strip_prefix(['+', '-']).unwrap_or(&t);
+    let (int, frac) = body.split_once('.').unwrap_or((body, ""));
+    let digits = |p: &str| p.chars().all(|c| c.is_ascii_digit());
+    (!(int.is_empty() && frac.is_empty()) && digits(int) && digits(frac)).then(|| t.parse().ok())?
+}
+
+pub(crate) fn calc(e: &Value, values: &Value) -> Value {
+    let Ok(e) = Expr::deserialize(e) else {
+        return Value::Null;
+    };
+    let lit = |v: &Value| match v {
+        Value::String(s) => plain(s)
+            .and_then(serde_json::Number::from_f64)
+            .map_or_else(|| Lit::Str(s.clone()), Lit::Num),
+        v => Lit::deserialize(v).unwrap_or_default(),
+    };
+    let state = values
+        .as_object()
+        .into_iter()
+        .flatten()
+        .map(|(k, v)| (k.clone(), lit(v)))
+        .collect();
+    serde_json::to_value(eval(&e, &state)).unwrap_or_default()
+}
+
 /// The screen's start state: its `state`, each field's `value` and each chips' first `selected`.
 pub fn start(screen: &Built) -> State {
     start_of(screen.value())
