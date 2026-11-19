@@ -1,0 +1,15 @@
+Decided: site writes each kind over the block's JSON, mirroring render/<kind>.ts, so both writers give one element per kind
+Because: "the two writers give the same element per kind"
+Decided: with no JS an action is a hidden `<form method=post>` after `<main>` that its controls join with the `form` attribute, so a block keeps render's own tag
+Because: crates/blocks/src/site/mod.rs:217
+Decided: the form fields `_screen`, `_block` and `_action` carry the Action; every other field is a string value
+Because: crates/blocks/src/wire.rs:253
+Decided: the page puts the screen's `div.scr` inside `<main>`, since render's screen is a div and two `main` landmarks would nest in the shell
+Because: crates/blocks/src/site/mod.rs:66
+Decided: adopt checks every drawn `[data-block]` against the screen and the screen's own children, then listens; it writes nothing to the DOM
+Because: "PNG and tree equal before and after `blocks.js`"
+Rejected: comparing whole outerHTML — a static control needs `type=submit` and `form`, so the test compares tag, classes, hooks and text of every hooked element
+Rejected: a writer file per kind — the shared helpers would be repeated 27 times against a cap already exceeded
+Check: web/test/site.test.ts runs the 27 fixtures in WebKit, the site with JS off, the PNG and tree before and after adopt, and a refused adopt
+Check: a tap's time values (`since`, `until`) are written as their label only: the library has no clock, the live tick fills them in
+Owner: Websites can now be served as plain pages that work without JavaScript, and the live renderer takes them over without redrawing.
