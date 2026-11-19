@@ -1,0 +1,4 @@
+Decided: merge origin/staging, keeping both import sets in render/index.ts and rebuilding web/dist/blocks.js from source
+Because: web/src/render/index.ts:4
+Rejected: none
+Owner: The branch now includes the latest shared work (islands); no change to what this feature does.
