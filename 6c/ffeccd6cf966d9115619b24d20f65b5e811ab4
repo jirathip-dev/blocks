@@ -1,0 +1,15 @@
+Decided: check() reads a lean copy of the schema's Block defs in gen/shapes.ts and matches it, in place of serde's deserialize, for the shape and extra faults
+Because: docs/architecture/react/adr.md:84
+Decided: the Fault type is generated into gen/shapes.ts from its own schema, as layout.ts is, and stays out of blocks.schema.json
+Because: crates/blocks/src/codegen/swift.rs:253
+Because: crates/blocks/src/codegen/shapes.rs:45
+Rejected: Fault in the wire schema — Swift's generated tagged enums add case unknown, which clashes with Fault::Unknown, and Swift has no use for Fault
+Decided: cases.json is written by a crate test under BLOCKS_GEN, a new just gen line, since codegen bans hand JSON and faulty screens cannot be typed
+Because: "The TS `check()` gives Rust's faults for every case in `fixtures/check/cases.json`"
+Decided: linkable moves into the core and the renderer re-exports it: one TS linkable, which core may import
+Because: web/src/render/index.ts:72
+Decided: the PR body carries a For apps line (nothing to do: new TS exports only), since gen/shapes.ts is on the for-apps path list
+Because: scripts/for-apps.sh:12
+Decided: web/dist conflicts with staging are resolved by rebuilding it with the just gen lines, not by hand
+Check: web/test/check.test.ts gives Built::check's faults for all 117 cases; dropping web/src/core/check.ts:31 fails it
+Owner: TypeScript apps can check a screen and get the same problems the Rust server reports, held equal by shared example screens.
