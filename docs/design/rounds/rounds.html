@@ -1,0 +1,42 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>rounds: an issue list whose rows carry their review rounds</title>
+<link rel="stylesheet" href="../../../web/src/blocks.css"><link rel="stylesheet" href="rounds.css"><link rel="stylesheet" href="page.css">
+<script src="rounds.js"></script></head>
+<body><main class="scr">
+<div class="tile"><div class="tabh"><span class="tw">sendmeter · issues</span><button type="button"><span>queue</span></button><button type="button"><span>board</span></button></div></div>
+<div class="tile"><div class="sh">in flight · 4</div><div id="list"></div></div>
+</main>
+<script>
+const v = (t) => ({ tap: { sheet: `/screens/verdict?seq=${t}` } });
+const rows = [
+  [{ id: "i23", title: "#23 web: HTML gaps: diagram", badge: { text: "needs human", tone: "needs" }, subtitle: { text: "review round 3 of 3 failed", tone: "bad" }, value: "fix(3)",
+    rounds: [
+      { id: "impl", name: "impl", state: "done", summary: "pushed 4f1c2e0", since: "3h" },
+      { id: "r1", name: "review 1", state: "fail", summary: "FAIL · 2 blocking", since: "2h", ...v(7) },
+      { id: "f1", name: "fix 1", state: "done", summary: "pushed 9ab03d1", since: "2h" },
+      { id: "r2", name: "review 2", state: "fail", summary: "FAIL · 1 blocking", since: "1h", ...v(11) },
+      { id: "r3", name: "review 3", state: "needs", summary: "FAIL · round limit reached", since: "12m",
+        blocks: [{ type: "text", text: "src/diagram.ts:88: the gutter route crosses the main column when two side steps share a row." }],
+        links: [{ label: "one more round", tap: { action: "extend" } }, { label: "park", tap: { action: "park" } }, { label: "verdict", tap: { sheet: "/v/14" } }] },
+    ] }],
+  [{ id: "i12", title: "#12 count rounds once", subtitle: "review 2 · working", value: "fix(1)",
+    rounds: [
+      { id: "impl", name: "impl", state: "done", summary: "pushed aaaaaaa", since: "66m" },
+      { id: "r1", name: "review 1", state: "fail", summary: "FAIL · 1 blocking", since: "58m", ...v(7) },
+      { id: "f1", name: "fix 1", state: "done", summary: "pushed ccccccc", since: "50m" },
+      { id: "r2", name: "review 2", state: "working", summary: "reviewing ccccccc", since: "4m",
+        lane: { name: "sendmeter-rev-12-r2", harness: "claude", model: "opus", host: "mini",
+          lines: ["$ cargo test --workspace", "test result: ok. 214 passed; 0 failed", "reading src/meter/round.rs"] },
+        links: [{ label: "PR #281", tap: { url: "https://example.invalid/pr/281" } }] },
+    ] }, true],
+  [{ id: "i44", title: "#44 rounds on a row", subtitle: { text: "review 2 · PASS", tone: "ok" }, value: "ready",
+    rounds: [
+      { id: "impl", name: "impl", state: "done", since: "2d" },
+      { id: "r1", name: "review 1", state: "fail", summary: "FAIL", since: "2d", ...v(3) },
+      { id: "r2", name: "review 2", state: "done", summary: "PASS", since: "1d", ...v(5) },
+    ] }],
+  [{ id: "i61", title: "#61 frame budget", badge: { text: "merged", tone: "done" }, subtitle: "no rounds: the row is drawn as today", value: "1d" }],
+];
+document.getElementById("list").replaceWith(...rows.map(([b, f]) => row(b, f)));
+document.body.dataset.h = Math.ceil(document.documentElement.scrollHeight);
+</script></body></html>
