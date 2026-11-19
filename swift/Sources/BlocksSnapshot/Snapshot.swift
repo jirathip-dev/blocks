@@ -13,6 +13,17 @@ public struct SnapshotRun: Sendable {
     public let faults: [String]
 }
 
+/// The block ids and action ids a screen draws, in drawn order: a `fixtures/ids` file.
+public struct DrawnIdList: Codable, Equatable, Sendable {
+    public let blocks: [String]
+    public let actions: [String]
+
+    public init(blocks: [String], actions: [String]) {
+        self.blocks = blocks
+        self.actions = actions
+    }
+}
+
 /// Draws a screen with `ImageRenderer` at scale 2, runs scripted steps and checks the drawn tree.
 @MainActor
 public struct Snapshot {
@@ -37,17 +48,41 @@ public struct Snapshot {
         wrapped { AnyView($0.appBlocks(blocks)) }
     }
 
-    /// Runs `steps` (a shot named `name` at the end when they take none); `check` compares each tree with `expect`.
-    public func run(_ steps: [Step], name: String = "shot", expect: TreeNode? = nil, check: Bool = false) throws
+    /// Draws each island with the app's view of its name, as `View.islands` does in an app.
+    public func islands(_ views: [String: IslandDraw]) -> Self {
+        wrapped { AnyView($0.islands(views)) }
+    }
+
+    /// The harness's test island: it draws its props and sends them back as `echo` each time it gets them.
+    public static let echo: IslandDraw = { props, send in
+        send("echo", props.fields)
+        return AnyView(Text(String(decoding: (try? JSONEncoder().encode(props)) ?? Data(), as: UTF8.self)))
+    }
+
+    /// Runs `steps` (a shot named `name` at the end when they take none); `check` compares each tree with `expect`, its ids with `ids`.
+    public func run(
+        _ steps: [Step], name: String = "shot", expect: TreeNode? = nil, ids: DrawnIdList? = nil, check: Bool = false
+    ) throws
         -> SnapshotRun
     {
         var screen = self.screen
         let key = try JSONValue(screen).id ?? ""
+        var edits: BlockState = [:]
+        var (shots, sent, dropped, times) = ([String](), [JSONValue](), [String](), [Double]())
+        func hear(_ seen: Seen) -> Seen {
+            for (id, (name, values)) in seen.heard.sorted(by: { $0.key < $1.key }) {
+                if let values {
+                    sent.append(.object(["screen": .string(key), "action": .string(name), "block": .string(id), "values": .object(values)]))
+                } else {
+                    dropped.append("event \(id) \(name)")
+                }
+            }
+            return seen
+        }
         let clock = ContinuousClock()
         let start = clock.now
-        var seen = draw(screen)
+        var seen = hear(draw(screen, edits))
         let paint = ms(clock.now - start)
-        var (shots, sent, dropped, times) = ([String](), [JSONValue](), [String](), [Double]())
         var (pngs, trees, faults) = ([String: Data](), [String: TreeNode](), [String]())
         func take(_ shot: String) throws {
             let tree = try seen.tree.decode(TreeNode.self)
@@ -56,28 +91,50 @@ public struct Snapshot {
             shots.append(shot)
             if check, let expect { Self.same(expect, tree, shot, &faults) }
             if check { Self.fit(tree, size.width, shot, &faults) }
+            if check, let ids, ids != seen.drawnIds {
+                faults.append("\(shot): drew ids \(seen.drawnIds), expected \(ids)")
+            }
         }
         for step in steps {
             let begun = clock.now
             switch step {
             case .tap(let on):
-                if let tap = seen.taps[on.id] {
+                let json = try JSONValue(screen)
+                let state = Behaviour.state(json, edits: edits)
+                let off = Behaviour(json, state: state).disabled.contains(on.id)
+                let block = Self.find(json, on.id)
+                let sets = (try? block?["tap"]?["set"]?.decode([SetState].self)) ?? []
+                let set = Behaviour.tap(sets, state: state)
+                edits.merge(set) { $1 }
+                if !off, let tap = seen.taps[on.id] {
+                    let names = Set(block?.list("fields").compactMap { $0.string("name") } ?? [])
+                    let typed = edits.filter { names.contains($0.key) }.mapValues(\.json)
                     sent.append(
                         .object([
                             "screen": .string(key), "action": .string(tap.action), "block": .string(on.id),
-                            "values": .object(tap.values),
+                            "values": .object(tap.values.merging(typed) { $1 }),
                         ]))
-                } else {
+                } else if off || set.isEmpty {
                     dropped.append("tap \(on.id)")
                 }
-            case .type(let typing): dropped.append("type \(typing.id)")
+                if !off, !set.isEmpty { seen = hear(draw(screen, edits)) }
+            case .type(let typing):
+                let json = try JSONValue(screen)
+                let field = Self.find(json, typing.id).flatMap { $0.list("fields").first?.string("name") ?? $0.string("name") }
+                let view = Behaviour(json, state: Behaviour.state(json, edits: edits))
+                if let field, !view.hidden.contains(field), !view.disabled.contains(field) {
+                    edits[field] = .string(typing.text)
+                    seen = hear(draw(screen, edits))
+                } else {
+                    dropped.append("type \(typing.id)")
+                }
             case .scroll(let on): dropped.append("scroll \(on.id)")
             case .frame(let frame):
                 if let new = frame.screen { screen = new } else { try screen.apply(frame.ops ?? []) }
-                seen = draw(screen)
+                seen = hear(draw(screen, edits))
             case .answer(let answer):
                 try screen.apply(answer.ops ?? [])
-                seen = draw(screen)
+                seen = hear(draw(screen, edits))
             case .shot(let shot): try take(shot.name)
             case .unknown(let value): dropped.append("unknown \(value)")
             }
@@ -106,17 +163,24 @@ public struct Snapshot {
         Double(d.components.seconds) * 1000 + Double(d.components.attoseconds) / 1e15
     }
 
-    private func draw(_ screen: Block) -> Seen {
+    private static func find(_ b: JSONValue, _ id: String) -> JSONValue? {
+        if b.id == id { return b }
+        let kids = b.list("blocks") + b.list("rows") + b.list("buttons") + b.list("rounds").flatMap { $0.list("blocks") }
+        return kids.lazy.compactMap { find($0, id) }.first
+    }
+
+    private func draw(_ screen: Block, _ edits: BlockState) -> Seen {
         let seen = Seen()
         var view = AnyView(
-            BlocksView(screen, source: .core).padding(BlocksView.inset)
+            BlocksView(screen, source: .core, state: edits).padding(BlocksView.inset)
                 .frame(width: size.width, height: size.height, alignment: .topLeading))
         for wrap in wraps { view = wrap(view) }
-        let root = view.reportsBlocks().background(look.palette.background).environment(\.look, look)
+        let root = view.islands(["x-echo": Self.echo]).hearsIslands { seen.heard[$0] = ($1, $2) }.reportsBlocks().background(look.palette.background).environment(\.look, look)
             .environment(\.colorScheme, look.palette.dark ? .dark : .light)
             .overlayPreferenceValue(DrawnBlocks.self) { blocks in
                 GeometryReader { proxy in seen.keep(blocks, proxy) }
             }
+            .overlayPreferenceValue(DrawnIds.self) { ids in seen.keep(ids) }
         let renderer = ImageRenderer(content: root)
         renderer.scale = 2
         if let image = renderer.cgImage { seen.png = Self.png(image) }
@@ -173,7 +237,15 @@ public struct Snapshot {
 private final class Seen {
     var tree: JSONValue = .null
     var taps: [String: BlockAction] = [:]
+    var heard: [String: (String, [String: JSONValue]?)] = [:]
     var png = Data()
+    var drawnIds = DrawnIdList(blocks: [], actions: [])
+
+    func keep(_ ids: [String]) -> Color {
+        let of = { (kind: String) in ids.filter { $0.hasPrefix(kind) }.map { String($0.dropFirst(kind.count)) } }
+        drawnIds = DrawnIdList(blocks: of("block:"), actions: of("action:"))
+        return .clear
+    }
 
     func keep(_ blocks: [DrawnBlock], _ proxy: GeometryProxy) -> Color {
         tree = blocks.first.map { node($0, proxy) } ?? .null
@@ -182,10 +254,10 @@ private final class Seen {
 
     private func node(_ b: DrawnBlock, _ proxy: GeometryProxy) -> JSONValue {
         let r = proxy[b.bounds]
-        if let id = b.id, let tap = b.tap, taps[id] == nil { taps[id] = tap }
+        if let id = b.id, let tap = b.tap, !b.hidden, taps[id] == nil { taps[id] = tap }
         return .object([
             "kind": .string(b.kind), "id": b.id.map(JSONValue.string) ?? .null,
-            "variant": b.variant.map(JSONValue.string) ?? .null, "drawn": .string(b.native ? "native" : "fallback"),
+            "variant": b.variant.map(JSONValue.string) ?? .null, "drawn": .string(b.hidden ? "hidden" : b.native ? "native" : "fallback"),
             "rect": .array([r.minX, r.minY, r.width, r.height].map { .number(Double($0)) }),
             "children": .array(b.children.map { node($0, proxy) }),
         ])

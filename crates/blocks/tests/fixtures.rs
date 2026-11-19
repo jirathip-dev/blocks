@@ -356,7 +356,11 @@ fn every_golden_parses_with_no_fault() {
             for f in Built::new(b).check(app) {
                 match f {
                     _ if herd_scene(&name, &f) => herd += 1,
-                    Fault::Shape { .. } | Fault::Extra { .. } | Fault::Unknown { .. } => {
+                    Fault::Shape { .. }
+                    | Fault::Extra { .. }
+                    | Fault::Unknown { .. }
+                    | Fault::Twice { .. }
+                    | Fault::ActTwice { .. } => {
                         bad.push(format!("{name}: {f:?}"));
                     }
                     _ => {}
@@ -454,7 +458,10 @@ fn check_finds_each_fault() {
         "{got:?}"
     );
     let mut want = vec![
-        Fault::Twice { id: s("a") },
+        Fault::Twice {
+            id: s("a"),
+            at: [s("/blocks/0"), s("/blocks/1")],
+        },
         Fault::Unnamed { kind: s("text") },
         Fault::Unnamed { kind: s("island") },
         Fault::Unknown { kind: s("gauge") },
@@ -515,4 +522,37 @@ fn an_action_and_its_answer_travel_as_both_apps_send_them() {
     for (def, v) in [("Action", &action), ("Answer", &answer)] {
         check(&s, &parse(&format!(r##"{{"$ref": "#/$defs/{def}"}}"##)), v, def).unwrap();
     }
+}
+
+#[test]
+fn check_refuses_an_id_twice_and_names_both_paths() {
+    let screen = parse(
+        r#"{"type": "screen", "id": "s", "blocks": [
+            {"type": "section", "id": "sec", "blocks": [
+                {"type": "list", "id": "l", "rows": [
+                    {"type": "row", "id": "sec", "title": "a", "tap": {"action": "open"}},
+                    {"type": "row", "id": "r2", "title": "b", "tap": {"action": "open"}}
+                ]}
+            ]},
+            {"type": "card", "id": "c", "title": "c", "buttons": [
+                {"type": "button", "label": "yes", "action": "pick"},
+                {"type": "button", "label": "no", "action": "pick"}
+            ]}
+        ]}"#,
+    );
+    let s = String::from;
+    assert_eq!(
+        Built::new(screen).check(&[]),
+        vec![
+            Fault::Twice {
+                id: s("sec"),
+                at: [s("/blocks/0"), s("/blocks/0/blocks/0/rows/0")],
+            },
+            Fault::ActTwice {
+                block: s("c"),
+                action: s("pick"),
+                at: [s("/blocks/1/buttons/0"), s("/blocks/1/buttons/1")],
+            },
+        ]
+    );
 }

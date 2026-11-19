@@ -3,6 +3,7 @@ import SwiftUI
 
 internal struct RowView: View {
     @Environment(\.look) private var look
+    @Environment(\.behaved) private var behaved
     @State private var open: Bool?
     internal let row: Row
 
@@ -55,7 +56,7 @@ internal struct RowView: View {
             Spacer(minLength: 4)
             if let badge = row.badge { Pill(badge: badge) }
             if let value = row.value {
-                RelativeValue(text: value.text(at:)).ui(13, .regular, look).foregroundStyle(palette.mute)
+                RelativeValue { value.text(at: $0, behaved.view.values) }.ui(13, .regular, look).foregroundStyle(palette.mute)
             }
             if let button = row.button { RowButton(button: button) }
             trailing
@@ -64,7 +65,7 @@ internal struct RowView: View {
         .contentShape(.rect)
         .overlay(alignment: .leading) {
             if row.changed == true {
-                RoundedRectangle(cornerRadius: 2).fill(palette.lead).frame(width: 3).padding(.vertical, 10)
+                RoundedRectangle(cornerRadius: look.radius(2)).fill(palette.lead).frame(width: 3).padding(.vertical, 10)
             }
         }
         .modifier(Lifted(lifted: row.lifted == true))
@@ -90,10 +91,11 @@ internal struct RelativeValue: View {
 }
 
 extension Shown {
-    internal func text(at now: Date) -> String {
+    internal func text(at now: Date, _ values: [String: String]) -> String {
         switch self {
         case .string(let string): string
         case .number(let number): number.formatted()
+        case .bound(let bound): values[bound.get] ?? ""
         case .time(let time): Relative.text(since: time.since, until: time.until, at: now)
         }
     }
@@ -135,7 +137,7 @@ internal struct RowButton: View {
         ActButton(source: Source(button)) {
             Text(button.label).ui(13, .semibold, look).foregroundStyle(tint)
                 .padding(.horizontal, 12).frame(minHeight: 30)
-                .background(look.outline ? Color.clear : tint.opacity(0.16), in: .capsule)
+                .background(look.outline ? Color.clear : tint.opacity(0.16), in: look.pill)
         }
     }
 }
@@ -147,7 +149,7 @@ internal struct Lifted: ViewModifier {
     @ViewBuilder
     internal func body(content: Content) -> some View {
         if lifted {
-            content.background(look.palette.background, in: .rect(cornerRadius: 12))
+            content.background(look.palette.background, in: .rect(cornerRadius: look.radius(12)))
                 .shadow(color: .black.opacity(0.4), radius: 12, y: 8).scaleEffect(1.02).offset(y: -6).zIndex(1)
         } else {
             content

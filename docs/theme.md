@@ -41,8 +41,15 @@ scheme. The values are the approved design's, in `docs/design/neutral-default/` 
 (`--dot-size: 2px`, `--dot-gap: 16px`, `--dot: var(--edge)`), and the motion: a screen's first-load build-up where
 its tiles settle in one by one (`--settle: 160ms`, `--rise: 8px`, `--stagger: 40ms`, `--build: 200ms`, so it is
 over by 360 ms, once, move and fade only, still under reduced motion) and a block that arrives later fading in
-where it lands while the blocks below slide down (`--enter: 160ms`), all on `--ease: cubic-bezier(0.2, 0, 0, 1)`.
-Drawing the tiles, seams, grid and motion in the HTML and SwiftUI renderers is its own issue.
+where it lands with no rise while the blocks below step down at once (`--enter: 160ms`), all on
+`--ease: cubic-bezier(0.2, 0, 0, 1)`.
+
+Both renderers draw them. HTML: `theme::css` writes the style values on `:root`, the shell and `blocks-shot` write them
+under `:where(:root)` so any app rule wins, and `blocks.css` reads only the variables; the shell plays the build-up once
+per screen (not on an update, a tab switch back, a resync or a site page's takeover), and `--motion: 0` or reduced
+motion turns it off. SwiftUI: `Look.tiles` (default `Tiles.default`, parsed from `blocksDefaultStyle`) draws every
+surface as a tile on the dot grid; `tiles: nil` gives the app's own `Style` back, and a still look, a `motion` of 0 or
+reduced motion turns the build-up off. `fixtures/look/kinds.json` is the kinds page both harnesses draw to one tree.
 
 ## Generated
 

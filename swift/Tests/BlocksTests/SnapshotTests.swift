@@ -42,6 +42,27 @@ final class SnapshotTests: XCTestCase {
         }
     }
 
+    func testEachIdsFixtureIsTheBlockAndActionIdsItsScreenDraws() throws {
+        let names = try FileManager.default.contentsOfDirectory(atPath: fixtures.appendingPathComponent("ids").path)
+            .map { String($0.dropLast(5)) }.sorted()
+        XCTAssertEqual(names, ["button", "screen"])
+        for name in names {
+            let ids = try load(DrawnIdList.self, "ids/\(name).json")
+            let run = try Snapshot(try load(Block.self, "blocks/\(name).json")).run([], name: name, ids: ids, check: true)
+            XCTAssertEqual(run.faults, [], name)
+        }
+    }
+
+    func testCheckFailsWhenTheDrawnIdsAreNotTheExpectedOnes() throws {
+        let run = try Snapshot(try load(Block.self, "blocks/button.json")).run(
+            [], name: "button", ids: try load(DrawnIdList.self, "ids/screen.json"), check: true)
+        XCTAssertEqual(
+            run.faults,
+            [
+                #"button: drew ids DrawnIdList(blocks: ["save"], actions: ["save"]), expected DrawnIdList(blocks: ["home", "hint"], actions: [])"#
+            ])
+    }
+
     func testCheckFailsWhenTheDrawnTreeIsNotTheExpectedOne() throws {
         let run = try Snapshot(try load(Block.self, "blocks/list.json")).run(
             [], name: "list", expect: try load(TreeNode.self, "trees/swift/card.json"), check: true)
@@ -64,6 +85,33 @@ final class SnapshotTests: XCTestCase {
         XCTAssertEqual(run.report.timings.steps_ms.count, 5)
         XCTAssertEqual(run.faults, [])
         XCTAssertNotEqual(run.pngs["before"], run.pngs["saved"])
+    }
+
+    private func island(_ name: String, events: String) throws -> Block {
+        try decode(
+            Block.self,
+            #"{"type": "island", "id": "e", "name": "\#(name)", "props": {"zoom": 3}, "events": \#(events), "fallback": {"title": "No map"}}"#)
+    }
+
+    func testAnIslandGetsItsPropsAndItsNamedEventIsSentAsAnAction() throws {
+        let run = try Snapshot(try island("x-echo", events: #"["echo"]"#)).run([])
+        let sent = try decode([Action].self, #"[{"screen": "e", "action": "echo", "block": "e", "values": {"zoom": 3}}]"#)
+        XCTAssertEqual(run.report.sent, sent)
+        XCTAssertEqual(run.report.dropped, [])
+        XCTAssertEqual(run.trees["shot"]?.drawn, .native)
+    }
+
+    func testAnIslandsUnnamedEventIsDroppedAndAnUnregisteredOneDrawsItsFallback() throws {
+        let unnamed = try Snapshot(try island("x-echo", events: "[]")).run([])
+        XCTAssertEqual(unnamed.report.sent, [])
+        XCTAssertEqual(unnamed.report.dropped, ["event e echo"])
+        let none = try Snapshot(try island("x-none", events: #"["echo"]"#)).run([])
+        XCTAssertEqual(none.report.sent, [])
+        XCTAssertEqual(none.report.dropped, [])
+        XCTAssertEqual(none.trees["shot"]?.drawn, .fallback)
+        let own = try Snapshot(try island("x-none", events: #"["echo"]"#)).islands(["x-none": Snapshot.echo]).run([])
+        XCTAssertEqual(own.trees["shot"]?.drawn, .native)
+        XCTAssertEqual(own.report.sent.map(\.action), ["echo"])
     }
 
     func testABlockStyleIsDrawn() throws {

@@ -1,15 +1,19 @@
 import type { LayoutPlace, LayoutTransition } from "./gen/layout.ts";
 import type { Scheme } from "./gen/schemes.ts";
 import type { Answer, Block, Kind, Op } from "./gen/types.ts";
+import { behave } from "./behave.ts";
 import { apply, patcher } from "./patch.ts";
 import { type Blk, blks, btn, type Ctx, el, h, isBlk, obj, type Post, type Renderer, render, type Store, tick } from "./render/index.ts";
+import { settle } from "./motion.ts";
 import { stream } from "./stream.ts";
-import { plain, type Theme } from "./theme.ts";
+import { plain, type Theme, tiles } from "./theme.ts";
 
+export { behave, evaluate, start, view } from "./behave.ts";
 export { dump } from "./dump.ts";
+export { settle } from "./motion.ts";
 export { apply, patcher } from "./patch.ts";
 export { el, h, kids, render } from "./render/index.ts";
-export { packs, plain } from "./theme.ts";
+export { packs, plain, tiles } from "./theme.ts";
 
 /// A layout node as the server's checked `layout.json` writes it; `P` is its place, per size class or resolved.
 export type Placed<P> = {
@@ -42,7 +46,7 @@ export type Mount = {
   store?: Store;
 };
 
-type View = { source: string; path: string; back: string[]; open: Set<string>; box: HTMLElement; body: HTMLElement; model?: Block; stop?: () => void };
+type View = { source: string; path: string; back: string[]; open: Set<string>; box: HTMLElement; body: HTMLElement; model?: Block; built: Set<string>; stop?: () => void; sync: () => void };
 type Tab = { node: Resolved; button: HTMLElement; pane: HTMLElement; view?: View };
 
 const ALWAYS: LayoutPlace[] = ["cards", "column", "panel", "inline"];
@@ -77,18 +81,42 @@ function local(): Store {
   };
 }
 
+const row = (label: string, f: () => void, on = false) => {
+  const r = h("div", `row tap${on ? " on" : ""}`, h("span", "rm", h("span", "rt", `${on ? "✓ " : ""}${label}`)));
+  r.tabIndex = 0;
+  r.setAttribute("role", "button");
+  r.onclick = f;
+  return r;
+};
+
+function wearer(schemes: Record<string, Scheme>, theme: Theme) {
+  const look = el("style");
+  look.id = "b-look";
+  document.head.append(look);
+  const wear = (name: string | null) => {
+    const s: Scheme | undefined = name ? schemes[name] : undefined;
+    look.textContent = tiles + (s ? theme.css(s) : "");
+  };
+  return { look, wear };
+}
+
+function looks(schemes: Record<string, Scheme>, store: Store, wear: (name: string | null) => void, again: () => void): HTMLElement {
+  const now = store.get("b:look");
+  const pick = (name: string | null) => () => {
+    store.put("b:look", name);
+    wear(name);
+    again();
+  };
+  const rows = Object.entries(schemes).map(([name, s]) => row(s.label, pick(name), name === now));
+  return h("div", "list", row("the app's own", pick(null), !now), ...rows);
+}
+
 /// Draws `o.layout` into `o.root`: its tabs, cards and menu, each screen kept and live on its source's one stream.
 export function mount(o: Mount): { close(): void } {
   const store = o.store ?? local();
   const theme = o.theme ?? plain;
   for (const href of o.css ?? []) document.head.append(Object.assign(el("link"), { rel: "stylesheet", href }));
-  const look = el("style");
-  look.id = "b-look";
-  document.head.append(look);
-  const wear = (name: string | null) => {
-    const s: Scheme | undefined = name ? o.schemes?.[name] : undefined;
-    look.textContent = s ? theme.css(s) : "";
-  };
+  const { look, wear } = wearer(o.schemes ?? {}, theme);
   wear(store.get("b:look"));
   const wide = matchMedia("(min-width: 1000px)");
   let shell = draw(o, store, theme, wear, wide.matches);
@@ -165,14 +193,20 @@ function draw(o: Mount, store: Store, theme: Theme, wear: (name: string | null) 
   const paint = (v: View) => {
     const e = v.model ? render(v.model, ctx(v)) : null;
     v.body.replaceChildren(...(e ? [e] : []));
+    v.sync();
     const b = btn("‹ back", "b-back");
     b.onclick = () => back(v);
     v.box.replaceChildren(...(v.back.length && v !== sheetView ? [b] : []), v.body);
     if (v === sheetView) heading(v);
+    if (!e || v.built.has(v.path)) return;
+    v.built.add(v.path);
+    requestAnimationFrame(() => settle(v.body));
   };
 
   const view = (source: string, path: string, box: HTMLElement): View => {
-    const v: View = { source, path, back: [], open: new Set(), box, body: el("div", "b-view") };
+    const body = el("div", "b-view");
+    const v: View = { source, path, back: [], open: new Set(), box, body, built: new Set(), sync: () => {} };
+    v.sync = behave(body, () => v.model);
     v.body.addEventListener("redraw", () => paint(v));
     return v;
   };
@@ -182,7 +216,7 @@ function draw(o: Mount, store: Store, theme: Theme, wear: (name: string | null) 
     const was = store.get(kept);
     if (!v.model && was) v.model = JSON.parse(was);
     paint(v);
-    const p = patcher({ root: v.body, model: () => v.model ?? { type: "screen" }, draw: (b) => render(b, ctx(v)) });
+    const p = patcher({ root: v.body, model: () => v.model ?? { type: "screen" }, draw: (b) => render(b, ctx(v)), saved: v.sync });
     const s = live(v.source);
     s.open(v.path, (screen, ops) => {
       v.model = screen;
@@ -318,23 +352,7 @@ function draw(o: Mount, store: Store, theme: Theme, wear: (name: string | null) 
   const parts = nodes.filter((n) => ALWAYS.includes(n.place)).map(() => el("section", "b-part"));
   const always = nodes.filter((n) => ALWAYS.includes(n.place)).map((n, i) => part(n, parts[i] ?? el("section")));
   const listed = nodes.filter((n) => SHEET.includes(n.place));
-  const row = (label: string, f: () => void, on = false) => {
-    const r = h("div", `row tap${on ? " on" : ""}`, h("span", "rm", h("span", "rt", `${on ? "✓ " : ""}${label}`)));
-    r.tabIndex = 0;
-    r.setAttribute("role", "button");
-    r.onclick = f;
-    return r;
-  };
-  const lookSheet = () => {
-    const now = store.get("b:look");
-    const pickLook = (name: string | null) => () => {
-      store.put("b:look", name);
-      wear(name);
-      lookSheet();
-    };
-    const rows = Object.entries(o.schemes ?? {}).map(([name, s]) => row(s.label, pickLook(name), name === now));
-    sheetWith("look", [h("div", "list", row("the app's own", pickLook(null), !now), ...rows)], menu);
-  };
+  const lookSheet = () => sheetWith("look", [looks(o.schemes ?? {}, store, wear, lookSheet)], menu);
   const menu = () => {
     const open = (n: Resolved) => () => {
       if (!isScreen(n)) return sheetWith(n.label ?? n.id, [o.components?.[n.type]?.(n) ?? el("div")], menu);
@@ -383,6 +401,24 @@ export function adopt(o: { theme?: Theme; store?: Store; blocks?: AppBlocks } = 
     return false;
   }
   const screen = String(obj(model).id ?? "");
+  const theme = o.theme ?? plain;
+  const store = o.store ?? local();
+  const schemes: Record<string, Scheme> = JSON.parse(data.dataset.looks || "{}");
+  const { wear } = wearer(schemes, theme);
+  wear(store.get("b:look"));
+  const sheet = el("div", "b-sheet");
+  const lookSheet = () => {
+    const x = btn("close", "b-sheet__close");
+    x.onclick = () => (sheet.hidden = true);
+    sheet.replaceChildren(h("div", "b-sheet__card", h("header", "b-sheet__head", h("b", "b-sheet__title", "look"), x), h("div", "b-sheet__body", looks(schemes, store, wear, lookSheet))));
+    sheet.hidden = false;
+    if (!sheet.isConnected) document.body.append(sheet);
+  };
+  sheet.addEventListener("click", (e) => e.target === sheet && (sheet.hidden = true));
+  document.addEventListener("click", (e) => {
+    const s = e.target instanceof Element ? e.target.closest<HTMLElement>("[data-sheet]") : null;
+    if (s) tap({ sheet: s.dataset.sheet });
+  });
   const p = patcher({ root, model: () => model, draw: (b) => render(b, ctx) });
   const take = (ops: Op[]) => {
     model = apply(model, ops) ?? model;
@@ -402,8 +438,9 @@ export function adopt(o: { theme?: Theme; store?: Store; blocks?: AppBlocks } = 
     if (typeof x.url === "string") open(x.url, "_blank", "noopener");
     else if (typeof x.open === "string") location.assign(x.open);
     else if (typeof x.action === "string") void act({ action: x.action, values: x.values });
+    else if (x.sheet === "look") lookSheet();
   };
-  const ctx: Ctx = { screen, act, tap, open: new Set(), theme: o.theme ?? plain, store: o.store ?? local(), apps: o.blocks };
+  const ctx: Ctx = { screen, act, tap, open: new Set(), theme, store, apps: o.blocks };
   document.addEventListener("submit", (e) => {
     const f = e.target;
     if (!(f instanceof HTMLFormElement) || !f.elements.namedItem("_action")) return;
@@ -413,13 +450,14 @@ export function adopt(o: { theme?: Theme; store?: Store; blocks?: AppBlocks } = 
     const { _block, _action, _screen, ...values } = v;
     void act({ action: _action, block: _block || undefined, values });
   });
-  stream({ url: data.dataset.stream ?? "" }).open(location.pathname, (s, ops) => {
-    const same = JSON.stringify(s) === JSON.stringify(model);
-    model = s;
-    if (ops) return p.queue(ops);
-    if (same) return;
-    root.replaceChildren(...[render(s, ctx)].filter((e): e is HTMLElement => e !== null));
-  });
+  if (data.dataset.stream)
+    stream({ url: data.dataset.stream }).open(location.pathname, (s, ops) => {
+      const same = JSON.stringify(s) === JSON.stringify(model);
+      model = s;
+      if (ops) return p.queue(ops);
+      if (same) return;
+      root.replaceChildren(...[render(s, ctx)].filter((e): e is HTMLElement => e !== null));
+    });
   return true;
 }
 

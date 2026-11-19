@@ -1,6 +1,8 @@
 use serde_json::{Map, Value};
 
-use super::{esc, fields, get, kids, list, on, one, shown, Go, W};
+use crate::behave;
+
+use super::{esc, fields, get, kids, list, on, one, rounds, sends, shown, Go, W};
 
 fn toned(v: Option<&Value>) -> (String, String) {
     match v {
@@ -16,6 +18,13 @@ fn ticked(w: &mut W<'_>, tag: &str, cls: &str, v: Option<&Value>) {
             let label = shown(t.get("label")).replace("{}", "").replace("{rel}", "");
             w.open("span", "", &[("data-tick", &t.to_string())]);
             w.text(label.trim());
+            w.close("span");
+        }
+        Some(t) if t.get("get").is_some() => {
+            let key = shown(t.get("get"));
+            let text = w.view.values.get(&key).cloned().unwrap_or_default();
+            w.open("span", "", &[("data-get", &key)]);
+            w.text(&text);
             w.close("span");
         }
         v => w.text(&shown(v)),
@@ -95,17 +104,47 @@ fn figure(w: &mut W<'_>, f: &Value) {
 }
 
 pub(super) fn row(w: &mut W<'_>, b: &Value) {
-    row_of(w, b, true);
+    if list(b, "rounds").is_empty() {
+        row_of(w, b, true);
+    } else {
+        rounds::row(w, b);
+    }
 }
 
-pub(super) fn row_of(w: &mut W<'_>, b: &Value, hooked: bool) {
+pub(super) fn face(w: &mut W<'_>, b: &Value, sub: bool) {
+    if let Some(f) = b.get("figure").filter(|f| f.is_object()) {
+        figure(w, f);
+    }
+    w.open("span", "rm", &[]);
+    w.el("span", "rt b-row__title", &shown(b.get("title")));
+    badge(w, "b-row__badge", b.get("badge"));
+    if let Some(sub) = b.get("subtitle").filter(|v| sub && !v.is_null()) {
+        let cls = format!("rs b-row__subtitle {}", toned(Some(sub)).1);
+        ticked(
+            w,
+            "span",
+            &cls,
+            if sub.is_object() { sub.get("text") } else { Some(sub) },
+        );
+    }
+    w.close("span");
+    if let Some(v) = b.get("value").filter(|v| !v.is_null()) {
+        ticked(w, "span", "rv b-row__value", Some(v));
+    }
+}
+
+pub(super) fn classes(b: &Value) -> String {
     let indent = b.get("indent").and_then(Value::as_u64).filter(|i| *i > 0);
-    let mut cls = format!(
+    format!(
         "row{}{}{}",
         if get(b, "style") == Some("link") { " link" } else { "" },
         if on(b, "sticky") { " sticky" } else { "" },
         indent.map_or(String::new(), |i| format!(" in{}", i.min(3)))
-    );
+    )
+}
+
+pub(super) fn row_of(w: &mut W<'_>, b: &Value, hooked: bool) {
+    let mut cls = classes(b);
     let swipe = list(b, "swipe");
     let go = match b.get("tap") {
         Some(t) if get(t, "url").is_none() && get(t, "open").is_none() => Go::Stay,
@@ -123,13 +162,14 @@ pub(super) fn row_of(w: &mut W<'_>, b: &Value, hooked: bool) {
             attrs.push(("href", u.as_str()));
             "a"
         }
-        Go::Post(_) | Go::Stay => "div",
+        Go::Post(..) | Go::Sheet(_) | Go::Stay => "div",
     };
     if tag == "a" || b.get("tap").is_some() || !swipe.is_empty() {
         cls.push_str(" tap");
     }
     if tag == "div" && (b.get("tap").is_some() || !swipe.is_empty()) {
         attrs.extend([("tabindex", "0"), ("role", "button")]);
+        attrs.extend(sends(b.get("tap")).map(|a| ("data-action", a)));
     }
     if !swipe.is_empty() && hooked {
         w.open_block("div", "rw", b, &[]);
@@ -139,25 +179,7 @@ pub(super) fn row_of(w: &mut W<'_>, b: &Value, hooked: bool) {
     } else {
         w.open(tag, &cls, &attrs);
     }
-    if let Some(f) = b.get("figure").filter(|f| f.is_object()) {
-        figure(w, f);
-    }
-    w.open("span", "rm", &[]);
-    w.el("span", "rt b-row__title", &shown(b.get("title")));
-    badge(w, "b-row__badge", b.get("badge"));
-    if let Some(sub) = b.get("subtitle").filter(|v| !v.is_null()) {
-        let cls = format!("rs b-row__subtitle {}", toned(Some(sub)).1);
-        ticked(
-            w,
-            "span",
-            &cls,
-            if sub.is_object() { sub.get("text") } else { Some(sub) },
-        );
-    }
-    w.close("span");
-    if let Some(v) = b.get("value").filter(|v| !v.is_null()) {
-        ticked(w, "span", "rv b-row__value", Some(v));
-    }
+    face(w, b, true);
     w.close(tag);
     if swipe.is_empty() {
         return;
@@ -256,7 +278,7 @@ pub(super) fn choice(w: &mut W<'_>, b: &Value) {
                 ("form", &f),
             ],
         );
-        w.btn("send", "", &Go::Post(f), &[], None);
+        w.btn("send", "", &Go::Post(f, action.clone()), &[], None);
         w.close("form");
     }
     w.close("div");
@@ -290,7 +312,13 @@ fn form_of(w: &mut W<'_>, b: &Value, cls: &str, bar: bool) {
             w.open("div", "bar", &[]);
         }
         let off: &[(&str, &str)] = if bar && on(s, "off") { &[("disabled", "")] } else { &[] };
-        w.btn(&shown(s.get("label")), "", &Go::Post(f), off, None);
+        w.btn(
+            &shown(s.get("label")),
+            "",
+            &Go::Post(f, action.unwrap_or_default().into()),
+            off,
+            None,
+        );
         if bar {
             w.close("div");
         }
@@ -316,6 +344,16 @@ fn placeholder(x: &Value, secret: bool) -> &str {
     }
 }
 
+fn input_type<'a>(secret: bool, kb: &str, hints: &'a [(&'static str, String)]) -> &'a str {
+    let typed = hints.iter().find(|(k, _)| *k == "type").map(|(_, v)| v.as_str());
+    match (secret, kb, typed) {
+        (true, _, _) => "password",
+        (false, _, Some(t)) => t,
+        (false, "url", None) => "url",
+        _ => "text",
+    }
+}
+
 fn field(w: &mut W<'_>, x: &Value, tie: &[(&str, &str)]) {
     let name = shown(x.get("name"));
     let kind = get(x, "type").unwrap_or_default();
@@ -327,7 +365,8 @@ fn field(w: &mut W<'_>, x: &Value, tie: &[(&str, &str)]) {
         if error.is_some() { " err" } else { "" },
         if on(x, "open") { " open" } else { "" },
     );
-    w.open("label", &row, &[]);
+    let hidden = w.view.hidden.contains(&name);
+    w.open("label", &row, if hidden { &[("hidden", "")] } else { &[] });
     w.open("span", "fl", &[]);
     w.el(
         "span",
@@ -367,13 +406,15 @@ fn field(w: &mut W<'_>, x: &Value, tie: &[(&str, &str)]) {
         }
         t => {
             let secret = t == "secret";
+            let hints = behave::hints(x);
             let kb = get(x, "keyboard").unwrap_or_default();
-            let ty = match (secret, kb) {
-                (true, _) => "password",
-                (false, "url") => "url",
-                _ => "text",
-            };
-            attrs.extend([("type", ty), ("autocomplete", "off")]);
+            attrs.extend([("type", input_type(secret, kb, &hints)), ("autocomplete", "off")]);
+            attrs.extend(
+                hints
+                    .iter()
+                    .filter(|(k, _)| *k != "type")
+                    .map(|(k, v)| (*k, v.as_str())),
+            );
             match kb {
                 "url" => attrs.push(("inputmode", "url")),
                 "number" => attrs.push(("inputmode", "decimal")),
@@ -421,7 +462,7 @@ pub(super) fn secret(w: &mut W<'_>, b: &Value) {
     w.close("label");
     w.open("div", "ra", &[]);
     w.el("p", "m sn", "sent to the app only, never to the agent");
-    w.btn("send", "", &Go::Post(f), &[], None);
+    w.btn("send", "", &Go::Post(f, shown(b.get("action"))), &[], None);
     w.close("div");
     w.close("div");
 }
@@ -455,7 +496,7 @@ pub(super) fn run(w: &mut W<'_>, b: &Value) {
 pub(super) fn button(w: &mut W<'_>, b: &Value) {
     let go = match (b.get("tap"), get(b, "action")) {
         (Some(t), _) => w.tap(Some(t), b.get("id")),
-        (None, Some(a)) => Go::Post(w.post(b.get("id"), a, &fields(&[b.get("values")]))),
+        (None, Some(a)) => Go::Post(w.post(b.get("id"), a, &fields(&[b.get("values")])), a.into()),
         (None, None) => Go::Stay,
     };
     w.btn(&shown(b.get("label")), &shown(b.get("style")), &go, &[], Some(b));
@@ -689,7 +730,13 @@ pub(super) fn composer(w: &mut W<'_>, b: &Value) {
     } else {
         shown(b.get("label"))
     };
-    w.btn(&label, "primary", &Go::Post(f.clone()), &[], None);
+    w.btn(
+        &label,
+        "primary",
+        &Go::Post(f.clone(), shown(b.get("action"))),
+        &[],
+        None,
+    );
     w.close("div");
     let chips: Vec<&Value> = list(b, "chips").iter().filter(|c| c.is_object()).collect();
     if !chips.is_empty() {

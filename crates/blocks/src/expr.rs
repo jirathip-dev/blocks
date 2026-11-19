@@ -64,6 +64,28 @@ pub enum Expr {
     Unknown(Map<String, Value>),
 }
 
+impl Default for Expr {
+    fn default() -> Self {
+        Self::Lit(Lit::Null)
+    }
+}
+
+impl Expr {
+    /// Whether every operation and pattern in the tree is one this version knows; an unknown one counts as absent.
+    pub fn known(&self) -> bool {
+        let all = |xs: &[Expr]| xs.iter().all(Expr::known);
+        match self {
+            Self::Lit(_) | Self::Get(_) => true,
+            Self::Not(x) | Self::Len(x) => x.known(),
+            Self::All(xs) | Self::Any(xs) | Self::Cat(xs) => all(xs),
+            Self::Eq(p) | Self::Lt(p) | Self::Has(p) | Self::Add(p) | Self::Sub(p) => all(&**p),
+            Self::Is(m) => !matches!(m.pattern, Pattern::Other(_)) && m.value.known(),
+            Self::Pick(p) => all(&**p),
+            Self::Unknown(_) => false,
+        }
+    }
+}
+
 fn flag(l: &Lit) -> Option<bool> {
     match l {
         Lit::Null => Some(false),
@@ -82,11 +104,35 @@ fn num(f: f64) -> Lit {
     }
 }
 
-fn text(l: &Lit) -> String {
+fn shown(f: f64) -> String {
+    let sci = format!("{:e}", f.abs());
+    let (m, x) = sci.split_once('e').unwrap_or((&sci, "0"));
+    let digits: String = m.chars().filter(char::is_ascii_digit).collect();
+    let k = i64::try_from(digits.len()).unwrap_or(0);
+    let n = x.parse::<i64>().unwrap_or(0) + 1;
+    let zeros = |c: i64| "0".repeat(usize::try_from(c).unwrap_or(0));
+    let body = if k <= n && n <= 21 {
+        format!("{digits}{}", zeros(n - k))
+    } else if 0 < n && n <= 21 {
+        let (a, b) = digits
+            .split_at_checked(usize::try_from(n).unwrap_or(0))
+            .unwrap_or((&digits, ""));
+        format!("{a}.{b}")
+    } else if -6 < n && n <= 0 {
+        format!("0.{}{digits}", zeros(-n))
+    } else {
+        let (a, b) = digits.split_at_checked(1).unwrap_or((&digits, ""));
+        let dot = if b.is_empty() { "" } else { "." };
+        format!("{a}{dot}{b}e{}{}", if n > 0 { "+" } else { "-" }, (n - 1).abs())
+    };
+    format!("{}{body}", if f < 0.0 { "-" } else { "" })
+}
+
+pub(crate) fn text(l: &Lit) -> String {
     match l {
         Lit::Null => String::new(),
         Lit::Bool(b) => b.to_string(),
-        Lit::Num(n) => n.as_f64().map(|f| format!("{f}")).unwrap_or_default(),
+        Lit::Num(n) => n.as_f64().map(shown).unwrap_or_default(),
         Lit::Str(s) => s.clone(),
     }
 }

@@ -9,6 +9,7 @@ The Rust types in `crates/blocks/src/` (`Block` and its kinds in `kind/`, `Expr`
 - `schema/sample.json`: old per-screen frames serialized by the Rust code, which the Swift test decodes
 - `web/src/gen/types.ts` and `web/src/gen/sample.ts`: the TS types, and the sample type-checked against them
 - `web/src/gen/hooks.ts`: each kind's style hooks, its `variant` field and its `parts`
+- `web/src/gen/schemes.ts` and `swift/Sources/Blocks/Gen/Schemes.swift`: the theme's scheme tokens
 - `swift/Sources/Blocks/Gen/Blocks.swift`: the Swift `Codable` types (`JSONValue.swift` beside it is kept by hand)
 - `swift/Sources/Blocks/Gen/Style.swift`: `theme::Style`, an app's `style.json`, which `fixtures/styles/` holds good and bad
 - `swift/Sources/Blocks/Gen/LayoutShapes.swift`: `layout::Place` and `layout::Transition`, the words a `layout.json`
@@ -32,6 +33,15 @@ Every kind takes `show`, an `Expr`: `{"get": "key"}`, `not`, `all`, `any`, `eq`,
 pattern), `add`, `sub`, `cat`, `pick`, or a bare value. `eval` is total: a wrong type gives `null`, and `null` is
 false. `fixtures/behave/` holds its cases (state, expression, value), and an operation a reader does not know
 evaluates to `null`.
+
+A field also takes `show`, `enabled` and `checks` (each `{ok, say}`), a button and an act `enabled`, and a tap `set` (each
+`{key, to}`: local state changes, nothing is sent). `behave::view` gives what a state makes of a screen: the hidden
+ids and field names, the disabled ones (a form whose check fails, for its submit) and each failing field's `say`;
+`behave.ts` and Swift's `Behaviour` give the same for `fixtures/behave/view.json`. A `show`, `enabled`, check or
+`set` that uses an operation or pattern a reader does not know counts as not written. A block's `show` needs its
+`id`. An act's `enabled` keys by the action it sends (`View.acts`); a row's or tile's `value` may be `{"get": key}`, which
+shows that state key's text (`View.values`). The static page writes the start state: `hidden`, `disabled` acts, bound
+values, and from checks `required`, `type="email"`, `maxlength`.
 
 `fixtures/screens/` holds both apps' screens as they sent them, copied verbatim (cooee at `8ca09a316`, drover at
 `dd475fcf0`), and `cooee/screen-tests-insert.json`, cooee's `ScreenTests` inserts written out as frames. Each

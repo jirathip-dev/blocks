@@ -5,7 +5,7 @@ import Foundation
 
 let usage =
     "usage: blocks-snap --screen <file> [--size 390x844] [--scheme light|dark] [--script <steps.json>]"
-    + " [--expect <tree.json>] [--check] --out <dir>\n"
+    + " [--expect <tree.json>] [--ids <ids.json>] [--check] --out <dir>\n"
 
 func fail(_ text: String, _ code: Int32) -> Never {
     FileHandle.standardError.write(Data(text.utf8))
@@ -48,7 +48,8 @@ do {
     let run = try snapshot.run(
         options["script"].map { read([Step].self, $0) } ?? [],
         name: URL(fileURLWithPath: screenFile).deletingPathExtension().lastPathComponent,
-        expect: options["expect"].map { read(TreeNode.self, $0) }, check: check)
+        expect: options["expect"].map { read(TreeNode.self, $0) }, ids: options["ids"].map { read(DrawnIdList.self, $0) },
+        check: check)
     let dir = URL(fileURLWithPath: out)
     try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
     let json = JSONEncoder()

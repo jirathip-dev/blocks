@@ -1,0 +1,42 @@
+{
+  "state": { "email": "ada@", "name": "Ada Lovelace", "plan": "free", "more": false, "places": 3 },
+  "cases": [
+    { "expr": { "eq": [{ "get": "plan" }, "team"] }, "want": false },
+    { "expr": { "not": { "lt": [20, { "len": { "get": "name" } }] } }, "want": true }
+  ],
+  "screen": {
+    "type": "screen",
+    "id": "signup",
+    "title": "Sign up",
+    "state": { "more": false, "places": 3 },
+    "actions": [{ "label": "Save", "action": "save", "enabled": { "get": "more" } }, { "label": "Help", "action": "help", "enabled": { "fold": [] } }],
+    "blocks": [
+      { "type": "chips", "id": "plan", "name": "plan", "selected": ["free"], "options": [{ "value": "free", "label": "Free" }, { "value": "team", "label": "Team" }] },
+      {
+        "type": "form",
+        "id": "join",
+        "submit": { "label": "Join", "action": "join" },
+        "fields": [
+          {
+            "type": "text",
+            "name": "email",
+            "checks": [
+              { "ok": { "is": { "value": { "get": "email" }, "pattern": "filled" } }, "say": "Enter an email" },
+              { "ok": { "is": { "value": { "get": "email" }, "pattern": "email" } }, "say": "Enter an email address" }
+            ]
+          },
+          { "type": "text", "name": "name", "checks": [{ "ok": { "not": { "lt": [20, { "len": { "get": "name" } }] } }, "say": "20 letters at most" }, { "ok": null, "say": "a null check is not written" }] },
+          { "type": "text", "name": "seats", "show": { "eq": [{ "get": "plan" }, "team"] }, "checks": [{ "ok": false, "say": "never shown" }] },
+          { "type": "toggle", "name": "news", "enabled": { "get": "more" } }
+        ]
+      },
+      { "type": "button", "id": "more", "label": "What is included?", "enabled": { "not": { "get": "more" } }, "tap": { "set": [{ "key": "more", "to": true }] } },
+      { "type": "text", "id": "plans", "markdown": "Unlimited screens", "show": { "get": "more" } },
+      { "type": "text", "id": "later", "markdown": "An operation from a newer server shows", "show": { "fold": [{ "get": "more" }] } },
+      { "type": "list", "id": "sum", "rows": [{ "type": "row", "id": "chosen", "title": "Plan", "value": { "get": "plan" } }] },
+      { "type": "stat", "id": "count", "label": "Seats", "value": { "get": "places" } },
+      { "type": "section", "id": "box", "show": { "get": "more" }, "blocks": [{ "type": "button", "id": "inner", "label": "Off", "enabled": false }] }
+    ]
+  },
+  "view": { "hidden": ["box", "plans", "seats"], "disabled": ["join", "news"], "says": { "email": "Enter an email address" }, "acts": ["save"], "values": { "plan": "free", "places": "3" } }
+}

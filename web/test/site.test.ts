@@ -55,11 +55,11 @@ test("site and render give the same element per kind: tag, classes, hooks and te
         const B = await import("/blocks.js");
         const sig = (e) =>
           [e, ...e.querySelectorAll("*")]
-            .filter((x) => x.hasAttribute("data-block") || [...x.classList].some((c) => c.startsWith("b-")))
+            .filter((x) => x.hasAttribute("data-block") || x.hasAttribute("data-action") || [...x.classList].some((c) => c.startsWith("b-")))
             .map((x) => ({
               tag: x.tagName,
               cls: [...x.classList].sort().join(" "),
-              hooks: ["data-block", "data-variant", "data-tone", "data-fallback"].map((a) => x.getAttribute(a)),
+              hooks: ["data-block", "data-variant", "data-tone", "data-fallback", "data-action"].map((a) => x.getAttribute(a)),
               id: x.dataset.id || "",
               text: x.textContent.replace(/\s+/g, " ").trim(),
             }));
@@ -123,6 +123,7 @@ test("the fixture site is the same PNG and tree before and after blocks.js takes
   const on = await open();
   ok(shot.equals(await on.page.screenshot({ fullPage: true })), "the PNG changed when blocks.js took the page over");
   deepStrictEqual(await tree(on.page), want);
+  deepStrictEqual(await on.page.evaluate(() => document.getAnimations().map((a) => a.animationName)), []);
   strictEqual(want[0].kind, "screen");
   await on.page.fill('input[name="email"]', "a@b.test");
   const sent = on.page.waitForResponse((r) => r.request().method() === "POST");

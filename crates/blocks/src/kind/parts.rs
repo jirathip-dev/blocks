@@ -2,6 +2,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::{Map, Number, Value};
 
 use super::Block;
+use crate::expr::Expr;
 
 /// A field sent as `null` when it has no value, rather than left out.
 pub type Nullable<T> = Option<T>;
@@ -62,13 +63,21 @@ wire! {
     }
 }
 
-/// A row's or a tile's value: a string, a number, or a time.
+wire! {
+    /// A value bound to local state: it shows the text of state key `get`.
+    pub struct Bound {
+        get: String,
+    }
+}
+
+/// A row's or a tile's value: a string, a number, a state key's value, or a time.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
 #[serde(untagged)]
 pub enum Shown {
     Text(String),
     Number(Number),
+    Get(Bound),
     Time(Time),
 }
 
@@ -106,6 +115,24 @@ wire! {
         url: Option<String>,
         focus: Option<String>,
         copy: Option<String>,
+        set: Option<Vec<Set>>,
+    }
+}
+
+wire! {
+    /// A tap's change of local state: `key` becomes the value of `to`; nothing is sent.
+    #[cfg_attr(feature = "schema", schemars(rename = "SetState"))]
+    pub struct Set {
+        key: String,
+        to: Expr,
+    }
+}
+
+wire! {
+    /// A field's test: while `ok` does not hold, the field shows `say` and its form's submit is off.
+    pub struct Check {
+        ok: Expr,
+        say: String,
     }
 }
 
@@ -130,6 +157,7 @@ wire! {
         tap: Option<Tap>,
         confirm: Option<Confirm>,
         menu: Option<Vec<Act>>,
+        enabled: Option<Expr>,
     }
 }
 
@@ -169,6 +197,9 @@ wire! {
         was: Option<String>,
         error: Option<String>,
         open: Option<bool>,
+        show: Option<Expr>,
+        enabled: Option<Expr>,
+        checks: Option<Vec<Check>>,
     }
 }
 

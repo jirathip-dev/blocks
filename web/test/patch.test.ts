@@ -1,9 +1,12 @@
-import { deepStrictEqual, strictEqual } from "node:assert/strict";
+import { deepStrictEqual, notStrictEqual, strictEqual } from "node:assert/strict";
 import { test } from "node:test";
 import { apply, patcher } from "../src/patch.ts";
 
 class El {
   attrs = new Map();
+  classList = new Set();
+  addEventListener() {}
+  removeEventListener() {}
   children = [];
   parentElement = null;
   text = "";
@@ -52,6 +55,7 @@ const draw = (b) => {
   draws++;
   const el = new El();
   el.attrs.set("data-id", b.id);
+  el.attrs.set("data-block", b.type);
   el.text = b.title ?? "";
   const kids = b.rows ?? b.blocks;
   if (kids) {
@@ -128,4 +132,19 @@ test("over 500 queued ops the patcher redraws the view once from the model", () 
   frame();
   deepStrictEqual(ids(v.root), ["a:A500"]);
   strictEqual(draws - before, 3);
+});
+
+test("a merge of only an island's props keeps its instance and hands it the new props; another field redraws it", () => {
+  const v = view(screen({ type: "island", id: "i", name: "x-echo", props: { zoom: 3 }, fallback: { title: "F" } }));
+  const at = () => v.root.children[0].children[0].children[0].children[0].children[0];
+  const first = at();
+  const before = draws;
+  v.send([{ op: "merge", id: "i", fields: { props: { zoom: 4 } } }]);
+  frame();
+  strictEqual(at(), first);
+  strictEqual(draws, before);
+  deepStrictEqual(first.props, { zoom: 4 });
+  v.send([{ op: "merge", id: "i", fields: { events: ["echo"] } }]);
+  frame();
+  notStrictEqual(at(), first);
 });

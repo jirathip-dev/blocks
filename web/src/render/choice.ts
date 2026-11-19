@@ -5,7 +5,7 @@ export function choice(b: Choice, c: Ctx): HTMLElement {
   const s = el("div", "choice");
   const opts = [...b.options].sort((x, y) => Number(y.value === b.recommended) - Number(x.value === b.recommended));
   for (const o of opts) {
-    const x = btn(`${o.label}${o.value === b.recommended ? " · recommended" : ""}`, "pick");
+    const x = btn(`${o.label}${o.value === b.recommended ? " · recommended" : ""}`, "pick", undefined, b.action);
     x.name = "choice";
     x.onclick = () => c.act({ action: b.action, block: b.id, values: { ...b.values, ...o.values, choice: o.value }, confirm: o.confirm }, x);
     s.append(x);
@@ -18,7 +18,7 @@ export function choice(b: Choice, c: Ctx): HTMLElement {
     const i = el("input");
     Object.assign(i, { name: "other", placeholder: other.placeholder ?? "other…", autocomplete: "off" });
     draft(i, `draft:${c.screen}:${String(b.id)}:other`, c.store);
-    const go = btn("send");
+    const go = btn("send", "", undefined, b.action);
     go.type = "submit";
     f.append(i, go);
     f.onsubmit = (e) => {

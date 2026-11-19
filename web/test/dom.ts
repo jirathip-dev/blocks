@@ -166,6 +166,7 @@ export function install() {
   g.HTMLElement = El;
   g.HTMLInputElement = El;
   g.CustomEvent = class {};
+  g.customElements = { get: () => undefined, whenDefined: () => new Promise(() => {}) };
   g.DOMParser = class {
     parseFromString(html) {
       const body = new Frag();

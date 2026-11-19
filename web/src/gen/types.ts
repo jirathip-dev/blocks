@@ -4,7 +4,7 @@ export type Frame = { from?: number | null; k: string; ops?: Op[] | null; rev: n
 
 export type Accessory = "chevron" | "none";
 
-export type Act = { action?: string | null; confirm?: Confirm | null; icon?: string | null; label: string; menu?: Act[] | null; tap?: Tap | null; tone?: Tone | null; values?: Record<string, unknown> | null };
+export type Act = { action?: string | null; confirm?: Confirm | null; enabled?: Expr | null; icon?: string | null; label: string; menu?: Act[] | null; tap?: Tap | null; tone?: Tone | null; values?: Record<string, unknown> | null };
 
 export type Action = { action: string; block?: string | null; screen: string; values?: Record<string, unknown> | null };
 
@@ -14,7 +14,9 @@ export type AppBlock = { fallback?: Fallback | null; id?: string | null; type: s
 
 export type Block = ({ type: "screen" } & Screen) | ({ type: "sheet" } & Sheet) | ({ type: "section" } & Section) | ({ type: "list" } & List) | ({ type: "row" } & Row) | ({ type: "card" } & Card) | ({ type: "choice" } & Choice) | ({ type: "form" } & Form) | ({ type: "config" } & Form) | ({ type: "secret" } & Secret) | ({ type: "run" } & Run) | ({ type: "button" } & Button) | ({ type: "chips" } & Chips) | ({ type: "stat" } & Stat) | ({ type: "text" } & Text) | ({ type: "images" } & Images) | ({ type: "web" } & Web) | ({ type: "diff" } & Diff) | ({ type: "editor" } & Editor) | ({ type: "scene" } & Scene) | ({ type: "diagram" } & Diagram) | ({ type: "composer" } & Composer) | ({ type: "prose" } & Prose) | ({ type: "hero" } & Hero) | ({ type: "media" } & Media) | ({ type: "nav" } & Nav) | ({ type: "island" } & Island) | (AppBlock & { [key: string]: unknown });
 
-export type Button = { action?: string | null; confirm?: Confirm | null; id?: string | null; label: string; show?: Expr | null; style?: ButtonStyle | null; tap?: Tap | null; values?: Record<string, unknown> | null };
+export type Bound = { get: string };
+
+export type Button = { action?: string | null; confirm?: Confirm | null; enabled?: Expr | null; id?: string | null; label: string; show?: Expr | null; style?: ButtonStyle | null; tap?: Tap | null; values?: Record<string, unknown> | null };
 
 export type ButtonStyle = "primary" | "plain" | "destructive";
 
@@ -23,6 +25,8 @@ export type Bye = { why: Why };
 export type Card = { badge?: Label | null; blocks?: Block[] | null; buttons?: Block[] | null; fold?: Fold | null; id?: string | null; kind?: CardKind | null; menu?: Act[] | null; meta?: string | null; push?: boolean | null; show?: Expr | null; subtitle?: string | null; tap?: Tap | null; title?: string | null; tone?: Tone | null };
 
 export type CardKind = "ask" | "run" | "secret" | "config" | "proposal";
+
+export type Check = { ok: Expr; say: string };
 
 export type Child = Block | Lane | Round;
 
@@ -52,7 +56,7 @@ export type Expr = { get: string } | { not: Expr } | { all: Expr[] } | { any: Ex
 
 export type Fallback = { subtitle?: string | null; tap?: Tap | null; title: string };
 
-export type Field = { doc?: string | null; error?: string | null; keyboard?: Keyboard | null; label?: string | null; name: string; open?: boolean | null; options?: string[] | null; placeholder?: string | null; set?: boolean | null; type: FieldKind; value?: FieldValue | null; was?: string | null };
+export type Field = { checks?: Check[] | null; doc?: string | null; enabled?: Expr | null; error?: string | null; keyboard?: Keyboard | null; label?: string | null; name: string; open?: boolean | null; options?: string[] | null; placeholder?: string | null; set?: boolean | null; show?: Expr | null; type: FieldKind; value?: FieldValue | null; was?: string | null };
 
 export type FieldKind = "text" | "toggle" | "picker" | "secret";
 
@@ -150,9 +154,11 @@ export type Secret = { action: string; id?: string | null; label?: string | null
 
 export type Section = { blocks: Block[]; footer?: string | null; header?: string | null; id?: string | null; show?: Expr | null };
 
+export type SetState = { key: string; to: Expr };
+
 export type Sheet = { blocks: Block[]; cancel?: string | null; done?: Submit | null; id?: string | null; show?: Expr | null; title: string };
 
-export type Shown = string | number | Time;
+export type Shown = string | number | Bound | Time;
 
 export type Span = { bold?: boolean | null; code?: boolean | null; italic?: boolean | null; link?: string | null; text: string };
 
@@ -172,7 +178,7 @@ export type Sync = { close?: string[] | null; open: Have[] };
 
 export type Synced = { keys: KeyState[] };
 
-export type Tap = { action?: string | null; copy?: string | null; focus?: string | null; open?: string | null; sheet?: string | null; thread?: string | null; url?: string | null; values?: Record<string, unknown> | null };
+export type Tap = { action?: string | null; copy?: string | null; focus?: string | null; open?: string | null; set?: SetState[] | null; sheet?: string | null; thread?: string | null; url?: string | null; values?: Record<string, unknown> | null };
 
 export type Text = { center?: boolean | null; font?: string | null; id?: string | null; markdown?: string | null; show?: Expr | null; size?: number | null; style?: TextStyle | null; text?: string | null; tone?: Tone | null; top?: number | null; until?: string | null; weight?: string | null };
 

@@ -1,4 +1,4 @@
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
 
 use serde_json::{Map, Value};
 
@@ -7,14 +7,39 @@ use crate::kind::{Block, Fallback, Fields, Screen, Tap};
 /// What makes a screen unfit to send: a server checks its own before it serves it.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum Fault {
-    Twice { id: String },
-    Unnamed { kind: String },
-    Unknown { kind: String },
-    Shape { kind: String, why: String },
-    Extra { kind: String, field: String },
-    Clash { kind: String },
-    Bare { kind: String, id: String },
-    State { key: String },
+    Twice {
+        id: String,
+        at: [String; 2],
+    },
+    ActTwice {
+        block: String,
+        action: String,
+        at: [String; 2],
+    },
+    Unnamed {
+        kind: String,
+    },
+    Unknown {
+        kind: String,
+    },
+    Shape {
+        kind: String,
+        why: String,
+    },
+    Extra {
+        kind: String,
+        field: String,
+    },
+    Clash {
+        kind: String,
+    },
+    Bare {
+        kind: String,
+        id: String,
+    },
+    State {
+        key: String,
+    },
 }
 
 /// A screen as it goes on the wire: typed in with its fallbacks written, or read in as JSON.
@@ -24,15 +49,20 @@ pub struct Built(Value);
 const LISTS: [&str; 3] = ["blocks", "rows", "buttons"];
 const DRAWN: [&str; 3] = ["row", "text", "island"];
 
-pub(crate) fn children(o: &Fields) -> impl Iterator<Item = &Value> {
+fn placed(o: &Fields) -> impl Iterator<Item = (String, &Value)> {
+    let lists = LISTS.iter().filter_map(|k| Some(((*k).to_string(), o.get(*k)?)));
     let rounds = o.get("rounds").and_then(Value::as_array).into_iter().flatten();
-    let in_rounds = rounds.filter_map(|r| r.get("blocks"));
-    LISTS
-        .iter()
-        .filter_map(|k| o.get(*k))
+    let in_rounds = rounds
+        .enumerate()
+        .filter_map(|(i, r)| Some((format!("rounds/{i}/blocks"), r.get("blocks")?)));
+    lists
         .chain(in_rounds)
-        .filter_map(Value::as_array)
-        .flatten()
+        .filter_map(|(at, l)| Some((at, l.as_array()?)))
+        .flat_map(|(at, l)| l.iter().enumerate().map(move |(i, v)| (format!("{at}/{i}"), v)))
+}
+
+pub(crate) fn children(o: &Fields) -> impl Iterator<Item = &Value> {
+    placed(o).map(|(_, v)| v)
 }
 
 fn kind(o: &Fields) -> &str {
@@ -93,13 +123,14 @@ fn shallow(o: &Fields) -> Value {
 
 struct Walk<'a> {
     app: &'a [&'a str],
-    ids: BTreeSet<String>,
+    ids: BTreeMap<String, String>,
+    acts: BTreeMap<(String, String), String>,
     keys: Vec<String>,
     out: Vec<Fault>,
 }
 
 impl Walk<'_> {
-    fn block(&mut self, v: &Value) {
+    fn block(&mut self, v: &Value, at: &str, scope: &str) {
         let Value::Object(o) = v else {
             let why = "a block that is no object".into();
             return self.out.push(Fault::Shape {
@@ -111,7 +142,14 @@ impl Walk<'_> {
         let id = o.get("id").and_then(Value::as_str);
         match id {
             Some("") => self.out.push(Fault::Unnamed { kind: k.clone() }),
-            Some(id) if !self.ids.insert(id.into()) => self.out.push(Fault::Twice { id: id.into() }),
+            Some(id) => {
+                if let Some(first) = self.ids.insert(id.into(), at.into()) {
+                    self.out.push(Fault::Twice {
+                        id: id.into(),
+                        at: [first, at.into()],
+                    });
+                }
+            }
             None if k == "island" => self.out.push(Fault::Unnamed { kind: k.clone() }),
             _ => {}
         }
@@ -125,15 +163,49 @@ impl Walk<'_> {
             self.out.push(Fault::Bare { kind: k.clone(), id });
         }
         if Block::KINDS.contains(&k.as_str()) {
-            self.core(&k, o);
-            children(o).for_each(|c| self.block(c));
+            let scope = id.filter(|i| !i.is_empty()).unwrap_or(scope);
+            let top = shallow(o);
+            self.sends(&top, at, scope);
+            self.core(&k, o, top);
+            placed(o).for_each(|(p, c)| self.block(c, &format!("{at}/{p}"), scope));
         } else if !self.app.contains(&k.as_str()) {
             self.out.push(Fault::Unknown { kind: k });
         }
     }
 
-    fn core(&mut self, k: &str, o: &Fields) {
-        match serde_json::from_value::<Block>(shallow(o)) {
+    fn sends(&mut self, v: &Value, at: &str, scope: &str) {
+        let inner = |x: &Value, k: &dyn std::fmt::Display| (x.is_object() || x.is_array()).then(|| format!("{at}/{k}"));
+        match v {
+            Value::Object(o) => {
+                if let Some(a) = o.get("action").and_then(Value::as_str) {
+                    let key = (scope.to_string(), a.to_string());
+                    if let Some(first) = self.acts.insert(key, at.into()) {
+                        self.out.push(Fault::ActTwice {
+                            block: scope.into(),
+                            action: a.into(),
+                            at: [first, at.into()],
+                        });
+                    }
+                }
+                for (k, x) in o {
+                    if let Some(p) = inner(x, k) {
+                        self.sends(x, &p, scope);
+                    }
+                }
+            }
+            Value::Array(l) => {
+                for (i, x) in l.iter().enumerate() {
+                    if let Some(p) = inner(x, &i) {
+                        self.sends(x, &p, scope);
+                    }
+                }
+            }
+            _ => {}
+        }
+    }
+
+    fn core(&mut self, k: &str, o: &Fields, top: Value) {
+        match serde_json::from_value::<Block>(top) {
             Err(e) => self.out.push(Fault::Shape {
                 kind: k.into(),
                 why: e.to_string(),
@@ -191,7 +263,8 @@ impl Built {
     pub fn check(&self, app: &[&str]) -> Vec<Fault> {
         let mut w = Walk {
             app,
-            ids: BTreeSet::new(),
+            ids: BTreeMap::new(),
+            acts: BTreeMap::new(),
             keys: vec![],
             out: vec![],
         };
@@ -199,7 +272,7 @@ impl Built {
         w.out.extend(clash.map(|k| Fault::Clash { kind: (*k).into() }));
         let state = self.0.get("state").and_then(Value::as_object).into_iter().flatten();
         w.keys.extend(state.map(|(k, _)| k.clone()));
-        w.block(&self.0);
+        w.block(&self.0, "", "");
         let mut declared = BTreeSet::new();
         let twice: Vec<String> = w
             .keys

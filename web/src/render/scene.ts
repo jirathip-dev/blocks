@@ -1,5 +1,5 @@
 import type { Lane, Scene } from "../gen/types.ts";
-import { type Ctx, el, h, href, ticked, urlOf } from "./index.ts";
+import { acts, type Ctx, el, h, href, sends, ticked, urlOf } from "./index.ts";
 
 function lane(l: Lane, c: Ctx): HTMLElement {
   const url = urlOf(l.tap);
@@ -9,7 +9,7 @@ function lane(l: Lane, c: Ctx): HTMLElement {
   x.setAttribute("aria-label", `${l.title}, ${l.state}`);
   const tap = l.tap;
   if (tap && !url) {
-    x.setAttribute("role", "button");
+    acts(x, sends(tap)).setAttribute("role", "button");
     x.tabIndex = 0;
     x.onclick = () => c.tap(tap);
     x.onkeydown = (e) => e.key === "Enter" && c.tap(tap);

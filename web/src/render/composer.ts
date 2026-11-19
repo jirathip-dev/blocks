@@ -31,7 +31,7 @@ export function composer(b: Composer, c: Ctx): HTMLElement {
   const post = async (action: string, values: Blk, x?: HTMLElement) => c.act({ action, block: b.id, values: { ...b.values, ...values } }, x);
   const row = el("div", "cr");
   const add = btn("+");
-  const go = btn("", "primary");
+  const go = btn("", "primary", undefined, b.action);
   const st = btn("steer");
   const send = async (steer = false) => {
     if (!ta.value.trim() && !d.files.length) return;
@@ -94,7 +94,7 @@ export function composer(b: Composer, c: Ctx): HTMLElement {
       const s = Math.max(0, Math.floor((Date.now() - Date.parse(String(obj(b.working).since))) / 1000));
       const fig = c.theme.figure({ state: "working" });
       p.replaceChildren(...(fig ? [fig] : []), h("span", "pt", d.stopping ? "stopping…" : `working ${s >= 60 ? `${Math.floor(s / 60)}m ` : ""}${s % 60}s`));
-      const x = btn("stop", "bad");
+      const x = btn("stop", "bad", undefined, act("stop"));
       x.onclick = async (e) => {
         e.stopPropagation();
         if (!(await post(act("stop"), {}, x))) return;
@@ -112,9 +112,9 @@ export function composer(b: Composer, c: Ctx): HTMLElement {
     const text = m.text;
     const r = h("div", "qd", h("span", "qt", text));
     r.dataset.q = String(m.q);
-    const now = btn("send now", "primary");
+    const now = btn("send now", "primary", undefined, act("steer"));
     const edit = btn("edit");
-    const rm = btn("remove", "bad");
+    const rm = btn("remove", "bad", undefined, act("unqueue"));
     now.onclick = () => post(act("steer"), { q: m.q }, now);
     edit.onclick = () => {
       [d.q, ta.value] = [m.q, text];

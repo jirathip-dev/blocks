@@ -1,6 +1,6 @@
 use serde_json::{Map, Value};
 
-use super::{get, list, Go, W};
+use super::{get, list, sends, Go, W};
 
 fn lane(w: &mut W<'_>, l: &Value) {
     let state = get(l, "state").unwrap_or_default();
@@ -21,9 +21,10 @@ fn lane(w: &mut W<'_>, l: &Value) {
             attrs.push(("href", u.as_str()));
             "a"
         }
-        Go::Post(_) | Go::Stay => {
+        Go::Post(..) | Go::Sheet(_) | Go::Stay => {
             if tap.is_some() {
                 attrs.extend([("role", "button"), ("tabindex", "0")]);
+                attrs.extend(sends(tap).map(|a| ("data-action", a)));
             }
             "div"
         }

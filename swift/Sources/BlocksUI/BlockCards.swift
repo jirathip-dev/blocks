@@ -3,6 +3,8 @@ import SwiftUI
 
 internal struct ActButton<Label: View>: View {
     @Environment(\.act) private var act
+    @Environment(\.behaved) private var behaved
+    @Environment(\.edit) private var edit
     @Environment(\.openURL) private var openURL
     @Environment(\.openThread) private var openThread
     @Environment(\.open) private var open
@@ -21,10 +23,19 @@ internal struct ActButton<Label: View>: View {
         }
         .buttonStyle(.plain)
         .modifier(Confirming(pending: $pending) { _ in fire() })
+        .modifier(Identified(id: sends, action: true))
+        .disabled(sends.map(behaved.view.acts.contains) == true)
+    }
+
+    private var sends: String? {
+        let tap = source.tap
+        return tap?.url ?? tap?.thread ?? tap?.open ?? tap?.sheet == nil ? source.sent(action)?.action : nil
     }
 
     private func fire() {
         let tap = source.tap
+        let set = Behaviour.tap(tap?.set ?? [], state: behaved.state)
+        if !set.isEmpty { edit(set) }
         if let url = tap?.url.flatMap(URL.init(string:)) {
             openURL(url)
         } else if let thread = tap?.thread {
@@ -120,7 +131,7 @@ internal struct CardBlock: View {
         .surface(look, radius: 20)
         .overlay(alignment: .leading) {
             if look.glass {
-                RoundedRectangle(cornerRadius: 2).fill(tint).frame(width: 3).padding(.vertical, 16)
+                RoundedRectangle(cornerRadius: look.radius(2)).fill(tint).frame(width: 3).padding(.vertical, 16)
             }
         }
         .modifier(BlockActs(menu: block.menu ?? []))
@@ -196,7 +207,7 @@ internal struct ChoiceBlock: View {
             if let box = block.other {
                 TextField(box.placeholder ?? "", text: $other).ui(14, .regular, look)
                     .padding(.horizontal, 12).frame(height: 38)
-                    .background(palette.background.opacity(0.5), in: .rect(cornerRadius: 10))
+                    .background(palette.background.opacity(0.5), in: .rect(cornerRadius: look.radius(10)))
             }
             if let fallback = block.default {
                 RelativeText(template: fallback.label ?? "", until: fallback.until.date)

@@ -1,20 +1,24 @@
 import { readFileSync } from "node:fs";
 import { webkit } from "playwright";
 import { defaultPair } from "../src/gen/schemes.ts";
-import { css as wear } from "../src/theme.ts";
+import { tiles, css as wear } from "../src/theme.ts";
+import { expect as differ } from "../src/tree.ts";
 
 const BASE = "http://blocks.test/";
 const BUDGET_MS = 16.7;
 const dist = (f) => readFileSync(new URL(`../dist/${f}`, import.meta.url));
-const LOOK = `${wear(defaultPair.light)}@media (prefers-color-scheme: dark){${wear(defaultPair.dark)}}html{background:var(--bg);color:var(--fg)}`;
+const LOOK = `${tiles}${wear(defaultPair.light)}@media (prefers-color-scheme: dark){${wear(defaultPair.dark)}}html{color:var(--fg)}`;
+const ECHO = `customElements.define("x-echo", class extends HTMLElement {
+  set props(p) { this.textContent = JSON.stringify(p); this.dispatchEvent(new CustomEvent("blocks-event", { bubbles: true, detail: { name: "echo", values: p } })); }
+});`;
 const PAGE = (css) =>
   `<!doctype html><meta charset=utf-8><link rel=stylesheet href=blocks.css><link rel=stylesheet href=look.css>${css.map((_, i) => `<link rel=stylesheet href=css/${i}>`).join("")}` +
-  `<body><div id=root></div><script type=module>import * as B from "./blocks.js"; window.B = B;</script>`;
+  `<body><div id=root></div><script type=module>import * as B from "./blocks.js"; window.B = B;</script><script>${ECHO}</script>`;
 
 function boot(screen) {
   const B = window.B;
   const root = document.getElementById("root");
-  const h = { model: screen, sent: [] };
+  const h = { model: screen, sent: [], dropped: [] };
   const ctx = {
     screen: String(screen.id ?? ""),
     act: async (a) => (h.sent.push({ screen: ctx.screen, action: a.action, block: a.block ?? null, values: a.values ?? null }), true),
@@ -22,11 +26,13 @@ function boot(screen) {
     open: new Set(),
     theme: B.plain,
     store: { get: () => null, put: () => {} },
+    drop: (what) => h.dropped.push(what),
   };
-  h.paint = () => root.replaceChildren(...[B.render(h.model, ctx)].filter(Boolean));
+  const sync = B.behave(root, () => h.model);
+  h.paint = () => (root.replaceChildren(...[B.render(h.model, ctx)].filter(Boolean)), sync());
   h.ops = (ops) => ((h.model = (ops?.length && B.apply(h.model, ops)) || h.model), h.paint());
   h.patch = [];
-  const p = B.patcher({ root, draw: (b) => B.render(b, ctx), model: () => ((h.t = performance.now()), h.model), saved: () => h.patch.push(performance.now() - h.t) });
+  const p = B.patcher({ root, draw: (b) => B.render(b, ctx), model: () => ((h.t = performance.now()), h.model), saved: () => (sync(), h.patch.push(performance.now() - h.t)) });
   h.frame = (f) => {
     const next = f.screen ?? (f.ops?.length && B.apply(h.model, f.ops));
     if (next) h.model = next;
@@ -75,6 +81,10 @@ function boot(screen) {
       requestAnimationFrame(watch);
     });
   h.dump = () => B.dump(root)[0] ?? null;
+  h.ids = () => ({
+    blocks: Array.from(root.querySelectorAll("[data-block][data-id]"), (e) => e.dataset.id),
+    actions: Array.from(root.querySelectorAll("[data-action]"), (e) => e.dataset.action),
+  });
   root.addEventListener("redraw", h.paint);
   window.h = h;
   const t0 = performance.now();
@@ -83,13 +93,6 @@ function boot(screen) {
 }
 
 const who = (n) => `${n.kind}${n.id ? `#${n.id}` : ""}`;
-
-function same(want, got, at, out) {
-  if (!got || want.kind !== got.kind || (want.id ?? null) !== (got.id ?? null) || want.drawn !== got.drawn)
-    return out.push(`${at}: drew ${got ? `${who(got)} ${got.drawn}` : "nothing"}, expected ${who(want)} ${want.drawn}`);
-  if (want.children.length !== got.children.length) out.push(`${at}/${who(got)}: ${got.children.length} children, expected ${want.children.length}`);
-  want.children.forEach((c, i) => same(c, got.children[i], `${at}/${who(got)}`, out));
-}
 
 function fit(n, width, at, out) {
   const here = `${at}/${who(n)}`;
@@ -103,7 +106,7 @@ function fit(n, width, at, out) {
 }
 
 /// Draws `screen` in WebKit, runs `steps`, and gives each shot's PNG and tree, the report and the failed checks.
-export async function shot({ screen, steps = [], name = "shot", size = "390x844", css = [], expect, check = false, browser }) {
+export async function shot({ screen, steps = [], name = "shot", size = "390x844", css = [], expect, ids, check = false, browser }) {
   const [width, height] = size.split("x").map(Number);
   const own = browser ?? (await webkit.launch());
   const page = await own.newPage({ viewport: { width, height } });
@@ -134,10 +137,16 @@ export async function shot({ screen, steps = [], name = "shot", size = "390x844"
         continue;
       }
       const t0 = performance.now();
-      const on = (id) => page.locator(`[data-block][data-id="${id}"]`).first();
-      const hit = (id, what) => on(id).locator(`xpath=descendant-or-self::*[${what}]`).or(on(id)).first();
-      if (s.tap) await hit(s.tap.id, "self::button or self::a or @role='button'").click();
-      if (s.type) await hit(s.type.id, "self::input or self::textarea").fill(s.type.text);
+      const on = (id) => page.locator(`[data-block][data-id="${id}"], [data-act="${id}"]`).first();
+      const hit = async (id, what) => {
+        const t = on(id).locator(`xpath=descendant-or-self::*[${what}]`).first();
+        return (await t.count()) ? t : on(id);
+      };
+      const live = async (t) => (await t.isVisible()) && (await t.isEnabled());
+      const tap = s.tap && (await hit(s.tap.id, "self::button or self::a or @role='button'"));
+      const type = s.type && (await hit(s.type.id, "self::input or self::textarea"));
+      if (tap) await ((await live(tap)) ? tap.click() : report.dropped.push(`tap ${s.tap.id}`));
+      if (type) await ((await live(type)) ? type.fill(s.type.text) : report.dropped.push(`type ${s.type.id}`));
       if (s.scroll) frames.push(...(await page.evaluate((id) => window.h.scroll(id), s.scroll.id)));
       if (s.answer) await page.evaluate((ops) => window.h.ops(ops), s.answer.ops ?? []);
       if (s.shot) {
@@ -145,12 +154,15 @@ export async function shot({ screen, steps = [], name = "shot", size = "390x844"
         pngs[n] = await page.screenshot();
         trees[n] = await page.evaluate(() => window.h.dump());
         report.shots.push(n);
-        if (check && expect) same(expect, trees[n], n, faults);
+        if (check && expect) differ(trees[n], expect, n, faults);
         if (check && trees[n]) fit(trees[n], width, n, faults);
+        const drew = ids && (await page.evaluate(() => window.h.ids()));
+        if (check && ids && JSON.stringify(drew) !== JSON.stringify(ids)) faults.push(`${n}: drew ids ${JSON.stringify(drew)}, expected ${JSON.stringify(ids)}`);
       }
       report.timings.steps_ms.push(performance.now() - t0);
     }
     report.sent = await page.evaluate(() => window.h.sent);
+    report.dropped.push(...(await page.evaluate(() => window.h.dropped)));
     if (frames.length) {
       report.timings.longest_frame_ms = Math.max(...frames);
       report.timings.frames_over_budget = frames.filter((f) => f > BUDGET_MS).length;

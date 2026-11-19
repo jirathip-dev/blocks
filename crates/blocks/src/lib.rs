@@ -1,3 +1,4 @@
+pub mod behave;
 mod built;
 mod diff;
 pub mod expr;

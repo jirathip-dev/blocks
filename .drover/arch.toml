@@ -18,6 +18,8 @@ generated = [
     "fixtures/trees/swift/*.json",
     "fixtures/html/*.html",
     "fixtures/site/*.html",
+    "fixtures/protocol/sim-*.json",
+    "fixtures/behave/sim.json",
 ]
 generate = "just gen"
 shared = ["crates/blocks/src/lib.rs", "crates/*/tests/support/**"]
@@ -82,16 +84,22 @@ mods = ["crate::mirror"]
 may_use = ["kind", "wire", "patch"]
 
 [[layer]]
+name = "behave"
+paths = ["crates/blocks/src/behave.rs"]
+mods = ["crate::behave", "blocks::behave"]
+may_use = ["expr", "kind", "built"]
+
+[[layer]]
 name = "tree"
 paths = ["crates/blocks/src/tree.rs"]
 mods = ["crate::tree", "blocks::tree"]
-may_use = ["expr", "kind", "built", "wire"]
+may_use = ["expr", "kind", "built", "behave", "wire"]
 
 [[layer]]
 name = "site"
 paths = ["crates/blocks/src/site/**"]
 mods = ["crate::site", "blocks::site"]
-may_use = ["kind", "built", "tree", "theme"]
+may_use = ["kind", "built", "behave", "tree", "theme"]
 
 [[layer]]
 name = "theme"
@@ -112,7 +120,7 @@ mods = ["crate::web", "blocks::web"]
 name = "codegen"
 paths = ["crates/blocks/src/codegen.rs", "crates/blocks/src/bin/**"]
 mods = ["crate::codegen", "blocks::codegen"]
-may_use = ["expr", "kind", "built", "wire", "patch", "diff", "shelf", "mirror", "theme", "layout", "tree", "site"]
+may_use = ["expr", "kind", "built", "wire", "patch", "diff", "shelf", "mirror", "theme", "layout", "behave", "tree", "site"]
 
 [[ban]]
 pattern = "drover"
