@@ -1,0 +1,4 @@
+Decided: merge origin/staging; rebuild web/dist/blocks.css and blocks.js with the web build instead of merging them by hand
+Because: web/package.json:7
+Rejected: none
+Owner: The document view now sits on the latest staging, with the new easing setting; nothing changes in how it works.
