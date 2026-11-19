@@ -1,0 +1,5 @@
+Decided: staging build fix, the site test counts 7 fixed pages plus 34 kinds, as staging counts 7 with the Styles page
+Because: site/tests/pages.rs:30
+Rejected: 8 fixed pages — that count came from a stale schemes.html left in the test's output folder, not from the build
+Check: cargo test -p blocks-site --test pages passes from an empty output folder
+Owner: A site test count is corrected so the build is green again; nothing changes in the document view.
