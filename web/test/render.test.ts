@@ -648,3 +648,14 @@ test("an element whose tap sends an action carries it as data-action; a link or 
   const rds = [{ id: "a", name: "impl", state: "done", tap: { action: "see" } }, { id: "b", name: "rev", state: "needs" }];
   strictEqual(part(render({ type: "row", id: "x", title: "t", rounds: rds }, ctx()), "rdl").dataset.action, "see");
 });
+
+test("a link that is not http, https, mailto or relative is dropped and its text drawn", async () => {
+  const f = JSON.parse(readFileSync(new URL("../../fixtures/links/screen.json", import.meta.url), "utf8"));
+  const e = render(f.screen, ctx());
+  const hrefs = all(e).filter((x) => x.tagName === "A").map((a) => a.href);
+  deepStrictEqual(hrefs, ["https://example.org/a", "mailto:ops@example.org", "/docs", "/about"]);
+  for (const t of f.texts) ok(e.textContent.includes(t), t);
+  const { linkable } = await import("../src/render/index.ts");
+  for (const u of f.safe) strictEqual(linkable(u), true, u);
+  for (const u of f.unsafe) strictEqual(linkable(u), false, u);
+});

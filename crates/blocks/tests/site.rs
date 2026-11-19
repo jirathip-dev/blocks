@@ -363,3 +363,24 @@ fn bars_write_a_clamped_progressbar_each_and_no_steps_or_no_bars_write_the_fallb
         assert!(h.contains("No steps yet"), "{h}");
     }
 }
+
+#[test]
+fn a_link_that_is_not_http_https_mailto_or_relative_is_dropped_and_its_text_drawn() {
+    let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
+    let text = std::fs::read_to_string(root.join("fixtures/links/screen.json")).unwrap();
+    let f: serde_json::Value = serde_json::from_str(&text).unwrap();
+    let html = site::fragment(&Built::new(f["screen"].clone()), "/act");
+    let low = html.to_ascii_lowercase();
+    for bad in ["javascript:", "href=\"data:", "href=\" "] {
+        assert!(!low.contains(bad), "{bad} in {html}");
+    }
+    for want in f["texts"].as_array().unwrap() {
+        assert!(html.contains(want.as_str().unwrap()), "{want} not in {html}");
+    }
+    for good in ["https://example.org/a", "mailto:ops@example.org", "/docs", "/about"] {
+        assert!(
+            html.contains(&format!("href=\"{good}\"")),
+            "{good} not linked in {html}"
+        );
+    }
+}

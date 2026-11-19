@@ -1,10 +1,10 @@
 use serde_json::Value;
 
-use super::{get, list, on, shown, W};
+use super::{get, link, list, on, shown, W};
 
 fn spans(w: &mut W<'_>, all: &[Value]) {
     for s in all.iter().filter(|s| s.is_object()) {
-        let link = get(s, "link");
+        let link = link(s, "link");
         let marks: Vec<&str> = [("b", "bold"), ("i", "italic"), ("code", "code")]
             .into_iter()
             .filter(|(_, k)| on(s, k))
@@ -122,24 +122,25 @@ pub(super) fn hero(w: &mut W<'_>, b: &Value) {
     w.close("header");
 }
 
-fn link(w: &mut W<'_>, l: &Value, cls: &str) {
-    let href = shown(l.get("href"));
-    let mut at = vec![("href", href.as_str())];
+fn nav_link(w: &mut W<'_>, l: &Value, cls: &str) {
+    let href = link(l, "href");
+    let tag = if href.is_some() { "a" } else { "span" };
+    let mut at: Vec<(&str, &str)> = href.map(|h| ("href", h)).into_iter().collect();
     if on(l, "current") {
         at.push(("aria-current", "page"));
     }
-    w.open("a", cls, &at);
+    w.open(tag, cls, &at);
     w.text(&shown(l.get("label")));
-    w.close("a");
+    w.close(tag);
 }
 
 pub(super) fn nav(w: &mut W<'_>, b: &Value) {
     w.open_block("nav", "nav", b, &[]);
     if let Some(brand) = b.get("brand").filter(|l| l.is_object()) {
-        link(w, brand, "brand");
+        nav_link(w, brand, "brand");
     }
     for l in list(b, "links").iter().filter(|l| l.is_object()) {
-        link(w, l, "");
+        nav_link(w, l, "");
     }
     w.close("nav");
 }

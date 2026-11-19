@@ -40,6 +40,10 @@ pub enum Fault {
     State {
         key: String,
     },
+    Link {
+        at: String,
+        url: String,
+    },
 }
 
 /// A screen as it goes on the wire: typed in with its fallbacks written, or read in as JSON.
@@ -48,6 +52,17 @@ pub struct Built(Value);
 
 const LISTS: [&str; 3] = ["blocks", "rows", "buttons"];
 const DRAWN: [&str; 3] = ["row", "text", "island"];
+const LINKS: [&str; 5] = ["url", "href", "link", "open", "src"];
+
+pub(crate) fn linkable(url: &str) -> bool {
+    let head = url.split(['/', '?', '#']).next().unwrap_or_default();
+    head.split_once(':').is_none_or(|(scheme, _)| {
+        let bare = scheme.chars().filter(|c| *c > ' ' && !c.is_control());
+        ["http", "https", "mailto"]
+            .iter()
+            .any(|s| bare.clone().map(|c| c.to_ascii_lowercase()).eq(s.chars()))
+    })
+}
 
 fn placed(o: &Fields) -> impl Iterator<Item = (String, &Value)> {
     let lists = LISTS.iter().filter_map(|k| Some(((*k).to_string(), o.get(*k)?)));
@@ -192,6 +207,12 @@ impl Walk<'_> {
         let inner = |x: &Value, k: &dyn std::fmt::Display| (x.is_object() || x.is_array()).then(|| format!("{at}/{k}"));
         match v {
             Value::Object(o) => {
+                let links = LINKS.iter().filter_map(|k| o.get(*k).and_then(Value::as_str));
+                let bad = links.filter(|u| !linkable(u)).map(|u| Fault::Link {
+                    at: at.into(),
+                    url: u.into(),
+                });
+                self.out.extend(bad.collect::<Vec<_>>());
                 if let Some(a) = o.get("action").and_then(Value::as_str) {
                     let key = (scope.to_string(), a.to_string());
                     if let Some(first) = self.acts.insert(key, at.into()) {
