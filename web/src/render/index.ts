@@ -1,5 +1,6 @@
 import { hooks, roles } from "../gen/hooks.ts";
 import type { Act, Block, Fallback, Kind, Label, Tap, Toned } from "../gen/types.ts";
+import { linkable } from "../core/check.ts";
 import { actionOf } from "../core/eval.ts";
 import { type Blk, blks, isBlk, named } from "../core/tree.ts";
 import { island, isTag } from "../island.ts";
@@ -68,12 +69,7 @@ export const h = <K extends keyof HTMLElementTagNameMap>(tag: K, cls: string, ..
   return e;
 };
 export const href = (a: HTMLAnchorElement, url: string) => Object.assign(a, { href: url, target: "_blank", rel: "noopener" });
-/// Whether a link may be written or opened: http, https, mailto or relative.
-export const linkable = (url: string): boolean => {
-  const head = url.replace(/[\u0000-\u0020\u007f-\u009f]/g, "").split(/[/?#]/, 1)[0] ?? "";
-  const at = head.indexOf(":");
-  return at < 0 || ["http", "https", "mailto"].includes(head.slice(0, at).toLowerCase());
-};
+export { linkable };
 export const urlOf = (t?: Tap | null): string | undefined => (t?.url != null && linkable(t.url) ? t.url : undefined);
 /// The action a tap sends: the tap's own when it goes nowhere else, else `action`.
 export const sends = (t?: Tap | null, action?: unknown): unknown => (t ? (t.url != null || t.open != null || t.sheet != null ? null : t.action) : action);
