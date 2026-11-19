@@ -17,3 +17,4 @@
 - don't push a workflow actionlint rejects, or run CI on a self-hosted runner (enforced by: CI actionlint, none)
 - don't push non-test, non-generated Rust, TS or Swift (or bench JS) over ci/cap.toml's line_cap, add it outside the paths the cap counts, or edit ci/cap.toml from a lane (enforced by: CI cap, `just cap` and scripts/line-cap.sh over crates/*/src, web/src, web/shot, swift/Sources, site/src and bench/; the lane hook)
 - don't stress the shared host from a lane: no `yes`, `stress` or busy loops, no N parallel copies; cap the run or reproduce under load in CI (enforced by: hook HOST_STRESS)
+- don't change expr, behave, patch or mirror in one language without the cross-language fixtures passing (enforced by: CI rust test, CI web and CI swift on fixtures/protocol and fixtures/behave with the fixed seeds per PR; CI sim nightly across the three languages, .github/workflows/sim.yml)
