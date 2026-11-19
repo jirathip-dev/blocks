@@ -71,6 +71,7 @@ public enum Block: Codable, Equatable, Sendable {
     case scene(Scene)
     case diagram(Diagram)
     case composer(Composer)
+    case lines(Lines)
     case prose(Prose)
     case hero(Hero)
     case media(Media)
@@ -104,6 +105,7 @@ public enum Block: Codable, Equatable, Sendable {
         case "scene": self = .scene(try Scene(from: decoder))
         case "diagram": self = .diagram(try Diagram(from: decoder))
         case "composer": self = .composer(try Composer(from: decoder))
+        case "lines": self = .lines(try Lines(from: decoder))
         case "prose": self = .prose(try Prose(from: decoder))
         case "hero": self = .hero(try Hero(from: decoder))
         case "media": self = .media(try Media(from: decoder))
@@ -137,6 +139,7 @@ public enum Block: Codable, Equatable, Sendable {
         case .scene(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("scene", forKey: .tag)
         case .diagram(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("diagram", forKey: .tag)
         case .composer(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("composer", forKey: .tag)
+        case .lines(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("lines", forKey: .tag)
         case .prose(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("prose", forKey: .tag)
         case .hero(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("hero", forKey: .tag)
         case .media(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("media", forKey: .tag)
@@ -333,6 +336,7 @@ public indirect enum Expr: Codable, Equatable, Sendable {
     case `is`(Match)
     case add([Expr])
     case sub([Expr])
+    case mul([Expr])
     case cat([Expr])
     case pick([Expr])
     case lit(Lit)
@@ -360,6 +364,7 @@ public indirect enum Expr: Codable, Equatable, Sendable {
             case "is": if let v = try? c.decode(Match.self, forKey: k) { self = .`is`(v); return }
             case "add": if let v = try? c.decode([Expr].self, forKey: k) { self = .add(v); return }
             case "sub": if let v = try? c.decode([Expr].self, forKey: k) { self = .sub(v); return }
+            case "mul": if let v = try? c.decode([Expr].self, forKey: k) { self = .mul(v); return }
             case "cat": if let v = try? c.decode([Expr].self, forKey: k) { self = .cat(v); return }
             case "pick": if let v = try? c.decode([Expr].self, forKey: k) { self = .pick(v); return }
             default: break
@@ -382,6 +387,7 @@ public indirect enum Expr: Codable, Equatable, Sendable {
         case .`is`(let v): var c = encoder.container(keyedBy: Key.self); try c.encode(v, forKey: Key("is"))
         case .add(let v): var c = encoder.container(keyedBy: Key.self); try c.encode(v, forKey: Key("add"))
         case .sub(let v): var c = encoder.container(keyedBy: Key.self); try c.encode(v, forKey: Key("sub"))
+        case .mul(let v): var c = encoder.container(keyedBy: Key.self); try c.encode(v, forKey: Key("mul"))
         case .cat(let v): var c = encoder.container(keyedBy: Key.self); try c.encode(v, forKey: Key("cat"))
         case .pick(let v): var c = encoder.container(keyedBy: Key.self); try c.encode(v, forKey: Key("pick"))
         case .lit(let v): try v.encode(to: encoder)
@@ -582,6 +588,31 @@ public struct LaneState: RawRepresentable, Hashable, Codable, Equatable, Sendabl
 public struct LineError: Codable, Equatable, Sendable {
     public var line: Int64
     public var message: String
+}
+
+public struct LineItem: Codable, Equatable, Sendable {
+    public var id: String
+    public var values: [String: JSONValue]
+}
+
+public struct Lines: Codable, Equatable, Sendable {
+    public var action: String?
+    public var add: String?
+    public var balance: [String]?
+    public var calc: [String: Expr]?
+    public var columns: [Field]
+    public var empty: String?
+    public var errors: [RowError]?
+    public var id: String?
+    public var items: [LineItem]
+    public var label: String?
+    public var max: UInt32?
+    public var min: UInt32?
+    public var name: String
+    public var scale: UInt8?
+    public var show: Expr?
+    public var submit: Submit?
+    public var sum: [String]?
 }
 
 public struct Link: Codable, Equatable, Sendable {
@@ -890,6 +921,12 @@ public struct Row: Codable, Equatable, Sendable {
     public var value: Shown?
 }
 
+public struct RowError: Codable, Equatable, Sendable {
+    public var message: String
+    public var name: String?
+    public var row: String?
+}
+
 public struct RowStyle: RawRepresentable, Hashable, Codable, Equatable, Sendable {
     public let rawValue: String
     public init(rawValue: String) { self.rawValue = rawValue }
@@ -1188,7 +1225,9 @@ public struct TreeNode: Codable, Equatable, Sendable {
     public var drawn: TreeDrawn
     public var id: String?
     public var kind: String
+    public var name: String
     public var rect: [Double]?
+    public var role: String
     public var text: String?
     public var variant: String?
 }

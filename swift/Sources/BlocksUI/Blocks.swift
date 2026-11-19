@@ -148,10 +148,20 @@ internal struct BlockNode: View {
     internal let block: Block
 
     internal var body: some View {
-        if let id = block.id, behaved.view.hidden.contains(id) {
+        if bare || block.id.map(behaved.view.hidden.contains) == true {
             Color.clear.frame(width: 0, height: 0).modifier(Reported(block: block, hidden: true))
         } else {
             drawn.disabled(!["form", "config"].contains(block.type) && block.id.map(behaved.view.disabled.contains) == true)
+        }
+    }
+
+    private var bare: Bool {
+        switch block {
+        case .list(let list): list.rows.isEmpty
+        case .chips(let chips): chips.options.isEmpty
+        case .images(let images): images.items.isEmpty
+        case .prose(let prose): prose.parts.isEmpty
+        default: false
         }
     }
 
@@ -179,6 +189,7 @@ internal struct BlockNode: View {
             case .scene(let scene): LaneStage(block: scene)
             case .diagram(let diagram): DiagramBlock(block: diagram)
             case .composer(let composer): ComposerBlock(block: composer)
+            case .lines(let lines): LinesBlock(block: lines)
             case .prose(let prose): ProseBlock(block: prose)
             case .hero(let hero): HeroBlock(block: hero)
             case .media(let media): MediaBlock(block: media)

@@ -8,6 +8,8 @@ package struct DrawnBlock {
     package let variant: String?
     package let native: Bool
     package let hidden: Bool
+    package let role: String
+    package let name: String
     package let bounds: Anchor<CGRect>
     package let tap: BlockAction?
     package let children: [DrawnBlock]
@@ -40,6 +42,15 @@ internal struct Reported: ViewModifier {
 
     @ViewBuilder
     internal func body(content: Content) -> some View {
+        let (role, name) = block.a11y
+        let shown = Group {
+            if role == "button" || role == "link" {
+                content.accessibilityElement(children: .combine).accessibilityAddTraits(role == "link" ? .isLink : .isButton)
+            } else {
+                content.accessibilityElement(children: .contain)
+            }
+        }
+        .accessibilityLabel(Text(name)).accessibilityHidden(hidden)
         if reports {
             let head = block.head
             let core = AppBlocks.isCore(head.type)
@@ -50,16 +61,15 @@ internal struct Reported: ViewModifier {
             let variant = head.variant.flatMap { $0.isEmpty ? nil : $0 }
             let id = head.id.flatMap { $0.isEmpty ? nil : $0 }
             let tap = head.source.sent(block.submit, values: block.fieldValues)
-            content.transformAnchorPreference(key: DrawnBlocks.self, value: .bounds) { drawn, bounds in
+            shown.transformAnchorPreference(key: DrawnBlocks.self, value: .bounds) { drawn, bounds in
                 drawn = [
                     DrawnBlock(
-                        kind: head.type, id: id, variant: variant, native: native, hidden: hidden, bounds: bounds,
-                        tap: tap,
-                        children: drawn)
+                        kind: head.type, id: id, variant: variant, native: native, hidden: hidden, role: role, name: name,
+                        bounds: bounds, tap: tap, children: drawn)
                 ]
             }
         } else {
-            content
+            shown
         }
     }
 }
@@ -92,6 +102,7 @@ extension Block {
         case .scene(let b): ("scene", b.id, nil, Source())
         case .diagram(let b): ("diagram", b.id, nil, Source())
         case .composer(let b): ("composer", b.id, nil, Source(action: b.action, values: b.values))
+        case .lines(let b): ("lines", b.id, nil, Source(action: b.action))
         case .prose(let b): ("prose", b.id, nil, Source())
         case .hero(let b): ("hero", b.id, nil, Source())
         case .media(let b): ("media", b.id, nil, Source())
@@ -102,6 +113,51 @@ extension Block {
                 b.type, b.id, nil,
                 Source(action: b.string("action"), tap: try? b["tap"]?.decode(Tap.self), values: b["values"]?.fields)
             )
+        }
+    }
+
+    private static let roles = ["section": "region", "form": "form", "config": "form", "nav": "navigation"]
+    private static let names = ["label", "title", "header", "question", "alt", "file", "command", "placeholder", "name"]
+
+    /// The accessible role and name every renderer gives this block's root, as `tree::a11y` in Rust.
+    internal var a11y: (role: String, name: String) {
+        let head = head
+        let role =
+            switch self {
+            case .button(let b): b.tap?.url == nil ? "button" : "link"
+            case .row(let b) where b.tap != nil && (b.rounds ?? []).isEmpty && (b.swipe ?? []).isEmpty:
+                b.tap?.url == nil ? "button" : "link"
+            case .editor: "button"
+            default: Self.roles[head.type] ?? "group"
+            }
+        let id = head.id.flatMap { $0.isEmpty ? nil : $0 }
+        return (role, named.compactMap { $0 }.first { !$0.isEmpty } ?? id ?? head.type)
+    }
+
+    private var named: [String?] {
+        switch self {
+        case .screen(let b): [b.title]
+        case .sheet(let b): [b.title]
+        case .section(let b): [b.header]
+        case .row(let b): [b.title]
+        case .card(let b): [b.title]
+        case .choice(let b): [b.question]
+        case .secret(let b): [b.label, b.placeholder, b.name]
+        case .run(let b): [b.command]
+        case .button(let b): [b.label]
+        case .chips(let b): [b.name]
+        case .stat(let b): [b.label]
+        case .diff(let b): [b.file]
+        case .editor(let b): [b.name]
+        case .scene(let b): [b.label]
+        case .diagram(let b): [b.title]
+        case .composer(let b): [b.label, b.placeholder]
+        case .lines(let b): [b.label, b.name]
+        case .hero(let b): [b.title]
+        case .media(let b): [b.alt]
+        case .island(let b): [b.name]
+        case .appBlock(let b): Self.names.map { b.string($0) }
+        default: []
         }
     }
 

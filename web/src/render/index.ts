@@ -1,4 +1,4 @@
-import { hooks } from "../gen/hooks.ts";
+import { hooks, names, roles } from "../gen/hooks.ts";
 import type { Act, Block, Fallback, Kind, Label, Tap, Toned } from "../gen/types.ts";
 import { actionOf } from "../behave.ts";
 import { island, isTag } from "../island.ts";
@@ -15,6 +15,7 @@ import { editor } from "./editor.ts";
 import { form } from "./form.ts";
 import { hero } from "./hero.ts";
 import { images } from "./images.ts";
+import { lines } from "./lines.ts";
 import { list } from "./list.ts";
 import { media } from "./media.ts";
 import { nav } from "./nav.ts";
@@ -63,7 +64,13 @@ export const h = <K extends keyof HTMLElementTagNameMap>(tag: K, cls: string, ..
   return e;
 };
 export const href = (a: HTMLAnchorElement, url: string) => Object.assign(a, { href: url, target: "_blank", rel: "noopener" });
-export const urlOf = (t?: Tap | null): string | undefined => t?.url ?? undefined;
+/// Whether a link may be written or opened: http, https, mailto or relative.
+export const linkable = (url: string): boolean => {
+  const head = url.replace(/[\u0000-\u0020\u007f-\u009f]/g, "").split(/[/?#]/, 1)[0] ?? "";
+  const at = head.indexOf(":");
+  return at < 0 || ["http", "https", "mailto"].includes(head.slice(0, at).toLowerCase());
+};
+export const urlOf = (t?: Tap | null): string | undefined => (t?.url != null && linkable(t.url) ? t.url : undefined);
 /// The action a tap sends: the tap's own when it goes nowhere else, else `action`.
 export const sends = (t?: Tap | null, action?: unknown): unknown => (t ? (t.url != null || t.open != null || t.sheet != null ? null : t.action) : action);
 /// Marks `e` with the action a tap on it sends, as `data-action`.
@@ -188,6 +195,7 @@ export const R: { [K in Kind]: (b: Of<K>, c: Ctx) => HTMLElement | null } = {
   scene,
   diagram,
   composer,
+  lines,
   prose,
   hero,
   media,
@@ -197,6 +205,9 @@ export const R: { [K in Kind]: (b: Of<K>, c: Ctx) => HTMLElement | null } = {
       ? island(b, [...fallback(b, c).childNodes], (action, values) => void c.act({ action, block: b.id, values }), (n) => c.drop?.(`event ${b.id ?? ""} ${n}`))
       : fallback(b, c),
 };
+
+/// The accessible name of block `b` of kind `t`: its first set name field, else its id, else its kind.
+export const named = (b: Blk, t: string) => String(names.map((k) => b[k]).find((v) => typeof v === "string" && v) ?? (typeof b.id === "string" && b.id ? b.id : t));
 
 const core = (b: Blk): b is Of<Kind> => Object.prototype.hasOwnProperty.call(hooks, String(b.type));
 const view = <K extends Kind>(t: K, b: Of<K>, c: Ctx) => R[t](b, c);
@@ -213,6 +224,9 @@ export function render(b: Blk, c: Ctx): HTMLElement | null {
   const v = own ? hooks[b.type].variant : null;
   if (v && b[v] != null) e.dataset.variant = String(b[v]);
   if (typeof b.tone === "string") e.dataset.tone = b.tone;
+  const native = e.tagName === "BUTTON" ? "button" : e.tagName === "A" && e.hasAttribute("href") ? "link" : null;
+  e.setAttribute("role", e.getAttribute("role") ?? native ?? roles[t] ?? "group");
+  e.setAttribute("aria-label", named(b, t));
   return e;
 }
 

@@ -1,0 +1,59 @@
+{
+  "id": "about",
+  "parts": [
+    {
+      "level": 2,
+      "part": "heading",
+      "spans": [
+        {
+          "text": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it"
+        }
+      ]
+    },
+    {
+      "part": "para",
+      "spans": [
+        {
+          "text": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it"
+        },
+        {
+          "bold": true,
+          "text": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it"
+        }
+      ]
+    },
+    {
+      "items": [
+        [
+          {
+            "text": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it"
+          }
+        ],
+        [
+          {
+            "text": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it"
+          }
+        ]
+      ],
+      "ordered": false,
+      "part": "list"
+    },
+    {
+      "part": "quote",
+      "spans": [
+        {
+          "text": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it"
+        }
+      ]
+    },
+    {
+      "lang": "rust",
+      "part": "code",
+      "text": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it"
+    },
+    {
+      "part": "rule"
+    }
+  ],
+  "type": "prose"
+}

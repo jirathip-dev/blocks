@@ -1,5 +1,6 @@
+import { type State, view } from "../behave.ts";
 import type { Field, Form } from "../gen/types.ts";
-import { type Blk, btn, type Ctx, draft, el, h, sent, type Store } from "./index.ts";
+import { btn, type Ctx, draft, el, h, sent, type Store } from "./index.ts";
 
 export function form(b: Form, c: Ctx): HTMLElement {
   const f = el("div", `form${b.submit ? " say" : ""}`);
@@ -12,7 +13,7 @@ export function form(b: Form, c: Ctx): HTMLElement {
   const word = go.firstElementChild ?? go;
   const send = () => {
     const v = values(f);
-    if (!String(v.text ?? "").trim()) return;
+    if (Object.values(v).every((x) => !String(x || "").trim()) || Object.keys(view(b, v).says).length) return;
     word.textContent = "sending…";
     c.act({ action: s.action, block: b.id, values: { ...s.values, ...v } }, go)
       .then((ok) => ok && sent(f, c.store))
@@ -64,8 +65,8 @@ export function field(x: Field, key: string, store: Store): HTMLElement {
 }
 
 /// The values of every field under `root`, as an action's `values` (a toggle is a bool, an empty secret is left out).
-export function values(root: HTMLElement): Blk {
-  const v: Blk = {};
+export function values(root: HTMLElement): State {
+  const v: State = {};
   root.querySelectorAll<HTMLInputElement | HTMLSelectElement>(".fd input, .fd select").forEach((i) => {
     if (i.type === "password" && !i.value) return;
     v[i.name] = i instanceof HTMLInputElement && i.type === "checkbox" ? i.checked : i.value;

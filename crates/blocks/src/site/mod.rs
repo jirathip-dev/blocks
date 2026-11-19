@@ -2,6 +2,7 @@ mod content;
 mod diagram;
 mod diff;
 mod editor;
+mod lines;
 mod rounds;
 mod scene;
 mod views;
@@ -10,7 +11,7 @@ use serde_json::{Map, Value};
 
 use crate::behave::{at_start, View};
 use crate::theme::{css, PerMode, Scheme, Style};
-use crate::tree::VARIANTS;
+use crate::tree::{a11y, VARIANTS};
 use crate::{Block, Built};
 
 /// What a page's head says: its title, description, canonical URL, preview image and language.
@@ -132,6 +133,10 @@ pub(crate) fn get<'v>(v: &'v Value, k: &str) -> Option<&'v str> {
     v.get(k).and_then(Value::as_str)
 }
 
+pub(crate) fn link<'v>(v: &'v Value, k: &str) -> Option<&'v str> {
+    get(v, k).filter(|u| crate::built::linkable(u))
+}
+
 pub(crate) fn list<'v>(v: &'v Value, k: &str) -> &'v [Value] {
     v.get(k).and_then(Value::as_array).map_or(&[], Vec::as_slice)
 }
@@ -235,7 +240,9 @@ impl<'a> W<'a> {
         if id.as_ref().is_some_and(|i| self.view.hidden.contains(i)) {
             all.push(("hidden", ""));
         }
-        all.extend_from_slice(attrs);
+        let (role, name) = a11y(b);
+        all.extend(attrs.iter().filter(|(k, _)| !["role", "aria-label"].contains(k)));
+        all.extend([("role", role), ("aria-label", name)]);
         self.open(tag, classes.trim_start(), &all);
     }
 
@@ -343,10 +350,10 @@ impl<'a> W<'a> {
 
     pub(crate) fn tap(&mut self, tap: Option<&Value>, block: Option<&Value>) -> Go {
         let Some(t) = tap else { return Go::Stay };
-        if let Some(u) = get(t, "url") {
+        if let Some(u) = link(t, "url") {
             return Go::Url(u.into());
         }
-        if let Some(o) = get(t, "open") {
+        if let Some(o) = link(t, "open") {
             return Go::Open(o.into());
         }
         if let Some(s) = get(t, "sheet") {
@@ -420,6 +427,7 @@ pub(crate) fn block(w: &mut W<'_>, b: &Value) {
         "diagram" => diagram::diagram(w, b),
         "diff" => diff::diff(w, b),
         "editor" => editor::editor(w, b),
+        "lines" => lines::lines(w, b),
         "scene" => scene::scene(w, b),
         "island" => island(w, b),
         _ => fallback(w, b),

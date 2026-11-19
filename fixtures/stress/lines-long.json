@@ -1,0 +1,83 @@
+{
+  "action": "check-journal",
+  "add": "add line",
+  "balance": [
+    "debit",
+    "credit"
+  ],
+  "columns": [
+    {
+      "label": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+      "name": "account",
+      "options": [
+        "6100 Rent",
+        "6200 Utilities",
+        "2100 Payables"
+      ],
+      "type": "picker"
+    },
+    {
+      "label": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+      "name": "memo",
+      "type": "text"
+    },
+    {
+      "keyboard": "number",
+      "label": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+      "name": "debit",
+      "type": "text"
+    },
+    {
+      "keyboard": "number",
+      "label": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+      "name": "credit",
+      "type": "text"
+    }
+  ],
+  "errors": [
+    {
+      "message": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+      "name": "account",
+      "row": "l2"
+    }
+  ],
+  "id": "journal",
+  "items": [
+    {
+      "id": "l1",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it"
+      }
+    },
+    {
+      "id": "l2",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it"
+      }
+    },
+    {
+      "id": "l3",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it"
+      }
+    }
+  ],
+  "label": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+  "min": 2,
+  "name": "lines",
+  "submit": {
+    "action": "post-journal",
+    "label": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it"
+  },
+  "sum": [
+    "debit",
+    "credit"
+  ],
+  "type": "lines"
+}

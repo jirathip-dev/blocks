@@ -161,7 +161,7 @@ private struct Spans: View {
                 (span.bold, .stronglyEmphasized), (span.italic, .emphasized), (span.code, .code),
             ]
             run.inlinePresentationIntent = marks.reduce(into: []) { if $1.0 == true { $0.insert($1.1) } }
-            if let link = span.link, let url = URL(string: link) {
+            if let link = span.link, linkable(link), let url = URL(string: link) {
                 (run.link, run.underlineStyle, run.foregroundColor) = (url, .single, look.palette.foreground)
             }
             text += run
@@ -240,7 +240,7 @@ internal struct HeroBlock: View {
             HStack(spacing: 8) {
                 ForEach(Array((block.actions ?? []).enumerated()), id: \.offset) { index, item in
                     ActButton(source: Source(item)) { CardButton(title: item.label, primary: index == 0) }
-                        .fixedSize()
+                        .fixedSize(horizontal: false, vertical: true)
                 }
             }
         }
@@ -285,11 +285,15 @@ private struct Linked: ViewModifier {
     fileprivate let href: String?
 
     fileprivate func body(content: Content) -> some View {
-        Button {
-            if let url = href.flatMap(URL.init(string:)) { Follows.follow(url, open: open, openURL: openURL) }
-        } label: {
+        if let href, linkable(href), let url = URL(string: href) {
+            Button {
+                Follows.follow(url, open: open, openURL: openURL)
+            } label: {
+                content
+            }
+            .buttonStyle(.plain)
+        } else {
             content
         }
-        .buttonStyle(.plain)
     }
 }

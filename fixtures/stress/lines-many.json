@@ -1,0 +1,1659 @@
+{
+  "action": "check-journal",
+  "add": "add line",
+  "balance": [
+    "debit",
+    "credit"
+  ],
+  "columns": [
+    {
+      "label": "Account",
+      "name": "account",
+      "options": [
+        "6100 Rent",
+        "6200 Utilities",
+        "2100 Payables"
+      ],
+      "type": "picker"
+    },
+    {
+      "label": "Description",
+      "name": "memo",
+      "type": "text"
+    },
+    {
+      "keyboard": "number",
+      "label": "Debit",
+      "name": "debit",
+      "type": "text"
+    },
+    {
+      "keyboard": "number",
+      "label": "Credit",
+      "name": "credit",
+      "type": "text"
+    }
+  ],
+  "errors": [
+    {
+      "message": "pick an account for line 2",
+      "name": "account",
+      "row": "l2"
+    }
+  ],
+  "id": "journal",
+  "items": [
+    {
+      "id": "l1-0",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-1",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-2",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-3",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-4",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-5",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-6",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-7",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-8",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-9",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-10",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-11",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-12",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-13",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-14",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-15",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-16",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-17",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-18",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-19",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-20",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-21",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-22",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-23",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-24",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-25",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-26",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-27",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-28",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-29",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-30",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-31",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-32",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-33",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-34",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-35",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-36",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-37",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-38",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-39",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-40",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-41",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-42",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-43",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-44",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-45",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-46",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-47",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-48",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-49",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-50",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-51",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-52",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-53",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-54",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-55",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-56",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-57",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-58",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-59",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-60",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-61",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-62",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-63",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-64",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-65",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-66",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-67",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-68",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-69",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-70",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-71",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-72",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-73",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-74",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-75",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-76",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-77",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-78",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-79",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-80",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-81",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-82",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-83",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-84",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-85",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-86",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-87",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-88",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-89",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-90",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-91",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-92",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-93",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-94",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-95",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-96",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-97",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-98",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-99",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-100",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-101",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-102",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-103",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-104",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-105",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-106",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-107",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-108",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-109",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-110",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-111",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-112",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-113",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-114",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-115",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-116",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-117",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-118",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-119",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-120",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-121",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-122",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-123",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-124",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-125",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-126",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-127",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-128",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-129",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-130",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-131",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-132",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-133",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-134",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-135",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-136",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-137",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-138",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-139",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-140",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-141",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-142",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-143",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-144",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-145",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-146",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-147",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-148",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-149",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-150",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-151",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-152",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-153",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-154",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-155",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-156",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-157",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-158",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-159",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-160",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-161",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-162",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-163",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-164",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-165",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-166",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-167",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-168",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-169",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-170",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-171",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-172",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-173",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-174",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-175",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-176",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-177",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-178",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-179",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-180",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-181",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-182",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-183",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-184",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-185",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-186",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-187",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-188",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-189",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-190",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-191",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-192",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-193",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-194",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-195",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-196",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    },
+    {
+      "id": "l3-197",
+      "values": {
+        "account": "2100 Payables",
+        "credit": "2668.50",
+        "memo": "landlord"
+      }
+    },
+    {
+      "id": "l1-198",
+      "values": {
+        "account": "6100 Rent",
+        "debit": "2400",
+        "memo": "office rent"
+      }
+    },
+    {
+      "id": "l2-199",
+      "values": {
+        "account": "",
+        "debit": "318.40",
+        "memo": "power and water"
+      }
+    }
+  ],
+  "label": "journal lines",
+  "min": 2,
+  "name": "lines",
+  "submit": {
+    "action": "post-journal",
+    "label": "post entry"
+  },
+  "sum": [
+    "debit",
+    "credit"
+  ],
+  "type": "lines"
+}

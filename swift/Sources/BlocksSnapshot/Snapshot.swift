@@ -91,6 +91,7 @@ public struct Snapshot {
             shots.append(shot)
             if check, let expect { Self.same(expect, tree, shot, &faults) }
             if check { Self.fit(tree, size.width, shot, &faults) }
+            if check { Self.named(tree, shot, &faults) }
             if check, let ids, ids != seen.drawnIds {
                 faults.append("\(shot): drew ids \(seen.drawnIds), expected \(ids)")
             }
@@ -204,6 +205,9 @@ public struct Snapshot {
             return out.append("\(at): drew \(drew), expected \(who(want)) \(want.drawn.rawValue)")
         }
         let here = "\(at)/\(who(got))"
+        if want.role != got.role || want.name != got.name {
+            out.append("\(here): drew \(got.role) \"\(got.name)\", expected \(want.role) \"\(want.name)\"")
+        }
         if want.children.count != got.children.count {
             out.append("\(here): \(got.children.count) children, expected \(want.children.count)")
         }
@@ -212,10 +216,17 @@ public struct Snapshot {
         }
     }
 
+    private static func named(_ n: TreeNode, _ at: String, _ out: inout [String]) {
+        let here = "\(at)/\(who(n))"
+        if n.role.isEmpty { out.append("\(here): has no role") }
+        if n.name.isEmpty { out.append("\(here): has no name") }
+        for child in n.children { named(child, here, &out) }
+    }
+
     private static func fit(_ n: TreeNode, _ width: CGFloat, _ at: String, _ out: inout [String]) {
         let here = "\(at)/\(who(n))"
         let r = rect(n)
-        if !(r.width > 0 && r.height > 0) { out.append("\(here): has no size") }
+        if n.drawn != .hidden, !(r.width > 0 && r.height > 0) { out.append("\(here): has no size") }
         if r.minX < -0.5 || r.maxX > width + 0.5 { out.append("\(here): leaves the screen's width") }
         let kids = n.children.filter { $0.drawn != .hidden }
         for (i, a) in kids.enumerated() {
@@ -258,6 +269,7 @@ private final class Seen {
         return .object([
             "kind": .string(b.kind), "id": b.id.map(JSONValue.string) ?? .null,
             "variant": b.variant.map(JSONValue.string) ?? .null, "drawn": .string(b.hidden ? "hidden" : b.native ? "native" : "fallback"),
+            "role": .string(b.role), "name": .string(b.name),
             "rect": .array([r.minX, r.minY, r.width, r.height].map { .number(Double($0)) }),
             "children": .array(b.children.map { node($0, proxy) }),
         ])

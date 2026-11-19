@@ -130,7 +130,7 @@ fn a_live_page_carries_the_screen_and_the_module_and_nothing_else() {
 #[test]
 fn an_action_is_a_submit_of_a_form_that_posts_its_values() {
     let p = page(None);
-    assert!(p.contains("<button class=\"b b-button\" data-block=\"button\" data-id=\"go\" type=\"submit\" form=\"b-f1\" data-action=\"go\"><span>Go</span></button>"), "{p}");
+    assert!(p.contains("<button class=\"b b-button\" data-block=\"button\" data-id=\"go\" type=\"submit\" form=\"b-f1\" data-action=\"go\" role=\"button\" aria-label=\"Go\"><span>Go</span></button>"), "{p}");
     assert!(p.contains("<form id=\"b-f1\" method=\"post\" action=\"/act\" hidden><input type=\"hidden\" name=\"_screen\" value=\"home\"><input type=\"hidden\" name=\"_block\" value=\"go\"><input type=\"hidden\" name=\"_action\" value=\"go\"></form>"), "{p}");
 }
 
@@ -187,7 +187,7 @@ fn editor_numbers_lines_from_first_and_marks_errors_on_and_off_the_excerpt() {
     assert_eq!(
         site::fragment(&Built::new(b), "/act"),
         concat!(
-            r#"<div class="ed b b-editor" data-block="editor" data-id="src" tabindex="0" role="button" aria-label="edit main">"#,
+            r#"<div class="ed b b-editor" data-block="editor" data-id="src" tabindex="0" role="button" aria-label="main">"#,
             r#"<div class="edl"><i>40</i><span>fn main() {</span></div>"#,
             r#"<div class="edl err"><i>41</i><span>    let n = 1</span></div><p class="ede">expected `;`</p>"#,
             r#"<div class="edl"><i>42</i><span> </span></div>"#,
@@ -213,7 +213,7 @@ fn a_config_writes_each_field_as_a_settings_row_with_its_note_and_a_save_bar() {
     });
     let html = site::fragment(&Built::new(b), "/act");
     for part in [
-        r#"<div class="form cfg b b-config" data-block="config" data-id="edgar">"#,
+        r#"<div class="form cfg b b-config" data-block="config" data-id="edgar" role="form" aria-label="edgar">"#,
         r#"<label class="fd"><span class="fl"><span class="fk">agent</span><span class="fn">sent to SEC</span></span><input name="agent" form="b-f1" type="text" autocomplete="off" placeholder="" value="cooee"></label>"#,
         r#"<span class="fn was">was https://www.sec.gov</span></span><input name="base" form="b-f1" type="url" autocomplete="off" inputmode="url""#,
         r#"<label class="fd err"><span class="fl"><span class="fk">every</span><span class="fn err">must be under 4</span></span><input name="every" form="b-f1" aria-invalid="true" type="text" autocomplete="off" inputmode="decimal" placeholder="" value="4.5">"#,
@@ -238,7 +238,7 @@ fn a_scene_lane_links_its_url_or_open_marks_any_other_tap_a_button_and_ticks_its
     ]}));
     let h = site::fragment(&b, "/act");
     assert!(
-        h.starts_with("<div class=\"scn b b-scene\" data-block=\"scene\" data-id=\"s\"><ul class=\"scl\">"),
+        h.starts_with("<div class=\"scn b b-scene\" data-block=\"scene\" data-id=\"s\" role=\"group\" aria-label=\"s\"><ul class=\"scl\">"),
         "{h}"
     );
     assert!(h.contains("<a class=\"ln merged tap\" data-id=\"a\" aria-label=\"pr, merged\" href=\"https://x.test/63\" target=\"_blank\" rel=\"noopener\">"), "{h}");
@@ -269,11 +269,11 @@ fn a_row_with_rounds_writes_its_fold_open_when_the_last_round_needs_you_and_fold
         )
     };
     let open = site::fragment(&row("needs"), "/act");
-    assert!(open.starts_with("<div class=\"rr open b b-row\" data-block=\"row\" data-id=\"i\"><div class=\"row tap\" data-id=\"i\" tabindex=\"0\" role=\"button\" aria-expanded=\"true\"><span class=\"rm\"><span class=\"rt b-row__title\">#23</span></span><span class=\"rc\">›</span></div><ol class=\"rds\">"), "{open}");
+    assert!(open.starts_with("<div class=\"rr open b b-row\" data-block=\"row\" data-id=\"i\" role=\"group\" aria-label=\"#23\"><div class=\"row tap\" data-id=\"i\" tabindex=\"0\" role=\"button\" aria-expanded=\"true\"><span class=\"rm\"><span class=\"rt b-row__title\">#23</span></span><span class=\"rc\">›</span></div><ol class=\"rds\">"), "{open}");
     assert!(open.contains("<li class=\"rd done\"><i class=\"rdm\" aria-label=\"done\"></i><div class=\"rdx\"><div class=\"rdl tap\" tabindex=\"0\" role=\"button\" data-action=\"see\"><span class=\"rdn\">impl</span><span class=\"rdu\"></span><span class=\"rdt\"><span data-tick=\"{&#34;since&#34;:&#34;2026-11-19T12:00:00Z&#34;}\"></span></span><span class=\"rc\">›</span></div></div></li>"), "{open}");
     assert!(open.contains("<li class=\"rd needs now\"><i class=\"rdm\" aria-label=\"needs\"></i><div class=\"rdx\"><div class=\"rdl\"><span class=\"rdn\">rev</span><span class=\"rdu\">busy</span></div><div class=\"rdb\"><div class=\"rdh\">rev-1 · mini</div><div class=\"rdo\"><div>a</div><div>b</div></div><div class=\"rdk\"><button type=\"submit\" form=\"b-f1\" data-action=\"go\"><span>go</span></button></div></div></div></li></ol></div>"), "{open}");
     let live = site::fragment(&row("working"), "/act");
-    assert!(live.starts_with("<div class=\"rr b b-row\" data-block=\"row\" data-id=\"i\"><div class=\"row tap\" data-id=\"i\" tabindex=\"0\" role=\"button\" aria-expanded=\"false\"><span class=\"rm\"><span class=\"rt b-row__title\">#23</span><span class=\"rs b-row__subtitle \">review</span></span><span class=\"rc\">›</span></div></div>"), "{live}");
+    assert!(live.starts_with("<div class=\"rr b b-row\" data-block=\"row\" data-id=\"i\" role=\"group\" aria-label=\"#23\"><div class=\"row tap\" data-id=\"i\" tabindex=\"0\" role=\"button\" aria-expanded=\"false\"><span class=\"rm\"><span class=\"rt b-row__title\">#23</span><span class=\"rs b-row__subtitle \">review</span></span><span class=\"rc\">›</span></div></div>"), "{live}");
 }
 
 #[test]
@@ -305,11 +305,118 @@ fn an_island_is_its_element_with_its_props_and_fallback_and_a_bad_name_a_plain_f
     };
     assert_eq!(
         island("x-map"),
-        "<x-map class=\"b b-island\" data-block=\"island\" data-id=\"m\" data-fallback=\"\" data-props=\"{&#34;q&#34;:&#34;&#60;a&#38;b&#62;&#34;}\"><div class=\"row\" data-id=\"\"><span class=\"rm\"><span class=\"rt b-row__title\">The map</span></span></div></x-map>"
+        "<x-map class=\"b b-island\" data-block=\"island\" data-id=\"m\" data-fallback=\"\" data-props=\"{&#34;q&#34;:&#34;&#60;a&#38;b&#62;&#34;}\" role=\"group\" aria-label=\"x-map\"><div class=\"row\" data-id=\"\"><span class=\"rm\"><span class=\"rt b-row__title\">The map</span></span></div></x-map>"
     );
     for bad in ["x map", "map", "X-map", "x-<b>", "1-x"] {
         let h = island(bad);
         assert!(h.starts_with("<div class=\"b b-island\""), "{bad:?}: {h}");
         assert!(h.ends_with("</div></div>") && h.contains("The map"), "{bad:?}: {h}");
+    }
+}
+
+fn invoice(qty: &str) -> serde_json::Value {
+    serde_json::json!({
+        "type": "lines", "id": "inv", "name": "items", "label": "invoice lines", "add": "add item",
+        "columns": [
+            {"type": "text", "name": "qty", "label": "Qty", "keyboard": "number"},
+            {"type": "text", "name": "price", "label": "Price", "keyboard": "number"},
+            {"type": "text", "name": "amount", "label": "Amount", "keyboard": "number"},
+            {"type": "text", "name": "paid", "label": "Paid", "keyboard": "number"}
+        ],
+        "calc": {"amount": {"mul": [{"get": "qty"}, {"get": "price"}]}},
+        "sum": ["amount", "paid"], "balance": ["amount", "paid"],
+        "items": [
+            {"id": "a", "values": {"qty": qty, "price": "1,450.005", "paid": "2900.01"}},
+            {"id": "b", "values": {"qty": "x", "price": "3", "paid": "0"}}
+        ],
+        "submit": {"label": "save", "action": "save-invoice"}
+    })
+}
+
+#[test]
+fn lines_work_out_calc_cells_and_totals_in_minor_units_and_check_the_balance() {
+    let html = site::fragment(&Built::new(invoice("2")), "/act");
+    assert!(
+        html.contains(r#"<span class="lqv" data-row="a" data-cell="amount">2,900.01</span>"#),
+        "{html}"
+    );
+    assert!(
+        html.contains(r#"<span class="lqv" data-row="b" data-cell="amount">—</span>"#),
+        "{html}"
+    );
+    assert!(html.contains("<b>2,900.01</b>"), "{html}");
+    assert!(
+        html.contains(r#"<p class="lqb ok" role="status">balanced · amount = paid</p>"#),
+        "{html}"
+    );
+    assert!(
+        html.contains(r#"value="1,450.005""#),
+        "a field keeps what was typed: {html}"
+    );
+    assert!(
+        !html.contains("lqw") && html.contains(r#"<button type="submit" form="b-f1" data-action="save-invoice">"#),
+        "{html}"
+    );
+    let off = site::fragment(&Built::new(invoice("3")), "/act");
+    assert!(off.contains("out of balance · paid short by 1,450.01"), "{off}");
+    assert!(
+        off.contains(r#"<p class="m lqw">balance the entry to save</p>"#),
+        "{off}"
+    );
+    assert!(
+        off.contains(r#"<button disabled="" type="submit" form="b-f1" data-action="save-invoice">"#),
+        "{off}"
+    );
+}
+
+#[test]
+fn lines_mark_a_row_error_and_turn_remove_off_at_the_minimum() {
+    let mut b = invoice("2");
+    b["min"] = 2.into();
+    b["errors"] =
+        serde_json::json!([{"row": "b", "name": "qty", "message": "a number"}, {"row": "gone", "message": "old"}]);
+    let html = site::fragment(&Built::new(b), "/act");
+    assert!(
+        html.contains(r#"<div class="lqr err" role="group" aria-label="line 2">"#),
+        "{html}"
+    );
+    assert!(html.contains(r#"<label class="lqc num err"><span class="lqk">Qty</span><input name="items.1.qty" aria-label="Qty, line 2""#), "{html}");
+    assert!(
+        html.contains(r#"<p class="lqe">a number</p>"#) && !html.contains(">old<"),
+        "{html}"
+    );
+    assert!(html.contains(r#"<p class="m lqw">fix 1 line to save</p>"#), "{html}");
+    assert_eq!(
+        html.matches(r#"aria-label="remove line 1" disabled"#).count(),
+        1,
+        "{html}"
+    );
+}
+
+#[test]
+fn a_lines_block_gets_a_fallback_named_by_its_label() {
+    let lines = blocks::samples().into_iter().find(|(k, _)| *k == "lines").unwrap().1;
+    let v = Built::of(&Screen::new().id("s").blocks(vec![lines])).value().clone();
+    assert_eq!(v["blocks"][0]["fallback"]["title"], "journal lines");
+}
+
+#[test]
+fn a_link_that_is_not_http_https_mailto_or_relative_is_dropped_and_its_text_drawn() {
+    let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
+    let text = std::fs::read_to_string(root.join("fixtures/links/screen.json")).unwrap();
+    let f: serde_json::Value = serde_json::from_str(&text).unwrap();
+    let html = site::fragment(&Built::new(f["screen"].clone()), "/act");
+    let low = html.to_ascii_lowercase();
+    for bad in ["javascript:", "href=\"data:", "href=\" "] {
+        assert!(!low.contains(bad), "{bad} in {html}");
+    }
+    for want in f["texts"].as_array().unwrap() {
+        assert!(html.contains(want.as_str().unwrap()), "{want} not in {html}");
+    }
+    for good in ["https://example.org/a", "mailto:ops@example.org", "/docs", "/about"] {
+        assert!(
+            html.contains(&format!("href=\"{good}\"")),
+            "{good} not linked in {html}"
+        );
     }
 }

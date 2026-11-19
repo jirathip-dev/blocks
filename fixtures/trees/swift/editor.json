@@ -3,5 +3,7 @@
   "id": "editor",
   "variant": null,
   "drawn": "native",
+  "role": "button",
+  "name": "notes",
   "children": []
 }
