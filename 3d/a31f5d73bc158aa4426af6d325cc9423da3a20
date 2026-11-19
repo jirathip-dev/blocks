@@ -1,0 +1,13 @@
+Decided: Time gains an optional label; Card.meta and Label.text are a Shown, which reads and writes a plain string as before
+Because: "A plain string still reads and writes as before: no screen that sends a string changes on the wire"
+Decided: SwiftUI's labelled time copies the HTML formats ({} as 30s/5m/24h/8d, {rel} as rounded minutes) so both give one text
+Because: "with the placeholders the HTML renderer already reads"
+Decided: the card sample carries a labelled time in its meta, badge, a row's toned subtitle and value, and a tile; card-long follows
+Because: "a `fixtures/blocks` sample and a stress variant that carry a labelled time in each of the four places"
+Decided: fixtures/times/labels.json is the fixed-clock check both the web and Swift tests read
+Because: "for a fixed clock (a tree or fixture check), for `since` and for `until`"
+Decided: site.test compares a ticking span by its time, not its text: the static page writes the start value, render the age
+Because: web/test/site.test.ts:69
+Rejected: changing HTML to Swift's formats — drover's screens are drawn by HTML today
+Check: only the card's goldens changed (blocks, html, trees, stress); every other golden is byte-equal
+Owner: Times shown on a card's corner, a badge or a coloured subtitle can now carry words around them, the same on web and iPhone.
