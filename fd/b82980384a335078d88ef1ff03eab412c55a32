@@ -1,0 +1,5 @@
+Decided: staging build fix, the showcase test counts 41 site pages, 7 fixed plus 34 kinds now that pages is a kind
+Because: web/test/pages/showcase.test.ts:51
+Rejected: a Swift code change — the swift job never ran, GitHub found no macOS runner for it; every swift.yml step passes locally at this head
+Check: cargo run -p blocks-site into an empty folder writes 41 html files and showcase.test.ts passes on it
+Owner: A site page count is corrected so the build goes green; the Swift failure was GitHub having no Mac free, not the code.
