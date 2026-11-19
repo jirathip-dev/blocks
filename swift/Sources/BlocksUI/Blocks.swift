@@ -141,7 +141,7 @@ internal struct BlockNode: View {
             default: AppBlockView(block: block)
             }
         }
-        .modifier(Styled(type: block.type))
+        .modifier(Styled(type: block.type)).modifier(Reported(block: block))
     }
 }
 

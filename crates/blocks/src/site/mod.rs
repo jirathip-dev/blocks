@@ -359,6 +359,7 @@ pub(crate) fn block(w: &mut W<'_>, b: &Value) {
         "choice" => views::choice(w, b),
         "form" => views::form(w, b),
         "config" => views::config(w, b),
+        "secret" => views::secret(w, b),
         "run" => views::run(w, b),
         "button" => views::button(w, b),
         "chips" => views::chips(w, b),
