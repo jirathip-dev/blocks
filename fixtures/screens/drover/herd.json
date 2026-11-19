@@ -6,7 +6,7 @@
           "id": "age-list",
           "rows": [
             {
-              "id": "age",
+              "id": "age-row",
               "subtitle": {
                 "text": "as of: not yet known",
                 "tone": "warn"

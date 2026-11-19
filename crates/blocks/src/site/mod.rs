@@ -419,12 +419,31 @@ pub(crate) fn block(w: &mut W<'_>, b: &Value) {
         "diagram" => diagram::diagram(w, b),
         "editor" => editor::editor(w, b),
         "scene" => scene::scene(w, b),
+        "island" => island(w, b),
         _ => fallback(w, b),
     }
 }
 
+fn island(w: &mut W<'_>, b: &Value) {
+    let tag = get(b, "name").filter(|n| {
+        n.starts_with(|c: char| c.is_ascii_lowercase())
+            && n.contains('-')
+            && n.chars()
+                .all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || "-._".contains(c))
+    });
+    let props = b.get("props").filter(|p| !p.is_null()).map(Value::to_string);
+    let attrs: Vec<(&str, &str)> = props.as_deref().map(|p| ("data-props", p)).into_iter().collect();
+    fallback_as(w, b, tag.unwrap_or("div"), &attrs);
+}
+
 pub(crate) fn fallback(w: &mut W<'_>, b: &Value) {
-    w.open_block("div", "", b, &[("data-fallback", "")]);
+    fallback_as(w, b, "div", &[]);
+}
+
+fn fallback_as(w: &mut W<'_>, b: &Value, tag: &str, attrs: &[(&str, &str)]) {
+    let mut all = vec![("data-fallback", "")];
+    all.extend_from_slice(attrs);
+    w.open_block(tag, "", b, &all);
     let f = b.get("fallback").filter(|f| !f.is_null());
     let title = f.map_or_else(|| b.get("type"), |f| f.get("title"));
     if let Some(t) = title.filter(|t| !t.is_null()) {
@@ -435,5 +454,5 @@ pub(crate) fn fallback(w: &mut W<'_>, b: &Value) {
         views::row_of(w, &Value::Object(r), false);
     }
     kids(w, list(b, "blocks"));
-    w.close("div");
+    w.close(tag);
 }
