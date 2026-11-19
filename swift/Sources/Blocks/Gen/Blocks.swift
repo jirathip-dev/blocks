@@ -94,6 +94,7 @@ public enum Block: Codable, Equatable, Sendable {
     case island(Island)
     case table(Table)
     case steps(Steps)
+    case chart(Chart)
     case toast(Toast)
     case timeline(Timeline)
     case appBlock(JSONValue)
@@ -132,6 +133,7 @@ public enum Block: Codable, Equatable, Sendable {
         case "island": self = .island(try Island(from: decoder))
         case "table": self = .table(try Table(from: decoder))
         case "steps": self = .steps(try Steps(from: decoder))
+        case "chart": self = .chart(try Chart(from: decoder))
         case "toast": self = .toast(try Toast(from: decoder))
         case "timeline": self = .timeline(try Timeline(from: decoder))
         default: self = .appBlock(try JSONValue(from: decoder))
@@ -170,6 +172,7 @@ public enum Block: Codable, Equatable, Sendable {
         case .island(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("island", forKey: .tag)
         case .table(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("table", forKey: .tag)
         case .steps(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("steps", forKey: .tag)
+        case .chart(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("chart", forKey: .tag)
         case .toast(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("toast", forKey: .tag)
         case .timeline(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("timeline", forKey: .tag)
         case .appBlock(let v): try v.encode(to: encoder)
@@ -256,6 +259,42 @@ public enum Cell: Codable, Equatable, Sendable {
         case .label(let v): try v.encode(to: encoder)
         }
     }
+}
+
+public struct Chart: Codable, Equatable, Sendable {
+    public var chart: ChartKind
+    public var empty: String?
+    public var era: Era?
+    public var format: ChartFormat?
+    public var id: String?
+    public var lang: String?
+    public var selected: String?
+    public var series: [Series]
+    public var show: Expr?
+    public var tap: Tap?
+    public var title: String
+    public var x: [String]
+}
+
+public struct ChartFormat: RawRepresentable, Hashable, Codable, Equatable, Sendable {
+    public let rawValue: String
+    public init(rawValue: String) { self.rawValue = rawValue }
+    public static let count = Self(rawValue: "count")
+    public static let thb = Self(rawValue: "thb")
+    public static let thbM = Self(rawValue: "thb_m")
+    public static let percent = Self(rawValue: "percent")
+    public static let all: [Self] = [.count, .thb, .thbM, .percent]
+}
+
+public struct ChartKind: RawRepresentable, Hashable, Codable, Equatable, Sendable {
+    public let rawValue: String
+    public init(rawValue: String) { self.rawValue = rawValue }
+    public static let bar = Self(rawValue: "bar")
+    public static let stacked = Self(rawValue: "stacked")
+    public static let line = Self(rawValue: "line")
+    public static let combo = Self(rawValue: "combo")
+    public static let donut = Self(rawValue: "donut")
+    public static let all: [Self] = [.bar, .stacked, .line, .combo, .donut]
 }
 
 public struct Check: Codable, Equatable, Sendable {
@@ -1149,6 +1188,22 @@ public struct Seen: Codable, Equatable, Sendable {
     public var rule: String
     public var run: String?
     public var shot: String?
+}
+
+public struct Series: Codable, Equatable, Sendable {
+    public var `as`: SeriesMark?
+    public var dash: Bool?
+    public var name: String
+    public var tone: Tone?
+    public var values: [Double]
+}
+
+public struct SeriesMark: RawRepresentable, Hashable, Codable, Equatable, Sendable {
+    public let rawValue: String
+    public init(rawValue: String) { self.rawValue = rawValue }
+    public static let bar = Self(rawValue: "bar")
+    public static let line = Self(rawValue: "line")
+    public static let all: [Self] = [.bar, .line]
 }
 
 public struct SetState: Codable, Equatable, Sendable {

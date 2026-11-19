@@ -132,7 +132,7 @@ class Walk {
       this.acts.set(key, at);
       if (first !== undefined) this.out.push({ fault: "act-twice", block: scope, action, at: [first, at] });
     }
-    for (const k of sorted(v)) if (isObj(v[k]) || Array.isArray(v[k])) this.sends(v[k], `${at}/${k}`, scope);
+    for (const k of sorted(v)) if (k !== "fallback" && (isObj(v[k]) || Array.isArray(v[k]))) this.sends(v[k], `${at}/${k}`, scope);
   }
 
   core(kind: string, o: Obj, top: Obj) {

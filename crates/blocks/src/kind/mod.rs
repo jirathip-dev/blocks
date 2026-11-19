@@ -7,6 +7,7 @@ use crate::expr::{Expr, State};
 
 #[macro_use]
 mod macros;
+mod chart;
 mod content;
 mod list;
 mod parts;
@@ -14,6 +15,7 @@ mod sample;
 mod table;
 mod timeline;
 
+pub use chart::*;
 pub use content::*;
 pub use parts::*;
 pub use sample::samples;
@@ -443,6 +445,7 @@ kinds! {
     Island(Island) = "island",
     Table(Table) = "table",
     Steps(Steps) = "steps",
+    Chart(Chart) = "chart",
     Toast(Toast) = "toast",
     Timeline(Timeline) = "timeline",
 }

@@ -19,7 +19,7 @@ const GROUPS: [(&str, &[&str]); 4] = [
     ),
     (
         "Lists and figures",
-        &["list", "row", "stat", "table", "steps", "chips", "timeline"],
+        &["list", "row", "stat", "chart", "table", "steps", "chips", "timeline"],
     ),
     (
         "Input",
@@ -44,6 +44,7 @@ fn about(kind: &str) -> &'static str {
         "row" => "One row: a title, a line, a value.",
         "stat" => "Figures: one tile, or a list of tiles.",
         "steps" => "A stepper with its current step, or progress bars.",
+        "chart" => "Bars, stacked bars, a line, a combo or a donut, with its legend and table.",
         "chips" => "A row of chips, one or many picked.",
         "button" => "A button that posts its action.",
         "choice" => "A question with options and a free answer.",
@@ -309,6 +310,14 @@ fn figures() -> Vec<Block> {
                 .selected(vec!["medium".to_string()])
         )),
     ]
+    .into_iter()
+    .chain(
+        blocks::samples()
+            .into_iter()
+            .filter(|(k, _)| *k == "chart")
+            .map(|(_, b)| b),
+    )
+    .collect()
 }
 
 fn input() -> Vec<Block> {

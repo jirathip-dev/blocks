@@ -48,7 +48,7 @@ const tree = (page) =>
 const files = SITE ? readdirSync(SITE).filter((f) => f.endsWith(".html")).sort() : [];
 
 test("every page is the same PNG and tree before and after blocks.js adopts it, all under /blocks/", async () => {
-  strictEqual(files.length, 38);
+  strictEqual(files.length, 39);
   const warm = await open("index.html", { js: false });
   await warm.page.screenshot({ fullPage: true });
   await warm.close();
