@@ -1,0 +1,5 @@
+Decided: the shot harness listens for console errors only when probes or checks run
+Because: web/shot/shot.ts:123
+Rejected: raising the 4 ms patch budget in the test — the budget is the repo's, and staging's runs sit at 2-3 ms
+Check: CI web's frame budget test passes at this head; the render/console bad fixture still fires its probe
+Owner: the speed test no longer pays for the new console watch, which only runs during checks
