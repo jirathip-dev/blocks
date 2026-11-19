@@ -113,6 +113,25 @@ test("a harness run paints on the default pair unless its --css says otherwise",
   }
 });
 
+test("an island gets its props, its named event is sent as an action, an unnamed one dropped, and with no component it draws its fallback", async () => {
+  const echo = (name, events) => ({ type: "island", id: "e", name, props: { zoom: 3 }, events, fallback: { title: "No map" } });
+  const browser = await webkit.launch();
+  try {
+    const merge = [{ frame: { ops: [{ op: "merge", id: "e", fields: { props: { zoom: 4 } } }] } }, { shot: { name: "shot" } }];
+    const named = await shot({ screen: echo("x-echo", ["echo"]), steps: merge, browser });
+    deepStrictEqual(named.report.sent, [3, 4].map((zoom) => ({ screen: "e", action: "echo", block: "e", values: { zoom } })));
+    deepStrictEqual(named.report.dropped, []);
+    deepStrictEqual([named.trees.shot.drawn, named.trees.shot.text], ["native", '{"zoom":4}']);
+    const unnamed = await shot({ screen: echo("x-echo", []), browser });
+    deepStrictEqual([unnamed.report.sent, unnamed.report.dropped], [[], ["event e echo"]]);
+    const none = await shot({ screen: echo("x-none", ["echo"]), browser });
+    deepStrictEqual([none.report.sent, none.report.dropped], [[], []]);
+    deepStrictEqual([none.trees.shot.drawn, none.trees.shot.text], ["fallback", "No map"]);
+  } finally {
+    await browser.close();
+  }
+});
+
 const rows = Array.from({ length: 200 }, (_, i) => ({ type: "row", id: `r${i}`, title: `Row ${i}`, subtitle: "green", value: "2m" }));
 const screen = { type: "screen", id: "rows", title: "Rows", blocks: [{ type: "list", id: "all", rows }] };
 
