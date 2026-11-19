@@ -13,6 +13,17 @@ public struct SnapshotRun: Sendable {
     public let faults: [String]
 }
 
+/// The block ids and action ids a screen draws, in drawn order: a `fixtures/ids` file.
+public struct DrawnIdList: Codable, Equatable, Sendable {
+    public let blocks: [String]
+    public let actions: [String]
+
+    public init(blocks: [String], actions: [String]) {
+        self.blocks = blocks
+        self.actions = actions
+    }
+}
+
 /// Draws a screen with `ImageRenderer` at scale 2, runs scripted steps and checks the drawn tree.
 @MainActor
 public struct Snapshot {
@@ -37,8 +48,10 @@ public struct Snapshot {
         wrapped { AnyView($0.appBlocks(blocks)) }
     }
 
-    /// Runs `steps` (a shot named `name` at the end when they take none); `check` compares each tree with `expect`.
-    public func run(_ steps: [Step], name: String = "shot", expect: TreeNode? = nil, check: Bool = false) throws
+    /// Runs `steps` (a shot named `name` at the end when they take none); `check` compares each tree with `expect`, its ids with `ids`.
+    public func run(
+        _ steps: [Step], name: String = "shot", expect: TreeNode? = nil, ids: DrawnIdList? = nil, check: Bool = false
+    ) throws
         -> SnapshotRun
     {
         var screen = self.screen
@@ -57,6 +70,9 @@ public struct Snapshot {
             shots.append(shot)
             if check, let expect { Self.same(expect, tree, shot, &faults) }
             if check { Self.fit(tree, size.width, shot, &faults) }
+            if check, let ids, ids != seen.drawnIds {
+                faults.append("\(shot): drew ids \(seen.drawnIds), expected \(ids)")
+            }
         }
         for step in steps {
             let begun = clock.now
@@ -143,6 +159,7 @@ public struct Snapshot {
             .overlayPreferenceValue(DrawnBlocks.self) { blocks in
                 GeometryReader { proxy in seen.keep(blocks, proxy) }
             }
+            .overlayPreferenceValue(DrawnIds.self) { ids in seen.keep(ids) }
         let renderer = ImageRenderer(content: root)
         renderer.scale = 2
         if let image = renderer.cgImage { seen.png = Self.png(image) }
@@ -200,6 +217,13 @@ private final class Seen {
     var tree: JSONValue = .null
     var taps: [String: BlockAction] = [:]
     var png = Data()
+    var drawnIds = DrawnIdList(blocks: [], actions: [])
+
+    func keep(_ ids: [String]) -> Color {
+        let of = { (kind: String) in ids.filter { $0.hasPrefix(kind) }.map { String($0.dropFirst(kind.count)) } }
+        drawnIds = DrawnIdList(blocks: of("block:"), actions: of("action:"))
+        return .clear
+    }
 
     func keep(_ blocks: [DrawnBlock], _ proxy: GeometryProxy) -> Color {
         tree = blocks.first.map { node($0, proxy) } ?? .null

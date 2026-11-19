@@ -46,7 +46,7 @@ internal struct ListBlock: View {
                 ForEach(Array(rows.enumerated()), id: \.offset) { _, row in
                     if case .row(let line) = row {
                         RowView(row: line).surface(look).modifier(Reordering(list: block, row: line))
-                            .modifier(Reported(block: row))
+                            .modifier(Reported(block: row)).modifier(Identified(id: row.id))
                     } else {
                         BlockNode(block: row)
                     }
@@ -61,7 +61,7 @@ internal struct ListBlock: View {
         VStack(spacing: 0) {
             ForEach(Array(rows.enumerated()), id: \.offset) { index, row in
                 if case .row(let line) = row {
-                    RowView(row: line).modifier(Reordering(list: block, row: line)).modifier(Reported(block: row))
+                    RowView(row: line).modifier(Reordering(list: block, row: line)).modifier(Reported(block: row)).modifier(Identified(id: row.id))
                 } else {
                     BlockNode(block: row)
                 }

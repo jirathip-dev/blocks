@@ -50,6 +50,24 @@ public struct StyledBlock { public let kind: String, id: String?, variant: Strin
 - The gate is the app's headless run with its own styles (section 6): a block squeezed to nothing, pushed off the
   screen or over its sibling fails `--check` there.
 
+## 2b. Stable ids (#84)
+
+An app's e2e test finds a block or an action by an id that the server gave it, never by CSS, text or markup.
+
+| | Web (live, shell and the static writer) | SwiftUI |
+|---|---|---|
+| a block with an `id` | `data-id="<block id>"`, beside the `data-block="<kind>"` hook | `accessibilityIdentifier("block:<block id>")` |
+| what a tap sends an action from | `data-action="<action>"` | `accessibilityIdentifier("action:<action>")` |
+
+- The ids come from the block, never from position: a block's `id` field and the `action` name it sends. A
+  renderer never makes up an id from an index, a path or the text. A block with no `id` gets none.
+- An actionable element is anything a tap on which sends an action: a button, a form's or field's send, a choice's
+  option, a chip, a swipe or menu item, a row, a round or a lane whose `tap` is an action. A tap that opens a URL, a
+  screen or a sheet is a link, not an action, and gets no `data-action`.
+- The static page and the live page write the same attributes, so taking a page over keeps them.
+- `fixtures/ids/<kind>.json` lists, in drawn order, the block ids and action ids that `fixtures/blocks/<kind>.json`
+  draws. `blocks-shot --ids` and `Snapshot.run(ids:)` (`blocks-snap --ids`) fail `--check` on any other list.
+
 ## 3. Behaviours (q2067)
 
 The shapes are in `shapes.md`. Every renderer runs the same loop:
@@ -143,7 +161,7 @@ One contract, one harness per renderer. Its shapes are Rust types in `tree.rs`, 
 blocks-shot  (HTML, WebKit)   ·   blocks-snap  (SwiftUI, macOS)
   --screen <file>  [--layout <file>]  [--scheme <name>]  [--style <file>]  [--size 390x844]
   [--css <file>]…  [--static | --adopt]                          HTML only: an app's CSS; the page with no JS; taken over
-  [--script <steps.json>]  [--expect <tree.json>]  [--check]  --out <dir>
+  [--script <steps.json>]  [--expect <tree.json>]  [--ids <ids.json>]  [--check]  --out <dir>
   → <dir>/<shot>.png, <dir>/<shot>.tree.json, <dir>/report.json; exit 1 when a check fails
 ```
 
@@ -166,7 +184,7 @@ pub fn expect(screen: &Built, kinds: &[&str], state: &State) -> Node;      // th
 - **Input** is by block id. WebKit gets real events on the element; SwiftUI calls the handler or binding the block
   registered with the same wrapper. The harness answers actions from the script and never opens a network.
 - **`--check`**: the tree equals `--expect` in kind, id, order and `drawn`; every drawn node has a size; none leaves
-  the screen's width; no two siblings overlap. `fixtures/trees/` holds the expected tree of every fixture
+  the screen's width; no two siblings overlap; the drawn block and action ids equal `--ids` (section 2b). `fixtures/trees/` holds the expected tree of every fixture
   for HTML, `fixtures/trees/swift/` for SwiftUI (#19: its native kinds differ until B14 and B15).
 - **Frames** (q2112): `blocks-shot` meters each animation frame's main-thread time (its tasks, `rAF`, style, layout
   and paint) through a `scroll` step (a smooth scroll to the block) and a run of `frame` steps (played as a burst, 60

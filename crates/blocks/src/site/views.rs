@@ -2,7 +2,7 @@ use serde_json::{Map, Value};
 
 use crate::behave;
 
-use super::{esc, fields, get, kids, list, on, one, rounds, shown, Go, W};
+use super::{esc, fields, get, kids, list, on, one, rounds, sends, shown, Go, W};
 
 fn toned(v: Option<&Value>) -> (String, String) {
     match v {
@@ -155,13 +155,14 @@ pub(super) fn row_of(w: &mut W<'_>, b: &Value, hooked: bool) {
             attrs.push(("href", u.as_str()));
             "a"
         }
-        Go::Post(_) | Go::Sheet(_) | Go::Stay => "div",
+        Go::Post(..) | Go::Sheet(_) | Go::Stay => "div",
     };
     if tag == "a" || b.get("tap").is_some() || !swipe.is_empty() {
         cls.push_str(" tap");
     }
     if tag == "div" && (b.get("tap").is_some() || !swipe.is_empty()) {
         attrs.extend([("tabindex", "0"), ("role", "button")]);
+        attrs.extend(sends(b.get("tap")).map(|a| ("data-action", a)));
     }
     if !swipe.is_empty() && hooked {
         w.open_block("div", "rw", b, &[]);
@@ -270,7 +271,7 @@ pub(super) fn choice(w: &mut W<'_>, b: &Value) {
                 ("form", &f),
             ],
         );
-        w.btn("send", "", &Go::Post(f), &[], None);
+        w.btn("send", "", &Go::Post(f, action.clone()), &[], None);
         w.close("form");
     }
     w.close("div");
@@ -304,7 +305,13 @@ fn form_of(w: &mut W<'_>, b: &Value, cls: &str, bar: bool) {
             w.open("div", "bar", &[]);
         }
         let off: &[(&str, &str)] = if bar && on(s, "off") { &[("disabled", "")] } else { &[] };
-        w.btn(&shown(s.get("label")), "", &Go::Post(f), off, None);
+        w.btn(
+            &shown(s.get("label")),
+            "",
+            &Go::Post(f, action.unwrap_or_default().into()),
+            off,
+            None,
+        );
         if bar {
             w.close("div");
         }
@@ -448,7 +455,7 @@ pub(super) fn secret(w: &mut W<'_>, b: &Value) {
     w.close("label");
     w.open("div", "ra", &[]);
     w.el("p", "m sn", "sent to the app only, never to the agent");
-    w.btn("send", "", &Go::Post(f), &[], None);
+    w.btn("send", "", &Go::Post(f, shown(b.get("action"))), &[], None);
     w.close("div");
     w.close("div");
 }
@@ -482,7 +489,7 @@ pub(super) fn run(w: &mut W<'_>, b: &Value) {
 pub(super) fn button(w: &mut W<'_>, b: &Value) {
     let go = match (b.get("tap"), get(b, "action")) {
         (Some(t), _) => w.tap(Some(t), b.get("id")),
-        (None, Some(a)) => Go::Post(w.post(b.get("id"), a, &fields(&[b.get("values")]))),
+        (None, Some(a)) => Go::Post(w.post(b.get("id"), a, &fields(&[b.get("values")])), a.into()),
         (None, None) => Go::Stay,
     };
     w.btn(&shown(b.get("label")), &shown(b.get("style")), &go, &[], Some(b));
@@ -716,7 +723,13 @@ pub(super) fn composer(w: &mut W<'_>, b: &Value) {
     } else {
         shown(b.get("label"))
     };
-    w.btn(&label, "primary", &Go::Post(f.clone()), &[], None);
+    w.btn(
+        &label,
+        "primary",
+        &Go::Post(f.clone(), shown(b.get("action"))),
+        &[],
+        None,
+    );
     w.close("div");
     let chips: Vec<&Value> = list(b, "chips").iter().filter(|c| c.is_object()).collect();
     if !chips.is_empty() {

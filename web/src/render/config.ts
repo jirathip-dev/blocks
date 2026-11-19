@@ -31,7 +31,7 @@ export function config(b: Form, c: Ctx): HTMLElement {
   }
   const s = b.submit;
   if (!s) return f;
-  const go = btn(s.label);
+  const go = btn(s.label, "", undefined, s.action);
   if (s.off) go.setAttribute("disabled", "");
   go.onclick = () => void c.act({ action: s.action, block: b.id, values: { ...s.values, ...values(f) } }, go).then((ok) => ok && sent(f, c.store));
   f.append(h("div", "bar", go));

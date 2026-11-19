@@ -23,6 +23,12 @@ internal struct ActButton<Label: View>: View {
         }
         .buttonStyle(.plain)
         .modifier(Confirming(pending: $pending) { _ in fire() })
+        .modifier(Identified(id: sends, action: true))
+    }
+
+    private var sends: String? {
+        let tap = source.tap
+        return tap?.url ?? tap?.thread ?? tap?.open ?? tap?.sheet == nil ? source.sent(action)?.action : nil
     }
 
     private func fire() {

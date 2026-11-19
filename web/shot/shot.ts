@@ -76,6 +76,10 @@ function boot(screen) {
       requestAnimationFrame(watch);
     });
   h.dump = () => B.dump(root)[0] ?? null;
+  h.ids = () => ({
+    blocks: Array.from(root.querySelectorAll("[data-block][data-id]"), (e) => e.dataset.id),
+    actions: Array.from(root.querySelectorAll("[data-action]"), (e) => e.dataset.action),
+  });
   root.addEventListener("redraw", h.paint);
   window.h = h;
   const t0 = performance.now();
@@ -104,7 +108,7 @@ function fit(n, width, at, out) {
 }
 
 /// Draws `screen` in WebKit, runs `steps`, and gives each shot's PNG and tree, the report and the failed checks.
-export async function shot({ screen, steps = [], name = "shot", size = "390x844", css = [], expect, check = false, browser }) {
+export async function shot({ screen, steps = [], name = "shot", size = "390x844", css = [], expect, ids, check = false, browser }) {
   const [width, height] = size.split("x").map(Number);
   const own = browser ?? (await webkit.launch());
   const page = await own.newPage({ viewport: { width, height } });
@@ -154,6 +158,8 @@ export async function shot({ screen, steps = [], name = "shot", size = "390x844"
         report.shots.push(n);
         if (check && expect) same(expect, trees[n], n, faults);
         if (check && trees[n]) fit(trees[n], width, n, faults);
+        const drew = ids && (await page.evaluate(() => window.h.ids()));
+        if (check && ids && JSON.stringify(drew) !== JSON.stringify(ids)) faults.push(`${n}: drew ids ${JSON.stringify(drew)}, expected ${JSON.stringify(ids)}`);
       }
       report.timings.steps_ms.push(performance.now() - t0);
     }
