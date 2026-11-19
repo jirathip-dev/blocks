@@ -1,0 +1,9 @@
+Decided: the PR is the approved ADR in docs/architecture/desktop/ alone; no renderer code and no shared-file edit
+Because: q2289
+Because: docs/architecture/desktop/adr.md:150
+Decided: the .drover/arch.toml, deny.toml, Cargo.toml and docs/deps.md lines wait for S1 (#144), which owns every shared-file edit
+Because: docs/architecture/desktop/design.md:184
+Rejected: building all six slices here — the orchestrator filed them as #144 to #149 behind the cap raise #143, so they would be built twice
+Rejected: adding the arch.toml lines now — #144 makes them, and two PRs would edit one shared file
+Check: the diff against staging is the five files under docs/architecture/desktop/ and nothing else
+Owner: The plan for the desktop renderer is recorded; the renderer itself comes in six follow-up changes after the cap raise.
