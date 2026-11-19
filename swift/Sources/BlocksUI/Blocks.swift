@@ -14,9 +14,14 @@ public struct BlocksView: View {
     private let focus: String?
     private let picked: String?
     private let beside: Block?
+    private let edits: BlockState
+    @State private var own: BlockState = [:]
 
     public var body: some View {
-        Group {
+        let edited = edits.merging(own) { $1 }
+        let json = (try? JSONValue(block)) ?? .null
+        let state = Behaviour.state(json, edits: edited)
+        return Group {
             if let beside {
                 HStack(alignment: .top, spacing: 24) {
                     BlockNode(block: block).fixedSize(horizontal: true, vertical: false)
@@ -29,6 +34,8 @@ public struct BlocksView: View {
         .environment(\.act, act).environment(\.open, open).environment(\.refresh, refresh)
         .environment(\.openThread, openThread).environment(\.focus, focus).environment(\.picked, picked)
         .environment(\.card, CardContext(poster: source))
+        .environment(\.behaved, Behaved(view: Behaviour(json, state: state), state: state, edited: Set(edited.keys)))
+        .environment(\.edit) { own.merge($0) { $1 } }
     }
 
     public init(
@@ -37,12 +44,14 @@ public struct BlocksView: View {
         focus: String? = nil,
         picked: String? = nil,
         beside: Block? = nil,
+        state: BlockState = [:],
         act: @escaping @MainActor (BlockAction) -> Void = { _ in },
         open: @escaping @MainActor (String) -> Void = { _ in },
         openThread: @escaping @MainActor (String) -> Void = { _ in },
         refresh: (@MainActor () -> Void)? = nil
     ) {
         self.refresh = refresh
+        self.edits = state
         self.block = block
         self.source = source
         self.act = act
@@ -71,6 +80,17 @@ private struct OpenThreadKey: EnvironmentKey {
     fileprivate static var defaultValue: @MainActor (String) -> Void { { _ in } }
 }
 
+/// The local state a screen is drawn in and what it makes of the screen.
+internal struct Behaved {
+    internal var view = Behaviour()
+    internal var state: BlockState = [:]
+    internal var edited: Set<String> = []
+}
+
+private struct EditKey: EnvironmentKey {
+    fileprivate static var defaultValue: @MainActor (BlockState) -> Void { { _ in } }
+}
+
 private struct OpenBesideKey: EnvironmentKey {
     fileprivate static var defaultValue: (@MainActor (String) -> Void)? { nil }
 }
@@ -80,6 +100,12 @@ extension EnvironmentValues {
     @Entry internal var picked: String?
     @Entry internal var card = CardContext()
     @Entry internal var form: Binding<[String: JSONValue]>?
+    @Entry internal var behaved = Behaved()
+
+    internal var edit: @MainActor (BlockState) -> Void {
+        get { self[EditKey.self] }
+        set { self[EditKey.self] = newValue }
+    }
 
     internal var act: @MainActor (BlockAction) -> Void {
         get { self[ActKey.self] }
@@ -118,9 +144,18 @@ extension Palette {
 }
 
 internal struct BlockNode: View {
+    @Environment(\.behaved) private var behaved
     internal let block: Block
 
     internal var body: some View {
+        if let id = block.id, behaved.view.hidden.contains(id) {
+            Color.clear.frame(width: 0, height: 0).modifier(Reported(block: block, hidden: true))
+        } else {
+            drawn.disabled(!["form", "config"].contains(block.type) && block.id.map(behaved.view.disabled.contains) == true)
+        }
+    }
+
+    private var drawn: some View {
         Group {
             switch block {
             case .screen(let screen): ScreenBlock(block: screen)

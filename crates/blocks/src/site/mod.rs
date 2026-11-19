@@ -7,6 +7,7 @@ mod views;
 
 use serde_json::{Map, Value};
 
+use crate::behave::{at_start, View};
 use crate::theme::{css, PerMode, Scheme, Style};
 use crate::tree::VARIANTS;
 use crate::{Block, Built};
@@ -156,6 +157,7 @@ pub(crate) enum Go {
 }
 
 pub(crate) struct W<'a> {
+    pub(crate) view: View,
     out: String,
     forms: String,
     n: u32,
@@ -167,6 +169,7 @@ impl<'a> W<'a> {
     fn new(root: &Value, action: &'a str) -> Self {
         let screen = shown(root.get("id"));
         Self {
+            view: at_start(root),
             out: String::new(),
             forms: String::new(),
             n: 0,
@@ -223,6 +226,9 @@ impl<'a> W<'a> {
         all.extend(id.as_deref().map(|i| ("data-id", i)));
         all.extend(variant.as_deref().map(|v| ("data-variant", v)));
         all.extend(get(b, "tone").map(|v| ("data-tone", v)));
+        if id.as_ref().is_some_and(|i| self.view.hidden.contains(i)) {
+            all.push(("hidden", ""));
+        }
         all.extend_from_slice(attrs);
         self.open(tag, classes.trim_start(), &all);
     }

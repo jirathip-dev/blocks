@@ -1,5 +1,7 @@
 use serde_json::{Map, Value};
 
+use crate::behave;
+
 use super::{esc, fields, get, kids, list, on, one, rounds, shown, Go, W};
 
 fn toned(v: Option<&Value>) -> (String, String) {
@@ -328,6 +330,16 @@ fn placeholder(x: &Value, secret: bool) -> &str {
     }
 }
 
+fn input_type<'a>(secret: bool, kb: &str, hints: &'a [(&'static str, String)]) -> &'a str {
+    let typed = hints.iter().find(|(k, _)| *k == "type").map(|(_, v)| v.as_str());
+    match (secret, kb, typed) {
+        (true, _, _) => "password",
+        (false, _, Some(t)) => t,
+        (false, "url", None) => "url",
+        _ => "text",
+    }
+}
+
 fn field(w: &mut W<'_>, x: &Value, tie: &[(&str, &str)]) {
     let name = shown(x.get("name"));
     let kind = get(x, "type").unwrap_or_default();
@@ -339,7 +351,8 @@ fn field(w: &mut W<'_>, x: &Value, tie: &[(&str, &str)]) {
         if error.is_some() { " err" } else { "" },
         if on(x, "open") { " open" } else { "" },
     );
-    w.open("label", &row, &[]);
+    let hidden = w.view.hidden.contains(&name);
+    w.open("label", &row, if hidden { &[("hidden", "")] } else { &[] });
     w.open("span", "fl", &[]);
     w.el(
         "span",
@@ -379,13 +392,15 @@ fn field(w: &mut W<'_>, x: &Value, tie: &[(&str, &str)]) {
         }
         t => {
             let secret = t == "secret";
+            let hints = behave::hints(x);
             let kb = get(x, "keyboard").unwrap_or_default();
-            let ty = match (secret, kb) {
-                (true, _) => "password",
-                (false, "url") => "url",
-                _ => "text",
-            };
-            attrs.extend([("type", ty), ("autocomplete", "off")]);
+            attrs.extend([("type", input_type(secret, kb, &hints)), ("autocomplete", "off")]);
+            attrs.extend(
+                hints
+                    .iter()
+                    .filter(|(k, _)| *k != "type")
+                    .map(|(k, v)| (*k, v.as_str())),
+            );
             match kb {
                 "url" => attrs.push(("inputmode", "url")),
                 "number" => attrs.push(("inputmode", "decimal")),

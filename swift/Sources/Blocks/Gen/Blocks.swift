@@ -149,6 +149,7 @@ public enum Block: Codable, Equatable, Sendable {
 public struct Button: Codable, Equatable, Sendable {
     public var action: String?
     public var confirm: Confirm?
+    public var enabled: Expr?
     public var id: String?
     public var label: String
     public var show: Expr?
@@ -196,6 +197,11 @@ public struct CardKind: RawRepresentable, Hashable, Codable, Equatable, Sendable
     public static let config = Self(rawValue: "config")
     public static let proposal = Self(rawValue: "proposal")
     public static let all: [Self] = [.ask, .run, .secret, .config, .proposal]
+}
+
+public struct Check: Codable, Equatable, Sendable {
+    public var ok: Expr
+    public var say: String
 }
 
 public enum Child: Codable, Equatable, Sendable {
@@ -338,21 +344,22 @@ public indirect enum Expr: Codable, Equatable, Sendable {
     public init(from decoder: any Decoder) throws {
         if let c = try? decoder.container(keyedBy: Key.self), c.allKeys.count == 1, let k = c.allKeys.first {
             switch k.stringValue {
-            case "get": self = .get(try c.decode(String.self, forKey: k)); return
-            case "not": self = .not(try c.decode(Expr.self, forKey: k)); return
-            case "all": self = .all(try c.decode([Expr].self, forKey: k)); return
-            case "any": self = .`any`(try c.decode([Expr].self, forKey: k)); return
-            case "eq": self = .eq(try c.decode([Expr].self, forKey: k)); return
-            case "lt": self = .lt(try c.decode([Expr].self, forKey: k)); return
-            case "len": self = .len(try c.decode(Expr.self, forKey: k)); return
-            case "has": self = .has(try c.decode([Expr].self, forKey: k)); return
-            case "is": self = .`is`(try c.decode(Match.self, forKey: k)); return
-            case "add": self = .add(try c.decode([Expr].self, forKey: k)); return
-            case "sub": self = .sub(try c.decode([Expr].self, forKey: k)); return
-            case "cat": self = .cat(try c.decode([Expr].self, forKey: k)); return
-            case "pick": self = .pick(try c.decode([Expr].self, forKey: k)); return
-            default: self = .unknown(try JSONValue(from: decoder)); return
+            case "get": if let v = try? c.decode(String.self, forKey: k) { self = .get(v); return }
+            case "not": if let v = try? c.decode(Expr.self, forKey: k) { self = .not(v); return }
+            case "all": if let v = try? c.decode([Expr].self, forKey: k) { self = .all(v); return }
+            case "any": if let v = try? c.decode([Expr].self, forKey: k) { self = .`any`(v); return }
+            case "eq": if let v = try? c.decode([Expr].self, forKey: k) { self = .eq(v); return }
+            case "lt": if let v = try? c.decode([Expr].self, forKey: k) { self = .lt(v); return }
+            case "len": if let v = try? c.decode(Expr.self, forKey: k) { self = .len(v); return }
+            case "has": if let v = try? c.decode([Expr].self, forKey: k) { self = .has(v); return }
+            case "is": if let v = try? c.decode(Match.self, forKey: k) { self = .`is`(v); return }
+            case "add": if let v = try? c.decode([Expr].self, forKey: k) { self = .add(v); return }
+            case "sub": if let v = try? c.decode([Expr].self, forKey: k) { self = .sub(v); return }
+            case "cat": if let v = try? c.decode([Expr].self, forKey: k) { self = .cat(v); return }
+            case "pick": if let v = try? c.decode([Expr].self, forKey: k) { self = .pick(v); return }
+            default: break
             }
+            self = .unknown(try JSONValue(from: decoder)); return
         }
         self = .lit(try Lit(from: decoder))
     }
@@ -385,7 +392,9 @@ public struct Fallback: Codable, Equatable, Sendable {
 }
 
 public struct Field: Codable, Equatable, Sendable {
+    public var checks: [Check]?
     public var doc: String?
+    public var enabled: Expr?
     public var error: String?
     public var keyboard: Keyboard?
     public var label: String?
@@ -394,6 +403,7 @@ public struct Field: Codable, Equatable, Sendable {
     public var options: [String]?
     public var placeholder: String?
     public var set: Bool?
+    public var show: Expr?
     public var type: FieldKind
     public var value: FieldValue?
     public var was: String?
@@ -942,6 +952,11 @@ public struct Section: Codable, Equatable, Sendable {
     public var show: Expr?
 }
 
+public struct SetState: Codable, Equatable, Sendable {
+    public var key: String
+    public var to: Expr
+}
+
 public struct Sheet: Codable, Equatable, Sendable {
     public var blocks: [Block]
     public var cancel: String?
@@ -1008,14 +1023,15 @@ public indirect enum Step: Codable, Equatable, Sendable {
     public init(from decoder: any Decoder) throws {
         if let c = try? decoder.container(keyedBy: Key.self), c.allKeys.count == 1, let k = c.allKeys.first {
             switch k.stringValue {
-            case "tap": self = .tap(try c.decode(StepOn.self, forKey: k)); return
-            case "type": self = .type(try c.decode(StepType.self, forKey: k)); return
-            case "scroll": self = .scroll(try c.decode(StepOn.self, forKey: k)); return
-            case "frame": self = .frame(try c.decode(Frame.self, forKey: k)); return
-            case "answer": self = .answer(try c.decode(Answer.self, forKey: k)); return
-            case "shot": self = .shot(try c.decode(StepShot.self, forKey: k)); return
-            default: self = .unknown(try JSONValue(from: decoder)); return
+            case "tap": if let v = try? c.decode(StepOn.self, forKey: k) { self = .tap(v); return }
+            case "type": if let v = try? c.decode(StepType.self, forKey: k) { self = .type(v); return }
+            case "scroll": if let v = try? c.decode(StepOn.self, forKey: k) { self = .scroll(v); return }
+            case "frame": if let v = try? c.decode(Frame.self, forKey: k) { self = .frame(v); return }
+            case "answer": if let v = try? c.decode(Answer.self, forKey: k) { self = .answer(v); return }
+            case "shot": if let v = try? c.decode(StepShot.self, forKey: k) { self = .shot(v); return }
+            default: break
             }
+            self = .unknown(try JSONValue(from: decoder)); return
         }
         self = .unknown(try JSONValue(from: decoder))
     }
@@ -1067,6 +1083,7 @@ public struct Tap: Codable, Equatable, Sendable {
     public var copy: String?
     public var focus: String?
     public var open: String?
+    public var set: [SetState]?
     public var sheet: String?
     public var thread: String?
     public var url: String?
