@@ -152,3 +152,41 @@ body.home .scr>*{animation:settle var(--home-settle) var(--ease) backwards;anima
 .spec .b-card{border-radius:0}
 .grid3:has(.scheme){gap:var(--dot-gap)}
 .lbl{background:var(--bg);border:1px solid var(--edge);border-bottom:0;padding:8px 12px;margin:0}
+
+button::before,button::after,a.btn::before,a.btn::after{content:none}
+button,a.btn{height:auto;min-height:36px;padding:7px 14px;border:1px solid var(--edge);border-radius:var(--radius);background:var(--card);color:var(--fg);font-weight:600;text-transform:none;line-height:1.2}
+button.primary,a.btn.primary{background:var(--l);border-color:var(--l);color:var(--bg)}
+button.bad,a.btn.bad{color:var(--r)}
+button:disabled{color:var(--mute);border-color:var(--line);background:var(--bg);opacity:1}
+button:active,a.btn:active{background:var(--l);color:var(--bg)}
+button:focus-visible,a.btn:focus-visible{outline:2px solid var(--l);outline-offset:2px}
+button.pick{padding:9px 12px;min-height:40px;line-height:1.35}
+.chips{gap:8px;padding:0;margin:0}
+.chips button,.scheme .chips button{min-height:28px;padding:3px 10px;font-size:13px;font-weight:550;background:var(--card);color:var(--fg);box-shadow:none}
+.chips button.on,.chips button[aria-pressed=true],.scheme .on{background:var(--l);border-color:var(--l);color:var(--bg);box-shadow:none}
+.scheme .chips button.primary{background:var(--l);border-color:var(--l);color:var(--bg)}
+.scheme .chips button.bad{color:var(--r)}
+.tag{border:1px solid var(--edge);border-radius:var(--radius);padding:1px 8px;font-weight:600}
+.tag.needs{color:var(--fk-a)}.tag.working,.tag.ok{color:var(--fk-g)}.tag.fail,.tag.bad{color:var(--r)}
+.st.warn b{color:var(--fk-a)}
+.b-hero>.bar{gap:var(--s2)}
+.spec .card{margin:0;border-radius:0}
+.spec .card .bar,.spec .shb .bar,.spec .bar{margin:12px 0 0;gap:8px}
+.spec>.bar{margin:0}
+.spec .choice{margin:0}
+.spec .other input,.spec .fd input,.spec .fd select,.spec .cmp textarea,.spec .cmp select{border:1px solid var(--edge);border-radius:0;background:var(--card);color:var(--fg);font:inherit;padding:7px 10px}
+.spec .fd{border-bottom:1px solid var(--line);padding:4px 0}
+.spec .fd .fk{flex:0 0 72px}
+.spec .fd input[type=checkbox]{flex:none;width:18px;height:18px;accent-color:var(--l)}
+.spec .cmp{border:0;background:none;padding:0}
+.spec .cmp .cr{gap:8px;align-items:stretch}
+.spec .cmp .qd{border:1px solid var(--line);padding:6px 8px;gap:6px}
+.spec .cmp .qd button{min-height:28px;padding:3px 8px;font-size:13px}
+.spec .cmp .pk{gap:8px}
+.spec .imgs{flex-wrap:wrap}
+.spec .sh .mk{display:inline-block;margin-right:8px}
+.spec .sec{margin:0}.spec .sec .sh{margin:0 0 6px;font-weight:600;color:var(--fg)}
+.spec .run .cmd{background:var(--card);border:1px solid var(--line);padding:8px 10px;margin:0 0 6px;white-space:pre-wrap}
+.spec .dg{overflow-x:auto}.spec .dgm{position:relative}
+.spec .b-screen>.b-text,.spec .b-screen>.b-row{margin-top:6px}
+.spec .ch>b,.spec .ch b{color:var(--fg)}
