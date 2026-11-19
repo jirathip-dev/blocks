@@ -85,9 +85,9 @@ All three servers run on the same machine as the browser, over loopback. WebKit 
   shell keeps from the last visit, and server-rendered React is about level with it.
 - **Memory**: client-rendered React ends lower (233 MB against 251 MB). blocks is well under server-rendered React
   (359 MB) and topcoat (761 MB). The shell also writes each screen to localStorage on every update.
-- **Bursts**: the patcher draws at most once every 100 ms (`web/src/patch.ts`). Updates that arrive closer together
-  wait for the next window, so back-to-back updates take up to 100 ms each. That is why the timed updates here
-  are 150 ms apart. React and topcoat draw each update as soon as it lands.
+- **Bursts**: the patcher queues ops and draws them on the next animation frame (`web/src/patch.ts`), so updates
+  that land within one frame draw together. The timed updates here are 150 ms apart, well over a frame, so each
+  draws on its own. React and topcoat draw each update as soon as it lands.
 
 ## Not measured
 
