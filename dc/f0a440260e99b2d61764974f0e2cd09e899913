@@ -1,0 +1,7 @@
+Decided: an action id is the action name scoped to its nearest block with an id; a repeat within that scope is refused
+Because: "Duplicate ids make the row diff update the wrong row and break #84's stable-id selectors"
+Rejected: unique action names across the whole screen — the goldens reuse `pause` across rows on purpose, so a check that wide would refuse valid screens
+Decided: fixed the drover herd golden (its section and its row were both `age`) rather than ignore Twice there
+Because: "every committed screen fixture passes"
+Check: crates/blocks/tests/fixtures.rs check_refuses_an_id_twice_and_names_both_paths and the sim's sound() check
+Owner: duplicate block ids and repeated actions in one block are now refused, with both places named
