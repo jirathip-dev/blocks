@@ -1,0 +1,59 @@
+Decided: one `chart` kind with `chart` = bar|stacked|line|combo|donut and one `format` per chart, so a combo never has a second axis.
+Because: q2294
+Decided: the static writer and the HTML renderer write the same element; site.test compares every mark, label and table cell.
+Because: "the static writer's element"
+Decided: `Built::check` skips a block's fallback when counting senders of an action.
+Because: crates/blocks/src/built.rs:241
+Rejected: dropping `tap` from a chart's fallback only — the same false fault hit any card with an action tap.
+Decided: staging build fix in `children()`: a table's rows are not child blocks, as `placed()` already says.
+Because: crates/blocks/src/built.rs:86
+Decided: reuse the table's `Era` type; `thb_m` keeps its underscore through a per-variant rename in `words!`.
+Because: crates/blocks/src/kind/chart.rs:17
+Rejected: a React adapter view — #81 has only its ADR and core entry, no adapter to wire.
+Check: a line chart's axis is fitted to its data; bars and combos start at zero (tests/site.rs).
+Owner: Charts now draw in the web page, the static site and the Apple app, with baht amounts and Buddhist-Era months.
+
+Decided: SwiftUI x labels lay out at one column's width and draw in an overlay spanning the columns they label, truncated to one line.
+Because: swift/Sources/BlocksUI/BlockChart.swift:182
+Rejected: keeping fixedSize() on the labels — a long x label widened the whole chart past the screen (chart-long at 390).
+Rejected: truncating each label to its own column — at 390 with 12 months a column is ~23px and "Jan 24" would read "J…".
+Check: blocks-snap --check at 390 passes on fixtures/stress/chart-long.json; the fixtures/trees/swift trees still match.
+Owner: A chart with very long month labels now stays inside a phone screen in the Apple app.
+
+Decided: the showcase test counts 38 site pages; the chart kind adds its kind page.
+Because: web/test/pages/showcase.test.ts:51
+Decided: merge origin/staging and regenerate the schema, TS and Swift rather than hand-merge them.
+Because: .drover/arch.toml:9
+Rejected: deriving the count from the kind list — the hard count is staging's own pattern and a lane change.
+Check: SITE=<built site> node --test web/test/pages/showcase.test.ts passes with 38 pages.
+Owner: The site's page check now expects the new chart page, so the build goes green.
+
+Decided: merge origin/staging twice and put chart beside toast in every kind list; regenerate the schema, TS, Swift and dist rather than hand-merge them.
+Because: .drover/arch.toml:9
+Decided: the hard kind counts staging added go from 31 to 32, and the stress fixture count to 64.
+Because: site/tests/pages.rs:30
+Rejected: none
+Check: the regenerated files match `just gen`; the cargo, web, swift and showcase tests pass at this head.
+Owner: The chart branch now carries staging's toast and guard work, with no behaviour changes.
+
+Decided: merge origin/staging and route chart through blocks-desktop's kind switch with no native view, as toast does, so the desktop draws its fallback.
+Because: crates/blocks-desktop/src/draw/toast.rs:6
+Rejected: a native egui chart view — #45 owns the desktop views and the issue names HTML, static site, SwiftUI and React only.
+Decided: regenerate the usage skill with gen's steps rather than hand-write kinds/chart.md.
+Because: .drover/arch.toml:9
+Check: cargo clippy --workspace and cargo test -p blocks-desktop pass on the merge with staging.
+Owner: The chart branch builds again on top of the new desktop app, which shows charts in its plain fallback for now.
+
+Decided: merge origin/staging, route both chart and diff in the site writer, and regenerate web/dist rather than hand-merge it.
+Because: .drover/arch.toml:9
+Decided: the TS check() skips a block's fallback when counting senders of an action, matching Built::check.
+Because: crates/blocks/src/built.rs:271
+Rejected: none
+Check: npm --prefix web run test passes check.test.ts over fixtures/check with the chart fixture.
+Owner: The chart branch now carries staging's diff view and its web screen check, with no behaviour changes.
+
+Decided: merge origin/staging and regenerate web/dist/blocks.js with gen's steps rather than hand-merge it.
+Because: .drover/arch.toml:25
+Rejected: none
+Check: codegen, npm run build and the BLOCKS_GEN tests leave no diff; cargo, web and swift tests pass at this head.
+Owner: The chart branch now carries staging's serif type option, with no behaviour changes.
