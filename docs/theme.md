@@ -49,7 +49,9 @@ under `:where(:root)` so any app rule wins, and `blocks.css` reads only the vari
 per screen (not on an update, a tab switch back, a resync or a site page's takeover), and `--motion: 0` or reduced
 motion turns it off. SwiftUI: `Look.tiles` (default `Tiles.default`, parsed from `blocksDefaultStyle`) draws every
 surface as a tile on the dot grid; `tiles: nil` gives the app's own `Style` back, and a still look, a `motion` of 0 or
-reduced motion turns the build-up off. `fixtures/look/kinds.json` is the kinds page both harnesses draw to one tree.
+reduced motion turns the build-up off. A style.json's `type` is `default`, `mono` or `serif`; `serif` sets labels in
+the system serif (HTML: `theme::css` writes a `ui-serif` font stack on `:root`, no web font; SwiftUI: the `.serif`
+design). `fixtures/look/kinds.json` is the kinds page both harnesses draw to one tree.
 
 ## Generated
 

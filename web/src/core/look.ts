@@ -1,7 +1,7 @@
 import { defaultPair, defaultStyle, type Mode, type Scheme } from "../gen/schemes.ts";
 
 export type Pair = Record<Mode, Scheme>;
-export type Scale = { space?: number; motion?: number };
+export type Scale = { space?: number; motion?: number; type?: string };
 
 const vars = (t: Record<string, string>) => Object.entries(t).map(([k, v]) => `${k}:${v}`);
 
@@ -9,7 +9,8 @@ const vars = (t: Record<string, string>) => Object.entries(t).map(([k, v]) => `$
 export function css(look: Scheme | Pair, style: Scale = {}): string {
   if ("tokens" in look) return `:root{${vars(look.tokens).join(";")};color-scheme:${look["color-scheme"]}}`;
   const all = (t: Record<string, string>) => vars(t).map((d) => `${d};`).join("");
-  const head = `color-scheme:light dark;--space:${style.space ?? 1};--motion:${style.motion ?? 1};`;
+  const serif = style.type === "serif" ? "font-family:ui-serif,Georgia,Cambria,serif;" : "";
+  const head = `color-scheme:light dark;${serif}--space:${style.space ?? 1};--motion:${style.motion ?? 1};`;
   return `:root{${head}${all(defaultStyle)}${all(look.light.tokens)}}@media (prefers-color-scheme: dark){:root{${all(look.dark.tokens)}}}`;
 }
 

@@ -27,6 +27,7 @@ test("css writes the crate's theme::css text for the default pair and each schem
   const still = JSON.parse(read("styles/still.json"));
   const want = {
     "default.css": css(defaultPair),
+    "default-serif.css": css(defaultPair, { type: "serif" }),
     "default-still.css": css(defaultPair, { space: still.space, motion: still.motion }),
   };
   for (const f of readdirSync(new URL("../../fixtures/schemes", import.meta.url)).filter((f) => f.endsWith(".json"))) {

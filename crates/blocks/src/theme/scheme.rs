@@ -2,7 +2,7 @@ use std::sync::OnceLock;
 
 use serde::{Deserialize, Serialize};
 
-use super::Style;
+use super::{Style, TypeDesign};
 
 /// A colour as `#rrggbb` or `#rrggbbaa`: nothing else parses.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -249,10 +249,17 @@ fn vars(s: &Scheme) -> String {
         .collect()
 }
 
+const SERIF: &str = "font-family:ui-serif,Georgia,Cambria,serif;";
+
 /// Every token as a CSS variable: the tile style and the light scheme on `:root`, the dark one under `prefers-color-scheme: dark`.
 pub fn css(schemes: &PerMode<Scheme>, style: &Style) -> String {
     format!(
-        ":root{{color-scheme:light dark;--space:{};--motion:{};{}{}}}@media (prefers-color-scheme: dark){{:root{{{}}}}}",
+        ":root{{color-scheme:light dark;{}--space:{};--motion:{};{}{}}}@media (prefers-color-scheme: dark){{:root{{{}}}}}",
+        if style.type_ == TypeDesign::Serif {
+            SERIF
+        } else {
+            ""
+        },
         f64::from(style.space),
         f64::from(style.motion),
         std::collections::BTreeMap::from(DEFAULT_STYLE)

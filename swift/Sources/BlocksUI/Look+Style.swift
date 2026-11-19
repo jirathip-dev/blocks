@@ -20,7 +20,7 @@ extension Look {
 
 extension View {
     internal func ui(_ size: CGFloat, _ weight: Font.Weight = .regular, _ look: Look) -> some View {
-        font(.system(size: size, weight: weight, design: look.type == .mono ? .monospaced : .default))
+        font(.system(size: size, weight: weight, design: look.type == .mono ? .monospaced : look.type == .serif ? .serif : .default))
     }
 
     internal func surface(_ look: Look, radius: CGFloat = 22, interactive: Bool = false) -> some View {

@@ -414,7 +414,8 @@ var vars = (t) => Object.entries(t).map(([k, v]) => `${k}:${v}`);
 function css(look, style = {}) {
   if ("tokens" in look) return `:root{${vars(look.tokens).join(";")};color-scheme:${look["color-scheme"]}}`;
   const all = (t) => vars(t).map((d) => `${d};`).join("");
-  const head = `color-scheme:light dark;--space:${style.space ?? 1};--motion:${style.motion ?? 1};`;
+  const serif = style.type === "serif" ? "font-family:ui-serif,Georgia,Cambria,serif;" : "";
+  const head = `color-scheme:light dark;${serif}--space:${style.space ?? 1};--motion:${style.motion ?? 1};`;
   return `:root{${head}${all(defaultStyle)}${all(look.light.tokens)}}@media (prefers-color-scheme: dark){:root{${all(look.dark.tokens)}}}`;
 }
 var tiles = `:where(:root){${vars(defaultStyle).join(";")}}`;
