@@ -240,7 +240,7 @@ internal struct HeroBlock: View {
             HStack(spacing: 8) {
                 ForEach(Array((block.actions ?? []).enumerated()), id: \.offset) { index, item in
                     ActButton(source: Source(item)) { CardButton(title: item.label, primary: index == 0) }
-                        .fixedSize()
+                        .fixedSize(horizontal: false, vertical: true)
                 }
             }
         }

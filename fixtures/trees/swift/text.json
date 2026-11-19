@@ -3,5 +3,7 @@
   "id": "note",
   "variant": null,
   "drawn": "native",
+  "role": "group",
+  "name": "note",
   "children": []
 }

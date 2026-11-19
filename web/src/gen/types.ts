@@ -196,7 +196,7 @@ export type Toned = string | Label;
 
 export type TreeDrawn = "native" | "fallback" | "hidden";
 
-export type TreeNode = { children: TreeNode[]; drawn: TreeDrawn; id?: string | null; kind: string; rect?: number[] | null; text?: string | null; variant?: string | null };
+export type TreeNode = { children: TreeNode[]; drawn: TreeDrawn; id?: string | null; kind: string; name: string; rect?: number[] | null; role: string; text?: string | null; variant?: string | null };
 
 export type Web = { height: number; id?: string | null; show?: Expr | null; src: string };
 

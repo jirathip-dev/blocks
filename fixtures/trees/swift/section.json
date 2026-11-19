@@ -3,12 +3,16 @@
   "id": "today",
   "variant": null,
   "drawn": "native",
+  "role": "region",
+  "name": "Today",
   "children": [
     {
       "kind": "text",
       "id": "today-note",
       "variant": null,
       "drawn": "native",
+      "role": "group",
+      "name": "today-note",
       "children": []
     }
   ]

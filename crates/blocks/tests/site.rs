@@ -130,7 +130,7 @@ fn a_live_page_carries_the_screen_and_the_module_and_nothing_else() {
 #[test]
 fn an_action_is_a_submit_of_a_form_that_posts_its_values() {
     let p = page(None);
-    assert!(p.contains("<button class=\"b b-button\" data-block=\"button\" data-id=\"go\" type=\"submit\" form=\"b-f1\" data-action=\"go\"><span>Go</span></button>"), "{p}");
+    assert!(p.contains("<button class=\"b b-button\" data-block=\"button\" data-id=\"go\" type=\"submit\" form=\"b-f1\" data-action=\"go\" role=\"button\" aria-label=\"Go\"><span>Go</span></button>"), "{p}");
     assert!(p.contains("<form id=\"b-f1\" method=\"post\" action=\"/act\" hidden><input type=\"hidden\" name=\"_screen\" value=\"home\"><input type=\"hidden\" name=\"_block\" value=\"go\"><input type=\"hidden\" name=\"_action\" value=\"go\"></form>"), "{p}");
 }
 
@@ -167,7 +167,7 @@ fn editor_numbers_lines_from_first_and_marks_errors_on_and_off_the_excerpt() {
     assert_eq!(
         site::fragment(&Built::new(b), "/act"),
         concat!(
-            r#"<div class="ed b b-editor" data-block="editor" data-id="src" tabindex="0" role="button" aria-label="edit main">"#,
+            r#"<div class="ed b b-editor" data-block="editor" data-id="src" tabindex="0" role="button" aria-label="main">"#,
             r#"<div class="edl"><i>40</i><span>fn main() {</span></div>"#,
             r#"<div class="edl err"><i>41</i><span>    let n = 1</span></div><p class="ede">expected `;`</p>"#,
             r#"<div class="edl"><i>42</i><span> </span></div>"#,
@@ -193,7 +193,7 @@ fn a_config_writes_each_field_as_a_settings_row_with_its_note_and_a_save_bar() {
     });
     let html = site::fragment(&Built::new(b), "/act");
     for part in [
-        r#"<div class="form cfg b b-config" data-block="config" data-id="edgar">"#,
+        r#"<div class="form cfg b b-config" data-block="config" data-id="edgar" role="form" aria-label="edgar">"#,
         r#"<label class="fd"><span class="fl"><span class="fk">agent</span><span class="fn">sent to SEC</span></span><input name="agent" form="b-f1" type="text" autocomplete="off" placeholder="" value="cooee"></label>"#,
         r#"<span class="fn was">was https://www.sec.gov</span></span><input name="base" form="b-f1" type="url" autocomplete="off" inputmode="url""#,
         r#"<label class="fd err"><span class="fl"><span class="fk">every</span><span class="fn err">must be under 4</span></span><input name="every" form="b-f1" aria-invalid="true" type="text" autocomplete="off" inputmode="decimal" placeholder="" value="4.5">"#,
@@ -218,7 +218,7 @@ fn a_scene_lane_links_its_url_or_open_marks_any_other_tap_a_button_and_ticks_its
     ]}));
     let h = site::fragment(&b, "/act");
     assert!(
-        h.starts_with("<div class=\"scn b b-scene\" data-block=\"scene\" data-id=\"s\"><ul class=\"scl\">"),
+        h.starts_with("<div class=\"scn b b-scene\" data-block=\"scene\" data-id=\"s\" role=\"group\" aria-label=\"s\"><ul class=\"scl\">"),
         "{h}"
     );
     assert!(h.contains("<a class=\"ln merged tap\" data-id=\"a\" aria-label=\"pr, merged\" href=\"https://x.test/63\" target=\"_blank\" rel=\"noopener\">"), "{h}");
@@ -249,11 +249,11 @@ fn a_row_with_rounds_writes_its_fold_open_when_the_last_round_needs_you_and_fold
         )
     };
     let open = site::fragment(&row("needs"), "/act");
-    assert!(open.starts_with("<div class=\"rr open b b-row\" data-block=\"row\" data-id=\"i\"><div class=\"row tap\" data-id=\"i\" tabindex=\"0\" role=\"button\" aria-expanded=\"true\"><span class=\"rm\"><span class=\"rt b-row__title\">#23</span></span><span class=\"rc\">›</span></div><ol class=\"rds\">"), "{open}");
+    assert!(open.starts_with("<div class=\"rr open b b-row\" data-block=\"row\" data-id=\"i\" role=\"group\" aria-label=\"#23\"><div class=\"row tap\" data-id=\"i\" tabindex=\"0\" role=\"button\" aria-expanded=\"true\"><span class=\"rm\"><span class=\"rt b-row__title\">#23</span></span><span class=\"rc\">›</span></div><ol class=\"rds\">"), "{open}");
     assert!(open.contains("<li class=\"rd done\"><i class=\"rdm\" aria-label=\"done\"></i><div class=\"rdx\"><div class=\"rdl tap\" tabindex=\"0\" role=\"button\" data-action=\"see\"><span class=\"rdn\">impl</span><span class=\"rdu\"></span><span class=\"rdt\"><span data-tick=\"{&#34;since&#34;:&#34;2026-11-19T12:00:00Z&#34;}\"></span></span><span class=\"rc\">›</span></div></div></li>"), "{open}");
     assert!(open.contains("<li class=\"rd needs now\"><i class=\"rdm\" aria-label=\"needs\"></i><div class=\"rdx\"><div class=\"rdl\"><span class=\"rdn\">rev</span><span class=\"rdu\">busy</span></div><div class=\"rdb\"><div class=\"rdh\">rev-1 · mini</div><div class=\"rdo\"><div>a</div><div>b</div></div><div class=\"rdk\"><button type=\"submit\" form=\"b-f1\" data-action=\"go\"><span>go</span></button></div></div></div></li></ol></div>"), "{open}");
     let live = site::fragment(&row("working"), "/act");
-    assert!(live.starts_with("<div class=\"rr b b-row\" data-block=\"row\" data-id=\"i\"><div class=\"row tap\" data-id=\"i\" tabindex=\"0\" role=\"button\" aria-expanded=\"false\"><span class=\"rm\"><span class=\"rt b-row__title\">#23</span><span class=\"rs b-row__subtitle \">review</span></span><span class=\"rc\">›</span></div></div>"), "{live}");
+    assert!(live.starts_with("<div class=\"rr b b-row\" data-block=\"row\" data-id=\"i\" role=\"group\" aria-label=\"#23\"><div class=\"row tap\" data-id=\"i\" tabindex=\"0\" role=\"button\" aria-expanded=\"false\"><span class=\"rm\"><span class=\"rt b-row__title\">#23</span><span class=\"rs b-row__subtitle \">review</span></span><span class=\"rc\">›</span></div></div>"), "{live}");
 }
 
 #[test]
@@ -285,7 +285,7 @@ fn an_island_is_its_element_with_its_props_and_fallback_and_a_bad_name_a_plain_f
     };
     assert_eq!(
         island("x-map"),
-        "<x-map class=\"b b-island\" data-block=\"island\" data-id=\"m\" data-fallback=\"\" data-props=\"{&#34;q&#34;:&#34;&#60;a&#38;b&#62;&#34;}\"><div class=\"row\" data-id=\"\"><span class=\"rm\"><span class=\"rt b-row__title\">The map</span></span></div></x-map>"
+        "<x-map class=\"b b-island\" data-block=\"island\" data-id=\"m\" data-fallback=\"\" data-props=\"{&#34;q&#34;:&#34;&#60;a&#38;b&#62;&#34;}\" role=\"group\" aria-label=\"x-map\"><div class=\"row\" data-id=\"\"><span class=\"rm\"><span class=\"rt b-row__title\">The map</span></span></div></x-map>"
     );
     for bad in ["x map", "map", "X-map", "x-<b>", "1-x"] {
         let h = island(bad);

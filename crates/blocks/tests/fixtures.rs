@@ -581,3 +581,152 @@ fn check_refuses_a_link_that_is_not_http_https_mailto_or_relative_naming_where()
         }
     }
 }
+
+const LONG: &str = "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it";
+const MANY: usize = 200;
+const VARIANTS: [&str; 3] = ["long", "empty", "many"];
+
+fn stretch(v: &mut Value, keys: &[&str]) {
+    match v {
+        Value::Object(o) => o.iter_mut().for_each(|(k, x)| match x {
+            Value::String(s) if keys.contains(&k.as_str()) => *s = LONG.into(),
+            Value::Array(a) if keys.contains(&k.as_str()) && a.iter().all(Value::is_string) => {
+                for s in a {
+                    *s = Value::String(format!("{}{LONG}", &s.as_str().unwrap()[..1]));
+                }
+            }
+            _ => stretch(x, keys),
+        }),
+        Value::Array(a) => a.iter_mut().for_each(|x| stretch(x, keys)),
+        _ => {}
+    }
+}
+
+fn mark(v: &mut Value, n: usize) {
+    match v {
+        Value::Object(o) => o.iter_mut().for_each(|(k, x)| match x {
+            Value::String(s) if ["id", "name", "value"].contains(&k.as_str()) => s.push_str(&format!("-{n}")),
+            _ => mark(x, n),
+        }),
+        Value::Array(a) => a.iter_mut().for_each(|x| mark(x, n)),
+        _ => {}
+    }
+}
+
+fn stress_rows(table: &Value, kinds: &[&str]) -> Result<(), String> {
+    let rows = table.as_object().ok_or("fixtures/stress/table.json is no object")?;
+    let mut bad: Vec<String> = kinds
+        .iter()
+        .filter(|k| !rows.contains_key(**k))
+        .map(|k| format!("{k}: no row in fixtures/stress/table.json"))
+        .collect();
+    for (k, row) in rows {
+        if !kinds.contains(&k.as_str()) {
+            bad.push(format!("{k}: a row for no kind"));
+        }
+        let some = VARIANTS.iter().filter(|v| row.get(**v).is_some()).count();
+        if some < VARIANTS.len() && row["why"].as_str().is_none_or(str::is_empty) {
+            bad.push(format!("{k}: a variant left out with no why"));
+        }
+    }
+    if bad.is_empty() {
+        Ok(())
+    } else {
+        Err(bad.join("\n"))
+    }
+}
+
+fn stress(table: &Value) -> Vec<(String, Value)> {
+    let mut out = vec![];
+    for (kind, b) in blocks::samples() {
+        let row = &table[kind];
+        let sample = serde_json::to_value(b).unwrap();
+        if let Some(keys) = row["long"].as_array() {
+            let keys: Vec<&str> = keys.iter().map(|k| k.as_str().unwrap()).collect();
+            let mut v = sample.clone();
+            stretch(&mut v, &keys);
+            assert_ne!(v, sample, "{kind}: long changes no text");
+            out.push((format!("{kind}-long"), v));
+        }
+        if let Some(key) = row["empty"].as_str() {
+            let mut v = sample.clone();
+            v[key] = Value::Array(vec![]);
+            out.push((format!("{kind}-empty"), v));
+        }
+        if let Some(key) = row["many"].as_str() {
+            let items = sample[key].as_array().unwrap();
+            let mut v = sample.clone();
+            v[key] = (0..MANY)
+                .map(|n| {
+                    let mut x = items[n % items.len()].clone();
+                    mark(&mut x, n);
+                    x
+                })
+                .collect();
+            out.push((format!("{kind}-many"), v));
+        }
+    }
+    out
+}
+
+#[test]
+fn every_kind_has_a_stress_row_and_each_variant_is_its_file_and_valid() {
+    let dir = root().join("fixtures/stress");
+    let table = read(&dir.join("table.json"));
+    stress_rows(&table, Block::KINDS).unwrap();
+    let want = stress(&table);
+    if std::env::var_os("BLOCKS_GEN").is_some() {
+        for e in std::fs::read_dir(&dir).unwrap() {
+            let p = e.unwrap().path();
+            if p.file_name().unwrap() != "table.json" {
+                std::fs::remove_file(p).unwrap();
+            }
+        }
+        for (name, v) in &want {
+            std::fs::write(
+                dir.join(format!("{name}.json")),
+                serde_json::to_string_pretty(v).unwrap() + "\n",
+            )
+            .unwrap();
+        }
+    }
+    let mut files: Vec<String> = std::fs::read_dir(&dir)
+        .unwrap()
+        .map(|e| e.unwrap().file_name().to_string_lossy().into_owned())
+        .collect();
+    files.sort();
+    let mut names: Vec<String> = want
+        .iter()
+        .map(|(n, _)| format!("{n}.json"))
+        .chain(["table.json".into()])
+        .collect();
+    names.sort();
+    assert_eq!(files, names, "fixtures/stress: run `just gen`");
+    let s = schema();
+    for (name, v) in want {
+        assert_eq!(
+            read(&dir.join(format!("{name}.json"))),
+            v,
+            "fixtures/stress/{name}.json: run `just gen`"
+        );
+        valid(&s, &v).unwrap_or_else(|e| panic!("{name}: {e}"));
+        serde_json::from_value::<Block>(v.clone()).unwrap_or_else(|e| panic!("{name}: {e}"));
+        assert_eq!(Built::new(v).check(&[]), vec![], "{name}");
+    }
+}
+
+#[test]
+fn a_kind_with_no_stress_row_or_no_why_fails_the_table_check() {
+    let table = read(&root().join("fixtures/stress/table.json"));
+    let kinds: Vec<&str> = Block::KINDS.iter().copied().chain(["gauge"]).collect();
+    assert_eq!(
+        stress_rows(&table, &kinds),
+        Err("gauge: no row in fixtures/stress/table.json".into())
+    );
+    let mut quiet = table.clone();
+    quiet["secret"].as_object_mut().unwrap().remove("why");
+    assert_eq!(
+        stress_rows(&quiet, Block::KINDS),
+        Err("secret: a variant left out with no why".into())
+    );
+}

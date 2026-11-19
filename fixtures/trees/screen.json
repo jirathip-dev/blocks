@@ -3,12 +3,16 @@
   "id": "home",
   "variant": null,
   "drawn": "native",
+  "role": "group",
+  "name": "Home",
   "children": [
     {
       "kind": "text",
       "id": "hint",
       "variant": null,
       "drawn": "native",
+      "role": "group",
+      "name": "hint",
       "children": []
     }
   ]

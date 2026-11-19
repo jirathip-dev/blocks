@@ -1188,7 +1188,9 @@ public struct TreeNode: Codable, Equatable, Sendable {
     public var drawn: TreeDrawn
     public var id: String?
     public var kind: String
+    public var name: String
     public var rect: [Double]?
+    public var role: String
     public var text: String?
     public var variant: String?
 }

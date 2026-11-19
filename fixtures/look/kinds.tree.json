@@ -3,18 +3,24 @@
   "id": "kinds",
   "variant": null,
   "drawn": "native",
+  "role": "group",
+  "name": "Kinds",
   "children": [
     {
       "kind": "section",
       "id": "stats",
       "variant": null,
       "drawn": "native",
+      "role": "region",
+      "name": "Stats",
       "children": [
         {
           "kind": "stat",
           "id": "today",
           "variant": null,
           "drawn": "native",
+          "role": "group",
+          "name": "today",
           "children": []
         }
       ]
@@ -24,18 +30,24 @@
       "id": "rows",
       "variant": null,
       "drawn": "native",
+      "role": "region",
+      "name": "Rows",
       "children": [
         {
           "kind": "list",
           "id": "tasks",
           "variant": null,
           "drawn": "native",
+          "role": "group",
+          "name": "tasks",
           "children": [
             {
               "kind": "row",
               "id": "oat",
               "variant": null,
               "drawn": "native",
+              "role": "group",
+              "name": "Restock oat milk",
               "children": []
             },
             {
@@ -43,6 +55,8 @@
               "id": "seal",
               "variant": null,
               "drawn": "native",
+              "role": "group",
+              "name": "Fix freezer door seal",
               "children": []
             },
             {
@@ -50,6 +64,8 @@
               "id": "licence",
               "variant": null,
               "drawn": "native",
+              "role": "group",
+              "name": "Renew food licence",
               "children": []
             },
             {
@@ -57,6 +73,8 @@
               "id": "coffee",
               "variant": null,
               "drawn": "native",
+              "role": "group",
+              "name": "Clean coffee machine",
               "children": []
             }
           ]
@@ -68,18 +86,24 @@
       "id": "cards",
       "variant": null,
       "drawn": "native",
+      "role": "region",
+      "name": "Cards",
       "children": [
         {
           "kind": "card",
           "id": "shift",
           "variant": null,
           "drawn": "native",
+          "role": "group",
+          "name": "Morning \u00b7 06:00\u201314:00",
           "children": [
             {
               "kind": "button",
               "id": "retry",
               "variant": "primary",
               "drawn": "native",
+              "role": "button",
+              "name": "Retry",
               "children": []
             },
             {
@@ -87,6 +111,8 @@
               "id": "delete",
               "variant": "destructive",
               "drawn": "native",
+              "role": "button",
+              "name": "Delete",
               "children": []
             }
           ]
@@ -96,6 +122,8 @@
           "id": "failed",
           "variant": null,
           "drawn": "native",
+          "role": "group",
+          "name": "Payment failed for order #4821",
           "children": []
         }
       ]
@@ -105,12 +133,16 @@
       "id": "controls",
       "variant": null,
       "drawn": "native",
+      "role": "region",
+      "name": "Form",
       "children": [
         {
           "kind": "chips",
           "id": "filter",
           "variant": null,
           "drawn": "native",
+          "role": "group",
+          "name": "filter",
           "children": []
         },
         {
@@ -118,6 +150,8 @@
           "id": "cafe",
           "variant": null,
           "drawn": "native",
+          "role": "form",
+          "name": "cafe",
           "children": []
         }
       ]
