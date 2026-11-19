@@ -25,15 +25,15 @@ after(() => browser.close());
 const drawn = (id) =>
   page.evaluate((i) => {
     const b = document.getElementById(i);
-    return { bracket: getComputedStyle(b, "::before").content, height: getComputedStyle(b).height };
+    return { bracket: getComputedStyle(b, "::before").content, case: getComputedStyle(b).textTransform };
   }, id);
 
 test("blocks.scoped.css draws a button inside the view and a fallback, never one beside it or inside an island or app kind", async () => {
-  const look = { bracket: '"["', height: "28px" };
+  const look = { bracket: '"["', case: "lowercase" };
   deepStrictEqual(await drawn("in"), look);
   deepStrictEqual(await drawn("fallback"), look);
   for (const id of ["beside", "island", "app"]) strictEqual((await drawn(id)).bracket, "none", id);
-  for (const id of ["beside", "island", "app"]) strictEqual((await drawn(id)).height === look.height, false, id);
+  for (const id of ["beside", "island", "app"]) strictEqual((await drawn(id)).case, "none", id);
 });
 
 test("gated passes the default pair and its CSS is the pair's", () => {
