@@ -1,0 +1,28 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>config: a plugin's settings</title>
+<link rel="stylesheet" href="../../../web/src/blocks.css"><link rel="stylesheet" href="config.css"><link rel="stylesheet" href="page.css">
+<script src="config.js"></script></head>
+<body><main class="scr">
+<div class="tile"><div class="tabh"><span class="tw">cooee · settings</span><button type="button"><span>plugins</span></button><button type="button"><span>back</span></button></div></div>
+<div class="tile"><div class="sh"><b class="thw">EDGAR plugin settings</b> · saved with the button</div><div id="a"></div></div>
+<div class="tile"><div class="sh"><b class="thw">Alerts</b> · each change saves as you make it</div><div id="b"></div></div>
+</main>
+<script>
+const edgar = { type: "config", id: "edgar", submit: { label: "Save", action: "save-config" }, fields: [
+  { type: "text", name: "user_agent", label: "User agent", value: "cooee research", doc: "Sent with every request, as SEC asks" },
+  { type: "picker", name: "rate", label: "Rate", value: "5 / s", options: ["1 / s", "5 / s", "10 / s"] },
+  { type: "text", name: "base", label: "Base URL", keyboard: "url", value: "https://data.sec.gov", was: "https://www.sec.gov" },
+  { type: "secret", name: "key", label: "API key", set: true },
+] };
+const alerts = { type: "config", id: "alerts", action: "set", fields: [
+  { type: "toggle", name: "filings", label: "New filings", value: true, doc: "One alert per 10-K, 10-Q or 8-K" },
+  { type: "toggle", name: "insider", label: "Insider trades", value: false },
+  { type: "picker", name: "digest", label: "Digest", value: "daily", options: ["off", "daily", "weekly"] },
+  { type: "text", name: "min", label: "Minimum size", keyboard: "number", value: "-5", error: "Must be 0 or more" },
+  { type: "text", name: "hook", label: "Webhook", keyboard: "url", placeholder: "https://…" },
+] };
+document.getElementById("a").replaceWith(config(edgar));
+document.getElementById("b").replaceWith(config(alerts, { saving: "digest" }));
+document.querySelectorAll(".tile").forEach((t, i) => t.style.setProperty("--i", i));
+document.body.dataset.h = Math.ceil(document.documentElement.scrollHeight);
+</script></body></html>

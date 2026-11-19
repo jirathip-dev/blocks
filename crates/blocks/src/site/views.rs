@@ -263,8 +263,21 @@ pub(super) fn choice(w: &mut W<'_>, b: &Value) {
 }
 
 pub(super) fn form(w: &mut W<'_>, b: &Value) {
+    let cls = if b.get("submit").is_some_and(Value::is_object) {
+        "form say"
+    } else {
+        "form"
+    };
+    form_of(w, b, cls, false);
+}
+
+pub(super) fn config(w: &mut W<'_>, b: &Value) {
+    form_of(w, b, "form cfg", true);
+}
+
+fn form_of(w: &mut W<'_>, b: &Value, cls: &str, bar: bool) {
     let submit = b.get("submit").filter(|s| s.is_object());
-    w.open_block("div", if submit.is_some() { "form say" } else { "form" }, b, &[]);
+    w.open_block("div", cls, b, &[]);
     let action = submit.and_then(|s| get(s, "action")).or_else(|| get(b, "action"));
     let f = action.map(|a| w.post(b.get("id"), a, &fields(&[submit.and_then(|s| s.get("values"))])));
     let owner = f.clone().unwrap_or_default();
@@ -273,25 +286,68 @@ pub(super) fn form(w: &mut W<'_>, b: &Value) {
         field(w, x, tie);
     }
     if let (Some(s), Some(f)) = (submit, f) {
-        w.btn(&shown(s.get("label")), "", &Go::Post(f), &[], None);
+        if bar {
+            w.open("div", "bar", &[]);
+        }
+        let off: &[(&str, &str)] = if bar && on(s, "off") { &[("disabled", "")] } else { &[] };
+        w.btn(&shown(s.get("label")), "", &Go::Post(f), off, None);
+        if bar {
+            w.close("div");
+        }
     }
     w.close("div");
 }
 
+fn note(x: &Value) -> (&'static str, String) {
+    let was = x.get("was").filter(|v| !v.is_null());
+    match (get(x, "error").filter(|e| !e.is_empty()), was) {
+        (Some(e), _) => ("fn err", e.to_owned()),
+        (None, Some(v)) => ("fn was", format!("was {}", shown(Some(v)))),
+        (None, None) => ("fn", get(x, "doc").unwrap_or_default().to_owned()),
+    }
+}
+
+fn placeholder(x: &Value, secret: bool) -> &str {
+    match (secret && on(x, "set"), get(x, "placeholder")) {
+        (true, _) => "set ✓ · type to replace",
+        (false, Some(p)) => p,
+        (false, None) if secret => "not set",
+        (false, None) => "",
+    }
+}
+
 fn field(w: &mut W<'_>, x: &Value, tie: &[(&str, &str)]) {
     let name = shown(x.get("name"));
-    w.open("label", "fd", &[]);
+    let kind = get(x, "type").unwrap_or_default();
+    let error = get(x, "error").filter(|e| !e.is_empty());
+    let (note_cls, note) = note(x);
+    let row = format!(
+        "fd{}{}{}",
+        if kind == "toggle" { " tg" } else { "" },
+        if error.is_some() { " err" } else { "" },
+        if on(x, "open") { " open" } else { "" },
+    );
+    w.open("label", &row, &[]);
+    w.open("span", "fl", &[]);
     w.el(
         "span",
         "fk",
         &get(x, "label").map_or_else(|| name.clone(), String::from),
     );
+    w.el("span", note_cls, &note);
+    w.close("span");
     let mut attrs: Vec<(&str, &str)> = vec![("name", &name)];
     attrs.extend_from_slice(tie);
+    if error.is_some() {
+        attrs.push(("aria-invalid", "true"));
+    }
+    if on(x, "open") {
+        attrs.push(("autofocus", ""));
+    }
     let value = shown(x.get("value"));
-    match get(x, "type").unwrap_or_default() {
+    match kind {
         "toggle" => {
-            attrs.push(("type", "checkbox"));
+            attrs.extend([("type", "checkbox"), ("role", "switch")]);
             if on(x, "value") {
                 attrs.push(("checked", ""));
             }
@@ -311,11 +367,19 @@ fn field(w: &mut W<'_>, x: &Value, tie: &[(&str, &str)]) {
         }
         t => {
             let secret = t == "secret";
-            attrs.extend([
-                ("type", if secret { "password" } else { "text" }),
-                ("autocomplete", "off"),
-            ]);
-            attrs.push(("placeholder", get(x, "placeholder").unwrap_or_default()));
+            let kb = get(x, "keyboard").unwrap_or_default();
+            let ty = match (secret, kb) {
+                (true, _) => "password",
+                (false, "url") => "url",
+                _ => "text",
+            };
+            attrs.extend([("type", ty), ("autocomplete", "off")]);
+            match kb {
+                "url" => attrs.push(("inputmode", "url")),
+                "number" => attrs.push(("inputmode", "decimal")),
+                _ => {}
+            }
+            attrs.push(("placeholder", placeholder(x, secret)));
             if !secret && !value.is_empty() {
                 attrs.push(("value", &value));
             }
