@@ -1,0 +1,12 @@
+{
+  "now": "2026-11-09T09:40:00Z",
+  "cases": [
+    { "value": { "since": "2026-11-09T09:35:00Z", "label": "as of {} ago" }, "want": "as of 5m ago" },
+    { "value": { "since": "2026-11-09T09:39:30Z", "label": "{} ago" }, "want": "30s ago" },
+    { "value": { "since": "2026-11-08T09:40:00Z", "label": "up {}" }, "want": "up 24h" },
+    { "value": { "since": "2026-11-01T09:40:00Z", "label": "{}" }, "want": "8d" },
+    { "value": { "until": "2026-11-09T09:53:00Z", "label": "lapses in {rel}" }, "want": "lapses in 13m" },
+    { "value": { "until": "2026-11-09T11:40:00Z", "label": "decides in {rel}" }, "want": "decides in 120m" },
+    { "value": { "until": "2026-11-09T09:30:00Z", "label": "lapses in {rel}" }, "want": "lapses in 0m" }
+  ]
+}

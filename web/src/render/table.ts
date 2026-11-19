@@ -1,5 +1,5 @@
 import type { Cell, Column, SortDir, Table, TableRow, TableSort } from "../gen/types.ts";
-import { btn, type Ctx, el, h } from "./index.ts";
+import { btn, type Ctx, el, h, value } from "./index.ts";
 import { at, number, total, unit } from "../core/table.ts";
 
 type St = { sort: TableSort | null; q: string; hidden: Set<string>; sel: Set<string>; menu: string; seen: Map<string, string>; changed: Set<string>; fresh: Set<string> };
@@ -14,7 +14,7 @@ const end = (c: Column) => (c.align ?? (numeric(c) ? "end" : "start")) === "end"
 
 function shown(c: Column, v: Cell | undefined): string {
   if (v === undefined) return "";
-  if (typeof v === "object") return v.text;
+  if (typeof v === "object") return value(v.text);
   if (typeof v === "number") return number(c, v);
   const d = /^(\d+)-(\d+)-(\d+)$/.exec(v);
   if (c.kind !== "date" || !d) return v;

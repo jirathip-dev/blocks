@@ -886,9 +886,13 @@
           ]
         },
         "meta": {
-          "type": [
-            "string",
-            "null"
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Shown"
+            },
+            {
+              "type": "null"
+            }
           ]
         },
         "push": {
@@ -2702,7 +2706,7 @@
       "description": "A short text and its tone: a badge, or a toned subtitle.",
       "properties": {
         "text": {
-          "type": "string"
+          "$ref": "#/$defs/Shown"
         },
         "tone": {
           "anyOf": [
@@ -4509,7 +4513,7 @@
           "$ref": "#/$defs/Time"
         }
       ],
-      "description": "A row's or a tile's value: a string, a number, a state key's value, or a time."
+      "description": "A shown value (a row's or tile's value, a card's meta, a label's text): a string, a number, a state key's value, or a time."
     },
     "SortDir": {
       "anyOf": [
@@ -5334,8 +5338,14 @@
       "type": "object"
     },
     "Time": {
-      "description": "A moment a value counts from or to.",
+      "description": "A moment a value counts from or to; `label` shows it, `{}` the age since `since`, `{rel}` what is left until `until`.",
       "properties": {
+        "label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "since": {
           "type": [
             "string",
