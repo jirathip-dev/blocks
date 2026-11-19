@@ -1,7 +1,7 @@
 import { deepStrictEqual } from "node:assert/strict";
 import { readdirSync, readFileSync } from "node:fs";
 import { test } from "node:test";
-import { evaluate, start, view } from "../src/behave.ts";
+import { evaluate, start, view } from "../src/core/eval.ts";
 
 const dir = new URL("../../fixtures/behave/", import.meta.url);
 const files = readdirSync(dir).map((f) => [f, JSON.parse(readFileSync(new URL(f, dir), "utf8"))]);
