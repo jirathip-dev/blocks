@@ -2,10 +2,12 @@ import { deepStrictEqual, ok, strictEqual } from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import { existsSync, mkdtempSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
+import { inflateSync } from "node:zlib";
 import { join } from "node:path";
 import { test } from "node:test";
 import { fileURLToPath } from "node:url";
 import { webkit } from "playwright";
+import { defaultPair } from "../src/gen/schemes.ts";
 import { shot } from "../shot/shot.ts";
 
 const at = (p) => fileURLToPath(new URL(p, import.meta.url));
@@ -44,6 +46,27 @@ test("a scripted tap sends the button's action and an answer's ops are drawn", (
   deepStrictEqual(report.sent, [{ screen: "save", action: "save", block: "save", values: {} }]);
   strictEqual(report.timings.steps_ms.length, 3);
   strictEqual(JSON.parse(readFileSync(join(out, "tap", "saved.tree.json"), "utf8")).text, "Saved");
+});
+
+const corner = (png) => {
+  const idat = [];
+  for (let at = 8; at < png.length; at += png.readUInt32BE(at) + 12) {
+    if (png.toString("ascii", at + 4, at + 8) === "IDAT") idat.push(png.subarray(at + 8, at + 8 + png.readUInt32BE(at)));
+  }
+  return `#${inflateSync(Buffer.concat(idat)).subarray(1, 4).toString("hex")}`;
+};
+
+test("a harness run paints on the default pair unless its --css says otherwise", async () => {
+  const own = join(out, "own.css");
+  writeFileSync(own, ":root{--bg:#102030}");
+  const screen = JSON.parse(readFileSync(join(blocks, "button.json"), "utf8"));
+  const browser = await webkit.launch();
+  try {
+    strictEqual(corner((await shot({ screen, browser })).pngs.shot), defaultPair.light.tokens["--bg"]);
+    strictEqual(corner((await shot({ screen, browser, css: [own] })).pngs.shot), "#102030");
+  } finally {
+    await browser.close();
+  }
 });
 
 const rows = Array.from({ length: 200 }, (_, i) => ({ type: "row", id: `r${i}`, title: `Row ${i}`, subtitle: "green", value: "2m" }));

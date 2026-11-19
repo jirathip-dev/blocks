@@ -2,17 +2,17 @@ import Blocks
 import SwiftUI
 
 public struct Palette: Sendable, Equatable {
-    public static let farmDark = Palette(
-        background: .hex(0x0f1a13), card: .hex(0x1d1a12), edge: .hex(0x3b3a27), line: .hex(0x26301f),
-        foreground: .hex(0xece4cc), mute: .hex(0xa3a68a), lead: .hex(0xecdba6), link: .hex(0x7cc4f0),
-        green: .hex(0x7fd06a), amber: .hex(0xf29b4b), red: .hex(0xff7d6e), purple: .hex(0xc7a4ff),
-        cyan: .hex(0x5fd0c4), dark: true
+    public static let defaultDark = Palette(
+        background: .hex(0x161616), card: .hex(0x1f1f1f), edge: .hex(0x3a3a3a), line: .hex(0x2a2a2a),
+        foreground: .hex(0xececec), mute: .hex(0xa3a3a3), lead: .hex(0xd6d6d6), link: .hex(0xd6d6d6),
+        green: .hex(0x769672), amber: .hex(0xc5a370), red: .hex(0xbb776e), purple: .hex(0xa295bb),
+        cyan: .hex(0x6da1a5), dark: true
     )
-    public static let farmLight = Palette(
-        background: .hex(0xf5efda), card: .hex(0xebe2c4), edge: .hex(0xcbbd90), line: .hex(0xe0d6b4),
-        foreground: .hex(0x29251a), mute: .hex(0x5c573f), lead: .hex(0x6b3410), link: .hex(0x1f639b),
-        green: .hex(0x2a6d1c), amber: .hex(0x7a5f00), red: .hex(0xb81d3c), purple: .hex(0x7a4aa8),
-        cyan: .hex(0x1c6e70), dark: false
+    public static let defaultLight = Palette(
+        background: .hex(0xf6f6f6), card: .hex(0xffffff), edge: .hex(0xd0d0d0), line: .hex(0xe4e4e4),
+        foreground: .hex(0x1c1c1c), mute: .hex(0x5e5e5e), lead: .hex(0x3d3d3d), link: .hex(0x3d3d3d),
+        green: .hex(0x547850), amber: .hex(0x927236), red: .hex(0xa75953), purple: .hex(0x74678e),
+        cyan: .hex(0x3c797d), dark: false
     )
 
     public var background: Color
@@ -29,8 +29,6 @@ public struct Palette: Sendable, Equatable {
     public var purple: Color
     public var cyan: Color
     public var dark: Bool
-
-    public static func farm(_ scheme: ColorScheme) -> Palette { scheme == .dark ? farmDark : farmLight }
 }
 
 extension Palette {
@@ -68,7 +66,7 @@ public struct Look: Sendable {
     public var style: Style
     public var still: Bool
 
-    public init(palette: Palette = .farmDark, style: Style = .bundled, still: Bool = false) {
+    public init(palette: Palette = .defaultDark, style: Style = .bundled, still: Bool = false) {
         self.palette = palette
         self.style = style
         self.still = still
