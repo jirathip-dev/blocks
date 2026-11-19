@@ -1,0 +1,4 @@
+Decided: merge origin/staging and rebuild web/dist/blocks.js from the merged sources instead of picking a side
+Because: web/package.json:7
+Rejected: none
+Owner: The theme branch is caught up with the latest shared work; nothing in the theme changed.
