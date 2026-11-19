@@ -130,6 +130,8 @@ export type Queued = { q: number; text: string };
 
 export type Reorder = { action: string; name: string };
 
+export type Report = { dropped: string[]; sent: Action[]; shots: string[]; timings: Timings };
+
 export type Round = { blocks?: Block[] | null; id: string; lane?: RoundLane | null; links?: Link[] | null; name: string; since?: string | null; state: LaneState; summary?: string | null; tap?: Tap | null };
 
 export type RoundLane = { harness?: string | null; host?: string | null; lines?: string[] | null; model?: string | null; name?: string | null };
@@ -156,6 +158,14 @@ export type Span = { bold?: boolean | null; code?: boolean | null; italic?: bool
 
 export type Stat = { id?: string | null; items?: Tile[] | null; label?: string | null; show?: Expr | null; spark?: number[] | null; tone?: Tone | null; unit?: string | null; value?: Shown | null };
 
+export type Step = { tap: StepOn } | { type: StepType } | { scroll: StepOn } | { frame: Frame } | { answer: Answer } | { shot: StepShot };
+
+export type StepOn = { id: string };
+
+export type StepShot = { name: string };
+
+export type StepType = { id: string; text: string };
+
 export type Submit = { action: string; label: string; off?: boolean | null; values?: Record<string, unknown> | null };
 
 export type Sync = { close?: string[] | null; open: Have[] };
@@ -172,9 +182,15 @@ export type Tile = { label: string; spark?: number[] | null; tone?: Tone | null;
 
 export type Time = { since?: string | null; until?: string | null };
 
+export type Timings = { first_paint_ms: number; frames_over_budget?: number | null; longest_frame_ms?: number | null; longest_patch_ms?: number | null; steps_ms: number[] };
+
 export type Tone = "ok" | "warn" | "bad" | "info" | "mute" | "accent" | "working" | "needs" | "done" | "fail" | "idle";
 
 export type Toned = string | Label;
+
+export type TreeDrawn = "native" | "fallback" | "hidden";
+
+export type TreeNode = { children: TreeNode[]; drawn: TreeDrawn; id?: string | null; kind: string; rect?: number[] | null; text?: string | null; variant?: string | null };
 
 export type Web = { height: number; id?: string | null; show?: Expr | null; src: string };
 

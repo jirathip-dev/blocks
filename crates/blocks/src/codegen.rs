@@ -3,8 +3,8 @@ use std::path::Path;
 use serde_json::{Map, Value};
 
 use crate::{
-    layout, theme, Action, Answer, Block, Bye, Card, Child, Composer, ComposerChip, Frame, Hello, List, OldFrame, Op,
-    Queued, Row, Screen, Sync, Synced, Text, Tone, SCHEMA_VERSION,
+    layout, theme, tree, Action, Answer, Block, Built, Bye, Card, Child, Composer, ComposerChip, Frame, Hello, List,
+    OldFrame, Op, Queued, Row, Screen, Sync, Synced, Text, Tone, SCHEMA_VERSION,
 };
 
 /// The JSON Schema of a `Frame`; its `$defs` hold `Block`, `Op` and the stream's other messages.
@@ -17,6 +17,9 @@ pub fn schema() -> Value {
     g.subschema_for::<Sync>();
     g.subschema_for::<Synced>();
     g.subschema_for::<OldFrame>();
+    g.subschema_for::<tree::Report>();
+    g.subschema_for::<tree::Step>();
+    g.subschema_for::<tree::Node>();
     let mut v = g.into_root_schema_for::<Frame>().to_value();
     if let Some(o) = v.as_object_mut() {
         let id = format!("https://github.com/jirathip-dev/blocks/schema/v{SCHEMA_VERSION}");
@@ -58,6 +61,7 @@ pub fn write(root: &Path) -> std::io::Result<()> {
             "swift/Sources/Blocks/Gen/Style.swift",
             style_swift().map_err(std::io::Error::other)?,
         ),
+        ("web/src/gen/layout.ts", layout_ts().map_err(std::io::Error::other)?),
         (
             "swift/Sources/Blocks/Gen/LayoutShapes.swift",
             layout_swift().map_err(std::io::Error::other)?,
@@ -71,18 +75,34 @@ pub fn write(root: &Path) -> std::io::Result<()> {
         let text = serde_json::to_string_pretty(&b)? + "\n";
         std::fs::write(root.join(format!("fixtures/blocks/{kind}.json")), text)?;
     }
+    trees(root)
+}
+
+fn trees(root: &Path) -> std::io::Result<()> {
+    let mut drawn = vec![];
+    for f in std::fs::read_dir(root.join("web/src/render"))? {
+        let name = f?.file_name().to_string_lossy().into_owned();
+        drawn.extend(name.strip_suffix(".ts").filter(|k| *k != "index").map(String::from));
+    }
+    let kinds: Vec<&str> = drawn.iter().map(String::as_str).collect();
+    std::fs::create_dir_all(root.join("fixtures/trees"))?;
+    for (kind, b) in crate::samples() {
+        let v = serde_json::to_value(&b)?;
+        let state = v
+            .get("state")
+            .cloned()
+            .map(serde_json::from_value)
+            .transpose()?
+            .unwrap_or_default();
+        let t = tree::expect(&Built::new(v), &kinds, &state);
+        let text = serde_json::to_string_pretty(&t)? + "\n";
+        std::fs::write(root.join(format!("fixtures/trees/{kind}.json")), text)?;
+    }
     Ok(())
 }
 
 const PARTS: [&str; 5] = ["title", "subtitle", "badge", "value", "figure"];
 const ACTIONS: [&str; 4] = ["actions", "buttons", "menu", "swipe"];
-const VARIANTS: [(&str, &str); 5] = [
-    ("row", "style"),
-    ("card", "kind"),
-    ("button", "style"),
-    ("text", "style"),
-    ("images", "size"),
-];
 
 fn hooks(s: &Value) -> Out {
     let all = defs(s)?;
@@ -104,7 +124,7 @@ fn hooks(s: &Value) -> Out {
         if ACTIONS.iter().any(|a| names.contains(a)) {
             parts.push("actions");
         }
-        let variant = VARIANTS
+        let variant = tree::VARIANTS
             .iter()
             .find(|(k, _)| k == kind)
             .map_or("null".into(), |(_, v)| format!("\"{v}\""));
@@ -161,6 +181,11 @@ fn schemes_swift() -> serde_json::Result<String> {
 fn style_swift() -> Out {
     let style = swift_defs(&schemars::schema_for!(theme::Style).to_value())?;
     Ok(style + &swift_defs(&schemars::schema_for!(theme::LabelRole).to_value())?)
+}
+
+fn layout_ts() -> Out {
+    let place = ts_defs(&schemars::schema_for!(layout::Place).to_value())?;
+    Ok(place + &ts_defs(&schemars::schema_for!(layout::Transition).to_value())?)
 }
 
 fn layout_swift() -> Out {
@@ -411,6 +436,7 @@ fn def(v: &Value) -> Result<Def<'_>, String> {
 fn defs(s: &Value) -> Result<Vec<(&str, Def<'_>)>, String> {
     let root = s.get("title").and_then(Value::as_str).map(|t| (t, s));
     let all = s.get("$defs").and_then(Value::as_object).into_iter().flatten();
+    let all = all.filter(|(k, _)| root.is_none_or(|(t, _)| t != k.as_str()));
     root.into_iter()
         .chain(all.map(|(k, v)| (k.as_str(), v)))
         .map(|(k, v)| Ok((k, def(v)?)))
@@ -492,7 +518,18 @@ fn ts_props(ps: &[Prop<'_>], tag: Option<String>) -> String {
 }
 
 fn ts(s: &Value) -> Out {
-    let mut out = format!("export const schemaVersion = {SCHEMA_VERSION};\n");
+    let mut out = format!("export const schemaVersion = {SCHEMA_VERSION};\n") + &ts_defs(s)?;
+    let kinds = Block::KINDS
+        .iter()
+        .map(|k| format!("\"{k}\""))
+        .collect::<Vec<_>>()
+        .join(" | ");
+    out.push_str(&format!("\nexport type Kind = {kinds};\n"));
+    Ok(out)
+}
+
+fn ts_defs(s: &Value) -> Out {
+    let mut out = String::new();
     for (name, d) in defs(s)? {
         let body = match &d {
             Def::Struct(ps) => ts_props(ps, None),
@@ -513,12 +550,6 @@ fn ts(s: &Value) -> Out {
         };
         out.push_str(&format!("\nexport type {name} = {body};\n"));
     }
-    let kinds = Block::KINDS
-        .iter()
-        .map(|k| format!("\"{k}\""))
-        .collect::<Vec<_>>()
-        .join(" | ");
-    out.push_str(&format!("\nexport type Kind = {kinds};\n"));
     Ok(out)
 }
 

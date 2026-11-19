@@ -120,6 +120,10 @@ class El extends Parent {
   remove() {
     this.parentNode?.drop(this);
   }
+  replaceWith(n) {
+    this.before(n);
+    this.remove();
+  }
   before(...ns) {
     ns.forEach((n) => this.parentNode.insertBefore(n, this));
   }

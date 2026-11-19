@@ -78,6 +78,9 @@ public struct Replica: Equatable, Sendable {
         return from == rev ? patch(f.k, f.rev, f.ops ?? []) : .gap
     }
 
+    /// Takes a burst of frames in one mutation, so a view that holds the replica redraws once for all of them.
+    public mutating func frames(_ fs: [Frame]) -> [Took] { fs.map { frame($0) } }
+
     /// Takes the answer to the `have` it `sent`: a screen applies, ops only on the rev that was sent.
     public mutating func synced(_ sent: [Have], _ s: Synced) -> [Took] {
         var took: [Took] = []
