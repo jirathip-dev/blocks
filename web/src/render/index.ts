@@ -12,6 +12,7 @@ import { images } from "./images.ts";
 import { list } from "./list.ts";
 import { row } from "./row.ts";
 import { run } from "./run.ts";
+import { scene } from "./scene.ts";
 import { screen } from "./screen.ts";
 import { section } from "./section.ts";
 import { sheet } from "./sheet.ts";
@@ -154,7 +155,7 @@ export const R: { [K in Kind]: (b: Of<K>, c: Ctx) => HTMLElement | null } = {
   web: gap(41),
   diff: gap(42),
   editor: gap(43),
-  scene: gap(38),
+  scene,
   diagram,
   composer,
   prose: gap(18),
