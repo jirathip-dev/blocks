@@ -1,0 +1,13 @@
+{
+  "guard": 2,
+  "known": [
+    {
+      "rule": "render/contrast",
+      "at": "sheet#review-stale/section~0"
+    },
+    {
+      "rule": "render/contrast",
+      "at": "sheet#review-stale/section~1"
+    }
+  ]
+}

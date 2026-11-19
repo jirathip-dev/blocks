@@ -42,7 +42,7 @@ harnesses (`docs/architecture/blocks/migration.md`).
 ## For agents
 
 Start a screen with the usage skill `skill/blocks/` (an app's lanes get it from `blocks skill --to <dir>`), from an
-example screen in `skill/blocks/examples/`, and check it headlessly with `blocks check` (`docs/guard.md`).
+example screen in `skill/blocks/examples/`, and check it headlessly with `blocks check --shot` (`docs/guard.md`).
 
 ## The Swift package
 

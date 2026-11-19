@@ -1,5 +1,5 @@
 {
-  "guard": 1,
+  "guard": 2,
   "known": [
     {
       "rule": "lint/fault",
