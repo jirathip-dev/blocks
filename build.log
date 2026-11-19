@@ -1,0 +1,12 @@
+
+> build
+> esbuild src/shell.ts --bundle --format=esm --minify --legal-comments=none --outfile=dist/blocks.js && esbuild src/blocks.css --minify --outfile=dist/blocks.css
+
+
+  dist/blocks.js  42.8kb
+
+⚡ Done in 12ms
+
+  dist/blocks.css  15.2kb
+
+⚡ Done in 2ms

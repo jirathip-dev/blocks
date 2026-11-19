@@ -1,0 +1,78 @@
+Closes #41
+
+## For humans
+- On the web page, an embedded web page now shows up in a locked-down frame at its set height, instead of a single fallback line. Static sites (no JS) write the same frame.
+- Under the frame, a small caption shows the page's address and an "open ↗" link that opens it in a new tab, which is the way out when a site refuses to be framed.
+- An address that isn't http or https shows a muted "This page can't be shown here." box at the same height.
+
+## What changed
+- `web/src/render/web.ts`: the view from the approved design (docs/design/web). It's a `div.web` root, whose hooks come from `render` (`b b-web`, `data-block`, `data-id`; `web` has no parts or variant in `gen/hooks.ts`). Inside are `iframe.wf` and `div.wm` (the `span.wu` address and the `href()` link). `src` is read with `new URL(src, document.baseURI)`; only http/https give a frame, anything else gives `div.wf.none`. The frame has `sandbox="allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox"`, `allow=""`, `referrerpolicy="no-referrer"`, `loading="lazy"` and the address as its `title`. No script is added to the host page.
+- `crates/blocks/src/site/views.rs` `web` (B8 landed during this round): writes the same element. A `src` with a scheme other than http/https gives the muted box. `fixtures/html/web.html` is regenerated, and site.test's per-kind comparison passes.
+- Fix round 2 (security): the static writer now reads `src` the way a browser's URL parser does before checking its scheme. It trims leading and trailing control characters and spaces, and drops tab, CR and LF anywhere. So `java\tscript:…`, `java\nscript:…` and ` \^AJavaScript:…` write the muted box with no frame or link, the same as the live view. There's a new Rust test (`tests/site.rs`) that drives `site::fragment`: it fails on the old writer (an `<iframe>` for `java\tscript:`) and passes now. render.test's non-http list has the same strings.
+- Merged origin/staging (#39 secret): `gaps` drops both secret and web, and both test sets are kept. `web/dist` was rebuilt.
+- Merged origin/staging (#40 config): `gaps` drops both config and web, render.test keeps both the config and web tests, and `web/dist` was rebuilt from the merged sources.
+- `index.ts`: `web: gap(41)` → `web`. `blocks.css`: the design's five token-only rules.
+- `patch.ts`: one line. A redraw whose new node equals the old one and holds an iframe keeps the old node, so the same `src` doesn't reload (the design's "A redraw with the same src keeps the frame").
+- Generated (gen steps, not hand-edited): `fixtures/trees/web.json` (drawn `native`), `fixtures/html/web.html`, `web/dist`.
+- Tests: the fixture's frame attributes, height, caption and link; the caption of an absolute address; non-http `src` (javascript:, data:, unparseable) gives the box with no frame or link; through the real patcher, a same-`src` merge keeps the iframe node and a new `src` replaces it. The test DOM shim gets `isEqualNode`, and patch.test's El gets `querySelector`.
+
+Decisions:
+- The caption is the `src` with `http(s)://`, query/hash and the trailing `/` dropped (`https://cooee.app/doc` → `cooee.app/doc`, as designed). The static writer has no page address, and site.test needs the same text from both writers. So a relative `src` shows as written (the fixture's `/doc`) rather than with the page's host.
+- The frame and link still resolve a relative `src` against the page (amendment q2182).
+
+src/ net +77 (+29 TS, +47 Rust; the design budgeted about +30 TS): the view as designed, one patcher line, and the static writer the AC requires now that B8 has landed. Repo total 11903 / cap 13500 after merging staging.
+
+## Evidence at 12185b2ea7b2171daf2cb0f73b4c3b614c0dfa4b
+This is the update round onto origin/staging (#40 config). Conflicts were in `web/test/render.test.ts`, where both sides are kept and `gaps` is now `["diff", "editor", "island"]`, and in `web/dist/blocks.{js,css}`, which were rebuilt. `just` isn't installed on this host, so I ran the recipe bodies directly.
+- gen: `cargo run -q --locked -p blocks --features schema --bin blocks-codegen && npm --prefix web run build` → exit 0; no drift afterwards
+- web: `npm --prefix web run check` / `run lint` / `run test` → 0 / 0 / 0 (57 pass, including blocks-shot --check)
+- `cargo fmt --check` → 0; both clippy invocations from the justfile → 0; `cargo test --workspace --all-features --locked` → 0
+- `scripts/lint-fixtures.sh rust` → 0, `ts` → 0; `sh scripts/line-cap.sh` → 0 (11903 / 13500); `scripts/deps-gate.sh` → 0
+- `drover arch-check --base origin/staging` → 1, with one violation: it calls `just gen` (exit 127, `just` missing). Drift was checked by hand above.
+- not run: `cargo deny` (not installed here; there's no dependency change)
+
+## Why (round 2)
+
+Decided: web draws a sandboxed iframe with no allow-same-origin, plus a muted address caption and an open link, as docs/design/web says
+Because: "The embedded page goes in a sandboxed `<iframe>`; nothing adds a script to the host page"
+Decided: the caption is src minus http(s)://, query, hash and a trailing slash, the same rule in render and site
+Because: crates/blocks/src/site/views.rs:532
+Rejected: host and path resolved against the page — the static writer has no page address, so site.test's same-text check would fail
+Decided: the patcher keeps an equal node that holds an iframe, so a redraw with the same src does not reload the page
+Because: web/src/patch.ts:116
+Decided: site/web.rs writes the same element now that B8 has landed
+Because: "Where the static writer `site/web.rs` exists (B8, #18), it writes the same element"
+Decided: merged origin/staging (#38 scene); render.test keeps both the scene and web tests, and the gap list drops both kinds
+Because: web/test/render.test.ts:17
+Check: render.test's three web tests, and site.test's per-kind comparison including web
+Owner: Embedded web pages now show in a locked-down frame with their address and an open link, on live and static pages.
+
+<sub>note on a71285e · git log --notes=why</sub>
+
+## Why (round 3)
+
+Decided: web draws a sandboxed iframe with no allow-same-origin, plus a muted address caption and an open link, as docs/design/web says
+Because: "The embedded page goes in a sandboxed `<iframe>`; nothing adds a script to the host page"
+Decided: the static writer reads src as a browser does before its scheme check: trims control chars and spaces, drops tab, CR and LF
+Because: "Where the static writer `site/web.rs` exists (B8, #18), it writes the same element"
+Rejected: keep the hand-rolled scheme parse on the raw string — java\tscript: became a live link outside the sandbox
+Decided: the caption is src minus http(s)://, query, hash and a trailing slash, the same rule in render and site
+Because: crates/blocks/src/site/views.rs:576
+Decided: the patcher keeps an equal node that holds an iframe, so a redraw with the same src does not reload the page
+Because: web/src/patch.ts:116
+Decided: merged origin/staging (#39 secret); gaps drops both secret and web, both test sets kept
+Because: web/test/render.test.ts:17
+Check: tests/site.rs a_web test fails on the old writer and passes now; render.test's non-http list has the same strings
+Owner: Embedded web pages show in a locked-down frame with their address and an open link; odd addresses that hide a script can no longer slip through on static pages.
+
+<sub>note on 1a696d1 · git log --notes=why</sub>
+
+## Why (round 4)
+
+Decided: merged origin/staging (#40 config); gaps drops both config and web, render.test keeps both test sets, web/dist rebuilt
+Because: web/test/render.test.ts:17
+Rejected: none
+Owner: Brought the embedded web page work up to date with the latest config changes; nothing new for users.
+
+<sub>note on 12185b2 · git log --notes=why</sub>
+

@@ -1,0 +1,70 @@
+
+> test
+> node --no-warnings --test test/*.test.ts
+
+✔ apply follows the crate: before, else after, else the end; a move; an unknown op is undefined (0.696833ms)
+✔ the patcher draws every op queued within one frame in one pass on that frame, touching only the nodes they name (0.3095ms)
+✔ over 500 queued ops the patcher redraws the view once from the model (1.564292ms)
+✔ there are protocol fixtures (0.593958ms)
+✔ the mirror runs epoch.json as the crate does (0.629834ms)
+✔ the mirror runs gone.json as the crate does (0.329917ms)
+✔ the mirror runs live.json as the crate does (0.395209ms)
+✔ the mirror runs reordered.json as the crate does (0.27975ms)
+✔ the mirror runs unknown-field.json as the crate does (0.23975ms)
+✔ the mirror runs unknown-kind.json as the crate does (0.279917ms)
+✔ the mirror runs unknown-op.json as the crate does (0.460834ms)
+✔ the mirror runs unknown-word.json as the crate does (0.283625ms)
+✔ the mirror runs version-app.json as the crate does (0.260084ms)
+✔ the mirror runs version-before.json as the crate does (0.137125ms)
+✔ the mirror runs version-server.json as the crate does (0.127667ms)
+✔ every fixture is drawn with its hooks, natively or as its fallback (9.981583ms)
+✔ parts carry their hook class and the block's own text (1.13675ms)
+✔ children of a container are drawn through render, with their hooks (0.259416ms)
+✔ a gap draws its fallback as a row, then its children (0.240541ms)
+✔ an app kind is the app's view when registered, else its fallback (0.177875ms)
+✔ a row's figure comes from the theme and carries its hook (0.173167ms)
+✔ a pack's words dress the plain word; css writes a scheme's tokens (0.526667ms)
+✔ a diagram lays out its spine, side columns and timers in a wide and a phone map (0.815292ms)
+✔ a diagram node with a tap opens it, and a changed count says what it was until counts change again (3.606708ms)
+✔ a diagram whose source has no state draws its fallback (0.160667ms)
+✔ a web block draws its page in a sandboxed frame at its height, with its address and an open link (0.288209ms)
+✔ a web block whose src is not http or https draws a muted box at its height, with no frame or link (0.135666ms)
+✔ a redraw of a web block with the same src keeps its frame; a new src replaces it (1.208958ms)
+✔ a config draws every field as a settings row: name, one note, its control (0.962458ms)
+✔ a config's open field takes the focus once, when it is first drawn (5.548083ms)
+✔ a config with an action saves each change at once and says so, or that it was not saved (1.5955ms)
+✔ a config with a submit sends every field over its values from its button, never an empty secret (0.61525ms)
+✔ a secret draws its label, a masked field and a send line, and set says so with a replace hint (0.218125ms)
+✔ a secret sends its value under its name, clears on success, keeps it on failure, and an empty one only focuses (0.416208ms)
+✔ a scene draws its label, then one chip per lane with its state, title and the set fields of stage, tool and age (1.8115ms)
+✔ a lane's url tap is a link, any other tap a button that taps on click and Enter, and no tap a plain box (0.466583ms)
+✔ a scene with no lanes draws its label alone (0.098334ms)
+✔ resolved keeps the place the file gave each size class (0.367875ms)
+✔ a two-tab layout draws its tabs, opens the first tab's key on one stream and follows its frames (22.732875ms)
+✔ a kept copy paints before the stream answers (1.430958ms)
+✔ an action posts to its source; its answer's ops patch the screen and its toast shows (13.484834ms)
+✔ the menu lists the menu's screens but hidden ones, and the look sheet wears a scheme the app gave (0.611125ms)
+✔ every fixtures/blocks file passes --check against its fixtures/trees tree in WebKit (21313.622375ms)
+✔ --check exits 1 when the drawn tree is not the expected one (729.087542ms)
+✔ a scripted tap sends the button's action and an answer's ops are drawn (747.895166ms)
+✔ a harness run paints on the default pair unless its --css says otherwise (719.773333ms)
+✔ the 200-row screen paints first in under 300 ms warm (691.656791ms)
+frame budget: scroll {"first_paint_ms":16,"longest_frame_ms":1,"frames_over_budget":0} burst {"first_paint_ms":18,"longest_frame_ms":2,"frames_over_budget":0,"longest_patch_ms":1}
+✔ on the 200-row screen a scripted scroll and a 2 s burst of 60 frames a second keep every frame in 16.7 ms, each frame's patch in 4 ms (3881.376583ms)
+✔ a burst of whole-screen frames on a 2,000-row screen counts its frames over 16.7 ms (1246.933959ms)
+✔ site and render give the same element per kind: tag, classes, hooks and text (626.033083ms)
+✔ the site's workflow diagram is the one render lays out: every element, its place and its lines (239.768625ms)
+✔ the fixture site with JS off: a link goes and a form posts (286.843167ms)
+✔ the fixture site is the same PNG and tree before and after blocks.js takes it over; then a form posts in place (689.152667ms)
+✔ a page whose element differs from its screen stays static (188.580416ms)
+✔ a stream opens on hello, syncs, patches, asks again on a gap, and parks on bye (17.704625ms)
+✔ every frame that arrives within one animation frame reaches the view in one call with all their ops (1.579917ms)
+✔ a hello more than one version away parks the stream with no sync (0.560625ms)
+ℹ tests 57
+ℹ suites 0
+ℹ pass 57
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 29663.356292

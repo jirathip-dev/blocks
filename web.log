@@ -1,0 +1,93 @@
+
+> build
+> esbuild src/shell.ts --bundle --format=esm --minify --legal-comments=none --outfile=dist/blocks.js && esbuild src/blocks.css --minify --outfile=dist/blocks.css
+
+
+  dist/blocks.js  44.1kb
+
+⚡ Done in 8ms
+
+  dist/blocks.css  16.2kb
+
+⚡ Done in 3ms
+
+> check
+> tsc --noEmit
+
+
+> lint
+> node --no-warnings lint.mjs src
+
+ts-lint: 0 violations
+
+> test
+> node --no-warnings --test test/*.test.ts
+
+✔ apply follows the crate: before, else after, else the end; a move; an unknown op is undefined (0.807166ms)
+✔ the patcher draws every op queued within one frame in one pass on that frame, touching only the nodes they name (0.399833ms)
+✔ over 500 queued ops the patcher redraws the view once from the model (3.497708ms)
+✔ there are protocol fixtures (1.151666ms)
+✔ the mirror runs epoch.json as the crate does (1.137791ms)
+✔ the mirror runs gone.json as the crate does (0.249ms)
+✔ the mirror runs live.json as the crate does (0.349042ms)
+✔ the mirror runs reordered.json as the crate does (0.2695ms)
+✔ the mirror runs unknown-field.json as the crate does (2.577167ms)
+✔ the mirror runs unknown-kind.json as the crate does (0.487917ms)
+✔ the mirror runs unknown-op.json as the crate does (0.232958ms)
+✔ the mirror runs unknown-word.json as the crate does (0.194708ms)
+✔ the mirror runs version-app.json as the crate does (0.17325ms)
+✔ the mirror runs version-before.json as the crate does (0.153084ms)
+✔ the mirror runs version-server.json as the crate does (0.1265ms)
+✔ every fixture is drawn with its hooks, natively or as its fallback (7.742ms)
+✔ parts carry their hook class and the block's own text (0.441916ms)
+✔ children of a container are drawn through render, with their hooks (0.075834ms)
+✔ a gap draws its fallback as a row, then its children (0.097666ms)
+✔ an app kind is the app's view when registered, else its fallback (0.083709ms)
+✔ a row's figure comes from the theme and carries its hook (0.08775ms)
+✔ a pack's words dress the plain word; css writes a scheme's tokens (0.269ms)
+✔ a diagram lays out its spine, side columns and timers in a wide and a phone map (0.596875ms)
+✔ a diagram node with a tap opens it, and a changed count says what it was until counts change again (2.281958ms)
+✔ a diagram whose source has no state draws its fallback (0.212ms)
+✔ a web block draws its page in a sandboxed frame at its height, with its address and an open link (0.380041ms)
+✔ a web block whose src is not http or https draws a muted box at its height, with no frame or link (0.208792ms)
+✔ a redraw of a web block with the same src keeps its frame; a new src replaces it (1.215917ms)
+✔ an editor numbers its lines from first, marks an error's line with its message, and lists errors off the excerpt (0.169125ms)
+✔ a tapped editor opens a named draft that survives a redraw and posts its action 400ms after typing stops (0.45325ms)
+✔ a config draws every field as a settings row: name, one note, its control (0.398375ms)
+✔ a config's open field takes the focus once, when it is first drawn (3.374792ms)
+✔ a config with an action saves each change at once and says so, or that it was not saved (0.743208ms)
+✔ a config with a submit sends every field over its values from its button, never an empty secret (0.496875ms)
+✔ a secret draws its label, a masked field and a send line, and set says so with a replace hint (0.145667ms)
+✔ a secret sends its value under its name, clears on success, keeps it on failure, and an empty one only focuses (0.266375ms)
+✔ a scene draws its label, then one chip per lane with its state, title and the set fields of stage, tool and age (0.723791ms)
+✔ a lane's url tap is a link, any other tap a button that taps on click and Enter, and no tap a plain box (0.147084ms)
+✔ a scene with no lanes draws its label alone (0.0265ms)
+✔ resolved keeps the place the file gave each size class (0.360417ms)
+✔ a two-tab layout draws its tabs, opens the first tab's key on one stream and follows its frames (20.243ms)
+✔ a kept copy paints before the stream answers (0.4125ms)
+✔ an action posts to its source; its answer's ops patch the screen and its toast shows (13.775209ms)
+✔ the menu lists the menu's screens but hidden ones, and the look sheet wears a scheme the app gave (0.688125ms)
+✔ every fixtures/blocks file passes --check against its fixtures/trees tree in WebKit (19351.297875ms)
+✔ --check exits 1 when the drawn tree is not the expected one (1815.118833ms)
+✔ a scripted tap sends the button's action and an answer's ops are drawn (1442.56625ms)
+✔ a harness run paints on the default pair unless its --css says otherwise (710.62775ms)
+✔ the 200-row screen paints first in under 300 ms warm (604.759958ms)
+frame budget: scroll {"first_paint_ms":9,"longest_frame_ms":1,"frames_over_budget":0} burst {"first_paint_ms":16,"longest_frame_ms":2,"frames_over_budget":0,"longest_patch_ms":1}
+✔ on the 200-row screen a scripted scroll and a 2 s burst of 60 frames a second keep every frame in 16.7 ms, each frame's patch in 4 ms (3774.464583ms)
+✔ a burst of whole-screen frames on a 2,000-row screen counts its frames over 16.7 ms (999.061792ms)
+✔ site and render give the same element per kind: tag, classes, hooks and text (388.638291ms)
+✔ the site's workflow diagram is the one render lays out: every element, its place and its lines (192.988166ms)
+✔ the fixture site with JS off: a link goes and a form posts (207.026208ms)
+✔ the fixture site is the same PNG and tree before and after blocks.js takes it over; then a form posts in place (510.741584ms)
+✔ a page whose element differs from its screen stays static (181.135209ms)
+✔ a stream opens on hello, syncs, patches, asks again on a gap, and parks on bye (14.478917ms)
+✔ every frame that arrives within one animation frame reaches the view in one call with all their ops (5.980584ms)
+✔ a hello more than one version away parks the stream with no sync (2.754291ms)
+ℹ tests 59
+ℹ suites 0
+ℹ pass 59
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 28940.499375

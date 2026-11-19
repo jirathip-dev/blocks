@@ -1,0 +1,146 @@
+   Compiling blocks v0.1.0 (/Users/jkmacmini/.local/share/drover/work/blocks/issue-41/crates/blocks)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.06s
+     Running unittests src/lib.rs (/Users/jkmacmini/.local/share/herdsman/work/.build/blocks-impl-41/debug/deps/blocks-19bf04343a9605fa)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/bin/codegen.rs (/Users/jkmacmini/.local/share/herdsman/work/.build/blocks-impl-41/debug/deps/blocks_codegen-418403f4404ef4d2)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/behave.rs (/Users/jkmacmini/.local/share/herdsman/work/.build/blocks-impl-41/debug/deps/behave-3a87cbfe006577a0)
+
+running 1 test
+test eval_gives_every_fixtures_behave_case_its_value ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/fixtures.rs (/Users/jkmacmini/.local/share/herdsman/work/.build/blocks-impl-41/debug/deps/fixtures-5a157355ba2c8682)
+
+running 11 tests
+test check_finds_each_fault ... ok
+test an_insert_lands_before_then_after_then_at_the_end_as_cooee_draws_it ... ok
+test built_of_writes_a_fallback_for_each_kind_a_client_may_not_draw ... ok
+test the_queue_stream_patches_the_queue_by_id_as_cooee_reads_it ... ok
+test an_action_and_its_answer_travel_as_both_apps_send_them ... ok
+test the_schema_and_the_types_refuse_a_core_kind_of_the_wrong_shape ... ok
+test the_27_kinds_each_have_a_typed_sample_that_is_its_fixture ... ok
+test every_fixture_parses_into_the_types_and_serializes_back_equal ... ok
+test every_golden_parses_with_no_fault ... ok
+test apply_of_the_diff_is_the_new_screen_for_every_pair_of_goldens ... ok
+test the_generated_schema_validates_every_fixture ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.38s
+
+     Running tests/layout.rs (/Users/jkmacmini/.local/share/herdsman/work/.build/blocks-impl-41/debug/deps/layout-4091582867be218f)
+
+running 6 tests
+test cooees_default_passes_with_cooees_contract_and_resolves_per_size ... ok
+test a_refusal_points_at_the_offending_text ... ok
+test merge_places_a_plugin_the_file_does_not_and_says_why_it_skips_the_rest ... ok
+test a_served_layout_reads_back_the_same ... ok
+test the_limits_are_refused ... ok
+test each_bad_fixture_is_refused_with_its_reason ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/perf.rs (/Users/jkmacmini/.local/share/herdsman/work/.build/blocks-impl-41/debug/deps/perf-5d8f8ab631c1e6c5)
+
+running 5 tests
+test a_500_kb_screen_serializes_and_parses_under_budget ... ignored, release only: `just perf`
+test applying_the_ops_of_a_200_row_screen_stays_under_budget ... ignored, release only: `just perf`
+test checking_a_200_node_layout_stays_under_budget ... ignored, release only: `just perf`
+test diffing_a_200_row_screen_stays_under_budget ... ignored, release only: `just perf`
+test writing_a_500_kb_screen_as_a_site_fragment_stays_under_budget ... ignored, release only: `just perf`
+
+test result: ok. 0 passed; 0 failed; 5 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/protocol.rs (/Users/jkmacmini/.local/share/herdsman/work/.build/blocks-impl-41/debug/deps/protocol-1d2230f25bc81d3d)
+
+running 2 tests
+test a_media_type_runs_at_the_lower_version_and_refuses_one_more_than_one_apart ... ok
+test the_mirror_runs_every_protocol_fixture ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/shelf.rs (/Users/jkmacmini/.local/share/herdsman/work/.build/blocks-impl-41/debug/deps/shelf-6b0c6a4d40a5a5ef)
+
+running 4 tests
+test old_turns_a_move_into_a_replace_of_its_parent_and_of_the_root_into_the_screen ... ok
+test a_put_is_first_then_same_then_a_delta_on_the_rev_before ... ok
+test a_state_is_current_the_rings_ops_the_whole_screen_or_gone ... ok
+test the_ring_keeps_sixteen_deltas_and_a_whole_screen_change_clears_it ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/sim.rs (/Users/jkmacmini/.local/share/herdsman/work/.build/blocks-impl-41/debug/deps/sim-67f0dab5c6a310ff)
+
+running 3 tests
+test random_seeds ... ignored, the nightly batch: `just sim [n]`
+test no_expression_panics_and_each_reads_back ... ok
+test the_fixed_seeds_converge ... ok
+
+test result: ok. 2 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.56s
+
+     Running tests/site.rs (/Users/jkmacmini/.local/share/herdsman/work/.build/blocks-impl-41/debug/deps/site-135d3797251a110a)
+
+running 9 tests
+test from_form_reads_the_post_the_fixture_site_sends ... ok
+test from_form_refuses_a_post_with_no_action_or_a_bad_escape ... ok
+test a_web_block_whose_src_is_not_http_or_https_writes_a_muted_box_with_no_frame_or_link ... ok
+test an_action_is_a_submit_of_a_form_that_posts_its_values ... ok
+test a_page_has_its_head_escaped_text_and_no_script_without_live ... ok
+test a_live_page_carries_the_screen_and_the_module_and_nothing_else ... ok
+test a_config_writes_each_field_as_a_settings_row_with_its_note_and_a_save_bar ... ok
+test a_scene_lane_links_its_url_or_open_marks_any_other_tap_a_button_and_ticks_its_age ... ok
+test editor_numbers_lines_from_first_and_marks_errors_on_and_off_the_excerpt ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/soak.rs (/Users/jkmacmini/.local/share/herdsman/work/.build/blocks-impl-41/debug/deps/soak-a9dc8045b0e1a0db)
+
+running 1 test
+test a_streams_memory_stays_flat ... ignored, release only: `just soak`
+
+test result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/theme.rs (/Users/jkmacmini/.local/share/herdsman/work/.build/blocks-impl-41/debug/deps/theme-e464e6d9913578ba)
+
+running 9 tests
+test the_default_pair_defines_every_required_token ... ok
+test css_sets_every_token_for_both_modes ... ok
+test a_scheme_missing_a_token_or_with_a_bad_colour_does_not_parse ... ok
+test the_default_pair_passes_the_gate_and_canonical_solarized_fails_it ... ok
+test check_pack_refuses_a_broken_pack_with_each_reason ... ok
+test every_good_style_fixture_reads_and_format_1_gets_the_default_space_and_motion ... ok
+test the_fixture_pack_passes_check_pack_on_the_schemes_given_and_only_those ... ok
+test the_default_pair_and_style_are_the_approved_design ... ok
+test each_bad_style_fixture_is_refused_with_its_reason ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/tree.rs (/Users/jkmacmini/.local/share/herdsman/work/.build/blocks-impl-41/debug/deps/tree-6f00471ddf00da37)
+
+running 2 tests
+test a_report_without_frame_timings_still_reads_and_writes_none ... ok
+test expect_marks_native_fallback_and_hidden_blocks_in_drawn_order ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/web.rs (/Users/jkmacmini/.local/share/herdsman/work/.build/blocks-impl-41/debug/deps/web-5dc4e2aa1b105102)
+
+running 1 test
+test the_bundle_exports_mount_and_carries_the_shell_style ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests blocks
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
