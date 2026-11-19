@@ -1,0 +1,12 @@
+Decided: each kind's renderer is web/src/render/kind/<kind>.ts and just gen writes web/src/gen/kinds.ts from that folder
+Because: "each kind is `web/src/render/kind/<kind>.ts`, `just gen` writes the table"
+Decided: index.ts helpers split into ctx, dom, act, text, block as shapes.md's table; linkable joins urlOf in act.ts
+Because: web/src/render/act.ts:5
+Decided: rounds goes to web/test/kit.ts since the data-action test in hooks.test.ts uses it as well as the row tests
+Because: web/test/hooks.test.ts:84
+Decided: test edits are only the relative paths the move forces; no test body, name or assertion changed
+Because: "Tests only move or are renamed; no test body changes."
+Rejected: committing the regenerated fixtures/trees/table.json pair — staging's own codegen drifts there, not this slice
+Check: npm test lists the same 121 test names as origin/staging; web/dist/blocks.css and fixtures/ are unchanged
+Check: web/dist/blocks.js changes only because gap is gone and the modules are reordered
+Owner: Each web block kind is its own file and the kinds list is generated, so kind PRs stop colliding.
