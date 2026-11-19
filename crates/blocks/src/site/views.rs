@@ -1,0 +1,594 @@
+use serde_json::{Map, Value};
+
+use super::{esc, fields, get, kids, list, on, shown, Go, W};
+
+fn toned(v: Option<&Value>) -> (String, String) {
+    match v {
+        Some(o @ Value::Object(_)) => (shown(o.get("text")), shown(o.get("tone"))),
+        v => (shown(v), String::new()),
+    }
+}
+
+fn ticked(w: &mut W<'_>, v: Option<&Value>) {
+    match v {
+        Some(t) if t.get("since").is_some() || t.get("until").is_some() => {
+            w.open("span", "", &[("data-tick", &t.to_string())]);
+            w.text(shown(t.get("label")).replace("{}", "").replace("{rel}", "").trim());
+            w.close("span");
+        }
+        v => w.text(&shown(v)),
+    }
+}
+
+pub(super) fn holder(w: &mut W<'_>, b: &Value, tag: &str, cls: &str, under: &str) {
+    w.open_block(tag, cls, b, &[]);
+    kids(w, list(b, under));
+    w.close(tag);
+}
+
+pub(super) fn screen(w: &mut W<'_>, b: &Value) {
+    w.open_block("div", "scr", b, &[]);
+    w.open("p", "tabh", &[]);
+    w.el("span", "tw b-screen__title", &shown(b.get("title")).to_lowercase());
+    for a in list(b, "actions") {
+        let menu = a.get("menu").and_then(Value::as_array);
+        for m in menu.map_or(std::slice::from_ref(a), Vec::as_slice) {
+            w.act(m, "b-screen__actions", None);
+        }
+    }
+    w.close("p");
+    kids(w, list(b, "blocks"));
+    w.close("div");
+}
+
+pub(super) fn section(w: &mut W<'_>, b: &Value) {
+    w.open_block("section", "sec", b, &[]);
+    if let Some(head) = get(b, "header").filter(|h| !h.is_empty()) {
+        let k = match head.split(' ').next().unwrap_or_default() {
+            "waiting" | "blocked" => "needs",
+            "in" => "working",
+            other => other,
+        };
+        let sh = match k {
+            "needs" => "r",
+            "working" => "g",
+            _ => "",
+        };
+        w.el("h3", &format!("sh {sh}"), head);
+    }
+    kids(w, list(b, "blocks"));
+    if let Some(f) = get(b, "footer").filter(|f| !f.is_empty()) {
+        w.el("p", "m foot", f);
+    }
+    w.close("section");
+}
+
+fn figure(w: &mut W<'_>, f: &Value) {
+    let s = get(f, "state").unwrap_or("undefined");
+    let (glyph, word, tone) = match s {
+        "working" => ("●", "working", "g"),
+        "needs" => ("!", "needs you", "r"),
+        "fail" => ("✗", "failed", "r"),
+        "done" => ("✓", "done", "mute"),
+        "merged" => ("✓", "merged", "g"),
+        "idle" => ("○", "idle", "mute"),
+        other => ("·", other, "mute"),
+    };
+    w.open(
+        "span",
+        &format!("rsg {s} b-row__figure"),
+        &[("role", "img"), ("aria-label", word), ("title", word)],
+    );
+    w.el("i", &format!("gl {tone}"), glyph);
+    w.close("span");
+}
+
+pub(super) fn row(w: &mut W<'_>, b: &Value) {
+    row_of(w, b, true);
+}
+
+pub(super) fn row_of(w: &mut W<'_>, b: &Value, hooked: bool) {
+    let indent = b.get("indent").and_then(Value::as_u64).filter(|i| *i > 0);
+    let mut cls = format!(
+        "row{}{}{}",
+        if get(b, "style") == Some("link") { " link" } else { "" },
+        if on(b, "sticky") { " sticky" } else { "" },
+        indent.map_or(String::new(), |i| format!(" in{}", i.min(3)))
+    );
+    let swipe = list(b, "swipe");
+    let go = match b.get("tap") {
+        Some(t) if get(t, "url").is_none() && get(t, "open").is_none() => Go::Stay,
+        t => w.tap(t, b.get("id")),
+    };
+    let id = shown(b.get("id"));
+    let own = swipe.is_empty() && hooked;
+    let mut attrs: Vec<(&str, &str)> = if own { vec![] } else { vec![("data-id", &id)] };
+    let tag = match &go {
+        Go::Url(u) => {
+            attrs.extend([("href", u.as_str()), ("target", "_blank"), ("rel", "noopener")]);
+            "a"
+        }
+        Go::Open(u) => {
+            attrs.push(("href", u.as_str()));
+            "a"
+        }
+        Go::Post(_) | Go::Stay => "div",
+    };
+    if tag == "a" || b.get("tap").is_some() || !swipe.is_empty() {
+        cls.push_str(" tap");
+    }
+    if tag == "div" && (b.get("tap").is_some() || !swipe.is_empty()) {
+        attrs.extend([("tabindex", "0"), ("role", "button")]);
+    }
+    if !swipe.is_empty() && hooked {
+        w.open_block("div", "rw", b, &[]);
+    }
+    if own {
+        w.open_block(tag, &cls, b, &attrs);
+    } else {
+        w.open(tag, &cls, &attrs);
+    }
+    if let Some(f) = b.get("figure").filter(|f| f.is_object()) {
+        figure(w, f);
+    }
+    w.open("span", "rm", &[]);
+    w.el("span", "rt b-row__title", &shown(b.get("title")));
+    if let Some(badge) = b.get("badge").filter(|v| !v.is_null()) {
+        let (text, tone) = toned(Some(badge));
+        w.raw(" ");
+        w.el("span", &format!("tag b-row__badge {tone}"), &text);
+    }
+    if let Some(sub) = b.get("subtitle").filter(|v| !v.is_null()) {
+        let tone = toned(Some(sub)).1;
+        w.open("span", &format!("rs b-row__subtitle {tone}"), &[]);
+        ticked(w, if sub.is_object() { sub.get("text") } else { Some(sub) });
+        w.close("span");
+    }
+    w.close("span");
+    if let Some(v) = b.get("value").filter(|v| !v.is_null()) {
+        w.open("span", "rv b-row__value", &[]);
+        ticked(w, Some(v));
+        w.close("span");
+    }
+    w.close(tag);
+    if swipe.is_empty() {
+        return;
+    }
+    w.open("div", "ra b-row__actions", &[("hidden", "")]);
+    for s in swipe {
+        let cls = if get(s, "tone") == Some("bad") { "bad" } else { "" };
+        w.act(s, cls, b.get("id"));
+    }
+    w.close("div");
+    if hooked {
+        w.close("div");
+    }
+}
+
+pub(super) fn card(w: &mut W<'_>, b: &Value) {
+    let cls = format!("card {} k-{}", shown(b.get("tone")), shown(b.get("kind")));
+    w.open_block("div", &cls, b, &[]);
+    if let Some(fold) = b.get("fold").filter(|f| f.is_object()) {
+        w.open(
+            "div",
+            "fold",
+            &[("tabindex", "0"), ("role", "button"), ("aria-expanded", "false")],
+        );
+        w.el("span", "fl", &shown(fold.get("line")));
+        if let Some(m) = fold.get("main").filter(|m| m.is_object()) {
+            let mut v = fields(&[m.get("values")]);
+            v.insert("choice".into(), m.get("value").cloned().unwrap_or(Value::Null));
+            let f = w.post(m.get("block"), &shown(m.get("action")), &v);
+            w.btn(&shown(m.get("label")), "main", &Go::Post(f), &[], None);
+        }
+        w.close("div");
+        w.close("div");
+        return;
+    }
+    let badge = b.get("badge").filter(|v| !v.is_null());
+    if get(b, "title").is_some_and(|t| !t.is_empty()) || badge.is_some() {
+        w.open("div", "ch", &[]);
+        w.el("b", "b-card__title", &shown(b.get("title")));
+        if let Some(badge) = badge {
+            let (text, tone) = toned(Some(badge));
+            w.raw(" ");
+            w.el("span", &format!("tag b-card__badge {tone}"), &text);
+        }
+        if let Some(m) = b.get("meta").filter(|v| !v.is_null()) {
+            w.raw(" ");
+            w.open("span", "m", &[]);
+            ticked(w, Some(m));
+            w.close("span");
+        }
+        w.close("div");
+    }
+    if let Some(s) = b.get("subtitle").filter(|v| !v.is_null()) {
+        w.el("p", "m b-card__subtitle", &toned(Some(s)).0);
+    }
+    kids(w, list(b, "blocks"));
+    let buttons = list(b, "buttons");
+    if buttons.iter().any(Value::is_object) {
+        w.open("div", "bar b-card__actions", &[]);
+        kids(w, buttons);
+        w.close("div");
+    }
+    w.close("div");
+}
+
+pub(super) fn choice(w: &mut W<'_>, b: &Value) {
+    w.open_block("div", "choice", b, &[]);
+    let rec = b.get("recommended");
+    let mut opts: Vec<&Value> = list(b, "options").iter().filter(|o| o.is_object()).collect();
+    opts.sort_by_key(|o| o.get("value") != rec || rec.is_none());
+    let action = shown(b.get("action"));
+    for o in opts {
+        let mut v = fields(&[b.get("values"), o.get("values")]);
+        v.insert("choice".into(), o.get("value").cloned().unwrap_or(Value::Null));
+        let mine = rec.is_some() && o.get("value") == rec;
+        let label = format!("{}{}", shown(o.get("label")), if mine { " · recommended" } else { "" });
+        let f = w.post(b.get("id"), &action, &v);
+        w.btn(&label, "pick", &Go::Post(f), &[], None);
+    }
+    if let Some(d) = b.get("default").filter(|d| d.is_object()) {
+        w.open("p", "m", &[]);
+        let t = Map::from_iter(
+            [("until", d.get("until")), ("label", d.get("label"))]
+                .map(|(k, v)| (k.into(), v.cloned().unwrap_or(Value::Null))),
+        );
+        ticked(w, Some(&Value::Object(t)));
+        w.close("p");
+    }
+    if let Some(other) = b.get("other").filter(|o| o.is_object()) {
+        let mut v = fields(&[b.get("values")]);
+        v.insert("choice".into(), Value::from(shown(other.get("for"))));
+        let f = w.post(b.get("id"), &action, &v);
+        let hint = get(other, "placeholder").unwrap_or("other…");
+        w.open("form", "other", &[]);
+        w.open(
+            "input",
+            "",
+            &[
+                ("name", "other"),
+                ("placeholder", hint),
+                ("autocomplete", "off"),
+                ("form", &f),
+            ],
+        );
+        w.btn("send", "", &Go::Post(f), &[], None);
+        w.close("form");
+    }
+    w.close("div");
+}
+
+pub(super) fn form(w: &mut W<'_>, b: &Value) {
+    let submit = b.get("submit").filter(|s| s.is_object());
+    w.open_block("div", if submit.is_some() { "form say" } else { "form" }, b, &[]);
+    let action = submit.and_then(|s| get(s, "action")).or_else(|| get(b, "action"));
+    let f = action.map(|a| w.post(b.get("id"), a, &fields(&[submit.and_then(|s| s.get("values"))])));
+    let owner = f.clone().unwrap_or_default();
+    let tie: &[(&str, &str)] = if f.is_some() { &[("form", &owner)] } else { &[] };
+    for x in list(b, "fields").iter().filter(|x| x.is_object()) {
+        field(w, x, tie);
+    }
+    if let (Some(s), Some(f)) = (submit, f) {
+        w.btn(&shown(s.get("label")), "", &Go::Post(f), &[], None);
+    }
+    w.close("div");
+}
+
+fn field(w: &mut W<'_>, x: &Value, tie: &[(&str, &str)]) {
+    let name = shown(x.get("name"));
+    w.open("label", "fd", &[]);
+    w.el(
+        "span",
+        "fk",
+        &get(x, "label").map_or_else(|| name.clone(), String::from),
+    );
+    let mut attrs: Vec<(&str, &str)> = vec![("name", &name)];
+    attrs.extend_from_slice(tie);
+    let value = shown(x.get("value"));
+    match get(x, "type").unwrap_or_default() {
+        "toggle" => {
+            attrs.push(("type", "checkbox"));
+            if on(x, "value") {
+                attrs.push(("checked", ""));
+            }
+            w.open("input", "", &attrs);
+        }
+        "picker" => {
+            w.open("select", "", &attrs);
+            let mut seen: Vec<String> = vec![];
+            for o in std::iter::once(x.get("value")).chain(list(x, "options").iter().map(Some)) {
+                let o = shown(o);
+                if o.is_empty() || seen.contains(&o) {
+                    continue;
+                }
+                let pick: &[(&str, &str)] = if o == value { &[("selected", "")] } else { &[] };
+                w.open("option", "", &[&[("value", o.as_str())], pick].concat());
+                w.text(&o);
+                w.close("option");
+                seen.push(o);
+            }
+            w.close("select");
+        }
+        t => {
+            let secret = t == "secret";
+            attrs.extend([
+                ("type", if secret { "password" } else { "text" }),
+                ("autocomplete", "off"),
+            ]);
+            attrs.push(("placeholder", get(x, "placeholder").unwrap_or_default()));
+            if !secret && !value.is_empty() {
+                attrs.push(("value", &value));
+            }
+            w.open("input", "", &attrs);
+        }
+    }
+    w.close("label");
+}
+
+pub(super) fn run(w: &mut W<'_>, b: &Value) {
+    w.open_block("div", "run", b, &[]);
+    w.el("pre", "cmd", &shown(b.get("command")));
+    let sha = get(b, "sha").filter(|s| !s.is_empty()).map(|s| format!("sha {s}"));
+    let meta: Vec<String> = [
+        get(b, "dir").map(String::from),
+        get(b, "touches").map(String::from),
+        sha,
+    ]
+    .into_iter()
+    .flatten()
+    .filter(|s| !s.is_empty())
+    .collect();
+    w.el("p", "m", &meta.join(" · "));
+    w.open("div", "bar", &[]);
+    for (choice, cls) in [("approve", "primary"), ("deny", "bad")] {
+        let v = Map::from_iter([
+            ("choice".into(), Value::from(choice)),
+            ("sha".into(), b.get("sha").cloned().unwrap_or(Value::Null)),
+        ]);
+        let f = w.post(b.get("id"), &shown(b.get("action")), &v);
+        w.btn(choice, cls, &Go::Post(f), &[], None);
+    }
+    w.close("div");
+    w.close("div");
+}
+
+pub(super) fn button(w: &mut W<'_>, b: &Value) {
+    let go = match (b.get("tap"), get(b, "action")) {
+        (Some(t), _) => w.tap(Some(t), b.get("id")),
+        (None, Some(a)) => Go::Post(w.post(b.get("id"), a, &fields(&[b.get("values")]))),
+        (None, None) => Go::Stay,
+    };
+    w.btn(&shown(b.get("label")), &shown(b.get("style")), &go, &[], Some(b));
+}
+
+pub(super) fn chips(w: &mut W<'_>, b: &Value) {
+    w.open_block("div", "chips", b, &[]);
+    let sel = list(b, "selected");
+    for o in list(b, "options").iter().filter(|o| o.is_object()) {
+        let v = o.get("value").cloned().unwrap_or(Value::Null);
+        let pressed = sel.contains(&v);
+        let f = w.post(
+            b.get("id"),
+            &shown(b.get("action")),
+            &Map::from_iter([(shown(b.get("name")), v)]),
+        );
+        let at = [("aria-pressed", if pressed { "true" } else { "false" })];
+        w.btn(
+            &shown(o.get("label")),
+            if pressed { "on" } else { "" },
+            &Go::Post(f),
+            &at,
+            None,
+        );
+    }
+    w.close("div");
+}
+
+pub(super) fn stat(w: &mut W<'_>, b: &Value) {
+    w.open_block("div", "stats", b, &[]);
+    let items = b.get("items").and_then(Value::as_array);
+    for i in items
+        .map_or(std::slice::from_ref(b), Vec::as_slice)
+        .iter()
+        .filter(|i| i.is_object())
+    {
+        w.open("div", &format!("st {}", shown(i.get("tone"))), &[]);
+        w.open("b", "b-stat__value", &[]);
+        ticked(w, i.get("value"));
+        w.close("b");
+        if let Some(u) = get(i, "unit").filter(|u| !u.is_empty()) {
+            w.raw(" ");
+            w.el("small", "", u);
+        }
+        w.el("span", "m", &shown(i.get("label")));
+        let sp: Vec<f64> = list(i, "spark")
+            .iter()
+            .map(|v| v.as_f64().unwrap_or(f64::NAN))
+            .collect();
+        let hi = sp.iter().copied().fold(1.0, f64::max);
+        if sp.len() > 1 {
+            let points: Vec<String> = sp
+                .iter()
+                .enumerate()
+                .map(|(x, v)| format!("{x},{}", 10.0 - (v / hi) * 10.0))
+                .collect();
+            w.raw(&format!(
+                "<svg class=\"spark\" viewBox=\"0 0 {} 10\" preserveAspectRatio=\"none\" aria-hidden=\"true\"><polyline points=\"{}\"></polyline></svg>",
+                sp.len() - 1,
+                points.join(" ")
+            ));
+        }
+        w.close("div");
+    }
+    w.close("div");
+}
+
+pub(super) fn text(w: &mut W<'_>, b: &Value) {
+    let source = shown(b.get("markdown"));
+    w.open_block("div", "txt", b, &[("data-md", &source)]);
+    w.raw(&md(&source));
+    w.close("div");
+}
+
+/// `md` of `render/index.ts`, but thread refs: code fences, inline code, bold, links and line breaks.
+fn md(s: &str) -> String {
+    s.split("```")
+        .enumerate()
+        .map(|(i, part)| {
+            let part = if i == 0 {
+                part
+            } else {
+                part.trim_start_matches(|c: char| c.is_ascii_lowercase())
+            };
+            let part = if i == 0 {
+                part
+            } else {
+                part.strip_prefix('\n').unwrap_or(part)
+            };
+            if i % 2 == 1 {
+                let body = part.strip_suffix('\n').unwrap_or(part);
+                return format!(
+                    "<div class=cb><pre>{}</pre><button type=button class=cpy><span>copy</span></button></div>",
+                    esc(body)
+                );
+            }
+            let t = pairs(&pairs(&esc(part), "`", '`', "code"), "**", '*', "b");
+            links(&t).replace('\n', "<br>")
+        })
+        .collect()
+}
+
+fn pairs(s: &str, mark: &str, stop: char, tag: &str) -> String {
+    let mut out = String::with_capacity(s.len());
+    let mut rest = s;
+    while let Some(at) = rest.find(mark) {
+        let (before, from) = rest.split_at(at);
+        out.push_str(before);
+        let inner = from.get(mark.len()..).unwrap_or_default();
+        let end = inner.find(stop).unwrap_or(inner.len());
+        let (body, after) = inner.split_at(end);
+        if let Some(next) = after.strip_prefix(mark).filter(|_| !body.is_empty()) {
+            out.push_str(&format!("<{tag}>{body}</{tag}>"));
+            rest = next;
+        } else {
+            let mut c = from.chars();
+            out.extend(c.next());
+            rest = c.as_str();
+        }
+    }
+    out + rest
+}
+
+fn links(s: &str) -> String {
+    let mut out = String::with_capacity(s.len());
+    let mut rest = s;
+    while !rest.is_empty() {
+        if let Some((text, url, next)) = named_link(rest) {
+            out.push_str(&format!("<a href=\"{url}\" target=_blank rel=noopener>{text}</a>"));
+            rest = next;
+        } else if rest.starts_with("http://") || rest.starts_with("https://") {
+            let run = rest.find(|c: char| c.is_whitespace() || c == '<').unwrap_or(rest.len());
+            let url = rest
+                .get(..run)
+                .unwrap_or_default()
+                .trim_end_matches(['.', ',', ';', ':', '!', '?', ')']);
+            out.push_str(&format!("<a href=\"{url}\" target=_blank rel=noopener>{url}</a>"));
+            rest = rest.get(url.len()..).unwrap_or_default();
+        } else {
+            let mut c = rest.chars();
+            out.extend(c.next());
+            rest = c.as_str();
+        }
+    }
+    out
+}
+
+fn named_link(s: &str) -> Option<(&str, &str, &str)> {
+    let (text, after) = s.strip_prefix('[')?.split_once("](")?;
+    let end = after.find(|c: char| c == ')' || c.is_whitespace())?;
+    let (url, close) = after.split_at(end);
+    let ok = !text.is_empty()
+        && !text.contains(']')
+        && url.starts_with("http")
+        && url.get(4..)?.trim_start_matches('s').starts_with(':');
+    ok.then_some((text, url, close.strip_prefix(')')?))
+}
+
+pub(super) fn images(w: &mut W<'_>, b: &Value) {
+    w.open_block("div", "imgs", b, &[]);
+    for i in list(b, "items").iter().filter(|i| i.is_object()) {
+        let src = shown(i.get("src"));
+        w.open("a", "", &[("href", &src), ("target", "_blank"), ("rel", "noopener")]);
+        w.open(
+            "img",
+            "",
+            &[("src", &src), ("alt", &shown(i.get("alt"))), ("loading", "lazy")],
+        );
+        w.close("a");
+    }
+    w.close("div");
+}
+
+pub(super) fn composer(w: &mut W<'_>, b: &Value) {
+    let acts = b.get("acts");
+    let act = |k: &str| acts.and_then(|a| get(a, k)).unwrap_or_default().to_string();
+    w.open_block("div", "cmp", b, &[]);
+    for m in list(b, "queued").iter().filter(|m| m.is_object()) {
+        let q = shown(m.get("q"));
+        w.open("div", "qd", &[("data-q", &q)]);
+        w.el("span", "qt", &shown(m.get("text")));
+        let qv = Map::from_iter([("q".into(), m.get("q").cloned().unwrap_or(Value::Null))]);
+        for (label, cls, a) in [
+            ("send now", "primary", act("steer")),
+            ("edit", "", String::new()),
+            ("remove", "bad", act("unqueue")),
+        ] {
+            let go = if a.is_empty() {
+                Go::Stay
+            } else {
+                Go::Post(w.post(b.get("id"), &a, &qv))
+            };
+            w.btn(label, cls, &go, &[], None);
+        }
+        w.close("div");
+    }
+    let f = w.post(b.get("id"), &shown(b.get("action")), &fields(&[b.get("values")]));
+    w.open("div", "cr", &[]);
+    w.btn("+", "", &Go::Stay, &[("aria-label", "attach")], None);
+    w.open("input", "", &[("type", "file"), ("multiple", ""), ("hidden", "")]);
+    let hint = shown(b.get("placeholder"));
+    w.open(
+        "textarea",
+        "",
+        &[("name", "text"), ("rows", "1"), ("placeholder", &hint), ("form", &f)],
+    );
+    w.close("textarea");
+    w.btn(&shown(b.get("label")), "primary", &Go::Post(f.clone()), &[], None);
+    w.close("div");
+    let chips: Vec<&Value> = list(b, "chips").iter().filter(|c| c.is_object()).collect();
+    if !chips.is_empty() {
+        w.open("div", "pk", &[]);
+        for ch in chips {
+            let n = shown(ch.get("name"));
+            let cur = shown(ch.get("cur"));
+            w.open("select", "", &[("aria-label", &n), ("name", &n), ("form", &f)]);
+            if cur.is_empty() {
+                w.open("option", "", &[("value", ""), ("selected", "")]);
+                w.text(&n);
+                w.close("option");
+            }
+            for o in list(ch, "all") {
+                let o = shown(Some(o));
+                let pick: &[(&str, &str)] = if o == cur { &[("selected", "")] } else { &[] };
+                w.open("option", "", &[&[("value", o.as_str())], pick].concat());
+                w.text(&o);
+                w.close("option");
+            }
+            w.close("select");
+        }
+        w.close("div");
+    }
+    w.close("div");
+}

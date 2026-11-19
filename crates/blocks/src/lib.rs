@@ -6,6 +6,7 @@ pub mod layout;
 mod mirror;
 mod patch;
 mod shelf;
+pub mod site;
 pub mod theme;
 pub mod tree;
 pub mod web;

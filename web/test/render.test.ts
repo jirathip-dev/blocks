@@ -14,7 +14,7 @@ const store = { get: () => null, put: () => {} };
 const ctx = (more = {}) => ({ screen: "home", act: async () => true, tap: () => {}, open: new Set(), theme: plain, store, ...more });
 const all = (e) => [e, ...e.children.flatMap(all)];
 const part = (e, cls) => all(e).find((x) => x.classList.contains(cls));
-const gaps = ["config", "secret", "web", "diff", "editor", "scene", "diagram", "prose", "hero", "media", "nav", "island"];
+const gaps = ["config", "secret", "web", "diff", "editor", "scene", "diagram", "island"];
 
 test("every fixture is drawn with its hooks, natively or as its fallback", () => {
   const kinds = readdirSync(dir).map((f) => f.replace(/\.json$/, ""));

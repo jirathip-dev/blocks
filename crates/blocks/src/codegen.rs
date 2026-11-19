@@ -3,8 +3,9 @@ use std::path::Path;
 use serde_json::{Map, Value};
 
 use crate::{
-    layout, theme, tree, Action, Answer, Block, Built, Bye, Card, Child, Composer, ComposerChip, Frame, Hello, List,
-    OldFrame, Op, Queued, Row, Screen, Sync, Synced, Text, Tone, SCHEMA_VERSION,
+    layout, site, theme, tree, Action, Answer, Block, Built, Bye, Card, Child, Composer, ComposerChip, Field,
+    FieldKind, Form, Frame, Hello, List, OldFrame, Op, Queued, Row, Screen, Submit, Sync, Synced, Text, Tone,
+    SCHEMA_VERSION,
 };
 
 /// The JSON Schema of a `Frame`; its `$defs` hold `Block`, `Op` and the stream's other messages.
@@ -75,7 +76,73 @@ pub fn write(root: &Path) -> std::io::Result<()> {
         let text = serde_json::to_string_pretty(&b)? + "\n";
         std::fs::write(root.join(format!("fixtures/blocks/{kind}.json")), text)?;
     }
-    trees(root)
+    trees(root)?;
+    html(root)
+}
+
+fn html(root: &Path) -> std::io::Result<()> {
+    std::fs::create_dir_all(root.join("fixtures/html"))?;
+    for (kind, b) in crate::samples() {
+        let text = site::fragment(&Built::new(serde_json::to_value(&b)?), "/act") + "\n";
+        std::fs::write(root.join(format!("fixtures/html/{kind}.html")), text)?;
+    }
+    let style = serde_json::from_str(&std::fs::read_to_string(root.join("fixtures/styles/still.json"))?)?;
+    let scheme = |n: &str| {
+        let s = theme::schemes().iter().find(|(k, _)| *k == n).map(|(_, s)| s.clone());
+        s.ok_or_else(|| std::io::Error::other(format!("no scheme {n}")))
+    };
+    let schemes = theme::PerMode {
+        light: scheme("paper")?,
+        dark: scheme("solarized-dark")?,
+    };
+    let look = site::Look { schemes, style };
+    let screen = Built::of(&site_screen());
+    std::fs::create_dir_all(root.join("fixtures/site"))?;
+    let live = site::Live {
+        js: "/blocks.js",
+        stream: "/stream",
+    };
+    for (file, live) in [("index.html", None), ("live.html", Some(live))] {
+        let head = site::Head {
+            title: "Blocks",
+            description: "One shape, three renderers",
+            canonical: "https://blocks.test/",
+            image: Some("/og.png"),
+            lang: "en",
+        };
+        let s = site::Site {
+            head,
+            look: &look,
+            css: &[],
+            action: "/act",
+            live,
+        };
+        std::fs::write(root.join("fixtures/site").join(file), site::page(&screen, &s) + "\n")?;
+    }
+    Ok(())
+}
+
+fn site_screen() -> Screen {
+    let mut blocks: Vec<Block> = crate::samples()
+        .into_iter()
+        .filter(|(k, _)| ["nav", "hero", "prose", "media"].contains(k))
+        .map(|(_, b)| b)
+        .collect();
+    let email = Field {
+        kind: FieldKind::Text,
+        name: "email".into(),
+        label: Some("Email".into()),
+        ..Field::default()
+    };
+    let submit = Submit {
+        label: "Sign up".into(),
+        action: "sign-up".into(),
+        ..Submit::default()
+    };
+    blocks.push(Block::Form(Box::new(
+        Form::new(vec![email]).id("signup").submit(submit),
+    )));
+    Screen::new().id("site").title("Blocks").blocks(blocks)
 }
 
 fn trees(root: &Path) -> std::io::Result<()> {
