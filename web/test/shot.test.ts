@@ -17,16 +17,29 @@ const blocks = at("../../fixtures/blocks/");
 const trees = at("../../fixtures/trees/");
 const run = (...args) => spawnSync(process.execPath, ["--no-warnings", cli, ...args], { encoding: "utf8" });
 
-test("every fixtures/blocks file passes --check against its fixtures/trees tree in WebKit", () => {
+test("every fixtures/blocks file passes --check against its fixtures/trees tree in WebKit at 390 and 1440", () => {
   const kinds = readdirSync(blocks).map((f) => f.replace(/\.json$/, ""));
   strictEqual(kinds.length, 28);
-  for (const k of kinds) {
-    const r = run("--screen", join(blocks, `${k}.json`), "--expect", join(trees, `${k}.json`), "--check", "--out", join(out, k));
-    strictEqual(r.status, 0, `${k}: ${r.stderr}`);
-    ok(existsSync(join(out, k, `${k}.png`)), k);
-    const tree = JSON.parse(readFileSync(join(out, k, `${k}.tree.json`), "utf8"));
-    strictEqual(tree.kind, k);
-    deepStrictEqual(JSON.parse(readFileSync(join(out, k, "report.json"), "utf8")).shots, [k]);
+  for (const size of ["390x844", "1440x900"])
+    for (const k of kinds) {
+      const dir = join(out, size, k);
+      const r = run("--screen", join(blocks, `${k}.json`), "--size", size, "--expect", join(trees, `${k}.json`), "--check", "--out", dir);
+      strictEqual(r.status, 0, `${k} ${size}: ${r.stderr}`);
+      ok(existsSync(join(dir, `${k}.png`)), k);
+      const tree = JSON.parse(readFileSync(join(dir, `${k}.tree.json`), "utf8"));
+      strictEqual(tree.kind, k);
+      ok(tree.role && tree.name, `${k}: ${tree.role} "${tree.name}"`);
+      deepStrictEqual(JSON.parse(readFileSync(join(dir, "report.json"), "utf8")).shots, [k]);
+    }
+});
+
+test("every fixtures/stress variant passes --check at 390 in WebKit: inside the width, over no sibling", () => {
+  const stress = at("../../fixtures/stress/");
+  const names = readdirSync(stress).filter((f) => f !== "table.json").map((f) => f.replace(/\.json$/, ""));
+  strictEqual(names.length, 51);
+  for (const n of names) {
+    const r = run("--screen", join(stress, `${n}.json`), "--check", "--out", join(out, n));
+    strictEqual(r.status, 0, `${n}: ${r.stderr}`);
   }
 });
 
@@ -34,6 +47,20 @@ test("--check exits 1 when the drawn tree is not the expected one", () => {
   const r = run("--screen", join(blocks, "list.json"), "--expect", join(trees, "card.json"), "--check", "--out", join(out, "wrong"));
   strictEqual(r.status, 1);
   ok(r.stderr.includes("drew list#rows native, expected card#card native"), r.stderr);
+});
+
+test("--check fails a node whose role or name is not the expected one, a node with no name and an unnamed link", () => {
+  const want = JSON.parse(readFileSync(join(trees, "button.json"), "utf8"));
+  const renamed = join(out, "renamed.json");
+  writeFileSync(renamed, JSON.stringify({ ...want, role: "link", name: "Send" }));
+  const r = run("--screen", join(blocks, "button.json"), "--expect", renamed, "--check", "--out", join(out, "renamed"));
+  strictEqual(r.status, 1);
+  strictEqual(r.stderr, 'button/button#save: drew button "Save", expected link "Send"\n');
+  const bare = join(out, "bare.json");
+  writeFileSync(bare, JSON.stringify({ type: "screen", id: "bare", blocks: [{ type: "" }, { type: "nav", links: [{ label: "", href: "/x" }] }] }));
+  const b = run("--screen", bare, "--check", "--out", join(out, "bare"));
+  strictEqual(b.status, 1);
+  strictEqual(b.stderr, "bare/screen#bare/: has no name\nbare: nav: an unnamed a\n");
 });
 
 test("each fixtures/ids file is the block and action ids its screen draws, and --check fails on others", () => {
@@ -61,13 +88,14 @@ test("a scripted tap sends the button's action and an answer's ops are drawn", (
   strictEqual(JSON.parse(readFileSync(join(out, "tap", "saved.tree.json"), "utf8")).text, "Saved");
 });
 
-test("scripted typing and taps change local state: a check's message, a disabled submit, a tap's set", () => {
+test("scripted typing and taps change local state: a check's message, a disabled submit and act, a tap's set, a bound value", () => {
   const view = JSON.parse(readFileSync(at("../../fixtures/behave/view.json"), "utf8"));
   const screen = join(out, "behave.json");
   const script = join(out, "behave-steps.json");
   writeFileSync(screen, JSON.stringify(view.screen));
   const steps = [
     { shot: { name: "start" } },
+    { tap: { id: "save" } },
     { type: { id: "join", text: "ada@" } },
     { shot: { name: "typed" } },
     { tap: { id: "join" } },
@@ -77,19 +105,22 @@ test("scripted typing and taps change local state: a check's message, a disabled
     { tap: { id: "more" } },
     { shot: { name: "more" } },
     { tap: { id: "more" } },
+    { tap: { id: "save" } },
   ];
   writeFileSync(script, JSON.stringify(steps));
   const r = run("--screen", screen, "--script", script, "--out", join(out, "behave"));
   strictEqual(r.status, 0, r.stderr);
   const tree = (n) => JSON.parse(readFileSync(join(out, "behave", `${n}.tree.json`), "utf8"));
   const drawn = (n) => Object.fromEntries(tree(n).children.map((c) => [c.id, c.drawn]));
-  deepStrictEqual(drawn("start"), { plan: "native", join: "native", more: "native", plans: "hidden", later: "native", box: "hidden" });
+  deepStrictEqual(drawn("start"), { plan: "native", join: "native", more: "native", plans: "hidden", later: "native", sum: "native", count: "native", box: "hidden" });
+  ok(tree("start").children[6].text.includes("3"), tree("start").children[6].text);
   ok(!tree("start").children[1].text.includes("Enter an email"), "an untouched field shows no message");
   ok(tree("typed").children[1].text.includes("Enter an email address"), tree("typed").children[1].text);
   ok(!tree("fixed").children[1].text.includes("Enter an email"), tree("fixed").children[1].text);
-  deepStrictEqual(drawn("more"), { plan: "native", join: "native", more: "native", plans: "native", later: "native", box: "native" });
+  deepStrictEqual(drawn("more"), { plan: "native", join: "native", more: "native", plans: "native", later: "native", sum: "native", count: "native", box: "native" });
   const report = JSON.parse(readFileSync(join(out, "behave", "report.json"), "utf8"));
-  deepStrictEqual(report.dropped, ["tap join", "tap more"], "the submit is off only while a check fails, the button once its set ran");
+  deepStrictEqual(report.dropped, ["tap save", "tap join", "tap more"], "save is off until more, the submit while a check fails, the button once its set ran");
+  deepStrictEqual(report.sent.filter((x) => x.action === "save").length, 1, "a disabled act posts nothing; once more is on, save posts");
 });
 
 const corner = (png) => {

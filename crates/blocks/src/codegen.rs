@@ -238,7 +238,13 @@ fn hooks(s: &Value) -> Out {
         let parts = parts.iter().map(|p| format!("\"{p}\"")).collect::<Vec<_>>().join(", ");
         out.push_str(&format!("    {kind}: {{ variant: {variant}, parts: [{parts}] }},\n"));
     }
-    out.push_str("};\n");
+    let roles = tree::ROLES.map(|(k, r)| format!("{k}: \"{r}\""));
+    let names = tree::NAMES.map(|n| format!("\"{n}\""));
+    out.push_str(&format!(
+        "}};\n\nexport const roles: Record<string, string> = {{ {} }};\n\nexport const names = [{}] as const;\n",
+        roles.join(", "),
+        names.join(", ")
+    ));
     Ok(out)
 }
 

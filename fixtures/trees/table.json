@@ -3,5 +3,7 @@
   "id": "invoices",
   "variant": null,
   "drawn": "native",
+  "role": "group",
+  "name": "Invoices",
   "children": []
 }

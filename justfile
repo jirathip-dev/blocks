@@ -8,6 +8,8 @@ check: fmt clippy fixtures test perf soak deps deny web arch cap actionlint swif
 gen: web-install
     cargo run -q --locked -p blocks --features schema --bin blocks-codegen
     npm --prefix web run build
+    BLOCKS_GEN=1 cargo test -q --locked -p blocks --test sim generated
+    BLOCKS_GEN=1 cargo test -q --locked -p blocks --test fixtures every_kind_has_a_stress_row
 
 fmt:
     cargo fmt --check
@@ -61,11 +63,13 @@ web: web-install
 # Layers, bans, sizes, frozen and generated files; BASE and PR_BODY narrow the comment and doc checks to a PR.
 arch:
     {{drover}} arch-check ${BASE:+--base "$BASE"} ${PR_BODY:+--pr-body "$PR_BODY"}
+    DROVER={{drover}} sh scripts/arch-size.test.sh
 
-# The line cap in ci/cap.toml (non-test, non-generated Rust, TS and Swift; CI's cap workflow) and the 30-line rules file.
+# The line cap in ci/cap.toml (non-test, non-generated Rust, TS and Swift; CI's cap workflow), the For apps check's test and the 30-line rules file.
 cap:
     sh scripts/line-cap.sh
     sh scripts/line-cap.test.sh
+    sh scripts/for-apps.test.sh
     test "$(wc -l < .drover/rules.md)" -le 30 || { echo ".drover/rules.md is over 30 lines"; exit 1; }
 
 actionlint:

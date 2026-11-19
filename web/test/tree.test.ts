@@ -19,7 +19,7 @@ test("tree() is fixtures/trees/<kind>.json for every fixtures/blocks file", () =
 test("evaluate() gives every fixtures/behave case's value, as the crate's eval", () => {
   for (const f of files("behave")) {
     const { state, cases } = json(`behave/${f}`);
-    for (const c of cases) deepStrictEqual(evaluate(c.expr, state), c.want, `${f}: ${JSON.stringify(c.expr)}`);
+    for (const c of cases) deepStrictEqual(evaluate(c.expr, c.state ?? state), c.want, `${f}: ${JSON.stringify(c.expr)}`);
   }
 });
 

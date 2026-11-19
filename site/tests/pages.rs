@@ -27,7 +27,7 @@ fn pages(out: &Path) -> Vec<(String, String)> {
 fn every_page_has_its_head_and_no_url_from_the_domain_root() {
     let out = build();
     let all = pages(&out);
-    assert_eq!(all.len(), 4 + 28);
+    assert_eq!(all.len(), 6 + 28);
     for (f, html) in &all {
         for want in [
             "<title>",
@@ -75,7 +75,7 @@ fn the_gallery_counts_every_kind_once_and_finds_its_fallback_group_from_the_rend
     );
     let group = gallery
         .split(&format!("Fallback only, no HTML view yet · {}", fallback.len()))
-        .nth(1)
+        .nth(2)
         .unwrap();
     let mut marked: Vec<String> = group
         .split("data-id=\"fb-")

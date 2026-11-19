@@ -32,3 +32,7 @@ export const hooks: Record<Kind, Hook> = {
     island: { variant: null, parts: [] },
     table: { variant: null, parts: ["title"] },
 };
+
+export const roles: Record<string, string> = { section: "region", form: "form", config: "form", nav: "navigation" };
+
+export const names = ["label", "title", "header", "question", "alt", "file", "command", "placeholder", "name"] as const;

@@ -18,6 +18,8 @@ generated = [
     "fixtures/trees/swift/*.json",
     "fixtures/html/*.html",
     "fixtures/site/*.html",
+    "fixtures/protocol/sim-*.json",
+    "fixtures/behave/sim.json",
 ]
 generate = "just gen"
 shared = ["crates/blocks/src/lib.rs", "crates/*/tests/support/**"]
@@ -208,4 +210,24 @@ max_fn_lines = 80
 
 [[size]]
 paths = ["crates/*/tests/**/*.rs"]
+max_file_lines = 1000
+
+[[size]]
+paths = ["web/src/**/*.ts", "web/shot/**/*.ts"]
+exclude = ["web/src/gen/**"]
+max_file_lines = 500
+max_fn_lines = 80
+
+[[size]]
+paths = ["web/test/**/*.ts"]
+max_file_lines = 1000
+
+[[size]]
+paths = ["swift/Sources/**/*.swift"]
+exclude = ["swift/Sources/**/Gen/**"]
+max_file_lines = 500
+max_fn_lines = 80
+
+[[size]]
+paths = ["swift/Tests/**/*.swift"]
 max_file_lines = 1000

@@ -3,5 +3,7 @@
   "id": "save",
   "variant": null,
   "drawn": "native",
+  "role": "button",
+  "name": "Save",
   "children": []
 }

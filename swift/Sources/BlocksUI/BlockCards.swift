@@ -24,6 +24,7 @@ internal struct ActButton<Label: View>: View {
         .buttonStyle(.plain)
         .modifier(Confirming(pending: $pending) { _ in fire() })
         .modifier(Identified(id: sends, action: true))
+        .disabled(sends.map(behaved.view.acts.contains) == true)
     }
 
     private var sends: String? {

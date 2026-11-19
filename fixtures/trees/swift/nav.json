@@ -3,5 +3,7 @@
   "id": "nav",
   "variant": null,
   "drawn": "fallback",
+  "role": "navigation",
+  "name": "nav",
   "children": []
 }

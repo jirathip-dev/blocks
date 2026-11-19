@@ -12,13 +12,7 @@ pub(super) fn editor(w: &mut W<'_>, b: &Value) {
             errs.entry(n).or_insert_with(|| shown(e.get("message")));
         }
     }
-    let label = format!("edit {}", shown(b.get("name")));
-    w.open_block(
-        "div",
-        "ed",
-        b,
-        &[("tabindex", "0"), ("role", "button"), ("aria-label", &label)],
-    );
+    w.open_block("div", "ed", b, &[("tabindex", "0")]);
     for (n, line) in (first..).zip(get(b, "text").unwrap_or_default().split('\n')) {
         let m = errs.remove(&n);
         w.open("div", if m.is_some() { "edl err" } else { "edl" }, &[]);

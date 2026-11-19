@@ -4,7 +4,7 @@ export type Frame = { from?: number | null; k: string; ops?: Op[] | null; rev: n
 
 export type Accessory = "chevron" | "none";
 
-export type Act = { action?: string | null; confirm?: Confirm | null; icon?: string | null; label: string; menu?: Act[] | null; tap?: Tap | null; tone?: Tone | null; values?: Record<string, unknown> | null };
+export type Act = { action?: string | null; confirm?: Confirm | null; enabled?: Expr | null; icon?: string | null; label: string; menu?: Act[] | null; tap?: Tap | null; tone?: Tone | null; values?: Record<string, unknown> | null };
 
 export type Action = { action: string; block?: string | null; screen: string; values?: Record<string, unknown> | null };
 
@@ -15,6 +15,8 @@ export type Answer = { close?: boolean | null; open?: string | null; ops?: Op[] 
 export type AppBlock = { fallback?: Fallback | null; id?: string | null; type: string };
 
 export type Block = ({ type: "screen" } & Screen) | ({ type: "sheet" } & Sheet) | ({ type: "section" } & Section) | ({ type: "list" } & List) | ({ type: "row" } & Row) | ({ type: "card" } & Card) | ({ type: "choice" } & Choice) | ({ type: "form" } & Form) | ({ type: "config" } & Form) | ({ type: "secret" } & Secret) | ({ type: "run" } & Run) | ({ type: "button" } & Button) | ({ type: "chips" } & Chips) | ({ type: "stat" } & Stat) | ({ type: "text" } & Text) | ({ type: "images" } & Images) | ({ type: "web" } & Web) | ({ type: "diff" } & Diff) | ({ type: "editor" } & Editor) | ({ type: "scene" } & Scene) | ({ type: "diagram" } & Diagram) | ({ type: "composer" } & Composer) | ({ type: "prose" } & Prose) | ({ type: "hero" } & Hero) | ({ type: "media" } & Media) | ({ type: "nav" } & Nav) | ({ type: "island" } & Island) | ({ type: "table" } & Table) | (AppBlock & { [key: string]: unknown });
+
+export type Bound = { get: string };
 
 export type BulkAction = { action: string; bad?: boolean | null; label: string };
 
@@ -172,7 +174,7 @@ export type SetState = { key: string; to: Expr };
 
 export type Sheet = { blocks: Block[]; cancel?: string | null; done?: Submit | null; id?: string | null; show?: Expr | null; title: string };
 
-export type Shown = string | number | Time;
+export type Shown = string | number | Bound | Time;
 
 export type SortDir = "asc" | "desc";
 
@@ -222,7 +224,7 @@ export type Total = "sum" | "avg" | "count";
 
 export type TreeDrawn = "native" | "fallback" | "hidden";
 
-export type TreeNode = { children: TreeNode[]; drawn: TreeDrawn; id?: string | null; kind: string; rect?: number[] | null; text?: string | null; variant?: string | null };
+export type TreeNode = { children: TreeNode[]; drawn: TreeDrawn; id?: string | null; kind: string; name: string; rect?: number[] | null; role: string; text?: string | null; variant?: string | null };
 
 export type Web = { height: number; id?: string | null; show?: Expr | null; src: string };
 

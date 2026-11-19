@@ -3,5 +3,7 @@
   "id": "change",
   "variant": null,
   "drawn": "fallback",
+  "role": "group",
+  "name": "src/lib.rs",
   "children": []
 }

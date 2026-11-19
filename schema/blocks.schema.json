@@ -33,6 +33,16 @@
             }
           ]
         },
+        "enabled": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
         "icon": {
           "type": [
             "string",
@@ -583,6 +593,18 @@
         }
       ],
       "description": "A block: an object whose `type` names its kind; any other `type` is an app's own."
+    },
+    "Bound": {
+      "description": "A value bound to local state: it shows the text of state key `get`.",
+      "properties": {
+        "get": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "get"
+      ],
+      "type": "object"
     },
     "BulkAction": {
       "description": "An action on the ticked rows: it sends `{rows: [ids]}`.",
@@ -4075,10 +4097,13 @@
           "type": "number"
         },
         {
+          "$ref": "#/$defs/Bound"
+        },
+        {
           "$ref": "#/$defs/Time"
         }
       ],
-      "description": "A row's or a tile's value: a string, a number, or a time."
+      "description": "A row's or a tile's value: a string, a number, a state key's value, or a time."
     },
     "SortDir": {
       "anyOf": [
@@ -4882,6 +4907,9 @@
         "kind": {
           "type": "string"
         },
+        "name": {
+          "type": "string"
+        },
         "rect": {
           "items": {
             "format": "double",
@@ -4893,6 +4921,9 @@
             "array",
             "null"
           ]
+        },
+        "role": {
+          "type": "string"
         },
         "text": {
           "type": [
@@ -4910,6 +4941,8 @@
       "required": [
         "kind",
         "drawn",
+        "role",
+        "name",
         "children"
       ],
       "type": "object"

@@ -4,15 +4,17 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
 use crate::built::{children, Built};
-use crate::expr::{eval, Expr, Lit, Pattern, State};
+use crate::expr::{eval, text, Expr, Lit, Pattern, State};
 use crate::kind::Check;
 
-/// What the state makes of a screen: hidden blocks and fields, disabled controls, each failing field's message.
+/// What the state makes of a screen: hidden blocks and fields, disabled controls and acts, messages, bound values.
 #[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub struct View {
     pub hidden: BTreeSet<String>,
     pub disabled: BTreeSet<String>,
     pub says: BTreeMap<String, String>,
+    pub acts: BTreeSet<String>,
+    pub values: BTreeMap<String, String>,
 }
 
 fn holds(b: &Value, key: &str, state: &State) -> Option<bool> {
@@ -24,6 +26,27 @@ fn checks(f: &Value) -> Vec<Check> {
     let all = f.get("checks").and_then(Value::as_array).into_iter().flatten();
     let written = all.filter(|c| c.get("ok").is_some_and(|ok| !ok.is_null()));
     written.filter_map(|c| Check::deserialize(c).ok()).collect()
+}
+
+fn acts(o: &serde_json::Map<String, Value>) -> Vec<&Value> {
+    let mut all: Vec<&Value> = ["actions", "swipe", "menu"]
+        .iter()
+        .filter_map(|k| o.get(*k)?.as_array())
+        .flatten()
+        .chain(o.get("button"))
+        .collect();
+    let menus: Vec<&Value> = all.iter().filter_map(|a| a.get("menu")?.as_array()).flatten().collect();
+    all.extend(menus);
+    all
+}
+
+pub(crate) fn sends(act: &Value) -> Option<&str> {
+    let tap = || act.get("tap")?.get("action");
+    act.get("action").or_else(tap)?.as_str()
+}
+
+fn bound(v: &Value) -> Option<&str> {
+    v.get("get")?.as_str()
 }
 
 fn fields(o: &serde_json::Map<String, Value>) -> impl Iterator<Item = (&str, &Value)> {
@@ -69,7 +92,7 @@ fn seed(b: &Value, s: &mut State) {
     children(o).for_each(|c| seed(c, s));
 }
 
-/// What `state` makes of `screen`: a `show` or `enabled` that does not hold, a check that fails; keyed by id or name.
+/// What `state` makes of `screen`: a `show` or `enabled` that does not hold, a check that fails, a bound value's text.
 pub fn view(screen: &Built, state: &State) -> View {
     let mut v = View::default();
     walk(screen.value(), state, &mut v);
@@ -103,6 +126,16 @@ fn walk(b: &Value, state: &State, v: &mut View) {
     }
     if failing {
         v.disabled.extend(id);
+    }
+    for a in acts(o)
+        .into_iter()
+        .filter(|a| holds(a, "enabled", state) == Some(false))
+    {
+        v.acts.extend(sends(a).map(String::from));
+    }
+    let items = o.get("items").and_then(Value::as_array).into_iter().flatten();
+    for k in std::iter::once(b).chain(items).filter_map(|i| bound(i.get("value")?)) {
+        v.values.insert(k.into(), text(state.get(k).unwrap_or(&Lit::Null)));
     }
     children(o).for_each(|c| walk(c, state, v));
 }
