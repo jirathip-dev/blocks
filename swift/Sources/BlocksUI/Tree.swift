@@ -103,11 +103,14 @@ extension Block {
         case .diagram(let b): ("diagram", b.id, nil, Source())
         case .chart(let b): ("chart", b.id, nil, Source())
         case .composer(let b): ("composer", b.id, nil, Source(action: b.action, values: b.values))
+        case .lines(let b): ("lines", b.id, nil, Source(action: b.action))
         case .prose(let b): ("prose", b.id, nil, Source())
         case .hero(let b): ("hero", b.id, nil, Source())
         case .media(let b): ("media", b.id, nil, Source())
         case .nav(let b): ("nav", b.id, nil, Source())
         case .island(let b): ("island", b.id, nil, Source())
+        case .table(let b): ("table", b.id, nil, Source())
+        case .steps(let b): ("steps", b.id, nil, Source())
         case .appBlock(let b):
             (
                 b.type, b.id, nil,
@@ -153,9 +156,12 @@ extension Block {
         case .diagram(let b): [b.title]
         case .chart(let b): [b.title]
         case .composer(let b): [b.label, b.placeholder]
+        case .lines(let b): [b.label, b.name]
         case .hero(let b): [b.title]
         case .media(let b): [b.alt]
         case .island(let b): [b.name]
+        case .table(let b): [b.title]
+        case .steps(let b): [b.title]
         case .appBlock(let b): Self.names.map { b.string($0) }
         default: []
         }

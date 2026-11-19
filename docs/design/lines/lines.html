@@ -1,0 +1,41 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>lines: a journal entry and an invoice</title>
+<link rel="stylesheet" href="../../../web/dist/blocks.css"><link rel="stylesheet" href="../neutral-default/tokens.css"><link rel="stylesheet" href="lines.css"><link rel="stylesheet" href="page.css">
+<script src="lines.js"></script></head>
+<body><main class="scr">
+<div class="tile"><div class="tabh"><span class="tw">ledger · journal</span><button type="button"><span>entries</span></button><button type="button"><span>accounts</span></button></div></div>
+<div class="tile"><div class="sh">JE-0142 · rent and utilities, november</div><p class="note">out of balance, and the app's check flagged line 3: the totals and the balance line update as you type, the row errors come back from the check</p><div id="journal"></div></div>
+<div class="tile"><div class="sh">INV-2291 · invoice lines</div><p class="note">one summed column, no balance: Amount is the app's (qty × price, filled by the check), so it is drawn as text, not a field</p><div id="invoice"></div></div>
+</main>
+<script>
+const accounts = ["1100 Cash", "1200 Receivables", "2100 Payables", "6100 Rent", "6200 Utilities", "6300 Internet"];
+const journal = { type: "lines", id: "je", name: "lines", label: "journal lines", action: "check-journal", add: "add line", min: 2,
+  columns: [
+    { type: "picker", name: "account", label: "Account", options: accounts },
+    { type: "text", name: "memo", label: "Description", placeholder: "optional" },
+    { type: "text", name: "debit", label: "Debit", keyboard: "number" },
+    { type: "text", name: "credit", label: "Credit", keyboard: "number" }],
+  sum: ["debit", "credit"], balance: ["debit", "credit"],
+  rows: [
+    { id: "l1", values: { account: "6100 Rent", memo: "office rent, November", debit: "2400" } },
+    { id: "l2", values: { account: "6200 Utilities", memo: "power and water", debit: "318.40" } },
+    { id: "l3", values: { account: "", memo: "fibre line", debit: "89.90" } },
+    { id: "l4", values: { account: "2100 Payables", memo: "due to Landmark Properties", credit: "2758.40" } }],
+  errors: [{ row: "l3", name: "account", message: "pick an account for line 3" }],
+  submit: { label: "post entry", action: "post-journal" } };
+const invoice = { type: "lines", id: "inv", name: "items", label: "invoice lines", action: "check-invoice", add: "add item",
+  columns: [
+    { type: "text", name: "item", label: "Description" },
+    { type: "text", name: "qty", label: "Qty", keyboard: "number" },
+    { type: "text", name: "price", label: "Unit price", keyboard: "number" },
+    { type: "text", name: "amount", label: "Amount", keyboard: "number", enabled: false }],
+  sum: ["amount"],
+  rows: [
+    { id: "i1", values: { item: "Design review, two rounds", qty: "2", price: "450", amount: "900" } },
+    { id: "i2", values: { item: "Hosting, Nov–Dec", qty: "2", price: "38", amount: "76" } },
+    { id: "i3", values: { item: "Domain renewal", qty: "1", price: "14.50", amount: "14.50" } }],
+  submit: { label: "save invoice", action: "save-invoice" } };
+document.getElementById("journal").replaceWith(lines(journal, { focus: "l3.account" }));
+document.getElementById("invoice").replaceWith(lines(invoice));
+document.body.dataset.h = Math.ceil(document.documentElement.scrollHeight);
+</script></body></html>

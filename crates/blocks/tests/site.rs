@@ -359,3 +359,180 @@ fn a_donut_folds_all_but_its_four_biggest_slices_into_other_and_reads_a_picked_o
     }
     assert!(!d.contains(">Delivery<"), "a folded slice is in Other");
 }
+
+fn invoice(qty: &str) -> serde_json::Value {
+    serde_json::json!({
+        "type": "lines", "id": "inv", "name": "items", "label": "invoice lines", "add": "add item",
+        "columns": [
+            {"type": "text", "name": "qty", "label": "Qty", "keyboard": "number"},
+            {"type": "text", "name": "price", "label": "Price", "keyboard": "number"},
+            {"type": "text", "name": "amount", "label": "Amount", "keyboard": "number"},
+            {"type": "text", "name": "paid", "label": "Paid", "keyboard": "number"}
+        ],
+        "calc": {"amount": {"mul": [{"get": "qty"}, {"get": "price"}]}},
+        "sum": ["amount", "paid"], "balance": ["amount", "paid"],
+        "items": [
+            {"id": "a", "values": {"qty": qty, "price": "1,450.005", "paid": "2900.01"}},
+            {"id": "b", "values": {"qty": "x", "price": "3", "paid": "0"}}
+        ],
+        "submit": {"label": "save", "action": "save-invoice"}
+    })
+}
+
+#[test]
+fn lines_work_out_calc_cells_and_totals_in_minor_units_and_check_the_balance() {
+    let html = site::fragment(&Built::new(invoice("2")), "/act");
+    assert!(
+        html.contains(r#"<span class="lqv" data-row="a" data-cell="amount">2,900.01</span>"#),
+        "{html}"
+    );
+    assert!(
+        html.contains(r#"<span class="lqv" data-row="b" data-cell="amount">—</span>"#),
+        "{html}"
+    );
+    assert!(html.contains("<b>2,900.01</b>"), "{html}");
+    assert!(
+        html.contains(r#"<p class="lqb ok" role="status">balanced · amount = paid</p>"#),
+        "{html}"
+    );
+    assert!(
+        html.contains(r#"value="1,450.005""#),
+        "a field keeps what was typed: {html}"
+    );
+    assert!(
+        !html.contains("lqw") && html.contains(r#"<button type="submit" form="b-f1" data-action="save-invoice">"#),
+        "{html}"
+    );
+    let off = site::fragment(&Built::new(invoice("3")), "/act");
+    assert!(off.contains("out of balance · paid short by 1,450.01"), "{off}");
+    assert!(
+        off.contains(r#"<p class="m lqw">balance the entry to save</p>"#),
+        "{off}"
+    );
+    assert!(
+        off.contains(r#"<button disabled="" type="submit" form="b-f1" data-action="save-invoice">"#),
+        "{off}"
+    );
+}
+
+#[test]
+fn lines_mark_a_row_error_and_turn_remove_off_at_the_minimum() {
+    let mut b = invoice("2");
+    b["min"] = 2.into();
+    b["errors"] =
+        serde_json::json!([{"row": "b", "name": "qty", "message": "a number"}, {"row": "gone", "message": "old"}]);
+    let html = site::fragment(&Built::new(b), "/act");
+    assert!(
+        html.contains(r#"<div class="lqr err" role="group" aria-label="line 2">"#),
+        "{html}"
+    );
+    assert!(html.contains(r#"<label class="lqc num err"><span class="lqk">Qty</span><input name="items.1.qty" aria-label="Qty, line 2""#), "{html}");
+    assert!(
+        html.contains(r#"<p class="lqe">a number</p>"#) && !html.contains(">old<"),
+        "{html}"
+    );
+    assert!(html.contains(r#"<p class="m lqw">fix 1 line to save</p>"#), "{html}");
+    assert_eq!(
+        html.matches(r#"aria-label="remove line 1" disabled"#).count(),
+        1,
+        "{html}"
+    );
+}
+
+#[test]
+fn a_lines_block_gets_a_fallback_named_by_its_label() {
+    let lines = blocks::samples().into_iter().find(|(k, _)| *k == "lines").unwrap().1;
+    let v = Built::of(&Screen::new().id("s").blocks(vec![lines])).value().clone();
+    assert_eq!(v["blocks"][0]["fallback"]["title"], "journal lines");
+}
+
+#[test]
+fn a_stepper_writes_done_now_and_to_do_steps_and_links_only_a_done_step_that_opens() {
+    let b = Built::new(
+        serde_json::json!({"type": "steps", "id": "s", "title": "Stop 3", "current": "c", "steps": [
+            {"id": "a", "label": "Stop", "sub": "09:42", "tap": {"open": "stop"}},
+            {"id": "b", "label": "Lines", "tap": {"action": "lines"}},
+            {"id": "c", "label": "Proof", "tap": {"open": "proof"}},
+            {"id": "d", "label": "Leave"}
+        ]}),
+    );
+    let h = site::fragment(&b, "/act");
+    assert!(h.starts_with("<div class=\"sp b b-steps\" data-block=\"steps\" data-id=\"s\" role=\"group\" aria-label=\"Stop 3\"><div class=\"sh\">Stop 3</div><ol class=\"spl\">"), "{h}");
+    assert!(h.contains("<li class=\"spi done\"><a class=\"spc tap\" aria-label=\"Stop, step 1 of 4, done\" title=\"Stop\" href=\"stop\"><span class=\"spr\" aria-hidden=\"true\"><i class=\"spm\">✓</i><span class=\"spk\"></span></span><span class=\"spn\">Stop</span><span class=\"sps\">09:42</span></a></li>"), "{h}");
+    assert!(h.contains("<div class=\"spc tap\" aria-label=\"Lines, step 2 of 4, done\" title=\"Lines\" role=\"button\" tabindex=\"0\" data-action=\"lines\">"), "{h}");
+    assert!(h.contains("<li class=\"spi now\" aria-current=\"step\"><div class=\"spc\" aria-label=\"Proof, step 3 of 4, current\" title=\"Proof\"><span class=\"spr\" aria-hidden=\"true\"><i class=\"spm\">3</i><span class=\"spk\"></span></span><span class=\"spn\">Proof</span><span class=\"sps\">step 3 of 4</span></div></li>"), "{h}");
+    assert!(
+        h.contains("<li class=\"spi todo\"><div class=\"spc\" aria-label=\"Leave, step 4 of 4, to do\""),
+        "{h}"
+    );
+    assert!(
+        h.ends_with(
+            "</ol><div class=\"spx\" aria-hidden=\"true\"><b>Proof</b><span class=\"m\">step 3 of 4</span></div></div>"
+        ),
+        "{h}"
+    );
+    let done = Built::new(
+        serde_json::json!({"type": "steps", "id": "s", "done": true, "steps": [{"id": "a", "label": "Stop"}]}),
+    );
+    let h = site::fragment(&done, "/act");
+    assert!(
+        h.contains("<li class=\"spi done\"><div class=\"spc\" aria-label=\"Stop, step 1 of 1, done\""),
+        "{h}"
+    );
+    assert!(h.contains("<b>All done</b><span class=\"m\">1 of 1</span>"), "{h}");
+}
+
+#[test]
+fn bars_write_a_clamped_progressbar_each_and_no_steps_or_no_bars_write_the_fallback() {
+    let b = Built::new(
+        serde_json::json!({"type": "steps", "id": "p", "title": "Week 47", "bars": [
+            {"label": "Boiler", "value": 130, "tone": "ok", "sub": "done Mon"},
+            {"label": "Lights", "value": 0}
+        ]}),
+    );
+    let h = site::fragment(&b, "/act");
+    assert!(h.starts_with("<div class=\"pg b b-steps\" data-block=\"steps\" data-id=\"p\" role=\"group\" aria-label=\"Week 47\"><div class=\"sh\">Week 47</div><div class=\"pgl rows\">"), "{h}");
+    assert!(h.contains("<div class=\"pgr ok\" role=\"progressbar\" aria-valuemin=\"0\" aria-valuemax=\"100\" aria-valuenow=\"100\" aria-label=\"Boiler\" aria-valuetext=\"100%, done Mon\"><span class=\"pgn\">Boiler</span><span class=\"pgv\">100%</span><span class=\"pgt\" style=\"--v:100\"><b></b></span><span class=\"pgs\">done Mon</span></div>"), "{h}");
+    assert!(h.contains("<div class=\"pgr zero\" role=\"progressbar\" aria-valuemin=\"0\" aria-valuemax=\"100\" aria-valuenow=\"0\" aria-label=\"Lights\"><span class=\"pgn\">Lights</span><span class=\"pgv\">0%</span>"), "{h}");
+    let one = site::fragment(
+        &Built::new(serde_json::json!({"type": "steps", "id": "p", "bars": [{"label": "Fire", "value": 62}]})),
+        "/act",
+    );
+    assert!(
+        one.contains("<div class=\"pgl\"><div class=\"pgr\" role=\"progressbar\""),
+        "{one}"
+    );
+    for empty in [
+        serde_json::json!({"type": "steps", "id": "e", "steps": [], "fallback": {"title": "No steps yet"}}),
+        serde_json::json!({"type": "steps", "id": "e", "bars": [], "fallback": {"title": "No steps yet"}}),
+        serde_json::json!({"type": "steps", "id": "e", "steps": [{"id": "a", "label": "Stop"}], "fallback": {"title": "No steps yet"}}),
+    ] {
+        let h = site::fragment(&Built::new(empty), "/act");
+        assert!(
+            h.starts_with("<div class=\"b b-steps\" data-block=\"steps\" data-id=\"e\" data-fallback=\"\""),
+            "{h}"
+        );
+        assert!(h.contains("No steps yet"), "{h}");
+    }
+}
+
+#[test]
+fn a_link_that_is_not_http_https_mailto_or_relative_is_dropped_and_its_text_drawn() {
+    let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
+    let text = std::fs::read_to_string(root.join("fixtures/links/screen.json")).unwrap();
+    let f: serde_json::Value = serde_json::from_str(&text).unwrap();
+    let html = site::fragment(&Built::new(f["screen"].clone()), "/act");
+    let low = html.to_ascii_lowercase();
+    for bad in ["javascript:", "href=\"data:", "href=\" "] {
+        assert!(!low.contains(bad), "{bad} in {html}");
+    }
+    for want in f["texts"].as_array().unwrap() {
+        assert!(html.contains(want.as_str().unwrap()), "{want} not in {html}");
+    }
+    for good in ["https://example.org/a", "mailto:ops@example.org", "/docs", "/about"] {
+        assert!(
+            html.contains(&format!("href=\"{good}\"")),
+            "{good} not linked in {html}"
+        );
+    }
+}

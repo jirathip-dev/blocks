@@ -1,0 +1,5 @@
+.stats{display:flex;flex-wrap:wrap;gap:var(--seam);margin:var(--seam) 0}
+.st{flex:1 1 0;min-width:max-content;overflow-wrap:normal;display:flex;flex-direction:column;padding:var(--s2)}
+.st b{font-size:var(--fs)}.st .m{font-size:var(--fs-meta)}
+.st.warn b{color:var(--a)}
+.spark{width:100%;height:var(--s3);fill:none;stroke:var(--l)}

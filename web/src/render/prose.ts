@@ -1,5 +1,5 @@
 import type { Part, Prose, Span } from "../gen/types.ts";
-import { el, h } from "./index.ts";
+import { el, h, linkable } from "./index.ts";
 
 const MARKS = [["code", "code"], ["i", "italic"], ["b", "bold"]] as const;
 const HEADS = ["h1", "h2", "h3", "h4", "h5", "h6"] as const;
@@ -8,7 +8,7 @@ const spans = (ss: Span[]): Node[] =>
   ss.map((s) => {
     let n: Node = document.createTextNode(s.text);
     for (const [tag, k] of MARKS) if (s[k]) n = h(tag, "", n);
-    return s.link != null ? Object.assign(h("a", "", n), { href: s.link }) : n;
+    return s.link != null && linkable(s.link) ? Object.assign(h("a", "", n), { href: s.link }) : n;
   });
 
 function part(p: Part): HTMLElement {

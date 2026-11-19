@@ -1,0 +1,70 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Layout · blocks</title><meta name="description" content="One layout.json, drawn for a phone and for a wide window."><meta property="og:title" content="Layout · blocks"><meta property="og:description" content="One layout.json, drawn for a phone and for a wide window.">
+<meta property="og:url" content="https://jirathip-dev.github.io/blocks/layout/"><meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="../neutral-default/tokens.css"><link rel="stylesheet" href="../../../web/src/blocks.css"><link rel="stylesheet" href="../showcase/site.css"><link rel="stylesheet" href="layout.css"></head>
+<body class="layout"><main><div class="scr b b-screen" data-block="screen" data-id="layout"><p class="tabh"><span class="tw b-screen__title">Layout</span></p>
+<nav class="nav b b-nav" data-block="nav" data-id="nav"><a class="brand" href="../showcase/index.html">blocks</a><a href="../showcase/gallery.html">gallery</a><a href="../showcase/schemes.html">schemes</a><a href="../showcase/numbers.html">numbers</a><a href="../showcase/behaviours.html">behaviours</a><a href="../showcase/islands.html">islands</a><a href="layout.html" aria-current="page">layout</a><a href="https://github.com/jirathip-dev/blocks">github</a></nav><div class="txt b b-text" data-block="text" data-id="intro">One <code>layout.json</code> places the same screens for a phone and for a wide window. Flip the size class: nothing is redrawn, the screens only move.</div><div class="b b-section bar-size" data-block="section" data-id="switch"><span class="lbl2">Size class</span><div class="chips b b-chips sw" data-block="chips" data-id="size" role="group" aria-label="size class"><button type="button" data-size="compact" aria-pressed="false"><span>compact</span></button><button type="button" data-size="wide" aria-pressed="false"><span>wide</span></button></div><span class="ok"><span class="mk g"></span>passes <code>layout::check</code> against the site's contract</span></div><div class="lay"><div class="left"><section class="sec b b-section drawn" data-block="section" data-id="drawn"><h3 class="sh ">Drawn · <span data-on="compact">compact: a phone</span><span data-on="wide">wide: a tablet or a desktop</span></h3><div class="stage"><div class="app" role="group" aria-label="the layout, drawn">
+<section class="b-part" data-screen="today" data-block="screen" data-id="today" aria-label="Today"><p class="tabh"><span class="tw b-screen__title">Today</span><span class="pl"><span data-on="compact">strip</span><span data-on="wide">panel</span></span></p><div class="stats b b-stat" data-block="stat" data-id="t-figs"><div class="st"><b class="b-stat__value">3</b><span class="m">to water</span></div><div class="st"><b class="b-stat__value">12</b><span class="m">plants</span></div><div class="st"><b class="b-stat__value">4<small>mm</small></b><span class="m">rain tonight</span></div></div><div class="list b b-list" data-block="list" data-id="t-jobs"><div class="row b b-row" data-block="row" data-id="j1"><span class="mk a"></span><span class="rm"><span class="rt b-row__title">Water the basil</span><span class="rs b-row__subtitle ">dry since Monday</span></span><span class="rv b-row__value">now</span></div><div class="row b b-row" data-block="row" data-id="j2"><span class="rm"><span class="rt b-row__title">Turn the lemon tree</span><span class="rs b-row__subtitle ">leaning to the window</span></span><span class="rv b-row__value">today</span></div><div class="row b b-row" data-block="row" data-id="j3"><span class="rm"><span class="rt b-row__title">Repot the fern</span><span class="rs b-row__subtitle ">roots out of the base</span></span><span class="rv b-row__value">Sat</span></div></div></section><section class="b-part" data-screen="plants" data-block="screen" data-id="plants" aria-label="Plants"><p class="tabh"><span class="tw b-screen__title">Plants</span><span class="pl"><span data-on="compact">strip</span><span data-on="wide">column</span></span></p><div class="list b b-list" data-block="list" data-id="p-all"><div class="row b b-row" data-block="row" data-id="basil"><span class="mk a"></span><span class="rm"><span class="rt b-row__title">Basil</span><span class="rs b-row__subtitle ">kitchen sill</span></span><span class="rv b-row__value">dry</span></div><div class="row b b-row" data-block="row" data-id="fern"><span class="mk g"></span><span class="rm"><span class="rt b-row__title">Fern</span><span class="rs b-row__subtitle ">bathroom</span></span><span class="rv b-row__value">fine</span></div><div class="row b b-row" data-block="row" data-id="lemon"><span class="mk g"></span><span class="rm"><span class="rt b-row__title">Lemon tree</span><span class="rs b-row__subtitle ">living room</span></span><span class="rv b-row__value">fine</span></div><div class="row b b-row" data-block="row" data-id="monstera"><span class="mk g"></span><span class="rm"><span class="rt b-row__title">Monstera</span><span class="rs b-row__subtitle ">hall</span></span><span class="rv b-row__value">fine</span></div><div class="row b b-row" data-block="row" data-id="rosemary"><span class="mk a"></span><span class="rm"><span class="rt b-row__title">Rosemary</span><span class="rs b-row__subtitle ">balcony</span></span><span class="rv b-row__value">dry</span></div><div class="row b b-row" data-block="row" data-id="mint"><span class="mk g"></span><span class="rm"><span class="rt b-row__title">Mint</span><span class="rs b-row__subtitle ">balcony</span></span><span class="rv b-row__value">fine</span></div></div></section><section class="b-part" data-screen="weather" data-block="screen" data-id="weather" aria-label="Weather"><p class="tabh"><span class="tw b-screen__title">Weather</span><span class="pl"><span data-on="compact">sheet</span><span data-on="wide">cards</span></span></p><div class="stats b b-stat" data-block="stat" data-id="w-rain"><div class="st"><b class="b-stat__value">4<small>mm</small></b><span class="m">rain tonight, from 21:00</span></div></div><div class="txt b b-text" data-block="text" data-id="w-note">Skip the balcony pots: the rain waters them.</div></section>
+<div class="scrim" aria-hidden="true"></div>
+<nav class="b-tabs"><button class="b-tab on" type="button" data-on="compact"><span>today</span></button><button class="b-tab" type="button" data-on="compact"><span>plants</span></button><button class="b-tab b-menu" type="button"><span>menu</span></button><span class="pl"><span data-on="compact">menu</span><span data-on="wide">menu</span></span></nav>
+</div></div></section><section class="sec b b-section" data-block="section" data-id="where"><h3 class="sh ">Where each screen goes</h3><div class="list b b-list" data-block="list" data-id="where"><div class="row b b-row" data-block="row" data-id="r-today"><span class="rm"><span class="rt b-row__title">Today</span><span class="rs b-row__subtitle ">a tab · the main panel</span></span><span class="rv b-row__value"><span class="pl"><span data-on="compact">strip</span><span data-on="wide">panel</span></span></span></div><div class="row b b-row" data-block="row" data-id="r-plants"><span class="rm"><span class="rt b-row__title">Plants</span><span class="rs b-row__subtitle ">a tab · a column at the side</span></span><span class="rv b-row__value"><span class="pl"><span data-on="compact">strip</span><span data-on="wide">column</span></span></span></div><div class="row b b-row" data-block="row" data-id="r-weather"><span class="rm"><span class="rt b-row__title">Weather</span><span class="rs b-row__subtitle ">a sheet over the page · a card at the side</span></span><span class="rv b-row__value"><span class="pl"><span data-on="compact">sheet</span><span data-on="wide">cards</span></span></span></div><div class="row b b-row" data-block="row" data-id="r-settings"><span class="rm"><span class="rt b-row__title">Settings</span><span class="rs b-row__subtitle ">behind menu, on both</span></span><span class="rv b-row__value"><span class="pl"><span data-on="compact">menu</span><span data-on="wide">menu</span></span></span></div></div></section></div><section class="sec b b-section file" data-block="section" data-id="file"><h3 class="sh ">layout.json</h3><div class="prose b b-prose" data-block="prose" data-id="json"><pre class="json"><code class="lang-json">{
+  "format": 1,
+  "root": {
+    "type": "nav",
+    "slots": {
+      "main": [
+        {
+          "type": "screen",
+          "source": "garden",
+          "path": "/screens/today",
+          "id": "today",
+          "label": "Today",
+          "place": {
+            "compact": <mark data-on="compact">"strip"</mark>,
+            "wide": <mark data-on="wide">"panel"</mark>
+          }
+        },
+        {
+          "type": "screen",
+          "source": "garden",
+          "path": "/screens/weather",
+          "id": "weather",
+          "label": "Weather",
+          "transition": "sheet",
+          "place": {
+            "compact": <mark data-on="compact">"sheet"</mark>,
+            "wide": <mark data-on="wide">"cards"</mark>
+          }
+        }
+      ],
+      "side": [
+        {
+          "type": "screen",
+          "source": "garden",
+          "path": "/screens/plants",
+          "id": "plants",
+          "label": "Plants",
+          "place": {
+            "compact": <mark data-on="compact">"strip"</mark>,
+            "wide": <mark data-on="wide">"column"</mark>
+          }
+        }
+      ],
+      "menu": [
+        {
+          "type": "screen",
+          "source": "garden",
+          "path": "/screens/settings",
+          "id": "settings",
+          "label": "Settings",
+          "place": <mark>"menu"</mark>
+        }
+      ]
+    }
+  }
+}</code></pre></div></section></div><section class="sec b b-section" data-block="section" data-id="contract"><h3 class="sh ">Checked when the site builds</h3><div class="grid2"><div class="txt b b-text" data-block="text" data-id="c-why">The site declares its own contract: no components beyond <code>nav</code>, and one screen no file may place. A file that breaks a rule stops the build, with its line and column.</div><div class="b c-code"><div class="prose b b-prose" data-block="prose" data-id="contract"><pre><code class="lang-rust">const GARDEN: Contract = Contract {
+    components: &amp;[],
+    locked: &amp;["/screens/account"],
+};
+layout::check(LAYOUT_JSON, &amp;GARDEN)?</code></pre></div><div class="state"><b>refused</b> layout.json:14:24 · root.slots.main[0]: unknown place "tabs"</div></div></div></section><div class="txt b b-text foot" data-block="text" data-id="foot">Every page here is a blocks <code>Screen</code>, written by <code>site::page</code>. No hand-written HTML. <a href="https://github.com/jirathip-dev/blocks">Source on GitHub</a>.</div></div></main>
+<script src="layout.js"></script></body></html>

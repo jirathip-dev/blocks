@@ -255,7 +255,10 @@ pub fn css(schemes: &PerMode<Scheme>, style: &Style) -> String {
         ":root{{color-scheme:light dark;--space:{};--motion:{};{}{}}}@media (prefers-color-scheme: dark){{:root{{{}}}}}",
         f64::from(style.space),
         f64::from(style.motion),
-        DEFAULT_STYLE.iter().map(|(k, v)| format!("{k}:{v};")).collect::<String>(),
+        std::collections::BTreeMap::from(DEFAULT_STYLE)
+            .iter()
+            .map(|(k, v)| format!("{k}:{v};"))
+            .collect::<String>(),
         vars(&schemes.light),
         vars(&schemes.dark)
     )

@@ -13,6 +13,7 @@
   "hero": { "long": ["title", "subtitle", "caption", "label"], "empty": "actions", "why": "a hero has a few calls to action, never hundreds" },
   "images": { "empty": "items", "many": "items", "why": "an image's alt is not drawn as text" },
   "island": { "long": ["title"], "why": "its props belong to the app's component: no rows the kind draws" },
+  "lines": { "long": ["label", "memo", "message"], "empty": "items", "many": "items" },
   "list": { "long": ["title", "subtitle", "value", "summary", "name", "markdown", "label"], "empty": "rows", "many": "rows" },
   "media": { "long": ["caption"], "why": "one picture: nothing to empty or repeat" },
   "nav": { "long": ["label"], "empty": "links", "why": "a nav bar holds a few links, never hundreds" },
@@ -24,7 +25,9 @@
   "secret": { "long": ["label"], "why": "one secret field: no rows to empty or repeat" },
   "section": { "long": ["header", "markdown"], "empty": "blocks", "many": "blocks" },
   "sheet": { "long": ["title", "markdown"], "empty": "blocks", "many": "blocks" },
+  "steps": { "long": ["title", "label", "sub"], "empty": "steps", "many": "steps" },
   "stat": { "long": ["label"], "why": "one number and its label: nothing to empty or repeat" },
+  "table": { "long": ["title", "label", "client"], "empty": "rows", "many": "rows" },
   "text": { "long": ["markdown"], "why": "one text: its empty is no block at all" },
   "web": { "why": "an embedded page: its text and rows are the page's, not the kind's" }
 }

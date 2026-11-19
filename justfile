@@ -10,6 +10,7 @@ gen: web-install
     npm --prefix web run build
     BLOCKS_GEN=1 cargo test -q --locked -p blocks --test sim generated
     BLOCKS_GEN=1 cargo test -q --locked -p blocks --test fixtures every_kind_has_a_stress_row
+    BLOCKS_GEN=1 cargo test -q --locked -p blocks --test theme css_writes_each_fixtures_css_file
 
 fmt:
     cargo fmt --check
@@ -64,11 +65,13 @@ web: web-install
 arch:
     {{drover}} arch-check ${BASE:+--base "$BASE"} ${PR_BODY:+--pr-body "$PR_BODY"}
     DROVER={{drover}} sh scripts/arch-size.test.sh
+    DROVER={{drover}} sh scripts/arch-ban.test.sh
 
-# The line cap in ci/cap.toml (non-test, non-generated Rust, TS and Swift; CI's cap workflow) and the 30-line rules file.
+# The line cap in ci/cap.toml (non-test, non-generated Rust, TS and Swift; CI's cap workflow), the For apps check's test and the 30-line rules file.
 cap:
     sh scripts/line-cap.sh
     sh scripts/line-cap.test.sh
+    sh scripts/for-apps.test.sh
     test "$(wc -l < .drover/rules.md)" -le 30 || { echo ".drover/rules.md is over 30 lines"; exit 1; }
 
 actionlint:

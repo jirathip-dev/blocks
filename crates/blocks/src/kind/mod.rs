@@ -7,13 +7,17 @@ use crate::expr::{Expr, State};
 
 #[macro_use]
 mod macros;
+mod chart;
 mod content;
 mod parts;
 mod sample;
+mod table;
 
+pub use chart::*;
 pub use content::*;
 pub use parts::*;
 pub use sample::samples;
+pub use table::*;
 
 kind! {
     /// A whole screen.
@@ -295,31 +299,38 @@ kind! {
 }
 
 kind! {
-    /// A chart of named series over x values: bar, stacked, line, combo or donut.
-    pub struct Chart {
+    /// A stepper of named steps with its current one, or progress bars.
+    pub struct Steps {
         id: Option<String>,
-        title: String,
-        chart: ChartKind,
-        x: Vec<String>,
-        series: Vec<Series>,
-        era: Option<Era>,
-        format: Option<ChartFormat>,
-        lang: Option<String>,
-        selected: Option<String>,
-        empty: Option<String>,
-        tap: Option<Tap>,
+        title: Option<String>,
+        steps: Option<Vec<Stage>>,
+        current: Option<String>,
+        done: Option<bool>,
+        bars: Option<Vec<Bar>>,
+        fallback: Option<Fallback>,
     }
 }
 
-impl Chart {
-    /// Why the chart is unfit to send: over 5 series, or a donut of other than one.
-    #[must_use]
-    pub fn unfit(&self) -> Option<String> {
-        let n = self.series.len();
-        if n > 5 {
-            return Some(format!("a chart of {n} series: at most 5"));
-        }
-        (self.chart == ChartKind::Donut && n > 1).then(|| format!("a donut of {n} series: one, over its slices"))
+kind! {
+    /// Repeating rows of fields with add and remove, running totals and a balance check.
+    pub struct Lines {
+        id: Option<String>,
+        name: String,
+        label: Option<String>,
+        action: Option<String>,
+        columns: Vec<Field>,
+        items: Vec<LineItem>,
+        calc: Option<BTreeMap<String, Expr>>,
+        sum: Option<Vec<String>>,
+        balance: Option<[String; 2]>,
+        scale: Option<u8>,
+        min: Option<u32>,
+        max: Option<u32>,
+        #[serde(rename = "add")]
+        adds: Option<String>,
+        empty: Option<String>,
+        errors: Option<Vec<RowError>>,
+        submit: Option<Submit>,
     }
 }
 
@@ -402,11 +413,14 @@ kinds! {
     Editor(Editor) = "editor",
     Scene(Scene) = "scene",
     Diagram(Diagram) = "diagram",
-    Chart(Chart) = "chart",
     Composer(Composer) = "composer",
+    Lines(Lines) = "lines",
     Prose(Prose) = "prose",
     Hero(Hero) = "hero",
     Media(Media) = "media",
     Nav(Nav) = "nav",
     Island(Island) = "island",
+    Table(Table) = "table",
+    Steps(Steps) = "steps",
+    Chart(Chart) = "chart",
 }

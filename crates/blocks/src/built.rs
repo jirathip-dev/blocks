@@ -2,7 +2,7 @@ use std::collections::{BTreeMap, BTreeSet};
 
 use serde_json::{Map, Value};
 
-use crate::kind::{Block, Fallback, Fields, Screen, Tap};
+use crate::kind::{Block, Fallback, Fields, Screen, Steps, Table, Tap};
 
 /// What makes a screen unfit to send: a server checks its own before it serves it.
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -40,6 +40,10 @@ pub enum Fault {
     State {
         key: String,
     },
+    Link {
+        at: String,
+        url: String,
+    },
 }
 
 /// A screen as it goes on the wire: typed in with its fallbacks written, or read in as JSON.
@@ -48,9 +52,24 @@ pub struct Built(Value);
 
 const LISTS: [&str; 3] = ["blocks", "rows", "buttons"];
 const DRAWN: [&str; 3] = ["row", "text", "island"];
+const LINKS: [&str; 5] = ["url", "href", "link", "open", "src"];
+
+pub(crate) fn linkable(url: &str) -> bool {
+    let head = url.split(['/', '?', '#']).next().unwrap_or_default();
+    head.split_once(':').is_none_or(|(scheme, _)| {
+        let bare = scheme.chars().filter(|c| *c > ' ' && !c.is_control());
+        ["http", "https", "mailto"]
+            .iter()
+            .any(|s| bare.clone().map(|c| c.to_ascii_lowercase()).eq(s.chars()))
+    })
+}
 
 fn placed(o: &Fields) -> impl Iterator<Item = (String, &Value)> {
-    let lists = LISTS.iter().filter_map(|k| Some(((*k).to_string(), o.get(*k)?)));
+    let rows = kind(o) != "table";
+    let lists = LISTS
+        .iter()
+        .filter(move |k| rows || **k != "rows")
+        .filter_map(|k| Some(((*k).to_string(), o.get(*k)?)));
     let rounds = o.get("rounds").and_then(Value::as_array).into_iter().flatten();
     let in_rounds = rounds
         .enumerate()
@@ -62,7 +81,16 @@ fn placed(o: &Fields) -> impl Iterator<Item = (String, &Value)> {
 }
 
 pub(crate) fn children(o: &Fields) -> impl Iterator<Item = &Value> {
-    placed(o).map(|(_, v)| v)
+    let rounds = o.get("rounds").and_then(Value::as_array).into_iter().flatten();
+    let in_rounds = rounds.filter_map(|r| r.get("blocks"));
+    let rows = kind(o) != "table";
+    LISTS
+        .iter()
+        .filter(move |k| rows || **k != "rows")
+        .filter_map(|k| o.get(*k))
+        .chain(in_rounds)
+        .filter_map(Value::as_array)
+        .flatten()
 }
 
 fn kind(o: &Fields) -> &str {
@@ -70,6 +98,10 @@ fn kind(o: &Fields) -> &str {
 }
 
 fn plain(o: &Fields) -> Fallback {
+    let table = (kind(o) == "table").then(|| serde_json::from_value::<Table>(Value::Object(o.clone())).ok());
+    if let Some(t) = table.flatten() {
+        return t.fallback();
+    }
     let text = |k: &str| o.get(k).and_then(Value::as_str).filter(|s| !s.is_empty());
     let named = [
         "title", "label", "header", "question", "name", "file", "command", "source", "src",
@@ -119,6 +151,21 @@ fn shallow(o: &Fields) -> Value {
         }
     }
     Value::Object(top)
+}
+
+fn unplaced(s: &Steps) -> Option<&'static str> {
+    let steps = s.steps.as_deref().unwrap_or_default();
+    let at = s.current.as_ref().map(|c| steps.iter().any(|x| &x.id == c));
+    if steps.is_empty() {
+        return None;
+    }
+    match (s.bars.is_some(), at, s.done == Some(true)) {
+        (true, ..) => Some("a steps block with both steps and bars"),
+        (false, Some(false), _) => Some("a stepper whose current names no step"),
+        (false, Some(true), true) => Some("a stepper both done and at a current step"),
+        (false, None, false) => Some("a stepper with neither a current step nor done"),
+        (false, Some(true), false) | (false, None, true) => None,
+    }
 }
 
 struct Walk<'a> {
@@ -177,6 +224,12 @@ impl Walk<'_> {
         let inner = |x: &Value, k: &dyn std::fmt::Display| (x.is_object() || x.is_array()).then(|| format!("{at}/{k}"));
         match v {
             Value::Object(o) => {
+                let links = LINKS.iter().filter_map(|k| o.get(*k).and_then(Value::as_str));
+                let bad = links.filter(|u| !linkable(u)).map(|u| Fault::Link {
+                    at: at.into(),
+                    url: u.into(),
+                });
+                self.out.extend(bad.collect::<Vec<_>>());
                 if let Some(a) = o.get("action").and_then(Value::as_str) {
                     let key = (scope.to_string(), a.to_string());
                     if let Some(first) = self.acts.insert(key, at.into()) {
@@ -217,10 +270,12 @@ impl Walk<'_> {
                     field: f.clone(),
                 });
                 self.out.extend(faults.collect::<Vec<_>>());
-                if let Block::Chart(c) = &b {
-                    let why = c.unfit();
-                    self.out.extend(why.map(|why| Fault::Shape { kind: k.into(), why }));
-                }
+                let why = match &b {
+                    Block::Steps(s) => unplaced(s).map(Into::into),
+                    Block::Chart(c) => c.unfit(),
+                    _ => None,
+                };
+                self.out.extend(why.map(|why| Fault::Shape { kind: k.into(), why }));
             }
         }
         let chip = o.get("name").and_then(Value::as_str);
@@ -238,7 +293,7 @@ fn gets<'a>(v: &'a Value, out: &mut Vec<&'a str>) {
     match v {
         Value::Object(o) => match (o.len(), o.get("get").and_then(Value::as_str)) {
             (1, Some(k)) => out.push(k),
-            _ => o.values().for_each(|x| gets(x, out)),
+            _ => o.iter().filter(|(k, _)| *k != "calc").for_each(|(_, x)| gets(x, out)),
         },
         Value::Array(a) => a.iter().for_each(|x| gets(x, out)),
         _ => {}

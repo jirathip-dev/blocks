@@ -20,3 +20,6 @@
 - don't add a kind without its stress fixtures: long-text, empty and many-row where the table says they apply (enforced by: a test over the generated Kind list; CI web and swift harness checks)
 - don't stress the shared host from a lane: no `yes`, `stress` or busy loops, no N parallel copies; cap the run or reproduce under load in CI (enforced by: hook HOST_STRESS)
 - don't change expr, behave, patch or mirror in one language without the cross-language fixtures passing (enforced by: CI rust test, CI web and CI swift on fixtures/protocol and fixtures/behave with the fixed seeds per PR; CI sim nightly across the three languages, .github/workflows/sim.yml)
+- don't change the schema, the wire, a builder or the look without a For apps line in the PR body (enforced by: CI, the For apps check)
+- don't let an app replace a core kind's view (enforced by: Built::check's Clash fault; the app-kind registration refuses a core kind's name in web and SwiftUI)
+- don't change the look without the measured look check passing (enforced by: CI web and swift, the look check on fixtures/look)

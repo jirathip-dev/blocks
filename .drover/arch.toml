@@ -1,4 +1,11 @@
-frozen = ["ci/cap.toml"]
+frozen = [
+    "ci/cap.toml",
+    "docs/schema.md",
+    "swift/Sources/BlocksUI/Blocks.swift",
+    "swift/Sources/BlocksUI/BlockCards.swift",
+    "swift/Sources/BlocksUI/BlockLeaves.swift",
+    "web/src/blocks.css",
+]
 generated = [
     "schema/blocks.schema.json",
     "schema/sample.json",
@@ -13,6 +20,8 @@ generated = [
     "web/src/gen/layout.ts",
     "web/dist/blocks.js",
     "web/dist/blocks.css",
+    "web/dist/core.js",
+    "web/dist/types/**",
     "fixtures/blocks/*.json",
     "fixtures/trees/*.json",
     "fixtures/trees/swift/*.json",
@@ -20,20 +29,49 @@ generated = [
     "fixtures/site/*.html",
     "fixtures/protocol/sim-*.json",
     "fixtures/behave/sim.json",
+    "fixtures/css/*.css",
 ]
 generate = "just gen"
-shared = ["crates/blocks/src/lib.rs", "crates/*/tests/support/**"]
+shared = [
+    "crates/blocks/src/lib.rs",
+    "crates/*/tests/support/**",
+    "crates/blocks/src/codegen/mod.rs",
+    "crates/blocks/tests/sim.rs",
+    "web/src/patch.ts",
+    "web/test/patch.test.ts",
+    "web/test/dom.ts",
+    "web/shot/shot.ts",
+    ".drover/arch.toml",
+    "justfile",
+    "README.md",
+]
 
 [[collect]]
 dir = "ci/cap.d"
 glob = "*.toml"
+
+[[collect]]
+dir = "docs"
+glob = "*.md"
+
+[[collect]]
+dir = "docs/schema"
+glob = "*.md"
+
+[[collect]]
+dir = "swift/Sources/BlocksUI/Kind"
+glob = "*.swift"
+
+[[collect]]
+dir = "web/src/css"
+glob = "**/*.css"
 
 [comments]
 policy = "strict"
 except = ["ci/lint-fixtures/**", "web/lint-fixtures/**"]
 
 [docs]
-paths = ["docs/*.md", "README.md"]
+paths = ["docs/*.md", "docs/schema/*.md", "README.md"]
 skip = [".drover/**"]
 
 [[layer]]
@@ -118,7 +156,7 @@ mods = ["crate::web", "blocks::web"]
 
 [[layer]]
 name = "codegen"
-paths = ["crates/blocks/src/codegen.rs", "crates/blocks/src/bin/**"]
+paths = ["crates/blocks/src/codegen/**", "crates/blocks/src/bin/**"]
 mods = ["crate::codegen", "blocks::codegen"]
 may_use = ["expr", "kind", "built", "wire", "patch", "diff", "shelf", "mirror", "theme", "layout", "behave", "tree", "site"]
 
@@ -164,7 +202,7 @@ reason = "the library is pure: it starts no process"
 [[ban]]
 pattern = "std::fs"
 paths = ["crates/*/src/**"]
-except = ["crates/blocks/src/codegen.rs"]
+except = ["crates/blocks/src/codegen/**"]
 reason = "the library is pure: only codegen writes files"
 
 [[ban]]
@@ -203,6 +241,21 @@ pattern = "document."
 paths = ["web/src/stream.ts"]
 reason = "the stream touches no DOM; the patcher does"
 
+[[ban]]
+pattern = "document."
+paths = ["web/src/core/**"]
+reason = "the core is framework-neutral: it computes, a renderer draws"
+
+[[ban]]
+pattern = "render/"
+paths = ["web/src/core/**"]
+reason = "the core never imports a renderer; renderers and adapters import the core"
+
+[[ban]]
+pattern = "from \"react"
+paths = ["web/src/**", "web/shot/shot.ts"]
+reason = "React lives in web/react and its harness boot only"
+
 [[size]]
 paths = ["crates/*/src/**/*.rs"]
 max_file_lines = 1000
@@ -231,3 +284,23 @@ max_fn_lines = 80
 [[size]]
 paths = ["swift/Tests/**/*.swift"]
 max_file_lines = 1000
+
+[[size]]
+paths = ["web/src/patch.ts", "web/test/patch.test.ts", "web/test/dom.ts", "web/shot/shot.ts"]
+max_file_lines = 200
+
+[[size]]
+paths = ["crates/blocks/tests/sim.rs"]
+max_file_lines = 520
+
+[[size]]
+paths = [".drover/arch.toml", "justfile"]
+max_file_lines = 300
+
+[[size]]
+paths = ["README.md"]
+max_file_lines = 70
+
+[[size]]
+paths = ["crates/blocks/src/codegen/mod.rs"]
+max_file_lines = 80

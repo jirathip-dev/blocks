@@ -23,34 +23,6 @@ words!(Tone {
     Fail,
     Idle
 });
-words!(ChartKind {
-    Bar,
-    Stacked,
-    Line,
-    Combo,
-    Donut
-});
-words!(Era { Ce, Be });
-words!(ChartFormat {
-    Count,
-    Thb,
-    #[serde(rename = "thb_m")]
-    ThbM,
-    Percent
-});
-words!(SeriesMark { Bar, Line });
-
-wire! {
-    /// One named series of a chart: a value per x, its tone, a combo's mark and a dashed line.
-    pub struct Series {
-        name: String,
-        values: Vec<Number>,
-        tone: Option<Tone>,
-        #[serde(rename = "as")]
-        mark: Option<SeriesMark>,
-        dash: Option<bool>,
-    }
-}
 words!(LaneState {
     Working,
     Needs,
@@ -378,6 +350,26 @@ wire! {
 }
 
 wire! {
+    /// One step of a stepper: a done one with a tap can be pressed.
+    pub struct Stage {
+        id: String,
+        label: String,
+        sub: Option<String>,
+        tap: Option<Tap>,
+    }
+}
+
+wire! {
+    /// One progress bar: its value from 0 to 100 and its tone.
+    pub struct Bar {
+        label: String,
+        value: u8,
+        tone: Option<Tone>,
+        sub: Option<String>,
+    }
+}
+
+wire! {
     /// One image.
     pub struct Image {
         src: String,
@@ -398,6 +390,23 @@ wire! {
     /// An editor's error on a line.
     pub struct LineError {
         line: i64,
+        message: String,
+    }
+}
+
+wire! {
+    /// One row of a `lines` block: its id and its values by column name.
+    pub struct LineItem {
+        id: String,
+        values: Fields,
+    }
+}
+
+wire! {
+    /// An app's check on a `lines` block: on a row and a column, or on the whole block.
+    pub struct RowError {
+        row: Option<String>,
+        name: Option<String>,
         message: String,
     }
 }

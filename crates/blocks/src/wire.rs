@@ -5,10 +5,10 @@ use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
-use crate::kind::{Block, Fields, Lane, Round};
+use crate::kind::{Block, Fields, Lane, Round, TableRow};
 use crate::SCHEMA_VERSION;
 
-/// What an `insert` adds: a block, or a scene's lane or a row's round.
+/// What an `insert` adds: a block, a scene's lane, a row's round or a table's row.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
 #[serde(untagged)]
@@ -16,6 +16,7 @@ pub enum Child {
     Block(Block),
     Lane(Box<Lane>),
     Round(Box<Round>),
+    TableRow(Box<TableRow>),
 }
 
 /// One edit to a screen; a block is named by its id.

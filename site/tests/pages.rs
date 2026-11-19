@@ -27,7 +27,7 @@ fn pages(out: &Path) -> Vec<(String, String)> {
 fn every_page_has_its_head_and_no_url_from_the_domain_root() {
     let out = build();
     let all = pages(&out);
-    assert_eq!(all.len(), 6 + 28);
+    assert_eq!(all.len(), 7 + 31);
     for (f, html) in &all {
         for want in [
             "<title>",
@@ -68,9 +68,9 @@ fn the_gallery_counts_every_kind_once_and_finds_its_fallback_group_from_the_rend
         .collect();
     fallback.sort();
     assert_ne!(fallback, Vec::<String>::new());
-    assert!(gallery.contains("All 28 core kinds"));
+    assert!(gallery.contains("All 31 core kinds"));
     assert!(
-        home.contains("<b class=\"b-stat__value\">28</b><span class=\"m\">core kinds"),
+        home.contains("<b class=\"b-stat__value\">31</b><span class=\"m\">core kinds"),
         "home's kind count"
     );
     let group = gallery
@@ -88,4 +88,30 @@ fn the_gallery_counts_every_kind_once_and_finds_its_fallback_group_from_the_rend
         gallery.matches(">No HTML view yet: this is its fallback<").count(),
         fallback.len()
     );
+}
+
+#[test]
+fn the_layout_page_shows_its_layout_json_as_is_and_places_each_screen_on_both_sizes() {
+    let out = build();
+    let html = fs::read_to_string(out.join("layout.html")).unwrap();
+    let data = html.split("id=\"blocks-screen\"").nth(1).unwrap();
+    let data = &data[data.find('>').unwrap() + 1..data.find("</script>").unwrap()];
+    let screen: serde_json::Value = serde_json::from_str(data).unwrap();
+    let file = include_str!("../layout.json").trim_end();
+    assert!(serde_json::to_string(&screen)
+        .unwrap()
+        .contains(&serde_json::to_string(file).unwrap()));
+    for tag in [
+        "at-compact-strip-today",
+        "at-wide-panel-today",
+        "at-compact-strip-plants",
+        "at-wide-column-plants",
+        "at-compact-sheet-weather",
+        "at-wide-cards-weather",
+        "at-compact-menu-settings",
+        "at-wide-menu-settings",
+    ] {
+        assert!(html.contains(&format!("data-id=\"{tag}\"")), "no {tag}");
+    }
+    assert!(html.contains("layout.json:14:24 · root.slots.main[0]: unknown place"));
 }

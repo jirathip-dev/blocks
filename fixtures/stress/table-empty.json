@@ -1,0 +1,70 @@
+{
+  "columns": [
+    {
+      "id": "inv",
+      "kind": "text",
+      "label": "Invoice",
+      "phone": "meta"
+    },
+    {
+      "id": "client",
+      "kind": "text",
+      "label": "Client",
+      "phone": "title",
+      "width": 18
+    },
+    {
+      "id": "status",
+      "kind": "tone",
+      "label": "Status"
+    },
+    {
+      "era": "be",
+      "id": "due",
+      "kind": "date",
+      "label": "Due"
+    },
+    {
+      "digits": 0,
+      "id": "late",
+      "kind": "bar",
+      "label": "Overdue",
+      "max": 60,
+      "tone": "warn",
+      "unit": "days"
+    },
+    {
+      "currency": "THB",
+      "id": "amount",
+      "kind": "money",
+      "label": "Amount",
+      "total": "sum"
+    }
+  ],
+  "empty": "No invoices yet.",
+  "export": [
+    "csv",
+    "xlsx"
+  ],
+  "id": "invoices",
+  "rows": [],
+  "select": {
+    "actions": [
+      {
+        "action": "remind",
+        "label": "send reminder"
+      },
+      {
+        "action": "void",
+        "bad": true,
+        "label": "void"
+      }
+    ]
+  },
+  "sort": {
+    "by": "due",
+    "dir": "asc"
+  },
+  "title": "Invoices",
+  "type": "table"
+}

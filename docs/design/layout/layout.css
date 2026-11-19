@@ -1,0 +1,56 @@
+:root{--app-ease:cubic-bezier(.2,.7,.2,1);--app-move:280ms}
+body[data-size=compact] [data-on=wide],body[data-size=wide] [data-on=compact]{display:none!important}
+
+.bar-size{background:var(--card);border:1px solid var(--edge);padding:12px var(--dot-gap)!important;display:flex!important;align-items:center;flex-wrap:wrap;gap:12px var(--dot-gap)}
+.bar-size .lbl2{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--mute)}
+.bar-size .ok{margin-left:auto;display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--mute)}
+.sw button{min-width:96px}
+.bar-size>.b{background:none;border:0;padding:0}
+.no-js .sw{display:none}
+
+.lay{display:grid;grid-template-columns:minmax(0,1fr) 400px;gap:var(--seam);align-items:start}
+.lay>.left{display:grid;gap:var(--seam);min-width:0}
+.lay .b-section{margin:0}
+.c-code{display:grid;gap:12px}.c-code>.b{background:none;border:0;padding:0}.c-code pre{margin:0}
+.lay>.b-section{margin:0}
+.drawn .stage{display:flex;justify-content:center;align-items:flex-start;padding:var(--dot-gap) 0;
+background:conic-gradient(from 270deg at 2px 2px,var(--line) 25%,transparent 0) 0 0/16px 16px,var(--bg);border:1px solid var(--line)}
+.file pre.json{margin:0;font:12px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace;white-space:pre;overflow-x:auto}
+.file mark{background:none;color:inherit}
+body[data-size=compact] .file mark[data-on=compact],body[data-size=wide] .file mark[data-on=wide],.file mark:not([data-on]){background:var(--l);color:var(--bg);padding:0 2px;margin:0 -2px}
+.file mark[data-on]{display:inline!important}
+
+.app{position:relative;display:grid;overflow:hidden;background:var(--bg);border:1px solid var(--edge);transform-origin:top center;font-size:14px}
+body[data-size=compact] .app{width:360px;height:700px;grid-template:"panel" 1fr "bar" auto/1fr;border-radius:28px;border-width:6px;border-color:var(--fg)}
+body[data-size=wide] .app{width:1024px;height:640px;grid-template:"col panel cards" 1fr "bar bar bar" auto/250px 1fr 290px;gap:1px;background:var(--edge)}
+.b-part{position:relative;display:flex;flex-direction:column;gap:12px;min-width:0;padding:16px;background:var(--bg);overflow:hidden}
+.b-part>.tabh{display:flex;align-items:center;justify-content:space-between;margin:0}
+.b-part>.tabh .tw{font-size:20px;font-weight:650}
+.b-part>.b{background:var(--card);border:1px solid var(--edge);padding:12px;margin:0}
+.b-part>.b-stat{background:none;border:0;padding:0;display:flex;flex-wrap:wrap;gap:2px}
+.b-part .st{padding:10px 12px;flex:1 1 80px}
+.b-part .st b{font-size:22px}
+.pl{font:11px/1 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--mute);border:1px dashed var(--edge);padding:3px 6px;background:var(--card)}
+[data-screen=today]{grid-area:panel}
+[data-screen=plants]{grid-area:col}
+[data-screen=weather]{grid-area:cards}
+body[data-size=wide] [data-screen=weather]{background:var(--bg)}
+body[data-size=compact] [data-screen=plants]{display:none}
+body[data-size=compact] [data-screen=weather]{position:absolute;left:0;right:0;bottom:0;z-index:3;background:var(--card);border-top:1px solid var(--edge);padding-bottom:20px;bottom:49px}
+body[data-size=compact] [data-screen=weather]::before{content:"";align-self:center;width:36px;height:4px;background:var(--edge);margin:-6px 0 2px}
+.scrim{display:none}
+body[data-size=compact] .scrim{display:block;position:absolute;inset:0;z-index:2;background:var(--scrim,#0004)}
+.app .b-tabs{grid-area:bar;position:relative;z-index:4;border-top:1px solid var(--edge)!important;align-items:center;padding:6px 12px;margin:0;background:var(--card);border-top:0}
+body[data-size=wide] .app .b-tabs{justify-content:flex-end}
+.app .b-menu{flex:none}
+body[data-size=compact] .app .b-tab{flex:1}
+.app .b-tabs .pl{margin-left:8px}
+.app .b-tabs button{height:36px;font-size:14px}
+
+@media (max-width:1100px){.lay{grid-template-columns:1fr}}
+@media (max-width:700px){
+.bar-size .ok{margin-left:0;flex-basis:100%}
+.drawn .stage{min-height:0;padding:12px 0}
+
+}
+.b-section[data-id=contract] .grid2{align-items:start}

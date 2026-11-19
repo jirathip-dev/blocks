@@ -1,0 +1,12 @@
+schema/*
+crates/blocks/src/kind/*
+crates/blocks/src/wire.rs
+web/src/gen/*
+swift/Sources/Blocks/Gen/*
+web/src/blocks.css
+web/src/css/*
+crates/blocks/src/theme/*
+web/src/theme.ts
+swift/Sources/BlocksUI/Theme.swift
+swift/Sources/BlocksUI/Style.swift
+swift/Sources/BlocksUI/Look+Style.swift

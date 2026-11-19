@@ -1,8 +1,10 @@
 use super::{
-    Act, Block, Button, Card, CardKind, Chart, ChartFormat, ChartKind, ChipOption, Chips, Choice, ChoiceOption,
-    Composer, Diagram, Diff, Editor, Era, Fallback, Field, FieldKind, Form, Hero, Hunk, Image, Images, Island, Lane,
-    LaneState, Link, List, Media, Nav, NavLink, Part, Prose, Round, RoundLane, Row, Run, Scene, Screen, Secret,
-    Section, Series, SeriesMark, Sheet, Shown, Span, Stat, Tap, Text, Tone, Toned, Web,
+    Act, Block, BulkAction, Button, Card, CardKind, Cell, Chart, ChartFormat, ChartKind, ChipOption, Chips, Choice,
+    ChoiceOption, Column, ColumnKind, Composer, Diagram, Diff, Editor, Era, ExportFormat, Fallback, Field, FieldKind,
+    Form, Hero, Hunk, Image, Images, Island, Keyboard, Label, Lane, LaneState, LineItem, Lines, Link, List, Media, Nav,
+    NavLink, Part, PhonePart, Prose, Round, RoundLane, Row, RowError, Run, Scene, Screen, Secret, Section, Series,
+    SeriesMark, Sheet, Shown, SortDir, Span, Stage, Stat, Steps, Submit, Table, TableRow, TableSelect, TableSort, Tap,
+    Text, Tone, Toned, Total, Web,
 };
 use crate::expr::{Expr, Lit, State};
 
@@ -17,6 +19,18 @@ fn text(id: &str, markdown: &str) -> Block {
     Block::Text(Box::new(Text::new().id(id).markdown(markdown)))
 }
 
+fn step(id: &str, label: &str, sub: &str) -> Stage {
+    Stage {
+        id: id.into(),
+        label: label.into(),
+        sub: Some(sub.into()),
+        tap: Some(Tap {
+            open: Some(id.into()),
+            ..Tap::default()
+        }),
+    }
+}
+
 fn field(name: &str, label: &str) -> Field {
     Field {
         kind: FieldKind::Text,
@@ -24,6 +38,69 @@ fn field(name: &str, label: &str) -> Field {
         label: Some(label.into()),
         ..Field::default()
     }
+}
+
+fn lines() -> Lines {
+    let money = |name: &str, label: &str| Field {
+        keyboard: Some(Keyboard::Number),
+        ..field(name, label)
+    };
+    let account = Field {
+        kind: FieldKind::Picker,
+        options: Some(vec![
+            "6100 Rent".into(),
+            "6200 Utilities".into(),
+            "2100 Payables".into(),
+        ]),
+        ..field("account", "Account")
+    };
+    let row = |id: &str, values: &[(&str, &str)]| LineItem {
+        id: id.into(),
+        values: values.iter().map(|(k, v)| ((*k).to_string(), (*v).into())).collect(),
+    };
+    let rows = vec![
+        row(
+            "l1",
+            &[("account", "6100 Rent"), ("memo", "office rent"), ("debit", "2400")],
+        ),
+        row(
+            "l2",
+            &[("account", ""), ("memo", "power and water"), ("debit", "318.40")],
+        ),
+        row(
+            "l3",
+            &[
+                ("account", "2100 Payables"),
+                ("memo", "landlord"),
+                ("credit", "2668.50"),
+            ],
+        ),
+    ];
+    let columns = vec![
+        account,
+        field("memo", "Description"),
+        money("debit", "Debit"),
+        money("credit", "Credit"),
+    ];
+    let error = RowError {
+        row: Some("l2".into()),
+        name: Some("account".into()),
+        message: "pick an account for line 2".into(),
+    };
+    Lines::new("lines", columns, rows)
+        .id("journal")
+        .label("journal lines")
+        .action("check-journal")
+        .sum(vec!["debit".to_string(), "credit".to_string()])
+        .balance(["debit".to_string(), "credit".to_string()])
+        .min(2_u32)
+        .adds("add line")
+        .errors(vec![error])
+        .submit(Submit {
+            label: "post entry".into(),
+            action: "post-journal".into(),
+            ..Submit::default()
+        })
 }
 
 fn content() -> Vec<Block> {
@@ -124,6 +201,7 @@ fn controls() -> Vec<Block> {
         )),
         Block::Editor(Box::new(Editor::new("notes", "hello", "save-notes").id("editor"))),
         Block::Composer(Box::new(Composer::new("say").id("say").placeholder("message the team"))),
+        Block::Lines(Box::new(lines())),
     ]
 }
 
@@ -230,6 +308,19 @@ fn chart() -> Chart {
     })
 }
 
+fn stepper() -> Vec<Block> {
+    vec![Block::Steps(Box::new(
+        Steps::new()
+            .id("stop")
+            .title("Stop 3 of 8")
+            .steps(vec![
+                step("stop", "Stop", "arrived 09:42"),
+                step("lines", "Lines", "6 checked"),
+            ])
+            .done(true),
+    ))]
+}
+
 fn holders() -> Vec<Block> {
     let shown = Text::new().id("hint").markdown("Ready").show(Expr::Get("ready".into()));
     let state: State = [("ready".to_string(), Lit::Bool(true))].into_iter().collect();
@@ -251,9 +342,135 @@ fn holders() -> Vec<Block> {
     ]
 }
 
+fn invoice(id: &str, client: &str, status: Cell, due: Option<&str>, late: Option<u32>, amount: u32) -> TableRow {
+    let mut cells = std::collections::BTreeMap::from([
+        ("inv".to_string(), Cell::Text(id.into())),
+        ("client".into(), Cell::Text(client.into())),
+        ("status".into(), status),
+        ("amount".into(), Cell::Number(amount.into())),
+    ]);
+    cells.extend(due.map(|d| ("due".into(), Cell::Text(d.into()))));
+    cells.extend(late.map(|l| ("late".into(), Cell::Number(l.into()))));
+    TableRow {
+        id: id.into(),
+        cells,
+        tap: Some(Tap {
+            open: Some(format!("/invoice/{id}")),
+            ..Tap::default()
+        }),
+    }
+}
+
+fn columns() -> Vec<Column> {
+    let col = |id: &str, label: &str, kind: ColumnKind| Column {
+        id: id.into(),
+        label: label.into(),
+        kind,
+        ..Column::default()
+    };
+    vec![
+        Column {
+            phone: Some(PhonePart::Meta),
+            ..col("inv", "Invoice", ColumnKind::Text)
+        },
+        Column {
+            width: Some(18),
+            phone: Some(PhonePart::Title),
+            ..col("client", "Client", ColumnKind::Text)
+        },
+        col("status", "Status", ColumnKind::Tone),
+        Column {
+            era: Some(Era::Be),
+            ..col("due", "Due", ColumnKind::Date)
+        },
+        Column {
+            unit: Some("days".into()),
+            tone: Some(Tone::Warn),
+            max: Some(60.into()),
+            digits: Some(0),
+            ..col("late", "Overdue", ColumnKind::Bar)
+        },
+        Column {
+            currency: Some("THB".into()),
+            total: Some(Total::Sum),
+            ..col("amount", "Amount", ColumnKind::Money)
+        },
+    ]
+}
+
+fn table() -> Block {
+    let label = |text: &str, tone: Tone| {
+        Cell::Label(Label {
+            text: text.into(),
+            tone: Some(tone),
+        })
+    };
+    let rows = vec![
+        invoice(
+            "INV-0133",
+            "Orchard Lane Clinic",
+            label("overdue", Tone::Warn),
+            Some("2026-10-18"),
+            Some(32),
+            48_750,
+        ),
+        invoice(
+            "INV-0136",
+            "Bluepeak Logistics",
+            label("disputed", Tone::Bad),
+            Some("2026-11-05"),
+            Some(14),
+            31_500,
+        ),
+        invoice(
+            "INV-0138",
+            "Saffron & Salt",
+            label("sent", Tone::Done),
+            Some("2026-11-19"),
+            None,
+            18_000,
+        ),
+        invoice(
+            "INV-0139",
+            "Tidewater Bakery",
+            label("paid", Tone::Ok),
+            Some("2026-11-26"),
+            None,
+            15_000,
+        ),
+        invoice(
+            "INV-0143",
+            "Moss Hill School",
+            label("draft", Tone::Mute),
+            None,
+            None,
+            13_500,
+        ),
+    ];
+    let bulk = |action: &str, label: &str, bad: Option<bool>| BulkAction {
+        action: action.into(),
+        label: label.into(),
+        bad,
+    };
+    let select = TableSelect {
+        actions: vec![bulk("remind", "send reminder", None), bulk("void", "void", Some(true))],
+    };
+    let table = Table::new(columns(), rows)
+        .id("invoices")
+        .title("Invoices")
+        .sort(TableSort {
+            by: "due".into(),
+            dir: SortDir::Asc,
+        })
+        .empty("No invoices yet.")
+        .select(select)
+        .export(vec![ExportFormat::Csv, ExportFormat::Xlsx]);
+    Block::Table(Box::new(table))
+}
+
 /// One typed sample per kind, keyed by its `type`; `fixtures/blocks` is written from them.
 pub fn samples() -> Vec<(&'static str, Block)> {
-    let all = [holders(), views(), controls(), content()].concat();
+    let all = [holders(), views(), controls(), content(), stepper(), vec![table()]].concat();
     let kind = |b: &Block| {
         let v = serde_json::to_value(b).ok()?;
         let t = v.get("type")?.as_str()?.to_string();

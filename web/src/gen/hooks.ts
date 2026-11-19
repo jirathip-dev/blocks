@@ -24,13 +24,16 @@ export const hooks: Record<Kind, Hook> = {
     editor: { variant: null, parts: [] },
     scene: { variant: null, parts: [] },
     diagram: { variant: null, parts: ["title"] },
-    chart: { variant: null, parts: ["title"] },
     composer: { variant: null, parts: [] },
+    lines: { variant: null, parts: [] },
     prose: { variant: null, parts: [] },
     hero: { variant: null, parts: ["title", "subtitle", "actions"] },
     media: { variant: null, parts: [] },
     nav: { variant: null, parts: [] },
     island: { variant: null, parts: [] },
+    table: { variant: null, parts: ["title"] },
+    steps: { variant: null, parts: ["title"] },
+    chart: { variant: null, parts: ["title"] },
 };
 
 export const roles: Record<string, string> = { section: "region", form: "form", config: "form", nav: "navigation", chart: "figure" };
