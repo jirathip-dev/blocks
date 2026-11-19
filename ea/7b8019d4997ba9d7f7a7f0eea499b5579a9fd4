@@ -1,0 +1,33 @@
+Decided: split only the three files the issue names; the other Block*.swift files stay for their own issue
+Because: "the BlocksUI view files (`Blocks.swift`, `BlockCards.swift`, `BlockLeaves.swift`) split into"
+Rejected: moving BlockContent, BlockFields, BlockEdits and the rest too — outside this issue's named files and frozen lines
+Decided: RelativeText, Pill and String.date go to Components.swift because two or more kinds use them
+Because: swift/Sources/BlocksUI/Components.swift:73
+Decided: ToolbarItemView with Screen, MissingPoster with Card, Sparkline with Stat; Palette.tone to Theme.swift
+Because: swift/Sources/BlocksUI/Kind/Screen.swift:34
+Check: sorted non-blank non-import lines of the old three plus Theme and Components equal the new files'
+Owner: The Swift views are reorganised one kind per file; nothing changes on screen.
+
+Decided: split only the three files the issue names; the other Block*.swift files, BlockTable.swift included, stay for their own issue
+Because: "the BlocksUI view files (`Blocks.swift`, `BlockCards.swift`, `BlockLeaves.swift`) split into"
+Rejected: moving BlockTable.swift into Kind/ in this merge — outside this issue's named files, like BlockSteps and the rest
+Decided: staging's table case goes into the switch in BlockNode.swift, since Blocks.swift stays deleted and frozen
+Because: swift/Sources/BlocksUI/BlockNode.swift:56
+Decided: arch.toml keeps both sides' frozen entries and both new collect blocks
+Because: .drover/arch.toml:61
+Decided: RelativeText, Pill and String.date go to Components.swift because two or more kinds use them
+Because: swift/Sources/BlocksUI/Components.swift:73
+Check: the switch in BlockNode.swift covers every Block case, table included; swift test passes
+Owner: The Swift views are reorganised one kind per file; nothing changes on screen.
+
+Decided: split only the three files the issue names; the other Block*.swift files, BlockTable.swift included, stay for their own issue
+Because: "the BlocksUI view files (`Blocks.swift`, `BlockCards.swift`, `BlockLeaves.swift`) split into"
+Rejected: moving BlockTable.swift into Kind/ in this merge — outside this issue's named files, like BlockSteps and the rest
+Decided: staging's table case goes into the switch in BlockNode.swift, since Blocks.swift stays deleted and frozen
+Because: swift/Sources/BlocksUI/BlockNode.swift:56
+Decided: arch.toml keeps both sides' frozen entries and both new collect blocks
+Because: .drover/arch.toml:61
+Decided: an empty commit reruns CI so the For apps check reads the edited PR body
+Because: .github/workflows/ci.yml:60
+Check: the switch in BlockNode.swift covers every Block case, table included; swift test passes
+Owner: The Swift views are reorganised one kind per file; nothing changes on screen.
