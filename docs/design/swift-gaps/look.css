@@ -1,10 +1,10 @@
-/* The built-in default pair (#53, docs/design/neutral-default): 19 tokens, light and dark. */
+/* The built-in default pair (#53, docs/design/neutral-default on design-53, muted states q2158): 19 tokens, light and dark. */
 .light{--bg:#f6f6f6;--card:#ffffff;--edge:#d0d0d0;--line:#e4e4e4;--scrim:#0000004d;--fg:#1c1c1c;--mute:#5e5e5e;
---l:#3d3d3d;--link:#3d3d3d;--g:#2f8a3e;--a:#a86f00;--r:#c62828;--p:#7a52b3;--c:#1f7a85;
---fk-l:#3d3d3d;--fk-p:#6a45a0;--fk-c:#17656e;--fk-g:#23702f;--fk-a:#855400}
+--l:#3d3d3d;--link:#3d3d3d;--g:#649163;--a:#9d7e4c;--r:#9e5855;--p:#927ea6;--c:#4690a0;
+--fk-l:#3d3d3d;--fk-p:#78658c;--fk-c:#267585;--fk-g:#537452;--fk-a:#816945}
 .dark{--bg:#161616;--card:#1f1f1f;--edge:#3a3a3a;--line:#2a2a2a;--scrim:#00000099;--fg:#ececec;--mute:#a3a3a3;
---l:#d6d6d6;--link:#d6d6d6;--g:#4fb860;--a:#d9a23a;--r:#f06a6a;--p:#b393e6;--c:#4fb8c4;
---fk-l:#d6d6d6;--fk-p:#b8a0e8;--fk-c:#6cc6d0;--fk-g:#6cc77a;--fk-a:#e0b25a}
+--l:#d6d6d6;--link:#d6d6d6;--g:#4d7a4d;--a:#8e703f;--r:#c27773;--p:#7b688e;--c:#2d7a8a;
+--fk-l:#d6d6d6;--fk-p:#9784ac;--fk-c:#4c96a6;--fk-g:#729471;--fk-a:#a18862}
 
 *{box-sizing:border-box;margin:0}
 body{background:#ececec;color:#1c1c1c;font:14px/1.45 -apple-system,system-ui,sans-serif}
@@ -38,7 +38,7 @@ a{color:var(--link);text-decoration:underline;text-underline-offset:2px}
 /* controls: square, ink is the only accent */
 .btn{display:inline-flex;align-items:center;justify-content:center;height:36px;padding:0 14px;font-size:15px;font-weight:600;color:var(--fg);background:var(--card);border:1px solid var(--edge);white-space:nowrap}
 .btn.primary{background:var(--l);color:var(--bg);border-color:var(--l)}
-.btn.bad{color:var(--r);border-color:var(--r)}
+.btn.bad{color:var(--r)}
 .btn.sm{height:28px;padding:0 10px;font-size:13px}
 .round{width:36px;height:36px;flex:none;display:inline-flex;align-items:center;justify-content:center;font-size:20px;color:var(--fg);border:1px solid var(--edge)}
 
