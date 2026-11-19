@@ -1,4 +1,5 @@
 mod kinds;
+mod live;
 mod pages;
 mod ui;
 
@@ -66,6 +67,8 @@ fn pages(bench: Option<&Value>, paper: &Scheme) -> Vec<Page> {
         kinds::gallery(&all),
         pages::schemes(paper),
         pages::numbers(bench),
+        live::behaviours(),
+        live::islands(),
     ];
     out.extend((0..all.len()).filter_map(|i| kinds::kind_page(&all, i)));
     out
