@@ -1,0 +1,12 @@
+Decided: --check keeps the rules it held before G4 (tree against --expect, no-size, overflow, overlap, no-name); --plan runs every probe
+Because: "every `fixtures/blocks` file still passes `--check`" while the core buttons are 28 px tall and fail render/tap-target
+Rejected: every probe in --check — the renderers' own 28 px buttons and the table's 4.47:1 header would fail it; fixing them is a look change outside this issue
+Decided: VERSION 2 and since 2 for the drawn rules, so --tighten may record them over guard-1 baselines
+Because: crates/blocks/src/guard/judge.rs:95
+Decided: a fixture on base with no baseline is held at the newest guard of base's baselines (Held.on_base)
+Because: crates/blocks/src/guard/judge.rs:72
+Rejected: u16::MAX for it — then any pin move that brings a rule breaks a fixture that was clean
+Decided: render/console and render/frame-budget get no probe here: console ships with G7 explore, frame-budget has no fixture that fires reliably
+Decided: guard.yml runs on macos-latest, the WebKit and fonts the committed baselines were drawn in
+Check: web/test/shot.test.ts bad-fixture test (one rule per fixture, css lines 3) and crates/blocks-cli/tests/check.rs render/stale/redraw/shot/clean tests
+Owner: Screens are now also drawn at phone width and judged; the repo's existing render problems are recorded in its baseline.
