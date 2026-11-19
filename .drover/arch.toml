@@ -22,7 +22,7 @@ generated = [
     "fixtures/behave/sim.json",
 ]
 generate = "just gen"
-shared = ["crates/blocks/src/lib.rs", "crates/*/tests/support/**"]
+shared = ["crates/blocks/src/lib.rs", "crates/*/tests/support/**", "crates/blocks/src/codegen/mod.rs"]
 
 [[collect]]
 dir = "ci/cap.d"
@@ -118,7 +118,7 @@ mods = ["crate::web", "blocks::web"]
 
 [[layer]]
 name = "codegen"
-paths = ["crates/blocks/src/codegen.rs", "crates/blocks/src/bin/**"]
+paths = ["crates/blocks/src/codegen/**", "crates/blocks/src/bin/**"]
 mods = ["crate::codegen", "blocks::codegen"]
 may_use = ["expr", "kind", "built", "wire", "patch", "diff", "shelf", "mirror", "theme", "layout", "behave", "tree", "site"]
 
@@ -164,7 +164,7 @@ reason = "the library is pure: it starts no process"
 [[ban]]
 pattern = "std::fs"
 paths = ["crates/*/src/**"]
-except = ["crates/blocks/src/codegen.rs"]
+except = ["crates/blocks/src/codegen/**"]
 reason = "the library is pure: only codegen writes files"
 
 [[ban]]
@@ -231,3 +231,7 @@ max_fn_lines = 80
 [[size]]
 paths = ["swift/Tests/**/*.swift"]
 max_file_lines = 1000
+
+[[size]]
+paths = ["crates/blocks/src/codegen/mod.rs"]
+max_file_lines = 80

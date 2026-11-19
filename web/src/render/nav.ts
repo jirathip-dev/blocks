@@ -1,8 +1,8 @@
 import type { Nav, NavLink } from "../gen/types.ts";
-import { el, h } from "./index.ts";
+import { el, h, linkable } from "./index.ts";
 
 const link = (l: NavLink, cls = "") => {
-  const a = Object.assign(h("a", cls, l.label), { href: l.href });
+  const a = linkable(l.href) ? Object.assign(h("a", cls, l.label), { href: l.href }) : h("span", cls, l.label);
   if (l.current) a.setAttribute("aria-current", "page");
   return a;
 };
