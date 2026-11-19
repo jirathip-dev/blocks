@@ -1,0 +1,14 @@
+Decided: value() and the figure glyph, word and tone table move into web/src/core/text.ts, shared by the HTML renderer and the React kinds
+Because: web/react/src/draw.ts:2
+Rejected: copying them into web/react — two copies of one rule; importing render/ from react is banned by .drover/arch.toml
+Decided: markdown is drawn as React elements by staged splits mirroring md()'s replace order, no raw HTML
+Because: .drover/arch.toml:367
+Decided: the same-markup test draws each native kind's fixture plus eight richer blocks with both renderers on one WebKit page
+Because: docs/architecture/react/boundaries.md:53
+Decided: a list's reorder handle and drag are left out; no fixture uses one and the HTML drag runs on DOM-only gesture code
+Because: web/src/render/list.ts:3
+Decided: the frame test's local-state case taps a row, since a native card has no tap, as in HTML
+Because: web/src/render/card.ts:4
+Check: react/test/markup.test.ts compares tag, classes, data-*, role, aria-* and own text; fixtures/trees/react has the nine as native
+Check: the cap passes at 29226 / 38500 after the raise the owner chose in q2394 (#247)
+Owner: React apps now draw these nine block types natively, held to the HTML renderer by a side-by-side test.
