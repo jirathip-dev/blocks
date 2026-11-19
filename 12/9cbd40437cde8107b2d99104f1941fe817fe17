@@ -1,0 +1,8 @@
+Decided: this PR is slice R0: the ADR folder plus README's opening naming Mode A and Mode B, in ADR part 1's words
+Because: docs/architecture/react/README.md:33
+Decided: the ADR's open questions now record the owner's answers, the cap at 19,000 and the shared codegen slice
+Because: q2271
+Rejected: adding the .drover/arch.toml lines now — the ADR assigns them to R1 and their generated paths do not exist yet
+Because: docs/architecture/react/adr.md:166
+Check: README's first paragraph matches adr.md part 1 and the Intent bullet says "in Mode A"
+Owner: The README now explains blocks' two ways of working; the React plan records your answers.
