@@ -1,0 +1,9 @@
+Decided: the timeline's rows field is `tracks`, not the ADR sketch's `rows`
+Because: crates/blocks/src/built.rs:57
+Rejected: keep `rows` and special-case timeline beside table in every walker — eight shared files in three languages
+Decided: the result type is `DaySpan` and the bar `TimeBar`
+Because: crates/blocks/src/kind/content.rs:8
+Decided: draw's target is a hit layer under the bars, so bar events never reach the row's draw machine
+Because: "Built on the approved gesture-to-action ADR from #136, with no new gesture rules outside it."
+Check: fixtures/gesture/timeline.json runs in Rust, TS and Swift; web/test/gesture.test.ts drives the real view three ways in
+Owner: A month planner whose bars move, stretch and draw by drag, keys or VoiceOver, saved only when the app agrees.
