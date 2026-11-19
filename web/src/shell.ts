@@ -3,7 +3,7 @@ import type { Scheme } from "./gen/schemes.ts";
 import type { Answer, Block, Kind, Op, Toast } from "./gen/types.ts";
 import { behave } from "./behave.ts";
 import type { Held } from "./gesture.ts";
-import { choose } from "./core/look.ts";
+import { choose, type Pair, type Scale } from "./core/look.ts";
 import { apply, patcher } from "./patch.ts";
 import { type Blk, blks, btn, type Ctx, el, h, isBlk, linkable, obj, type Post, type Renderer, render, type Store, tick } from "./render/index.ts";
 import { settle } from "./motion.ts";
@@ -93,25 +93,33 @@ const row = (label: string, f: () => void, on = false) => {
   return r;
 };
 
-function wearer(schemes: Record<string, Scheme>, theme: Theme) {
+/// A look on offer: one scheme, or a light and dark pair with the style it wears.
+export type Worn = Scheme | (Pair & { style?: Scale });
+
+function wearer(schemes: Record<string, Worn>, theme: Theme, own: Element | null = null) {
   const look = el("style");
   look.id = "b-look";
   document.head.append(look);
-  const wear = (name: string | null) => {
+  const base = own?.textContent ?? "";
+  const wear = (name: string | null, keep?: Store) => {
+    keep?.put("b:look", name);
     const dark = typeof matchMedia === "function" && matchMedia("(prefers-color-scheme: dark)").matches;
-    look.textContent = tiles + (name ? theme.css(choose(name, dark, schemes)) : "");
+    const w = name !== null && Object.prototype.hasOwnProperty.call(schemes, name) ? schemes[name] : undefined;
+    if (own) own.textContent = w && !("tokens" in w) ? "" : base;
+    look.textContent = tiles + (!w ? (name ? theme.css(choose(name, dark)) : "") : "tokens" in w ? theme.css(w) : theme.css(w, w.style));
+    if (w && name) document.documentElement.dataset.look = name;
+    else document.documentElement.removeAttribute("data-look");
   };
   return { look, wear };
 }
 
-function looks(schemes: Record<string, Scheme>, store: Store, wear: (name: string | null) => void, again: () => void): HTMLElement {
+function looks(schemes: Record<string, Worn>, store: Store, wear: (name: string | null, keep?: Store) => void, again: () => void): HTMLElement {
   const now = store.get("b:look");
   const pick = (name: string | null) => () => {
-    store.put("b:look", name);
-    wear(name);
+    wear(name, store);
     again();
   };
-  const rows = Object.entries(schemes).map(([name, s]) => row(s.label, pick(name), name === now));
+  const rows = Object.entries(schemes).map(([name, s]) => row("tokens" in s ? s.label : name, pick(name), name === now));
   return h("div", "list", row("the app's own", pick(null), !now), ...rows);
 }
 
@@ -140,7 +148,7 @@ export function mount(o: Mount): { close(): void } {
   };
 }
 
-function draw(o: Mount, store: Store, theme: Theme, wear: (name: string | null) => void, wide: boolean): { close(): void } {
+function draw(o: Mount, store: Store, theme: Theme, wear: (name: string | null, keep?: Store) => void, wide: boolean): { close(): void } {
   const nodes = walk(resolved(o.layout.root, wide)).filter((n) => n.place !== "hidden");
   const streams = new Map<string, ReturnType<typeof stream>>();
   const live = (source: string) => {
@@ -403,8 +411,8 @@ export function adopt(o: { theme?: Theme; store?: Store; blocks?: AppBlocks } = 
   const screen = String(obj(model).id ?? "");
   const theme = o.theme ?? plain;
   const store = o.store ?? local();
-  const schemes: Record<string, Scheme> = JSON.parse(data.dataset.looks || "{}");
-  const { wear } = wearer(schemes, theme);
+  const schemes: Record<string, Worn> = JSON.parse(data.dataset.looks || "{}");
+  const { wear } = wearer(schemes, theme, document.head.querySelector("style"));
   wear(store.get("b:look"));
   const sheet = el("div", "b-sheet");
   const lookSheet = () => {
@@ -443,6 +451,7 @@ export function adopt(o: { theme?: Theme; store?: Store; blocks?: AppBlocks } = 
     }
     else if (typeof x.action === "string") void act({ action: x.action, values: x.values });
     else if (x.sheet === "look") lookSheet();
+    else if (typeof x.sheet === "string" && x.sheet.startsWith("look:")) wear(x.sheet.slice(5), store);
   };
   const ctx: Ctx = { screen, act, tap, open: new Set(), theme, store, apps: o.blocks, held: new Map() };
   document.addEventListener("submit", (e) => {
