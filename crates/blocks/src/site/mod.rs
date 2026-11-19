@@ -1,5 +1,6 @@
 mod content;
 mod diagram;
+mod editor;
 mod scene;
 mod views;
 
@@ -373,6 +374,7 @@ pub(crate) fn block(w: &mut W<'_>, b: &Value) {
         "media" => content::media(w, b),
         "nav" => content::nav(w, b),
         "diagram" => diagram::diagram(w, b),
+        "editor" => editor::editor(w, b),
         "scene" => scene::scene(w, b),
         _ => fallback(w, b),
     }
