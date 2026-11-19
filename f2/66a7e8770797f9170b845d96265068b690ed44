@@ -1,0 +1,29 @@
+Decided: TypeDesign gains Serif, serialised serif, the default stays Default so existing style.json files read unchanged
+Because: "Existing style.json files read unchanged; the default stays `default`."
+Decided: theme::css and the TS css write font-family on :root for serif only, so default and mono output stay byte-identical
+Because: "web: a CSS font stack, no web font download"
+Decided: the web side lands here, since the draws-every-Style-axis issue has not merged
+Because: "The web side lands with the 'draws every Style axis' issue if that merges first, else here."
+Rejected: drawing mono on web too — that axis belongs to the draws-every-Style-axis issue
+Check: fixtures/css/default-serif.css is written by tests/theme.rs and matched by web/test/choose.test.ts
+Owner: Styles can ask for serif type, drawn in the device's own serif font on web and Swift.
+
+Decided: merged origin/staging; serif now rides staging's axes() in theme::css and the TS css, appending a ui-serif stack on :root
+Because: "web: a CSS font stack, no web font download"
+Rejected: none
+Owner: The branch is updated onto staging; serif styles still draw in the device's own serif font.
+
+Decided: merged origin/staging (#42) into issue-221; the only conflict, web/dist/blocks.js, was rebuilt from source
+Because: "Existing style.json files read unchanged; the default stays `default`."
+Rejected: none
+Owner: The branch is updated onto staging again; serif styles still draw in the device's own serif font.
+
+Decided: merged origin/staging (#225) into issue-221; the only conflict, web/dist/blocks.js, was rebuilt from source
+Because: "Existing style.json files read unchanged; the default stays `default`."
+Rejected: none
+Owner: The branch is updated onto staging again; serif styles still draw in the device's own serif font.
+
+Decided: merged origin/staging (#228) into issue-221; the only conflict, the theme import in tests/theme.rs, keeps both Fills and TypeDesign
+Because: "Existing style.json files read unchanged; the default stays `default`."
+Rejected: none
+Owner: The branch is updated onto staging again; serif styles still draw in the device's own serif font.
