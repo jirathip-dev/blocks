@@ -48,7 +48,7 @@ const tree = (page) =>
 const files = SITE ? readdirSync(SITE).filter((f) => f.endsWith(".html")).sort() : [];
 
 test("every page is the same PNG and tree before and after blocks.js adopts it, all under /blocks/", async () => {
-  strictEqual(files.length, 33);
+  strictEqual(files.length, 34);
   const warm = await open("index.html", { js: false });
   await warm.page.screenshot({ fullPage: true });
   await warm.close();
@@ -149,4 +149,39 @@ test("in blocks-shot, behaviours' toggle shows and hides a field, its check spea
   deepStrictEqual([find(tree, "echo").drawn, find(tree, "echo").text], ["native", '{"says":"hello"}']);
   deepStrictEqual([find(tree, "later").drawn, find(tree, "later").text], ["fallback", "An echo of its propsx-echo needs JS; until it loads, this row"]);
   deepStrictEqual(i.report.sent, [{ screen: "islands", action: "echo", block: "echo", values: { says: "hello" } }]);
+});
+
+test("layout: the switch moves the same screens between compact and wide without a reload; on a phone the file opens on a tap", async () => {
+  const { page, close } = await open("layout.html", { width: 1440 });
+  const boxes = () =>
+    page.$$eval('[data-id="app"]>section', (all) =>
+      all.map((s) => {
+        const r = s.getBoundingClientRect();
+        const p = s.parentElement.getBoundingClientRect();
+        return { id: s.dataset.id, blocks: [...s.querySelectorAll("[data-id]")].map((b) => b.dataset.id), x: Math.round(r.left - p.left), y: Math.round(r.top - p.top), w: Math.round(r.width) };
+      }),
+    );
+  const at = (all, id) => all.find((s) => s.id === id);
+  const url = page.url();
+  const auto = await boxes();
+  await page.click('[data-id="to-compact"]');
+  const compact = await boxes();
+  await page.click('[data-id="to-wide"]');
+  const wide = await boxes();
+  strictEqual(page.url(), url);
+  deepStrictEqual(auto, wide, "at 1440 the page starts wide");
+  deepStrictEqual(compact.map((s) => [s.id, s.blocks]), wide.map((s) => [s.id, s.blocks]), "the same screens and blocks");
+  ok(at(wide, "plants").x < at(wide, "today").x && at(wide, "today").x < at(wide, "weather").x, "wide: column, panel, cards side by side");
+  ok(at(wide, "settings").y > at(wide, "today").y, "wide: settings in the bar below");
+  ok(at(compact, "weather").y > at(compact, "today").y && at(compact, "weather").w === at(compact, "today").w, "compact: weather a sheet over today");
+  ok(at(compact, "plants").y > at(compact, "weather").y && at(compact, "settings").y === at(compact, "plants").y, "compact: plants and settings in the tab bar");
+  ok(await page.isVisible('[data-id="json"]'), "at 1440 the file sits beside the drawing");
+  ok(!(await page.isVisible('[data-id="open-file"]')));
+  await close();
+  const phone = await open("layout.html", { width: 390 });
+  ok(!(await phone.page.isVisible('[data-id="json"]')), "at 390 the file starts folded");
+  await phone.page.click('[data-id="open-file"]');
+  ok(await phone.page.isVisible('[data-id="json"]'));
+  ok((await phone.page.textContent('[data-id="json"]')).includes('"place": "menu"'));
+  await phone.close();
 });
