@@ -112,7 +112,7 @@ let (layout, skipped) = layout::merge(layout, &plugin_places, &SHELL);
 
 let scheme: Scheme = serde_json::from_str(&file)?;  // a token that is not #rrggbb[aa] does not parse
 let misses = blocks::theme::gate(&scheme);          // contrast and ΔE: empty, or the scheme is refused
-let builtin = blocks::theme::schemes();             // the 12 in theme/schemes/, gated in this repo's CI
+let misses = blocks::theme::check_pack(&files, &schemes);   // a swag pack against the schemes it may name
 ```
 
 ## drover's page (TS): the whole of `main.ts` after the move

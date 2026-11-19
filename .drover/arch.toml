@@ -23,10 +23,6 @@ shared = ["crates/blocks/src/lib.rs", "crates/*/tests/support/**"]
 dir = "ci/cap.d"
 glob = "*.toml"
 
-[[collect]]
-dir = "theme/schemes"
-glob = "*.json"
-
 [comments]
 policy = "strict"
 except = ["ci/lint-fixtures/**", "web/lint-fixtures/**"]
