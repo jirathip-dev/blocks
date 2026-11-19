@@ -34,6 +34,8 @@ generated = [
     "fixtures/gesture/sim.json",
     "fixtures/css/*.css",
     "crates/blocks/src/guard/rules/mod.rs",
+    "skill/blocks/**",
+    "crates/blocks-cli/src/gen/skill.rs",
 ]
 generate = "just gen"
 shared = [

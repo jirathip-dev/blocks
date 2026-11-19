@@ -24,6 +24,7 @@ Then `.blocks/guard.json`, by hand. Unknown keys are refused (exit 2), so a typo
 - `screens`: folders, not searched below. Each `*.json` whose root is a `screen` or a `sheet` is a fixture; any other
   file is listed in `skipped`. A fixture is named by its file name without `.json`, so two folders may not share one.
 - `kinds`: the app's own kinds, as `Built::check` takes them.
+- `examples`: fixture names `blocks skill` adds to the usage skill as examples; each must have no finding.
 
 Write each screen as `<screen>.<seed>.json` from the app's own builders over fixed data, and fail a test when a file
 is not what the builder writes today; then a changed builder is a changed file. On the adopting PR, run
@@ -37,6 +38,7 @@ is not what the builder writes today; then a changed builder is a changed file. 
 | `blocks check --base origin/staging` | only the fixtures the branch changed (the fixture, its ignore or its baseline, committed or not); baselines held against the merge base |
 | `blocks check --all --base <ref>` | every fixture, still held against base |
 | `blocks check --tighten` | rewrite `.blocks/baseline/`: drop what is fixed, then judge again |
+| `blocks skill --to <dir>` | write the usage skill of this pin (`skill/blocks/` in the blocks repo) into `<dir>`, plus a page per `examples` fixture; exit 1 when one has a finding |
 | `--format text\|json\|sarif`, `--out <file>` | the report: text (default), one `Outcome` as JSON, or SARIF 2.1.0; to stdout unless `--out` |
 
 Exit 0 clean, 1 a new error, 2 a broken setup (no config, a file that does not parse, an unknown flag, an ignore

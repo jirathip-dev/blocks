@@ -1,3 +1,4 @@
 {
-  "screens": ["fixtures/screens/cooee", "fixtures/screens/drover", "fixtures/guard/ok"]
+  "screens": ["fixtures/screens/cooee", "fixtures/screens/drover", "fixtures/guard/ok"],
+  "examples": ["lanes"]
 }

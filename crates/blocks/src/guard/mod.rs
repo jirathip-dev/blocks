@@ -49,3 +49,15 @@ pub fn finding(seen: Seen, fixture: &str) -> Option<Finding> {
         steps: None,
     })
 }
+
+/// The skill's page for example screen `name`, or what `lint` sees on it: an example has no finding.
+pub fn example(name: &str, screen: &Built, app: &[&str]) -> Result<String, Vec<Seen>> {
+    let seen = lint(screen, app);
+    if !seen.is_empty() {
+        return Err(seen);
+    }
+    let json = serde_json::to_string_pretty(screen.value()).unwrap_or_default();
+    Ok(format!(
+        "# Example: `{name}`\n\nA screen with no guard finding: start a new screen from it.\n\n```json\n{json}\n```\n"
+    ))
+}

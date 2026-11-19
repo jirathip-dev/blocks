@@ -1,4 +1,9 @@
 mod files;
+mod skill;
+
+mod gen {
+    pub(crate) mod skill;
+}
 
 use std::collections::BTreeMap;
 use std::io::Write as _;
@@ -6,7 +11,7 @@ use std::process::ExitCode;
 
 use blocks::guard::{self, Baseline, Finding, Held, Outcome, Scope, Severity};
 
-const USAGE: &str = "usage: blocks check [--base <ref>] [--all] [--tighten] [--format text|json|sarif] [--out <file>]";
+const USAGE: &str = "usage: blocks check [--base <ref>] [--all] [--tighten] [--format text|json|sarif] [--out <file>] | blocks skill --to <dir>";
 
 #[derive(Default)]
 enum Format {
@@ -25,7 +30,7 @@ struct Flags {
     out: Option<String>,
 }
 
-/// `blocks check`: lint the screens `.blocks/guard.json` names and judge them; exit 0 clean, 1 a new error, 2 a broken setup.
+/// `blocks check` judges the screens `.blocks/guard.json` names, `blocks skill` writes the usage skill; exit 0 ok, 1 a finding, 2 a broken setup.
 pub fn main() -> ExitCode {
     let args: Vec<String> = std::env::args().skip(1).collect();
     match run(&args) {
@@ -46,9 +51,6 @@ fn value(it: &mut std::slice::Iter<String>, flag: &str) -> Result<String, String
 
 fn flags(args: &[String]) -> Result<Flags, String> {
     let mut it = args.iter();
-    if it.next().map(String::as_str) != Some("check") {
-        return Err(USAGE.into());
-    }
     let mut f = Flags::default();
     while let Some(a) = it.next() {
         match a.as_str() {
@@ -71,6 +73,14 @@ fn flags(args: &[String]) -> Result<Flags, String> {
 }
 
 fn run(args: &[String]) -> Result<bool, String> {
+    match args.split_first() {
+        Some((cmd, rest)) if cmd == "check" => check(rest),
+        Some((cmd, rest)) if cmd == "skill" => skill::run(rest),
+        _ => Err(USAGE.into()),
+    }
+}
+
+fn check(args: &[String]) -> Result<bool, String> {
     let f = flags(args)?;
     let config = files::config()?;
     let mut scope = Scope::default();

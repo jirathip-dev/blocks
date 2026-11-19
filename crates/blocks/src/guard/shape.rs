@@ -123,7 +123,7 @@ pub struct Baseline {
     pub known: Vec<Known>,
 }
 
-/// `.blocks/guard.json`: the folders whose screens are checked and the app's own kinds.
+/// `.blocks/guard.json`: the folders whose screens are checked, the app's own kinds and the skill's examples.
 #[derive(Clone, Debug, Default, PartialEq, Eq, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Config {
@@ -131,6 +131,8 @@ pub struct Config {
     pub screens: Vec<String>,
     #[serde(default)]
     pub kinds: Vec<String>,
+    #[serde(default)]
+    pub examples: Vec<String>,
 }
 
 /// What an app holds against its findings, by fixture name: ignores, baselines, and base's baselines in a PR.
