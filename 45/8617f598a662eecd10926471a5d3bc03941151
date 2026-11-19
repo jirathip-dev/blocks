@@ -1,0 +1,12 @@
+Decided: each harness measures rects plus a few PNG pixels on fixtures/look/kinds.json against the Scheme and tile tokens in use, with no golden file
+Because: "from the rects it already has and a few sampled pixels of its PNG, never from text"
+Because: web/shot/look.ts:41
+Decided: web expects the generated Scheme for the page's colour scheme and the tile tokens its :root declares, so an app sheet like still-tiles.css is a look of its own
+Because: swift/Sources/BlocksSnapshot/Measure.swift:9
+Rejected: running every fixtures/styles JSON on the web — there a style only sets --space and --motion, and neither changes a tile
+Decided: forced defects break the drawing, not the expected tokens: web injects CSS rules, Swift draws a broken Look and measures it against the good one
+Because: "A forced defect fails it, one scripted case per fact"
+Decided: ±2 per channel, because WebKit draws the conic-gradient dot as 209,209,208 for #d0d0d0; Swift matches exactly
+Rejected: a page-padding check — the web pads 8 px, not a multiple of the dot gap, and changing the look is out of scope
+Check: node --test web/test/measured.test.ts and swift test --filter MeasuredLookTests pass, and each defect fails on its own fact
+Owner: CI now measures the default look's seams, corners, colours and dot grid in both renderers, with no pictures to keep up to date
