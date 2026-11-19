@@ -1,0 +1,13 @@
+Decided: check_pack takes the schemes a pack may name as a slice of (name, Scheme), the shape the old built-in list had
+Because: "`check_pack` takes the schemes a pack may name as an argument, instead of reading a built-in list"
+Decided: the web shell's mount takes an optional schemes map for its look sheet instead of the generated list
+Because: web/src/shell.ts:89
+Rejected: dropping the look sheet — an app that hands swag's schemes would lose its picker
+Decided: fixtures/packs/plain names default-dark and default-light, so its test hands check_pack the default pair
+Because: "A small pack in `fixtures/` keeps `check_pack` and the `Theme` port tested without swag"
+Decided: the SwiftUI parameter paper became ground, so no source under swift/Sources names a scheme
+Because: swift/Sources/BlocksUI/Look+Style.swift:32
+Rejected: keeping #53's no-named-colour check on the default pair — no named scheme is left here to compare with
+Check: every removed scheme and pack file is byte-identical in swag at ed46f590e36579313e66fe3fd91cf448714bb710
+Check: check_pack with an empty scheme list refuses the fixture pack's two scheme names
+Owner: blocks keeps only the theme rules and its grey default; every named look now comes from swag.
