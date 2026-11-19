@@ -108,22 +108,21 @@ export function composer(b: Composer, c: Ctx): HTMLElement {
     const t = setInterval(() => (p.isConnected ? tick() : clearInterval(t)), 1000);
     return p;
   }
-  function queued(m: Queued): HTMLElement {
-    const text = m.text;
+  function queued({ q, text }: Queued): HTMLElement {
     const r = h("div", "qd", h("span", "qt", text));
-    r.dataset.q = String(m.q);
+    r.dataset.q = String(q);
     const now = btn("send now", "primary", undefined, act("steer"));
     const edit = btn("edit");
     const rm = btn("remove", "bad", undefined, act("unqueue"));
-    now.onclick = () => post(act("steer"), { q: m.q }, now);
+    now.onclick = () => post(act("steer"), { q }, now);
     edit.onclick = () => {
-      [d.q, ta.value] = [m.q, text];
+      [d.q, ta.value] = [q, text];
       c.store.put(key, text);
       grow();
       ta.focus();
       draw();
     };
-    rm.onclick = () => post(act("unqueue"), { q: m.q }, rm);
+    rm.onclick = () => post(act("unqueue"), { q }, rm);
     r.append(now, edit, rm);
     return r;
   }
@@ -166,8 +165,7 @@ export function composer(b: Composer, c: Ctx): HTMLElement {
     if (d.steer) row.append(st);
     else st.remove();
     const picks = el("div", "pk");
-    for (const ch of b.chips ?? []) {
-      const n = ch.name;
+    for (const { name: n, ...ch } of b.chips ?? []) {
       const s = el("select");
       const cur = String(d.picks[n] ?? ch.cur ?? "");
       s.setAttribute("aria-label", n);
