@@ -13,7 +13,7 @@ const BASE = "http://blocks.test/";
 const read = (p) => readFileSync(new URL(p, import.meta.url), "utf8");
 const still = read("../../fixtures/styles/still-tiles.css");
 const PAGE = (own) =>
-  `<!doctype html><meta charset=utf-8><link rel=stylesheet href=blocks.css><style>${css(defaultPair.light)}</style>${own ? `<style>${own}</style>` : ""}` +
+  `<!doctype html><meta charset=utf-8><link rel=stylesheet href=blocks.css><style>${css(defaultPair.light)}</style><style>*{animation-play-state:paused!important}</style>${own ? `<style>${own}</style>` : ""}` +
   `<body><div id=root></div><script type=module>import * as B from "./blocks.js"; window.B = B;</script>`;
 
 const rows = (n, at = "") => Array.from({ length: n }, (_, i) => ({ type: "row", id: `${at}r${i}`, title: `Row ${i}` }));

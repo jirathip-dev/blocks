@@ -9,7 +9,15 @@
       "id": "row",
       "variant": null,
       "drawn": "native",
-      "children": []
+      "children": [
+        {
+          "kind": "text",
+          "id": "finding",
+          "variant": null,
+          "drawn": "native",
+          "children": []
+        }
+      ]
     }
   ]
 }
