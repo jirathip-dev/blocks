@@ -14,7 +14,7 @@ const store = { get: () => null, put: () => {} };
 const ctx = (more = {}) => ({ screen: "home", act: async () => true, tap: () => {}, open: new Set(), theme: plain, store, ...more });
 const all = (e) => [e, ...e.children.flatMap(all)];
 const part = (e, cls) => all(e).find((x) => x.classList.contains(cls));
-const gaps = ["config", "secret", "diff", "editor", "scene", "prose", "hero", "media", "nav", "island"];
+const gaps = ["config", "secret", "diff", "editor", "scene", "island"];
 
 test("every fixture is drawn with its hooks, natively or as its fallback", () => {
   const kinds = readdirSync(dir).map((f) => f.replace(/\.json$/, ""));
@@ -80,9 +80,9 @@ test("a row's figure comes from the theme and carries its hook", () => {
 });
 
 test("a pack's words dress the plain word; css writes a scheme's tokens", () => {
-  const theme = JSON.parse(readFileSync(new URL("../../theme/packs/farm/theme.json", import.meta.url), "utf8"));
-  const t = packs({ theme: { ...theme, sprites: false }, base: "/packs/farm/" });
-  strictEqual(t.word("needs", "needs").textContent, "at the gate · needs");
+  const theme = JSON.parse(readFileSync(new URL("../../fixtures/packs/plain/theme.json", import.meta.url), "utf8"));
+  const t = packs({ theme: { ...theme, sprites: false }, base: "/packs/plain/" });
+  strictEqual(t.word("needs", "needs").textContent, "your turn · needs");
   strictEqual(t.word("nope", "plain").textContent, "plain");
   const s = css(defaultPair.dark);
   ok(s.startsWith(":root{--bg:#161616;") && s.endsWith(";color-scheme:dark}"), s);
@@ -182,10 +182,12 @@ test("a web block draws its page in a sandboxed frame at its height, with its ad
   const f = e.querySelector("iframe");
   deepStrictEqual(
     ["src", "sandbox", "allow", "referrerpolicy", "loading", "title"].map((k) => f?.getAttribute(k)),
-    ["http://blocks.test/doc", "allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox", "", "no-referrer", "lazy", "blocks.test/doc"],
+    ["http://blocks.test/doc", "allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox", "", "no-referrer", "lazy", "/doc"],
   );
   strictEqual(f?.style.height, "240px");
-  strictEqual(part(e, "wu")?.textContent, "blocks.test/doc");
+  strictEqual(part(e, "wu")?.textContent, "/doc");
+  const abs = render({ type: "web", src: "https://cooee.app/doc/?v=1#top", height: 9 }, ctx());
+  strictEqual(part(abs, "wu")?.textContent, "cooee.app/doc");
   const a = e.querySelector("a");
   deepStrictEqual([a?.href, a?.target, a?.rel, a?.textContent], ["http://blocks.test/doc", "_blank", "noopener", "open ↗"]);
 });

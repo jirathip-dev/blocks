@@ -17,7 +17,7 @@ export function web(b: Web): HTMLElement {
     root.append(none);
     return root;
   }
-  const shown = (url.host + url.pathname).replace(/\/$/, "");
+  const shown = b.src.replace(/^https?:[/]{2}/i, "").replace(/[?#].*$/, "").replace(/\/$/, "");
   const f = el("iframe", "wf");
   f.style.height = `${b.height}px`;
   const at = { sandbox, allow: "", referrerpolicy: "no-referrer", loading: "lazy", title: shown, src: url.href };
