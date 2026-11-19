@@ -1,5 +1,5 @@
 import type { LayoutPlace, LayoutTransition } from "./gen/layout.ts";
-import { type Scheme, schemes } from "./gen/schemes.ts";
+import type { Scheme } from "./gen/schemes.ts";
 import type { Answer, Block, Kind, Op } from "./gen/types.ts";
 import { apply, patcher } from "./patch.ts";
 import { type Blk, blks, btn, type Ctx, el, h, isBlk, obj, type Post, type Renderer, render, type Store, tick } from "./render/index.ts";
@@ -38,6 +38,7 @@ export type Mount = {
   components?: Record<string, (n: Resolved) => HTMLElement | null>;
   css?: string[];
   theme?: Theme;
+  schemes?: Record<string, Scheme>;
   store?: Store;
 };
 
@@ -85,7 +86,7 @@ export function mount(o: Mount): { close(): void } {
   look.id = "b-look";
   document.head.append(look);
   const wear = (name: string | null) => {
-    const s: Scheme | undefined = name ? schemes[name] : undefined;
+    const s: Scheme | undefined = name ? o.schemes?.[name] : undefined;
     look.textContent = s ? theme.css(s) : "";
   };
   wear(store.get("b:look"));
@@ -331,7 +332,7 @@ function draw(o: Mount, store: Store, theme: Theme, wear: (name: string | null) 
       wear(name);
       lookSheet();
     };
-    const rows = Object.entries(schemes).map(([name, s]) => row(s.label, pickLook(name), name === now));
+    const rows = Object.entries(o.schemes ?? {}).map(([name, s]) => row(s.label, pickLook(name), name === now));
     sheetWith("look", [h("div", "list", row("the app's own", pickLook(null), !now), ...rows)], menu);
   };
   const menu = () => {

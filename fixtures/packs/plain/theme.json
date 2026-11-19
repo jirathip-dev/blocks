@@ -1,0 +1,8 @@
+{
+  "label": "plain",
+  "scheme": { "dark": "default-dark", "light": "default-light" },
+  "sprites": true,
+  "moments": false,
+  "words": { "working": "busy", "needs": "your turn", "done": "finished", "fail": "broke", "idle": "resting",
+    "merged": "landed", "loading": "getting ready", "empty-threads": "nothing open" }
+}

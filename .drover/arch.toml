@@ -25,10 +25,6 @@ shared = ["crates/blocks/src/lib.rs", "crates/*/tests/support/**"]
 dir = "ci/cap.d"
 glob = "*.toml"
 
-[[collect]]
-dir = "theme/schemes"
-glob = "*.json"
-
 [comments]
 policy = "strict"
 except = ["ci/lint-fixtures/**", "web/lint-fixtures/**"]
@@ -123,6 +119,12 @@ paths = ["Cargo.toml", "crates/*/Cargo.toml", "crates/*/src/**", "web/src/**", "
 reason = "drover depends on blocks, never the other way: no drover import or type here"
 comments = true
 ignore_case = true
+
+[[ban]]
+pattern = "bench/"
+paths = ["Cargo.toml", "crates/*/Cargo.toml", "crates/*/src/**", "web/src/**", "web/package.json", "swift/Sources/**", "Package.swift"]
+reason = "bench/ is dev only (React, topcoat and the bench servers): the crate, the bundle and the Swift package never import it"
+comments = true
 
 [[ban]]
 pattern = "import SwiftUI"

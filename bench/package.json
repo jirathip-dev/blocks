@@ -1,0 +1,16 @@
+{
+  "name": "blocks-bench",
+  "private": true,
+  "type": "module",
+  "description": "The 200-row bench: React's server and bundle, and the WebKit runner; dev only, never imported by web/src, the crate or the Swift package",
+  "scripts": {
+    "build": "esbuild react/client.js --bundle --format=esm --minify --legal-comments=none --define:process.env.NODE_ENV=\\\"production\\\" --outfile=dist/react.js",
+    "bench": "node --no-warnings run.js"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2",
+    "playwright": "1.63.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
+  }
+}

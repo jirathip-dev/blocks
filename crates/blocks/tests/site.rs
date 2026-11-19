@@ -1,17 +1,13 @@
 use blocks::site::{self, Head, Live, Look, Site};
-use blocks::theme::{schemes, PerMode, Style};
+use blocks::theme::{self, Style};
 use blocks::{Action, Block, Built, Button, Row, Screen};
 
 fn look() -> Look {
     let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
     let text = std::fs::read_to_string(root.join("fixtures/styles/still.json")).unwrap();
     let style: Style = serde_json::from_str(&text).unwrap();
-    let s = schemes()[0].1.clone();
     Look {
-        schemes: PerMode {
-            dark: s.clone(),
-            light: s,
-        },
+        schemes: theme::default().clone(),
         style,
     }
 }

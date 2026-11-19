@@ -87,15 +87,10 @@ fn html(root: &Path) -> std::io::Result<()> {
         std::fs::write(root.join(format!("fixtures/html/{kind}.html")), text)?;
     }
     let style = serde_json::from_str(&std::fs::read_to_string(root.join("fixtures/styles/still.json"))?)?;
-    let scheme = |n: &str| {
-        let s = theme::schemes().iter().find(|(k, _)| *k == n).map(|(_, s)| s.clone());
-        s.ok_or_else(|| std::io::Error::other(format!("no scheme {n}")))
+    let look = site::Look {
+        schemes: theme::default().clone(),
+        style,
     };
-    let schemes = theme::PerMode {
-        light: scheme("paper")?,
-        dark: scheme("solarized-dark")?,
-    };
-    let look = site::Look { schemes, style };
     let screen = Built::of(&site_screen());
     std::fs::create_dir_all(root.join("fixtures/site"))?;
     let live = site::Live {
@@ -235,18 +230,17 @@ fn hooks(s: &Value) -> Out {
 }
 
 fn schemes_ts() -> serde_json::Result<String> {
-    let all: std::collections::BTreeMap<_, _> = theme::schemes().iter().map(|(n, s)| (*n, s)).collect();
-    let tokens = theme::schemes()
-        .first()
-        .map(|(_, s)| s.tokens.all().map(|(k, _)| format!("\"{k}\"")).join(" | "))
-        .unwrap_or_default();
+    let tokens = theme::default()
+        .light
+        .tokens
+        .all()
+        .map(|(k, _)| format!("\"{k}\""))
+        .join(" | ");
     Ok(format!(
         "export type Mode = \"dark\" | \"light\";\n\nexport type Token = {tokens};\n\n\
          export type Scheme = {{ label: string; \"color-scheme\": Mode; tokens: Record<Token, string> }};\n\n\
-         export const schemes: Record<string, Scheme> = {};\n\n\
          export const defaultPair: Record<Mode, Scheme> = {};\n\n\
          export const defaultStyle: Record<string, string> = {};\n",
-        serde_json::to_string_pretty(&all)?,
         serde_json::to_string_pretty(theme::default())?,
         serde_json::to_string_pretty(&std::collections::BTreeMap::from(theme::DEFAULT_STYLE))?
     ))
@@ -276,11 +270,8 @@ fn schemes_swift() -> serde_json::Result<String> {
     let mut out = String::from(
         "public enum SchemeMode: String, Codable, Equatable, Sendable {\n    case dark, light\n}\n\n\
          public struct Scheme: Equatable, Sendable {\n    public let label: String\n    public let mode: SchemeMode\n    \
-         public let tokens: [String: String]\n}\n\npublic let blocksSchemes: [String: Scheme] = [\n",
+         public let tokens: [String: String]\n}\n\n",
     );
-    for (name, s) in theme::schemes() {
-        out.push_str(&format!("    {}: {},\n", q(name)?, scheme_swift(s)?));
-    }
     let pair = theme::default();
     let style = theme::DEFAULT_STYLE
         .iter()
@@ -288,7 +279,7 @@ fn schemes_swift() -> serde_json::Result<String> {
         .collect::<serde_json::Result<Vec<_>>>()?
         .join(", ");
     out.push_str(&format!(
-        "]\n\npublic let blocksDefaultLight = {}\n\npublic let blocksDefaultDark = {}\n\n\
+        "public let blocksDefaultLight = {}\n\npublic let blocksDefaultDark = {}\n\n\
          public let blocksDefaultStyle: [String: String] = [{style}]\n",
         scheme_swift(&pair.light)?,
         scheme_swift(&pair.dark)?

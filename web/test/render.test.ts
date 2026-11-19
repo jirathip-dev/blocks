@@ -80,9 +80,9 @@ test("a row's figure comes from the theme and carries its hook", () => {
 });
 
 test("a pack's words dress the plain word; css writes a scheme's tokens", () => {
-  const theme = JSON.parse(readFileSync(new URL("../../theme/packs/farm/theme.json", import.meta.url), "utf8"));
-  const t = packs({ theme: { ...theme, sprites: false }, base: "/packs/farm/" });
-  strictEqual(t.word("needs", "needs").textContent, "at the gate · needs");
+  const theme = JSON.parse(readFileSync(new URL("../../fixtures/packs/plain/theme.json", import.meta.url), "utf8"));
+  const t = packs({ theme: { ...theme, sprites: false }, base: "/packs/plain/" });
+  strictEqual(t.word("needs", "needs").textContent, "your turn · needs");
   strictEqual(t.word("nope", "plain").textContent, "plain");
   const s = css(defaultPair.dark);
   ok(s.startsWith(":root{--bg:#161616;") && s.endsWith(";color-scheme:dark}"), s);
