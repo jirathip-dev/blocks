@@ -2,6 +2,7 @@ mod content;
 mod diagram;
 mod editor;
 mod lines;
+mod pages;
 mod rounds;
 mod scene;
 mod steps;
@@ -440,6 +441,7 @@ pub(crate) fn block(w: &mut W<'_>, b: &Value) {
         "table" => table::table(w, b),
         "steps" => steps::steps(w, b),
         "toast" => toast::toast(w, b),
+        "pages" => pages::pages(w, b),
         _ => fallback(w, b),
     }
 }

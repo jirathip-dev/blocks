@@ -218,7 +218,8 @@
               "island",
               "table",
               "steps",
-              "toast"
+              "toast",
+              "pages"
             ]
           },
           "type": "string"
@@ -661,6 +662,19 @@
           "properties": {
             "type": {
               "const": "toast",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/Pages",
+          "properties": {
+            "type": {
+              "const": "pages",
               "type": "string"
             }
           },
@@ -3435,6 +3449,94 @@
           ]
         }
       },
+      "type": "object"
+    },
+    "Page": {
+      "description": "One page of a `pages` block: its picture, what it shows, and its size in pixels.",
+      "properties": {
+        "alt": {
+          "type": "string"
+        },
+        "height": {
+          "format": "uint32",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "src": {
+          "type": "string"
+        },
+        "width": {
+          "format": "uint32",
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "src",
+        "alt",
+        "width",
+        "height"
+      ],
+      "type": "object"
+    },
+    "Pages": {
+      "additionalProperties": true,
+      "description": "A document as the app's server drew it, one picture a page: paged and zoomed in the view, with its PDF.",
+      "properties": {
+        "fallback": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Fallback"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "file": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "note": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "pages": {
+          "items": {
+            "$ref": "#/$defs/Page"
+          },
+          "type": "array"
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "title": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "pages"
+      ],
       "type": "object"
     },
     "Part": {

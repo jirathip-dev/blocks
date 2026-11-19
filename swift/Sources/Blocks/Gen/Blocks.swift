@@ -95,6 +95,7 @@ public enum Block: Codable, Equatable, Sendable {
     case table(Table)
     case steps(Steps)
     case toast(Toast)
+    case pages(Pages)
     case appBlock(JSONValue)
 
     private enum Tag: String, CodingKey { case tag = "type" }
@@ -132,6 +133,7 @@ public enum Block: Codable, Equatable, Sendable {
         case "table": self = .table(try Table(from: decoder))
         case "steps": self = .steps(try Steps(from: decoder))
         case "toast": self = .toast(try Toast(from: decoder))
+        case "pages": self = .pages(try Pages(from: decoder))
         default: self = .appBlock(try JSONValue(from: decoder))
         }
     }
@@ -169,6 +171,7 @@ public enum Block: Codable, Equatable, Sendable {
         case .table(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("table", forKey: .tag)
         case .steps(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("steps", forKey: .tag)
         case .toast(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("toast", forKey: .tag)
+        case .pages(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("pages", forKey: .tag)
         case .appBlock(let v): try v.encode(to: encoder)
         }
     }
@@ -890,6 +893,23 @@ public enum Op: Codable, Equatable, Sendable {
 public struct Other: Codable, Equatable, Sendable {
     public var `for`: String?
     public var placeholder: String?
+}
+
+public struct Page: Codable, Equatable, Sendable {
+    public var alt: String
+    public var height: UInt32
+    public var src: String
+    public var width: UInt32
+}
+
+public struct Pages: Codable, Equatable, Sendable {
+    public var fallback: Fallback?
+    public var file: String?
+    public var id: String?
+    public var note: String?
+    public var pages: [Page]
+    public var show: Expr?
+    public var title: String?
 }
 
 public struct PartHeading: Codable, Equatable, Sendable {

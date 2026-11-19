@@ -15,7 +15,7 @@ final class RenderTests: XCTestCase {
         "screen", "sheet", "section", "list", "row", "card", "choice", "form", "config", "secret", "run", "button",
         "chips", "stat", "text", "images", "web", "diff", "editor", "scene", "diagram", "composer", "lines",
     ]
-    private static let content = ["prose", "hero", "media", "nav", "steps", "toast"]
+    private static let content = ["prose", "hero", "media", "nav", "steps", "toast", "pages"]
     private let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent().appendingPathComponent("../../..")
 
     private func pixels(
@@ -125,6 +125,16 @@ final class RenderTests: XCTestCase {
         let busy = #"{"type": "composer", "action": "say", "acts": {"stop": "halt"}, "working": {"since": "2026-01-01T00:00:00Z"}}"#
         XCTAssertEqual(try pixels(BlocksView(block(idle), source: .core), red), 0)
         XCTAssertGreaterThan(try pixels(BlocksView(block(busy), source: .core), red), 0)
+    }
+
+    func testPagesFrameEachPageAtItsSizeFittedToTheWidthAndSayNoPagesYetWhenEmpty() throws {
+        let three = height(BlocksView(try fixture("pages"), source: .core))
+        let page = (390 - 32) * 1754.0 / 1240
+        XCTAssertGreaterThan(three, 3 * page, "three pages at fit, each at its aspect")
+        XCTAssertLessThan(three, 3 * page + 200, "and only the head, the note and the gaps besides")
+        let empty = height(BlocksView(try block(#"{"type": "pages", "id": "e", "title": "Report", "pages": []}"#), source: .core))
+        XCTAssertGreaterThan(empty, 44)
+        XCTAssertLessThan(empty, 200)
     }
 
     func testAToastTicksItsToneCutsLongTextAtThreeLinesAndDrawsDoneWhenEmpty() throws {

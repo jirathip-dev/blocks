@@ -30,7 +30,8 @@ var hooks = {
   island: { variant: null, parts: [] },
   table: { variant: null, parts: ["title"] },
   steps: { variant: null, parts: ["title"] },
-  toast: { variant: null, parts: ["title"] }
+  toast: { variant: null, parts: ["title"] },
+  pages: { variant: null, parts: ["title"] }
 };
 var roles = { section: "region", form: "form", config: "form", nav: "navigation", toast: "status" };
 var names = ["label", "title", "header", "question", "alt", "file", "command", "placeholder", "name"];
@@ -452,6 +453,7 @@ var island = (fields) => ({ type: "island", ...fields });
 var table = (fields) => ({ type: "table", ...fields });
 var steps = (fields) => ({ type: "steps", ...fields });
 var toast = (fields) => ({ type: "toast", ...fields });
+var pages = (fields) => ({ type: "pages", ...fields });
 var expr = {
   get: (v) => ({ get: v }),
   not: (v) => ({ not: v }),
@@ -569,6 +571,7 @@ export {
   media,
   names,
   nav,
+  pages,
   prose,
   roles,
   row,

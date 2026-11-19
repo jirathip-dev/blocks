@@ -124,11 +124,11 @@ export function gestured<B extends Block, G, R, C>(el: HTMLElement, c: Ctx, o: G
   mark();
 }
 
-/// The one pinch, Ctrl and wheel, double-tap and key zoom; `keep` holds the zoom outside the view, `apply` draws it.
-export function zoomed(el: HTMLElement, keep: Record<string, unknown>, o: { min: number; max: number; apply: (z: number) => void }): void {
+/// The one pinch, Ctrl and wheel, double-tap and key zoom; `keep` holds the zoom outside the view, `apply` draws it, `live` while fingers or the wheel still move.
+export function zoomed(el: HTMLElement, keep: Record<string, unknown>, o: { min: number; max: number; apply: (z: number, live: boolean) => void }): void {
   const at = new Map<number, [number, number]>();
   const z = () => (typeof keep.zoom === "number" ? keep.zoom : o.min);
-  const to = (k: number) => o.apply((keep.zoom = Math.min(o.max, Math.max(o.min, k))));
+  const to = (k: number, live = false) => o.apply((keep.zoom = Math.min(o.max, Math.max(o.min, k))), live);
   const span = () => {
     const [a, b] = [...at.values()];
     return a && b ? Math.hypot(a[0] - b[0], a[1] - b[1]) : 0;
@@ -143,15 +143,27 @@ export function zoomed(el: HTMLElement, keep: Record<string, unknown>, o: { min:
   el.addEventListener("pointermove", (e) => {
     if (!at.has(e.pointerId)) return;
     at.set(e.pointerId, [e.clientX, e.clientY]);
-    if (at.size === 2 && d0) to((z0 * span()) / d0);
+    if (at.size === 2 && d0) to((z0 * span()) / d0, true);
   });
   const up = (e: PointerEvent) => {
     at.delete(e.pointerId);
+    if (at.size < 2 && d0) to(z());
     if (at.size < 2) d0 = 0;
   };
+  let still: ReturnType<typeof setTimeout> | undefined;
   el.addEventListener("pointerup", up);
   el.addEventListener("pointercancel", up);
-  el.addEventListener("wheel", (e) => e.ctrlKey && (e.preventDefault(), to(z() * Math.exp(-e.deltaY / 100))), { passive: false });
+  el.addEventListener(
+    "wheel",
+    (e) => {
+      if (!e.ctrlKey) return;
+      e.preventDefault();
+      to(z() * Math.exp(-e.deltaY / 100), true);
+      clearTimeout(still);
+      still = setTimeout(() => to(z()), 150);
+    },
+    { passive: false },
+  );
   el.addEventListener("dblclick", () => to(z() > o.min ? o.min : 2.5));
   el.addEventListener("keydown", (e) => {
     const k: Record<string, number> = { "+": z() * 1.25, "=": z() * 1.25, "-": z() / 1.25, "0": o.min };

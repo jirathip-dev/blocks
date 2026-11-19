@@ -344,6 +344,18 @@ kind! {
     }
 }
 
+kind! {
+    /// A document as the app's server drew it, one picture a page: paged and zoomed in the view, with its PDF.
+    pub struct Pages {
+        id: Option<String>,
+        title: Option<String>,
+        pages: Vec<Page>,
+        file: Option<String>,
+        note: Option<String>,
+        fallback: Option<Fallback>,
+    }
+}
+
 wire! {
     /// A block of a `type` that is no core kind: an app's own, kept whole.
     pub struct AppBlock {
@@ -433,4 +445,5 @@ kinds! {
     Table(Table) = "table",
     Steps(Steps) = "steps",
     Toast(Toast) = "toast",
+    Pages(Pages) = "pages",
 }

@@ -18,7 +18,7 @@ const gaps = ["diff", "island"];
 
 test("every fixture is drawn with its hooks, natively or as its fallback", () => {
   const kinds = readdirSync(dir).map((f) => f.replace(/\.json$/, ""));
-  strictEqual(kinds.length, 31);
+  strictEqual(kinds.length, 32);
   for (const kind of kinds) {
     const b = fixture(kind);
     const e = render(b, ctx());
@@ -242,6 +242,13 @@ test("a toast in the flow is its tick, glyph and text with no clock, close or un
     ok(x.hasAttribute("data-fallback"));
     strictEqual(part(x, "b-row__title")?.textContent, want);
   }
+});
+
+test("pages with none draws its head and note, says no pages yet, and offers no paging, zoom or region", () => {
+  const e = render({ ...fixture("pages"), pages: [] }, ctx());
+  deepStrictEqual([part(e, "dcc").textContent, part(e, "dcn").textContent, part(e, "dce").textContent], ["no pages", "Out of date: the prices changed after this was drawn.", "No pages yet"]);
+  deepStrictEqual(all(e).filter((x) => x.tagName === "BUTTON" || x.classList.contains("dcw")), []);
+  strictEqual(part(e, "btn").getAttribute("aria-label"), "download Q-2026-0418 rev 3 as PDF");
 });
 
 test("a web block draws its page in a sandboxed frame at its height, with its address and an open link", () => {

@@ -20,6 +20,7 @@ import { lines } from "./lines.ts";
 import { list } from "./list.ts";
 import { media } from "./media.ts";
 import { nav } from "./nav.ts";
+import { pages } from "./pages.ts";
 import { prose } from "./prose.ts";
 import { row } from "./row.ts";
 import { run } from "./run.ts";
@@ -210,6 +211,7 @@ export const R: { [K in Kind]: (b: Of<K>, c: Ctx) => HTMLElement | null } = {
   table,
   steps,
   toast,
+  pages,
 };
 
 

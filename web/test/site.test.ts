@@ -48,14 +48,14 @@ const tree = (page) =>
 test("site and render give the same element per kind: tag, classes, hooks, role, name and text", async () => {
   const { page, close } = await open({ page: "<!doctype html><body>" });
   const kinds = readdirSync(at("../../fixtures/blocks/")).map((f) => f.replace(/\.json$/, ""));
-  strictEqual(kinds.length, 31);
+  strictEqual(kinds.length, 32);
   for (const k of kinds) {
     const [written, drawn] = await page.evaluate(
       async ([html, b]) => {
         const B = await import("/blocks.js");
         const bare = (x) => {
           const c = x.cloneNode(true);
-          c.querySelectorAll(".tbh :is(select, button), .tbm").forEach((e) => e.remove());
+          c.querySelectorAll(".tbh :is(select, button), .tbm, .dcc, .dcb").forEach((e) => e.remove());
           return c;
         };
         const sig = (e) =>

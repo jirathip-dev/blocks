@@ -1,0 +1,27 @@
+{
+  "file": "/q/0418.pdf",
+  "id": "quote",
+  "note": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+  "pages": [
+    {
+      "alt": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+      "height": 1754,
+      "src": "/q/0418/1.png",
+      "width": 1240
+    },
+    {
+      "alt": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+      "height": 1754,
+      "src": "/q/0418/2.png",
+      "width": 1240
+    },
+    {
+      "alt": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+      "height": 1754,
+      "src": "/q/0418/3.png",
+      "width": 1240
+    }
+  ],
+  "title": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+  "type": "pages"
+}

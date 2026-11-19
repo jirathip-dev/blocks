@@ -1,9 +1,10 @@
 use super::{
     Act, Block, BulkAction, Button, Card, CardKind, Cell, ChipOption, Chips, Choice, ChoiceOption, Column, ColumnKind,
     Composer, Diagram, Diff, Editor, Era, ExportFormat, Fallback, Field, FieldKind, Form, Hero, Hunk, Image, Images,
-    Island, Keyboard, Label, Lane, LaneState, LineItem, Lines, Link, List, Media, Nav, NavLink, Part, PhonePart, Prose,
-    Round, RoundLane, Row, RowError, Run, Scene, Screen, Secret, Section, Sheet, Shown, SortDir, Span, Stage, Stat,
-    Steps, Submit, Table, TableRow, TableSelect, TableSort, Tap, Text, Toast, Tone, Toned, Total, Undo, Web,
+    Island, Keyboard, Label, Lane, LaneState, LineItem, Lines, Link, List, Media, Nav, NavLink, Page, Pages, Part,
+    PhonePart, Prose, Round, RoundLane, Row, RowError, Run, Scene, Screen, Secret, Section, Sheet, Shown, SortDir,
+    Span, Stage, Stat, Steps, Submit, Table, TableRow, TableSelect, TableSort, Tap, Text, Toast, Tone, Toned, Total,
+    Undo, Web,
 };
 use crate::expr::{Expr, Lit, State};
 
@@ -450,6 +451,27 @@ fn toast() -> Block {
     ))
 }
 
+fn pages() -> Block {
+    let page = |n: u32, alt: &str| Page {
+        src: format!("/q/0418/{n}.png"),
+        alt: alt.into(),
+        width: 1240,
+        height: 1754,
+    };
+    let quote = vec![
+        page(1, "Cover and priced items: 8 lines, total 51,092.50 including VAT"),
+        page(2, "Terms and conditions, clauses 1 to 6"),
+        page(3, "Programme of works and the acceptance signature box"),
+    ];
+    Block::Pages(Box::new(
+        Pages::new(quote)
+            .id("quote")
+            .title("Q-2026-0418 rev 3")
+            .file("/q/0418.pdf")
+            .note("Out of date: the prices changed after this was drawn."),
+    ))
+}
+
 /// One typed sample per kind, keyed by its `type`; `fixtures/blocks` is written from them.
 pub fn samples() -> Vec<(&'static str, Block)> {
     let all = [
@@ -458,7 +480,7 @@ pub fn samples() -> Vec<(&'static str, Block)> {
         controls(),
         content(),
         stepper(),
-        vec![table(), toast()],
+        vec![table(), toast(), pages()],
     ]
     .concat();
     let kind = |b: &Block| {
