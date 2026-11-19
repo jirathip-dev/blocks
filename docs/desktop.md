@@ -19,3 +19,5 @@ Measured with the harness at 390 and 1440, with Noto Sans Thai given by `--font`
 - Line breaks are wrong: egui breaks a line only at a space or, failing that, at the last character that fits. Thai
   puts no space between words, so a long Thai line is cut inside a word (`อาศั` / `ย`). The other two renderers
   break between words.
+
+![The Thai sample at 390, drawn by the harness](desktop-thai-390.png)
