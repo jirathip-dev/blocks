@@ -361,6 +361,13 @@ wire! {
 }
 
 wire! {
+    /// A composer's turn in progress: when it started.
+    pub struct Working {
+        since: String,
+    }
+}
+
+wire! {
     /// A reorderable list's action.
     pub struct Reorder {
         action: String,
