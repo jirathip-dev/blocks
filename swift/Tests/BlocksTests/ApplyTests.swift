@@ -166,4 +166,25 @@ final class ApplyTests: XCTestCase {
         XCTAssertTrue(replica.dot)
         XCTAssertEqual(replica.screen("k"), try block(base))
     }
+
+    func testABurstOfFramesChangesTheReplicaOnceAndEndsAsEachFrameInTurnWould() throws {
+        let frame = { (json: String) in try JSONDecoder().decode(Frame.self, from: Data(json.utf8)) }
+        var one = Replica()
+        one.hello(try JSONDecoder().decode(Hello.self, from: Data(#"{"v": 1, "sid": "s", "epoch": "e", "keys": 16}"#.utf8)))
+        one.open("k")
+        _ = one.frame(try frame(#"{"k": "k", "rev": 1, "screen": \#(base)}"#))
+        let burst = try (1...3).map { i in
+            try frame(#"{"k": "k", "from": \#(i), "rev": \#(i + 1), "ops": [{"op": "merge", "id": "a", "fields": {"title": "A\#(i)"}}]}"#)
+        }
+        var changes = 0
+        var replica = one {
+            didSet { changes += 1 }
+        }
+        let took = replica.frames(burst)
+        XCTAssertEqual(took, [.patched, .patched, .patched])
+        XCTAssertEqual(changes, 1)
+        for f in burst { _ = one.frame(f) }
+        XCTAssertEqual(replica, one)
+        XCTAssertEqual(try JSONValue(XCTUnwrap(replica.screen("k"))).list("blocks").first?.list("rows").first?.string("title"), "A3")
+    }
 }

@@ -32,6 +32,9 @@ globalThis.fetch = async (url, init) => {
   return { ok: r.status === undefined, status: r.status ?? 200, json: async () => r };
 };
 const settle = () => new Promise((r) => setImmediate(r));
+const frames = [];
+globalThis.requestAnimationFrame = (f) => frames.push(f);
+const frame = () => frames.splice(0).forEach((f) => f());
 
 const row = (id, title) => ({ type: "row", id, title });
 const screen = (...rows) => ({ type: "screen", id: "s", title: "Q", blocks: [{ type: "list", id: "l", rows }] });
@@ -54,13 +57,16 @@ test("a stream opens on hello, syncs, patches, asks again on a gap, and parks on
 
   const merge = { op: "merge", id: "a", fields: { title: "A2" } };
   es.emit("message", { k: "/q", from: 1, rev: 2, ops: [merge] });
+  frame();
   deepStrictEqual(seen.at(-1), { screen: screen(row("a", "A2")), ops: [merge] });
   es.emit("message", { k: "/q", from: 1, rev: 2, ops: [merge] });
+  frame();
   deepStrictEqual(seen.length, 2);
 
   const ins = { op: "insert", into: "l", block: row("b", "B") };
   replies.push({ keys: [{ k: "/q", rev: 4, ops: [ins] }] });
   es.emit("message", { k: "/q", from: 3, rev: 4, ops: [] });
+  frame();
   await settle();
   deepStrictEqual(posts.at(-1).body, { open: [{ k: "/q", rev: 2 }], close: [] });
   deepStrictEqual(seen.at(-1), { screen: screen(row("a", "A2"), row("b", "B")), ops: [ins] });
@@ -87,6 +93,27 @@ test("a stream opens on hello, syncs, patches, asks again on a gap, and parks on
   s.close("/r");
   await settle();
   deepStrictEqual([posts.length, es4.closed, states.at(-1)], [n, true, "off"]);
+});
+
+test("every frame that arrives within one animation frame reaches the view in one call with all their ops", async () => {
+  const seen = [];
+  const s = stream({ url: "/burst" });
+  s.open("/q", (screen, ops) => seen.push({ screen, ops }));
+  const es = sources.at(-1);
+  replies.push({ keys: [{ k: "/q", rev: 1, screen: screen(row("a", "A")) }] });
+  es.emit("hello", hello());
+  await settle();
+  seen.length = 0;
+  const ops = [1, 2, 3].map((i) => ({ op: "insert", into: "l", block: row(`b${i}`, "B") }));
+  ops.forEach((op, i) => es.emit("message", { k: "/q", from: i + 1, rev: i + 2, ops: [op] }));
+  deepStrictEqual([seen.length, frames.length], [0, 1]);
+  frame();
+  deepStrictEqual(seen, [{ screen: screen(row("a", "A"), row("b1", "B"), row("b2", "B"), row("b3", "B")), ops }]);
+  es.emit("message", { k: "/q", from: 4, rev: 5, ops: [ops[0]] });
+  es.emit("message", { k: "/q", rev: 6, screen: screen() });
+  frame();
+  deepStrictEqual(seen.at(-1), { screen: screen(), ops: undefined });
+  s.close("/q");
 });
 
 test("a hello more than one version away parks the stream with no sync", async () => {

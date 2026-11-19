@@ -146,16 +146,14 @@ function isBlock(r: Rec): r is Rec & Block {
   return typeof r.type === "string";
 }
 
-/// Patches the view in `root` with queued ops at most once per 100 ms, on an animation frame; over 500 it redraws.
+/// Patches the view in `root` with every op queued within one animation frame, in one pass; over 500 it redraws.
 export function patcher(o: { root: HTMLElement; model: () => Block; draw: Draw; saved?: () => void }) {
   let ops: Op[] = [];
   let over = false;
-  let timer: ReturnType<typeof setTimeout> | undefined;
-  let last = -Infinity;
+  let due = false;
   const run = (): void => {
-    timer = undefined;
+    due = false;
     if (!ops.length && !over) return;
-    last = Date.now();
     const model = o.model();
     const todo = ops;
     ops = [];
@@ -171,15 +169,11 @@ export function patcher(o: { root: HTMLElement; model: () => Block; draw: Draw; 
         ops = [];
         over = true;
       }
-      if (timer === undefined) timer = setTimeout(() => requestAnimationFrame(run), Math.max(0, last + 100 - Date.now()));
+      if (!due) requestAnimationFrame(run);
+      due = true;
     },
-    flush(): void {
-      clearTimeout(timer);
-      run();
-    },
+    flush: run,
     drop(): void {
-      clearTimeout(timer);
-      timer = undefined;
       ops = [];
       over = false;
     },

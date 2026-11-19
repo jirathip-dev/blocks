@@ -91,42 +91,37 @@ test("apply follows the crate: before, else after, else the end; a move; an unkn
   strictEqual(apply(s, [{ op: "remove", id: "zz" }]), undefined);
 });
 
-test("the patcher touches only the nodes its ops name, once per 100 ms on an animation frame", (t) => {
-  t.mock.timers.enable({ apis: ["setTimeout", "Date"] });
+test("the patcher draws every op queued within one frame in one pass on that frame, touching only the nodes they name", () => {
   const v = view(screen(row("a", "A"), row("b", "B"), row("c", "C")));
   const [, b] = v.root.children[0].children[0].children[0].children[0].children;
-  v.send([{ op: "merge", id: "a", fields: { title: "A2" } }, { op: "move", id: "c", into: "l", before: "a" }]);
-  t.mock.timers.tick(0);
+  v.send([{ op: "merge", id: "a", fields: { title: "A2" } }]);
+  v.send([{ op: "move", id: "c", into: "l", before: "a" }]);
+  v.send([{ op: "insert", into: "l", after: "b", block: row("d", "D") }]);
+  strictEqual(frames.length, 1);
   deepStrictEqual(ids(v.root), ["a:A", "b:B", "c:C"]);
   frame();
-  deepStrictEqual(ids(v.root), ["c:C", "a:A2", "b:B"]);
+  deepStrictEqual(ids(v.root), ["c:C", "a:A2", "b:B", "d:D"]);
   strictEqual(v.root.children[0].children[0].children[0].children[0].children[2], b);
   strictEqual(v.saved(), 1);
 
-  v.send([{ op: "insert", into: "l", after: "b", block: row("d", "D") }, { op: "remove", id: "c" }]);
-  t.mock.timers.tick(90);
-  frame();
-  deepStrictEqual(ids(v.root), ["c:C", "a:A2", "b:B"]);
-  t.mock.timers.tick(10);
+  v.send([{ op: "remove", id: "c" }]);
   frame();
   deepStrictEqual(ids(v.root), ["a:A2", "b:B", "d:D"]);
+  strictEqual(v.saved(), 2);
 
   v.send([{ op: "remove", id: "d" }]);
   v.p.flush();
   deepStrictEqual(ids(v.root), ["a:A2", "b:B"]);
   v.send([{ op: "remove", id: "b" }]);
   v.p.drop();
-  t.mock.timers.tick(200);
   frame();
   deepStrictEqual(ids(v.root), ["a:A2", "b:B"]);
 });
 
-test("over 500 queued ops the patcher redraws the view once from the model", (t) => {
-  t.mock.timers.enable({ apis: ["setTimeout", "Date"] });
+test("over 500 queued ops the patcher redraws the view once from the model", () => {
   const v = view(screen(row("a", "A")));
   for (let i = 0; i < 501; i++) v.send([{ op: "merge", id: "a", fields: { title: `A${i}` } }]);
   const before = draws;
-  t.mock.timers.tick(0);
   frame();
   deepStrictEqual(ids(v.root), ["a:A500"]);
   strictEqual(draws - before, 3);
