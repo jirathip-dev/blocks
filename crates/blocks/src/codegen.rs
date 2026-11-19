@@ -3,8 +3,8 @@ use std::path::Path;
 use serde_json::{Map, Value};
 
 use crate::{
-    theme, Action, Answer, Block, Bye, Card, Child, Composer, ComposerChip, Frame, Hello, List, OldFrame, Op, Queued,
-    Row, Screen, Sync, Synced, Text, Tone, SCHEMA_VERSION,
+    layout, theme, Action, Answer, Block, Bye, Card, Child, Composer, ComposerChip, Frame, Hello, List, OldFrame, Op,
+    Queued, Row, Screen, Sync, Synced, Text, Tone, SCHEMA_VERSION,
 };
 
 /// The JSON Schema of a `Frame`; its `$defs` hold `Block`, `Op` and the stream's other messages.
@@ -57,6 +57,10 @@ pub fn write(root: &Path) -> std::io::Result<()> {
         (
             "swift/Sources/Blocks/Gen/Style.swift",
             style_swift().map_err(std::io::Error::other)?,
+        ),
+        (
+            "swift/Sources/Blocks/Gen/LayoutShapes.swift",
+            layout_swift().map_err(std::io::Error::other)?,
         ),
     ];
     for (path, text) in files {
@@ -157,6 +161,11 @@ fn schemes_swift() -> serde_json::Result<String> {
 fn style_swift() -> Out {
     let style = swift_defs(&schemars::schema_for!(theme::Style).to_value())?;
     Ok(style + &swift_defs(&schemars::schema_for!(theme::LabelRole).to_value())?)
+}
+
+fn layout_swift() -> Out {
+    let place = swift_defs(&schemars::schema_for!(layout::Place).to_value())?;
+    Ok(place + &swift_defs(&schemars::schema_for!(layout::Transition).to_value())?)
 }
 
 fn row(id: &str, title: &str) -> Block {
@@ -584,9 +593,14 @@ fn swift_words(name: &str, ws: &[&str]) -> String {
             word(&camel(w, false))
         )
     });
+    let all = ws
+        .iter()
+        .map(|w| format!(".{}", word(&camel(w, false))))
+        .collect::<Vec<_>>()
+        .join(", ");
     format!(
         "\npublic struct {name}: RawRepresentable, Hashable, {CODABLE} {{\n    public let rawValue: String\n    \
-         public init(rawValue: String) {{ self.rawValue = rawValue }}\n{}}}\n",
+         public init(rawValue: String) {{ self.rawValue = rawValue }}\n{}    public static let all: [Self] = [{all}]\n}}\n",
         lets.collect::<String>()
     )
 }

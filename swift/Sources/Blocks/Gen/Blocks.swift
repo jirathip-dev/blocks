@@ -13,6 +13,7 @@ public struct Accessory: RawRepresentable, Hashable, Codable, Equatable, Sendabl
     public init(rawValue: String) { self.rawValue = rawValue }
     public static let chevron = Self(rawValue: "chevron")
     public static let none = Self(rawValue: "none")
+    public static let all: [Self] = [.chevron, .none]
 }
 
 public struct Act: Codable, Equatable, Sendable {
@@ -162,6 +163,7 @@ public struct ButtonStyle: RawRepresentable, Hashable, Codable, Equatable, Senda
     public static let primary = Self(rawValue: "primary")
     public static let plain = Self(rawValue: "plain")
     public static let destructive = Self(rawValue: "destructive")
+    public static let all: [Self] = [.primary, .plain, .destructive]
 }
 
 public struct Bye: Codable, Equatable, Sendable {
@@ -193,6 +195,7 @@ public struct CardKind: RawRepresentable, Hashable, Codable, Equatable, Sendable
     public static let secret = Self(rawValue: "secret")
     public static let config = Self(rawValue: "config")
     public static let proposal = Self(rawValue: "proposal")
+    public static let all: [Self] = [.ask, .run, .secret, .config, .proposal]
 }
 
 public enum Child: Codable, Equatable, Sendable {
@@ -402,6 +405,7 @@ public struct FieldKind: RawRepresentable, Hashable, Codable, Equatable, Sendabl
     public static let toggle = Self(rawValue: "toggle")
     public static let picker = Self(rawValue: "picker")
     public static let secret = Self(rawValue: "secret")
+    public static let all: [Self] = [.text, .toggle, .picker, .secret]
 }
 
 public enum FieldValue: Codable, Equatable, Sendable {
@@ -489,6 +493,7 @@ public struct ImageSize: RawRepresentable, Hashable, Codable, Equatable, Sendabl
     public init(rawValue: String) { self.rawValue = rawValue }
     public static let small = Self(rawValue: "small")
     public static let large = Self(rawValue: "large")
+    public static let all: [Self] = [.small, .large]
 }
 
 public struct Images: Codable, Equatable, Sendable {
@@ -528,6 +533,7 @@ public struct Keyboard: RawRepresentable, Hashable, Codable, Equatable, Sendable
     public static let `default` = Self(rawValue: "default")
     public static let url = Self(rawValue: "url")
     public static let number = Self(rawValue: "number")
+    public static let all: [Self] = [.`default`, .url, .number]
 }
 
 public struct Label: Codable, Equatable, Sendable {
@@ -554,6 +560,7 @@ public struct LaneState: RawRepresentable, Hashable, Codable, Equatable, Sendabl
     public static let idle = Self(rawValue: "idle")
     public static let fail = Self(rawValue: "fail")
     public static let merged = Self(rawValue: "merged")
+    public static let all: [Self] = [.working, .needs, .done, .idle, .fail, .merged]
 }
 
 public struct LineError: Codable, Equatable, Sendable {
@@ -792,6 +799,7 @@ public struct Pattern: RawRepresentable, Hashable, Codable, Equatable, Sendable 
     public static let email = Self(rawValue: "email")
     public static let url = Self(rawValue: "url")
     public static let number = Self(rawValue: "number")
+    public static let all: [Self] = [.filled, .email, .url, .number]
 }
 
 public struct Pending: Codable, Equatable, Sendable {
@@ -864,6 +872,7 @@ public struct RowStyle: RawRepresentable, Hashable, Codable, Equatable, Sendable
     public init(rawValue: String) { self.rawValue = rawValue }
     public static let link = Self(rawValue: "link")
     public static let destructive = Self(rawValue: "destructive")
+    public static let all: [Self] = [.link, .destructive]
 }
 
 public struct Run: Codable, Equatable, Sendable {
@@ -1018,6 +1027,7 @@ public struct TextStyle: RawRepresentable, Hashable, Codable, Equatable, Sendabl
     public init(rawValue: String) { self.rawValue = rawValue }
     public static let body = Self(rawValue: "body")
     public static let footnote = Self(rawValue: "footnote")
+    public static let all: [Self] = [.body, .footnote]
 }
 
 public struct Tile: Codable, Equatable, Sendable {
@@ -1047,6 +1057,7 @@ public struct Tone: RawRepresentable, Hashable, Codable, Equatable, Sendable {
     public static let done = Self(rawValue: "done")
     public static let fail = Self(rawValue: "fail")
     public static let idle = Self(rawValue: "idle")
+    public static let all: [Self] = [.ok, .warn, .bad, .info, .mute, .accent, .working, .needs, .done, .fail, .idle]
 }
 
 public enum Toned: Codable, Equatable, Sendable {
@@ -1078,4 +1089,5 @@ public struct Why: RawRepresentable, Hashable, Codable, Equatable, Sendable {
     public static let evicted = Self(rawValue: "evicted")
     public static let unpaired = Self(rawValue: "unpaired")
     public static let handover = Self(rawValue: "handover")
+    public static let all: [Self] = [.evicted, .unpaired, .handover]
 }

@@ -2,6 +2,7 @@ mod built;
 mod diff;
 pub mod expr;
 mod kind;
+pub mod layout;
 mod mirror;
 mod patch;
 mod shelf;

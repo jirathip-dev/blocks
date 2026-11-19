@@ -9,6 +9,7 @@ generated = [
     "web/src/gen/schemes.ts",
     "swift/Sources/Blocks/Gen/Schemes.swift",
     "swift/Sources/Blocks/Gen/Style.swift",
+    "swift/Sources/Blocks/Gen/LayoutShapes.swift",
     "fixtures/blocks/*.json",
 ]
 generate = "just gen"
@@ -83,10 +84,15 @@ paths = ["crates/blocks/src/theme/**"]
 mods = ["crate::theme"]
 
 [[layer]]
+name = "layout"
+paths = ["crates/blocks/src/layout.rs"]
+mods = ["crate::layout", "blocks::layout"]
+
+[[layer]]
 name = "codegen"
 paths = ["crates/blocks/src/codegen.rs", "crates/blocks/src/bin/**"]
 mods = ["crate::codegen", "blocks::codegen"]
-may_use = ["expr", "kind", "built", "wire", "patch", "diff", "shelf", "mirror", "theme"]
+may_use = ["expr", "kind", "built", "wire", "patch", "diff", "shelf", "mirror", "theme", "layout"]
 
 [[ban]]
 pattern = "drover"
