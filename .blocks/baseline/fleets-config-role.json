@@ -2,8 +2,32 @@
   "guard": 2,
   "known": [
     {
+      "rule": "render/clipped-text",
+      "at": "screen#role-rev/section~1/list#accounts/row#A"
+    },
+    {
+      "rule": "render/clipped-text",
+      "at": "screen#role-rev/section~1/list#accounts/row#B"
+    },
+    {
+      "rule": "render/clipped-text",
+      "at": "screen#role-rev/section~1/list#accounts/row#C"
+    },
+    {
       "rule": "render/contrast",
-      "at": "screen#role-rev/section~1/list~0/row#B"
+      "at": "screen#role-rev/section~1/list#accounts/row#B"
+    },
+    {
+      "rule": "render/tap-target",
+      "at": "screen#role-rev/section~1/list#accounts/row#A"
+    },
+    {
+      "rule": "render/tap-target",
+      "at": "screen#role-rev/section~1/list#accounts/row#B"
+    },
+    {
+      "rule": "render/tap-target",
+      "at": "screen#role-rev/section~1/list#accounts/row#C"
     }
   ]
 }
