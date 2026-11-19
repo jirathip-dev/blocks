@@ -1,0 +1,24 @@
+Decided: rewrite "The existing issues" as a state table (closed, merged, split) instead of the old amendment lines, which no longer apply to closed issues.
+Because: "#1, #4, #5, #6 and #7 are closed, and #13 and #27 have merged since"
+Decided: B9b, B1b, B4b and B16b share rows with their parent slices in the budget, so the totals stay as estimated.
+Because: "the split slices in the tables, the order diagram and the budget"
+Decided: SlotView and Layout move from B9's row to B3's, and C4 deletes "the files B9 and B3 list".
+Because: "`SlotView` ships with B3 (#14)"
+Decided: B14's other kinds name #38 to #44, now filed, which are blocked on #15, #17 and #23.
+Because: "every \"Blocked on\" there matches `drover queue blocks ls`"
+Rejected: editing the B13 row or the compat line of the diagram — they are left to #22
+Because: "The B13 row and the compat part of the order diagram are left to #22"
+Check: each slice's blockers in migration.md against drover queue blocks ls and the issue's Blocked on line.
+Owner: The front page and the migration plan now match what has merged and the issues that are filed.
+
+Decided: rewrite "The existing issues" as a state table (closed, merged, split) instead of the old amendment lines, which no longer apply to closed issues.
+Because: "#1, #4, #5, #6 and #7 are closed, and #13 and #27 have merged since"
+Decided: B1b, B4b, B9b and B16b share rows with their parent slices in the budget, so the totals stay as estimated.
+Because: "the split slices in the tables, the order diagram and the budget"
+Decided: SlotView and Layout move from B9's row to B3's, and C4 deletes "the files B9 and B3 list".
+Because: "`SlotView` ships with B3 (#14)"
+Decided: the staging merge keeps #22's B13 row and compat line verbatim.
+Because: "The B13 row and the compat part of the order diagram are left to #22"
+Rejected: rewording #22's B13 text in this PR — it belongs to #22
+Check: each slice's blockers in migration.md against drover queue blocks ls and the issue's Blocked on line.
+Owner: The front page and the migration plan now match what has merged and the issues that are filed.
