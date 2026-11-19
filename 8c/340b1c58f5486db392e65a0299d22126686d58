@@ -1,0 +1,10 @@
+Decided: ci/cap.d/2026-11-19-17000.toml raises line_cap to 17000; the commit carries Cap: 15000 → 17000 (#101, q2247)
+Because: q2247
+Decided: the Rust find in scripts/line-cap.sh takes site/src and bench beside crates/*/src, skipping target and node_modules
+Because: scripts/line-cap.sh:8
+Decided: bench JS is a separate find over bench/*.js outside node_modules; lock files are .json so never match
+Because: "its hand-written `.js` outside `node_modules` and lock files"
+Rejected: counting web/lint.mjs or Package.swift — the issue names them as not counted on purpose
+Check: scripts/line-cap.test.sh expects 11 with the site/bench fixtures and fails (7) against the old script
+Check: sh scripts/line-cap.sh reports 15794 / 17000 at the head
+Owner: the line cap is now 17000 and the site generator and benchmark code count toward it
