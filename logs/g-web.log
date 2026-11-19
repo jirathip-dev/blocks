@@ -1,0 +1,50 @@
+
+> check
+> tsc --noEmit
+
+
+> lint
+> node --no-warnings lint.mjs src
+
+ts-lint: 0 violations
+
+> test
+> node --no-warnings --test test/*.test.ts
+
+✔ apply follows the crate: before, else after, else the end; a move; an unknown op is undefined (0.686917ms)
+✔ the patcher touches only the nodes its ops name, once per 100 ms on an animation frame (5.976916ms)
+✔ over 500 queued ops the patcher redraws the view once from the model (3.269666ms)
+✔ there are protocol fixtures (0.862959ms)
+✔ the mirror runs epoch.json as the crate does (0.969375ms)
+✔ the mirror runs gone.json as the crate does (1.06725ms)
+✔ the mirror runs live.json as the crate does (0.386541ms)
+✔ the mirror runs reordered.json as the crate does (0.16825ms)
+✔ the mirror runs unknown-field.json as the crate does (0.125917ms)
+✔ the mirror runs unknown-kind.json as the crate does (0.120792ms)
+✔ the mirror runs unknown-op.json as the crate does (0.123041ms)
+✔ the mirror runs unknown-word.json as the crate does (0.11925ms)
+✔ the mirror runs version-app.json as the crate does (0.141291ms)
+✔ the mirror runs version-before.json as the crate does (0.100625ms)
+✔ the mirror runs version-server.json as the crate does (0.073875ms)
+✔ every fixture is drawn with its hooks, natively or as its fallback (3.077709ms)
+✔ parts carry their hook class and the block's own text (0.48525ms)
+✔ children of a container are drawn through render, with their hooks (0.083041ms)
+✔ a gap draws its fallback as a row, then its children (0.110334ms)
+✔ an app kind is the app's view when registered, else its fallback (0.09125ms)
+✔ a row's figure comes from the theme and carries its hook (0.083333ms)
+✔ a pack's words dress the plain word; css writes a scheme's tokens (0.146584ms)
+✔ resolved keeps the place the file gave each size class (0.41025ms)
+✔ a two-tab layout draws its tabs, opens the first tab's key on one stream and follows its frames (22.623167ms)
+✔ a kept copy paints before the stream answers (0.326875ms)
+✔ an action posts to its source; its answer's ops patch the screen and its toast shows (12.406667ms)
+✔ the menu lists the menu's screens but hidden ones, and the look sheet wears a scheme (0.651042ms)
+✔ a stream opens on hello, syncs, patches, asks again on a gap, and parks on bye (16.620792ms)
+✔ a hello more than one version away parks the stream with no sync (2.379125ms)
+ℹ tests 29
+ℹ suites 0
+ℹ pass 29
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 120.322209

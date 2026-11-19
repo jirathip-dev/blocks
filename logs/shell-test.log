@@ -1,0 +1,13 @@
+✔ resolved keeps the place the file gave each size class (0.404917ms)
+✔ a two-tab layout draws its tabs, opens the first tab's key on one stream and follows its frames (20.29725ms)
+✔ a kept copy paints before the stream answers (0.347125ms)
+✔ an action posts to its source; its answer's ops patch the screen and its toast shows (12.840625ms)
+✔ the menu lists the menu's screens but hidden ones, and the look sheet wears a scheme (0.706958ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 109.017167

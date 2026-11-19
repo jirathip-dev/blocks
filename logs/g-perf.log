@@ -1,0 +1,17 @@
+   Compiling blocks v0.1.0 (/Users/jkmacmini/.local/share/drover/work/blocks/issue-16/crates/blocks)
+    Finished `release` profile [optimized] target(s) in 24.52s
+     Running tests/perf.rs (/Users/jkmacmini/.local/share/herdsman/work/.build/blocks-impl-16/release/deps/perf-993e2ef2d1f84236)
+
+running 4 tests
+test a_500_kb_screen_serializes_and_parses_under_budget ... | serialize a 500 KB screen | 284.4 µs | 3000.0 µs |
+| parse a 500 KB screen | 1177.8 µs | 5000.0 µs |
+ok
+test applying_the_ops_of_a_200_row_screen_stays_under_budget ... | apply the ops to a 200-row screen | 19.8 µs | 150.0 µs |
+ok
+test checking_a_200_node_layout_stays_under_budget ... | check a 200-node layout | 86.2 µs | 300.0 µs |
+ok
+test diffing_a_200_row_screen_stays_under_budget ... | diff a 200-row screen | 9.7 µs | 150.0 µs |
+ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.24s
+

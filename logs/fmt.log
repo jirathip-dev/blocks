@@ -1,0 +1,21 @@
+Diff in /Users/jkmacmini/.local/share/drover/work/blocks/issue-16/crates/blocks/tests/web.rs:1:
+ #[test]
+ fn the_bundle_exports_mount_and_carries_the_shell_style() {
+     assert!(blocks::web::JS.contains("mount"), "web/dist/blocks.js has no mount");
+[31m-    assert!(blocks::web::JS.contains("export{"), "web/dist/blocks.js is not an ES module");
+(B[m[31m-    assert!(blocks::web::CSS.contains(".b-sheet"), "web/dist/blocks.css has no shell style");
+(B[m[31m-    assert!(blocks::web::CSS.contains("@layer blocks"), "web/dist/blocks.css lost its layer");
+(B[m[32m+    assert!(
+(B[m[32m+        blocks::web::JS.contains("export{"),
+(B[m[32m+        "web/dist/blocks.js is not an ES module"
+(B[m[32m+    );
+(B[m[32m+    assert!(
+(B[m[32m+        blocks::web::CSS.contains(".b-sheet"),
+(B[m[32m+        "web/dist/blocks.css has no shell style"
+(B[m[32m+    );
+(B[m[32m+    assert!(
+(B[m[32m+        blocks::web::CSS.contains("@layer blocks"),
+(B[m[32m+        "web/dist/blocks.css lost its layer"
+(B[m[32m+    );
+(B[m }
+ 
