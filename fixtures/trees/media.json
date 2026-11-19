@@ -2,6 +2,6 @@
   "kind": "media",
   "id": "chart",
   "variant": null,
-  "drawn": "fallback",
+  "drawn": "native",
   "children": []
 }

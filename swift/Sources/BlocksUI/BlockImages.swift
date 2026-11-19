@@ -32,22 +32,22 @@ private struct Opened: Identifiable {
     fileprivate var id: Int { index }
 }
 
-private struct ZoomedPicture: View {
+internal struct ZoomedPicture: View {
     @State private var scale: CGFloat = 1
-    fileprivate let item: JSONValue
+    internal let item: JSONValue
 
-    fileprivate var body: some View {
+    internal var body: some View {
         Picture(item: item, fit: true).scaleEffect(scale)
             .gesture(MagnifyGesture().onChanged { scale = max(1, $0.magnification) })
     }
 }
 
-private struct Picture: View {
+internal struct Picture: View {
     @Environment(\.look) private var look
-    fileprivate let item: JSONValue
-    fileprivate var fit = false
+    internal let item: JSONValue
+    internal var fit = false
 
-    fileprivate var body: some View {
+    internal var body: some View {
         let src = item.string("src") ?? ""
         if let image = Self.decoded(src) {
             Image(decorative: image, scale: 1).resizable().aspectRatio(contentMode: fit ? .fit : .fill)

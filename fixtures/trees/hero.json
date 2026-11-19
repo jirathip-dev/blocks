@@ -2,6 +2,6 @@
   "kind": "hero",
   "id": "hero",
   "variant": null,
-  "drawn": "fallback",
+  "drawn": "native",
   "children": []
 }
