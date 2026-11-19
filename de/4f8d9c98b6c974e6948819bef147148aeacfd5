@@ -1,0 +1,13 @@
+Decided: an island is a custom element named by the island, carrying data-fallback and data-props with its fallback inside, written alike by render and site
+Because: docs/architecture/blocks/renderers.md:100
+Decided: x-echo draws its props and sends them back as `echo` each time it gets them, so neither harness taps inside a component
+Because: swift/Sources/BlocksSnapshot/Snapshot.swift:58
+Decided: a dropped event is `event <id> <name>` in report.dropped, beside `tap <id>`; the Ctx and the SwiftUI environment carry the drop to the harness
+Because: docs/architecture/blocks/renderers.md:119
+Decided: a merge of only `props` sets them on the live element; any other field redraws it
+Because: web/src/patch.ts:122
+Decided: an island name that is no valid custom element tag draws the plain div fallback, so no unescaped tag is written
+Because: crates/blocks/src/site/mod.rs:420
+Rejected: drawing `size` now — the criteria do not name it, so it stays undrawn as before
+Check: web/test/shot.test.ts island test, SnapshotTests island tests, tests/site.rs island test, fixtures/html/island.html from gen
+Owner: Apps can now host their own interactive components on web and iPhone screens, with a plain stand-in on static pages.
