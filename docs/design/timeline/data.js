@@ -2,7 +2,7 @@
 const OFF = ["2026-12-05", "2026-12-06", "2026-12-10", "2026-12-12", "2026-12-13", "2026-12-19", "2026-12-20", "2026-12-26", "2026-12-27", "2026-12-31"];
 const d = n => "2026-12-" + String(n).padStart(2, "0");
 var planner = {
-  type: "timeline", id: "plan", title: "Crews", meta: "8 jobs · weekends and holidays shaded", from: d(1), to: d(31), off: OFF, corner: "Job",
+  type: "timeline", id: "plan", title: "Crews", meta: "8 jobs", from: d(1), to: d(31), off: OFF, corner: "Job",
   move: { action: "schedule", name: "bar" }, stretch: { action: "schedule", name: "bar" }, draw: { action: "schedule", name: "bar" },
   rows: [
     { id: "j0", title: "St Anne's annexe", subtitle: "Crew 3 · fit-out", bars: [{ id: "b01", start: "2026-11-23", end: d(4), label: "Fit-out", progress: 80 }] },
@@ -29,7 +29,7 @@ var planner = {
   ],
 };
 var activities = {
-  type: "timeline", id: "acts", title: "Estimate E-118 · activities", meta: "read-only · edit the days in the list below", from: d(1), to: d(31), off: OFF, corner: "Activity", static: false,
+  type: "timeline", id: "acts", title: "Estimate E-118 · activities", meta: "read-only", from: d(1), to: d(31), off: OFF, corner: "Activity", static: false,
   rows: [
     { id: "a1", title: "Site set-up", bars: [{ id: "x1", start: d(1), end: d(2), label: "2 days" }] },
     { id: "a2", title: "Demolition", bars: [{ id: "x2", start: d(3), end: d(9), label: "5 days" }] },
