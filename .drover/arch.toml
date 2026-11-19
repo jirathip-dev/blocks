@@ -25,6 +25,7 @@ generate = "just gen"
 shared = [
     "crates/blocks/src/lib.rs",
     "crates/*/tests/support/**",
+    "crates/blocks/src/codegen/mod.rs",
     "crates/blocks/tests/sim.rs",
     "web/src/patch.ts",
     "web/test/patch.test.ts",
@@ -133,7 +134,7 @@ mods = ["crate::web", "blocks::web"]
 
 [[layer]]
 name = "codegen"
-paths = ["crates/blocks/src/codegen.rs", "crates/blocks/src/bin/**"]
+paths = ["crates/blocks/src/codegen/**", "crates/blocks/src/bin/**"]
 mods = ["crate::codegen", "blocks::codegen"]
 may_use = ["expr", "kind", "built", "wire", "patch", "diff", "shelf", "mirror", "theme", "layout", "behave", "tree", "site"]
 
@@ -179,7 +180,7 @@ reason = "the library is pure: it starts no process"
 [[ban]]
 pattern = "std::fs"
 paths = ["crates/*/src/**"]
-except = ["crates/blocks/src/codegen.rs"]
+except = ["crates/blocks/src/codegen/**"]
 reason = "the library is pure: only codegen writes files"
 
 [[ban]]
@@ -262,3 +263,7 @@ max_file_lines = 300
 [[size]]
 paths = ["README.md"]
 max_file_lines = 70
+
+[[size]]
+paths = ["crates/blocks/src/codegen/mod.rs"]
+max_file_lines = 80

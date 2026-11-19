@@ -36,7 +36,7 @@ internal struct ActButton<Label: View>: View {
         let tap = source.tap
         let set = Behaviour.tap(tap?.set ?? [], state: behaved.state)
         if !set.isEmpty { edit(set) }
-        if let url = tap?.url.flatMap(URL.init(string:)) {
+        if let link = tap?.url, linkable(link), let url = URL(string: link) {
             openURL(url)
         } else if let thread = tap?.thread {
             openThread(thread)
