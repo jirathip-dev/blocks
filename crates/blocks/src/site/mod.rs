@@ -7,6 +7,7 @@ mod rounds;
 mod scene;
 mod steps;
 mod table;
+mod timeline;
 mod toast;
 mod views;
 
@@ -442,6 +443,7 @@ pub(crate) fn block(w: &mut W<'_>, b: &Value) {
         "table" => table::table(w, b),
         "steps" => steps::steps(w, b),
         "toast" => toast::toast(w, b),
+        "timeline" => timeline::timeline(w, b),
         _ => fallback(w, b),
     }
 }

@@ -69,4 +69,5 @@ switch! {
     Table => table,
     Steps => steps,
     Toast => toast,
+    Timeline => timeline,
 }

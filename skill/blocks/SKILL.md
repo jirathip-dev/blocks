@@ -40,6 +40,7 @@ A screen is data: a `screen` or `sheet` block of typed blocks, checked, then dra
 - [`table`](kinds/table.md): A data table: typed columns, rows by id, sort, filter, totals, row select and export.
 - [`steps`](kinds/steps.md): A stepper of named steps with its current one, or progress bars.
 - [`toast`](kinds/toast.md): A short line after an action, in a tone, with an optional undo: an answer's toast, or drawn where it sits.
+- [`timeline`](kinds/timeline.md): Rows of bars on a day axis from `from` to `to` (ISO days); `move`, `stretch` and `draw` each send a `DaySpan`.
 
 ## More
 

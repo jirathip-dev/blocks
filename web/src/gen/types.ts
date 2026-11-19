@@ -16,7 +16,7 @@ export type AppBlock = { fallback?: Fallback | null; id?: string | null; type: s
 
 export type Bar = { label: string; sub?: string | null; tone?: Tone | null; value: number };
 
-export type Block = ({ type: "screen" } & Screen) | ({ type: "sheet" } & Sheet) | ({ type: "section" } & Section) | ({ type: "list" } & List) | ({ type: "row" } & Row) | ({ type: "card" } & Card) | ({ type: "choice" } & Choice) | ({ type: "form" } & Form) | ({ type: "config" } & Form) | ({ type: "secret" } & Secret) | ({ type: "run" } & Run) | ({ type: "button" } & Button) | ({ type: "chips" } & Chips) | ({ type: "stat" } & Stat) | ({ type: "text" } & Text) | ({ type: "images" } & Images) | ({ type: "web" } & Web) | ({ type: "diff" } & Diff) | ({ type: "editor" } & Editor) | ({ type: "scene" } & Scene) | ({ type: "diagram" } & Diagram) | ({ type: "composer" } & Composer) | ({ type: "lines" } & Lines) | ({ type: "prose" } & Prose) | ({ type: "hero" } & Hero) | ({ type: "media" } & Media) | ({ type: "nav" } & Nav) | ({ type: "island" } & Island) | ({ type: "table" } & Table) | ({ type: "steps" } & Steps) | ({ type: "toast" } & Toast) | (AppBlock & { [key: string]: unknown });
+export type Block = ({ type: "screen" } & Screen) | ({ type: "sheet" } & Sheet) | ({ type: "section" } & Section) | ({ type: "list" } & List) | ({ type: "row" } & Row) | ({ type: "card" } & Card) | ({ type: "choice" } & Choice) | ({ type: "form" } & Form) | ({ type: "config" } & Form) | ({ type: "secret" } & Secret) | ({ type: "run" } & Run) | ({ type: "button" } & Button) | ({ type: "chips" } & Chips) | ({ type: "stat" } & Stat) | ({ type: "text" } & Text) | ({ type: "images" } & Images) | ({ type: "web" } & Web) | ({ type: "diff" } & Diff) | ({ type: "editor" } & Editor) | ({ type: "scene" } & Scene) | ({ type: "diagram" } & Diagram) | ({ type: "composer" } & Composer) | ({ type: "lines" } & Lines) | ({ type: "prose" } & Prose) | ({ type: "hero" } & Hero) | ({ type: "media" } & Media) | ({ type: "nav" } & Nav) | ({ type: "island" } & Island) | ({ type: "table" } & Table) | ({ type: "steps" } & Steps) | ({ type: "toast" } & Toast) | ({ type: "timeline" } & Timeline) | (AppBlock & { [key: string]: unknown });
 
 export type Bound = { get: string };
 
@@ -57,6 +57,8 @@ export type Composer = { action: string; acts?: Record<string, string> | null; c
 export type ComposerChip = { all: string[]; cur?: string | null; name: string };
 
 export type Confirm = { destructive?: boolean | null; message?: string | null; ok?: string | null; title: string };
+
+export type DaySpan = { end: string; id?: string | null; row?: string | null; start: string };
 
 export type Diagram = { counts?: Record<string, number> | null; id?: string | null; nodes?: Record<string, Node> | null; selected?: string | null; show?: Expr | null; source: string; title?: string | null };
 
@@ -240,6 +242,12 @@ export type Tile = { label: string; spark?: number[] | null; tone?: Tone | null;
 
 export type Time = { label?: string | null; since?: string | null; until?: string | null };
 
+export type TimeBar = { end: string; fixed?: boolean | null; id: string; label?: string | null; progress?: number | null; start: string; tap?: Tap | null; tone?: Tone | null };
+
+export type TimeRow = { bars: TimeBar[]; id: string; subtitle?: string | null; tap?: Tap | null; title: string };
+
+export type Timeline = { draw?: Gesture | null; empty?: string | null; from: string; id?: string | null; move?: Gesture | null; off?: string[] | null; show?: Expr | null; stretch?: Gesture | null; title?: string | null; to: string; tracks: TimeRow[] };
+
 export type Timings = { first_paint_ms: number; frames_over_budget?: number | null; longest_frame_ms?: number | null; longest_patch_ms?: number | null; steps_ms: number[] };
 
 export type Toast = { fallback?: Fallback | null; id?: string | null; show?: Expr | null; title: string; tone?: Tone | null; undo?: Undo | null };
@@ -264,4 +272,4 @@ export type Why = "evicted" | "unpaired" | "handover";
 
 export type Working = { since: string };
 
-export type Kind = "screen" | "sheet" | "section" | "list" | "row" | "card" | "choice" | "form" | "config" | "secret" | "run" | "button" | "chips" | "stat" | "text" | "images" | "web" | "diff" | "editor" | "scene" | "diagram" | "composer" | "lines" | "prose" | "hero" | "media" | "nav" | "island" | "table" | "steps" | "toast";
+export type Kind = "screen" | "sheet" | "section" | "list" | "row" | "card" | "choice" | "form" | "config" | "secret" | "run" | "button" | "chips" | "stat" | "text" | "images" | "web" | "diff" | "editor" | "scene" | "diagram" | "composer" | "lines" | "prose" | "hero" | "media" | "nav" | "island" | "table" | "steps" | "toast" | "timeline";

@@ -95,6 +95,7 @@ public enum Block: Codable, Equatable, Sendable {
     case table(Table)
     case steps(Steps)
     case toast(Toast)
+    case timeline(Timeline)
     case appBlock(JSONValue)
 
     private enum Tag: String, CodingKey { case tag = "type" }
@@ -132,6 +133,7 @@ public enum Block: Codable, Equatable, Sendable {
         case "table": self = .table(try Table(from: decoder))
         case "steps": self = .steps(try Steps(from: decoder))
         case "toast": self = .toast(try Toast(from: decoder))
+        case "timeline": self = .timeline(try Timeline(from: decoder))
         default: self = .appBlock(try JSONValue(from: decoder))
         }
     }
@@ -169,6 +171,7 @@ public enum Block: Codable, Equatable, Sendable {
         case .table(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("table", forKey: .tag)
         case .steps(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("steps", forKey: .tag)
         case .toast(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("toast", forKey: .tag)
+        case .timeline(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("timeline", forKey: .tag)
         case .appBlock(let v): try v.encode(to: encoder)
         }
     }
@@ -374,6 +377,13 @@ public struct Confirm: Codable, Equatable, Sendable {
     public var message: String?
     public var ok: String?
     public var title: String
+}
+
+public struct DaySpan: Codable, Equatable, Sendable {
+    public var end: String
+    public var id: String?
+    public var row: String?
+    public var start: String
 }
 
 public struct Diagram: Codable, Equatable, Sendable {
@@ -1395,6 +1405,39 @@ public struct Time: Codable, Equatable, Sendable {
     public var label: String?
     public var since: String?
     public var until: String?
+}
+
+public struct TimeBar: Codable, Equatable, Sendable {
+    public var end: String
+    public var fixed: Bool?
+    public var id: String
+    public var label: String?
+    public var progress: UInt8?
+    public var start: String
+    public var tap: Tap?
+    public var tone: Tone?
+}
+
+public struct TimeRow: Codable, Equatable, Sendable {
+    public var bars: [TimeBar]
+    public var id: String
+    public var subtitle: String?
+    public var tap: Tap?
+    public var title: String
+}
+
+public struct Timeline: Codable, Equatable, Sendable {
+    public var draw: Gesture?
+    public var empty: String?
+    public var from: String
+    public var id: String?
+    public var move: Gesture?
+    public var off: [String]?
+    public var show: Expr?
+    public var stretch: Gesture?
+    public var title: String?
+    public var to: String
+    public var tracks: [TimeRow]
 }
 
 public struct Timings: Codable, Equatable, Sendable {
