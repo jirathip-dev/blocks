@@ -8,13 +8,13 @@ pub use judge::{judge, tighten};
 pub use rules::RULES;
 pub use sarif::{sarif, Sarif};
 pub use shape::{
-    Baseline, Config, Finding, Held, Ignore, Ignored, Known, Outcome, Reason, Rule, Scope, Seen, Severity,
+    Baseline, Config, Finding, Held, Ignore, Ignored, Known, Outcome, Plan, Reason, Rule, Run, Scope, Seen, Severity,
 };
 
 use crate::built::Built;
 
 /// The guard version: it moves with any new rule or tighter limit.
-pub const VERSION: u16 = 1;
+pub const VERSION: u16 = 2;
 
 /// The table row of rule `id`.
 pub fn rule(id: &str) -> Option<&'static Rule> {
@@ -48,4 +48,16 @@ pub fn finding(seen: Seen, fixture: &str) -> Option<Finding> {
         fix: r.fix.into(),
         steps: None,
     })
+}
+
+/// The skill's page for example screen `name`, or what `lint` sees on it: an example has no finding.
+pub fn example(name: &str, screen: &Built, app: &[&str]) -> Result<String, Vec<Seen>> {
+    let seen = lint(screen, app);
+    if !seen.is_empty() {
+        return Err(seen);
+    }
+    let json = serde_json::to_string_pretty(screen.value()).unwrap_or_default();
+    Ok(format!(
+        "# Example: `{name}`\n\nA screen with no guard finding: start a new screen from it.\n\n```json\n{json}\n```\n"
+    ))
 }

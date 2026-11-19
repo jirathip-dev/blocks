@@ -146,18 +146,21 @@ fn trees(root: &Path) -> std::io::Result<Files> {
 fn expected(dir: &str, kinds: &[&str]) -> std::io::Result<Files> {
     let mut out = vec![];
     for (kind, b) in crate::samples() {
-        let v = serde_json::to_value(&b)?;
-        let state = v
-            .get("state")
-            .cloned()
-            .map(serde_json::from_value)
-            .transpose()?
-            .unwrap_or_default();
-        let t = tree::expect(&Built::new(v), kinds, &state);
-        let text = serde_json::to_string_pretty(&t)? + "\n";
+        let text = serde_json::to_string_pretty(&tree_of(&b, kinds)?)? + "\n";
         out.push((format!("{dir}/{kind}.json"), text));
     }
     Ok(out)
+}
+
+pub(super) fn tree_of(b: &Block, kinds: &[&str]) -> std::io::Result<tree::Node> {
+    let v = serde_json::to_value(b)?;
+    let state = v
+        .get("state")
+        .cloned()
+        .map(serde_json::from_value)
+        .transpose()?
+        .unwrap_or_default();
+    Ok(tree::expect(&Built::new(v), kinds, &state))
 }
 
 fn row(id: &str, title: &str) -> Block {

@@ -2,7 +2,7 @@ drover := env("DROVER", "drover")
 test_allow := "-A clippy::unwrap_used -A clippy::expect_used -A clippy::panic -A clippy::indexing_slicing -A clippy::as_conversions -A clippy::print_stdout -A clippy::print_stderr -A clippy::let_underscore_must_use"
 
 # Every gate CI runs, in one go; passes on a clean tree.
-check: fmt clippy fixtures test guard perf soak deps deny web arch cap actionlint swift
+check: fmt clippy fixtures test guard perf soak deps deny web arch cap actionlint swift desktop
 
 # Every generated file (.drover/arch.toml `generated`) from the Rust types; arch-check fails on a difference.
 gen: web-install
@@ -55,6 +55,15 @@ sim n="500":
 
 deps:
     scripts/deps-gate.sh
+
+# The desktop renderer's tests (docs/architecture/desktop/), then the blocks crate's tree, which must link no egui.
+desktop:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    cargo test --locked -p blocks-desktop
+    tree=$(cargo tree --locked -p blocks --all-features --target all -e normal,build --prefix none)
+    if grep -q egui <<<"$tree"; then echo "the blocks crate links egui"; exit 1; fi
+    echo "desktop: the blocks crate links no egui"
 
 deny:
     cargo deny --locked check

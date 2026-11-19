@@ -1,0 +1,41 @@
+{
+  "guard": 2,
+  "known": [
+    {
+      "rule": "render/contrast",
+      "at": "sheet#lane-sendmeter-impl-12/button#act-clean"
+    },
+    {
+      "rule": "render/contrast",
+      "at": "sheet#lane-sendmeter-impl-12/button#act-kill"
+    },
+    {
+      "rule": "render/contrast",
+      "at": "sheet#lane-sendmeter-impl-12/button#act-stop"
+    },
+    {
+      "rule": "render/contrast",
+      "at": "sheet#lane-sendmeter-impl-12/section#facts"
+    },
+    {
+      "rule": "render/contrast",
+      "at": "sheet#lane-sendmeter-impl-12/section#transcript"
+    },
+    {
+      "rule": "render/tap-target",
+      "at": "sheet#lane-sendmeter-impl-12/button#act-clean"
+    },
+    {
+      "rule": "render/tap-target",
+      "at": "sheet#lane-sendmeter-impl-12/button#act-kill"
+    },
+    {
+      "rule": "render/tap-target",
+      "at": "sheet#lane-sendmeter-impl-12/button#act-stop"
+    },
+    {
+      "rule": "render/tap-target",
+      "at": "sheet#lane-sendmeter-impl-12/section#transcript/text#t-0"
+    }
+  ]
+}
