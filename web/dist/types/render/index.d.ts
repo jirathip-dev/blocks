@@ -1,5 +1,6 @@
 import type { Act, Block, Kind, Label, Tap, Toned } from "../gen/types.ts";
 import { type Blk, blks, isBlk, named } from "../core/tree.ts";
+import type { Held } from "../gesture.ts";
 import type { Theme } from "../theme.ts";
 export { type Blk, blks, isBlk, named };
 export type Post = {
@@ -22,6 +23,7 @@ export type Ctx = {
     store: Store;
     apps?: Record<string, Renderer>;
     drop?: (what: string) => void;
+    held?: Map<string, Held>;
 };
 export declare const obj: (v: unknown) => Blk;
 export declare const esc: (s: unknown) => string;

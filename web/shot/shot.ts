@@ -3,6 +3,7 @@ import { webkit } from "playwright";
 import { defaultPair } from "../src/gen/schemes.ts";
 import { tiles, css as wear } from "../src/theme.ts";
 import { expect as differ } from "../src/core/tree.ts";
+import { gesture } from "./gesture.ts";
 import { declared, measure } from "./look.ts";
 
 const BASE = "http://blocks.test/";
@@ -22,12 +23,13 @@ function boot(screen) {
   const h = { model: screen, sent: [], dropped: [] };
   const ctx = {
     screen: String(screen.id ?? ""),
-    act: async (a) => (h.sent.push({ screen: ctx.screen, action: a.action, block: a.block ?? null, values: a.values ?? null }), true),
+    act: async (a) => (h.sent.push({ screen: ctx.screen, action: a.action, block: a.block ?? null, values: a.values ?? null }), h.hold ? new Promise((done) => (h.wait = done)) : true),
     tap: (t) => typeof t?.action === "string" && ctx.act({ action: t.action, values: t.values }),
     open: new Set(),
     theme: B.plain,
     store: { get: () => null, put: () => {} },
     drop: (what) => h.dropped.push(what),
+    held: new Map(),
   };
   const sync = B.behave(root, () => h.model);
   h.paint = () => (root.replaceChildren(...[B.render(h.model, ctx)].filter(Boolean)), sync());
@@ -164,7 +166,8 @@ export async function shot({ screen, steps = [], name = "shot", size = "390x844"
       if (tap) await ((await live(tap)) ? tap.click() : report.dropped.push(`tap ${s.tap.id}`));
       if (type) await ((await live(type)) ? type.fill(s.type.text) : report.dropped.push(`type ${s.type.id}`));
       if (s.scroll) frames.push(...(await page.evaluate((id) => window.h.scroll(id), s.scroll.id)));
-      if (s.answer) await page.evaluate((ops) => window.h.ops(ops), s.answer.ops ?? []);
+      if (s.answer) await page.evaluate((ops) => (window.h.ops(ops), window.h.wait?.(true)), s.answer.ops ?? []);
+      if (s.gesture || s.refuse) await gesture(page, s);
       if (s.shot) {
         const n = s.shot.name;
         pngs[n] = await page.screenshot();
