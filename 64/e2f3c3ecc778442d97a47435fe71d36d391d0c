@@ -1,0 +1,5 @@
+Decided: merged origin/staging (f0e378a, #66 B15) into issue-18; the merge commit adapts site's composer view and render's composer label to B15's kind change
+Because: crates/blocks/src/site/views.rs:1
+Rejected: none
+Check: web/test/site.test.ts still gives the same element per kind from both writers after B15 (45 web tests pass at 64e2f3c)
+Owner: The website branch now includes the latest SwiftUI work and still passes its checks.
