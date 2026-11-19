@@ -1,0 +1,7 @@
+Decided: added a For apps line to the PR body: nothing for an app to do, since diff only gains its native web look
+Because: .drover/rules.md:23
+Decided: merged origin/staging (theme #220) where only web/dist conflicted; rebuilt web/dist from the merged sources with the just gen lines
+Because: "generated files come from `just gen`, never hand-edited"
+Rejected: picking either side of the web/dist conflict by hand — dist is build output of the merged sources
+Check: scripts/for-apps.sh passes on the PR body; arch-check shows no generated drift
+Owner: The change note now tells app makers they have nothing to do, and the diff view is up to date with the shared branch again.
