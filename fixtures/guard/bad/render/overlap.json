@@ -1,0 +1,17 @@
+{
+  "type": "screen",
+  "id": "s",
+  "title": "Bad",
+  "blocks": [
+    {
+      "type": "text",
+      "id": "a",
+      "markdown": "A note that is long enough to fill more than one line of the screen at 390 px wide"
+    },
+    {
+      "type": "text",
+      "id": "b",
+      "markdown": "A second note"
+    }
+  ]
+}

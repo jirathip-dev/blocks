@@ -1,0 +1,10 @@
+{
+  "type": "screen",
+  "id": "s",
+  "title": "Bad",
+  "blocks": [
+    {
+      "type": ""
+    }
+  ]
+}

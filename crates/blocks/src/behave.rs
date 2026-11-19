@@ -5,6 +5,7 @@ use serde_json::Value;
 
 use crate::built::{children, Built};
 use crate::expr::{eval, text, Expr, Lit, Pattern, State};
+use crate::gesture::Word;
 use crate::kind::Check;
 
 /// What the state makes of a screen: hidden blocks and fields, disabled controls and acts, messages, bound values.
@@ -33,7 +34,7 @@ fn acts(o: &serde_json::Map<String, Value>) -> Vec<&Value> {
         .iter()
         .filter_map(|k| o.get(*k)?.as_array())
         .flatten()
-        .chain(o.get("button"))
+        .chain(std::iter::once("button").chain(Word::ALL).filter_map(|k| o.get(k)))
         .collect();
     let menus: Vec<&Value> = all.iter().filter_map(|a| a.get("menu")?.as_array()).flatten().collect();
     all.extend(menus);

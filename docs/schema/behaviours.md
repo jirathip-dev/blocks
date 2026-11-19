@@ -1,7 +1,7 @@
 # Behaviours
 
 Every kind takes `show`, an `Expr`: `{"get": "key"}`, `not`, `all`, `any`, `eq`, `lt`, `len`, `has`, `is` (a named
-pattern), `add`, `sub`, `mul`, `cat`, `pick`, or a bare value. `eval` is total: a wrong type gives `null`, and `null` is
+pattern), `add`, `sub`, `mul`, `div` (a division by zero is `null`), `cat`, `pick`, or a bare value. `eval` is total: a wrong type gives `null`, and `null` is
 false. `fixtures/behave/` holds its cases (state, expression, value), and an operation a reader does not know
 evaluates to `null`.
 

@@ -11,6 +11,7 @@ public struct BlocksView: View {
     private let open: @MainActor (String) -> Void
     private let openThread: @MainActor (String) -> Void
     private let refresh: (@MainActor () -> Void)?
+    private let acted: (@MainActor (BlockAction) async -> Bool)?
     private let focus: String?
     private let picked: String?
     private let beside: Block?
@@ -31,7 +32,7 @@ public struct BlocksView: View {
                 BlockNode(block: block)
             }
         }
-        .environment(\.act, act).environment(\.open, open).environment(\.refresh, refresh)
+        .environment(\.act, act).environment(\.acted, acted).environment(\.open, open).environment(\.refresh, refresh)
         .environment(\.openThread, openThread).environment(\.focus, focus).environment(\.picked, picked)
         .environment(\.card, CardContext(poster: source))
         .environment(\.behaved, Behaved(view: Behaviour(json, state: state), state: state, edited: Set(edited.keys)))
@@ -48,9 +49,11 @@ public struct BlocksView: View {
         act: @escaping @MainActor (BlockAction) -> Void = { _ in },
         open: @escaping @MainActor (String) -> Void = { _ in },
         openThread: @escaping @MainActor (String) -> Void = { _ in },
-        refresh: (@MainActor () -> Void)? = nil
+        refresh: (@MainActor () -> Void)? = nil,
+        acted: (@MainActor (BlockAction) async -> Bool)? = nil
     ) {
         self.refresh = refresh
+        self.acted = acted
         self.edits = state
         self.block = block
         self.source = source

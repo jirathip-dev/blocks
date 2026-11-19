@@ -28,7 +28,7 @@ export type ButtonStyle = "primary" | "plain" | "destructive";
 
 export type Bye = { why: Why };
 
-export type Card = { badge?: Label | null; blocks?: Block[] | null; buttons?: Block[] | null; fold?: Fold | null; id?: string | null; kind?: CardKind | null; menu?: Act[] | null; meta?: string | null; push?: boolean | null; show?: Expr | null; subtitle?: string | null; tap?: Tap | null; title?: string | null; tone?: Tone | null };
+export type Card = { badge?: Label | null; blocks?: Block[] | null; buttons?: Block[] | null; fold?: Fold | null; id?: string | null; kind?: CardKind | null; menu?: Act[] | null; meta?: Shown | null; push?: boolean | null; show?: Expr | null; subtitle?: string | null; tap?: Tap | null; title?: string | null; tone?: Tone | null };
 
 export type CardKind = "ask" | "run" | "secret" | "config" | "proposal";
 
@@ -68,7 +68,7 @@ export type Era = "be";
 
 export type ExportFormat = "csv" | "xlsx";
 
-export type Expr = { get: string } | { not: Expr } | { all: Expr[] } | { any: Expr[] } | { eq: Expr[] } | { lt: Expr[] } | { len: Expr } | { has: Expr[] } | { is: Match } | { add: Expr[] } | { sub: Expr[] } | { mul: Expr[] } | { cat: Expr[] } | { pick: Expr[] } | Lit;
+export type Expr = { get: string } | { not: Expr } | { all: Expr[] } | { any: Expr[] } | { eq: Expr[] } | { lt: Expr[] } | { len: Expr } | { has: Expr[] } | { is: Match } | { add: Expr[] } | { sub: Expr[] } | { mul: Expr[] } | { div: Expr[] } | { cat: Expr[] } | { pick: Expr[] } | Lit;
 
 export type Fallback = { subtitle?: string | null; tap?: Tap | null; title: string };
 
@@ -87,6 +87,8 @@ export type Fold = { line: string; main?: FoldMain | null };
 export type FoldMain = { action: string; block?: string | null; label: string; value?: string | null; values?: Record<string, unknown> | null };
 
 export type Form = { action?: string | null; fields: Field[]; id?: string | null; show?: Expr | null; submit?: Submit | null };
+
+export type Gesture = { action: string; enabled?: Expr | null; name: string };
 
 export type Have = { k: string; rev?: number | null };
 
@@ -110,7 +112,7 @@ export type KeyState = { gone?: number | null; k: string; ops?: Op[] | null; rev
 
 export type Keyboard = "default" | "url" | "number";
 
-export type Label = { text: string; tone?: Tone | null };
+export type Label = { text: Shown; tone?: Tone | null };
 
 export type Lane = { id: string; since?: string | null; stage?: string | null; state: LaneState; tap?: Tap | null; title: string; tool?: string | null };
 
@@ -124,7 +126,7 @@ export type Lines = { action?: string | null; add?: string | null; balance?: str
 
 export type Link = { label: string; tap: Tap };
 
-export type List = { id?: string | null; reorder?: Reorder | null; rows: Block[]; show?: Expr | null };
+export type List = { id?: string | null; reorder?: Gesture | null; rows: Block[]; show?: Expr | null };
 
 export type Lit = null | boolean | number | string;
 
@@ -152,11 +154,13 @@ export type Pending = { count: string; discard: Tap; review: Tap; text: string }
 
 export type PhonePart = "title" | "tag" | "value" | "meta" | "hide";
 
+export type Plan = { out: string; runs: PlanRun[] };
+
+export type PlanRun = { css: string[]; kinds: string[]; name: string; probes: boolean; screen: string; scripts: string[]; size: string; steps: Step[] };
+
 export type Prose = { id?: string | null; parts: Part[]; show?: Expr | null };
 
 export type Queued = { q: number; text: string };
-
-export type Reorder = { action: string; name: string };
 
 export type Report = { dropped: string[]; sent: Action[]; shots: string[]; timings: Timings };
 
@@ -198,9 +202,13 @@ export type Stage = { id: string; label: string; sub?: string | null; tap?: Tap 
 
 export type Stat = { id?: string | null; items?: Tile[] | null; label?: string | null; show?: Expr | null; spark?: number[] | null; tone?: Tone | null; unit?: string | null; value?: Shown | null };
 
-export type Step = { tap: StepOn } | { type: StepType } | { scroll: StepOn } | { frame: Frame } | { answer: Answer } | { shot: StepShot };
+export type Step = { tap: StepOn } | { type: StepType } | { scroll: StepOn } | { frame: Frame } | { answer: Answer } | { shot: StepShot } | { gesture: StepGesture } | { refuse: StepRefuse };
+
+export type StepGesture = { grab: unknown; id: string; reach: unknown[]; via: Via };
 
 export type StepOn = { id: string };
+
+export type StepRefuse = { toast: string };
 
 export type StepShot = { name: string };
 
@@ -230,7 +238,7 @@ export type TextStyle = "body" | "footnote";
 
 export type Tile = { label: string; spark?: number[] | null; tone?: Tone | null; unit?: string | null; value: Shown };
 
-export type Time = { since?: string | null; until?: string | null };
+export type Time = { label?: string | null; since?: string | null; until?: string | null };
 
 export type Timings = { first_paint_ms: number; frames_over_budget?: number | null; longest_frame_ms?: number | null; longest_patch_ms?: number | null; steps_ms: number[] };
 
@@ -247,6 +255,8 @@ export type TreeDrawn = "native" | "fallback" | "hidden";
 export type TreeNode = { children: TreeNode[]; drawn: TreeDrawn; id?: string | null; kind: string; name: string; rect?: number[] | null; role: string; text?: string | null; variant?: string | null };
 
 export type Undo = { action: string; confirm?: Confirm | null; label?: string | null; values?: Record<string, unknown> | null };
+
+export type Via = "pointer" | "keys" | "action";
 
 export type Web = { height: number; id?: string | null; show?: Expr | null; src: string };
 
