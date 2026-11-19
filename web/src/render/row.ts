@@ -1,22 +1,20 @@
-import type { Figure } from "../gen/types.ts";
-import { type Blk, blks, btn, type Ctx, el, h, href, isBlk, ticked, toggle, tone, urlOf } from "./index.ts";
+import type { Row } from "../gen/types.ts";
+import { btn, type Ctx, el, h, href, ticked, toggle, tone, urlOf } from "./index.ts";
 
-const isFigure = (v: unknown): v is Figure => isBlk(v);
-
-export function row(b: Blk, c: Ctx): HTMLElement {
-  const cls = `row${b.style === "link" ? " link" : ""}${b.sticky ? " sticky" : ""}${b.indent ? " in" + Math.min(Number(b.indent), 3) : ""}`;
+export function row(b: Row, c: Ctx): HTMLElement {
+  const cls = `row${b.style === "link" ? " link" : ""}${b.sticky ? " sticky" : ""}${b.indent ? " in" + Math.min(b.indent, 3) : ""}`;
   const url = urlOf(b.tap);
   const r: HTMLElement = url ? href(el("a", cls), url) : el("div", cls);
-  r.dataset.id = String(b.id ?? "");
+  r.dataset.id = b.id ?? "";
   const sub = b.subtitle == null ? null : tone(b.subtitle);
   const badge = b.badge == null ? null : tone(b.badge);
-  const fig = isFigure(b.figure) ? c.theme.figure(b.figure) : null;
+  const fig = b.figure ? c.theme.figure(b.figure) : null;
   if (fig instanceof Element) fig.classList.add("b-row__figure");
-  const main = h("span", "rm", h("span", "rt b-row__title", String(b.title ?? "")));
-  if (badge) main.append(" ", h("span", `tag b-row__badge ${badge.tone ?? ""}`, String(badge.text ?? "")));
+  const main = h("span", "rm", h("span", "rt b-row__title", b.title ?? ""));
+  if (badge) main.append(" ", h("span", `tag b-row__badge ${badge.tone ?? ""}`, badge.text));
   if (sub) main.append(h("span", `rs b-row__subtitle ${sub.tone ?? ""}`, ticked(sub.text)));
   r.replaceChildren(...(fig ? [fig] : []), main, ...(b.value != null ? [h("span", "rv b-row__value", ticked(b.value))] : []));
-  const swipe = blks(b.swipe);
+  const swipe = b.swipe ?? [];
   if (url) r.classList.add("tap");
   else if (b.tap || swipe.length) {
     r.classList.add("tap");

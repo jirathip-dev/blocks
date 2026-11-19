@@ -1,7 +1,8 @@
-import { type Blk, type Ctx, el, md } from "./index.ts";
+import type { Text } from "../gen/types.ts";
+import { type Ctx, el, md } from "./index.ts";
 
-export function text(b: Blk, c: Ctx): HTMLElement {
+export function text(b: Text, c: Ctx): HTMLElement {
   const t = el("div", "txt", md(b.markdown, c.screen.startsWith("thread-")));
-  t.dataset.md = String(b.markdown ?? "");
+  t.dataset.md = b.markdown ?? "";
   return t;
 }
