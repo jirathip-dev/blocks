@@ -153,9 +153,13 @@
           "type": "array"
         },
         "toast": {
-          "type": [
-            "string",
-            "null"
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Toast"
+            },
+            {
+              "type": "null"
+            }
           ]
         }
       },
@@ -213,7 +217,8 @@
               "nav",
               "island",
               "table",
-              "steps"
+              "steps",
+              "toast"
             ]
           },
           "type": "string"
@@ -643,6 +648,19 @@
           "properties": {
             "type": {
               "const": "steps",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/Toast",
+          "properties": {
+            "type": {
+              "const": "toast",
               "type": "string"
             }
           },
@@ -5300,6 +5318,65 @@
       ],
       "type": "object"
     },
+    "Toast": {
+      "additionalProperties": true,
+      "description": "A short line after an action, in a tone, with an optional undo: an answer's toast, or drawn where it sits.",
+      "properties": {
+        "fallback": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Fallback"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "title": {
+          "type": "string"
+        },
+        "tone": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Tone"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "undo": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Undo"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "type": "object"
+    },
     "Tone": {
       "anyOf": [
         {
@@ -5419,6 +5496,41 @@
       ],
       "type": "object"
     },
+    "Undo": {
+      "description": "A toast's undo: its label (default \"undo\") and the action it sends, with any confirm.",
+      "properties": {
+        "action": {
+          "type": "string"
+        },
+        "confirm": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Confirm"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "values": {
+          "additionalProperties": true,
+          "type": [
+            "object",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "action"
+      ],
+      "type": "object"
+    },
     "Web": {
       "additionalProperties": true,
       "description": "A web view of a fixed height.",
@@ -5476,7 +5588,7 @@
       "type": "object"
     }
   },
-  "$id": "https://github.com/jirathip-dev/blocks/schema/v1",
+  "$id": "https://github.com/jirathip-dev/blocks/schema/v2",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "description": "One key's change: ops that apply only on rev `from`, or with no `from` the whole screen.",
   "properties": {

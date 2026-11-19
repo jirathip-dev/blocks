@@ -1,4 +1,4 @@
-export declare const schemaVersion = 1;
+export declare const schemaVersion = 2;
 export type Frame = {
     from?: number | null;
     k: string;
@@ -29,7 +29,7 @@ export type Answer = {
     close?: boolean | null;
     open?: string | null;
     ops?: Op[] | null;
-    toast?: string | null;
+    toast?: Toast | null;
 };
 export type AppBlock = {
     fallback?: Fallback | null;
@@ -102,7 +102,9 @@ export type Block = ({
     type: "table";
 } & Table) | ({
     type: "steps";
-} & Steps) | (AppBlock & {
+} & Steps) | ({
+    type: "toast";
+} & Toast) | (AppBlock & {
     [key: string]: unknown;
 });
 export type Bound = {
@@ -834,6 +836,14 @@ export type Timings = {
     longest_patch_ms?: number | null;
     steps_ms: number[];
 };
+export type Toast = {
+    fallback?: Fallback | null;
+    id?: string | null;
+    show?: Expr | null;
+    title: string;
+    tone?: Tone | null;
+    undo?: Undo | null;
+};
 export type Tone = "ok" | "warn" | "bad" | "info" | "mute" | "accent" | "working" | "needs" | "done" | "fail" | "idle";
 export type Toned = string | Label;
 export type Total = "sum" | "avg" | "count";
@@ -849,6 +859,12 @@ export type TreeNode = {
     text?: string | null;
     variant?: string | null;
 };
+export type Undo = {
+    action: string;
+    confirm?: Confirm | null;
+    label?: string | null;
+    values?: Record<string, unknown> | null;
+};
 export type Web = {
     height: number;
     id?: string | null;
@@ -859,4 +875,4 @@ export type Why = "evicted" | "unpaired" | "handover";
 export type Working = {
     since: string;
 };
-export type Kind = "screen" | "sheet" | "section" | "list" | "row" | "card" | "choice" | "form" | "config" | "secret" | "run" | "button" | "chips" | "stat" | "text" | "images" | "web" | "diff" | "editor" | "scene" | "diagram" | "composer" | "lines" | "prose" | "hero" | "media" | "nav" | "island" | "table" | "steps";
+export type Kind = "screen" | "sheet" | "section" | "list" | "row" | "card" | "choice" | "form" | "config" | "secret" | "run" | "button" | "chips" | "stat" | "text" | "images" | "web" | "diff" | "editor" | "scene" | "diagram" | "composer" | "lines" | "prose" | "hero" | "media" | "nav" | "island" | "table" | "steps" | "toast";

@@ -470,3 +470,13 @@ wire! {
         tap: Option<Tap>,
     }
 }
+
+wire! {
+    /// A toast's undo: its label (default "undo") and the action it sends, with any confirm.
+    pub struct Undo {
+        label: Option<String>,
+        action: String,
+        values: Option<Fields>,
+        confirm: Option<Confirm>,
+    }
+}

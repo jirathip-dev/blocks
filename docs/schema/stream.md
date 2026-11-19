@@ -16,5 +16,5 @@ know is dropped and the key opened again with no rev. No order is assumed betwee
 `just sim` drops, doubles and reorders frames and checks the mirror converges; `fixtures/protocol/` holds the cases
 both clients run. `wire::old` turns ops into the old per-screen stream's `{"seq", "ops"}` frames (`OldFrame`).
 
-The media type names the format and the version, `application/vnd.blocks+json;v=1`. `MediaType::pick` reads an
+The media type names the format and the version, `application/vnd.blocks+json;v=2`. `MediaType::pick` reads an
 `Accept` value and answers at the lower of the two versions, or refuses one more than one apart.

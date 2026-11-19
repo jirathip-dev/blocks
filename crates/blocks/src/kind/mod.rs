@@ -332,6 +332,17 @@ kind! {
     }
 }
 
+kind! {
+    /// A short line after an action, in a tone, with an optional undo: an answer's toast, or drawn where it sits.
+    pub struct Toast {
+        id: Option<String>,
+        tone: Option<Tone>,
+        title: String,
+        undo: Option<Undo>,
+        fallback: Option<Fallback>,
+    }
+}
+
 wire! {
     /// A block of a `type` that is no core kind: an app's own, kept whole.
     pub struct AppBlock {
@@ -420,4 +431,5 @@ kinds! {
     Island(Island) = "island",
     Table(Table) = "table",
     Steps(Steps) = "steps",
+    Toast(Toast) = "toast",
 }
