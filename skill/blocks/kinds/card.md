@@ -15,7 +15,7 @@ The Rust type `Card`; in TS, `card(fields: Card)` from `web/src/gen/builders.ts`
 | `id` | `string` | optional |
 | `kind` | `CardKind` | optional |
 | `menu` | `Act[]` | optional |
-| `meta` | `string` | optional |
+| `meta` | `Shown` | optional |
 | `push` | `boolean` | optional |
 | `show` | `Expr` | optional |
 | `subtitle` | `string` | optional |
@@ -31,7 +31,43 @@ The Rust type `Card`; in TS, `card(fields: Card)` from `web/src/gen/builders.ts`
   "id": "card",
   "kind": "ask",
   "title": "q1",
-  "subtitle": "waiting"
+  "subtitle": "waiting",
+  "meta": {
+    "since": "2026-11-09T09:35:00Z",
+    "label": "as of {} ago"
+  },
+  "badge": {
+    "text": {
+      "until": "2026-11-09T09:53:00Z",
+      "label": "lapses in {rel}"
+    }
+  },
+  "blocks": [
+    {
+      "type": "row",
+      "id": "card-row",
+      "title": "Review",
+      "subtitle": {
+        "text": {
+          "until": "2026-11-09T09:53:00Z",
+          "label": "decides in {rel}"
+        }
+      },
+      "value": {
+        "since": "2026-11-09T09:35:00Z",
+        "label": "{} ago"
+      }
+    },
+    {
+      "type": "stat",
+      "id": "card-up",
+      "label": "up",
+      "value": {
+        "since": "2026-11-09T09:35:00Z",
+        "label": "{}"
+      }
+    }
+  ]
 }
 ```
 
@@ -45,6 +81,25 @@ The Rust type `Card`; in TS, `card(fields: Card)` from `web/src/gen/builders.ts`
   "drawn": "native",
   "role": "group",
   "name": "q1",
-  "children": []
+  "children": [
+    {
+      "kind": "row",
+      "id": "card-row",
+      "variant": null,
+      "drawn": "native",
+      "role": "group",
+      "name": "Review",
+      "children": []
+    },
+    {
+      "kind": "stat",
+      "id": "card-up",
+      "variant": null,
+      "drawn": "native",
+      "role": "group",
+      "name": "up",
+      "children": []
+    }
+  ]
 }
 ```
