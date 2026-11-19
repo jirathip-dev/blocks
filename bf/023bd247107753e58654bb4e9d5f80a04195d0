@@ -1,0 +1,6 @@
+Decided: merge origin/staging, keeping both the new chart kind and timeline; generated files taken from staging then regenerated
+Because: crates/blocks-desktop/src/draw.rs:72
+Decided: kind counts in the Rust, web, Swift and site tests go from 32 to 33, stress variants from 64 to 67
+Because: crates/blocks/tests/fixtures.rs:380
+Rejected: none
+Owner: The planner now sits beside the new chart kind; nothing about the planner changed.
