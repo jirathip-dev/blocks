@@ -1,0 +1,15 @@
+/* The rules impl adds to web/src/blocks.css for `diff`: tokens only, no new colour; the block sits in its tile. */
+.df{min-width:0;font-size:12px}
+.dfh{display:flex;flex-wrap:wrap;align-items:baseline;gap:0 var(--s3);padding:0 0 var(--s2)}
+.dff{flex:1 1 auto;min-width:0;font:600 12px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;overflow-wrap:anywhere}
+.dfs{color:var(--mute);font-size:var(--fs-meta);white-space:nowrap}
+.dfb{display:grid;grid-template-columns:minmax(100%,max-content);overflow-x:auto;background:var(--bg);border:1px solid var(--line);
+font:12px/18px ui-monospace,SFMono-Regular,Menlo,monospace;tab-size:4}
+.dfk,.dfl{white-space:pre;padding:0 var(--s3) 0 calc(var(--s3) + 3px)}
+.dfk{color:var(--link);padding-top:var(--s1);padding-bottom:var(--s1);border-top:1px solid var(--line)}
+.dfk:first-child{border-top:0}
+.dfl{color:var(--mute)}
+.dfl.add,.dfl.del{color:var(--fg)}
+.dfl.add{box-shadow:inset 3px 0 0 var(--g)}.dfl.del{box-shadow:inset 3px 0 0 var(--r)}
+.dfm{font-style:normal;font-weight:700;user-select:none}
+.dfl.add .dfm{color:var(--fk-g)}.dfl.del .dfm{color:var(--r)}
