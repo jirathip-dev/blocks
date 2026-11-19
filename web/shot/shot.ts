@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { webkit } from "playwright";
 import { defaultPair } from "../src/gen/schemes.ts";
 import { tiles, css as wear } from "../src/theme.ts";
-import { expect as differ } from "../src/tree.ts";
+import { expect as differ } from "../src/core/tree.ts";
 import { declared, measure } from "./look.ts";
 
 const BASE = "http://blocks.test/";

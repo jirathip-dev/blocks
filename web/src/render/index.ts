@@ -1,6 +1,7 @@
-import { hooks, names, roles } from "../gen/hooks.ts";
+import { hooks, roles } from "../gen/hooks.ts";
 import type { Act, Block, Fallback, Kind, Label, Tap, Toned } from "../gen/types.ts";
-import { actionOf } from "../behave.ts";
+import { actionOf } from "../core/eval.ts";
+import { type Blk, blks, isBlk, named } from "../core/tree.ts";
 import { island, isTag } from "../island.ts";
 import type { Theme } from "../theme.ts";
 import { button } from "./button.ts";
@@ -32,7 +33,7 @@ import { steps } from "./steps.ts";
 import { text } from "./text.ts";
 import { web } from "./web.ts";
 
-export type Blk = { [k: string]: unknown };
+export { type Blk, blks, isBlk, named };
 export type Post = { action: unknown; block?: unknown; values?: unknown; confirm?: unknown };
 export type Store = { get(key: string): string | null; put(key: string, value: string | null): void };
 export type Renderer = (b: Blk, c: Ctx) => HTMLElement | null;
@@ -47,9 +48,7 @@ export type Ctx = {
   drop?: (what: string) => void;
 };
 
-export const isBlk = (v: unknown): v is Blk => typeof v === "object" && v !== null;
 export const obj = (v: unknown): Blk => (isBlk(v) ? v : {});
-export const blks = (v: unknown): Blk[] => (Array.isArray(v) ? v.filter(isBlk) : []);
 export const esc = (s: unknown) => String(s ?? "").replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
 export const nodes = (html: string) => Array.from(new DOMParser().parseFromString("<body>" + html, "text/html").body.childNodes);
 
@@ -209,8 +208,6 @@ export const R: { [K in Kind]: (b: Of<K>, c: Ctx) => HTMLElement | null } = {
   steps,
 };
 
-/// The accessible name of block `b` of kind `t`: its first set name field, else its id, else its kind.
-export const named = (b: Blk, t: string) => String(names.map((k) => b[k]).find((v) => typeof v === "string" && v) ?? (typeof b.id === "string" && b.id ? b.id : t));
 
 const core = (b: Blk): b is Of<Kind> => Object.prototype.hasOwnProperty.call(hooks, String(b.type));
 const view = <K extends Kind>(t: K, b: Of<K>, c: Ctx) => R[t](b, c);

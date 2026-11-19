@@ -1,14 +1,12 @@
-import { hooks, roles } from "./gen/hooks.ts";
-import type { Block, Lit, TreeDrawn, TreeNode } from "./gen/types.ts";
-import { evaluate, type State } from "./behave.ts";
-import { fallback, R, type Blk, isBlk, blks, named } from "./render/index.ts";
+import { hooks, names, roles } from "../gen/hooks.ts";
+import type { Block, Lit, TreeDrawn, TreeNode } from "../gen/types.ts";
+import { evaluate, type State } from "./eval.ts";
 
-export { evaluate };
-
-/// The kinds the HTML renderer draws natively: the others, and an island with no component, draw their fallback.
-export const native: readonly string[] = Object.entries(R)
-  .filter(([k, r]) => r !== fallback && k !== "island")
-  .map(([k]) => k);
+export type Blk = { [k: string]: unknown };
+export const isBlk = (v: unknown): v is Blk => typeof v === "object" && v !== null;
+export const blks = (v: unknown): Blk[] => (Array.isArray(v) ? v.filter(isBlk) : []);
+/// The accessible name of block `b` of kind `t`: its first set name field, else its id, else its kind.
+export const named = (b: Blk, t: string) => String(names.map((k) => b[k]).find((v) => typeof v === "string" && v) ?? (typeof b.id === "string" && b.id ? b.id : t));
 
 const isLit = (v: unknown): v is Lit => v === null || ["boolean", "number", "string"].includes(typeof v);
 const isExpr = (v: unknown) => v !== undefined && !Array.isArray(v);
@@ -42,7 +40,7 @@ function node(v: unknown, kinds: readonly string[], state: State): TreeNode {
 }
 
 /// The tree a renderer drawing `kinds` natively must draw for `screen`, roles and names included, as the crate's `tree::expect`: no rect, no text.
-export function tree(screen: Block, kinds: readonly string[] = native, state?: State): TreeNode {
+export function tree(screen: Block, kinds: readonly string[], state?: State): TreeNode {
   const b: Blk = screen;
   const own: State = {};
   for (const [k, v] of Object.entries(isBlk(b.state) ? b.state : {})) if (isLit(v)) own[k] = v;
