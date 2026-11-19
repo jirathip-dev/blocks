@@ -1,0 +1,5 @@
+Decided: ci.yml runs the For apps check as sh scripts/for-apps.sh, like just cap runs its test
+Because: .github/workflows/ci.yml:61
+Rejected: setting the executable bit — the other step scripts mix modes; sh works either way
+Check: CI rust job's For apps step exits 0 on this PR; sh scripts/for-apps.test.sh exits 0
+Owner: Fixes the CI step that could not start the new For apps check.
