@@ -1,0 +1,15 @@
+{
+  "kind": "sheet",
+  "id": "add",
+  "variant": null,
+  "drawn": "native",
+  "children": [
+    {
+      "kind": "text",
+      "id": "sheet-note",
+      "variant": null,
+      "drawn": "native",
+      "children": []
+    }
+  ]
+}
