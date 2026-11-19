@@ -1,0 +1,11 @@
+Decided: the sim records the follower's received messages into fixtures/protocol/sim-<seed>.json, which every protocol runner already reads
+Because: "the messages the follower receives in order (hello, frames, sync replies)"
+Decided: each seed's fixture caps the random loop at 60 steps then drains to convergence; the converge test still runs 300
+Because: "if a seed's run is long, the PR may cap the steps per seed and say so"
+Decided: fixtures/behave/sim.json holds the first 5 of each seed's 50 expressions for all 200 seeds, each case with its own state
+Because: "or a stated, fixed subset with the reason in the PR body"
+Decided: a Rust test compares the committed files with a fresh sim run; BLOCKS_GEN=1 (run by just gen) rewrites them and drops stale seeds
+Because: crates/blocks/tests/sim.rs:466
+Rejected: all 10000 expressions and full 300-step runs — 1.9 MB and 3.8 MB, not reviewable; #90's nightly corpus covers them
+Check: with st.rev < h.rev made <= in web/src/stream.ts or swift Apply.swift, sim-1,2,3,10,16,18,20 fail and no hand-written fixture does
+Owner: The web and Apple versions now replay the simulator's saved runs on every pull request, so drift from Rust fails the normal tests.
