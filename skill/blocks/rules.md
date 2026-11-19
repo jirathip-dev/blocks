@@ -32,6 +32,7 @@ Guard version 2. A new error fails `blocks check`; a warning never fails.
 | `render/overlap` | error | 2 | two sibling blocks cover each other | Remove the app rule that positions the block; let the layout place it. |
 | `lint/primary-twice` | error | 1 | two primary buttons among one block's children, or one at the top of a screen that has done | Keep one primary action in a group; make the others `plain`. |
 | `css/private-selector` | error | 2 | an app selector names a `.b-` class that is no generated hook | Style a hook from the renderer contract (`.b-<kind>`, `.b-<kind>__<part>`, `[data-variant]`, `[data-tone]`). |
+| `css/raw-colour` | error | 2 | an app colour property set to anything but a scheme token (`var(--fg)`, `var(--card)`, …), `currentColor`, `transparent` or `inherit` | Use the scheme token for that role, or add the colour to the app's scheme so the gate checks it. |
 | `guard/seed-missing` | warn | 1 | a screen with a list has no `empty` fixture, or no `long` one | Add the fixture from the app's fixture writer. |
 | `explore/sent-differs` | error | 1 | the renderer sent other actions than the screen declares for the step | Send the action from the block that declares it; an app view posts through the `act` it is handed. |
 | `render/tap-target` | error | 2 | a control under 44 by 44 px; a link inside running text is exempt | Give the control at least 44 px each way: use the kind's own button, or drop the app rule that shrinks it. |

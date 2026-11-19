@@ -46,7 +46,7 @@ fn every_rule_has_a_what_a_fix_an_engine_and_a_unique_id() {
         );
         assert_eq!(guard::rule(r.id), Some(*r));
     }
-    assert_eq!(RULES.len(), 39);
+    assert_eq!(RULES.len(), 40);
     assert_eq!(guard::rule("lint/nope"), None);
 }
 
