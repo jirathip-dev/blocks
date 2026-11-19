@@ -22,6 +22,7 @@ generated = [
     "fixtures/site/*.html",
     "fixtures/protocol/sim-*.json",
     "fixtures/behave/sim.json",
+    "fixtures/css/*.css",
 ]
 generate = "just gen"
 shared = [
