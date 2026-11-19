@@ -1,0 +1,12 @@
+Decided: SwiftUI checks against generated fixtures/trees/swift, and its tree's kind/id/variant/order must equal fixtures/trees
+Because: q2167
+Because: crates/blocks/src/codegen.rs:81
+Decided: the tree is reported by a Reported modifier beside Styled, applied in BlockNode and on a list's rows
+Because: swift/Sources/BlocksUI/Blocks.swift:140
+Rejected: reporting inside Styled and putting Styled on list rows — an app's row style would start drawing on list rows, a visual change
+Decided: type and scroll steps go in report.dropped until B11 brings scripted input
+Because: docs/architecture/blocks/migration.md:54
+Decided: blocks-snap --scheme takes light or dark, the default pair staging left after dropping named schemes
+Because: swift/Sources/Blocks/Gen/Schemes.swift:11
+Check: swift.yml's step runs blocks-snap --check on all 27 fixtures; SnapshotTests covers check, the negative case, a tap, an answer and blockStyle
+Owner: SwiftUI screens can be drawn headlessly (picture, tree, report), and CI checks every sample block draws as expected.
