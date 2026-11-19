@@ -2,9 +2,9 @@ name: swift
 on:
   push:
     branches: [main, staging]
-    paths: ["Package.swift", "swift/**", "schema/sample.json", "fixtures/screens/**", "fixtures/blocks/**", "fixtures/trees/**", "fixtures/protocol/**", "fixtures/behave/**", "fixtures/sim/**", "fixtures/stress/**", "fixtures/look/**", "fixtures/styles/**", "fixtures/guard/**", ".github/workflows/swift.yml"]
+    paths: ["Package.swift", "swift/**", "schema/sample.json", "fixtures/screens/**", "fixtures/blocks/**", "fixtures/trees/**", "fixtures/protocol/**", "fixtures/behave/**", "fixtures/sim/**", "fixtures/stress/**", "fixtures/look/**", "fixtures/styles/**", "fixtures/guard/**", ".github/workflows/swift.yml", "web/lint.mjs", "ci/tokens/**", "ci/lint-fixtures/swift/**", "scripts/lint-fixtures.sh"]
   pull_request:
-    paths: ["Package.swift", "swift/**", "schema/sample.json", "fixtures/screens/**", "fixtures/blocks/**", "fixtures/trees/**", "fixtures/protocol/**", "fixtures/behave/**", "fixtures/sim/**", "fixtures/stress/**", "fixtures/look/**", "fixtures/styles/**", "fixtures/guard/**", ".github/workflows/swift.yml"]
+    paths: ["Package.swift", "swift/**", "schema/sample.json", "fixtures/screens/**", "fixtures/blocks/**", "fixtures/trees/**", "fixtures/protocol/**", "fixtures/behave/**", "fixtures/sim/**", "fixtures/stress/**", "fixtures/look/**", "fixtures/styles/**", "fixtures/guard/**", ".github/workflows/swift.yml", "web/lint.mjs", "ci/tokens/**", "ci/lint-fixtures/swift/**", "scripts/lint-fixtures.sh"]
 
 permissions:
   contents: read
@@ -14,6 +14,13 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: "the token lint on swift/Sources/BlocksUI against ci/tokens/baseline.txt, and its fixtures (each ci/lint-fixtures/swift/<name>.swift fails it; clean.swift passes)"
+        run: |
+          node --no-warnings web/lint.mjs swift/Sources/BlocksUI
+          scripts/lint-fixtures.sh swift
       - name: "the Swift package: op apply, the generated types, a render test per core kind"
         env:
           BLOCKS_STRICT: "1"
