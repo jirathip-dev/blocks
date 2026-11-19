@@ -1,0 +1,12 @@
+Decided: one core kind `steps` that draws a stepper (`steps` with `current` or `done`) or progress bars (`bars`), with a `fallback` row when empty or unplaced.
+Decided: bar fill stays ink; the tone colours only the number, the tick and a warn or bad note.
+Because: q2295
+Decided: a stepper with neither current nor done, or a current naming no step, is a Built::check Shape fault and draws its fallback.
+Because: crates/blocks/src/built.rs:124
+Rejected: a separate top-level label/value/tone for one bar — a one-item `bars` says the same, so there is one way.
+Rejected: naming the step type `Step` — the shot script already owns `Step` in the generated TS, which would rename it Step2.
+Decided: the sample is a finished stepper because the stress many-variant suffixes every id, so no `current` could match there.
+Because: crates/blocks/tests/fixtures.rs:580
+Check: web/test/site.test.ts compares the static writer's element with the live render for the steps fixture.
+Check: the fill and tick move by transform, since web/lint.mjs bans animating width and left.
+Owner: Screens can now show a stepper or progress bars, drawn the same on web, the static site and Apple.
