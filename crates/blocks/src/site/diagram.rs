@@ -86,9 +86,10 @@ fn edge(line: &str) -> Option<(&str, &str)> {
     Some((from, into))
 }
 
-fn chart(source: &str) -> Chart {
-    let (mut order, mut parsed): (Vec<String>, Vec<Edge>) = (vec![], vec![]);
-    let mut names = HashMap::new();
+type Parsed = (Vec<String>, HashMap<String, String>, Vec<Edge>);
+
+fn parse(source: &str) -> Parsed {
+    let (mut order, mut names, mut parsed) = (vec![], HashMap::new(), vec![]);
     let add = |order: &mut Vec<String>, id: &str| {
         if id != "[*]" && !order.iter().any(|o| o == id) {
             order.push(id.to_string());
@@ -110,6 +111,10 @@ fn chart(source: &str) -> Chart {
             });
         }
     }
+    (order, names, parsed)
+}
+
+fn spine(order: &[String], parsed: &[Edge]) -> (Vec<String>, BTreeSet<String>) {
     let at = |id: &str| order.iter().position(|o| o == id);
     let forward: Vec<&Edge> = parsed
         .iter()
@@ -125,12 +130,10 @@ fn chart(source: &str) -> Chart {
             }
         }
     }
-    let (mut spine, mut row, mut side) = (Vec::<String>::new(), HashMap::new(), HashMap::new());
+    let mut spine = Vec::<String>::new();
     let start = parsed.iter().find(|e| e.from == "[*]").map(|e| e.into.as_str());
     let mut id = start.or_else(|| order.first().map(String::as_str));
     while let Some(i) = id.filter(|i| !spine.iter().any(|s| s == i)) {
-        row.insert(i.to_string(), i32::try_from(spine.len()).unwrap_or(i32::MAX));
-        side.insert(i.to_string(), 0);
         spine.push(i.to_string());
         id = next.get(i).copied();
     }
@@ -144,53 +147,68 @@ fn chart(source: &str) -> Chart {
             optional.extend(spine.get(a + 1..z).unwrap_or_default().iter().cloned());
         }
     }
-    let rest: Vec<&String> = order.iter().filter(|o| !side.contains_key(*o)).collect();
-    for id in rest {
-        let touching: Vec<&String> = parsed
+    (spine, optional)
+}
+
+fn place(id: &str, parsed: &[Edge], row: &HashMap<String, i32>, side: &HashMap<String, i32>) -> (i32, i32) {
+    let touching: Vec<&String> = parsed
+        .iter()
+        .filter_map(|e| match (e.from == id, e.into == id) {
+            (true, _) => Some(&e.into),
+            (_, true) => Some(&e.from),
+            _ => None,
+        })
+        .filter(|n| side.get(*n) == Some(&0))
+        .collect();
+    let before: Vec<&String> = parsed
+        .iter()
+        .filter(|e| e.into == id && row.contains_key(&e.from))
+        .map(|e| &e.from)
+        .collect();
+    let (mut column, mut at) = (1, 0);
+    if !touching.is_empty() {
+        at = touching
             .iter()
-            .filter_map(|e| match (e.from == *id, e.into == *id) {
-                (true, _) => Some(&e.into),
-                (_, true) => Some(&e.from),
-                _ => None,
-            })
-            .filter(|n| side.get(*n) == Some(&0))
-            .collect();
-        let before: Vec<&String> = parsed
+            .map(|n| row.get(*n).copied().unwrap_or(0))
+            .min()
+            .unwrap_or(0);
+        column = if parsed.iter().any(|e| e.from == id && side.get(&e.into) == Some(&0)) {
+            1
+        } else {
+            -1
+        };
+    } else if !before.is_empty() {
+        at = before
             .iter()
-            .filter(|e| e.into == *id && row.contains_key(&e.from))
-            .map(|e| &e.from)
-            .collect();
-        let (mut column, mut place) = (1, 0);
-        if !touching.is_empty() {
-            place = touching
-                .iter()
-                .map(|n| row.get(*n).copied().unwrap_or(0))
-                .min()
-                .unwrap_or(0);
-            column = if parsed.iter().any(|e| e.from == *id && side.get(&e.into) == Some(&0)) {
-                1
-            } else {
-                -1
-            };
-        } else if !before.is_empty() {
-            place = before
-                .iter()
-                .map(|b| row.get(*b).copied().unwrap_or(0))
-                .max()
-                .unwrap_or(0)
-                + 1;
-            column = before
-                .iter()
-                .map(|b| side.get(*b))
-                .find(|s| *s != Some(&0))
-                .flatten()
-                .copied()
-                .unwrap_or(1);
-        }
-        while side.iter().any(|(k, s)| *s == column && row.get(k) == Some(&place)) {
-            place += 1;
-        }
-        row.insert(id.clone(), place);
+            .map(|b| row.get(*b).copied().unwrap_or(0))
+            .max()
+            .unwrap_or(0)
+            + 1;
+        column = before
+            .iter()
+            .map(|b| side.get(*b))
+            .find(|s| *s != Some(&0))
+            .flatten()
+            .copied()
+            .unwrap_or(1);
+    }
+    while side.iter().any(|(k, s)| *s == column && row.get(k) == Some(&at)) {
+        at += 1;
+    }
+    (at, column)
+}
+
+fn chart(source: &str) -> Chart {
+    let (order, names, parsed) = parse(source);
+    let (spine, optional) = spine(&order, &parsed);
+    let (mut row, mut side) = (HashMap::new(), HashMap::new());
+    for (i, id) in spine.iter().enumerate() {
+        row.insert(id.clone(), i32::try_from(i).unwrap_or(i32::MAX));
+        side.insert(id.clone(), 0);
+    }
+    for id in order.iter().filter(|o| !spine.contains(o)) {
+        let (at, column) = place(id, &parsed, &row, &side);
+        row.insert(id.clone(), at);
         side.insert(id.clone(), column);
     }
     let mut edges: Vec<Edge> = vec![];
@@ -310,6 +328,14 @@ fn map(w: &mut W<'_>, g: &Chart, b: &Value, m: &Metrics, counts: &HashMap<String
         &format!("dgm {}", m.cls),
         &[("style", &format!("width:{width}px;height:{height}px"))],
     );
+    w.raw(&lines(g, b, m, &at, width, height));
+    for id in &g.order {
+        node(w, g, b, id, at(id), counts);
+    }
+    w.close("div");
+}
+
+fn lines(g: &Chart, b: &Value, m: &Metrics, at: &dyn Fn(&str) -> Box, width: f64, height: f64) -> String {
     let mut svg = format!("<svg width=\"{width}\" height=\"{height}\" aria-hidden=\"true\">");
     let nodes = b.get("nodes");
     let node = |id: &str| nodes.and_then(|n| n.get(id)).filter(|n| n.is_object());
@@ -337,58 +363,57 @@ fn map(w: &mut W<'_>, g: &Chart, b: &Value, m: &Metrics, counts: &HashMap<String
             head(&mut svg, *tip, *back);
         }
     }
-    w.raw(&(svg + "</svg>"));
-    for id in &g.order {
-        let n = node(id);
-        let field = |k: &str| n.and_then(|n| n.get(k)).filter(|v| !v.is_null());
-        let p = at(id);
-        let name = g.names.get(id).unwrap_or(id);
-        let label = field("label").map_or_else(|| name.clone(), |l| shown(Some(l)));
-        let style = format!("left:{}px;top:{}px;width:{}px;height:{}px", p.x, p.y, p.w, p.h);
-        let tap = field("tap").is_some();
-        let mut at: Vec<(&str, &str)> = vec![("style", &style), ("title", &label)];
-        if tap {
-            at.extend([("tabindex", "0"), ("role", "button")]);
+    svg + "</svg>"
+}
+
+fn node(w: &mut W<'_>, g: &Chart, b: &Value, id: &String, p: Box, counts: &HashMap<String, f64>) {
+    let n = b.get("nodes").and_then(|n| n.get(id)).filter(|n| n.is_object());
+    let field = |k: &str| n.and_then(|n| n.get(k)).filter(|v| !v.is_null());
+    let name = g.names.get(id).unwrap_or(id);
+    let label = field("label").map_or_else(|| name.clone(), |l| shown(Some(l)));
+    let style = format!("left:{}px;top:{}px;width:{}px;height:{}px", p.x, p.y, p.w, p.h);
+    let tap = field("tap").is_some();
+    let mut at: Vec<(&str, &str)> = vec![("style", &style), ("title", &label)];
+    if tap {
+        at.extend([("tabindex", "0"), ("role", "button")]);
+    }
+    if field("limit").is_some() {
+        let value = shown(field("value"));
+        let aria = format!("{label} {value}, opens its setting");
+        at.push(("aria-label", &aria));
+        w.open("div", if tap { "dgn timer tap" } else { "dgn timer" }, &at);
+        w.open("span", "", &[("aria-hidden", "true")]);
+        w.text("⧗");
+        w.close("span");
+        w.open("span", "", &[]);
+        w.el("span", "dgl", &label);
+        w.el("span", "dgv", &value);
+        w.close("span");
+    } else {
+        let count = counts.get(id).copied().unwrap_or(0.0);
+        let opt = g.optional.contains(id);
+        let state = field("state").map_or_else(|| "idle".to_string(), |s| shown(Some(s)));
+        let cls = format!(
+            "dgn {state}{}{}{}",
+            if count.abs() < f64::EPSILON { " zero" } else { "" },
+            if get(b, "selected") == Some(id.as_str()) {
+                " picked"
+            } else {
+                ""
+            },
+            if tap { " tap" } else { "" }
+        );
+        let plural = if (count - 1.0).abs() < f64::EPSILON { "" } else { "s" };
+        let aria = format!("{name}, {count} issue{plural}{}", if opt { ", optional" } else { "" });
+        at.push(("aria-label", &aria));
+        w.open("div", &cls, &at);
+        w.el("span", "dgl", name);
+        w.open("span", "dgc", &[]);
+        w.text(&count.to_string());
+        if opt {
+            w.el("small", "opt", "optional");
         }
-        if field("limit").is_some() {
-            let value = shown(field("value"));
-            let aria = format!("{label} {value}, opens its setting");
-            at.push(("aria-label", &aria));
-            w.open("div", if tap { "dgn timer tap" } else { "dgn timer" }, &at);
-            w.open("span", "", &[("aria-hidden", "true")]);
-            w.text("⧗");
-            w.close("span");
-            w.open("span", "", &[]);
-            w.el("span", "dgl", &label);
-            w.el("span", "dgv", &value);
-            w.close("span");
-        } else {
-            let count = counts.get(id).copied().unwrap_or(0.0);
-            let opt = g.optional.contains(id);
-            let state = field("state").map_or_else(|| "idle".to_string(), |s| shown(Some(s)));
-            let cls = format!(
-                "dgn {state}{}{}{}",
-                if count.abs() < f64::EPSILON { " zero" } else { "" },
-                if get(b, "selected") == Some(id.as_str()) {
-                    " picked"
-                } else {
-                    ""
-                },
-                if tap { " tap" } else { "" }
-            );
-            let plural = if (count - 1.0).abs() < f64::EPSILON { "" } else { "s" };
-            let aria = format!("{name}, {count} issue{plural}{}", if opt { ", optional" } else { "" });
-            at.push(("aria-label", &aria));
-            w.open("div", &cls, &at);
-            w.el("span", "dgl", name);
-            w.open("span", "dgc", &[]);
-            w.text(&count.to_string());
-            if opt {
-                w.el("small", "opt", "optional");
-            }
-            w.close("span");
-        }
-        w.close("div");
+        w.close("span");
     }
     w.close("div");
 }
