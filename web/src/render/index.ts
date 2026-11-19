@@ -6,7 +6,9 @@ import { card } from "./card.ts";
 import { chips } from "./chips.ts";
 import { choice } from "./choice.ts";
 import { composer } from "./composer.ts";
+import { config } from "./config.ts";
 import { diagram } from "./diagram.ts";
+import { editor } from "./editor.ts";
 import { form } from "./form.ts";
 import { hero } from "./hero.ts";
 import { images } from "./images.ts";
@@ -18,6 +20,7 @@ import { row } from "./row.ts";
 import { run } from "./run.ts";
 import { scene } from "./scene.ts";
 import { screen } from "./screen.ts";
+import { secret } from "./secret.ts";
 import { section } from "./section.ts";
 import { sheet } from "./sheet.ts";
 import { stat } from "./stat.ts";
@@ -148,8 +151,8 @@ export const R: { [K in Kind]: (b: Of<K>, c: Ctx) => HTMLElement | null } = {
   card,
   choice,
   form,
-  config: gap(40),
-  secret: gap(39),
+  config,
+  secret,
   run,
   button,
   chips,
@@ -158,7 +161,7 @@ export const R: { [K in Kind]: (b: Of<K>, c: Ctx) => HTMLElement | null } = {
   images,
   web: gap(41),
   diff: gap(42),
-  editor: gap(43),
+  editor,
   scene,
   diagram,
   composer,

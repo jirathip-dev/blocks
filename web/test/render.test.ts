@@ -1,6 +1,6 @@
 import { deepStrictEqual, ok, strictEqual } from "node:assert/strict";
 import { readdirSync, readFileSync } from "node:fs";
-import { test } from "node:test";
+import { mock, test } from "node:test";
 import { install } from "./dom.ts";
 
 install();
@@ -14,7 +14,7 @@ const store = { get: () => null, put: () => {} };
 const ctx = (more = {}) => ({ screen: "home", act: async () => true, tap: () => {}, open: new Set(), theme: plain, store, ...more });
 const all = (e) => [e, ...e.children.flatMap(all)];
 const part = (e, cls) => all(e).find((x) => x.classList.contains(cls));
-const gaps = ["config", "secret", "web", "diff", "editor", "island"];
+const gaps = ["web", "diff", "island"];
 
 test("every fixture is drawn with its hooks, natively or as its fallback", () => {
   const kinds = readdirSync(dir).map((f) => f.replace(/\.json$/, ""));
@@ -53,7 +53,7 @@ test("children of a container are drawn through render, with their hooks", () =>
 });
 
 test("a gap draws its fallback as a row, then its children", () => {
-  const b = { type: "editor", id: "flow", fallback: { title: "Flow", subtitle: "2 nodes" }, blocks: [fixture("text")] };
+  const b = { type: "island", id: "flow", fallback: { title: "Flow", subtitle: "2 nodes" }, blocks: [fixture("text")] };
   const e = render(b, ctx());
   ok(e.hasAttribute("data-fallback"));
   strictEqual(part(e, "b-row__title")?.textContent, "Flow");
@@ -175,6 +175,228 @@ test("a diagram whose source has no state draws its fallback", () => {
   const e = render({ type: "diagram", id: "x", source: "graph TD; a-->b", fallback: { title: "Flow" } }, ctx());
   ok(e.hasAttribute("data-fallback"));
   strictEqual(part(e, "b-row__title")?.textContent, "Flow");
+});
+
+test("an editor numbers its lines from first, marks an error's line with its message, and lists errors off the excerpt", () => {
+  const errors = [
+    { line: 41, message: "expected `;`" },
+    { line: 41, message: "second" },
+    { line: 9, message: "unknown key" },
+  ];
+  const e = render({ type: "editor", id: "src", name: "main", action: "check", first: 40, text: "fn main() {\n    let n = 1\n\n}", errors }, ctx());
+  strictEqual(e.hasAttribute("data-fallback"), false);
+  deepStrictEqual(
+    e.children.map((k) => [k.className, k.textContent]),
+    [
+      ["edl", "40fn main() {"],
+      ["edl err", "41    let n = 1"],
+      ["ede", "expected `;`"],
+      ["edl", "42 "],
+      ["edl", "43}"],
+      ["ede far", "line 9 · unknown key"],
+    ],
+  );
+  strictEqual(e.getAttribute("role"), "button");
+  strictEqual(e.getAttribute("aria-label"), "edit main");
+  const one = render(fixture("editor"), ctx());
+  deepStrictEqual(
+    one.children.map((k) => k.textContent),
+    ["1hello"],
+  );
+});
+
+test("a tapped editor opens a named draft that survives a redraw and posts its action 400ms after typing stops", () => {
+  mock.timers.enable({ apis: ["setTimeout"] });
+  const posts = [];
+  const c = ctx({ screen: "ed", act: async (a) => (posts.push(a), true) });
+  const b = { type: "editor", id: "cfg", name: "fleet", action: "check-fleet", text: "x = 1\ny =", errors: [{ line: 2, message: "expected a value" }] };
+  const e = render(b, c);
+  e.onkeydown({ key: "a", preventDefault() {} });
+  strictEqual(e.querySelector("textarea"), null);
+  e.onkeydown({ key: "Enter", preventDefault() {} });
+  const ta = e.querySelector("textarea");
+  ok(ta && e.classList.contains("on"));
+  strictEqual(ta.name, "fleet");
+  strictEqual(ta.value, "x = 1\ny =");
+  strictEqual(e.getAttribute("role"), null);
+  deepStrictEqual(
+    e.children.slice(1).map((k) => k.textContent),
+    ["line 2 · expected a value"],
+  );
+  ta.value = "x = 1\ny = 2";
+  ta.oninput();
+  mock.timers.tick(399);
+  strictEqual(posts.length, 0);
+  ta.value = "x = 1\ny = 3";
+  ta.oninput();
+  mock.timers.tick(399);
+  strictEqual(posts.length, 0);
+  mock.timers.tick(1);
+  deepStrictEqual(posts, [{ action: "check-fleet", block: "cfg", values: { fleet: "x = 1\ny = 3" } }]);
+  const again = render({ ...b, action: "check-2", errors: [] }, c);
+  strictEqual(again.querySelector("textarea"), ta);
+  strictEqual(again.children.length, 1);
+  ta.value = b.text;
+  ta.oninput();
+  mock.timers.tick(400);
+  strictEqual(posts.length, 1);
+  ta.value = "z";
+  ta.oninput();
+  mock.timers.tick(400);
+  strictEqual(posts[1].action, "check-2");
+  mock.timers.reset();
+});
+
+const settings = (more = {}) => ({
+  type: "config",
+  id: "edgar",
+  fields: [
+    { type: "text", name: "agent", label: "User agent", value: "cooee", doc: "sent to SEC" },
+    { type: "text", name: "base", value: "https://x.test", keyboard: "url", was: "https://www.sec.gov" },
+    { type: "text", name: "every", value: 4.5, keyboard: "number", error: "must be under 4", doc: "minutes" },
+    { type: "toggle", name: "on", label: "On", value: true },
+    { type: "picker", name: "form", value: "8-K", options: ["10-K", "10-Q"] },
+    { type: "secret", name: "key", set: true, value: "hidden" },
+    { type: "secret", name: "token", placeholder: "paste a token" },
+    { type: "secret", name: "pin", open: true },
+  ],
+  ...more,
+});
+const rows = (e) => e.children.filter((x) => x.classList.contains("fd"));
+const ctl = (r) => r.querySelector("input, select");
+const later = () => new Promise((r) => setImmediate(r));
+
+test("a config draws every field as a settings row: name, one note, its control", () => {
+  const e = render(settings(), ctx());
+  deepStrictEqual([e.className, e.dataset.block, e.dataset.id], ["form cfg b b-config", "config", "edgar"]);
+  const r = rows(e);
+  deepStrictEqual(
+    r.map((x) => x.className),
+    ["fd", "fd", "fd err", "fd tg", "fd", "fd", "fd", "fd open"],
+  );
+  deepStrictEqual(
+    r.map((x) => [part(x, "fk").textContent, part(x, "fn").className, part(x, "fn").textContent]),
+    [
+      ["User agent", "fn", "sent to SEC"],
+      ["base", "fn was", "was https://www.sec.gov"],
+      ["every", "fn err", "must be under 4"],
+      ["On", "fn", ""],
+      ["form", "fn", ""],
+      ["key", "fn", ""],
+      ["token", "fn", ""],
+      ["pin", "fn", ""],
+    ],
+  );
+  const c = r.map(ctl);
+  deepStrictEqual(
+    c.map((i) => [i.tagName, i.name, i.type, i.value, i.placeholder, i.inputMode]),
+    [
+      ["INPUT", "agent", "text", "cooee", "", undefined],
+      ["INPUT", "base", "url", "https://x.test", "", "url"],
+      ["INPUT", "every", "text", "4.5", "", "decimal"],
+      ["INPUT", "on", "checkbox", undefined, undefined, undefined],
+      ["SELECT", "form", undefined, undefined, undefined, undefined],
+      ["INPUT", "key", "password", "", "set ✓ · type to replace", undefined],
+      ["INPUT", "token", "password", "", "paste a token", undefined],
+      ["INPUT", "pin", "password", "", "not set", undefined],
+    ],
+  );
+  strictEqual(c[2].getAttribute("aria-invalid"), "true");
+  strictEqual(c[0].getAttribute("aria-invalid"), null);
+  deepStrictEqual([c[3].checked, c[3].getAttribute("role")], [true, "switch"]);
+  deepStrictEqual(c[4].children.map((o) => [o.value, o.selected]), [["8-K", true], ["10-K", false], ["10-Q", false]]);
+  strictEqual(e.querySelector("button"), null);
+});
+
+test("a config's open field takes the focus once, when it is first drawn", async () => {
+  const c = ctx({ screen: "focus" });
+  let n = 0;
+  for (let k = 0; k < 2; k++) ctl(rows(render(settings(), c))[7]).focus = () => n++;
+  await later();
+  strictEqual(n, 1);
+});
+
+test("a config with an action saves each change at once and says so, or that it was not saved", async () => {
+  const sent = [];
+  let ok = true;
+  const c = ctx({ act: async (a) => (sent.push(a), ok) });
+  const e = render(settings({ action: "save" }), c);
+  const r = rows(e);
+  const on = ctl(r[3]);
+  on.checked = false;
+  on.onchange();
+  strictEqual(part(r[3], "fn").textContent, "saving…");
+  await later();
+  deepStrictEqual(sent, [{ action: "save", block: "edgar", values: { on: false } }]);
+  deepStrictEqual([part(r[3], "fn").className, part(r[3], "fn").textContent], ["fn", ""]);
+  ok = false;
+  ctl(r[0]).value = "bot";
+  ctl(r[0]).onchange();
+  await later();
+  deepStrictEqual(sent[1].values, { agent: "bot" });
+  deepStrictEqual([part(r[0], "fn").className, part(r[0], "fn").textContent], ["fn err", "not saved"]);
+  ctl(r[5]).onchange();
+  await later();
+  strictEqual(sent.length, 2);
+  strictEqual(render(settings(), c).querySelector("input").onchange, undefined);
+});
+
+test("a config with a submit sends every field over its values from its button, never an empty secret", async () => {
+  const sent = [];
+  const c = ctx({ act: async (a, b) => (sent.push([a, b]), true) });
+  const e = render(settings({ submit: { action: "store", label: "save", values: { app: "edgar" } } }), c);
+  const go = e.querySelector("button");
+  strictEqual(go.parentNode.className, "bar");
+  strictEqual(go.hasAttribute("disabled"), false);
+  ctl(rows(e)[6]).value = "t0k";
+  ctl(rows(e)[4]).value = "10-K";
+  go.onclick();
+  await later();
+  deepStrictEqual(sent[0][0], {
+    action: "store",
+    block: "edgar",
+    values: { app: "edgar", agent: "cooee", base: "https://x.test", every: "4.5", on: true, form: "10-K", token: "t0k" },
+  });
+  strictEqual(sent[0][1], go);
+  const off = render(settings({ submit: { action: "store", label: "save", off: true } }), c);
+  strictEqual(off.querySelector("button").hasAttribute("disabled"), true);
+});
+
+test("a secret draws its label, a masked field and a send line, and set says so with a replace hint", () => {
+  const e = render(fixture("secret"), ctx());
+  ok(!e.hasAttribute("data-fallback"));
+  strictEqual(e.className, "secret b b-secret");
+  const i = all(e).find((x) => x.tagName === "INPUT");
+  deepStrictEqual([i.type, i.name, i.placeholder, i.autocomplete, i.spellcheck], ["password", "token", "", "new-password", false]);
+  strictEqual(part(e, "fk").textContent, "API token");
+  strictEqual(part(e, "sn").textContent, "sent to the app only, never to the agent");
+  const s = render({ type: "secret", name: "GH", action: "a", set: true, placeholder: "ghp_…" }, ctx());
+  strictEqual(part(s, "fk").textContent, "GHset ✓");
+  strictEqual(all(s).find((x) => x.tagName === "INPUT").placeholder, "paste to replace");
+});
+
+test("a secret sends its value under its name, clears on success, keeps it on failure, and an empty one only focuses", async () => {
+  const posts = [];
+  let answer = true;
+  const e = render({ type: "secret", id: "k", name: "API_KEY", action: "save", values: { app: "x" } }, ctx({ act: async (a) => (posts.push(a), answer) }));
+  const i = all(e).find((x) => x.tagName === "INPUT");
+  const go = all(e).find((x) => x.tagName === "BUTTON");
+  let focused = 0;
+  i.focus = () => focused++;
+  go.onclick();
+  deepStrictEqual([posts.length, focused], [0, 1]);
+  i.value = "sk-1";
+  go.onclick();
+  strictEqual(go.textContent, "sending…");
+  await new Promise((r) => setImmediate(r));
+  deepStrictEqual(posts, [{ action: "save", block: "k", values: { app: "x", API_KEY: "sk-1" } }]);
+  deepStrictEqual([i.value, go.textContent], ["", "send"]);
+  answer = false;
+  i.value = "sk-2";
+  const enter = i.listeners.find(([t]) => t === "keydown")[1];
+  enter({ key: "Enter", preventDefault: () => {} });
+  await new Promise((r) => setImmediate(r));
+  deepStrictEqual([posts.length, posts[1].values.API_KEY, i.value], [2, "sk-2", "sk-2"]);
 });
 
 const lanes = (e) => part(e, "scl").children.map((li) => li.children[0]);

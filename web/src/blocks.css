@@ -85,10 +85,37 @@ input[type=checkbox]{width:var(--s4);height:var(--s4);accent-color:var(--l)}
 .fd{display:flex;align-items:center;gap:var(--s2);min-height:var(--hit);border-bottom:1px solid var(--line)}
 .fd .fk{flex:1}
 .fd input:not([type=checkbox]),.fd select{flex:2}
+.fl{display:contents}
+.fn{display:none}
+.cfg{container-type:inline-size;display:block}
+.cfg .fd{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,3fr);align-items:center;column-gap:var(--s4);row-gap:var(--s1);padding:var(--s2) 0;min-height:var(--hit);border-bottom:1px solid var(--line)}
+.cfg>.fd:last-child{border-bottom:0}
+.cfg .fd.tg{grid-template-columns:minmax(0,1fr) auto}
+.cfg .fl{display:flex;flex-direction:column;gap:2px;min-width:0}
+.cfg .fn:empty{display:none}
+.cfg .fk{flex:none;color:var(--fg)}
+.cfg .fn{display:block;font-size:var(--fs-meta);color:var(--mute)}
+.cfg .fn.was{color:var(--l)}
+.cfg .fn.err{color:var(--r)}
+.cfg input:not([type=checkbox]),.cfg select{box-sizing:border-box;width:100%;height:calc(var(--ctl) + var(--s2));border-radius:0;background:var(--bg)}
+.cfg input::placeholder{color:var(--mute)}
+.cfg .fd.err input,.cfg .fd.err select{box-shadow:inset 3px 0 0 var(--r)}
+.cfg input:focus-visible,.cfg select:focus-visible,.cfg .fd.open input,.cfg .fd.open select{outline:2px solid var(--l);outline-offset:-1px}
+.cfg input[type=checkbox]{appearance:none;margin:0;width:36px;height:20px;border-radius:0;cursor:pointer;background:linear-gradient(var(--bg),var(--bg)) no-repeat 3px 50%/14px 14px,var(--edge)}
+.cfg input[type=checkbox]:checked{background-position:calc(100% - 3px) 50%;background-color:var(--l)}
+.cfg input[type=checkbox]:focus-visible{outline:2px solid var(--l);outline-offset:2px}
+.cfg .bar{display:flex;justify-content:flex-end;gap:var(--s3);padding-top:var(--s2)}
+@container (max-width:480px){.cfg .fd:not(.tg){grid-template-columns:minmax(0,1fr)}}
 .form.say{position:sticky;bottom:calc(var(--hit) + var(--s2) + env(safe-area-inset-bottom));display:flex;align-items:center;gap:var(--s3);padding:var(--s2) 0;background:var(--bg);border-top:1px solid var(--line)}
 .form.say .fd{flex:1;border:0;min-height:0}
 .form.say .fk:empty{display:none}
 .card .form.say{position:static;border:0;padding:0;background:none}
+.secret .fd input{border-radius:0;letter-spacing:.12em}
+.secret .fd input::placeholder{letter-spacing:0;color:var(--mute)}
+.secret .fd input:focus{outline:2px solid var(--l);outline-offset:-1px;border-color:var(--l)}
+.secret .fk .set{white-space:nowrap;color:var(--fk-g);font-size:var(--fs-meta);margin-left:var(--s2)}
+.secret .ra{justify-content:space-between;align-items:center}
+.secret .sn{font-size:var(--fs-meta);margin:0}
 
 .cmp{position:sticky;bottom:calc(var(--hit) + var(--s2) + env(safe-area-inset-bottom));padding:var(--s2) 0;background:var(--bg);border-top:1px solid var(--line)}
 .cmp .cr{display:flex;align-items:flex-end;gap:var(--s3)}
@@ -137,6 +164,18 @@ input[type=checkbox]{width:var(--s4);height:var(--s4);accent-color:var(--l)}
 .dgn.timer{flex-direction:row;justify-content:flex-start;align-items:center;gap:var(--s1);border:1px dashed var(--link);background:transparent;color:var(--link)}
 .dgn.timer .dgv{font-weight:600}
 .dgn.timer>span{display:flex;flex-direction:column;min-width:0}
+.ed{margin:var(--s2) 0 0;padding:var(--s2) 0;font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:var(--bg);border:1px solid var(--edge);border-radius:0;cursor:text}
+.ed:focus-visible,.ed textarea:focus-visible{outline:2px solid var(--l);outline-offset:-2px}
+.edl{display:flex;gap:10px;padding:0 var(--s3) 0 0;white-space:pre-wrap;overflow-wrap:anywhere}
+.edl>i{flex:none;width:4ch;text-align:right;font-style:normal;color:var(--mute);user-select:none}
+.edl>span{flex:1;min-width:0;color:var(--fg)}
+.edl.err{box-shadow:inset 3px 0 0 var(--r)}
+.edl.err>i{color:var(--r)}
+.ede{margin:2px 0 var(--s1) calc(4ch + 10px);padding:0 var(--s3) 0 0;color:var(--r);font:600 var(--fs-meta)/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+.ede.far{margin-left:var(--s3)}
+.ed textarea{display:block;box-sizing:border-box;width:100%;min-height:320px;margin:0;padding:0 var(--s3);font:inherit;color:var(--fg);background:none;border:0;border-radius:0;resize:vertical}
+.ed.on{cursor:auto;border-color:var(--l)}
+.ed.on .ede{margin-left:var(--s3)}
 .scn{container-type:inline-size;margin:var(--s2) 0 0}
 .scn>.sh{margin-top:0}
 .scl{display:flex;flex-wrap:wrap;gap:var(--s2);margin:0;padding:0;list-style:none}
