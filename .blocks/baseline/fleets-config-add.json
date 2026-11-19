@@ -1,0 +1,17 @@
+{
+  "guard": 2,
+  "known": [
+    {
+      "rule": "render/contrast",
+      "at": "sheet#add/section~0"
+    },
+    {
+      "rule": "render/contrast",
+      "at": "sheet#add/section~1"
+    },
+    {
+      "rule": "render/contrast",
+      "at": "sheet#add/section~2"
+    }
+  ]
+}

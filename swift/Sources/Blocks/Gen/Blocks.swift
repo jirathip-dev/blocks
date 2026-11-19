@@ -1021,6 +1021,22 @@ public struct PhonePart: RawRepresentable, Hashable, Codable, Equatable, Sendabl
     public static let all: [Self] = [.title, .tag, .value, .meta, .hide]
 }
 
+public struct Plan: Codable, Equatable, Sendable {
+    public var out: String
+    public var runs: [PlanRun]
+}
+
+public struct PlanRun: Codable, Equatable, Sendable {
+    public var css: [String]
+    public var kinds: [String]
+    public var name: String
+    public var probes: Bool
+    public var screen: String
+    public var scripts: [String]
+    public var size: String
+    public var steps: [Step]
+}
+
 public struct Prose: Codable, Equatable, Sendable {
     public var id: String?
     public var parts: [Part]
