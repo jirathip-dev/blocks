@@ -62,6 +62,7 @@ web: web-install
 # Layers, bans, sizes, frozen and generated files; BASE and PR_BODY narrow the comment and doc checks to a PR.
 arch:
     {{drover}} arch-check ${BASE:+--base "$BASE"} ${PR_BODY:+--pr-body "$PR_BODY"}
+    DROVER={{drover}} sh scripts/arch-size.test.sh
 
 # The line cap in ci/cap.toml (non-test, non-generated Rust, TS and Swift; CI's cap workflow) and the 30-line rules file.
 cap:
