@@ -2,8 +2,8 @@ use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
-fn build() -> PathBuf {
-    let out = Path::new(env!("CARGO_TARGET_TMPDIR")).join("showcase");
+fn build(name: &str) -> PathBuf {
+    let out = Path::new(env!("CARGO_TARGET_TMPDIR")).join(name);
     let ok = Command::new(env!("CARGO_BIN_EXE_blocks-site"))
         .arg(&out)
         .status()
@@ -25,7 +25,7 @@ fn pages(out: &Path) -> Vec<(String, String)> {
 
 #[test]
 fn every_page_has_its_head_and_no_url_from_the_domain_root() {
-    let out = build();
+    let out = build("pages");
     let all = pages(&out);
     assert_eq!(all.len(), 7 + 31);
     for (f, html) in &all {
@@ -53,7 +53,7 @@ fn every_page_has_its_head_and_no_url_from_the_domain_root() {
 
 #[test]
 fn the_gallery_counts_every_kind_once_and_finds_its_fallback_group_from_the_renderer() {
-    let out = build();
+    let out = build("gallery");
     let gallery = fs::read_to_string(out.join("gallery.html")).unwrap();
     let home = fs::read_to_string(out.join("index.html")).unwrap();
     let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("..");
@@ -92,7 +92,7 @@ fn the_gallery_counts_every_kind_once_and_finds_its_fallback_group_from_the_rend
 
 #[test]
 fn the_layout_page_shows_its_layout_json_as_is_and_places_each_screen_on_both_sizes() {
-    let out = build();
+    let out = build("layout");
     let html = fs::read_to_string(out.join("layout.html")).unwrap();
     let data = html.split("id=\"blocks-screen\"").nth(1).unwrap();
     let data = &data[data.find('>').unwrap() + 1..data.find("</script>").unwrap()];

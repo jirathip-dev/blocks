@@ -3,6 +3,7 @@ import SwiftUI
 
 internal struct CardBlock: View {
     @Environment(\.look) private var look
+    @Environment(\.behaved) private var behaved
     @Environment(\.card) private var context
     internal let block: Card
 
@@ -80,7 +81,10 @@ internal struct CardBlock: View {
                 }
                 Spacer(minLength: 4)
                 if let badge { Pill(badge: badge) }
-                if let meta { Text(meta).ui(12, .regular, look).foregroundStyle(look.palette.mute) }
+                if let meta {
+                    RelativeValue { meta.text(at: $0, behaved.view.values) }.ui(12, .regular, look)
+                        .foregroundStyle(look.palette.mute)
+                }
             }
             .foregroundStyle(tint)
         }

@@ -138,7 +138,7 @@ export type Card = {
     id?: string | null;
     kind?: CardKind | null;
     menu?: Act[] | null;
-    meta?: string | null;
+    meta?: Shown | null;
     push?: boolean | null;
     show?: Expr | null;
     subtitle?: string | null;
@@ -409,7 +409,7 @@ export type KeyState = {
 };
 export type Keyboard = "default" | "url" | "number";
 export type Label = {
-    text: string;
+    text: Shown;
     tone?: Tone | null;
 };
 export type Lane = {
@@ -563,6 +563,20 @@ export type Pending = {
     text: string;
 };
 export type PhonePart = "title" | "tag" | "value" | "meta" | "hide";
+export type Plan = {
+    out: string;
+    runs: PlanRun[];
+};
+export type PlanRun = {
+    css: string[];
+    kinds: string[];
+    name: string;
+    probes: boolean;
+    screen: string;
+    scripts: string[];
+    size: string;
+    steps: Step[];
+};
 export type Prose = {
     id?: string | null;
     parts: Part[];
@@ -841,6 +855,7 @@ export type Tile = {
     value: Shown;
 };
 export type Time = {
+    label?: string | null;
     since?: string | null;
     until?: string | null;
 };

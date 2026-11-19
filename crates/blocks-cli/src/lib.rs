@@ -1,4 +1,10 @@
+mod draw;
 mod files;
+mod skill;
+
+mod gen {
+    pub(crate) mod skill;
+}
 
 use std::collections::BTreeMap;
 use std::io::Write as _;
@@ -6,7 +12,7 @@ use std::process::ExitCode;
 
 use blocks::guard::{self, Baseline, Finding, Held, Outcome, Scope, Severity};
 
-const USAGE: &str = "usage: blocks check [--base <ref>] [--all] [--tighten] [--format text|json|sarif] [--out <file>]";
+const USAGE: &str = "usage: blocks check [--base <ref>] [--all] [--render] [--tighten] [--format text|json|sarif] [--out <file>] | blocks check --shot <fixture>… | blocks skill --to <dir>";
 
 #[derive(Default)]
 enum Format {
@@ -20,12 +26,14 @@ enum Format {
 struct Flags {
     base: Option<String>,
     all: bool,
+    render: bool,
+    shot: Vec<String>,
     tighten: bool,
     format: Format,
     out: Option<String>,
 }
 
-/// `blocks check`: lint the screens `.blocks/guard.json` names and judge them; exit 0 clean, 1 a new error, 2 a broken setup.
+/// `blocks check` lints, draws with `--render` and judges the screens `.blocks/guard.json` names; `blocks skill` writes the usage skill; exit 0 ok, 1 a finding, 2 a broken setup.
 pub fn main() -> ExitCode {
     let args: Vec<String> = std::env::args().skip(1).collect();
     match run(&args) {
@@ -46,14 +54,13 @@ fn value(it: &mut std::slice::Iter<String>, flag: &str) -> Result<String, String
 
 fn flags(args: &[String]) -> Result<Flags, String> {
     let mut it = args.iter();
-    if it.next().map(String::as_str) != Some("check") {
-        return Err(USAGE.into());
-    }
     let mut f = Flags::default();
     while let Some(a) = it.next() {
         match a.as_str() {
             "--base" => f.base = Some(value(&mut it, a)?),
             "--all" => f.all = true,
+            "--render" => f.render = true,
+            "--shot" => f.shot.push(value(&mut it, a)?),
             "--tighten" => f.tighten = true,
             "--out" => f.out = Some(value(&mut it, a)?),
             "--format" => {
@@ -71,17 +78,40 @@ fn flags(args: &[String]) -> Result<Flags, String> {
 }
 
 fn run(args: &[String]) -> Result<bool, String> {
+    match args.split_first() {
+        Some((cmd, rest)) if cmd == "check" => check(rest),
+        Some((cmd, rest)) if cmd == "skill" => skill::run(rest),
+        _ => Err(USAGE.into()),
+    }
+}
+
+fn check(args: &[String]) -> Result<bool, String> {
     let f = flags(args)?;
     let config = files::config()?;
-    let mut scope = Scope::default();
+    let mut scope = Scope {
+        rendered: f.render,
+        ..Scope::default()
+    };
     let mut screens = files::screens(&config, &mut scope.skipped)?;
+    if !f.shot.is_empty() {
+        return write(f.out.as_ref(), &draw::shots(&config, &screens, &f.shot)?).map(|()| true);
+    }
+    let names: Vec<String> = screens.keys().cloned().collect();
     let base = f.base.as_deref().map(files::merge_base).transpose()?;
     if let (Some(mb), false, false) = (&base, f.all, f.tighten) {
         let changed = files::changed(mb)?;
+        let looks = config.css.iter().chain(&config.scripts).chain(&config.inputs);
+        let redraw = f.render
+            && looks.map(|p| p.trim_end_matches('/')).any(|p| {
+                changed
+                    .iter()
+                    .any(|c| c == p || c.strip_prefix(p).is_some_and(|r| r.starts_with('/')))
+            });
         screens.retain(|name, fx| {
-            [fx.path.clone(), files::baseline_path(name), files::ignore_path(name)]
-                .iter()
-                .any(|p| changed.contains(p))
+            redraw
+                || [fx.path.clone(), files::baseline_path(name), files::ignore_path(name)]
+                    .iter()
+                    .any(|p| changed.contains(p))
         });
     }
     let mut held = Held::default();
@@ -93,8 +123,13 @@ fn run(args: &[String]) -> Result<bool, String> {
     if let Some(mb) = &base {
         if files::at_base::<serde_json::Value>(mb, files::CONFIG)?.is_some() {
             let mut was = BTreeMap::new();
-            for name in screens.keys() {
-                was.extend(files::at_base(mb, &files::baseline_path(name))?.map(|b| (name.clone(), b)));
+            for name in names {
+                was.extend(files::at_base(mb, &files::baseline_path(&name))?.map(|b| (name, b)));
+            }
+            for (name, fx) in &screens {
+                if files::at_base::<serde_json::Value>(mb, &fx.path)?.is_some() {
+                    held.on_base.insert(name.clone());
+                }
             }
             held.base = Some(was);
         }
@@ -107,6 +142,9 @@ fn run(args: &[String]) -> Result<bool, String> {
             found.push(guard::finding(seen, &fx.path).ok_or_else(|| format!("{}: no rule {rule}", fx.path))?);
         }
     }
+    if f.render {
+        found.extend(draw::render(&config, &screens)?);
+    }
     let mut outcome = guard::judge(&found, &held, &scope);
     if f.tighten {
         held.baselines = tighten(&outcome, &held.baselines, &scope)?;
@@ -117,13 +155,17 @@ fn run(args: &[String]) -> Result<bool, String> {
         Format::Json => json(&outcome)?,
         Format::Sarif => json(&guard::sarif(&outcome))?,
     };
-    match &f.out {
-        Some(path) => std::fs::write(path, body).map_err(|e| format!("{path}: {e}"))?,
+    write(f.out.as_ref(), &body)?;
+    Ok(outcome.pass)
+}
+
+fn write(out: Option<&String>, body: &str) -> Result<(), String> {
+    match out {
+        Some(path) => std::fs::write(path, body).map_err(|e| format!("{path}: {e}")),
         None => std::io::stdout()
             .write_all(body.as_bytes())
-            .map_err(|e| format!("stdout: {e}"))?,
+            .map_err(|e| format!("stdout: {e}")),
     }
-    Ok(outcome.pass)
 }
 
 fn tighten(
@@ -140,13 +182,11 @@ fn tighten(
             .filter(|f| f.file == *path)
             .cloned()
             .collect();
-        let b = guard::tighten(old.get(name), &mine);
+        let b = guard::tighten(old.get(name), &mine, scope.rendered);
         let file = files::baseline_path(name);
         if b.known.is_empty() {
-            match std::fs::remove_file(&file) {
-                Err(e) if e.kind() != std::io::ErrorKind::NotFound => return Err(format!("{file}: {e}")),
-                _ => continue,
-            }
+            files::remove(&file)?;
+            continue;
         }
         std::fs::create_dir_all(".blocks/baseline").map_err(|e| format!(".blocks/baseline: {e}"))?;
         std::fs::write(&file, json(&b)?).map_err(|e| format!("{file}: {e}"))?;
@@ -155,7 +195,7 @@ fn tighten(
     Ok(out)
 }
 
-fn json<T: serde::Serialize>(v: &T) -> Result<String, String> {
+pub(crate) fn json<T: serde::Serialize>(v: &T) -> Result<String, String> {
     serde_json::to_string_pretty(v)
         .map(|s| s + "\n")
         .map_err(|e| e.to_string())

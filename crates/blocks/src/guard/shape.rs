@@ -1,6 +1,8 @@
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 
 use serde::{Deserialize, Serialize};
+
+use crate::tree::Step;
 
 /// How a finding counts: an error fails when it is new, a warning is printed and never fails.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
@@ -123,29 +125,56 @@ pub struct Baseline {
     pub known: Vec<Known>,
 }
 
-/// `.blocks/guard.json`: the folders whose screens are checked and the app's own kinds.
+/// `.blocks/guard.json`: the screens, the app's kinds, its CSS and scripts, the harnesses that draw them, the inputs that redraw all and the skill's examples.
 #[derive(Clone, Debug, Default, PartialEq, Eq, Deserialize)]
-#[serde(deny_unknown_fields)]
+#[serde(deny_unknown_fields, default)]
 pub struct Config {
-    #[serde(default)]
     pub screens: Vec<String>,
-    #[serde(default)]
     pub kinds: Vec<String>,
+    pub css: Vec<String>,
+    pub scripts: Vec<String>,
+    pub harness: Vec<Vec<String>>,
+    pub inputs: Vec<String>,
+    pub examples: Vec<String>,
 }
 
-/// What an app holds against its findings, by fixture name: ignores, baselines, and base's baselines in a PR.
+/// What a harness draws: each run in one process, its shots under `<out>/<run>/` and every `Seen` in `<out>/seen.json`.
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
+pub struct Plan {
+    pub out: String,
+    pub runs: Vec<Run>,
+}
+
+/// One screen drawn at one size with the app's CSS, scripts and kinds; the probes run when `probes` is set.
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[cfg_attr(feature = "schema", derive(schemars::JsonSchema), schemars(rename = "PlanRun"))]
+pub struct Run {
+    pub name: String,
+    pub screen: String,
+    pub size: String,
+    pub css: Vec<String>,
+    pub scripts: Vec<String>,
+    pub kinds: Vec<String>,
+    pub steps: Vec<Step>,
+    pub probes: bool,
+}
+
+/// What an app holds against its findings, by fixture name: ignores, baselines, and in a PR base's baselines and fixtures.
 #[derive(Clone, Debug, Default)]
 pub struct Held {
     pub ignores: BTreeMap<String, Vec<Ignore>>,
     pub baselines: BTreeMap<String, Baseline>,
     pub base: Option<BTreeMap<String, Baseline>>,
+    pub on_base: BTreeSet<String>,
 }
 
-/// The fixtures judged, name to path, and what was not judged with why.
+/// The fixtures judged, name to path, what was not judged with why, and whether a harness drew them.
 #[derive(Clone, Debug, Default)]
 pub struct Scope {
     pub fixtures: BTreeMap<String, String>,
     pub skipped: Vec<String>,
+    pub rendered: bool,
 }
 
 /// A finding an ignore covers, with the ignore's reason.

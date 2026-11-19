@@ -104,7 +104,7 @@ kind! {
         tone: Option<Tone>,
         title: Option<String>,
         subtitle: Option<String>,
-        meta: Option<String>,
+        meta: Option<Shown>,
         badge: Option<Label>,
         buttons: Option<Vec<Block>>,
         tap: Option<Tap>,
@@ -381,6 +381,14 @@ macro_rules! kinds {
         impl Block {
             /// The core kinds' `type` names.
             pub const KINDS: &[&str] = &[$($name),*];
+
+            /// The block's `type`: a core kind's name, or an app's own.
+            pub fn kind(&self) -> &str {
+                match self {
+                    $(Self::$v(_) => $name,)*
+                    Self::App(b) => &b.kind,
+                }
+            }
 
             /// The block's id, when it has one.
             pub fn id(&self) -> Option<&str> {

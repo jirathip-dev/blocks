@@ -1,0 +1,16 @@
+[package]
+name = "blocks-desktop"
+description = "The blocks desktop renderer: draws a screen into an egui Ui"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+repository.workspace = true
+
+[dependencies]
+blocks = { path = "../blocks" }
+egui.workspace = true
+serde_json.workspace = true
+
+[lints]
+workspace = true
