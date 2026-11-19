@@ -1,0 +1,12 @@
+Decided: the crate writes one corpus with its own results; TS and Swift read the same file and report the shortest differing case and its seed
+Because: "One seeded corpus file the three runners read; a mismatch fails the job and prints the seed and the shortest failing case."
+Decided: fixtures/sim/mismatch.json forces three differences, checked per PR in the existing Rust, web and Swift test jobs
+Because: "A committed case that differed at least once (or a forced-mismatch test) proves the comparison bites."
+Decided: number text in cat follows JS Number#toString in Rust and Swift; a null check ok counts as not written in Rust
+Because: crates/blocks/src/behave.rs:24
+Rejected: narrowing the random numbers to hide the cat difference — it is a real disagreement, fixed at the root
+Rejected: generating merges of fields a kind lacks — those screens are Built::check faults; the three differ there, left for a follow-up
+Decided: the nightly job moves to macos-latest so Swift runs in the same job; no new per-PR job
+Because: "Nightly only (and `just sim` locally); no new per-PR job."
+Check: with crates/blocks/src reverted, cargo test -p blocks --test behave fails on the four new fixture cases
+Owner: the nightly sim now compares Rust, web and Swift; it found and fixed two disagreements
