@@ -179,6 +179,7 @@ private struct ChartPlot: View {
         let c = model.chart, n = c.x.count, (lo, hi) = model.scale
         let height: CGFloat = width < 520 ? 150 : 180
         let every = max(1, Int((Double(n) / (width < 700 ? 6 : 12)).rounded(.up)))
+        let span = max(0, width - 76) / CGFloat(max(n, 1)) * CGFloat(every)
         VStack(alignment: .leading, spacing: 4) {
             ChartLegend(model: model)
             HStack(alignment: .top, spacing: 8) {
@@ -194,9 +195,10 @@ private struct ChartPlot: View {
                     marks.frame(height: height).overlay { columns }
                     HStack(spacing: 0) {
                         ForEach(Array(c.x.enumerated()), id: \.offset) { i, x in
-                            Text(i % every == 0 ? model.label(x, long: false) : "").lineLimit(1).fixedSize()
-                                .fontWeight(model.picked == i ? .semibold : .regular)
-                                .frame(maxWidth: .infinity)
+                            Text(" ").frame(maxWidth: .infinity).overlay {
+                                Text(i % every == 0 ? model.label(x, long: false) : "").lineLimit(1)
+                                    .fontWeight(model.picked == i ? .semibold : .regular).frame(width: span)
+                            }
                         }
                     }
                     .ui(11, .regular, look).foregroundStyle(look.palette.mute)
