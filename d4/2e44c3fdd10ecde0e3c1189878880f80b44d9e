@@ -1,0 +1,12 @@
+Decided: pages zooms only through the shared zoomed/Zoomed, which now tells live (pinch, wheel) from settled, so the kind writes no pointer code
+Because: "Built on the approved gesture-to-action ADR from #136, with no new gesture rules outside it."
+Because: web/src/render/pages.ts:36
+Decided: a pinch scales by transform and the page width is written once on release; a step eases by transform over --settle, then writes once
+Because: "Zoom follows the motion rule."
+Because: swift/Sources/BlocksUI/Gestured.swift:128
+Decided: one fit control that shows "fit" or the percent; no per-page captions
+Because: q2371
+Rejected: container queries from the mockup — WebKit clamps page scroll to 0 when a container-type element is inserted, so every redraw lost the reader's place
+Rejected: a desktop view — the issue names web and SwiftUI; desktop draws the fallback with TODO(#45) like toast and chart
+Check: web/test/document.test.ts drives paging, zoom, redraw and the live pinch in WebKit with a fake clock and asserts nothing is sent
+Owner: Apps can show a server-drawn document with paging and zoom on web, iPhone/Mac and the static site, with no PDF library in blocks.
