@@ -36,5 +36,19 @@ jobs:
             for f in fixtures/blocks/*.json fixtures/stress/*-*.json; do
               k=$(basename "$f" .json)
               "$desk" --screen "$f" --size "$size" --check --out "shots/desktop/$size/$k"
+              test -s "shots/desktop/$size/$k/$k.png"
             done
           done
+      - name: "the Thai sample at 390 and 1440 with a Thai font: a row, a paragraph that wraps, a form"
+        run: |
+          t=crates/blocks-desk/tests/thai
+          desk="target/debug/blocks-desk"
+          if [ "$RUNNER_OS" = Windows ]; then desk="$desk.exe"; fi
+          for size in 390x844 1440x900; do
+            "$desk" --screen "$t/screen.json" --font "$t/NotoSansThai-Regular.ttf" --size "$size" --check --out "shots/desktop/$size/thai"
+            test -s "shots/desktop/$size/thai/screen.png"
+          done
+      - name: "perf in release: every pass of the 200-row screen in 16.7 ms, each patch in 4 ms (numbers in the job summary)"
+        run: |
+          { echo "### desktop perf (release, $RUNNER_OS)"; echo; echo "| case | took | budget |"; echo "|---|---|---|"; } >> "$GITHUB_STEP_SUMMARY"
+          cargo test --release --locked -p blocks-desk --test perf -- --ignored --nocapture --test-threads=1
