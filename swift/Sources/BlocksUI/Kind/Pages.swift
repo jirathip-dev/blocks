@@ -58,13 +58,15 @@ internal struct PagesBlock: View {
     private func sheets(_ count: Int, _ proxy: ScrollViewProxy) -> some View {
         let widest = max(CGFloat(block.pages.map(\.width).max() ?? 1), 1)
         let tall = block.pages.reduce(0) { $0 + CGFloat($1.height) / widest }
-        return Fitted(height: { 16 * CGFloat(count + 1) + max(0, $0 - 32) * zoom * tall }) {
+        let gaps = 16 * CGFloat(count + 1), scale = zoom * tall
+        return Fitted(height: { gaps + max(0, $0 - 32) * scale }) {
             ScrollView(.horizontal) {
                 VStack(spacing: 16) {
                     ForEach(Array(block.pages.enumerated()), id: \.offset) { index, page in
-                        Picture(src: page.src, alt: page.alt, fit: true)
-                            .aspectRatio(CGFloat(page.width) / max(CGFloat(page.height), 1), contentMode: .fit)
-                            .containerRelativeFrame(.horizontal) { length, _ in max(0, length - 32) * zoom * CGFloat(page.width) / widest }
+                        let share: CGFloat = zoom * CGFloat(page.width) / widest
+                        let ratio: CGFloat = CGFloat(page.width) / max(CGFloat(page.height), 1)
+                        Picture(src: page.src, alt: page.alt, fit: true).aspectRatio(ratio, contentMode: .fit)
+                            .containerRelativeFrame(.horizontal) { length, _ in max(0, length - 32) * share }
                             .background(Color.white).overlay(Rectangle().strokeBorder(look.palette.edge, lineWidth: 1))
                             .accessibilityElement(children: .ignore).accessibilityAddTraits(.isImage)
                             .accessibilityLabel("Page \(index + 1) of \(count). \(page.alt)").id(index)
@@ -87,7 +89,7 @@ internal struct PagesBlock: View {
 }
 
 private struct Fitted: SwiftUI.Layout {
-    let height: (CGFloat) -> CGFloat
+    let height: @Sendable (CGFloat) -> CGFloat
 
     func sizeThatFits(proposal: ProposedViewSize, subviews: LayoutSubviews, cache: inout ()) -> CGSize {
         let width = proposal.replacingUnspecifiedDimensions().width
