@@ -430,15 +430,16 @@ export function adopt(o: { theme?: Theme; store?: Store; blocks?: AppBlocks } = 
     const r = await fetch(data.dataset.action ?? "", { method: "POST", headers: { "content-type": "application/json" }, body }).catch(() => undefined);
     const j: Answer = (await r?.json().catch(() => undefined)) ?? {};
     if (j.ops?.length) take(j.ops);
-    if (j.open) location.assign(j.open);
+    if (j.open && linkable(j.open)) location.assign(j.open);
     return !!r?.ok;
   };
   const tap = (t: unknown) => {
     const x = obj(t);
     if (typeof x.url === "string") {
       if (linkable(x.url)) open(x.url, "_blank", "noopener");
+    } else if (typeof x.open === "string") {
+      if (linkable(x.open)) location.assign(x.open);
     }
-    else if (typeof x.open === "string") location.assign(x.open);
     else if (typeof x.action === "string") void act({ action: x.action, values: x.values });
     else if (x.sheet === "look") lookSheet();
   };
