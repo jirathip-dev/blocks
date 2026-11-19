@@ -1,8 +1,8 @@
 import type { LayoutPlace, LayoutTransition } from "./gen/layout.ts";
 import type { Scheme } from "./gen/schemes.ts";
-import type { Answer, Block, Kind } from "./gen/types.ts";
+import type { Answer, Block, Kind, Op } from "./gen/types.ts";
 import { apply, patcher } from "./patch.ts";
-import { type Blk, btn, type Ctx, el, h, isBlk, obj, type Post, type Renderer, render, type Store, tick } from "./render/index.ts";
+import { type Blk, blks, btn, type Ctx, el, h, isBlk, obj, type Post, type Renderer, render, type Store, tick } from "./render/index.ts";
 import { stream } from "./stream.ts";
 import { plain, type Theme } from "./theme.ts";
 
@@ -362,3 +362,65 @@ function draw(o: Mount, store: Store, theme: Theme, wear: (name: string | null) 
     },
   };
 }
+
+const drawn = (b: Blk): [string, string][] =>
+  [...(typeof b.id === "string" ? [[b.id, String(b.type)] satisfies [string, string]] : []), ...["blocks", "rows", "buttons"].flatMap((k) => (Array.isArray(b[k]) ? b[k].filter(isBlk).flatMap(drawn) : []))];
+
+/// Takes over a page `site` wrote without redrawing it: its forms post in place and the stream patches it; false: it stays static.
+export function adopt(o: { theme?: Theme; store?: Store; blocks?: AppBlocks } = {}): boolean {
+  const data = document.getElementById("blocks-screen");
+  const root = document.querySelector("main");
+  if (!data || !root) return false;
+  let model: Block = JSON.parse(data.textContent ?? "null");
+  const want = new Map(drawn(obj(model)));
+  const els = Array.from(root.querySelectorAll<HTMLElement>("[data-block]"));
+  const top = [obj(model), ...blks(obj(model).blocks)];
+  const off =
+    els.find((e) => e.dataset.id && want.get(e.dataset.id) !== e.dataset.block)?.dataset.id ??
+    top.find((b) => typeof b.id === "string" && !els.some((e) => e.dataset.id === b.id && e.dataset.block === b.type))?.id;
+  if (off !== undefined) {
+    console.warn(`blocks: the page stays static, block ${off} is missing or differs`);
+    return false;
+  }
+  const screen = String(obj(model).id ?? "");
+  const p = patcher({ root, model: () => model, draw: (b) => render(b, ctx) });
+  const take = (ops: Op[]) => {
+    model = apply(model, ops) ?? model;
+    p.queue(ops);
+  };
+  const act = async (a: Post): Promise<boolean> => {
+    if (isBlk(a.confirm) && !confirm(String(a.confirm.title ?? ""))) return false;
+    const body = JSON.stringify({ screen, action: a.action, block: a.block ?? undefined, values: a.values ?? undefined });
+    const r = await fetch(data.dataset.action ?? "", { method: "POST", headers: { "content-type": "application/json" }, body }).catch(() => undefined);
+    const j: Answer = (await r?.json().catch(() => undefined)) ?? {};
+    if (j.ops?.length) take(j.ops);
+    if (j.open) location.assign(j.open);
+    return !!r?.ok;
+  };
+  const tap = (t: unknown) => {
+    const x = obj(t);
+    if (typeof x.url === "string") open(x.url, "_blank", "noopener");
+    else if (typeof x.open === "string") location.assign(x.open);
+    else if (typeof x.action === "string") void act({ action: x.action, values: x.values });
+  };
+  const ctx: Ctx = { screen, act, tap, open: new Set(), theme: o.theme ?? plain, store: o.store ?? local(), apps: o.blocks };
+  document.addEventListener("submit", (e) => {
+    const f = e.target;
+    if (!(f instanceof HTMLFormElement) || !f.elements.namedItem("_action")) return;
+    e.preventDefault();
+    const v: Blk = {};
+    new FormData(f).forEach((x, k) => (v[k] = x));
+    const { _block, _action, _screen, ...values } = v;
+    void act({ action: _action, block: _block || undefined, values });
+  });
+  stream({ url: data.dataset.stream ?? "" }).open(location.pathname, (s, ops) => {
+    const same = JSON.stringify(s) === JSON.stringify(model);
+    model = s;
+    if (ops) return p.queue(ops);
+    if (same) return;
+    root.replaceChildren(...[render(s, ctx)].filter((e): e is HTMLElement => e !== null));
+  });
+  return true;
+}
+
+if (typeof document !== "undefined" && document.getElementById?.("blocks-screen")) adopt();

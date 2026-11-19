@@ -3,6 +3,7 @@ use std::fmt;
 
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
+use serde_json::Value;
 
 use crate::kind::{Block, Fields, Lane, Round};
 use crate::SCHEMA_VERSION;
@@ -245,6 +246,48 @@ impl From<serde_json::Error> for Broken {
     fn from(e: serde_json::Error) -> Self {
         Self(e.to_string())
     }
+}
+
+impl Action {
+    /// A static page's `<form>` post: `_screen`, `_block` and `_action`, every other field a string value.
+    pub fn from_form(body: &str) -> Result<Action, Broken> {
+        let mut a = Action::default();
+        let (mut screen, mut action) = (None, None);
+        for pair in body.split('&').filter(|p| !p.is_empty()) {
+            let (k, v) = pair.split_once('=').unwrap_or((pair, ""));
+            let (k, v) = (form_text(k)?, form_text(v)?);
+            match k.as_str() {
+                "_screen" => screen = Some(v),
+                "_block" => a.block = Some(v).filter(|b| !b.is_empty()),
+                "_action" => action = Some(v),
+                _ => drop(a.values.insert(k, Value::String(v))),
+            }
+        }
+        a.screen = screen.ok_or_else(|| Broken("a form post without _screen".into()))?;
+        a.action = action
+            .filter(|x| !x.is_empty())
+            .ok_or_else(|| Broken("a form post without _action".into()))?;
+        Ok(a)
+    }
+}
+
+fn form_text(s: &str) -> Result<String, Broken> {
+    let mut out = Vec::with_capacity(s.len());
+    let mut bytes = s.bytes();
+    while let Some(b) = bytes.next() {
+        out.push(match b {
+            b'+' => b' ',
+            b'%' => {
+                let hex = |b: Option<u8>| b.and_then(|b| char::from(b).to_digit(16));
+                let (hi, lo) = hex(bytes.next())
+                    .zip(hex(bytes.next()))
+                    .ok_or_else(|| Broken("a bad % escape".into()))?;
+                u8::try_from(hi * 16 + lo).map_err(|e| Broken(e.to_string()))?
+            }
+            b => b,
+        });
+    }
+    String::from_utf8(out).map_err(|e| Broken(e.to_string()))
 }
 
 impl MediaType {

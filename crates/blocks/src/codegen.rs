@@ -1,10 +1,11 @@
+use std::collections::BTreeMap;
 use std::path::Path;
 
-use serde_json::{Map, Value};
+use serde_json::{Map, Number, Value};
 
 use crate::{
-    layout, theme, tree, Action, Answer, Block, Built, Bye, Card, Child, Composer, ComposerChip, Frame, Hello, List,
-    OldFrame, Op, Queued, Row, Screen, Sync, Synced, Text, Tone, SCHEMA_VERSION,
+    layout, site, theme, tree, Action, Answer, Block, Built, Bye, Card, Child, Composer, ComposerChip, Diagram, Frame,
+    Hello, List, Node, OldFrame, Op, Queued, Row, Screen, Sync, Synced, Tap, Text, Tone, SCHEMA_VERSION,
 };
 
 /// The JSON Schema of a `Frame`; its `$defs` hold `Block`, `Op` and the stream's other messages.
@@ -75,7 +76,100 @@ pub fn write(root: &Path) -> std::io::Result<()> {
         let text = serde_json::to_string_pretty(&b)? + "\n";
         std::fs::write(root.join(format!("fixtures/blocks/{kind}.json")), text)?;
     }
-    trees(root)
+    trees(root)?;
+    html(root)
+}
+
+fn html(root: &Path) -> std::io::Result<()> {
+    std::fs::create_dir_all(root.join("fixtures/html"))?;
+    for (kind, b) in crate::samples() {
+        let text = site::fragment(&Built::new(serde_json::to_value(&b)?), "/act") + "\n";
+        std::fs::write(root.join(format!("fixtures/html/{kind}.html")), text)?;
+    }
+    let style = serde_json::from_str(&std::fs::read_to_string(root.join("fixtures/styles/still.json"))?)?;
+    let look = site::Look {
+        schemes: theme::default().clone(),
+        style,
+    };
+    let screen = Built::of(&site_screen());
+    std::fs::create_dir_all(root.join("fixtures/site"))?;
+    let live = site::Live {
+        js: "/blocks.js",
+        stream: "/stream",
+    };
+    for (file, live) in [("index.html", None), ("live.html", Some(live))] {
+        let head = site::Head {
+            title: "Blocks",
+            description: "One shape, three renderers",
+            canonical: "https://blocks.test/",
+            image: Some("/og.png"),
+            lang: "en",
+        };
+        let s = site::Site {
+            head,
+            look: &look,
+            css: &[],
+            action: "/act",
+            live,
+        };
+        std::fs::write(root.join("fixtures/site").join(file), site::page(&screen, &s) + "\n")?;
+    }
+    Ok(())
+}
+
+fn site_screen() -> Screen {
+    let on = ["nav", "hero", "prose", "media", "form"];
+    let mut blocks: Vec<Block> = crate::samples()
+        .into_iter()
+        .filter(|(k, _)| on.contains(k))
+        .map(|(_, b)| b)
+        .collect();
+    blocks.push(Block::Diagram(Box::new(workflow())));
+    Screen::new().id("site").title("Blocks").blocks(blocks)
+}
+
+fn workflow() -> Diagram {
+    let source = "[*] --> queued\nqueued --> impl\nimpl --> review\nstate \"in review\" as review\nreview --> fix\nfix --> review\nreview --> ready\nimpl --> ready\nready --> merged\nqueued --> blocked\nstate stall\nimpl --> stall";
+    let counts = [
+        ("queued", 3),
+        ("impl", 2),
+        ("review", 1),
+        ("fix", 0),
+        ("ready", 1),
+        ("merged", 9),
+        ("blocked", 1),
+    ];
+    let node = |state: Option<Tone>, limit: Option<&str>| Node {
+        state,
+        limit: limit.map(String::from),
+        value: limit.map(|_| "45m".into()),
+        tap: Some(Tap {
+            open: Some("/settings".into()),
+            ..Tap::default()
+        }),
+        ..Node::default()
+    };
+    let nodes = [
+        ("impl", node(Some(Tone::Working), None)),
+        ("blocked", node(Some(Tone::Needs), None)),
+        ("stall", node(None, Some("stall_minutes"))),
+    ];
+    Diagram::new(source)
+        .id("workflow")
+        .title("Workflow")
+        .selected("review")
+        .counts(
+            counts
+                .map(|(k, n)| (k.to_string(), Number::from(n)))
+                .into_iter()
+                .collect::<BTreeMap<_, _>>(),
+        )
+        .nodes(
+            nodes
+                .map(|(k, n)| (k.to_string(), n))
+                .into_iter()
+                .collect::<BTreeMap<_, _>>(),
+        )
 }
 
 fn trees(root: &Path) -> std::io::Result<()> {
