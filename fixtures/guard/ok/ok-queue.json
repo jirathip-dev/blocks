@@ -1,0 +1,112 @@
+{
+  "type": "screen",
+  "id": "s",
+  "title": "Queue",
+  "actions": [
+    {
+      "label": "Refresh",
+      "action": "refresh"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "card",
+      "id": "drive",
+      "title": "Drive",
+      "buttons": [
+        {
+          "type": "button",
+          "id": "drive-now",
+          "label": "Drive now",
+          "action": "drive",
+          "style": "primary"
+        },
+        {
+          "type": "button",
+          "id": "pause",
+          "label": "Pause",
+          "action": "pause"
+        }
+      ]
+    },
+    {
+      "type": "section",
+      "id": "lanes",
+      "header": "Lanes",
+      "blocks": [
+        {
+          "type": "list",
+          "id": "rows",
+          "rows": [
+            {
+              "type": "row",
+              "id": "r1",
+              "title": "#159 guard lint",
+              "badge": {
+                "text": "impl"
+              },
+              "tap": {
+                "action": "open"
+              }
+            },
+            {
+              "type": "row",
+              "id": "r2",
+              "title": "#160 blocks check",
+              "button": {
+                "label": "Stop",
+                "action": "stop",
+                "tone": "bad",
+                "confirm": {
+                  "title": "Stop lane #160?",
+                  "ok": "Stop",
+                  "destructive": true
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "section",
+      "id": "done",
+      "header": "Done",
+      "blocks": [
+        {
+          "type": "list",
+          "id": "merged",
+          "rows": []
+        },
+        {
+          "type": "text",
+          "markdown": "Merged issues appear here."
+        }
+      ]
+    },
+    {
+      "type": "island",
+      "id": "map",
+      "name": "fleet-map",
+      "size": {
+        "width": 358,
+        "height": 200
+      },
+      "fallback": {
+        "title": "Fleet map"
+      }
+    },
+    {
+      "type": "button",
+      "id": "rm",
+      "label": "Remove fleet",
+      "action": "remove",
+      "style": "destructive",
+      "confirm": {
+        "title": "Remove the fleet and its queue?",
+        "ok": "Remove",
+        "destructive": true
+      }
+    }
+  ]
+}

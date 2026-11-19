@@ -58,7 +58,7 @@ export function row(b: Row, c: Ctx): HTMLElement {
   const fig = b.figure ? c.theme.figure(b.figure) : null;
   if (fig instanceof Element) fig.classList.add("b-row__figure");
   const main = h("span", "rm", h("span", "rt b-row__title", b.title ?? ""));
-  if (badge) main.append(" ", h("span", `tag b-row__badge ${badge.tone ?? ""}`, badge.text));
+  if (badge) main.append(" ", h("span", `tag b-row__badge ${badge.tone ?? ""}`, ticked(badge.text)));
   if (sub) main.append(h("span", `rs b-row__subtitle ${sub.tone ?? ""}`, ticked(sub.text)));
   r.replaceChildren(...(fig ? [fig] : []), main, ...(b.value != null ? [h("span", "rv b-row__value", ticked(b.value))] : []));
   if (rounds.length) {

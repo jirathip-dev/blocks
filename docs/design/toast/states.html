@@ -1,0 +1,27 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="../neutral-default/tokens.css"><link rel="stylesheet" href="../../../web/dist/blocks.css"><link rel="stylesheet" href="toast.css"><link rel="stylesheet" href="page.css">
+<script src="toast.js"></script><title>toast: every state</title></head>
+<body><main class="scr">
+<div class="top"><div class="tabh"><span class="tw">toast · every state</span></div></div>
+<h2>1 · Tones</h2><p class="note">A 3 px tick on the left in the tone's colour and a glyph in its text colour; the surface stays the card, the frame stays ink. No tone (or a tone word this client does not know) is plain: an ink tick and no glyph.</p>
+<div class="cases">
+<div data-b='{"type":"toast","id":"a","tone":"ok","text":"Order #4821 sent to the bakery","left":0.8}'></div>
+<div data-b='{"type":"toast","id":"b","tone":"warn","text":"Saved offline; it syncs when you are back online","left":0.8}'></div>
+<div data-b='{"type":"toast","id":"c","tone":"bad","text":"Payment for #4825 was declined"}'></div>
+<div data-b='{"type":"toast","id":"d","text":"Copied","left":0.8}'></div>
+</div>
+<h2>2 · Undo, focus and dismiss</h2><p class="note">Undo is the house bracket button, lowercase, its label from the app (default "undo"). Keyboard focus: the house 2 px ink ring. × dismisses; Escape does too while focus is in the toast. Any tone may carry an undo.</p>
+<div class="cases">
+<div data-b='{"type":"toast","id":"e","tone":"ok","text":"Removed Butter 250 g from the order","undo":{"label":"put back","action":"restore"},"left":0.9,"focus":"undo"}'></div>
+<div data-b='{"type":"toast","id":"f","tone":"warn","text":"Run 14 moved to tomorrow","undo":{"action":"unmove"},"left":0.5,"held":true,"focus":"close"}'></div>
+</div>
+<h2>3 · Stress</h2><p class="note">Long text wraps and stops at 3 lines with "…"; the full text is the accessible name. A long undo label ends in "…" on one line. Empty text draws the block's fallback ("Done" by default) so a toast is never blank.</p>
+<div class="cases">
+<div data-b='{"type":"toast","id":"g","tone":"bad","text":"Couldn’t save the delivery note for Marlow Bakery because the signature image was larger than the 5 MB the server accepts; take the photo again at a lower resolution, or sign on the device instead, then press save once more"}'></div>
+<div data-b='{"type":"toast","id":"h","tone":"ok","text":"Archived 128 orders","undo":{"label":"restore all 128 archived orders","action":"unarchive"},"left":0.7,"waiting":3}'></div>
+<div data-b='{"type":"toast","id":"i","tone":"ok","text":"","fallback":"Done","left":0.7}'></div>
+</div>
+<h2>4 · In the flow <small>· static site, fixtures, an older client</small></h2><p class="note">With no server to answer, the static site writer draws the toast where it sits, as one quiet line in the flow: an edge frame, no clock, no ×, and no undo (its action has nowhere to go). This is also how blocks-shot shows the fixture.</p>
+<div data-b='{"type":"toast","id":"j","tone":"ok","text":"Archived 3 orders","undo":{"action":"unarchive"},"inline":true}'></div>
+<div data-b='{"type":"toast","id":"k","tone":"warn","text":"Prices change on 1 December","inline":true}'></div>
+</main><script>draw()</script></body></html>

@@ -1,0 +1,65 @@
+{
+  "guard": 2,
+  "known": [
+    {
+      "rule": "render/contrast",
+      "at": "screen#thread-t4/row#who"
+    },
+    {
+      "rule": "render/overlap",
+      "at": "screen#thread-t4/card#m-19"
+    },
+    {
+      "rule": "render/overlap",
+      "at": "screen#thread-t4/card#m-24"
+    },
+    {
+      "rule": "render/tap-target",
+      "at": "screen#thread-t4"
+    },
+    {
+      "rule": "render/tap-target",
+      "at": "screen#thread-t4/card#m-16/button#m-16-apply"
+    },
+    {
+      "rule": "render/tap-target",
+      "at": "screen#thread-t4/card#m-16/button#m-16-discard"
+    },
+    {
+      "rule": "render/tap-target",
+      "at": "screen#thread-t4/card#m-16/text#m-16-d"
+    },
+    {
+      "rule": "render/tap-target",
+      "at": "screen#thread-t4/card#m-18/run#r1"
+    },
+    {
+      "rule": "render/tap-target",
+      "at": "screen#thread-t4/card#m-19/button#m-19-copy"
+    },
+    {
+      "rule": "render/tap-target",
+      "at": "screen#thread-t4/card#m-19/text#m-19-cmd"
+    },
+    {
+      "rule": "render/tap-target",
+      "at": "screen#thread-t4/card#m-19/text#m-19-tail"
+    },
+    {
+      "rule": "render/tap-target",
+      "at": "screen#thread-t4/card#m-24/choice#q9"
+    },
+    {
+      "rule": "render/tap-target",
+      "at": "screen#thread-t4/card#m-25/button#m-25-sign-in"
+    },
+    {
+      "rule": "render/tap-target",
+      "at": "screen#thread-t4/card#m-26/button#m-26-link"
+    },
+    {
+      "rule": "render/tap-target",
+      "at": "screen#thread-t4/composer#say"
+    }
+  ]
+}

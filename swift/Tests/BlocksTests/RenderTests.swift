@@ -15,7 +15,7 @@ final class RenderTests: XCTestCase {
         "screen", "sheet", "section", "list", "row", "card", "choice", "form", "config", "secret", "run", "button",
         "chips", "stat", "text", "images", "web", "diff", "editor", "scene", "diagram", "composer", "lines",
     ]
-    private static let content = ["prose", "hero", "media", "nav", "steps"]
+    private static let content = ["prose", "hero", "media", "nav", "steps", "toast"]
     private let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent().appendingPathComponent("../../..")
 
     private func pixels(
@@ -127,6 +127,51 @@ final class RenderTests: XCTestCase {
         XCTAssertGreaterThan(try pixels(BlocksView(block(busy), source: .core), red), 0)
     }
 
+    private func near(_ colour: Color) throws -> (UInt8, UInt8, UInt8, UInt8) -> Bool {
+        let rgb = try XCTUnwrap(NSColor(colour).usingColorSpace(.sRGB))
+        let want = [rgb.redComponent, rgb.greenComponent, rgb.blueComponent].map { Int($0 * 255) }
+        return { r, g, b, a in a > 200 && zip([r, g, b].map(Int.init), want).allSatisfy { abs($0 - $1) < 12 } }
+    }
+
+    func testAChartDrawsItsBarsInInkAndItsWarnLineInAmberAndAnEmptyOneNeither() throws {
+        let palette = Look(still: true).palette
+        let (ink, amber) = (try near(palette.lead), try near(palette.amber))
+        let chart = BlocksView(try fixture("chart"), source: .core)
+        XCTAssertGreaterThan(try pixels(chart, ink), 2000, "six revenue bars")
+        XCTAssertGreaterThan(try pixels(chart, amber), 150, "the target line")
+        let empty = try block(
+            #"{"type": "chart", "title": "Revenue", "chart": "combo", "x": [], "series": [], "empty": "None yet"}"#)
+        XCTAssertLessThan(try pixels(BlocksView(empty, source: .core), ink), 300, "no bars, text only")
+        XCTAssertEqual(try pixels(BlocksView(empty, source: .core), amber), 0)
+        let donut = try block(
+            #"{"type": "chart", "title": "Spend", "chart": "donut", "x": ["a", "b"], "series": [{"name": "s", "values": [3, 1]}]}"#)
+        XCTAssertGreaterThan(try pixels(BlocksView(donut, source: .core), ink), 2000, "the biggest slice in ink")
+    }
+
+    func testAToastTicksItsToneCutsLongTextAtThreeLinesAndDrawsDoneWhenEmpty() throws {
+        let palette = Look(still: true).palette
+        func near(_ color: Color) throws -> (UInt8, UInt8, UInt8, UInt8) -> Bool {
+            let rgb = try XCTUnwrap(NSColor(color).usingColorSpace(.sRGB))
+            let want = [rgb.redComponent, rgb.greenComponent, rgb.blueComponent].map { Int($0 * 255) }
+            return { r, g, b, a in a > 200 && zip([r, g, b].map(Int.init), want).allSatisfy { abs($0 - $1) < 6 } }
+        }
+        func toast(_ fields: String) throws -> some View {
+            BlocksView(try block(#"{"type": "toast", \#(fields)}"#), source: .core)
+        }
+        let (green, red) = (try near(palette.green), try near(palette.red))
+        XCTAssertGreaterThan(try pixels(toast(#""title": "Archived", "tone": "ok""#), green), 0, "the ok tick and glyph")
+        XCTAssertEqual(try pixels(toast(#""title": "Archived""#), green), 0, "no tone: an ink tick")
+        XCTAssertGreaterThan(try pixels(toast(#""title": "Declined", "tone": "bad""#), red), 0)
+        let one = height(try toast(#""title": "Archived""#))
+        let long = height(try toast(#""title": "\#(String(repeating: "a long line that wraps ", count: 40))""#))
+        XCTAssertGreaterThan(long, one, "long text wraps")
+        XCTAssertLessThan(long, one + 3 * 20, "and stops at 3 lines")
+        let empty = try toast(#""title": """#)
+        let done = BlocksView(try block(#"{"type": "row", "title": "Done"}"#), source: .core)
+        XCTAssertEqual(height(empty), height(done))
+        XCTAssertEqual(try pixels(empty), try pixels(done))
+    }
+
     func testStepsFillsInkByValueTicksItsToneAndDrawsItsFallbackWhenUnplaced() throws {
         let palette = Look(still: true).palette
         func near(_ color: Color) throws -> (UInt8, UInt8, UInt8, UInt8) -> Bool {
@@ -154,6 +199,27 @@ final class RenderTests: XCTestCase {
         let row = try block(#"{"type": "pinned", \#(fallback)}"#)
         XCTAssertEqual(height(BlocksView(unplaced, source: .core)), height(BlocksView(row, source: .core)))
         XCTAssertEqual(try pixels(BlocksView(unplaced, source: .core)), try pixels(BlocksView(row, source: .core)))
+    }
+
+    func testSolidFillsARowButtonInItsFullToneWithItsTextInTheBackground() throws {
+        let palette = Look(still: true).palette
+        func near(_ color: Color) throws -> (UInt8, UInt8, UInt8, UInt8) -> Bool {
+            let rgb = try XCTUnwrap(NSColor(color).usingColorSpace(.sRGB))
+            let want = [rgb.redComponent, rgb.greenComponent, rgb.blueComponent].map { Int($0 * 255) }
+            return { r, g, b, a in a > 200 && zip([r, g, b].map(Int.init), want).allSatisfy { abs($0 - $1) < 6 } }
+        }
+        var solid = Style.bundled
+        solid.fills = .solid
+        let row = try block(#"{"type": "row", "title": "Build", "button": {"label": "Ship", "action": "ship", "tone": "ok"}}"#)
+        func drawn(_ style: Style) -> some View {
+            BlocksView(row, source: .core).environment(\.look, Look(style: style, still: true))
+        }
+        let green = try near(palette.green)
+        let (tinted, filled) = (try pixels(drawn(.bundled), green), try pixels(drawn(solid), green))
+        XCTAssertGreaterThan(filled, tinted + 500, "the pill is the full tone")
+        let ink = try near(palette.background)
+        let label = (try pixels(drawn(.bundled), columns: 0.7...1, ink), try pixels(drawn(solid), columns: 0.7...1, ink))
+        XCTAssertGreaterThan(label.1, label.0, "its label is in the background colour")
     }
 
     func testAnAppKindDrawsItsRegisteredViewElseItsFallback() throws {

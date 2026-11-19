@@ -1,6 +1,7 @@
 mod kinds;
 mod live;
 mod pages;
+mod sizes;
 mod ui;
 
 use std::error::Error;
@@ -8,7 +9,7 @@ use std::fs;
 use std::path::{Path, PathBuf};
 
 use blocks::site::{self, Head, Live, Look, Site};
-use blocks::theme::{self, Fills, Format, Marks, Scale, Scheme, Sections, Style, Surface, TypeDesign};
+use blocks::theme::{self, Easing, Fills, Format, Marks, Scale, Scheme, Sections, Style, Surface, TypeDesign};
 use blocks::Built;
 use serde_json::Value;
 
@@ -23,6 +24,7 @@ fn style() -> Result<Style, String> {
         space: Scale::default(),
         radius: Scale::try_from(0.0)?,
         motion: Scale::default(),
+        easing: Easing::default(),
         surface: Surface::Solid,
         fills: Fills::Tint,
         marks: Marks::Symbols,
@@ -57,10 +59,10 @@ fn css(panels: &[(&str, &Scheme)]) -> String {
             i + 1
         ));
     }
-    out + include_str!("../site.css")
+    out + include_str!("../site.css") + &sizes::css()
 }
 
-fn pages(bench: Option<&Value>, paper: &Scheme) -> Vec<Page> {
+fn pages(bench: Option<&Value>, paper: &Scheme) -> Result<Vec<Page>, String> {
     let all = kinds::samples();
     let mut out = vec![
         pages::home(all.len(), bench),
@@ -69,9 +71,10 @@ fn pages(bench: Option<&Value>, paper: &Scheme) -> Vec<Page> {
         pages::numbers(bench),
         live::behaviours(),
         live::islands(),
+        sizes::layout()?,
     ];
     out.extend((0..all.len()).filter_map(|i| kinds::kind_page(&all, i)));
-    out
+    Ok(out)
 }
 
 fn write(out: &Path, p: &Page, look: &Look, looks: &[(&str, &Scheme)]) -> Result<(), Box<dyn Error>> {
@@ -118,7 +121,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         .map(|t| serde_json::from_str(&t))
         .transpose()?;
     let paper = pages::paper()?;
-    let misses = theme::gate(&paper);
+    let misses = theme::gate(&paper, Fills::Tint);
     if !misses.is_empty() {
         return Err(format!("Paper fails theme::gate: {misses:?}").into());
     }
@@ -129,7 +132,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         style: style()?,
     };
     fs::create_dir_all(out.join("media"))?;
-    for p in pages(bench.as_ref(), &paper) {
+    for p in pages(bench.as_ref(), &paper)? {
         write(&out, &p, &look, &looks)?;
     }
     for f in ["blocks.js", "blocks.css"] {

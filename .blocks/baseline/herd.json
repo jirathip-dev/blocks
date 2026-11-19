@@ -1,0 +1,17 @@
+{
+  "guard": 2,
+  "known": [
+    {
+      "rule": "lint/fault",
+      "at": ""
+    },
+    {
+      "rule": "render/contrast",
+      "at": "screen#herd/section#age/list#age-list/row#age-row"
+    },
+    {
+      "rule": "render/no-size",
+      "at": "screen#herd/scene#herd-scene"
+    }
+  ]
+}

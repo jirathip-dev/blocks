@@ -1,4 +1,5 @@
 import type { Lit } from "../gen/types.ts";
+import { WORDS } from "./gesture.ts";
 
 /// A screen's local state: a value by key.
 export type State = Record<string, Lit>;
@@ -9,7 +10,7 @@ type Rec = { [k: string]: unknown };
 export const own = (o: object, k: string) => Object.prototype.hasOwnProperty.call(o, k);
 export const rec = (v: unknown): v is Rec => typeof v === "object" && v !== null && !Array.isArray(v);
 const UNKNOWN: Rec = { "?": null };
-const PAIRS: Record<string, number> = { eq: 2, lt: 2, has: 2, add: 2, sub: 2, mul: 2, pick: 3 };
+const PAIRS: Record<string, number> = { eq: 2, lt: 2, has: 2, add: 2, sub: 2, mul: 2, div: 2, pick: 3 };
 const PATTERNS = ["filled", "email", "url", "number"];
 
 export function read(v: unknown): unknown {
@@ -112,6 +113,8 @@ export function ev(e: unknown, s: State): Lit {
       return n ? num(n.x - n.y) : null;
     case "mul":
       return n ? num(n.x * n.y) : null;
+    case "div":
+      return n ? num(n.x / n.y) : null;
     case "cat":
       return xs.map(text).join("");
     case "pick":
@@ -140,7 +143,7 @@ export const actionOf = (a: Rec): string | undefined => {
   return typeof k === "string" ? k : undefined;
 };
 const acts = (b: Rec): Rec[] => {
-  const all = [...list(b.actions), ...list(b.swipe), ...list(b.menu), ...(rec(b.button) ? [b.button] : [])];
+  const all = [...list(b.actions), ...list(b.swipe), ...list(b.menu), ...[b.button, ...WORDS.map((w) => b[w])].filter(rec)];
   return [...all, ...all.flatMap((a) => list(a.menu))];
 };
 const lit = (v: unknown): Lit => (v === null || typeof v === "boolean" || typeof v === "number" || typeof v === "string" ? v : null);

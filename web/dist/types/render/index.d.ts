@@ -1,5 +1,7 @@
 import type { Act, Block, Kind, Label, Tap, Toned } from "../gen/types.ts";
+import { linkable } from "../core/check.ts";
 import { type Blk, blks, isBlk, named } from "../core/tree.ts";
+import type { Held } from "../gesture.ts";
 import type { Theme } from "../theme.ts";
 export { type Blk, blks, isBlk, named };
 export type Post = {
@@ -22,6 +24,7 @@ export type Ctx = {
     store: Store;
     apps?: Record<string, Renderer>;
     drop?: (what: string) => void;
+    held?: Map<string, Held>;
 };
 export declare const obj: (v: unknown) => Blk;
 export declare const esc: (s: unknown) => string;
@@ -33,7 +36,7 @@ export declare const href: (a: HTMLAnchorElement, url: string) => HTMLAnchorElem
     target: string;
     rel: string;
 };
-export declare const linkable: (url: string) => boolean;
+export { linkable };
 export declare const urlOf: (t?: Tap | null) => string | undefined;
 export declare const sends: (t?: Tap | null, action?: unknown) => unknown;
 export declare const acts: <E extends HTMLElement>(e: E, action: unknown) => E;

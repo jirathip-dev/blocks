@@ -1,0 +1,56 @@
+{
+  "format": 1,
+  "root": {
+    "type": "nav",
+    "slots": {
+      "main": [
+        {
+          "type": "screen",
+          "source": "garden",
+          "path": "/screens/today",
+          "id": "today",
+          "label": "Today",
+          "place": {
+            "compact": "strip",
+            "wide": "panel"
+          }
+        },
+        {
+          "type": "screen",
+          "source": "garden",
+          "path": "/screens/weather",
+          "id": "weather",
+          "label": "Weather",
+          "transition": "sheet",
+          "place": {
+            "compact": "sheet",
+            "wide": "cards"
+          }
+        }
+      ],
+      "side": [
+        {
+          "type": "screen",
+          "source": "garden",
+          "path": "/screens/plants",
+          "id": "plants",
+          "label": "Plants",
+          "place": {
+            "compact": "strip",
+            "wide": "column"
+          }
+        }
+      ],
+      "menu": [
+        {
+          "type": "screen",
+          "source": "garden",
+          "path": "/screens/settings",
+          "id": "settings",
+          "label": "Settings",
+          "place": "menu"
+        }
+      ]
+    }
+  }
+}

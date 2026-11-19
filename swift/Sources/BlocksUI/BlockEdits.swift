@@ -138,30 +138,3 @@ internal struct ErrorNote: View {
             .background(look.palette.red.opacity(0.18), in: .rect(cornerRadius: look.radius(6))).padding(.horizontal, 10)
     }
 }
-
-internal struct Reordering: ViewModifier {
-    @Environment(\.act) private var act
-    internal let list: Blocks.List
-    internal let row: Row
-
-    @ViewBuilder
-    internal func body(content: Content) -> some View {
-        if let reorder = list.reorder, let id = row.id, row.handle == true {
-            content.draggable(id).dropDestination(for: String.self) { dropped, _ in
-                guard let moved = dropped.first else { return }
-                let order = self.order(moving: moved, onto: id).map(JSONValue.string)
-                act(BlockAction(action: reorder.action, values: [reorder.name: .array(order)]))
-            }
-        } else {
-            content
-        }
-    }
-
-    private func order(moving moved: String, onto target: String) -> [String] {
-        var ids = list.rows.compactMap(\.id)
-        guard let from = ids.firstIndex(of: moved), let place = ids.firstIndex(of: target) else { return ids }
-        ids.remove(at: from)
-        ids.insert(moved, at: place)
-        return ids
-    }
-}

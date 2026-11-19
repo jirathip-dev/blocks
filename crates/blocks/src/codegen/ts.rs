@@ -17,7 +17,7 @@ pub(super) fn files(_: &Path, s: &Value) -> std::io::Result<Files> {
 }
 
 impl Ty<'_> {
-    fn ts(&self) -> String {
+    pub(super) fn ts(&self) -> String {
         match self {
             Self::Null => "null".into(),
             Self::Str => "string".into(),
@@ -53,7 +53,7 @@ fn ts(s: &Value) -> Out {
     Ok(out)
 }
 
-fn ts_defs(s: &Value) -> Out {
+pub(super) fn ts_defs(s: &Value) -> Out {
     let mut out = String::new();
     for (name, d) in defs(s)? {
         let body = match &d {

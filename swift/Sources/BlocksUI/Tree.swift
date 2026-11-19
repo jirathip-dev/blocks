@@ -101,6 +101,7 @@ extension Block {
         case .editor(let b): ("editor", b.id, nil, Source(action: b.action))
         case .scene(let b): ("scene", b.id, nil, Source())
         case .diagram(let b): ("diagram", b.id, nil, Source())
+        case .chart(let b): ("chart", b.id, nil, Source())
         case .composer(let b): ("composer", b.id, nil, Source(action: b.action, values: b.values))
         case .lines(let b): ("lines", b.id, nil, Source(action: b.action))
         case .prose(let b): ("prose", b.id, nil, Source())
@@ -110,6 +111,7 @@ extension Block {
         case .island(let b): ("island", b.id, nil, Source())
         case .table(let b): ("table", b.id, nil, Source())
         case .steps(let b): ("steps", b.id, nil, Source())
+        case .toast(let b): ("toast", b.id, nil, Source())
         case .appBlock(let b):
             (
                 b.type, b.id, nil,
@@ -118,7 +120,7 @@ extension Block {
         }
     }
 
-    private static let roles = ["section": "region", "form": "form", "config": "form", "nav": "navigation"]
+    private static let roles = ["section": "region", "form": "form", "config": "form", "nav": "navigation", "chart": "figure", "toast": "status"]
     private static let names = ["label", "title", "header", "question", "alt", "file", "command", "placeholder", "name"]
 
     /// The accessible role and name every renderer gives this block's root, as `tree::a11y` in Rust.
@@ -153,6 +155,7 @@ extension Block {
         case .editor(let b): [b.name]
         case .scene(let b): [b.label]
         case .diagram(let b): [b.title]
+        case .chart(let b): [b.title]
         case .composer(let b): [b.label, b.placeholder]
         case .lines(let b): [b.label, b.name]
         case .hero(let b): [b.title]
@@ -160,6 +163,7 @@ extension Block {
         case .island(let b): [b.name]
         case .table(let b): [b.title]
         case .steps(let b): [b.title]
+        case .toast(let b): [b.title]
         case .appBlock(let b): Self.names.map { b.string($0) }
         default: []
         }
