@@ -1,0 +1,4 @@
+Decided: merged origin/staging; table.ts keeps this branch's value import and staging's core/table helpers, web/dist/blocks.js and fixtures/built/every.json come from the gen lines
+Because: "Generated schema, TS and Swift types from `just gen`"
+Rejected: none
+Owner: The branch is up to date with the latest shared work; nothing it does changes.
