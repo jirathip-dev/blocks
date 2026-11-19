@@ -6,8 +6,9 @@ Decision: blocks gets a TS core with no framework in it (typed builders, check, 
 stylesheet) and a React adapter that draws each kind as a real React component, held to the HTML renderer by a
 same-markup test. Hosting the HTML renderer inside React was built and measured, then rejected. check is a TS port.
 Slices: seven, about 1,400 counted lines: core entry, builders, check, scoped CSS, adapter frame, 9 kinds, 3 kinds.
-Open questions: draw 13 kinds first and 14 as fallbacks? one cap raise to about 18,500? one package with a react
-path, not a second package? react-dom and React's two type packages as dev tools?
+Answered (q2271): 13 kinds now, the other 14 as fallbacks in one later issue; the cap stays at 19,000 (#120), with
+one more raise sized by `drover cap` before R5, which starts counting `web/react/`; one package `@jirathip-dev/blocks`
+with the `/react` path; react-dom, @types/react and @types/react-dom approved as dev-only tools.
 
 ## Read in this order
 
@@ -34,8 +35,9 @@ The screen is data in both: a tree of typed blocks that is checked, then drawn.
 
 ## The slices, in order
 
-Counted lines are non-test, non-generated lines under `ci/cap.toml`. Today: 15,991 at staging, cap 17,000, open PRs
-+100, so 909 of headroom. The seven slices need about 1,400: one raise before R5 (`adr.md`, open question 2).
+Counted lines are non-test, non-generated lines under `ci/cap.toml`. The cap is 19,000 (#120); the seven slices
+need about 1,400, and one more raise, sized by `drover cap`, lands before R5 (q2271). R2's move of `codegen.rs` into
+the `codegen/` folder is one slice shared with #79's G1, filed once.
 
 | | Slice | Builds | Counted lines | After |
 |---|---|---|---|---|

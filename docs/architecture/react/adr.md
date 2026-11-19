@@ -6,8 +6,7 @@ Decision: blocks gets a TS core with no framework in it (typed builders, check, 
 stylesheet) and a React adapter that draws each kind as a real React component, held to the HTML renderer by a
 same-markup test. Hosting the HTML renderer inside React was built and measured, then rejected. check is a TS port.
 Slices: seven, about 1,400 counted lines: core entry, builders, check, scoped CSS, adapter frame, 9 kinds, 3 kinds.
-Open questions: draw 13 kinds first and 14 as fallbacks? one cap raise to about 18,500? one package with a react
-path, not a second package? react-dom and React's two type packages as dev tools?
+Open questions, all answered yes by the owner (q2271); the cap stays at 19,000 (#120) with one more raise before R5.
 
 ## Question
 
@@ -137,7 +136,7 @@ it no longer server-renders, needs a host registry and portals to carry React co
 - An island that opens its own portal draws outside its box. CSS cannot stop that; the contract forbids it.
 - Found on the way, not fixed here: the HTML form's `text`-only send, and `href` taking any URL scheme.
 
-## Open questions
+## Open questions (answered: q2271)
 
 1. **Kinds.** The issue says one component per core kind. I chose 13 now and 14 as fallbacks (composer, scene,
    run, secret, config, choice, diagram, editor, web, diff, prose, hero, media, nav), filed as one later issue.
