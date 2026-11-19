@@ -1,0 +1,15 @@
+ok: allow_attributes_without_reason is refused
+ok: as_conversions is refused
+ok: clean passes
+ok: dbg_macro is refused
+ok: expect_used is refused
+ok: indexing_slicing is refused
+ok: let_underscore_must_use is refused
+ok: panic is refused
+ok: print_stderr is refused
+ok: print_stdout is refused
+ok: todo is refused
+ok: unimplemented is refused
+ok: unsafe_code is refused
+ok: unwrap_used is refused
+fixtures-rust exit 0

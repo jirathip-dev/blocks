@@ -1,0 +1,114 @@
+Building for debugging...
+[2 / 20] Blocks
+[4 / 22] Blocks
+[7 / 25] BlocksUI
+[12 / 30] BlocksUI
+[15 / 32] blocks-snap-product
+[26 / 46] BlocksUI
+[29 / 46] blocks-snap-product
+[30 / 46] BlocksUI
+[31 / 46] Blocks
+[32 / 47] Blocks
+[38 / 47] BlocksSnapshot
+[42 / 48] BlocksTests-product
+[50 / 56] BlocksTests-product
+[55 / 59] BlocksTests-product
+[57 / 59] BlocksTests-product
+Build complete! (7.34 secs)
+Test Suite 'All tests' started at 2569-11-19 10:07:55.252.
+Test Suite 'BlocksTests.xctest' started at 2569-11-19 10:07:55.253.
+Test Suite 'ApplyTests' started at 2569-11-19 10:07:55.253.
+Test Case '-[BlocksTests.ApplyTests testABurstOfFramesChangesTheReplicaOnceAndEndsAsEachFrameInTurnWould]' started.
+Test Case '-[BlocksTests.ApplyTests testABurstOfFramesChangesTheReplicaOnceAndEndsAsEachFrameInTurnWould]' passed (0.006 seconds).
+Test Case '-[BlocksTests.ApplyTests testAFailingOpLeavesTheScreenAsItWas]' started.
+Test Case '-[BlocksTests.ApplyTests testAFailingOpLeavesTheScreenAsItWas]' passed (0.003 seconds).
+Test Case '-[BlocksTests.ApplyTests testBadgeAndDotLeaveTheScreenAsItIs]' started.
+Test Case '-[BlocksTests.ApplyTests testBadgeAndDotLeaveTheScreenAsItIs]' passed (0.001 seconds).
+Test Case '-[BlocksTests.ApplyTests testInsertAddsALaneToASceneAndARoundToARow]' started.
+Test Case '-[BlocksTests.ApplyTests testInsertAddsALaneToASceneAndARoundToARow]' passed (0.001 seconds).
+Test Case '-[BlocksTests.ApplyTests testInsertGoesBeforeAfterOrAtTheEnd]' started.
+Test Case '-[BlocksTests.ApplyTests testInsertGoesBeforeAfterOrAtTheEnd]' passed (0.001 seconds).
+Test Case '-[BlocksTests.ApplyTests testMergeSetsFieldsOnANestedBlock]' started.
+Test Case '-[BlocksTests.ApplyTests testMergeSetsFieldsOnANestedBlock]' passed (0.001 seconds).
+Test Case '-[BlocksTests.ApplyTests testMoveTakesABlockOutAndPutsItBeforeAnother]' started.
+Test Case '-[BlocksTests.ApplyTests testMoveTakesABlockOutAndPutsItBeforeAnother]' passed (0.001 seconds).
+Test Case '-[BlocksTests.ApplyTests testRemoveDropsABlockFromACardsButtons]' started.
+Test Case '-[BlocksTests.ApplyTests testRemoveDropsABlockFromACardsButtons]' passed (0.000 seconds).
+Test Case '-[BlocksTests.ApplyTests testReplaceSwapsTheWholeBlock]' started.
+Test Case '-[BlocksTests.ApplyTests testReplaceSwapsTheWholeBlock]' passed (0.000 seconds).
+Test Case '-[BlocksTests.ApplyTests testScreenReplacesTheRoot]' started.
+Test Case '-[BlocksTests.ApplyTests testScreenReplacesTheRoot]' passed (0.000 seconds).
+Test Case '-[BlocksTests.ApplyTests testTheReplicaKeepsTheBadgeAndDotOfThePatchesItApplies]' started.
+Test Case '-[BlocksTests.ApplyTests testTheReplicaKeepsTheBadgeAndDotOfThePatchesItApplies]' passed (0.000 seconds).
+Test Case '-[BlocksTests.ApplyTests testTheReplicaRunsEveryProtocolFixture]' started.
+Test Case '-[BlocksTests.ApplyTests testTheReplicaRunsEveryProtocolFixture]' passed (0.012 seconds).
+Test Suite 'ApplyTests' passed at 2569-11-19 10:07:55.281.
+	 Executed 12 tests, with 0 failures (0 unexpected) in 0.027 (0.029) seconds
+Test Suite 'LayoutTests' started at 2569-11-19 10:07:55.281.
+Test Case '-[BlocksTests.LayoutTests testCooeesDefaultPassesWithCooeesContractAndResolvesPerSize]' started.
+Test Case '-[BlocksTests.LayoutTests testCooeesDefaultPassesWithCooeesContractAndResolvesPerSize]' passed (0.001 seconds).
+Test Case '-[BlocksTests.LayoutTests testEachBadFixtureIsRefusedWithTheRustReason]' started.
+Test Case '-[BlocksTests.LayoutTests testEachBadFixtureIsRefusedWithTheRustReason]' passed (0.002 seconds).
+Test Case '-[BlocksTests.LayoutTests testTheLimitsAreRefused]' started.
+Test Case '-[BlocksTests.LayoutTests testTheLimitsAreRefused]' passed (0.006 seconds).
+Test Suite 'LayoutTests' passed at 2569-11-19 10:07:55.290.
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.008 (0.009) seconds
+Test Suite 'RenderTests' started at 2569-11-19 10:07:55.290.
+Test Case '-[BlocksTests.RenderTests testABlockStyleWrapsOnlyItsKind]' started.
+Test Case '-[BlocksTests.RenderTests testABlockStyleWrapsOnlyItsKind]' passed (0.049 seconds).
+Test Case '-[BlocksTests.RenderTests testAnAppKindDrawsItsRegisteredViewElseItsFallback]' started.
+Test Case '-[BlocksTests.RenderTests testAnAppKindDrawsItsRegisteredViewElseItsFallback]' passed (0.012 seconds).
+Test Case '-[BlocksTests.RenderTests testAnAppKindNamedLikeACoreKindIsRefused]' started.
+Test Case '-[BlocksTests.RenderTests testAnAppKindNamedLikeACoreKindIsRefused]' passed (0.001 seconds).
+Test Case '-[BlocksTests.RenderTests testAWorkingComposerShowsItsStopInRed]' started.
+Test Case '-[BlocksTests.RenderTests testAWorkingComposerShowsItsStopInRed]' passed (0.080 seconds).
+Test Case '-[BlocksTests.RenderTests testEveryContentKindDrawsItsOwnView]' started.
+Test Case '-[BlocksTests.RenderTests testEveryContentKindDrawsItsOwnView]' passed (0.071 seconds).
+Test Case '-[BlocksTests.RenderTests testEveryCoreKindInTheFixturesDraws]' started.
+Test Case '-[BlocksTests.RenderTests testEveryCoreKindInTheFixturesDraws]' passed (0.436 seconds).
+Test Case '-[BlocksTests.RenderTests testMediaAndHeroKeepTheMediaBoxBeforeThePictureLoads]' started.
+Test Case '-[BlocksTests.RenderTests testMediaAndHeroKeepTheMediaBoxBeforeThePictureLoads]' passed (0.003 seconds).
+Test Case '-[BlocksTests.RenderTests testNavPutsTheBrandLeftAndTheLinksRightOnABareBar]' started.
+Test Case '-[BlocksTests.RenderTests testNavPutsTheBrandLeftAndTheLinksRightOnABareBar]' passed (0.017 seconds).
+Test Case '-[BlocksTests.RenderTests testSlotViewDrawsAResolvedLayoutsNodesThroughTheAppsClosure]' started.
+Test Case '-[BlocksTests.RenderTests testSlotViewDrawsAResolvedLayoutsNodesThroughTheAppsClosure]' passed (0.013 seconds).
+Test Suite 'RenderTests' passed at 2569-11-19 10:07:55.974.
+	 Executed 9 tests, with 0 failures (0 unexpected) in 0.682 (0.683) seconds
+Test Suite 'SampleTests' started at 2569-11-19 10:07:55.974.
+Test Case '-[BlocksTests.SampleTests testEveryScreenFixtureDecodesAndRoundTrips]' started.
+Test Case '-[BlocksTests.SampleTests testEveryScreenFixtureDecodesAndRoundTrips]' passed (0.088 seconds).
+Test Case '-[BlocksTests.SampleTests testTheRustSampleDecodesAndRoundTrips]' started.
+Test Case '-[BlocksTests.SampleTests testTheRustSampleDecodesAndRoundTrips]' passed (0.001 seconds).
+Test Suite 'SampleTests' passed at 2569-11-19 10:07:56.063.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.089 (0.089) seconds
+Test Suite 'SchemeTests' started at 2569-11-19 10:07:56.063.
+Test Case '-[BlocksTests.SchemeTests testTheDefaultPairIsBuiltInAndThePaletteDefaultsToIt]' started.
+Test Case '-[BlocksTests.SchemeTests testTheDefaultPairIsBuiltInAndThePaletteDefaultsToIt]' passed (0.000 seconds).
+Test Suite 'SchemeTests' passed at 2569-11-19 10:07:56.063.
+	 Executed 1 test, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'SnapshotTests' started at 2569-11-19 10:07:56.063.
+Test Case '-[BlocksTests.SnapshotTests testABlockStyleIsDrawn]' started.
+Test Case '-[BlocksTests.SnapshotTests testABlockStyleIsDrawn]' passed (0.048 seconds).
+Test Case '-[BlocksTests.SnapshotTests testATapSendsTheButtonsActionAndAnAnswersOpsAreDrawn]' started.
+Test Case '-[BlocksTests.SnapshotTests testATapSendsTheButtonsActionAndAnAnswersOpsAreDrawn]' passed (0.026 seconds).
+Test Case '-[BlocksTests.SnapshotTests testCheckFailsWhenTheDrawnTreeIsNotTheExpectedOne]' started.
+Test Case '-[BlocksTests.SnapshotTests testCheckFailsWhenTheDrawnTreeIsNotTheExpectedOne]' passed (0.011 seconds).
+Test Case '-[BlocksTests.SnapshotTests testEveryFixtureBlockPassesCheckAndItsTreeHasTheHTMLTreesShape]' started.
+/Users/jkmacmini/.local/share/drover/work/blocks/issue-19/swift/Sources/BlocksSnapshot/Snapshot.swift:122: warning: -[BlocksTests.SnapshotTests testEveryFixtureBlockPassesCheckAndItsTreeHasTheHTMLTreesShape] : Accessing FocusState's value outside of the body of a View. This will result in a constant Binding of the initial value and will not update.
+Test Case '-[BlocksTests.SnapshotTests testEveryFixtureBlockPassesCheckAndItsTreeHasTheHTMLTreesShape]' passed (0.481 seconds).
+Test Suite 'SnapshotTests' passed at 2569-11-19 10:07:56.629.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.565 (0.566) seconds
+Test Suite 'StyleTests' started at 2569-11-19 10:07:56.629.
+Test Case '-[BlocksTests.StyleTests testEveryGoodStyleFixtureDecodes]' started.
+Test Case '-[BlocksTests.StyleTests testEveryGoodStyleFixtureDecodes]' passed (0.001 seconds).
+Test Suite 'StyleTests' passed at 2569-11-19 10:07:56.630.
+	 Executed 1 test, with 0 failures (0 unexpected) in 0.001 (0.001) seconds
+Test Suite 'BlocksTests.xctest' passed at 2569-11-19 10:07:56.630.
+	 Executed 32 tests, with 0 failures (0 unexpected) in 1.373 (1.377) seconds
+Test Suite 'All tests' passed at 2569-11-19 10:07:56.630.
+	 Executed 32 tests, with 0 failures (0 unexpected) in 1.373 (1.378) seconds
+◇ Test run started.
+↳ Testing Library Version: 2403
+↳ Target Platform: arm64e-apple-macos14.0
+✔ Test run with 0 tests in 0 suites passed after 0.001 seconds.
+swift-test exit 0

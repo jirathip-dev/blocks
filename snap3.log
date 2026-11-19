@@ -1,0 +1,8 @@
+Building for debugging...
+[1 / 11]
+Build complete! (0.27 secs)
+build exit 0
+snap-check exit 0
+scheme-light exit 0
+blocks-snap: no scheme farm
+scheme-bad exit 2

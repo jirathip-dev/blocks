@@ -1,0 +1,16 @@
+fmt exit 0
+    Checking serde_core v1.0.229
+    Checking zmij v1.0.23
+    Checking memchr v2.8.3
+    Checking itoa v1.0.19
+    Checking ref-cast v1.0.27
+    Checking dyn-clone v1.0.20
+    Checking serde_json v1.0.154
+    Checking serde v1.0.229
+    Checking schemars v1.2.3
+    Checking blocks v0.1.0 (/Users/jkmacmini/.local/share/drover/work/blocks/issue-19/crates/blocks)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 5.22s
+clippy-lib exit 0
+    Checking blocks v0.1.0 (/Users/jkmacmini/.local/share/drover/work/blocks/issue-19/crates/blocks)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 16.65s
+clippy-tests exit 0
