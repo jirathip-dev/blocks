@@ -202,7 +202,7 @@ import { deepStrictEqual } from 'node:assert/strict';
 import { expect, tree } from '@jirathip-dev/blocks/web/src/tree.ts';
 import { gate } from '@jirathip-dev/blocks/web/src/gate.ts';
 import { inbox } from '../src/routes/inbox.ts';     // (threads) => Block, a typed screen
-import { tokens } from '@synergy/ui/tokens.ts';      // the app's scheme: { label, 'color-scheme', tokens }
+import { tokens } from '@acme/ui/tokens.ts';      // the app's scheme: { label, 'color-scheme', tokens }
 
 test('/inbox draws its threads as rows, the empty hint hidden', () => {
   const got = tree(inbox([{ id: 't1', title: 'Hello' }]));
