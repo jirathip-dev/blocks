@@ -9,6 +9,8 @@ The Rust types in `crates/blocks/src/` (`Block` and its kinds, `Op`, and the str
 - `web/src/gen/types.ts` and `web/src/gen/sample.ts`: the TS types, and the sample type-checked against them
 - `swift/Sources/Blocks/Gen/Blocks.swift`: the Swift `Codable` types (`JSONValue.swift` beside it is kept by hand)
 - `swift/Sources/Blocks/Gen/Style.swift`: `theme::Style`, an app's `style.json`, which `fixtures/styles/` holds good and bad
+- `swift/Sources/Blocks/Gen/LayoutShapes.swift`: `layout::Place` and `layout::Transition`, the words a `layout.json`
+  places with; `fixtures/layouts/` holds cooee's default and the bad files both readers refuse with `refused.json`'s reasons
 
 ## Blocks
 

@@ -95,4 +95,27 @@ final class RenderTests: XCTestCase {
         XCTAssertGreaterThan(try pixels(BlocksView(screen, source: .core).blockStyle("text", Red()), red), 0)
         XCTAssertEqual(try pixels(BlocksView(screen, source: .core).blockStyle("row", Red()), red), 0)
     }
+
+    func testSlotViewDrawsAResolvedLayoutsNodesThroughTheAppsClosure() throws {
+        let layout = try Blocks.Layout(json: layoutFixture("cooee.json"), contract: cooeeContract)
+        let tint = { (r: UInt8, g: UInt8, b: UInt8) in
+            { (pr: UInt8, pg: UInt8, pb: UInt8, a: UInt8) in
+                a > 200 && (pr > 200) == (r > 0) && (pg > 200) == (g > 0) && (pb > 200) == (b > 0)
+            }
+        }
+        func drawn(_ size: SizeClass) -> some View {
+            SlotView(layout.resolved(for: size)) { node in
+                switch node.content {
+                case .component("sidebar"): Color(red: 1, green: 0, blue: 0).frame(width: 20, height: 20)
+                case .screen(_, path: "/screens/home"): Color(red: 0, green: 1, blue: 0).frame(width: 20, height: 20)
+                default: Color(red: 0, green: 0, blue: 1).frame(width: 20, height: 20)
+                }
+            }
+        }
+        XCTAssertEqual(try pixels(drawn(.wide), tint(1, 0, 0)), 400, "the sidebar column")
+        XCTAssertEqual(try pixels(drawn(.wide), tint(0, 1, 0)), 400, "home, the first main node")
+        XCTAssertEqual(try pixels(drawn(.wide), tint(0, 0, 1)), 0, "chat and the menu stay the app's to open")
+        XCTAssertEqual(try pixels(drawn(.compact), tint(1, 0, 0)), 0, "the sidebar is a menu row on compact")
+        XCTAssertEqual(try pixels(drawn(.compact), tint(0, 1, 0)), 400)
+    }
 }

@@ -1,0 +1,14 @@
+{
+  "bad-screen": "root.slots.main[0]: a screen needs a source and a path under /screens/, not \"/home\"",
+  "cycle": "root.slots.main[0].slots.main[0].slots.main[0].slots.main[0].slots.main[0].slots.main[0]: over 6 deep",
+  "duplicate-id": "root.slots.main[1]: id \"x\" is taken",
+  "locked-replaced": "root.slots.menu[0]: a locked screen can't be placed: \"/screens/pairing\"",
+  "newer-format": "format: this reader takes 1",
+  "not-json": "not JSON",
+  "root-not-nav": "root: not a nav",
+  "unknown-config": "root.slots.main[0]: unknown config \"colour\"",
+  "unknown-place": "root.slots.side[0]: unknown place \"colum\"",
+  "unknown-slot": "root.slots.main[0]: unknown slot \"header\"",
+  "unknown-transition": "root.slots.menu[0]: unknown transition \"spin\"",
+  "unknown-type": "root.slots.main[0]: unknown type \"carousel\""
+}

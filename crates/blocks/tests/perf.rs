@@ -80,3 +80,21 @@ fn a_500_kb_screen_serializes_and_parses_under_budget() {
     let took = time(10, || serde_json::from_str::<Block>(&json).unwrap());
     report("parse a 500 KB screen", took, Duration::from_millis(5));
 }
+
+#[test]
+#[ignore = "release only: `just perf`"]
+fn checking_a_200_node_layout_stays_under_budget() {
+    let contract = blocks::layout::Contract {
+        components: &[],
+        locked: &[],
+    };
+    let rows: Vec<String> = (0..199)
+        .map(|i| format!(r#"{{"type": "screen", "source": "core", "path": "/screens/r{i}", "place": "push"}}"#))
+        .collect();
+    let text = format!(
+        r#"{{"format": 1, "root": {{"type": "nav", "slots": {{"main": [{}]}}}}}}"#,
+        rows.join(",")
+    );
+    let took = time(200, || blocks::layout::check(&text, &contract).unwrap());
+    report("check a 200-node layout", took, Duration::from_micros(300));
+}
