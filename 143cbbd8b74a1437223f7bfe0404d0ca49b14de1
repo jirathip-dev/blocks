@@ -1,0 +1,12 @@
+Decided: mount reads the layout resolved per size class and draws strip as tabs, cards/column/panel/inline always, menu/sheet/push as menu rows
+Because: "the resolved layout as tabs, cards, sheet, menu; kept copies; actions; the look sheet; an app's"
+Decided: a tab switch opens the new key before it closes the old, so the one stream stays open
+Because: web/src/shell.ts:300
+Decided: esbuild 0.28.2 exact-pinned builds web/dist, run by just gen after codegen; CI's rust job gets Node for arch-check
+Because: q2139
+Decided: gen/layout.ts carries the generated place and transition words; the node shape is typed by hand in shell.ts
+Rejected: generating the node type — the Rust Node has a custom Serialize and no JSON Schema to write it from
+Check: AppBlocks rejects a core kind name at compile time
+Because: web/src/shell.ts:29
+Check: rebuilding web/dist is byte-identical, and arch-check passed with the gen recipe on the PATH
+Owner: Pages built on blocks get tabs, a menu, sheets and a look picker from the layout, and Rust servers can serve the page script directly.
