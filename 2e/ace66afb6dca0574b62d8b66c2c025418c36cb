@@ -1,0 +1,4 @@
+Decided: merged origin/staging (#43 editor); gaps drops both editor and web, render.test keeps both test sets, web/dist rebuilt
+Because: web/test/render.test.ts:17
+Rejected: none
+Owner: Brought the embedded web page work up to date with the latest editor changes; nothing new for users.
