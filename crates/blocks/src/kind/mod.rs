@@ -101,7 +101,7 @@ kind! {
         tone: Option<Tone>,
         title: Option<String>,
         subtitle: Option<String>,
-        meta: Option<String>,
+        meta: Option<Shown>,
         badge: Option<Label>,
         buttons: Option<Vec<Block>>,
         tap: Option<Tap>,

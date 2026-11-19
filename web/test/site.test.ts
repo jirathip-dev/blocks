@@ -66,7 +66,8 @@ test("site and render give the same element per kind: tag, classes, hooks, role,
         const t = document.createElement("template");
         t.innerHTML = html;
         const ctx = { screen: String(b.id ?? ""), act: async () => true, tap: () => {}, open: new Set(), theme: B.plain, store: { get: () => null, put: () => {} } };
-        return [sig(t.content.querySelector("[data-block]")), sig(B.render(b, ctx))];
+        const still = (e) => (e.querySelectorAll("[data-tick]").forEach((x) => (x.textContent = JSON.stringify(Object.entries(JSON.parse(x.dataset.tick)).sort()))), e);
+        return [sig(still(t.content.querySelector("[data-block]"))), sig(still(B.render(b, ctx)))];
       },
       [read(`../../fixtures/html/${k}.html`), JSON.parse(read(`../../fixtures/blocks/${k}.json`))],
     );
