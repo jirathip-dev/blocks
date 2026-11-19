@@ -45,6 +45,10 @@ internal struct StepsBlock: View {
                     line(steps, at, names: false)
                     summary(steps, at)
                 }
+                VStack(alignment: .leading, spacing: 4) {
+                    ScrollView(.horizontal, showsIndicators: false) { line(steps, at, names: false) }
+                    summary(steps, at)
+                }
             }
         } else {
             line(steps, at, names: true)
