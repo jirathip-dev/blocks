@@ -117,6 +117,12 @@ comments = true
 ignore_case = true
 
 [[ban]]
+pattern = "bench/"
+paths = ["Cargo.toml", "crates/*/Cargo.toml", "crates/*/src/**", "web/src/**", "web/package.json", "swift/Sources/**", "Package.swift"]
+reason = "bench/ is dev only (React, topcoat and the bench servers): the crate, the bundle and the Swift package never import it"
+comments = true
+
+[[ban]]
 pattern = "import SwiftUI"
 paths = ["swift/Sources/Blocks/**"]
 reason = "Blocks is Foundation only: the views live in BlocksUI"

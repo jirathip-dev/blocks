@@ -75,3 +75,18 @@ swift:
     set -euo pipefail
     if [ "$(uname)" != Darwin ]; then echo "swift: macOS only, skipped (CI's swift job runs it)"; exit 0; fi
     BLOCKS_STRICT=1 swift test
+
+# bench/ builds: its two servers (blocks on Shelf, topcoat), its React bundle and its runner; CI's bench job, never a gate on the numbers.
+bench-build:
+    cd bench && cargo build --locked
+    npm --prefix bench ci --no-audit --no-fund
+    npm --prefix bench run build
+    node --check bench/run.js
+
+# The 200-row screen in blocks, React and topcoat in headless WebKit (docs/bench.md); writes bench/results.json and docs/bench-blocks.json.
+bench:
+    cd bench && cargo build --release --locked
+    cd bench && cargo run -q --release --locked --bin topcoat -- asset bundle --release --bin topcoat-bench
+    npm --prefix bench ci --no-audit --no-fund
+    npm --prefix bench run build
+    npm --prefix bench run bench
