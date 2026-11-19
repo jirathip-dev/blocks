@@ -1,0 +1,25 @@
+{
+  "guard": 2,
+  "known": [
+    {
+      "rule": "render/contrast",
+      "at": "sheet#issue-sendmeter-12/section#history"
+    },
+    {
+      "rule": "render/contrast",
+      "at": "sheet#issue-sendmeter-12/section#lanes"
+    },
+    {
+      "rule": "render/contrast",
+      "at": "sheet#issue-sendmeter-12/section#links"
+    },
+    {
+      "rule": "render/contrast",
+      "at": "sheet#issue-sendmeter-12/section#status"
+    },
+    {
+      "rule": "render/tap-target",
+      "at": "sheet#issue-sendmeter-12/section#status/chips#stage"
+    }
+  ]
+}

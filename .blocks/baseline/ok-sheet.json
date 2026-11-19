@@ -1,0 +1,9 @@
+{
+  "guard": 2,
+  "known": [
+    {
+      "rule": "render/tap-target",
+      "at": "sheet#add/button#cancel-add"
+    }
+  ]
+}

@@ -33,6 +33,13 @@ pub(crate) fn read<T: DeserializeOwned>(path: &str) -> Result<Option<T>, String>
     }
 }
 
+pub(crate) fn remove(path: &str) -> Result<(), String> {
+    match std::fs::remove_file(path) {
+        Err(e) if e.kind() != std::io::ErrorKind::NotFound => Err(format!("{path}: {e}")),
+        _ => Ok(()),
+    }
+}
+
 pub(crate) fn config() -> Result<Config, String> {
     read(CONFIG)?.ok_or_else(|| format!("{CONFIG}: not found"))
 }

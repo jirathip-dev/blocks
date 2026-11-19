@@ -8,13 +8,13 @@ pub use judge::{judge, tighten};
 pub use rules::RULES;
 pub use sarif::{sarif, Sarif};
 pub use shape::{
-    Baseline, Config, Finding, Held, Ignore, Ignored, Known, Outcome, Reason, Rule, Scope, Seen, Severity,
+    Baseline, Config, Finding, Held, Ignore, Ignored, Known, Outcome, Plan, Reason, Rule, Run, Scope, Seen, Severity,
 };
 
 use crate::built::Built;
 
 /// The guard version: it moves with any new rule or tighter limit.
-pub const VERSION: u16 = 1;
+pub const VERSION: u16 = 2;
 
 /// The table row of rule `id`.
 pub fn rule(id: &str) -> Option<&'static Rule> {
