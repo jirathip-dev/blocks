@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>composer: SwiftUI</title><link rel="stylesheet" href="look.css"></head>
+<body><main class="canvas">
+<h1>composer: the message box, in SwiftUI</h1>
+<p class="lede">drover's thread screen (fixtures/screens/drover/thread.json) on the bundled look: farm dark, glass. The composer is the screen's last block, so it docks at the foot above the keyboard. Four states of one block, left to right.</p>
+
+<div class="grid g4">
+
+<section>
+<p class="tag"><b>1 · idle</b> · empty, one chip</p>
+<div class="frame farm-dark ui">
+  <div class="msg s"><div class="who"><span>ORCHESTRATOR</span><span>115m</span></div>Two questions, one at a time.</div>
+  <div class="msg s"><div class="who"><span>YOU</span><span>✓ 111m</span></div>Per key.</div>
+  <div class="cmp">
+    <div class="row">
+      <span class="round s">+</span>
+      <div class="field s ph">message the orchestrator</div>
+      <span class="btn primary">send</span>
+    </div>
+    <div class="chips"><span class="chip s"><span class="k">effort</span> ▾</span></div>
+  </div>
+</div>
+<p class="note">Placeholder from <code>placeholder</code>, send label from <code>label</code>. An unset chip shows its name; it is a menu of <code>all</code>.</p>
+</section>
+
+<section>
+<p class="tag"><b>2 · typing</b> · grows, one file, chip set</p>
+<div class="frame farm-dark ui">
+  <div class="msg s"><div class="who"><span>ORCHESTRATOR</span><span>5m</span></div>Retry-After only, or the X-RateLimit headers too?</div>
+  <div class="cmp">
+    <div class="thumb"><span><i>×</i></span></div>
+    <div class="row">
+      <span class="round s">+</span>
+      <div class="field s">Both, and send the reset as seconds, not a date. Screenshot of the old client attached.<span class="caret"></span></div>
+      <span class="btn primary">send</span>
+    </div>
+    <div class="chips"><span class="chip s"><span class="k">effort</span> high ▾</span></div>
+  </div>
+</div>
+<p class="note">The field grows to six lines, then scrolls. ⌘↩ sends on the Mac. <code>+</code> picks up to 10 files; each shows as a thumbnail with ×.</p>
+</section>
+
+<section>
+<p class="tag"><b>3 · working</b> · stop, a queued message</p>
+<div class="frame farm-dark ui">
+  <div class="msg s"><div class="who"><span>ORCHESTRATOR</span><span>now</span></div>Filing it: drover brief sendmeter 19…</div>
+  <div class="cmp">
+    <div class="pill s"><span class="dot"></span><span class="t">working 1m 12s</span><span class="btn bad sm">stop</span></div>
+    <div class="q s"><span class="n">1</span><span class="t">and the tests for the 429 path</span><span class="btn primary sm">send now</span><span class="btn sm">edit</span><span class="btn bad sm">remove</span></div>
+    <div class="row">
+      <span class="round s">+</span>
+      <div class="field s ph">message the orchestrator</div>
+      <span class="btn primary">queue</span>
+    </div>
+    <div class="chips"><span class="chip s"><span class="k">effort</span> high ▾</span></div>
+  </div>
+</div>
+<p class="note">While the turn runs, send becomes <b>queue</b> (<code>acts.queue</code>). Each <code>queued</code> entry is a row: send now (<code>acts.steer</code>), edit, remove (<code>acts.unqueue</code>).</p>
+</section>
+
+<section>
+<p class="tag"><b>4 · hold send</b> · steer, then sent</p>
+<div class="frame farm-dark ui">
+  <div class="msg s"><div class="who"><span>ORCHESTRATOR</span><span>now</span></div>Filing it: drover brief sendmeter 19…</div>
+  <div class="cmp">
+    <div class="pill s"><span class="dot"></span><span class="t">working 1m 40s</span><span class="btn bad sm">stop</span></div>
+    <div class="row" style="position:relative">
+      <span class="round s">+</span>
+      <div class="field s">skip the docs change</div>
+      <span class="btn primary">queue</span>
+      <div class="menu s"><div class="hi">Steer now</div><div>Queue for the turn's end</div></div>
+    </div>
+    <div class="st">✓ sent</div>
+    <div class="st r">not sent: no pane <span class="btn bad sm">retry</span></div>
+  </div>
+</div>
+<p class="note">A long press on send (a right click on the Mac) offers <b>steer now</b>. Under the row: sending…, ✓ sent, or not sent with retry. Editing a queued message turns send into <b>save</b>.</p>
+</section>
+
+</div>
+</main><script>document.documentElement.dataset.h=Math.ceil(document.documentElement.scrollHeight)</script></body></html>

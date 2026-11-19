@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>content kinds: SwiftUI</title><link rel="stylesheet" href="look.css"></head>
+<body><main class="canvas">
+<h1>nav, hero, prose, media: a site page in SwiftUI</h1>
+<p class="lede">One screen of the four content kinds, in order: nav, hero (with its media), prose, then a video media. Bundled look: farm dark, glass. The content keeps to one readable column (720 pt at most); nav spans the width.</p>
+
+<div class="frame win farm-dark ui">
+  <nav class="nav">
+    <span class="brand">Blocks</span>
+    <div class="links"><a class="cur">Docs</a><a>Kinds</a><a>Renderers</a><a>Changelog</a><a>GitHub</a></div>
+  </nav>
+
+  <div class="col">
+    <section class="hero">
+      <h1>One shape, three renderers</h1>
+      <p class="sub">A server builds a typed screen once. The web page, the iPhone and the Mac draw the same blocks.</p>
+      <figure class="media">
+        <div class="box" style="aspect-ratio:640/360"><div class="chart"><i style="height:35%"></i><i style="height:60%"></i><i style="height:48%"></i><i style="height:82%"></i><i style="height:70%"></i><i style="height:92%"></i><i style="height:64%"></i></div></div>
+        <figcaption>This week</figcaption>
+      </figure>
+      <div class="acts"><span class="btn primary">Start</span><span class="btn">Read the ADR</span></div>
+    </section>
+
+    <article class="prose">
+      <h2>Blocks</h2>
+      <p>Typed <b>screens</b>, sent as JSON and patched by ops. A <i>prose</i> block is a tree of parts, so no renderer needs a markdown reader; see <a>the schema</a> and <code>Prose::new()</code>.</p>
+      <ul><li>one schema, 27 kinds</li><li>a fallback for every app kind</li><li>patches, not repaints</li></ul>
+      <ol><li>build the screen</li><li>send it</li><li>patch it as it changes</li></ol>
+      <blockquote>Built by type, drawn by every renderer.</blockquote>
+      <h3>From Rust</h3>
+      <pre class="s"><span class="lang">rust</span>Prose::new()
+    .heading(2, "Blocks")
+    .para("Typed screens.")</pre>
+      <hr>
+      <figure class="media">
+        <div class="box" style="aspect-ratio:1280/720"><div class="scene"></div><span class="play">▶</span></div>
+        <figcaption>A two-minute tour</figcaption>
+      </figure>
+    </article>
+  </div>
+</div>
+<p class="note">nav: the brand at the left in the lead colour, links at the right; the <code>current</code> link is tinted. At phone width the links scroll sideways under a fade, with no menu button. hero: title, subtitle, media, then its actions (the first one primary). media: its box takes <code>width</code>×<code>height</code> before the picture loads; <code>alt</code> shows until then; a <code>video</code> shows its <code>poster</code> and a play button and plays in place.</p>
+</main><script>document.documentElement.dataset.h=Math.ceil(document.documentElement.scrollHeight)</script></body></html>
