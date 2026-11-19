@@ -1,0 +1,58 @@
+Decided: site writes each kind over the block's JSON, mirroring render/<kind>.ts, so both writers give one element per kind
+Because: "the two writers give the same element per kind"
+Decided: with no JS an action is a hidden `<form method=post>` after `<main>` that its controls join with the `form` attribute, so a block keeps render's own tag
+Because: crates/blocks/src/site/mod.rs:217
+Decided: the form fields `_screen`, `_block` and `_action` carry the Action; every other field is a string value
+Because: crates/blocks/src/wire.rs:253
+Decided: the page puts the screen's `div.scr` inside `<main>`, since render's screen is a div and two `main` landmarks would nest in the shell
+Because: crates/blocks/src/site/mod.rs:66
+Decided: adopt checks every drawn `[data-block]` against the screen and the screen's own children, then listens; it writes nothing to the DOM
+Because: "PNG and tree equal before and after `blocks.js`"
+Rejected: comparing whole outerHTML — a static control needs `type=submit` and `form`, so the test compares tag, classes, hooks and text of every hooked element
+Rejected: a writer file per kind — the shared helpers would be repeated 27 times against a cap already exceeded
+Check: web/test/site.test.ts runs the 27 fixtures in WebKit, the site with JS off, the PNG and tree before and after adopt, and a refused adopt
+Check: a tap's time values (`since`, `until`) are written as their label only: the library has no clock, the live tick fills them in
+Owner: Websites can now be served as plain pages that work without JavaScript, and the live renderer takes them over without redrawing.
+
+Decided: site writes each kind over the block's JSON, mirroring render/<kind>.ts, so both writers give one element per kind
+Because: "the two writers give the same element per kind"
+Decided: with no JS an action is a hidden `<form method=post>` after `<main>` that its controls join with the `form` attribute, so a block keeps render's own tag
+Because: crates/blocks/src/site/mod.rs:217
+Decided: the form fields `_screen`, `_block` and `_action` carry the Action; every other field is a string value
+Because: crates/blocks/src/wire.rs:253
+Decided: the page puts the screen's `div.scr` inside `<main>`, since render's screen is a div and two `main` landmarks would nest in the shell
+Because: crates/blocks/src/site/mod.rs:66
+Decided: adopt checks the drawn blocks against the screen and writes nothing to the DOM; the test compares PNG and tree before and after
+Because: "PNG and tree equal before and after `blocks.js`"
+Decided: diagram, drawn natively by #23 mid-PR, stays its fallback on the static page; the equality test names it as the one exception
+Because: web/test/site.test.ts:53
+Rejected: comparing whole outerHTML — a static control needs `type=submit` and `form`, so the test compares tag, classes, hooks and text
+Check: web/test/site.test.ts runs the fixtures in WebKit, the site with JS off, takeover with an equal PNG and tree, and a refused takeover
+Owner: Websites can now be served as plain pages that work without JavaScript, and the live renderer takes them over without redrawing.
+
+Decided: site writes each kind over the block's JSON, mirroring render/<kind>.ts, so both writers give one element per kind
+Because: "the two writers give the same element per kind"
+Decided: with no JS an action is a hidden `<form method=post>` after `<main>` that its controls join with the `form` attribute, so a block keeps render's own tag
+Because: crates/blocks/src/site/mod.rs:217
+Decided: the form fields `_screen`, `_block` and `_action` carry the Action; every other field is a string value
+Because: crates/blocks/src/wire.rs:253
+Decided: adopt checks the drawn blocks against the screen and writes nothing to the DOM; the test compares PNG and tree before and after
+Because: "PNG and tree equal before and after `blocks.js`"
+Decided: diagram, drawn natively by #23 mid-PR, is ported to site/diagram.rs line for line; a static page has no previous counts
+Because: q2179
+Rejected: comparing whole outerHTML — a static control needs `type=submit` and `form`, so the test compares tag, classes, hooks and text
+Check: site.test.ts compares the fixture site's workflow diagram element by element with render's (style, ARIA, rounded paths)
+Check: the gutter route for same-column, non-adjacent edges is never drawn: chart drops those edges, so no fixture reaches it
+Owner: Websites can now be served as plain pages that work without JavaScript, the workflow chart included, and the live page takes them over without redrawing.
+
+Decided: merged origin/staging (f0e378a, #66 B15) into issue-18; the merge commit adapts site's composer view and render's composer label to B15's kind change
+Because: crates/blocks/src/site/views.rs:1
+Rejected: none
+Check: web/test/site.test.ts still gives the same element per kind from both writers after B15 (45 web tests pass at 64e2f3c)
+Owner: The website branch now includes the latest SwiftUI work and still passes its checks.
+
+Decided: merged origin/staging (336fb08, #69 schemes leave blocks) into issue-18; codegen's site fixture and the site test use the built-in default pair, since the named schemes are gone
+Because: crates/blocks/src/codegen.rs:91
+Rejected: none
+Check: fixtures/site/*.html regenerated by gen with the default pair; 45 web tests and cargo test pass at fcbd6c2
+Owner: The website branch now includes the latest theme cleanup and still passes its checks.
