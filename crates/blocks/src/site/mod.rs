@@ -367,6 +367,7 @@ pub(crate) fn block(w: &mut W<'_>, b: &Value) {
         "stat" => views::stat(w, b),
         "text" => views::text(w, b),
         "images" => views::images(w, b),
+        "web" => views::web(w, b),
         "composer" => views::composer(w, b),
         "prose" => content::prose(w, b),
         "hero" => content::hero(w, b),

@@ -1,0 +1,15 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>web: an embedded page in a screen</title>
+<link rel="stylesheet" href="../../../web/src/blocks.css"><link rel="stylesheet" href="web.css"><link rel="stylesheet" href="page.css">
+<script src="web.js"></script></head>
+<body><main class="scr">
+<div class="tile"><div class="tabh"><span class="tw">cooee · updates</span><button type="button"><span>install</span></button><button type="button"><span>later</span></button></div></div>
+<div class="tile one st"><b>4.2</b><span class="m">available</span></div><div class="tile one st"><b>4.1</b><span class="m">installed</span></div><div class="tile one st"><b>38 MB</b><span class="m">download</span></div>
+<div class="tile" id="t"><div class="sh">What's new</div></div>
+<div class="tile"><div class="row"><span class="rm"><span class="rt">Install tonight</span><span class="rs">the app restarts at 2:00 if it is idle</span></span><span class="rv">off</span></div></div>
+</main>
+<script>
+document.getElementById("t").append(web({ type: "web", id: "doc", src: "doc.html", height: 240 }, { shown: "cooee.app/doc" }));
+document.querySelectorAll(".tile").forEach((t, i) => t.style.setProperty("--i", i));
+document.body.dataset.h = Math.ceil(document.documentElement.scrollHeight);
+</script></body></html>
