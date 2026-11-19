@@ -21,7 +21,7 @@ fn lane(w: &mut W<'_>, l: &Value) {
             attrs.push(("href", u.as_str()));
             "a"
         }
-        Go::Post(_) | Go::Stay => {
+        Go::Post(_) | Go::Sheet(_) | Go::Stay => {
             if tap.is_some() {
                 attrs.extend([("role", "button"), ("tabindex", "0")]);
             }

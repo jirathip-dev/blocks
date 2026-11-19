@@ -1,0 +1,19 @@
+[package]
+name = "blocks-site"
+description = "The blocks showcase website: every page a blocks Screen, written with site::page"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+repository.workspace = true
+
+[[bin]]
+name = "blocks-site"
+path = "src/main.rs"
+
+[dependencies]
+blocks = { path = "../crates/blocks" }
+serde_json.workspace = true
+
+[lints]
+workspace = true

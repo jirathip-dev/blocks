@@ -12,6 +12,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "blocks-site"
+version = "0.1.0"
+dependencies = [
+ "blocks",
+ "serde_json",
+]
+
+[[package]]
 name = "dyn-clone"
 version = "1.0.20"
 source = "registry+https://github.com/rust-lang/crates.io-index"
