@@ -1,0 +1,27 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>editor: a file with its errors</title>
+<link rel="stylesheet" href="../../../web/src/blocks.css"><link rel="stylesheet" href="../neutral-default/tokens.css"><link rel="stylesheet" href="editor.css"><link rel="stylesheet" href="page.css">
+<script src="editor.js"></script></head>
+<body><main class="scr">
+<div class="tile"><div class="tabh"><span class="tw">blocks · settings</span><button type="button"><span>fleet</span></button><button type="button"><span>hosts</span></button></div></div>
+<div class="tile"><div class="sh">fleet.toml</div><p class="note">2 problems · tap the file to edit, it is checked as you type</p><div id="read"></div></div>
+<div class="tile"><div class="sh">fleet.toml · editing</div><p class="note">the same block after a tap: the draft keeps its place across redraws; the errors from the last check sit under it</p><div id="edit"></div></div>
+</main>
+<script>
+const text = `[fleet.blocks]
+repo = "jirathip-dev/blocks"
+integration = "staging"
+max_in_flight = eight
+triage = "weekly"
+
+[fleet.blocks.role.impl]
+harness = "claude"
+effort = "highest"
+model = "claude-opus-5-5"
+# a long line wraps under its own text, never under the line numbers, so a phone keeps the gutter readable at any width`;
+const block = { type: "editor", id: "fleet", name: "fleet", action: "check-fleet", first: 12, text,
+  errors: [{ line: 15, message: "max_in_flight: expected an integer, found `eight`" }, { line: 20, message: "effort: one of none, low, medium, high, xhigh" }] };
+document.getElementById("read").replaceWith(editor(block));
+document.getElementById("edit").replaceWith(editor({ ...block, text: text.replace("eight", "8"), errors: block.errors.slice(1) }, { editing: true }));
+document.body.dataset.h = Math.ceil(document.documentElement.scrollHeight);
+</script></body></html>
