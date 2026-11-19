@@ -28,6 +28,7 @@ var hooks = {
   media: { variant: null, parts: [] },
   nav: { variant: null, parts: [] },
   island: { variant: null, parts: [] },
+  table: { variant: null, parts: ["title"] },
   steps: { variant: null, parts: ["title"] }
 };
 var roles = { section: "region", form: "form", config: "form", nav: "navigation" };
@@ -287,7 +288,7 @@ var str = (b, k) => typeof b[k] === "string" && b[k] !== "" ? String(b[k]) : nul
 function under(b, drawn) {
   if (drawn === "fallback") return Array.isArray(b.blocks) ? b.blocks : [];
   if (drawn === "hidden") return [];
-  const lists = ["blocks", "rows", "buttons"].flatMap((k) => Array.isArray(b[k]) ? b[k] : []);
+  const lists = ["blocks", b.type === "table" ? "" : "rows", "buttons"].flatMap((k) => Array.isArray(b[k]) ? b[k] : []);
   return lists.concat(blks(b.rounds).flatMap((r) => Array.isArray(r.blocks) ? r.blocks : []));
 }
 function role(b, kind) {

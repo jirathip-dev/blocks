@@ -1,0 +1,152 @@
+{
+  "type": "table",
+  "id": "invoices",
+  "title": "Invoices",
+  "columns": [
+    {
+      "id": "inv",
+      "label": "Invoice",
+      "kind": "text",
+      "phone": "meta"
+    },
+    {
+      "id": "client",
+      "label": "Client",
+      "kind": "text",
+      "width": 18,
+      "phone": "title"
+    },
+    {
+      "id": "status",
+      "label": "Status",
+      "kind": "tone"
+    },
+    {
+      "id": "due",
+      "label": "Due",
+      "kind": "date",
+      "era": "be"
+    },
+    {
+      "id": "late",
+      "label": "Overdue",
+      "kind": "bar",
+      "unit": "days",
+      "digits": 0,
+      "max": 60,
+      "tone": "warn"
+    },
+    {
+      "id": "amount",
+      "label": "Amount",
+      "kind": "money",
+      "currency": "THB",
+      "total": "sum"
+    }
+  ],
+  "rows": [
+    {
+      "id": "INV-0133",
+      "cells": {
+        "amount": 48750,
+        "client": "Orchard Lane Clinic",
+        "due": "2026-10-18",
+        "inv": "INV-0133",
+        "late": 32,
+        "status": {
+          "text": "overdue",
+          "tone": "warn"
+        }
+      },
+      "tap": {
+        "open": "/invoice/INV-0133"
+      }
+    },
+    {
+      "id": "INV-0136",
+      "cells": {
+        "amount": 31500,
+        "client": "Bluepeak Logistics",
+        "due": "2026-11-05",
+        "inv": "INV-0136",
+        "late": 14,
+        "status": {
+          "text": "disputed",
+          "tone": "bad"
+        }
+      },
+      "tap": {
+        "open": "/invoice/INV-0136"
+      }
+    },
+    {
+      "id": "INV-0138",
+      "cells": {
+        "amount": 18000,
+        "client": "Saffron & Salt",
+        "due": "2026-11-19",
+        "inv": "INV-0138",
+        "status": {
+          "text": "sent",
+          "tone": "done"
+        }
+      },
+      "tap": {
+        "open": "/invoice/INV-0138"
+      }
+    },
+    {
+      "id": "INV-0139",
+      "cells": {
+        "amount": 15000,
+        "client": "Tidewater Bakery",
+        "due": "2026-11-26",
+        "inv": "INV-0139",
+        "status": {
+          "text": "paid",
+          "tone": "ok"
+        }
+      },
+      "tap": {
+        "open": "/invoice/INV-0139"
+      }
+    },
+    {
+      "id": "INV-0143",
+      "cells": {
+        "amount": 13500,
+        "client": "Moss Hill School",
+        "inv": "INV-0143",
+        "status": {
+          "text": "draft",
+          "tone": "mute"
+        }
+      },
+      "tap": {
+        "open": "/invoice/INV-0143"
+      }
+    }
+  ],
+  "sort": {
+    "by": "due",
+    "dir": "asc"
+  },
+  "empty": "No invoices yet.",
+  "select": {
+    "actions": [
+      {
+        "action": "remind",
+        "label": "send reminder"
+      },
+      {
+        "action": "void",
+        "label": "void",
+        "bad": true
+      }
+    ]
+  },
+  "export": [
+    "csv",
+    "xlsx"
+  ]
+}

@@ -1,0 +1,3311 @@
+{
+  "columns": [
+    {
+      "id": "inv",
+      "kind": "text",
+      "label": "Invoice",
+      "phone": "meta"
+    },
+    {
+      "id": "client",
+      "kind": "text",
+      "label": "Client",
+      "phone": "title",
+      "width": 18
+    },
+    {
+      "id": "status",
+      "kind": "tone",
+      "label": "Status"
+    },
+    {
+      "era": "be",
+      "id": "due",
+      "kind": "date",
+      "label": "Due"
+    },
+    {
+      "digits": 0,
+      "id": "late",
+      "kind": "bar",
+      "label": "Overdue",
+      "max": 60,
+      "tone": "warn",
+      "unit": "days"
+    },
+    {
+      "currency": "THB",
+      "id": "amount",
+      "kind": "money",
+      "label": "Amount",
+      "total": "sum"
+    }
+  ],
+  "empty": "No invoices yet.",
+  "export": [
+    "csv",
+    "xlsx"
+  ],
+  "id": "invoices",
+  "rows": [
+    {
+      "cells": {
+        "amount": 48750,
+        "client": "Orchard Lane Clinic",
+        "due": "2026-10-18",
+        "inv": "INV-0133",
+        "late": 32,
+        "status": {
+          "text": "overdue",
+          "tone": "warn"
+        }
+      },
+      "id": "INV-0133-0",
+      "tap": {
+        "open": "/invoice/INV-0133"
+      }
+    },
+    {
+      "cells": {
+        "amount": 31500,
+        "client": "Bluepeak Logistics",
+        "due": "2026-11-05",
+        "inv": "INV-0136",
+        "late": 14,
+        "status": {
+          "text": "disputed",
+          "tone": "bad"
+        }
+      },
+      "id": "INV-0136-1",
+      "tap": {
+        "open": "/invoice/INV-0136"
+      }
+    },
+    {
+      "cells": {
+        "amount": 18000,
+        "client": "Saffron & Salt",
+        "due": "2026-11-19",
+        "inv": "INV-0138",
+        "status": {
+          "text": "sent",
+          "tone": "done"
+        }
+      },
+      "id": "INV-0138-2",
+      "tap": {
+        "open": "/invoice/INV-0138"
+      }
+    },
+    {
+      "cells": {
+        "amount": 15000,
+        "client": "Tidewater Bakery",
+        "due": "2026-11-26",
+        "inv": "INV-0139",
+        "status": {
+          "text": "paid",
+          "tone": "ok"
+        }
+      },
+      "id": "INV-0139-3",
+      "tap": {
+        "open": "/invoice/INV-0139"
+      }
+    },
+    {
+      "cells": {
+        "amount": 13500,
+        "client": "Moss Hill School",
+        "inv": "INV-0143",
+        "status": {
+          "text": "draft",
+          "tone": "mute"
+        }
+      },
+      "id": "INV-0143-4",
+      "tap": {
+        "open": "/invoice/INV-0143"
+      }
+    },
+    {
+      "cells": {
+        "amount": 48750,
+        "client": "Orchard Lane Clinic",
+        "due": "2026-10-18",
+        "inv": "INV-0133",
+        "late": 32,
+        "status": {
+          "text": "overdue",
+          "tone": "warn"
+        }
+      },
+      "id": "INV-0133-5",
+      "tap": {
+        "open": "/invoice/INV-0133"
+      }
+    },
+    {
+      "cells": {
+        "amount": 31500,
+        "client": "Bluepeak Logistics",
+        "due": "2026-11-05",
+        "inv": "INV-0136",
+        "late": 14,
+        "status": {
+          "text": "disputed",
+          "tone": "bad"
+        }
+      },
+      "id": "INV-0136-6",
+      "tap": {
+        "open": "/invoice/INV-0136"
+      }
+    },
+    {
+      "cells": {
+        "amount": 18000,
+        "client": "Saffron & Salt",
+        "due": "2026-11-19",
+        "inv": "INV-0138",
+        "status": {
+          "text": "sent",
+          "tone": "done"
+        }
+      },
+      "id": "INV-0138-7",
+      "tap": {
+        "open": "/invoice/INV-0138"
+      }
+    },
+    {
+      "cells": {
+        "amount": 15000,
+        "client": "Tidewater Bakery",
+        "due": "2026-11-26",
+        "inv": "INV-0139",
+        "status": {
+          "text": "paid",
+          "tone": "ok"
+        }
+      },
+      "id": "INV-0139-8",
+      "tap": {
+        "open": "/invoice/INV-0139"
+      }
+    },
+    {
+      "cells": {
+        "amount": 13500,
+        "client": "Moss Hill School",
+        "inv": "INV-0143",
+        "status": {
+          "text": "draft",
+          "tone": "mute"
+        }
+      },
+      "id": "INV-0143-9",
+      "tap": {
+        "open": "/invoice/INV-0143"
+      }
+    },
+    {
+      "cells": {
+        "amount": 48750,
+        "client": "Orchard Lane Clinic",
+        "due": "2026-10-18",
+        "inv": "INV-0133",
+        "late": 32,
+        "status": {
+          "text": "overdue",
+          "tone": "warn"
+        }
+      },
+      "id": "INV-0133-10",
+      "tap": {
+        "open": "/invoice/INV-0133"
+      }
+    },
+    {
+      "cells": {
+        "amount": 31500,
+        "client": "Bluepeak Logistics",
+        "due": "2026-11-05",
+        "inv": "INV-0136",
+        "late": 14,
+        "status": {
+          "text": "disputed",
+          "tone": "bad"
+        }
+      },
+      "id": "INV-0136-11",
+      "tap": {
+        "open": "/invoice/INV-0136"
+      }
+    },
+    {
+      "cells": {
+        "amount": 18000,
+        "client": "Saffron & Salt",
+        "due": "2026-11-19",
+        "inv": "INV-0138",
+        "status": {
+          "text": "sent",
+          "tone": "done"
+        }
+      },
+      "id": "INV-0138-12",
+      "tap": {
+        "open": "/invoice/INV-0138"
+      }
+    },
+    {
+      "cells": {
+        "amount": 15000,
+        "client": "Tidewater Bakery",
+        "due": "2026-11-26",
+        "inv": "INV-0139",
+        "status": {
+          "text": "paid",
+          "tone": "ok"
+        }
+      },
+      "id": "INV-0139-13",
+      "tap": {
+        "open": "/invoice/INV-0139"
+      }
+    },
+    {
+      "cells": {
+        "amount": 13500,
+        "client": "Moss Hill School",
+        "inv": "INV-0143",
+        "status": {
+          "text": "draft",
+          "tone": "mute"
+        }
+      },
+      "id": "INV-0143-14",
+      "tap": {
+        "open": "/invoice/INV-0143"
+      }
+    },
+    {
+      "cells": {
+        "amount": 48750,
+        "client": "Orchard Lane Clinic",
+        "due": "2026-10-18",
+        "inv": "INV-0133",
+        "late": 32,
+        "status": {
+          "text": "overdue",
+          "tone": "warn"
+        }
+      },
+      "id": "INV-0133-15",
+      "tap": {
+        "open": "/invoice/INV-0133"
+      }
+    },
+    {
+      "cells": {
+        "amount": 31500,
+        "client": "Bluepeak Logistics",
+        "due": "2026-11-05",
+        "inv": "INV-0136",
+        "late": 14,
+        "status": {
+          "text": "disputed",
+          "tone": "bad"
+        }
+      },
+      "id": "INV-0136-16",
+      "tap": {
+        "open": "/invoice/INV-0136"
+      }
+    },
+    {
+      "cells": {
+        "amount": 18000,
+        "client": "Saffron & Salt",
+        "due": "2026-11-19",
+        "inv": "INV-0138",
+        "status": {
+          "text": "sent",
+          "tone": "done"
+        }
+      },
+      "id": "INV-0138-17",
+      "tap": {
+        "open": "/invoice/INV-0138"
+      }
+    },
+    {
+      "cells": {
+        "amount": 15000,
+        "client": "Tidewater Bakery",
+        "due": "2026-11-26",
+        "inv": "INV-0139",
+        "status": {
+          "text": "paid",
+          "tone": "ok"
+        }
+      },
+      "id": "INV-0139-18",
+      "tap": {
+        "open": "/invoice/INV-0139"
+      }
+    },
+    {
+      "cells": {
+        "amount": 13500,
+        "client": "Moss Hill School",
+        "inv": "INV-0143",
+        "status": {
+          "text": "draft",
+          "tone": "mute"
+        }
+      },
+      "id": "INV-0143-19",
+      "tap": {
+        "open": "/invoice/INV-0143"
+      }
+    },
+    {
+      "cells": {
+        "amount": 48750,
+        "client": "Orchard Lane Clinic",
+        "due": "2026-10-18",
+        "inv": "INV-0133",
+        "late": 32,
+        "status": {
+          "text": "overdue",
+          "tone": "warn"
+        }
+      },
+      "id": "INV-0133-20",
+      "tap": {
+        "open": "/invoice/INV-0133"
+      }
+    },
+    {
+      "cells": {
+        "amount": 31500,
+        "client": "Bluepeak Logistics",
+        "due": "2026-11-05",
+        "inv": "INV-0136",
+        "late": 14,
+        "status": {
+          "text": "disputed",
+          "tone": "bad"
+        }
+      },
+      "id": "INV-0136-21",
+      "tap": {
+        "open": "/invoice/INV-0136"
+      }
+    },
+    {
+      "cells": {
+        "amount": 18000,
+        "client": "Saffron & Salt",
+        "due": "2026-11-19",
+        "inv": "INV-0138",
+        "status": {
+          "text": "sent",
+          "tone": "done"
+        }
+      },
+      "id": "INV-0138-22",
+      "tap": {
+        "open": "/invoice/INV-0138"
+      }
+    },
+    {
+      "cells": {
+        "amount": 15000,
+        "client": "Tidewater Bakery",
+        "due": "2026-11-26",
+        "inv": "INV-0139",
+        "status": {
+          "text": "paid",
+          "tone": "ok"
+        }
+      },
+      "id": "INV-0139-23",
+      "tap": {
+        "open": "/invoice/INV-0139"
+      }
+    },
+    {
+      "cells": {
+        "amount": 13500,
+        "client": "Moss Hill School",
+        "inv": "INV-0143",
+        "status": {
+          "text": "draft",
+          "tone": "mute"
+        }
+      },
+      "id": "INV-0143-24",
+      "tap": {
+        "open": "/invoice/INV-0143"
+      }
+    },
+    {
+      "cells": {
+        "amount": 48750,
+        "client": "Orchard Lane Clinic",
+        "due": "2026-10-18",
+        "inv": "INV-0133",
+        "late": 32,
+        "status": {
+          "text": "overdue",
+          "tone": "warn"
+        }
+      },
+      "id": "INV-0133-25",
+      "tap": {
+        "open": "/invoice/INV-0133"
+      }
+    },
+    {
+      "cells": {
+        "amount": 31500,
+        "client": "Bluepeak Logistics",
+        "due": "2026-11-05",
+        "inv": "INV-0136",
+        "late": 14,
+        "status": {
+          "text": "disputed",
+          "tone": "bad"
+        }
+      },
+      "id": "INV-0136-26",
+      "tap": {
+        "open": "/invoice/INV-0136"
+      }
+    },
+    {
+      "cells": {
+        "amount": 18000,
+        "client": "Saffron & Salt",
+        "due": "2026-11-19",
+        "inv": "INV-0138",
+        "status": {
+          "text": "sent",
+          "tone": "done"
+        }
+      },
+      "id": "INV-0138-27",
+      "tap": {
+        "open": "/invoice/INV-0138"
+      }
+    },
+    {
+      "cells": {
+        "amount": 15000,
+        "client": "Tidewater Bakery",
+        "due": "2026-11-26",
+        "inv": "INV-0139",
+        "status": {
+          "text": "paid",
+          "tone": "ok"
+        }
+      },
+      "id": "INV-0139-28",
+      "tap": {
+        "open": "/invoice/INV-0139"
+      }
+    },
+    {
+      "cells": {
+        "amount": 13500,
+        "client": "Moss Hill School",
+        "inv": "INV-0143",
+        "status": {
+          "text": "draft",
+          "tone": "mute"
+        }
+      },
+      "id": "INV-0143-29",
+      "tap": {
+        "open": "/invoice/INV-0143"
+      }
+    },
+    {
+      "cells": {
+        "amount": 48750,
+        "client": "Orchard Lane Clinic",
+        "due": "2026-10-18",
+        "inv": "INV-0133",
+        "late": 32,
+        "status": {
+          "text": "overdue",
+          "tone": "warn"
+        }
+      },
+      "id": "INV-0133-30",
+      "tap": {
+        "open": "/invoice/INV-0133"
+      }
+    },
+    {
+      "cells": {
+        "amount": 31500,
+        "client": "Bluepeak Logistics",
+        "due": "2026-11-05",
+        "inv": "INV-0136",
+        "late": 14,
+        "status": {
+          "text": "disputed",
+          "tone": "bad"
+        }
+      },
+      "id": "INV-0136-31",
+      "tap": {
+        "open": "/invoice/INV-0136"
+      }
+    },
+    {
+      "cells": {
+        "amount": 18000,
+        "client": "Saffron & Salt",
+        "due": "2026-11-19",
+        "inv": "INV-0138",
+        "status": {
+          "text": "sent",
+          "tone": "done"
+        }
+      },
+      "id": "INV-0138-32",
+      "tap": {
+        "open": "/invoice/INV-0138"
+      }
+    },
+    {
+      "cells": {
+        "amount": 15000,
+        "client": "Tidewater Bakery",
+        "due": "2026-11-26",
+        "inv": "INV-0139",
+        "status": {
+          "text": "paid",
+          "tone": "ok"
+        }
+      },
+      "id": "INV-0139-33",
+      "tap": {
+        "open": "/invoice/INV-0139"
+      }
+    },
+    {
+      "cells": {
+        "amount": 13500,
+        "client": "Moss Hill School",
+        "inv": "INV-0143",
+        "status": {
+          "text": "draft",
+          "tone": "mute"
+        }
+      },
+      "id": "INV-0143-34",
+      "tap": {
+        "open": "/invoice/INV-0143"
+      }
+    },
+    {
+      "cells": {
+        "amount": 48750,
+        "client": "Orchard Lane Clinic",
+        "due": "2026-10-18",
+        "inv": "INV-0133",
+        "late": 32,
+        "status": {
+          "text": "overdue",
+          "tone": "warn"
+        }
+      },
+      "id": "INV-0133-35",
+      "tap": {
+        "open": "/invoice/INV-0133"
+      }
+    },
+    {
+      "cells": {
+        "amount": 31500,
+        "client": "Bluepeak Logistics",
+        "due": "2026-11-05",
+        "inv": "INV-0136",
+        "late": 14,
+        "status": {
+          "text": "disputed",
+          "tone": "bad"
+        }
+      },
+      "id": "INV-0136-36",
+      "tap": {
+        "open": "/invoice/INV-0136"
+      }
+    },
+    {
+      "cells": {
+        "amount": 18000,
+        "client": "Saffron & Salt",
+        "due": "2026-11-19",
+        "inv": "INV-0138",
+        "status": {
+          "text": "sent",
+          "tone": "done"
+        }
+      },
+      "id": "INV-0138-37",
+      "tap": {
+        "open": "/invoice/INV-0138"
+      }
+    },
+    {
+      "cells": {
+        "amount": 15000,
+        "client": "Tidewater Bakery",
+        "due": "2026-11-26",
+        "inv": "INV-0139",
+        "status": {
+          "text": "paid",
+          "tone": "ok"
+        }
+      },
+      "id": "INV-0139-38",
+      "tap": {
+        "open": "/invoice/INV-0139"
+      }
+    },
+    {
+      "cells": {
+        "amount": 13500,
+        "client": "Moss Hill School",
+        "inv": "INV-0143",
+        "status": {
+          "text": "draft",
+          "tone": "mute"
+        }
+      },
+      "id": "INV-0143-39",
+      "tap": {
+        "open": "/invoice/INV-0143"
+      }
+    },
+    {
+      "cells": {
+        "amount": 48750,
+        "client": "Orchard Lane Clinic",
+        "due": "2026-10-18",
+        "inv": "INV-0133",
+        "late": 32,
+        "status": {
+          "text": "overdue",
+          "tone": "warn"
+        }
+      },
+      "id": "INV-0133-40",
+      "tap": {
+        "open": "/invoice/INV-0133"
+      }
+    },
+    {
+      "cells": {
+        "amount": 31500,
+        "client": "Bluepeak Logistics",
+        "due": "2026-11-05",
+        "inv": "INV-0136",
+        "late": 14,
+        "status": {
+          "text": "disputed",
+          "tone": "bad"
+        }
+      },
+      "id": "INV-0136-41",
+      "tap": {
+        "open": "/invoice/INV-0136"
+      }
+    },
+    {
+      "cells": {
+        "amount": 18000,
+        "client": "Saffron & Salt",
+        "due": "2026-11-19",
+        "inv": "INV-0138",
+        "status": {
+          "text": "sent",
+          "tone": "done"
+        }
+      },
+      "id": "INV-0138-42",
+      "tap": {
+        "open": "/invoice/INV-0138"
+      }
+    },
+    {
+      "cells": {
+        "amount": 15000,
+        "client": "Tidewater Bakery",
+        "due": "2026-11-26",
+        "inv": "INV-0139",
+        "status": {
+          "text": "paid",
+          "tone": "ok"
+        }
+      },
+      "id": "INV-0139-43",
+      "tap": {
+        "open": "/invoice/INV-0139"
+      }
+    },
+    {
+      "cells": {
+        "amount": 13500,
+        "client": "Moss Hill School",
+        "inv": "INV-0143",
+        "status": {
+          "text": "draft",
+          "tone": "mute"
+        }
+      },
+      "id": "INV-0143-44",
+      "tap": {
+        "open": "/invoice/INV-0143"
+      }
+    },
+    {
+      "cells": {
+        "amount": 48750,
+        "client": "Orchard Lane Clinic",
+        "due": "2026-10-18",
+        "inv": "INV-0133",
+        "late": 32,
+        "status": {
+          "text": "overdue",
+          "tone": "warn"
+        }
+      },
+      "id": "INV-0133-45",
+      "tap": {
+        "open": "/invoice/INV-0133"
+      }
+    },
+    {
+      "cells": {
+        "amount": 31500,
+        "client": "Bluepeak Logistics",
+        "due": "2026-11-05",
+        "inv": "INV-0136",
+        "late": 14,
+        "status": {
+          "text": "disputed",
+          "tone": "bad"
+        }
+      },
+      "id": "INV-0136-46",
+      "tap": {
+        "open": "/invoice/INV-0136"
+      }
+    },
+    {
+      "cells": {
+        "amount": 18000,
+        "client": "Saffron & Salt",
+        "due": "2026-11-19",
+        "inv": "INV-0138",
+        "status": {
+          "text": "sent",
+          "tone": "done"
+        }
+      },
+      "id": "INV-0138-47",
+      "tap": {
+        "open": "/invoice/INV-0138"
+      }
+    },
+    {
+      "cells": {
+        "amount": 15000,
+        "client": "Tidewater Bakery",
+        "due": "2026-11-26",
+        "inv": "INV-0139",
+        "status": {
+          "text": "paid",
+          "tone": "ok"
+        }
+      },
+      "id": "INV-0139-48",
+      "tap": {
+        "open": "/invoice/INV-0139"
+      }
+    },
+    {
+      "cells": {
+        "amount": 13500,
+        "client": "Moss Hill School",
+        "inv": "INV-0143",
+        "status": {
+          "text": "draft",
+          "tone": "mute"
+        }
+      },
+      "id": "INV-0143-49",
+      "tap": {
+        "open": "/invoice/INV-0143"
+      }
+    },
+    {
+      "cells": {
+        "amount": 48750,
+        "client": "Orchard Lane Clinic",
+        "due": "2026-10-18",
+        "inv": "INV-0133",
+        "late": 32,
+        "status": {
+          "text": "overdue",
+          "tone": "warn"
+        }
+      },
+      "id": "INV-0133-50",
+      "tap": {
+        "open": "/invoice/INV-0133"
+      }
+    },
+    {
+      "cells": {
+        "amount": 31500,
+        "client": "Bluepeak Logistics",
+        "due": "2026-11-05",
+        "inv": "INV-0136",
+        "late": 14,
+        "status": {
+          "text": "disputed",
+          "tone": "bad"
+        }
+      },
+      "id": "INV-0136-51",
+      "tap": {
+        "open": "/invoice/INV-0136"
+      }
+    },
+    {
+      "cells": {
+        "amount": 18000,
+        "client": "Saffron & Salt",
+        "due": "2026-11-19",
+        "inv": "INV-0138",
+        "status": {
+          "text": "sent",
+          "tone": "done"
+        }
+      },
+      "id": "INV-0138-52",
+      "tap": {
+        "open": "/invoice/INV-0138"
+      }
+    },
+    {
+      "cells": {
+        "amount": 15000,
+        "client": "Tidewater Bakery",
+        "due": "2026-11-26",
+        "inv": "INV-0139",
+        "status": {
+          "text": "paid",
+          "tone": "ok"
+        }
+      },
+      "id": "INV-0139-53",
+      "tap": {
+        "open": "/invoice/INV-0139"
+      }
+    },
+    {
+      "cells": {
+        "amount": 13500,
+        "client": "Moss Hill School",
+        "inv": "INV-0143",
+        "status": {
+          "text": "draft",
+          "tone": "mute"
+        }
+      },
+      "id": "INV-0143-54",
+      "tap": {
+        "open": "/invoice/INV-0143"
+      }
+    },
+    {
+      "cells": {
+        "amount": 48750,
+        "client": "Orchard Lane Clinic",
+        "due": "2026-10-18",
+        "inv": "INV-0133",
+        "late": 32,
+        "status": {
+          "text": "overdue",
+          "tone": "warn"
+        }
+      },
+      "id": "INV-0133-55",
+      "tap": {
+        "open": "/invoice/INV-0133"
+      }
+    },
+    {
+      "cells": {
+        "amount": 31500,
+        "client": "Bluepeak Logistics",
+        "due": "2026-11-05",
+        "inv": "INV-0136",
+        "late": 14,
+        "status": {
+          "text": "disputed",
+          "tone": "bad"
+        }
+      },
+      "id": "INV-0136-56",
+      "tap": {
+        "open": "/invoice/INV-0136"
+      }
+    },
+    {
+      "cells": {
+        "amount": 18000,
+        "client": "Saffron & Salt",
+        "due": "2026-11-19",
+        "inv": "INV-0138",
+        "status": {
+          "text": "sent",
+          "tone": "done"
+        }
+      },
+      "id": "INV-0138-57",
+      "tap": {
+        "open": "/invoice/INV-0138"
+      }
+    },
+    {
+      "cells": {
+        "amount": 15000,
+        "client": "Tidewater Bakery",
+        "due": "2026-11-26",
+        "inv": "INV-0139",
+        "status": {
+          "text": "paid",
+          "tone": "ok"
+        }
+      },
+      "id": "INV-0139-58",
+      "tap": {
+        "open": "/invoice/INV-0139"
+      }
+    },
+    {
+      "cells": {
+        "amount": 13500,
+        "client": "Moss Hill School",
+        "inv": "INV-0143",
+        "status": {
+          "text": "draft",
+          "tone": "mute"
+        }
+      },
+      "id": "INV-0143-59",
+      "tap": {
+        "open": "/invoice/INV-0143"
+      }
+    },
+    {
+      "cells": {
+        "amount": 48750,
+        "client": "Orchard Lane Clinic",
+        "due": "2026-10-18",
+        "inv": "INV-0133",
+        "late": 32,
+        "status": {
+          "text": "overdue",
+          "tone": "warn"
+        }
+      },
+      "id": "INV-0133-60",
+      "tap": {
+        "open": "/invoice/INV-0133"
+      }
+    },
+    {
+      "cells": {
+        "amount": 31500,
+        "client": "Bluepeak Logistics",
+        "due": "2026-11-05",
+        "inv": "INV-0136",
+        "late": 14,
+        "status": {
+          "text": "disputed",
+          "tone": "bad"
+        }
+      },
+      "id": "INV-0136-61",
+      "tap": {
+        "open": "/invoice/INV-0136"
+      }
+    },
+    {
+      "cells": {
+        "amount": 18000,
+        "client": "Saffron & Salt",
+        "due": "2026-11-19",
+        "inv": "INV-0138",
+        "status": {
+          "text": "sent",
+          "tone": "done"
+        }
+      },
+      "id": "INV-0138-62",
+      "tap": {
+        "open": "/invoice/INV-0138"
+      }
+    },
+    {
+      "cells": {
+        "amount": 15000,
+        "client": "Tidewater Bakery",
+        "due": "2026-11-26",
+        "inv": "INV-0139",
+        "status": {
+          "text": "paid",
+          "tone": "ok"
+        }
+      },
+      "id": "INV-0139-63",
+      "tap": {
+        "open": "/invoice/INV-0139"
+      }
+    },
+    {
+      "cells": {
+        "amount": 13500,
+        "client": "Moss Hill School",
+        "inv": "INV-0143",
+        "status": {
+          "text": "draft",
+          "tone": "mute"
+        }
+      },
+      "id": "INV-0143-64",
+      "tap": {
+        "open": "/invoice/INV-0143"
+      }
+    },
+    {
+      "cells": {
+        "amount": 48750,
+        "client": "Orchard Lane Clinic",
+        "due": "2026-10-18",
+        "inv": "INV-0133",
+        "late": 32,
+        "status": {
+          "text": "overdue",
+          "tone": "warn"
+        }
+      },
+      "id": "INV-0133-65",
+      "tap": {
+        "open": "/invoice/INV-0133"
+      }
+    },
+    {
+      "cells": {
+        "amount": 31500,
+        "client": "Bluepeak Logistics",
+        "due": "2026-11-05",
+        "inv": "INV-0136",
+        "late": 14,
+        "status": {
+          "text": "disputed",
+          "tone": "bad"
+        }
+      },
+      "id": "INV-0136-66",
+      "tap": {
+        "open": "/invoice/INV-0136"
+      }
+    },
+    {
+      "cells": {
+        "amount": 18000,
+        "client": "Saffron & Salt",
+        "due": "2026-11-19",
+        "inv": "INV-0138",
+        "status": {
+          "text": "sent",
+          "tone": "done"
+        }
+      },
+      "id": "INV-0138-67",
+      "tap": {
+        "open": "/invoice/INV-0138"
+      }
+    },
+    {
+      "cells": {
+        "amount": 15000,
+        "client": "Tidewater Bakery",
+        "due": "2026-11-26",
+        "inv": "INV-0139",
+        "status": {
+          "text": "paid",
+          "tone": "ok"
+        }
+      },
+      "id": "INV-0139-68",
+      "tap": {
+        "open": "/invoice/INV-0139"
+      }
+    },
+    {
+      "cells": {
+        "amount": 13500,
+        "client": "Moss Hill School",
+        "inv": "INV-0143",
+        "status": {
+          "text": "draft",
+          "tone": "mute"
+        }
+      },
+      "id": "INV-0143-69",
+      "tap": {
+        "open": "/invoice/INV-0143"
+      }
+    },
+    {
+      "cells": {
+        "amount": 48750,
+        "client": "Orchard Lane Clinic",
+        "due": "2026-10-18",
+        "inv": "INV-0133",
+        "late": 32,
+        "status": {
+          "text": "overdue",
+          "tone": "warn"
+        }
+      },
+      "id": "INV-0133-70",
+      "tap": {
+        "open": "/invoice/INV-0133"
+      }
+    },
+    {
+      "cells": {
+        "amount": 31500,
+        "client": "Bluepeak Logistics",
+        "due": "2026-11-05",
+        "inv": "INV-0136",
+        "late": 14,
+        "status": {
+          "text": "disputed",
+          "tone": "bad"
+        }
+      },
+      "id": "INV-0136-71",
+      "tap": {
+        "open": "/invoice/INV-0136"
+      }
+    },
+    {
+      "cells": {
+        "amount": 18000,
+        "client": "Saffron & Salt",
+        "due": "2026-11-19",
+        "inv": "INV-0138",
+        "status": {
+          "text": "sent",
+          "tone": "done"
+        }
+      },
+      "id": "INV-0138-72",
+      "tap": {
+        "open": "/invoice/INV-0138"
+      }
+    },
+    {
+      "cells": {
+        "amount": 15000,
+        "client": "Tidewater Bakery",
+        "due": "2026-11-26",
+        "inv": "INV-0139",
+        "status": {
+          "text": "paid",
+          "tone": "ok"
+        }
+      },
+      "id": "INV-0139-73",
+      "tap": {
+        "open": "/invoice/INV-0139"
+      }
+    },
+    {
+      "cells": {
+        "amount": 13500,
+        "client": "Moss Hill School",
+        "inv": "INV-0143",
+        "status": {
+          "text": "draft",
+          "tone": "mute"
+        }
+      },
+      "id": "INV-0143-74",
+      "tap": {
+        "open": "/invoice/INV-0143"
+      }
+    },
+    {
+      "cells": {
+        "amount": 48750,
+        "client": "Orchard Lane Clinic",
+        "due": "2026-10-18",
+        "inv": "INV-0133",
+        "late": 32,
+        "status": {
+          "text": "overdue",
+          "tone": "warn"
+        }
+      },
+      "id": "INV-0133-75",
+      "tap": {
+        "open": "/invoice/INV-0133"
+      }
+    },
+    {
+      "cells": {
+        "amount": 31500,
+        "client": "Bluepeak Logistics",
+        "due": "2026-11-05",
+        "inv": "INV-0136",
+        "late": 14,
+        "status": {
+          "text": "disputed",
+          "tone": "bad"
+        }
+      },
+      "id": "INV-0136-76",
+      "tap": {
+        "open": "/invoice/INV-0136"
+      }
+    },
+    {
+      "cells": {
+        "amount": 18000,
+        "client": "Saffron & Salt",
+        "due": "2026-11-19",
+        "inv": "INV-0138",
+        "status": {
+          "text": "sent",
+          "tone": "done"
+        }
+      },
+      "id": "INV-0138-77",
+      "tap": {
+        "open": "/invoice/INV-0138"
+      }
+    },
+    {
+      "cells": {
+        "amount": 15000,
+        "client": "Tidewater Bakery",
+        "due": "2026-11-26",
+        "inv": "INV-0139",
+        "status": {
+          "text": "paid",
+          "tone": "ok"
+        }
+      },
+      "id": "INV-0139-78",
+      "tap": {
+        "open": "/invoice/INV-0139"
+      }
+    },
+    {
+      "cells": {
+        "amount": 13500,
+        "client": "Moss Hill School",
+        "inv": "INV-0143",
+        "status": {
+          "text": "draft",
+          "tone": "mute"
+        }
+      },
+      "id": "INV-0143-79",
+      "tap": {
+        "open": "/invoice/INV-0143"
+      }
+    },
+    {
+      "cells": {
+        "amount": 48750,
+        "client": "Orchard Lane Clinic",
+        "due": "2026-10-18",
+        "inv": "INV-0133",
+        "late": 32,
+        "status": {
+          "text": "overdue",
+          "tone": "warn"
+        }
+      },
+      "id": "INV-0133-80",
+      "tap": {
+        "open": "/invoice/INV-0133"
+      }
+    },
+    {
+      "cells": {
+        "amount": 31500,
+        "client": "Bluepeak Logistics",
+        "due": "2026-11-05",
+        "inv": "INV-0136",
+        "late": 14,
+        "status": {
+          "text": "disputed",
+          "tone": "bad"
+        }
+      },
+      "id": "INV-0136-81",
+      "tap": {
+        "open": "/invoice/INV-0136"
+      }
+    },
+    {
+      "cells": {
+        "amount": 18000,
+        "client": "Saffron & Salt",
+        "due": "2026-11-19",
+        "inv": "INV-0138",
+        "status": {
+          "text": "sent",
+          "tone": "done"
+        }
+      },
+      "id": "INV-0138-82",
+      "tap": {
+        "open": "/invoice/INV-0138"
+      }
+    },
+    {
+      "cells": {
+        "amount": 15000,
+        "client": "Tidewater Bakery",
+        "due": "2026-11-26",
+        "inv": "INV-0139",
+        "status": {
+          "text": "paid",
+          "tone": "ok"
+        }
+      },
+      "id": "INV-0139-83",
+      "tap": {
+        "open": "/invoice/INV-0139"
+      }
+    },
+    {
+      "cells": {
+        "amount": 13500,
+        "client": "Moss Hill School",
+        "inv": "INV-0143",
+        "status": {
+          "text": "draft",
+          "tone": "mute"
+        }
+      },
+      "id": "INV-0143-84",
+      "tap": {
+        "open": "/invoice/INV-0143"
+      }
+    },
+    {
+      "cells": {
+        "amount": 48750,
+        "client": "Orchard Lane Clinic",
+        "due": "2026-10-18",
+        "inv": "INV-0133",
+        "late": 32,
+        "status": {
+          "text": "overdue",
+          "tone": "warn"
+        }
+      },
+      "id": "INV-0133-85",
+      "tap": {
+        "open": "/invoice/INV-0133"
+      }
+    },
+    {
+      "cells": {
+        "amount": 31500,
+        "client": "Bluepeak Logistics",
+        "due": "2026-11-05",
+        "inv": "INV-0136",
+        "late": 14,
+        "status": {
+          "text": "disputed",
+          "tone": "bad"
+        }
+      },
+      "id": "INV-0136-86",
+      "tap": {
+        "open": "/invoice/INV-0136"
+      }
+    },
+    {
+      "cells": {
+        "amount": 18000,
+        "client": "Saffron & Salt",
+        "due": "2026-11-19",
+        "inv": "INV-0138",
+        "status": {
+          "text": "sent",
+          "tone": "done"
+        }
+      },
+      "id": "INV-0138-87",
+      "tap": {
+        "open": "/invoice/INV-0138"
+      }
+    },
+    {
+      "cells": {
+        "amount": 15000,
+        "client": "Tidewater Bakery",
+        "due": "2026-11-26",
+        "inv": "INV-0139",
+        "status": {
+          "text": "paid",
+          "tone": "ok"
+        }
+      },
+      "id": "INV-0139-88",
+      "tap": {
+        "open": "/invoice/INV-0139"
+      }
+    },
+    {
+      "cells": {
+        "amount": 13500,
+        "client": "Moss Hill School",
+        "inv": "INV-0143",
+        "status": {
+          "text": "draft",
+          "tone": "mute"
+        }
+      },
+      "id": "INV-0143-89",
+      "tap": {
+        "open": "/invoice/INV-0143"
+      }
+    },
+    {
+      "cells": {
+        "amount": 48750,
+        "client": "Orchard Lane Clinic",
+        "due": "2026-10-18",
+        "inv": "INV-0133",
+        "late": 32,
+        "status": {
+          "text": "overdue",
+          "tone": "warn"
+        }
+      },
+      "id": "INV-0133-90",
+      "tap": {
+        "open": "/invoice/INV-0133"
+      }
+    },
+    {
+      "cells": {
+        "amount": 31500,
+        "client": "Bluepeak Logistics",
+        "due": "2026-11-05",
+        "inv": "INV-0136",
+        "late": 14,
+        "status": {
+          "text": "disputed",
+          "tone": "bad"
+        }
+      },
+      "id": "INV-0136-91",
+      "tap": {
+        "open": "/invoice/INV-0136"
+      }
+    },
+    {
+      "cells": {
+        "amount": 18000,
+        "client": "Saffron & Salt",
+        "due": "2026-11-19",
+        "inv": "INV-0138",
+        "status": {
+          "text": "sent",
+          "tone": "done"
+        }
+      },
+      "id": "INV-0138-92",
+      "tap": {
+        "open": "/invoice/INV-0138"
+      }
+    },
+    {
+      "cells": {
+        "amount": 15000,
+        "client": "Tidewater Bakery",
+        "due": "2026-11-26",
+        "inv": "INV-0139",
+        "status": {
+          "text": "paid",
+          "tone": "ok"
+        }
+      },
+      "id": "INV-0139-93",
+      "tap": {
+        "open": "/invoice/INV-0139"
+      }
+    },
+    {
+      "cells": {
+        "amount": 13500,
+        "client": "Moss Hill School",
+        "inv": "INV-0143",
+        "status": {
+          "text": "draft",
+          "tone": "mute"
+        }
+      },
+      "id": "INV-0143-94",
+      "tap": {
+        "open": "/invoice/INV-0143"
+      }
+    },
+    {
+      "cells": {
+        "amount": 48750,
+        "client": "Orchard Lane Clinic",
+        "due": "2026-10-18",
+        "inv": "INV-0133",
+        "late": 32,
+        "status": {
+          "text": "overdue",
+          "tone": "warn"
+        }
+      },
+      "id": "INV-0133-95",
+      "tap": {
+        "open": "/invoice/INV-0133"
+      }
+    },
+    {
+      "cells": {
+        "amount": 31500,
+        "client": "Bluepeak Logistics",
+        "due": "2026-11-05",
+        "inv": "INV-0136",
+        "late": 14,
+        "status": {
+          "text": "disputed",
+          "tone": "bad"
+        }
+      },
+      "id": "INV-0136-96",
+      "tap": {
+        "open": "/invoice/INV-0136"
+      }
+    },
+    {
+      "cells": {
+        "amount": 18000,
+        "client": "Saffron & Salt",
+        "due": "2026-11-19",
+        "inv": "INV-0138",
+        "status": {
+          "text": "sent",
+          "tone": "done"
+        }
+      },
+      "id": "INV-0138-97",
+      "tap": {
+        "open": "/invoice/INV-0138"
+      }
+    },
+    {
+      "cells": {
+        "amount": 15000,
+        "client": "Tidewater Bakery",
+        "due": "2026-11-26",
+        "inv": "INV-0139",
+        "status": {
+          "text": "paid",
+          "tone": "ok"
+        }
+      },
+      "id": "INV-0139-98",
+      "tap": {
+        "open": "/invoice/INV-0139"
+      }
+    },
+    {
+      "cells": {
+        "amount": 13500,
+        "client": "Moss Hill School",
+        "inv": "INV-0143",
+        "status": {
+          "text": "draft",
+          "tone": "mute"
+        }
+      },
+      "id": "INV-0143-99",
+      "tap": {
+        "open": "/invoice/INV-0143"
+      }
+    },
+    {
+      "cells": {
+        "amount": 48750,
+        "client": "Orchard Lane Clinic",
+        "due": "2026-10-18",
+        "inv": "INV-0133",
+        "late": 32,
+        "status": {
+          "text": "overdue",
+          "tone": "warn"
+        }
+      },
+      "id": "INV-0133-100",
+      "tap": {
+        "open": "/invoice/INV-0133"
+      }
+    },
+    {
+      "cells": {
+        "amount": 31500,
+        "client": "Bluepeak Logistics",
+        "due": "2026-11-05",
+        "inv": "INV-0136",
+        "late": 14,
+        "status": {
+          "text": "disputed",
+          "tone": "bad"
+        }
+      },
+      "id": "INV-0136-101",
+      "tap": {
+        "open": "/invoice/INV-0136"
+      }
+    },
+    {
+      "cells": {
+        "amount": 18000,
+        "client": "Saffron & Salt",
+        "due": "2026-11-19",
+        "inv": "INV-0138",
+        "status": {
+          "text": "sent",
+          "tone": "done"
+        }
+      },
+      "id": "INV-0138-102",
+      "tap": {
+        "open": "/invoice/INV-0138"
+      }
+    },
+    {
+      "cells": {
+        "amount": 15000,
+        "client": "Tidewater Bakery",
+        "due": "2026-11-26",
+        "inv": "INV-0139",
+        "status": {
+          "text": "paid",
+          "tone": "ok"
+        }
+      },
+      "id": "INV-0139-103",
+      "tap": {
+        "open": "/invoice/INV-0139"
+      }
+    },
+    {
+      "cells": {
+        "amount": 13500,
+        "client": "Moss Hill School",
+        "inv": "INV-0143",
+        "status": {
+          "text": "draft",
+          "tone": "mute"
+        }
+      },
+      "id": "INV-0143-104",
+      "tap": {
+        "open": "/invoice/INV-0143"
+      }
+    },
+    {
+      "cells": {
+        "amount": 48750,
+        "client": "Orchard Lane Clinic",
+        "due": "2026-10-18",
+        "inv": "INV-0133",
+        "late": 32,
+        "status": {
+          "text": "overdue",
+          "tone": "warn"
+        }
+      },
+      "id": "INV-0133-105",
+      "tap": {
+        "open": "/invoice/INV-0133"
+      }
+    },
+    {
+      "cells": {
+        "amount": 31500,
+        "client": "Bluepeak Logistics",
+        "due": "2026-11-05",
+        "inv": "INV-0136",
+        "late": 14,
+        "status": {
+          "text": "disputed",
+          "tone": "bad"
+        }
+      },
+      "id": "INV-0136-106",
+      "tap": {
+        "open": "/invoice/INV-0136"
+      }
+    },
+    {
+      "cells": {
+        "amount": 18000,
+        "client": "Saffron & Salt",
+        "due": "2026-11-19",
+        "inv": "INV-0138",
+        "status": {
+          "text": "sent",
+          "tone": "done"
+        }
+      },
+      "id": "INV-0138-107",
+      "tap": {
+        "open": "/invoice/INV-0138"
+      }
+    },
+    {
+      "cells": {
+        "amount": 15000,
+        "client": "Tidewater Bakery",
+        "due": "2026-11-26",
+        "inv": "INV-0139",
+        "status": {
+          "text": "paid",
+          "tone": "ok"
+        }
+      },
+      "id": "INV-0139-108",
+      "tap": {
+        "open": "/invoice/INV-0139"
+      }
+    },
+    {
+      "cells": {
+        "amount": 13500,
+        "client": "Moss Hill School",
+        "inv": "INV-0143",
+        "status": {
+          "text": "draft",
+          "tone": "mute"
+        }
+      },
+      "id": "INV-0143-109",
+      "tap": {
+        "open": "/invoice/INV-0143"
+      }
+    },
+    {
+      "cells": {
+        "amount": 48750,
+        "client": "Orchard Lane Clinic",
+        "due": "2026-10-18",
+        "inv": "INV-0133",
+        "late": 32,
+        "status": {
+          "text": "overdue",
+          "tone": "warn"
+        }
+      },
+      "id": "INV-0133-110",
+      "tap": {
+        "open": "/invoice/INV-0133"
+      }
+    },
+    {
+      "cells": {
+        "amount": 31500,
+        "client": "Bluepeak Logistics",
+        "due": "2026-11-05",
+        "inv": "INV-0136",
+        "late": 14,
+        "status": {
+          "text": "disputed",
+          "tone": "bad"
+        }
+      },
+      "id": "INV-0136-111",
+      "tap": {
+        "open": "/invoice/INV-0136"
+      }
+    },
+    {
+      "cells": {
+        "amount": 18000,
+        "client": "Saffron & Salt",
+        "due": "2026-11-19",
+        "inv": "INV-0138",
+        "status": {
+          "text": "sent",
+          "tone": "done"
+        }
+      },
+      "id": "INV-0138-112",
+      "tap": {
+        "open": "/invoice/INV-0138"
+      }
+    },
+    {
+      "cells": {
+        "amount": 15000,
+        "client": "Tidewater Bakery",
+        "due": "2026-11-26",
+        "inv": "INV-0139",
+        "status": {
+          "text": "paid",
+          "tone": "ok"
+        }
+      },
+      "id": "INV-0139-113",
+      "tap": {
+        "open": "/invoice/INV-0139"
+      }
+    },
+    {
+      "cells": {
+        "amount": 13500,
+        "client": "Moss Hill School",
+        "inv": "INV-0143",
+        "status": {
+          "text": "draft",
+          "tone": "mute"
+        }
+      },
+      "id": "INV-0143-114",
+      "tap": {
+        "open": "/invoice/INV-0143"
+      }
+    },
+    {
+      "cells": {
+        "amount": 48750,
+        "client": "Orchard Lane Clinic",
+        "due": "2026-10-18",
+        "inv": "INV-0133",
+        "late": 32,
+        "status": {
+          "text": "overdue",
+          "tone": "warn"
+        }
+      },
+      "id": "INV-0133-115",
+      "tap": {
+        "open": "/invoice/INV-0133"
+      }
+    },
+    {
+      "cells": {
+        "amount": 31500,
+        "client": "Bluepeak Logistics",
+        "due": "2026-11-05",
+        "inv": "INV-0136",
+        "late": 14,
+        "status": {
+          "text": "disputed",
+          "tone": "bad"
+        }
+      },
+      "id": "INV-0136-116",
+      "tap": {
+        "open": "/invoice/INV-0136"
+      }
+    },
+    {
+      "cells": {
+        "amount": 18000,
+        "client": "Saffron & Salt",
+        "due": "2026-11-19",
+        "inv": "INV-0138",
+        "status": {
+          "text": "sent",
+          "tone": "done"
+        }
+      },
+      "id": "INV-0138-117",
+      "tap": {
+        "open": "/invoice/INV-0138"
+      }
+    },
+    {
+      "cells": {
+        "amount": 15000,
+        "client": "Tidewater Bakery",
+        "due": "2026-11-26",
+        "inv": "INV-0139",
+        "status": {
+          "text": "paid",
+          "tone": "ok"
+        }
+      },
+      "id": "INV-0139-118",
+      "tap": {
+        "open": "/invoice/INV-0139"
+      }
+    },
+    {
+      "cells": {
+        "amount": 13500,
+        "client": "Moss Hill School",
+        "inv": "INV-0143",
+        "status": {
+          "text": "draft",
+          "tone": "mute"
+        }
+      },
+      "id": "INV-0143-119",
+      "tap": {
+        "open": "/invoice/INV-0143"
+      }
+    },
+    {
+      "cells": {
+        "amount": 48750,
+        "client": "Orchard Lane Clinic",
+        "due": "2026-10-18",
+        "inv": "INV-0133",
+        "late": 32,
+        "status": {
+          "text": "overdue",
+          "tone": "warn"
+        }
+      },
+      "id": "INV-0133-120",
+      "tap": {
+        "open": "/invoice/INV-0133"
+      }
+    },
+    {
+      "cells": {
+        "amount": 31500,
+        "client": "Bluepeak Logistics",
+        "due": "2026-11-05",
+        "inv": "INV-0136",
+        "late": 14,
+        "status": {
+          "text": "disputed",
+          "tone": "bad"
+        }
+      },
+      "id": "INV-0136-121",
+      "tap": {
+        "open": "/invoice/INV-0136"
+      }
+    },
+    {
+      "cells": {
+        "amount": 18000,
+        "client": "Saffron & Salt",
+        "due": "2026-11-19",
+        "inv": "INV-0138",
+        "status": {
+          "text": "sent",
+          "tone": "done"
+        }
+      },
+      "id": "INV-0138-122",
+      "tap": {
+        "open": "/invoice/INV-0138"
+      }
+    },
+    {
+      "cells": {
+        "amount": 15000,
+        "client": "Tidewater Bakery",
+        "due": "2026-11-26",
+        "inv": "INV-0139",
+        "status": {
+          "text": "paid",
+          "tone": "ok"
+        }
+      },
+      "id": "INV-0139-123",
+      "tap": {
+        "open": "/invoice/INV-0139"
+      }
+    },
+    {
+      "cells": {
+        "amount": 13500,
+        "client": "Moss Hill School",
+        "inv": "INV-0143",
+        "status": {
+          "text": "draft",
+          "tone": "mute"
+        }
+      },
+      "id": "INV-0143-124",
+      "tap": {
+        "open": "/invoice/INV-0143"
+      }
+    },
+    {
+      "cells": {
+        "amount": 48750,
+        "client": "Orchard Lane Clinic",
+        "due": "2026-10-18",
+        "inv": "INV-0133",
+        "late": 32,
+        "status": {
+          "text": "overdue",
+          "tone": "warn"
+        }
+      },
+      "id": "INV-0133-125",
+      "tap": {
+        "open": "/invoice/INV-0133"
+      }
+    },
+    {
+      "cells": {
+        "amount": 31500,
+        "client": "Bluepeak Logistics",
+        "due": "2026-11-05",
+        "inv": "INV-0136",
+        "late": 14,
+        "status": {
+          "text": "disputed",
+          "tone": "bad"
+        }
+      },
+      "id": "INV-0136-126",
+      "tap": {
+        "open": "/invoice/INV-0136"
+      }
+    },
+    {
+      "cells": {
+        "amount": 18000,
+        "client": "Saffron & Salt",
+        "due": "2026-11-19",
+        "inv": "INV-0138",
+        "status": {
+          "text": "sent",
+          "tone": "done"
+        }
+      },
+      "id": "INV-0138-127",
+      "tap": {
+        "open": "/invoice/INV-0138"
+      }
+    },
+    {
+      "cells": {
+        "amount": 15000,
+        "client": "Tidewater Bakery",
+        "due": "2026-11-26",
+        "inv": "INV-0139",
+        "status": {
+          "text": "paid",
+          "tone": "ok"
+        }
+      },
+      "id": "INV-0139-128",
+      "tap": {
+        "open": "/invoice/INV-0139"
+      }
+    },
+    {
+      "cells": {
+        "amount": 13500,
+        "client": "Moss Hill School",
+        "inv": "INV-0143",
+        "status": {
+          "text": "draft",
+          "tone": "mute"
+        }
+      },
+      "id": "INV-0143-129",
+      "tap": {
+        "open": "/invoice/INV-0143"
+      }
+    },
+    {
+      "cells": {
+        "amount": 48750,
+        "client": "Orchard Lane Clinic",
+        "due": "2026-10-18",
+        "inv": "INV-0133",
+        "late": 32,
+        "status": {
+          "text": "overdue",
+          "tone": "warn"
+        }
+      },
+      "id": "INV-0133-130",
+      "tap": {
+        "open": "/invoice/INV-0133"
+      }
+    },
+    {
+      "cells": {
+        "amount": 31500,
+        "client": "Bluepeak Logistics",
+        "due": "2026-11-05",
+        "inv": "INV-0136",
+        "late": 14,
+        "status": {
+          "text": "disputed",
+          "tone": "bad"
+        }
+      },
+      "id": "INV-0136-131",
+      "tap": {
+        "open": "/invoice/INV-0136"
+      }
+    },
+    {
+      "cells": {
+        "amount": 18000,
+        "client": "Saffron & Salt",
+        "due": "2026-11-19",
+        "inv": "INV-0138",
+        "status": {
+          "text": "sent",
+          "tone": "done"
+        }
+      },
+      "id": "INV-0138-132",
+      "tap": {
+        "open": "/invoice/INV-0138"
+      }
+    },
+    {
+      "cells": {
+        "amount": 15000,
+        "client": "Tidewater Bakery",
+        "due": "2026-11-26",
+        "inv": "INV-0139",
+        "status": {
+          "text": "paid",
+          "tone": "ok"
+        }
+      },
+      "id": "INV-0139-133",
+      "tap": {
+        "open": "/invoice/INV-0139"
+      }
+    },
+    {
+      "cells": {
+        "amount": 13500,
+        "client": "Moss Hill School",
+        "inv": "INV-0143",
+        "status": {
+          "text": "draft",
+          "tone": "mute"
+        }
+      },
+      "id": "INV-0143-134",
+      "tap": {
+        "open": "/invoice/INV-0143"
+      }
+    },
+    {
+      "cells": {
+        "amount": 48750,
+        "client": "Orchard Lane Clinic",
+        "due": "2026-10-18",
+        "inv": "INV-0133",
+        "late": 32,
+        "status": {
+          "text": "overdue",
+          "tone": "warn"
+        }
+      },
+      "id": "INV-0133-135",
+      "tap": {
+        "open": "/invoice/INV-0133"
+      }
+    },
+    {
+      "cells": {
+        "amount": 31500,
+        "client": "Bluepeak Logistics",
+        "due": "2026-11-05",
+        "inv": "INV-0136",
+        "late": 14,
+        "status": {
+          "text": "disputed",
+          "tone": "bad"
+        }
+      },
+      "id": "INV-0136-136",
+      "tap": {
+        "open": "/invoice/INV-0136"
+      }
+    },
+    {
+      "cells": {
+        "amount": 18000,
+        "client": "Saffron & Salt",
+        "due": "2026-11-19",
+        "inv": "INV-0138",
+        "status": {
+          "text": "sent",
+          "tone": "done"
+        }
+      },
+      "id": "INV-0138-137",
+      "tap": {
+        "open": "/invoice/INV-0138"
+      }
+    },
+    {
+      "cells": {
+        "amount": 15000,
+        "client": "Tidewater Bakery",
+        "due": "2026-11-26",
+        "inv": "INV-0139",
+        "status": {
+          "text": "paid",
+          "tone": "ok"
+        }
+      },
+      "id": "INV-0139-138",
+      "tap": {
+        "open": "/invoice/INV-0139"
+      }
+    },
+    {
+      "cells": {
+        "amount": 13500,
+        "client": "Moss Hill School",
+        "inv": "INV-0143",
+        "status": {
+          "text": "draft",
+          "tone": "mute"
+        }
+      },
+      "id": "INV-0143-139",
+      "tap": {
+        "open": "/invoice/INV-0143"
+      }
+    },
+    {
+      "cells": {
+        "amount": 48750,
+        "client": "Orchard Lane Clinic",
+        "due": "2026-10-18",
+        "inv": "INV-0133",
+        "late": 32,
+        "status": {
+          "text": "overdue",
+          "tone": "warn"
+        }
+      },
+      "id": "INV-0133-140",
+      "tap": {
+        "open": "/invoice/INV-0133"
+      }
+    },
+    {
+      "cells": {
+        "amount": 31500,
+        "client": "Bluepeak Logistics",
+        "due": "2026-11-05",
+        "inv": "INV-0136",
+        "late": 14,
+        "status": {
+          "text": "disputed",
+          "tone": "bad"
+        }
+      },
+      "id": "INV-0136-141",
+      "tap": {
+        "open": "/invoice/INV-0136"
+      }
+    },
+    {
+      "cells": {
+        "amount": 18000,
+        "client": "Saffron & Salt",
+        "due": "2026-11-19",
+        "inv": "INV-0138",
+        "status": {
+          "text": "sent",
+          "tone": "done"
+        }
+      },
+      "id": "INV-0138-142",
+      "tap": {
+        "open": "/invoice/INV-0138"
+      }
+    },
+    {
+      "cells": {
+        "amount": 15000,
+        "client": "Tidewater Bakery",
+        "due": "2026-11-26",
+        "inv": "INV-0139",
+        "status": {
+          "text": "paid",
+          "tone": "ok"
+        }
+      },
+      "id": "INV-0139-143",
+      "tap": {
+        "open": "/invoice/INV-0139"
+      }
+    },
+    {
+      "cells": {
+        "amount": 13500,
+        "client": "Moss Hill School",
+        "inv": "INV-0143",
+        "status": {
+          "text": "draft",
+          "tone": "mute"
+        }
+      },
+      "id": "INV-0143-144",
+      "tap": {
+        "open": "/invoice/INV-0143"
+      }
+    },
+    {
+      "cells": {
+        "amount": 48750,
+        "client": "Orchard Lane Clinic",
+        "due": "2026-10-18",
+        "inv": "INV-0133",
+        "late": 32,
+        "status": {
+          "text": "overdue",
+          "tone": "warn"
+        }
+      },
+      "id": "INV-0133-145",
+      "tap": {
+        "open": "/invoice/INV-0133"
+      }
+    },
+    {
+      "cells": {
+        "amount": 31500,
+        "client": "Bluepeak Logistics",
+        "due": "2026-11-05",
+        "inv": "INV-0136",
+        "late": 14,
+        "status": {
+          "text": "disputed",
+          "tone": "bad"
+        }
+      },
+      "id": "INV-0136-146",
+      "tap": {
+        "open": "/invoice/INV-0136"
+      }
+    },
+    {
+      "cells": {
+        "amount": 18000,
+        "client": "Saffron & Salt",
+        "due": "2026-11-19",
+        "inv": "INV-0138",
+        "status": {
+          "text": "sent",
+          "tone": "done"
+        }
+      },
+      "id": "INV-0138-147",
+      "tap": {
+        "open": "/invoice/INV-0138"
+      }
+    },
+    {
+      "cells": {
+        "amount": 15000,
+        "client": "Tidewater Bakery",
+        "due": "2026-11-26",
+        "inv": "INV-0139",
+        "status": {
+          "text": "paid",
+          "tone": "ok"
+        }
+      },
+      "id": "INV-0139-148",
+      "tap": {
+        "open": "/invoice/INV-0139"
+      }
+    },
+    {
+      "cells": {
+        "amount": 13500,
+        "client": "Moss Hill School",
+        "inv": "INV-0143",
+        "status": {
+          "text": "draft",
+          "tone": "mute"
+        }
+      },
+      "id": "INV-0143-149",
+      "tap": {
+        "open": "/invoice/INV-0143"
+      }
+    },
+    {
+      "cells": {
+        "amount": 48750,
+        "client": "Orchard Lane Clinic",
+        "due": "2026-10-18",
+        "inv": "INV-0133",
+        "late": 32,
+        "status": {
+          "text": "overdue",
+          "tone": "warn"
+        }
+      },
+      "id": "INV-0133-150",
+      "tap": {
+        "open": "/invoice/INV-0133"
+      }
+    },
+    {
+      "cells": {
+        "amount": 31500,
+        "client": "Bluepeak Logistics",
+        "due": "2026-11-05",
+        "inv": "INV-0136",
+        "late": 14,
+        "status": {
+          "text": "disputed",
+          "tone": "bad"
+        }
+      },
+      "id": "INV-0136-151",
+      "tap": {
+        "open": "/invoice/INV-0136"
+      }
+    },
+    {
+      "cells": {
+        "amount": 18000,
+        "client": "Saffron & Salt",
+        "due": "2026-11-19",
+        "inv": "INV-0138",
+        "status": {
+          "text": "sent",
+          "tone": "done"
+        }
+      },
+      "id": "INV-0138-152",
+      "tap": {
+        "open": "/invoice/INV-0138"
+      }
+    },
+    {
+      "cells": {
+        "amount": 15000,
+        "client": "Tidewater Bakery",
+        "due": "2026-11-26",
+        "inv": "INV-0139",
+        "status": {
+          "text": "paid",
+          "tone": "ok"
+        }
+      },
+      "id": "INV-0139-153",
+      "tap": {
+        "open": "/invoice/INV-0139"
+      }
+    },
+    {
+      "cells": {
+        "amount": 13500,
+        "client": "Moss Hill School",
+        "inv": "INV-0143",
+        "status": {
+          "text": "draft",
+          "tone": "mute"
+        }
+      },
+      "id": "INV-0143-154",
+      "tap": {
+        "open": "/invoice/INV-0143"
+      }
+    },
+    {
+      "cells": {
+        "amount": 48750,
+        "client": "Orchard Lane Clinic",
+        "due": "2026-10-18",
+        "inv": "INV-0133",
+        "late": 32,
+        "status": {
+          "text": "overdue",
+          "tone": "warn"
+        }
+      },
+      "id": "INV-0133-155",
+      "tap": {
+        "open": "/invoice/INV-0133"
+      }
+    },
+    {
+      "cells": {
+        "amount": 31500,
+        "client": "Bluepeak Logistics",
+        "due": "2026-11-05",
+        "inv": "INV-0136",
+        "late": 14,
+        "status": {
+          "text": "disputed",
+          "tone": "bad"
+        }
+      },
+      "id": "INV-0136-156",
+      "tap": {
+        "open": "/invoice/INV-0136"
+      }
+    },
+    {
+      "cells": {
+        "amount": 18000,
+        "client": "Saffron & Salt",
+        "due": "2026-11-19",
+        "inv": "INV-0138",
+        "status": {
+          "text": "sent",
+          "tone": "done"
+        }
+      },
+      "id": "INV-0138-157",
+      "tap": {
+        "open": "/invoice/INV-0138"
+      }
+    },
+    {
+      "cells": {
+        "amount": 15000,
+        "client": "Tidewater Bakery",
+        "due": "2026-11-26",
+        "inv": "INV-0139",
+        "status": {
+          "text": "paid",
+          "tone": "ok"
+        }
+      },
+      "id": "INV-0139-158",
+      "tap": {
+        "open": "/invoice/INV-0139"
+      }
+    },
+    {
+      "cells": {
+        "amount": 13500,
+        "client": "Moss Hill School",
+        "inv": "INV-0143",
+        "status": {
+          "text": "draft",
+          "tone": "mute"
+        }
+      },
+      "id": "INV-0143-159",
+      "tap": {
+        "open": "/invoice/INV-0143"
+      }
+    },
+    {
+      "cells": {
+        "amount": 48750,
+        "client": "Orchard Lane Clinic",
+        "due": "2026-10-18",
+        "inv": "INV-0133",
+        "late": 32,
+        "status": {
+          "text": "overdue",
+          "tone": "warn"
+        }
+      },
+      "id": "INV-0133-160",
+      "tap": {
+        "open": "/invoice/INV-0133"
+      }
+    },
+    {
+      "cells": {
+        "amount": 31500,
+        "client": "Bluepeak Logistics",
+        "due": "2026-11-05",
+        "inv": "INV-0136",
+        "late": 14,
+        "status": {
+          "text": "disputed",
+          "tone": "bad"
+        }
+      },
+      "id": "INV-0136-161",
+      "tap": {
+        "open": "/invoice/INV-0136"
+      }
+    },
+    {
+      "cells": {
+        "amount": 18000,
+        "client": "Saffron & Salt",
+        "due": "2026-11-19",
+        "inv": "INV-0138",
+        "status": {
+          "text": "sent",
+          "tone": "done"
+        }
+      },
+      "id": "INV-0138-162",
+      "tap": {
+        "open": "/invoice/INV-0138"
+      }
+    },
+    {
+      "cells": {
+        "amount": 15000,
+        "client": "Tidewater Bakery",
+        "due": "2026-11-26",
+        "inv": "INV-0139",
+        "status": {
+          "text": "paid",
+          "tone": "ok"
+        }
+      },
+      "id": "INV-0139-163",
+      "tap": {
+        "open": "/invoice/INV-0139"
+      }
+    },
+    {
+      "cells": {
+        "amount": 13500,
+        "client": "Moss Hill School",
+        "inv": "INV-0143",
+        "status": {
+          "text": "draft",
+          "tone": "mute"
+        }
+      },
+      "id": "INV-0143-164",
+      "tap": {
+        "open": "/invoice/INV-0143"
+      }
+    },
+    {
+      "cells": {
+        "amount": 48750,
+        "client": "Orchard Lane Clinic",
+        "due": "2026-10-18",
+        "inv": "INV-0133",
+        "late": 32,
+        "status": {
+          "text": "overdue",
+          "tone": "warn"
+        }
+      },
+      "id": "INV-0133-165",
+      "tap": {
+        "open": "/invoice/INV-0133"
+      }
+    },
+    {
+      "cells": {
+        "amount": 31500,
+        "client": "Bluepeak Logistics",
+        "due": "2026-11-05",
+        "inv": "INV-0136",
+        "late": 14,
+        "status": {
+          "text": "disputed",
+          "tone": "bad"
+        }
+      },
+      "id": "INV-0136-166",
+      "tap": {
+        "open": "/invoice/INV-0136"
+      }
+    },
+    {
+      "cells": {
+        "amount": 18000,
+        "client": "Saffron & Salt",
+        "due": "2026-11-19",
+        "inv": "INV-0138",
+        "status": {
+          "text": "sent",
+          "tone": "done"
+        }
+      },
+      "id": "INV-0138-167",
+      "tap": {
+        "open": "/invoice/INV-0138"
+      }
+    },
+    {
+      "cells": {
+        "amount": 15000,
+        "client": "Tidewater Bakery",
+        "due": "2026-11-26",
+        "inv": "INV-0139",
+        "status": {
+          "text": "paid",
+          "tone": "ok"
+        }
+      },
+      "id": "INV-0139-168",
+      "tap": {
+        "open": "/invoice/INV-0139"
+      }
+    },
+    {
+      "cells": {
+        "amount": 13500,
+        "client": "Moss Hill School",
+        "inv": "INV-0143",
+        "status": {
+          "text": "draft",
+          "tone": "mute"
+        }
+      },
+      "id": "INV-0143-169",
+      "tap": {
+        "open": "/invoice/INV-0143"
+      }
+    },
+    {
+      "cells": {
+        "amount": 48750,
+        "client": "Orchard Lane Clinic",
+        "due": "2026-10-18",
+        "inv": "INV-0133",
+        "late": 32,
+        "status": {
+          "text": "overdue",
+          "tone": "warn"
+        }
+      },
+      "id": "INV-0133-170",
+      "tap": {
+        "open": "/invoice/INV-0133"
+      }
+    },
+    {
+      "cells": {
+        "amount": 31500,
+        "client": "Bluepeak Logistics",
+        "due": "2026-11-05",
+        "inv": "INV-0136",
+        "late": 14,
+        "status": {
+          "text": "disputed",
+          "tone": "bad"
+        }
+      },
+      "id": "INV-0136-171",
+      "tap": {
+        "open": "/invoice/INV-0136"
+      }
+    },
+    {
+      "cells": {
+        "amount": 18000,
+        "client": "Saffron & Salt",
+        "due": "2026-11-19",
+        "inv": "INV-0138",
+        "status": {
+          "text": "sent",
+          "tone": "done"
+        }
+      },
+      "id": "INV-0138-172",
+      "tap": {
+        "open": "/invoice/INV-0138"
+      }
+    },
+    {
+      "cells": {
+        "amount": 15000,
+        "client": "Tidewater Bakery",
+        "due": "2026-11-26",
+        "inv": "INV-0139",
+        "status": {
+          "text": "paid",
+          "tone": "ok"
+        }
+      },
+      "id": "INV-0139-173",
+      "tap": {
+        "open": "/invoice/INV-0139"
+      }
+    },
+    {
+      "cells": {
+        "amount": 13500,
+        "client": "Moss Hill School",
+        "inv": "INV-0143",
+        "status": {
+          "text": "draft",
+          "tone": "mute"
+        }
+      },
+      "id": "INV-0143-174",
+      "tap": {
+        "open": "/invoice/INV-0143"
+      }
+    },
+    {
+      "cells": {
+        "amount": 48750,
+        "client": "Orchard Lane Clinic",
+        "due": "2026-10-18",
+        "inv": "INV-0133",
+        "late": 32,
+        "status": {
+          "text": "overdue",
+          "tone": "warn"
+        }
+      },
+      "id": "INV-0133-175",
+      "tap": {
+        "open": "/invoice/INV-0133"
+      }
+    },
+    {
+      "cells": {
+        "amount": 31500,
+        "client": "Bluepeak Logistics",
+        "due": "2026-11-05",
+        "inv": "INV-0136",
+        "late": 14,
+        "status": {
+          "text": "disputed",
+          "tone": "bad"
+        }
+      },
+      "id": "INV-0136-176",
+      "tap": {
+        "open": "/invoice/INV-0136"
+      }
+    },
+    {
+      "cells": {
+        "amount": 18000,
+        "client": "Saffron & Salt",
+        "due": "2026-11-19",
+        "inv": "INV-0138",
+        "status": {
+          "text": "sent",
+          "tone": "done"
+        }
+      },
+      "id": "INV-0138-177",
+      "tap": {
+        "open": "/invoice/INV-0138"
+      }
+    },
+    {
+      "cells": {
+        "amount": 15000,
+        "client": "Tidewater Bakery",
+        "due": "2026-11-26",
+        "inv": "INV-0139",
+        "status": {
+          "text": "paid",
+          "tone": "ok"
+        }
+      },
+      "id": "INV-0139-178",
+      "tap": {
+        "open": "/invoice/INV-0139"
+      }
+    },
+    {
+      "cells": {
+        "amount": 13500,
+        "client": "Moss Hill School",
+        "inv": "INV-0143",
+        "status": {
+          "text": "draft",
+          "tone": "mute"
+        }
+      },
+      "id": "INV-0143-179",
+      "tap": {
+        "open": "/invoice/INV-0143"
+      }
+    },
+    {
+      "cells": {
+        "amount": 48750,
+        "client": "Orchard Lane Clinic",
+        "due": "2026-10-18",
+        "inv": "INV-0133",
+        "late": 32,
+        "status": {
+          "text": "overdue",
+          "tone": "warn"
+        }
+      },
+      "id": "INV-0133-180",
+      "tap": {
+        "open": "/invoice/INV-0133"
+      }
+    },
+    {
+      "cells": {
+        "amount": 31500,
+        "client": "Bluepeak Logistics",
+        "due": "2026-11-05",
+        "inv": "INV-0136",
+        "late": 14,
+        "status": {
+          "text": "disputed",
+          "tone": "bad"
+        }
+      },
+      "id": "INV-0136-181",
+      "tap": {
+        "open": "/invoice/INV-0136"
+      }
+    },
+    {
+      "cells": {
+        "amount": 18000,
+        "client": "Saffron & Salt",
+        "due": "2026-11-19",
+        "inv": "INV-0138",
+        "status": {
+          "text": "sent",
+          "tone": "done"
+        }
+      },
+      "id": "INV-0138-182",
+      "tap": {
+        "open": "/invoice/INV-0138"
+      }
+    },
+    {
+      "cells": {
+        "amount": 15000,
+        "client": "Tidewater Bakery",
+        "due": "2026-11-26",
+        "inv": "INV-0139",
+        "status": {
+          "text": "paid",
+          "tone": "ok"
+        }
+      },
+      "id": "INV-0139-183",
+      "tap": {
+        "open": "/invoice/INV-0139"
+      }
+    },
+    {
+      "cells": {
+        "amount": 13500,
+        "client": "Moss Hill School",
+        "inv": "INV-0143",
+        "status": {
+          "text": "draft",
+          "tone": "mute"
+        }
+      },
+      "id": "INV-0143-184",
+      "tap": {
+        "open": "/invoice/INV-0143"
+      }
+    },
+    {
+      "cells": {
+        "amount": 48750,
+        "client": "Orchard Lane Clinic",
+        "due": "2026-10-18",
+        "inv": "INV-0133",
+        "late": 32,
+        "status": {
+          "text": "overdue",
+          "tone": "warn"
+        }
+      },
+      "id": "INV-0133-185",
+      "tap": {
+        "open": "/invoice/INV-0133"
+      }
+    },
+    {
+      "cells": {
+        "amount": 31500,
+        "client": "Bluepeak Logistics",
+        "due": "2026-11-05",
+        "inv": "INV-0136",
+        "late": 14,
+        "status": {
+          "text": "disputed",
+          "tone": "bad"
+        }
+      },
+      "id": "INV-0136-186",
+      "tap": {
+        "open": "/invoice/INV-0136"
+      }
+    },
+    {
+      "cells": {
+        "amount": 18000,
+        "client": "Saffron & Salt",
+        "due": "2026-11-19",
+        "inv": "INV-0138",
+        "status": {
+          "text": "sent",
+          "tone": "done"
+        }
+      },
+      "id": "INV-0138-187",
+      "tap": {
+        "open": "/invoice/INV-0138"
+      }
+    },
+    {
+      "cells": {
+        "amount": 15000,
+        "client": "Tidewater Bakery",
+        "due": "2026-11-26",
+        "inv": "INV-0139",
+        "status": {
+          "text": "paid",
+          "tone": "ok"
+        }
+      },
+      "id": "INV-0139-188",
+      "tap": {
+        "open": "/invoice/INV-0139"
+      }
+    },
+    {
+      "cells": {
+        "amount": 13500,
+        "client": "Moss Hill School",
+        "inv": "INV-0143",
+        "status": {
+          "text": "draft",
+          "tone": "mute"
+        }
+      },
+      "id": "INV-0143-189",
+      "tap": {
+        "open": "/invoice/INV-0143"
+      }
+    },
+    {
+      "cells": {
+        "amount": 48750,
+        "client": "Orchard Lane Clinic",
+        "due": "2026-10-18",
+        "inv": "INV-0133",
+        "late": 32,
+        "status": {
+          "text": "overdue",
+          "tone": "warn"
+        }
+      },
+      "id": "INV-0133-190",
+      "tap": {
+        "open": "/invoice/INV-0133"
+      }
+    },
+    {
+      "cells": {
+        "amount": 31500,
+        "client": "Bluepeak Logistics",
+        "due": "2026-11-05",
+        "inv": "INV-0136",
+        "late": 14,
+        "status": {
+          "text": "disputed",
+          "tone": "bad"
+        }
+      },
+      "id": "INV-0136-191",
+      "tap": {
+        "open": "/invoice/INV-0136"
+      }
+    },
+    {
+      "cells": {
+        "amount": 18000,
+        "client": "Saffron & Salt",
+        "due": "2026-11-19",
+        "inv": "INV-0138",
+        "status": {
+          "text": "sent",
+          "tone": "done"
+        }
+      },
+      "id": "INV-0138-192",
+      "tap": {
+        "open": "/invoice/INV-0138"
+      }
+    },
+    {
+      "cells": {
+        "amount": 15000,
+        "client": "Tidewater Bakery",
+        "due": "2026-11-26",
+        "inv": "INV-0139",
+        "status": {
+          "text": "paid",
+          "tone": "ok"
+        }
+      },
+      "id": "INV-0139-193",
+      "tap": {
+        "open": "/invoice/INV-0139"
+      }
+    },
+    {
+      "cells": {
+        "amount": 13500,
+        "client": "Moss Hill School",
+        "inv": "INV-0143",
+        "status": {
+          "text": "draft",
+          "tone": "mute"
+        }
+      },
+      "id": "INV-0143-194",
+      "tap": {
+        "open": "/invoice/INV-0143"
+      }
+    },
+    {
+      "cells": {
+        "amount": 48750,
+        "client": "Orchard Lane Clinic",
+        "due": "2026-10-18",
+        "inv": "INV-0133",
+        "late": 32,
+        "status": {
+          "text": "overdue",
+          "tone": "warn"
+        }
+      },
+      "id": "INV-0133-195",
+      "tap": {
+        "open": "/invoice/INV-0133"
+      }
+    },
+    {
+      "cells": {
+        "amount": 31500,
+        "client": "Bluepeak Logistics",
+        "due": "2026-11-05",
+        "inv": "INV-0136",
+        "late": 14,
+        "status": {
+          "text": "disputed",
+          "tone": "bad"
+        }
+      },
+      "id": "INV-0136-196",
+      "tap": {
+        "open": "/invoice/INV-0136"
+      }
+    },
+    {
+      "cells": {
+        "amount": 18000,
+        "client": "Saffron & Salt",
+        "due": "2026-11-19",
+        "inv": "INV-0138",
+        "status": {
+          "text": "sent",
+          "tone": "done"
+        }
+      },
+      "id": "INV-0138-197",
+      "tap": {
+        "open": "/invoice/INV-0138"
+      }
+    },
+    {
+      "cells": {
+        "amount": 15000,
+        "client": "Tidewater Bakery",
+        "due": "2026-11-26",
+        "inv": "INV-0139",
+        "status": {
+          "text": "paid",
+          "tone": "ok"
+        }
+      },
+      "id": "INV-0139-198",
+      "tap": {
+        "open": "/invoice/INV-0139"
+      }
+    },
+    {
+      "cells": {
+        "amount": 13500,
+        "client": "Moss Hill School",
+        "inv": "INV-0143",
+        "status": {
+          "text": "draft",
+          "tone": "mute"
+        }
+      },
+      "id": "INV-0143-199",
+      "tap": {
+        "open": "/invoice/INV-0143"
+      }
+    }
+  ],
+  "select": {
+    "actions": [
+      {
+        "action": "remind",
+        "label": "send reminder"
+      },
+      {
+        "action": "void",
+        "bad": true,
+        "label": "void"
+      }
+    ]
+  },
+  "sort": {
+    "by": "due",
+    "dir": "asc"
+  },
+  "title": "Invoices",
+  "type": "table"
+}

@@ -27,7 +27,7 @@ fn pages(out: &Path) -> Vec<(String, String)> {
 fn every_page_has_its_head_and_no_url_from_the_domain_root() {
     let out = build();
     let all = pages(&out);
-    assert_eq!(all.len(), 6 + 29);
+    assert_eq!(all.len(), 6 + 30);
     for (f, html) in &all {
         for want in [
             "<title>",
@@ -68,9 +68,9 @@ fn the_gallery_counts_every_kind_once_and_finds_its_fallback_group_from_the_rend
         .collect();
     fallback.sort();
     assert_ne!(fallback, Vec::<String>::new());
-    assert!(gallery.contains("All 29 core kinds"));
+    assert!(gallery.contains("All 30 core kinds"));
     assert!(
-        home.contains("<b class=\"b-stat__value\">29</b><span class=\"m\">core kinds"),
+        home.contains("<b class=\"b-stat__value\">30</b><span class=\"m\">core kinds"),
         "home's kind count"
     );
     let group = gallery
