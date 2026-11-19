@@ -1,0 +1,9 @@
+Decided: scene draws the approved design's chips; show is left undrawn until behaviours land
+Because: q2180
+Decided: the phone rule is a container query at 600px, as diagram's, instead of the mockup's @media
+Because: web/src/blocks.css:114
+Decided: a lane with a url tap is a link; any other tap is role=button on click and Enter, as a row does
+Because: web/src/render/row.ts:19
+Rejected: a sideways-scrolling chip strip as Swift has — q2180 says the chips wrap
+Check: web/test/render.test.ts scene tests; blocks-shot --check on fixtures/blocks/scene.json now expects native
+Owner: The web now shows each lane as a chip with its state, title, stage, tool and age, instead of a fallback line.
