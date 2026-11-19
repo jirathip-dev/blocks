@@ -23,3 +23,4 @@
 - don't change the schema, the wire, a builder or the look without a For apps line in the PR body (enforced by: CI, the For apps check)
 - don't let an app replace a core kind's view (enforced by: Built::check's Clash fault; the app-kind registration refuses a core kind's name in web and SwiftUI)
 - don't change the look without the measured look check passing (enforced by: CI web and swift, the look check on fixtures/look)
+- don't add a guard rule without its fix text and a fixture that fails it (enforced by: CI test, the rule table test in crates/blocks/tests/guard.rs)
