@@ -13,6 +13,7 @@ import { list } from "./list.ts";
 import { row } from "./row.ts";
 import { run } from "./run.ts";
 import { screen } from "./screen.ts";
+import { secret } from "./secret.ts";
 import { section } from "./section.ts";
 import { sheet } from "./sheet.ts";
 import { stat } from "./stat.ts";
@@ -144,7 +145,7 @@ export const R: { [K in Kind]: (b: Of<K>, c: Ctx) => HTMLElement | null } = {
   choice,
   form,
   config: gap(40),
-  secret: gap(39),
+  secret,
   run,
   button,
   chips,
