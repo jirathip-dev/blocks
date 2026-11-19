@@ -1,0 +1,5 @@
+Decided: the showcase test expects 34 pages, since the steps kind adds one docs-site page.
+Because: web/test/pages/showcase.test.ts:51
+Rejected: deriving the count from the files — the fixed number is what catches a page that silently drops.
+Check: cargo run -p blocks-site builds 34 pages and test/pages/showcase.test.ts passes on them.
+Owner: The docs site's page check now counts the new stepper page.
