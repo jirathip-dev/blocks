@@ -1,0 +1,9 @@
+Decided: Style refuses bad values in its own types (Format, Scale, Affix, closed enums, deny_unknown_fields), so reading a style.json is the check
+Because: docs/architecture/blocks/shapes.md:334
+Decided: space and motion are 0-4 multipliers defaulting to 1, like radius, so format 1 files still read
+Because: docs/architecture/blocks/shapes.md:281
+Decided: codegen writes Gen/Style.swift from Style's schema; BlocksUI/Style.swift keeps only bundled and apply
+Because: "generated to Swift so `BlocksUI/Style.swift` reads the generated shape"
+Rejected: Swift-side affix validation kept — the Rust edge refuses it once, Swift decodes open words like the wire types
+Check: fixtures/styles/modern.json equals Style.bundled (StyleTests) and each bad fixture's reason (tests/theme.rs)
+Owner: Styles gain spacing and motion, bad style files and broken art packs are refused with a reason.
