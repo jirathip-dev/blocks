@@ -66,10 +66,19 @@ impl Net {
     }
 }
 
+fn sound(b: &Block) -> Result<(), String> {
+    let faults = Built::new(serde_json::to_value(b).map_err(|e| e.to_string())?).check(&[]);
+    faults
+        .is_empty()
+        .then_some(())
+        .ok_or(format!("the sim made an unfit screen: {faults:?}"))
+}
+
 fn run(seed: u64) -> Result<(), String> {
     let mut rng = Rng::new(seed);
     let rows = rng.below(30);
     let mut truth = screen(&mut rng, rows, 6);
+    sound(&truth)?;
     let mut net = Net {
         shelf: Shelf::default(),
         epoch: 0,
@@ -110,6 +119,7 @@ fn run(seed: u64) -> Result<(), String> {
                 if applied != later {
                     return Err(at("apply(diff(a, b), a) is not b".into()));
                 }
+                sound(&later).map_err(at)?;
                 truth = later;
                 if let Put::Changed(d) = net.shelf.put(&0, K, &truth).map_err(|e| at(e.to_string()))? {
                     net.seen.insert(d.rev, truth.clone());
