@@ -2,8 +2,8 @@ import type { Lit } from "./gen/types.ts";
 
 /// A screen's local state: a value by key.
 export type State = Record<string, Lit>;
-/// What the state makes of a screen, as the crate's `behave::View`: keyed by block id or field name.
-export type View = { hidden: Set<string>; disabled: Set<string>; says: Record<string, string> };
+/// What the state makes of a screen, as the crate's `behave::View`: by block id, field name, action or state key.
+export type View = { hidden: Set<string>; disabled: Set<string>; says: Record<string, string>; acts: Set<string>; values: Record<string, string> };
 
 type Rec = { [k: string]: unknown };
 const own = (o: object, k: string) => Object.prototype.hasOwnProperty.call(o, k);
@@ -132,6 +132,15 @@ function holds(e: unknown, s: State): boolean | undefined {
 const list = (v: unknown): Rec[] => (Array.isArray(v) ? v.filter(rec) : []);
 const kids = (b: Rec): Rec[] => [...list(b.blocks), ...list(b.rows), ...list(b.buttons), ...list(b.rounds).flatMap((r) => list(r.blocks))];
 const named = (b: Rec) => list(b.fields).filter((f) => typeof f.name === "string");
+/// The action an act sends, which its `enabled` turns off: its own, else its tap's.
+export const actionOf = (a: Rec): string | undefined => {
+  const k = a.action ?? (rec(a.tap) ? a.tap.action : undefined);
+  return typeof k === "string" ? k : undefined;
+};
+const acts = (b: Rec): Rec[] => {
+  const all = [...list(b.actions), ...list(b.swipe), ...list(b.menu), ...(rec(b.button) ? [b.button] : [])];
+  return [...all, ...all.flatMap((a) => list(a.menu))];
+};
 const lit = (v: unknown): Lit => (v === null || typeof v === "boolean" || typeof v === "number" || typeof v === "string" ? v : null);
 
 /// The screen's start state: its `state`, each field's `value` and each chips' first `selected`.
@@ -151,7 +160,7 @@ export function start(screen: unknown): State {
 
 /// What `s` makes of `screen`, as the crate's `behave::view`.
 export function view(screen: unknown, s: State): View {
-  const v: View = { hidden: new Set(), disabled: new Set(), says: {} };
+  const v: View = { hidden: new Set(), disabled: new Set(), says: {}, acts: new Set(), values: {} };
   const walk = (b: Rec) => {
     const id = typeof b.id === "string" ? b.id : undefined;
     if (holds(b.show, s) === false) {
@@ -174,6 +183,14 @@ export function view(screen: unknown, s: State): View {
       }
     }
     if (failing && id !== undefined) v.disabled.add(id);
+    for (const a of acts(b)) {
+      const k = actionOf(a);
+      if (k !== undefined && holds(a.enabled, s) === false) v.acts.add(k);
+    }
+    for (const i of [b, ...list(b.items)]) {
+      const k = rec(i.value) ? i.value.get : undefined;
+      if (typeof k === "string") v.values[k] = text(own(s, k) ? (s[k] ?? null) : null);
+    }
     kids(b).forEach(walk);
   };
   if (rec(screen)) walk(screen);
@@ -199,6 +216,8 @@ export function behave(root: HTMLElement, model: () => unknown): () => void {
       const go = e.dataset.block === "form" ? e.querySelector("[data-submit]") : e;
       if (go instanceof HTMLButtonElement) go.disabled = v.disabled.has(id);
     });
+    root.querySelectorAll<HTMLButtonElement>("button[data-act]").forEach((b) => (b.disabled = v.acts.has(b.dataset.act ?? "")));
+    root.querySelectorAll<HTMLElement>("[data-get]").forEach((e) => (e.textContent = v.values[e.dataset.get ?? ""] ?? ""));
     root.querySelectorAll<HTMLInputElement | HTMLSelectElement>(".fd input[name], .fd select[name]").forEach((i) => {
       const l = i.closest<HTMLElement>(".fd");
       if (!l) return;

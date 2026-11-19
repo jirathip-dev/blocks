@@ -1,5 +1,7 @@
 import { hooks, names, roles } from "../gen/hooks.ts";
-import type { Block, Fallback, Kind, Label, Tap, Toned } from "../gen/types.ts";
+import type { Act, Block, Fallback, Kind, Label, Tap, Toned } from "../gen/types.ts";
+import { actionOf } from "../behave.ts";
+import { island, isTag } from "../island.ts";
 import type { Theme } from "../theme.ts";
 import { button } from "./button.ts";
 import { card } from "./card.ts";
@@ -39,6 +41,7 @@ export type Ctx = {
   theme: Theme;
   store: Store;
   apps?: Record<string, Renderer>;
+  drop?: (what: string) => void;
 };
 
 export const isBlk = (v: unknown): v is Blk => typeof v === "object" && v !== null;
@@ -65,6 +68,12 @@ export const sends = (t?: Tap | null, action?: unknown): unknown => (t ? (t.url 
 /// Marks `e` with the action a tap on it sends, as `data-action`.
 export const acts = <E extends HTMLElement>(e: E, action: unknown): E => {
   if (typeof action === "string" && action) e.dataset.action = action;
+  return e;
+};
+/// Marks an act's button with the action its `enabled` turns off, as `data-act`.
+export const offable = <E extends HTMLElement>(e: E, a: Act): E => {
+  const k = actionOf(a);
+  if (k) e.dataset.act = k;
   return e;
 };
 export const btn = (label: unknown, cls = "", url?: string, action?: unknown) => {
@@ -99,6 +108,11 @@ export function value(v: unknown): string {
   return String(v ?? "");
 }
 export const ticked = (v: unknown): Node | string => {
+  if (isBlk(v) && typeof v.get === "string") {
+    const s = el("span", "");
+    s.dataset.get = v.get;
+    return s;
+  }
   if (!(isBlk(v) && ("since" in v || "until" in v))) return value(v);
   const s = h("span", "", value(v));
   s.dataset.tick = JSON.stringify(v);
@@ -177,7 +191,10 @@ export const R: { [K in Kind]: (b: Of<K>, c: Ctx) => HTMLElement | null } = {
   hero,
   media,
   nav,
-  island: gap(21),
+  island: (b, c) =>
+    isTag(b.name)
+      ? island(b, [...fallback(b, c).childNodes], (action, values) => void c.act({ action, block: b.id, values }), (n) => c.drop?.(`event ${b.id ?? ""} ${n}`))
+      : fallback(b, c),
 };
 
 /// The accessible name of block `b` of kind `t`: its first set name field, else its id, else its kind.

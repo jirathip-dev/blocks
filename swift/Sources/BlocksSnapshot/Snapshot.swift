@@ -48,6 +48,17 @@ public struct Snapshot {
         wrapped { AnyView($0.appBlocks(blocks)) }
     }
 
+    /// Draws each island with the app's view of its name, as `View.islands` does in an app.
+    public func islands(_ views: [String: IslandDraw]) -> Self {
+        wrapped { AnyView($0.islands(views)) }
+    }
+
+    /// The harness's test island: it draws its props and sends them back as `echo` each time it gets them.
+    public static let echo: IslandDraw = { props, send in
+        send("echo", props.fields)
+        return AnyView(Text(String(decoding: (try? JSONEncoder().encode(props)) ?? Data(), as: UTF8.self)))
+    }
+
     /// Runs `steps` (a shot named `name` at the end when they take none); `check` compares each tree with `expect`, its ids with `ids`.
     public func run(
         _ steps: [Step], name: String = "shot", expect: TreeNode? = nil, ids: DrawnIdList? = nil, check: Bool = false
@@ -57,11 +68,21 @@ public struct Snapshot {
         var screen = self.screen
         let key = try JSONValue(screen).id ?? ""
         var edits: BlockState = [:]
+        var (shots, sent, dropped, times) = ([String](), [JSONValue](), [String](), [Double]())
+        func hear(_ seen: Seen) -> Seen {
+            for (id, (name, values)) in seen.heard.sorted(by: { $0.key < $1.key }) {
+                if let values {
+                    sent.append(.object(["screen": .string(key), "action": .string(name), "block": .string(id), "values": .object(values)]))
+                } else {
+                    dropped.append("event \(id) \(name)")
+                }
+            }
+            return seen
+        }
         let clock = ContinuousClock()
         let start = clock.now
-        var seen = draw(screen, edits)
+        var seen = hear(draw(screen, edits))
         let paint = ms(clock.now - start)
-        var (shots, sent, dropped, times) = ([String](), [JSONValue](), [String](), [Double]())
         var (pngs, trees, faults) = ([String: Data](), [String: TreeNode](), [String]())
         func take(_ shot: String) throws {
             let tree = try seen.tree.decode(TreeNode.self)
@@ -97,24 +118,24 @@ public struct Snapshot {
                 } else if off || set.isEmpty {
                     dropped.append("tap \(on.id)")
                 }
-                if !off, !set.isEmpty { seen = draw(screen, edits) }
+                if !off, !set.isEmpty { seen = hear(draw(screen, edits)) }
             case .type(let typing):
                 let json = try JSONValue(screen)
                 let field = Self.find(json, typing.id).flatMap { $0.list("fields").first?.string("name") ?? $0.string("name") }
                 let view = Behaviour(json, state: Behaviour.state(json, edits: edits))
                 if let field, !view.hidden.contains(field), !view.disabled.contains(field) {
                     edits[field] = .string(typing.text)
-                    seen = draw(screen, edits)
+                    seen = hear(draw(screen, edits))
                 } else {
                     dropped.append("type \(typing.id)")
                 }
             case .scroll(let on): dropped.append("scroll \(on.id)")
             case .frame(let frame):
                 if let new = frame.screen { screen = new } else { try screen.apply(frame.ops ?? []) }
-                seen = draw(screen, edits)
+                seen = hear(draw(screen, edits))
             case .answer(let answer):
                 try screen.apply(answer.ops ?? [])
-                seen = draw(screen, edits)
+                seen = hear(draw(screen, edits))
             case .shot(let shot): try take(shot.name)
             case .unknown(let value): dropped.append("unknown \(value)")
             }
@@ -155,7 +176,7 @@ public struct Snapshot {
             BlocksView(screen, source: .core, state: edits).padding(BlocksView.inset)
                 .frame(width: size.width, height: size.height, alignment: .topLeading))
         for wrap in wraps { view = wrap(view) }
-        let root = view.reportsBlocks().background(look.palette.background).environment(\.look, look)
+        let root = view.islands(["x-echo": Self.echo]).hearsIslands { seen.heard[$0] = ($1, $2) }.reportsBlocks().background(look.palette.background).environment(\.look, look)
             .environment(\.colorScheme, look.palette.dark ? .dark : .light)
             .overlayPreferenceValue(DrawnBlocks.self) { blocks in
                 GeometryReader { proxy in seen.keep(blocks, proxy) }
@@ -227,6 +248,7 @@ public struct Snapshot {
 private final class Seen {
     var tree: JSONValue = .null
     var taps: [String: BlockAction] = [:]
+    var heard: [String: (String, [String: JSONValue]?)] = [:]
     var png = Data()
     var drawnIds = DrawnIdList(blocks: [], actions: [])
 

@@ -1,0 +1,27 @@
+{
+  "from": 3,
+  "n": 7,
+  "cases": [
+    { "seed": 3, "state": { "k0": 2 }, "expr": { "add": [{ "get": "k0" }, 1] }, "value": 3 },
+    { "seed": 7, "state": {}, "expr": { "cat": [1e21] }, "value": "1000000000000000000000" },
+    {
+      "seed": 8,
+      "state": { "k0": "ab" },
+      "screen": {
+        "type": "screen",
+        "id": "s",
+        "blocks": [
+          { "type": "text", "id": "t", "markdown": "x", "show": { "eq": [{ "get": "k0" }, "cd"] } },
+          { "type": "form", "id": "f", "fields": [{ "type": "text", "name": "k0", "checks": [{ "ok": { "lt": [{ "len": { "get": "k0" } }, 2] }, "say": "short" }] }] }
+        ]
+      },
+      "view": { "hidden": [], "disabled": [], "says": {} }
+    },
+    {
+      "seed": 9,
+      "screen": { "type": "screen", "id": "s", "title": "sim", "blocks": [{ "type": "list", "id": "l", "rows": [{ "type": "row", "id": "l0", "title": "row 0" }] }] },
+      "ops": [{ "op": "merge", "id": "l0", "fields": { "title": "row zero" } }],
+      "after": { "type": "screen", "id": "s", "title": "sim", "blocks": [{ "type": "list", "id": "l", "rows": [{ "type": "row", "id": "l0", "title": "row 0" }] }] }
+    }
+  ]
+}

@@ -19,6 +19,7 @@ public struct Accessory: RawRepresentable, Hashable, Codable, Equatable, Sendabl
 public struct Act: Codable, Equatable, Sendable {
     public var action: String?
     public var confirm: Confirm?
+    public var enabled: Expr?
     public var icon: String?
     public var label: String
     public var menu: [Act]?
@@ -144,6 +145,10 @@ public enum Block: Codable, Equatable, Sendable {
         case .appBlock(let v): try v.encode(to: encoder)
         }
     }
+}
+
+public struct Bound: Codable, Equatable, Sendable {
+    public var get: String
 }
 
 public struct Button: Codable, Equatable, Sendable {
@@ -969,16 +974,18 @@ public struct Sheet: Codable, Equatable, Sendable {
 public enum Shown: Codable, Equatable, Sendable {
     case string(String)
     case number(Double)
+    case bound(Bound)
     case time(Time)
 
     public init(from decoder: any Decoder) throws {
-        if let v = try? String(from: decoder) { self = .string(v) } else if let v = try? Double(from: decoder) { self = .number(v) } else if let v = try? Time(from: decoder) { self = .time(v) } else { throw DecodingError.dataCorrupted(.init(codingPath: decoder.codingPath, debugDescription: "no Shown")) }
+        if let v = try? String(from: decoder) { self = .string(v) } else if let v = try? Double(from: decoder) { self = .number(v) } else if let v = try? Bound(from: decoder) { self = .bound(v) } else if let v = try? Time(from: decoder) { self = .time(v) } else { throw DecodingError.dataCorrupted(.init(codingPath: decoder.codingPath, debugDescription: "no Shown")) }
     }
 
     public func encode(to encoder: any Encoder) throws {
         switch self {
         case .string(let v): try v.encode(to: encoder)
         case .number(let v): try v.encode(to: encoder)
+        case .bound(let v): try v.encode(to: encoder)
         case .time(let v): try v.encode(to: encoder)
         }
     }

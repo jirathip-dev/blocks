@@ -78,13 +78,14 @@ test("a scripted tap sends the button's action and an answer's ops are drawn", (
   strictEqual(JSON.parse(readFileSync(join(out, "tap", "saved.tree.json"), "utf8")).text, "Saved");
 });
 
-test("scripted typing and taps change local state: a check's message, a disabled submit, a tap's set", () => {
+test("scripted typing and taps change local state: a check's message, a disabled submit and act, a tap's set, a bound value", () => {
   const view = JSON.parse(readFileSync(at("../../fixtures/behave/view.json"), "utf8"));
   const screen = join(out, "behave.json");
   const script = join(out, "behave-steps.json");
   writeFileSync(screen, JSON.stringify(view.screen));
   const steps = [
     { shot: { name: "start" } },
+    { tap: { id: "save" } },
     { type: { id: "join", text: "ada@" } },
     { shot: { name: "typed" } },
     { tap: { id: "join" } },
@@ -94,19 +95,22 @@ test("scripted typing and taps change local state: a check's message, a disabled
     { tap: { id: "more" } },
     { shot: { name: "more" } },
     { tap: { id: "more" } },
+    { tap: { id: "save" } },
   ];
   writeFileSync(script, JSON.stringify(steps));
   const r = run("--screen", screen, "--script", script, "--out", join(out, "behave"));
   strictEqual(r.status, 0, r.stderr);
   const tree = (n) => JSON.parse(readFileSync(join(out, "behave", `${n}.tree.json`), "utf8"));
   const drawn = (n) => Object.fromEntries(tree(n).children.map((c) => [c.id, c.drawn]));
-  deepStrictEqual(drawn("start"), { plan: "native", join: "native", more: "native", plans: "hidden", later: "native", box: "hidden" });
+  deepStrictEqual(drawn("start"), { plan: "native", join: "native", more: "native", plans: "hidden", later: "native", sum: "native", count: "native", box: "hidden" });
+  ok(tree("start").children[6].text.includes("3"), tree("start").children[6].text);
   ok(!tree("start").children[1].text.includes("Enter an email"), "an untouched field shows no message");
   ok(tree("typed").children[1].text.includes("Enter an email address"), tree("typed").children[1].text);
   ok(!tree("fixed").children[1].text.includes("Enter an email"), tree("fixed").children[1].text);
-  deepStrictEqual(drawn("more"), { plan: "native", join: "native", more: "native", plans: "native", later: "native", box: "native" });
+  deepStrictEqual(drawn("more"), { plan: "native", join: "native", more: "native", plans: "native", later: "native", sum: "native", count: "native", box: "native" });
   const report = JSON.parse(readFileSync(join(out, "behave", "report.json"), "utf8"));
-  deepStrictEqual(report.dropped, ["tap join", "tap more"], "the submit is off only while a check fails, the button once its set ran");
+  deepStrictEqual(report.dropped, ["tap save", "tap join", "tap more"], "save is off until more, the submit while a check fails, the button once its set ran");
+  deepStrictEqual(report.sent.filter((x) => x.action === "save").length, 1, "a disabled act posts nothing; once more is on, save posts");
 });
 
 const corner = (png) => {
@@ -125,6 +129,25 @@ test("a harness run paints on the default pair unless its --css says otherwise",
   try {
     strictEqual(corner((await shot({ screen, browser })).pngs.shot), defaultPair.light.tokens["--bg"]);
     strictEqual(corner((await shot({ screen, browser, css: [own] })).pngs.shot), "#102030");
+  } finally {
+    await browser.close();
+  }
+});
+
+test("an island gets its props, its named event is sent as an action, an unnamed one dropped, and with no component it draws its fallback", async () => {
+  const echo = (name, events) => ({ type: "island", id: "e", name, props: { zoom: 3 }, events, fallback: { title: "No map" } });
+  const browser = await webkit.launch();
+  try {
+    const merge = [{ frame: { ops: [{ op: "merge", id: "e", fields: { props: { zoom: 4 } } }] } }, { shot: { name: "shot" } }];
+    const named = await shot({ screen: echo("x-echo", ["echo"]), steps: merge, browser });
+    deepStrictEqual(named.report.sent, [3, 4].map((zoom) => ({ screen: "e", action: "echo", block: "e", values: { zoom } })));
+    deepStrictEqual(named.report.dropped, []);
+    deepStrictEqual([named.trees.shot.drawn, named.trees.shot.text], ["native", '{"zoom":4}']);
+    const unnamed = await shot({ screen: echo("x-echo", []), browser });
+    deepStrictEqual([unnamed.report.sent, unnamed.report.dropped], [[], ["event e echo"]]);
+    const none = await shot({ screen: echo("x-none", ["echo"]), browser });
+    deepStrictEqual([none.report.sent, none.report.dropped], [[], []]);
+    deepStrictEqual([none.trees.shot.drawn, none.trees.shot.text], ["fallback", "No map"]);
   } finally {
     await browser.close();
   }

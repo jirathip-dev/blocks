@@ -33,9 +33,10 @@ extension EnvironmentValues {
 }
 
 internal struct Reported: ViewModifier {
-    private static let gaps: Set = ["composer", "prose", "hero", "media", "nav", "island"]
+    private static let gaps: Set = ["composer", "prose", "hero", "media", "nav"]
     @Environment(\.reportsBlocks) private var reports
     @Environment(\.appBlocks) private var appBlocks
+    @Environment(\.islands) private var islands
     internal let block: Block
     internal var hidden = false
 
@@ -53,7 +54,10 @@ internal struct Reported: ViewModifier {
         if reports {
             let head = block.head
             let core = AppBlocks.isCore(head.type)
-            let native = core ? !Self.gaps.contains(head.type) : appBlocks?.views[head.type] != nil
+            let native =
+                if case .island(let island) = block { islands[island.name] != nil } else {
+                    core ? !Self.gaps.contains(head.type) : appBlocks?.views[head.type] != nil
+                }
             let variant = head.variant.flatMap { $0.isEmpty ? nil : $0 }
             let id = head.id.flatMap { $0.isEmpty ? nil : $0 }
             let tap = head.source.sent(block.submit, values: block.fieldValues)

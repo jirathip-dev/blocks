@@ -3,6 +3,7 @@ import SwiftUI
 
 internal struct RowView: View {
     @Environment(\.look) private var look
+    @Environment(\.behaved) private var behaved
     @State private var open: Bool?
     internal let row: Row
 
@@ -55,7 +56,7 @@ internal struct RowView: View {
             Spacer(minLength: 4)
             if let badge = row.badge { Pill(badge: badge) }
             if let value = row.value {
-                RelativeValue(text: value.text(at:)).ui(13, .regular, look).foregroundStyle(palette.mute)
+                RelativeValue { value.text(at: $0, behaved.view.values) }.ui(13, .regular, look).foregroundStyle(palette.mute)
             }
             if let button = row.button { RowButton(button: button) }
             trailing
@@ -90,10 +91,11 @@ internal struct RelativeValue: View {
 }
 
 extension Shown {
-    internal func text(at now: Date) -> String {
+    internal func text(at now: Date, _ values: [String: String]) -> String {
         switch self {
         case .string(let string): string
         case .number(let number): number.formatted()
+        case .bound(let bound): values[bound.get] ?? ""
         case .time(let time): Relative.text(since: time.since, until: time.until, at: now)
         }
     }

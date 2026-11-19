@@ -15,5 +15,5 @@
 - don't push with a failing test, a sim seed that fails or a perf budget overrun (enforced by: CI test, CI perf in release)
 - don't let a stream's memory grow with its length (enforced by: CI soak)
 - don't push a workflow actionlint rejects, or run CI on a self-hosted runner (enforced by: CI actionlint, none)
-- don't push non-test, non-generated Rust, TS or Swift over ci/cap.toml's line_cap, or edit ci/cap.toml from a lane (enforced by: CI cap, `just cap` and scripts/line-cap.sh; the lane hook)
+- don't push non-test, non-generated Rust, TS or Swift (or bench JS) over ci/cap.toml's line_cap, add it outside the paths the cap counts, or edit ci/cap.toml from a lane (enforced by: CI cap, `just cap` and scripts/line-cap.sh over crates/*/src, web/src, web/shot, swift/Sources, site/src and bench/; the lane hook)
 - don't stress the shared host from a lane: no `yes`, `stress` or busy loops, no N parallel copies; cap the run or reproduce under load in CI (enforced by: hook HOST_STRESS)
