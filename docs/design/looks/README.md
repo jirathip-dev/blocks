@@ -1,55 +1,41 @@
 ## Summary
 
-Decision: a look switcher sits at the right of the nav on every page (four named buttons, its own full-width row on a phone) and restyles the page in place; the four looks are Default (today's tiles, unchanged), Paper (serif, roomy, soft corners, calm), Console (mono, dense, square, dashed, still) and Playful (round, bold solid fills, glass cards, a small overshoot), each a light and a dark scheme that follow the device and pass the contrast gate. A new Styles page replaces the schemes page in the nav: one sample per axis, drawn in all four looks side by side, ending with "Bring your own".
-Screens: home (each look, light and dark), gallery (each look), Styles (Default light, Console dark); each at 1440 and 390.
-Open questions: today the web renderer draws only the motion setting; the other axes never reach the page, and three values don't exist yet. Should the orchestrator file the four crate issues below and block impl on them (recommended), or should impl ship colour and motion first?
+Decision: the four looks redrawn to your notes, every axis pushed to its extreme. Default stays exactly as today. Console is square, mono, dense and borderless (no dashed edges). Paper is serif and airy, with hairline rules. Playful has a clean white base, big round corners, soft grey fills instead of borders, a black pill for the main action and a bright accent per item (purple, blue, green, orange, pink). It has no glass and no violet. Card padding now grows and shrinks with each look's spacing, so nothing touches a card edge. All eight light and dark schemes pass the contrast gate.
+Screens: home in each look, light and dark; the gallery in each look; the Styles page in each look. Each is drawn at 1440 and 390 wide.
+Open questions: the per-item accents (Playful), the white secondary pills (Playful) and the hairline rows (Paper) are site styling for that look, not a token. Keep them in the site's CSS (recommended), or name a new style value so any app can have them?
 
 ## Images
 
 | Image | What it shows |
 |---|---|
-| `home-default-{light,dark}-{1440,390}.png` | Default looks exactly as today. The only change is the switcher in the nav (Default pressed, ink-filled) and *styles* in place of *schemes* |
-| `home-paper-{light,dark}-{1440,390}.png` | Paper: serif type, 1.5× space (24 px padding, 8 px gaps between tiles), 6 px corners, tinted primary action, quiet upper-case section headers. Dark is a new warm pair |
-| `home-console-{light,dark}-{1440,390}.png` | Console: mono type, 0.75× space, square corners, dashed tile edges, outlined primary, buttons as `[label]`, sections as `// label` in lower case, no motion. The accent is steel blue, not green, so it stays clear of the "good" state colour (the gate's colour-distance check) |
-| `home-playful-{light,dark}-{1440,390}.png` | Playful: heavy sans headings, 1.25× space, 18 px corners with pill buttons, solid accent fills, glass cards (translucent, soft shadow), violet pair |
-| `gallery-{look}-light-{1440,390}.png` | All 30 kinds in each look, cropped to the first screens. Every kind follows the look, with no per-kind work: radius, surface, fills and marks reach rows, cards, chips, tags and state marks |
-| `styles-default-light-{1440,390}.png` | The Styles page: an intro, then one section per axis (colour, type, space, radius, motion, surface, fills, marks, sections, labels). Each has one line on what the axis does, then four cells, one per look, each with its value. The look being worn is marked *wearing*; values the crate lacks today are marked *is new*. Motion is drawn as three frames with its numbers, since an image can't move. Four across at 1440, two by two at 390 |
-| `styles-console-dark-{1440,390}.png` | The same page wearing Console on a dark device: the page changes, the four cells stay pinned to their looks |
+| `home-default-{light,dark}-{1440,390}.png` | Default, unchanged: byte-identical to today's staging render |
+| `home-console-{light,dark}-{1440,390}.png` | Console: mono type, space ×0.5 (dense), radius 0 (square), no motion. Borderless: cards are set apart from the page by fill alone, because the edge token equals the card colour. Outlined picked chip, `[button]` labels and `// section` headers in lower case |
+| `home-paper-{light,dark}-{1440,390}.png` | Paper: serif type, space ×2 (airy), 3 px corners, a calm ×1.75 motion. Hairlines: 1 px card edges, and list rows split by thin rules instead of boxed tiles. Quiet upper-case section headers, state marks as words |
+| `home-playful-{light,dark}-{1440,390}.png` | Playful: white page, grey-filled cards with no borders, 24 px corners, so buttons and chips are pills. A black pill for the primary action (white in dark), with white pills for the rest. Each item gets its own bright accent: the four stat numbers and a round avatar dot on each *Look around* row, cycling purple, blue, green, orange, pink |
+| `gallery-{look}-light-{1440,390}.png` | All 33 kinds in each look, top of the page. Every kind follows the look through the tokens and style, with no per-kind work. In Playful each kind's card gets the next avatar colour |
+| `styles-{look}-light-{1440,390}.png` | The Styles page as #142 built it (the page and the switcher are unchanged), wearing each look. The space fix shows here: each sample panel's inner padding is 16 px × space with a 10 px floor, and each row's inset is 12 px × space with an 8 px floor. At Console's ×0.5 no row touches the panel edge, and at Paper's ×2 nothing clips at 390 |
 
-## Decisions
-
-- **Switcher.** It sits in the nav because the nav is on every page: a *look* label, then four buttons, each with a small swatch in that look's accent and corner shape. Pressed shows the current look. Picking one swaps the look's CSS variables with no reload, and is remembered (the shell's existing `b:look` store) so it holds across pages. It never chooses light or dark: the device does. With JS off the switcher is hidden and the page wears Default.
-- **Schemes merge into Styles.** Colour is one axis of ten, so the schemes page's content (the pairs, *Bring your own*, the JSON) becomes the Styles page's first and last sections. The schemes page and its *look* sheet button go away, so there is one place to pick a look, not two.
-- **Looks are the site's own.** They are defined in `site/` beside Paper today. The crate's built-in default pair and its `DEFAULT_STYLE` are unchanged; Default here is that pair.
-- **Values per look** (as in `looks.mjs`):
+## Values (`proposal/looks.json`)
 
 | Axis | Default | Paper | Console | Playful |
 |---|---|---|---|---|
-| type | default | serif (new) | mono | default |
-| space | 1 | 1.5 | 0.75 | 1.25 |
-| radius | 0 | 1 (6 px) | 0 | 3 (18 px) |
-| motion | 1, standard | 1.75, calm (new) | 0 | 1.25, bouncy (new) |
-| surface | solid | solid | dashed | glass |
-| fills | tint* | tint | outline | solid (new) |
+| type | default | serif | mono | default |
+| space | 1 | 2 | 0.5 | 1.25 |
+| radius | 0 | 0.25 (3 px) | 0 | 2 (24 px) |
+| motion · easing | 1 · standard | 1.75 · calm | 0 · standard | 1.25 · bouncy |
+| surface | solid | solid | solid | solid |
+| fills | tint | tint | outline | solid |
 | marks | symbols | text | text | symbols |
 | sections | title | quiet | title | title |
-| labels | as is | section upper | section `// ` lower, button `[ ]` lower | picked `• ` |
+| labels | as is | header upper | header `// ` lower, button `[ ]` lower | as is |
 
-  *Default keeps today's ink-filled primary button and picked chip (#53).
-- **Schemes and the gate.** All eight schemes (Default pair, Paper light from today, and six new: Paper dark, Console light and dark, Playful light and dark) pass a port of `theme::gate` in `looks.mjs`; `node build.mjs` prints the result. The site build must run the real `theme::gate` on all eight, as it does on Paper now.
-- **Motion rule.** Every animation stays on transform and opacity, scaled by `--motion`, and none under reduced motion. Console's 0 means none at all. Playful's overshoot is an easing curve on the same transform, not a new property.
-
-## Crate gaps (separate issues, not site CSS)
-
-The mockups fake these in `axes.css` only so the looks can be judged. Impl must not port that file as it is.
-
-1. **web: the HTML renderer draws every `Style` axis.** Today `theme::css` writes only `--space` and `--motion`, and `blocks.css` never reads `--space`. `--radius` is pinned to 0 px by `DEFAULT_STYLE`, and `style.radius` is ignored. Type, surface, fills, marks, sections and labels never reach the HTML. Swift already reads some of them.
-2. **theme: `TypeDesign` gains `Serif`** (Paper). Today it is `Default | Mono`.
-3. **theme: `Fills` gains `Solid`** (Playful's bold fills). Today it is `Tint | Outline`.
-4. **theme: an easing setting on `Style`** (`standard | calm | bouncy`) for Paper's calm and Playful's bounce. Today the ease is a fixed `DEFAULT_STYLE` value, and `motion` scales only durations.
-
-There is also one site-and-shell change inside this issue: a look is a scheme pair plus a style, but `Live.looks` and the shell's look sheet take one scheme per name today.
+- **All four surfaces are `solid`** (an opaque card with an edge in `--edge`, in both the web and SwiftUI renderers). The look comes from the edge token. Console and Playful set `--edge` to the card colour, so cards are borderless. Paper sets a light hairline colour. This drops Console's `dashed` and Playful's `glass`.
+- **Playful accents.** `--p`, `--c`, `--g`, `--a` and `--r` are purple, blue, green, orange and pink, deep enough that white text reads on each (solid fills need 4.5:1 against the page). `--l` is near-black in light and near-white in dark, so the primary action is a black or white pill.
+- **No new crate values.** Everything uses the Style axes #220–#223 added (`Serif`, `Fills::Solid`, easing).
 
 ## Files
 
-`looks.mjs` holds the four looks (style values, both schemes) and the gate port. `build.mjs` takes a real site build and writes `home-*`, `gallery-*` and `styles-*` pages: it wears each look, puts the switcher in the nav, renames schemes to styles, and builds `looks.css` from `looks.mjs` and `axes.css`. `render.sh` builds the site with `cargo run -p blocks-site`, runs the builder and renders the PNGs with Playwright's cached headless Chromium (reduced motion, light or dark by the device setting). `blocks.css`, `site.css` and `media/` are copied from that build so the pages open on their own. These files are mockups only.
+- `proposal/looks.json` and `proposal/site.css` are the proposed `site/looks.json` and `site/site.css`. Impl copies them over (site.css: +25 / −6 lines).
+- `site.css` changes. The space fix: `--sp` gets a 10 px floor, and a new `--in` (12 px × space, 8 px floor) replaces the five hard-coded `12px × space` insets. Both resolve to today's values at space 1, so Default is unchanged. Then come the Playful and Paper rules from the open question, each scoped to `html[data-look=…]`.
+- `render.sh` copies HEAD to a temp folder and swaps in the two proposal files. It builds the real site there; that build runs the real `theme::gate` on all eight schemes and stops on a miss. It then writes `home-`, `gallery-` and `styles-<look>.html`, each pre-set to its look, and renders the PNGs with Playwright's headless Chromium (reduced motion, light or dark by the device setting).
+- `blocks.css`, `blocks.js`, `site.css` and `media/` come from that build, so the pages open on their own.
