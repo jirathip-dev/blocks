@@ -1,0 +1,5 @@
+Decided: the showcase site test expects 40 pages, the timeline page added to staging's 39
+Because: web/test/pages/showcase.test.ts:51
+Rejected: count pages from the site kind list instead — a refactor the fix does not need
+Check: cargo run -p blocks-site builds 40 pages and test/pages/showcase.test.ts passes 6 of 6 against it
+Owner: A test that counts the showcase pages now counts the planner page too.
