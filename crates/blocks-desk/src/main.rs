@@ -8,8 +8,8 @@ use blocks_desktop::{Kit, Look};
 use serde::de::DeserializeOwned;
 use serde::Serialize;
 
-const USAGE: &str = "usage: blocks-desk --screen <file> [--size 390x844] [--scheme light|dark] [--script <steps.json>] [--expect <tree.json>] [--ids <ids.json>] [--check] --out <dir>";
-const KEYS: [&str; 7] = ["screen", "size", "scheme", "script", "expect", "ids", "out"];
+const USAGE: &str = "usage: blocks-desk --screen <file> [--size 390x844] [--scheme light|dark] [--script <steps.json>] [--expect <tree.json>] [--ids <ids.json>] [--font <ttf>] [--check] --out <dir>";
+const KEYS: [&str; 8] = ["screen", "size", "scheme", "script", "expect", "ids", "font", "out"];
 
 struct Failed(String);
 
@@ -78,16 +78,19 @@ fn run(mut args: impl Iterator<Item = String>) -> Result<Vec<String>, String> {
         tree: opt("expect").map(read).transpose()?,
         ids: opt("ids").map(read).transpose()?,
     };
-    let mut run = Desk::new(read(screen)?)
-        .size(width, height)
-        .kit(Kit::new(look))
-        .run(&steps);
+    let mut desk = Desk::new(read(screen)?).size(width, height).kit(Kit::new(look));
+    if let Some(f) = opt("font") {
+        desk = desk.font(std::fs::read(f).map_err(|e| format!("{f}: {e}"))?);
+    }
+    let mut run = desk.run(&steps);
     if check {
         run.check(&want);
     }
     let dir = Path::new(out);
     std::fs::create_dir_all(dir).map_err(|e| format!("{out}: {e}"))?;
     for s in &run.shots {
+        let png = dir.join(format!("{}.png", s.name));
+        std::fs::write(&png, &s.png).map_err(|e| format!("{}: {e}", png.display()))?;
         write(dir, &format!("{}.tree.json", s.name), &s.tree)?;
     }
     write(dir, "report.json", &run.report)?;

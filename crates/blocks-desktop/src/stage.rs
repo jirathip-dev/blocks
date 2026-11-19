@@ -64,6 +64,7 @@ impl Stage {
     /// One pass: draws the screen into `ui` and gives back what the user did.
     pub fn show(&mut self, ui: &mut Ui, kit: &Kit, _unix_now: f64) -> Vec<Event> {
         let Some(h) = &self.held else { return vec![] };
+        ui.painter().rect_filled(ui.max_rect(), 0.0, kit.look.bg(ui));
         let mut rec = Rec::default();
         let mut cx = Cx::new(&kit.look, &mut rec, std::slice::from_ref(&h.plan));
         cx.block(ui, &h.block);
