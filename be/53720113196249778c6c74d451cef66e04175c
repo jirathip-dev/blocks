@@ -1,0 +1,12 @@
+Decided: TS and Swift source files cap at 500 lines and 80 per function; their tests at 1000 with no function cap, as Rust tests
+Because: "unless today's files show a tighter one fits with no file over it"
+Decided: today's three TS functions over 80 are baselined at their length with drover arch-check --write-baseline, not split
+Because: .drover/arch-baseline.txt:2
+Decided: a scripted check over only the [[size]] rules proves the caps, run by just arch in CI
+Because: scripts/arch-size.test.sh:8
+Decided: Swift rules are added though this drover build skips .swift files; no second checker
+Because: "do not hand-roll a second checker"
+Rejected: a function cap of 250 to clear shell.ts draw — it would let every other function grow threefold
+Rejected: asking to split draw, composer and stream — the baseline keeps them at today's length with no split
+Check: sh scripts/arch-size.test.sh exits 0 at head and 1 with base's .drover/arch.toml
+Owner: TypeScript and Swift files now have size limits in CI; three long existing functions are allowed at today's length but cannot grow.
