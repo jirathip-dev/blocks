@@ -1,0 +1,6 @@
+Decided: no code change for the perf FAIL; the HTML-write budget miss was CI runner noise.
+Because: crates/blocks/tests/perf.rs:89
+Check: locally in release the 500 KB HTML write takes 4687 µs on staging and 4724 µs at this head, under the 10 ms budget.
+Rejected: raising the perf budget — the head is within 1% of staging, so nothing regressed.
+Decided: merged origin/staging (the codegen split into a folder); clean, and the codegen rerun leaves no diff.
+Owner: The stepper branch is up to date again; the red speed check was a slow CI machine, not this change.
