@@ -12,6 +12,7 @@ import { choice } from "./choice.ts";
 import { composer } from "./composer.ts";
 import { config } from "./config.ts";
 import { diagram } from "./diagram.ts";
+import { diff } from "./diff.ts";
 import { editor } from "./editor.ts";
 import { form } from "./form.ts";
 import { hero } from "./hero.ts";
@@ -193,7 +194,7 @@ export const R: { [K in Kind]: (b: Of<K>, c: Ctx) => HTMLElement | null } = {
   text,
   images,
   web,
-  diff: gap(42),
+  diff,
   editor,
   scene,
   diagram,
