@@ -1,0 +1,4 @@
+Decided: merged origin/staging (#40 config); gaps drops both config and web, render.test keeps both test sets, web/dist rebuilt
+Because: web/test/render.test.ts:17
+Rejected: none
+Owner: Brought the embedded web page work up to date with the latest config changes; nothing new for users.
