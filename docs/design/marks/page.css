@@ -13,8 +13,6 @@ h2 small{font-weight:400;font-size:var(--fs-meta)}
 .b-tabs.pin{position:fixed;left:0;right:0;bottom:0;padding:var(--s2)}
 @media (min-width:600px){.b-tabs.pin{display:none}}
 .cases>.tst,main>.tst:not(.inl){margin-bottom:var(--s2)}
-.legend{display:flex;flex-wrap:wrap;gap:var(--s1) var(--s4);color:var(--mute);font-size:var(--fs-meta);margin:var(--s1) 0}
-.legend i{display:inline-block;width:10px;height:10px;margin-right:var(--s1);vertical-align:-1px}
 .heard{color:var(--fg);font-size:var(--fs-meta);margin:var(--s1) 0 var(--s2);padding-left:var(--s2);border-left:2px solid var(--line)}
 .heard b{color:var(--mute);font-weight:400}
 .two{display:grid;grid-template-columns:minmax(0,1fr);gap:0 var(--s4)}
