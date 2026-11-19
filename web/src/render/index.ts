@@ -121,7 +121,7 @@ export function toggle(e: HTMLElement, id: unknown, c: Ctx, folds = false) {
 function fallback(b: Blk, c: Ctx): HTMLElement {
   const box = el("div");
   box.dataset.fallback = "";
-  const f = obj(b.fallback);
+  const f = obj(b.fallback ?? { title: b.type });
   if (f.title != null) box.append(row({ type: "row", title: f.title, subtitle: f.subtitle, tap: f.tap }, c));
   box.append(...kids(b.blocks, c));
   return box;
