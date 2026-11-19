@@ -69,3 +69,30 @@ extension Source {
             confirm: Confirmation(act.confirm, label: act.label, destructive: act.tone?.rawValue == "bad"))
     }
 }
+
+internal struct RelativeText: View {
+    internal let template: String
+    internal let until: Date?
+
+    internal var body: some View {
+        TimelineView(.everyMinute) { context in
+            Text(Relative.filled(template, until: until, at: context.date))
+        }
+    }
+}
+
+internal struct Pill: View {
+    @Environment(\.look) private var look
+    internal let badge: Blocks.Label
+
+    internal var body: some View {
+        let tint = look.palette.tone(badge.tone?.rawValue) ?? look.palette.mute
+        Text(badge.text).ui(11, .bold, look).foregroundStyle(tint)
+            .padding(.horizontal, 8).padding(.vertical, 3)
+            .background(tint.opacity(0.15), in: look.pill)
+    }
+}
+
+extension String {
+    internal var date: Date? { try? Date(self, strategy: .iso8601) }
+}

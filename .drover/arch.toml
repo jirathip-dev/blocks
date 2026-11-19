@@ -1,4 +1,11 @@
-frozen = ["ci/cap.toml", "docs/schema.md", "web/src/blocks.css"]
+frozen = [
+    "ci/cap.toml",
+    "docs/schema.md",
+    "swift/Sources/BlocksUI/Blocks.swift",
+    "swift/Sources/BlocksUI/BlockCards.swift",
+    "swift/Sources/BlocksUI/BlockLeaves.swift",
+    "web/src/blocks.css",
+]
 generated = [
     "schema/blocks.schema.json",
     "schema/sample.json",
@@ -50,6 +57,10 @@ glob = "*.md"
 [[collect]]
 dir = "docs/schema"
 glob = "*.md"
+
+[[collect]]
+dir = "swift/Sources/BlocksUI/Kind"
+glob = "*.swift"
 
 [[collect]]
 dir = "web/src/css"
