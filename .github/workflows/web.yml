@@ -22,5 +22,11 @@ jobs:
         run: npm --prefix web ci --no-audit --no-fund && npx --prefix web playwright install --with-deps webkit
       - name: "typecheck (tsc --strict), lint.mjs on web/src, and node --test: fixtures/protocol, stream.ts and patch.ts; blocks-shot --check on every fixtures/blocks file, the 200-row first paint and frame budget in WebKit"
         run: just web
-      - name: "lint fixtures (each web/lint-fixtures/<name>.ts or .css fails lint.mjs; clean.ts passes)"
+      - name: "lint fixtures (each web/lint-fixtures/<name>.ts or .css fails lint.mjs; clean.ts and clean.css pass)"
         run: scripts/lint-fixtures.sh ts
+      - name: "the token baseline only shrinks: ci/tokens/baseline.txt gains no line against the PR's base"
+        if: github.event_name == 'pull_request'
+        run: |
+          git fetch --no-tags --depth=1 origin "$GITHUB_BASE_REF"
+          git cat-file -e FETCH_HEAD:ci/tokens/baseline.txt 2>/dev/null || exit 0
+          git diff --numstat FETCH_HEAD -- ci/tokens/baseline.txt | awk '$1 > 0 { print "::error::ci/tokens/baseline.txt gains " $1 " lines: use a scheme or style token instead"; bad = 1 } END { exit bad }'

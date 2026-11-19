@@ -18,7 +18,7 @@ macro_rules! pick {
 
 pick!(
     /// The font design every label is set in.
-    pub TypeDesign { Default, Mono }
+    pub TypeDesign { Default, Mono, Serif }
 );
 pick!(
     /// How a card's surface is drawn.
@@ -26,7 +26,7 @@ pick!(
 );
 pick!(
     /// How a tinted part is filled.
-    pub Fills { Tint, Outline }
+    pub Fills { Tint, Outline, Solid }
 );
 pick!(
     /// Whether a mark is a symbol or its text.
@@ -36,6 +36,23 @@ pick!(
     /// How a section's header shows.
     pub Sections { Title, Quiet }
 );
+pick!(
+    /// The curve every move and fade runs on.
+    pub Easing { Standard, Calm, Bouncy }
+);
+
+impl Easing {
+    /// The CSS timing function this easing draws with.
+    #[must_use]
+    pub const fn curve(self) -> &'static str {
+        match self {
+            Self::Standard => "cubic-bezier(0.2, 0, 0, 1)",
+            Self::Calm => "cubic-bezier(0.4, 0, 0.2, 1)",
+            Self::Bouncy => "cubic-bezier(0.34, 1.3, 0.64, 1)",
+        }
+    }
+}
+
 pick!(
     /// The case a label is set in.
     pub LabelCase { AsIs, Lower, Upper }
@@ -140,7 +157,7 @@ pub struct StyleLabel {
     pub case: LabelCase,
 }
 
-/// An app's style.json: the type, spacing, radius, motion and surface tokens a renderer reads.
+/// An app's style.json: the type, spacing, radius, motion, easing and surface tokens a renderer reads.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
 #[serde(deny_unknown_fields)]
@@ -153,6 +170,8 @@ pub struct Style {
     pub radius: Scale,
     #[serde(default)]
     pub motion: Scale,
+    #[serde(default)]
+    pub easing: Easing,
     pub surface: Surface,
     pub fills: Fills,
     pub marks: Marks,

@@ -1,0 +1,29 @@
+{
+  "type": "sheet",
+  "id": "add",
+  "title": "Add fleet",
+  "blocks": [
+    {
+      "type": "form",
+      "id": "f",
+      "action": "add",
+      "fields": [
+        {
+          "type": "text",
+          "name": "repo",
+          "label": "Repo"
+        }
+      ]
+    },
+    {
+      "type": "button",
+      "id": "cancel-add",
+      "label": "Cancel",
+      "action": "cancel"
+    }
+  ],
+  "done": {
+    "label": "Add",
+    "action": "add"
+  }
+}

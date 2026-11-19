@@ -1,5 +1,5 @@
 [graph]
-targets = ["x86_64-unknown-linux-gnu", "aarch64-unknown-linux-gnu", "aarch64-apple-darwin"]
+targets = ["x86_64-unknown-linux-gnu", "aarch64-unknown-linux-gnu", "aarch64-apple-darwin", "x86_64-pc-windows-msvc"]
 all-features = true
 
 [advisories]
@@ -10,6 +10,14 @@ yanked = "deny"
 version = 2
 allow = ["MIT", "Apache-2.0", "Unicode-3.0"]
 confidence-threshold = 0.9
+
+[[licenses.exceptions]]
+crate = "foldhash"
+allow = ["Zlib"]
+
+[[licenses.exceptions]]
+crate = "epaint_default_fonts"
+allow = ["OFL-1.1", "Ubuntu-font-1.0"]
 
 [licenses.private]
 ignore = true
@@ -22,6 +30,9 @@ deny = [
     { crate = "tokio", reason = "transports live in drover and cooee, never here" },
     { crate = "hyper", reason = "transports live in drover and cooee, never here" },
     { crate = "reqwest", reason = "transports live in drover and cooee, never here" },
+    { crate = "eframe", reason = "the window is the app's, never this workspace's" },
+    { crate = "winit", reason = "the window is the app's, never this workspace's" },
+    { crate = "wgpu", reason = "the harness draws on the CPU" },
 ]
 
 [sources]

@@ -42,14 +42,18 @@ scheme. The values are the approved design's, in `docs/design/neutral-default/` 
 its tiles settle in one by one (`--settle: 160ms`, `--rise: 8px`, `--stagger: 40ms`, `--build: 200ms`, so it is
 over by 360 ms, once, move and fade only, still under reduced motion) and a block that arrives later fading in
 where it lands with no rise while the blocks below step down at once (`--enter: 160ms`), all on
-`--ease: cubic-bezier(0.2, 0, 0, 1)`.
+`--ease: cubic-bezier(0.2, 0, 0, 1)`. style.json's optional `easing` picks that curve: `standard` (the default, the
+curve above), `calm` (`cubic-bezier(0.4, 0, 0.2, 1)`) or `bouncy` (`cubic-bezier(0.34, 1.3, 0.64, 1)`, at most 3%
+past its end, so a rise of 8px overshoots by under a pixel); format 1 and 2 files without it read as `standard`.
 
 Both renderers draw them. HTML: `theme::css` writes the style values on `:root`, the shell and `blocks-shot` write them
 under `:where(:root)` so any app rule wins, and `blocks.css` reads only the variables; the shell plays the build-up once
 per screen (not on an update, a tab switch back, a resync or a site page's takeover), and `--motion: 0` or reduced
 motion turns it off. SwiftUI: `Look.tiles` (default `Tiles.default`, parsed from `blocksDefaultStyle`) draws every
 surface as a tile on the dot grid; `tiles: nil` gives the app's own `Style` back, and a still look, a `motion` of 0 or
-reduced motion turns the build-up off. `fixtures/look/kinds.json` is the kinds page both harnesses draw to one tree.
+reduced motion turns the build-up off. A style.json's `type` is `default`, `mono` or `serif`; `serif` sets labels in
+the system serif (HTML: `theme::css` writes a `ui-serif` font stack on `:root`, no web font; SwiftUI: the `.serif`
+design). `fixtures/look/kinds.json` is the kinds page both harnesses draw to one tree.
 
 ## Generated
 

@@ -1,6 +1,9 @@
-use serde_json::{Map, Value};
+use serde_json::Value;
 
 use super::write::{get, list, W};
+
+mod fallback;
+use fallback::fallback_as;
 
 macro_rules! kinds {
     ($($name:literal => $m:ident,)*) => {
@@ -38,12 +41,16 @@ kinds! {
     "media" => media,
     "nav" => nav,
     "diagram" => diagram,
+    "chart" => chart,
+    "diff" => diff,
     "editor" => editor,
     "lines" => lines,
     "scene" => scene,
     "island" => island,
     "table" => table,
     "steps" => steps,
+    "toast" => toast,
+    "timeline" => timeline,
 }
 
 pub(crate) fn kids(w: &mut W<'_>, bs: &[Value]) {
@@ -60,21 +67,4 @@ fn holder(w: &mut W<'_>, b: &Value, tag: &str, cls: &str, under: &str) {
 
 pub(crate) fn fallback(w: &mut W<'_>, b: &Value) {
     fallback_as(w, b, "div", &[]);
-}
-
-fn fallback_as(w: &mut W<'_>, b: &Value, tag: &str, attrs: &[(&str, &str)]) {
-    let mut all = vec![("data-fallback", "")];
-    all.extend_from_slice(attrs);
-    w.open_block(tag, "", b, &all);
-    let f = b.get("fallback").filter(|f| !f.is_null());
-    let title = f.map_or_else(|| b.get("type"), |f| f.get("title"));
-    if let Some(t) = title.filter(|t| !t.is_null()) {
-        let mut r = Map::from_iter([("type".into(), Value::from("row")), ("title".into(), t.clone())]);
-        for k in ["subtitle", "tap"] {
-            r.extend(f.and_then(|f| f.get(k)).map(|v| (k.into(), v.clone())));
-        }
-        row::row_of(w, &Value::Object(r), false);
-    }
-    kids(w, list(b, "blocks"));
-    w.close(tag);
 }

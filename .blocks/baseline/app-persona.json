@@ -1,0 +1,13 @@
+{
+  "guard": 2,
+  "known": [
+    {
+      "rule": "lint/fault",
+      "at": ""
+    },
+    {
+      "rule": "render/no-size",
+      "at": "screen#persona/screen#screen"
+    }
+  ]
+}

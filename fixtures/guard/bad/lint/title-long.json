@@ -1,0 +1,11 @@
+{
+  "type": "screen",
+  "id": "s",
+  "title": "Every lane that waits on the owner, the reviewer or the CI runner",
+  "blocks": [
+    {
+      "type": "text",
+      "markdown": "Nothing queued."
+    }
+  ]
+}

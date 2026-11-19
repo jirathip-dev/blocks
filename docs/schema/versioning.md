@@ -14,3 +14,7 @@
 - An additive change (a new kind, op, field or word) keeps the version; every reader above must tolerate it.
 - A breaking change bumps `SCHEMA_VERSION` and states the migration in the PR.
 - Every change reruns `just gen` in the same PR, so the schema, TS and Swift never lag the Rust types.
+
+| Version | Change | One version behind gets |
+|---|---|---|
+| 2 | an `Answer`'s `toast` is a `toast` object (`title`, `tone`, `undo`), not a string | its `title` as the string, "Done" when empty; `MediaType::write` does it |

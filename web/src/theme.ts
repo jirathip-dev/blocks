@@ -1,9 +1,9 @@
-import { css } from "./core/look.ts";
+import { css, type Pair, type Scale } from "./core/look.ts";
 import type { Scheme } from "./gen/schemes.ts";
 import type { Figure } from "./gen/types.ts";
 
 export type ThemeJson = { label: string; scheme: { dark: string; light: string }; sprites: boolean; moments: boolean; words: Record<string, string> };
-export type Theme = { figure(f: Figure): Node | null; word(key: string, plain: string): Node; css(s: Scheme): string };
+export type Theme = { figure(f: Figure): Node | null; word(key: string, plain: string): Node; css(look: Scheme | Pair, style?: Scale): string };
 
 const NS = "http://www.w3.org/2000/svg";
 const GLYPH: Record<string, string> = { working: "●", needs: "!", fail: "✗", done: "✓", merged: "✓", idle: "○" };

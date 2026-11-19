@@ -1,0 +1,57 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>chart: every state</title>
+<link rel="stylesheet" href="../../../web/src/blocks.css"><link rel="stylesheet" href="page.css"><link rel="stylesheet" href="chart.css">
+<script src="chart.js"></script></head>
+<body><main id="page">
+<div class="top"><b>chart</b><span class="m">every state, on the default look</span></div>
+<div class="half" data-c="tap" data-n="1 · Tap a month: the band, the bold label and the legend show it; it sends the block's action with that month. <code>sales.month {x: &quot;2024-03&quot;}</code>"></div>
+<div class="half" data-c="hover" data-n="2 · Hover on the web (no tap): a 1px crosshair, and the legend reads that month. Leaving puts it back on the selected or last month."></div>
+<div class="half" data-c="ce" data-n="3a · Months, no era: Gregorian, English."></div>
+<div class="half" data-c="th" data-n="3b · era be on a Thai screen: Thai month names, Buddhist-Era year (+543). An English screen with era be reads &quot;Mar 67&quot;."></div>
+<div data-c="many" data-n="4 · Many: 24 months. Labels thin to at most 12 on a wide card and 6 on a narrow one; every bar is still drawn and tappable."></div>
+<div class="half" data-c="long" data-n="5 · Long names: the legend wraps under the title; a long donut row or x label ends in …; nothing is cut in the table."></div>
+<div class="half" data-c="donutsel" data-n="6 · Tap a donut slice or row: it thickens, its row gets the ink edge, the middle reads it. More than 5 slices: the smallest fold into Other (n)."></div>
+<div class="half" data-c="empty" data-n="7 · Empty: no values. The axes stay, the plot says the block's empty text, nothing is tappable."></div>
+<div class="half" data-c="table" data-n="8 · Table: every chart carries its numbers as a table, closed by default. It is what a screen reader and the static site's print read."></div>
+<div class="card"><div class="cht">Value formats</div><div class="tw" style="margin-top:8px"><table class="fmt" style="width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums">
+<tr><th style="text-align:left">format</th><th>12,345,678</th><th>845,000</th><th>31.42</th><th>3184</th></tr>
+<tr><td>thb</td><td>฿12,345,678</td><td>฿845,000</td><td>฿31</td><td>฿3,184</td></tr>
+<tr><td>thb_m</td><td>฿12.3M</td><td>฿845K</td><td>฿31</td><td>฿3K</td></tr>
+<tr><td>percent</td><td>—</td><td>—</td><td>31.4%</td><td>—</td></tr>
+<tr><td>count</td><td>12,345,678</td><td>845,000</td><td>31</td><td>3,184</td></tr></table></div>
+<p class="note">9 · One format per chart, for its axis, legend, table and labels. Combo series share it, so a combo has one axis.</p></div>
+<div class="card"><div class="row"><span class="rm"><span class="rt">Revenue and target</span><span class="rs">Chart: ฿14.3M revenue over 12 months · update the app to see it</span></span></div>
+<p class="note">10 · Fallback: a client that does not know <code>chart</code> draws the block's fallback row (title and its summary line), like any new kind.</p></div>
+</main>
+<script>
+const fy = ["2023-10","2023-11","2023-12","2024-01","2024-02","2024-03","2024-04","2024-05","2024-06","2024-07","2024-08","2024-09"];
+const six = fy.slice(0, 6), M = a => a.map(v => v * 1e5);
+const rev = [9.2,10.4,14.8,11.1,10.6,12.9,11.8,12.2,11.4,12.6,13.1,11.9];
+const C = {
+  tap: { chart: "combo", title: "Revenue and target", x: fy, era: "be", format: "thb_m", selected: "2024-03",
+    series: [{ name: "Revenue", values: M(rev) }, { name: "Target", as: "line", tone: "warn", values: M([10,10,13,11,11,12,12,12,12,12.5,12.5,12.5]) }] },
+  hover: { chart: "line", title: "Gross margin", x: fy, era: "be", format: "percent", selected: "2023-12", hover: 2, nosel: true,
+    series: [{ name: "FY 2567", values: [28.1,29.4,33.0,30.2,30.8,31.9,31.1,32.4,31.6,32.8,33.5,31.4] },
+             { name: "FY 2566", tone: "mute", dash: true, values: [26.0,27.2,30.1,28.4,28.0,29.6,29.0,29.9,29.1,30.2,30.8,29.7] }] },
+  ce: { chart: "bar", title: "Orders", x: six, format: "count", series: [{ name: "Orders", values: [214,236,341,262,248,291] }] },
+  th: { chart: "bar", title: "คำสั่งซื้อ", lang: "th", x: six, era: "be", format: "count", series: [{ name: "คำสั่งซื้อ", values: [214,236,341,262,248,291] }] },
+  many: { chart: "stacked", title: "Revenue by channel, two years", x: [...fy.map(m => m.replace(/^(\d{4})/, y => y - 1)), ...fy], era: "be", format: "thb_m",
+    series: [{ name: "Store", values: M([...rev, ...rev].map((v, i) => v * (i < 12 ? 0.48 : 0.52))) }, { name: "Online", values: M([...rev, ...rev].map((v, i) => v * (i < 12 ? 0.26 : 0.32))) }] },
+  long: { chart: "stacked", title: "Receivables by customer group, overdue and on time, this quarter", x: six, era: "be", format: "thb_m",
+    series: [{ name: "Government agencies and state enterprises", values: M([3,3.4,4,3.2,3.6,3.9]) }, { name: "Private companies with credit terms", values: M([2,2.1,2.6,2.3,2.4,2.2]) }, { name: "Overdue over 60 days", tone: "bad", values: M([0.4,0.6,0.5,0.8,0.7,0.9]) }] },
+  donutsel: { chart: "donut", title: "Spend by category", format: "thb_m", selected: "Stock",
+    x: ["Payroll","Stock","Rent","Marketing","Delivery","Software","Utilities"], series: [{ name: "Spend", values: [3820000,2950000,1200000,640000,410000,180000,150000] }] },
+  empty: { chart: "bar", title: "Refunds", x: six, era: "be", format: "thb", empty: "No refunds this half", series: [{ name: "Refunds", values: six.map(() => null) }] },
+  table: { chart: "line", title: "Cash on hand", x: six, era: "be", format: "thb_m", tableOpen: true, series: [{ name: "Cash", values: M([42,39,51,47,44,48]) }] },
+};
+document.querySelectorAll("[data-c]").forEach(t => {
+  const b = Object.assign({ type: "chart", id: t.dataset.c }, C[t.dataset.c]);
+  if (b.nosel) { b.selected = b.x[b.hover]; }
+  const c = chart(b);
+  if (b.nosel) { c.querySelectorAll(".chb").forEach(e => e.remove()); c.querySelector(".chx2 .sel").className = c.querySelector(".chx2 .sel").className.replace("sel", ""); }
+  const n = document.createElement("p"); n.className = "note"; n.innerHTML = t.dataset.n; c.append(n);
+  c.className += " " + t.className; t.replaceWith(c);
+});
+document.querySelectorAll(".fmt th,.fmt td").forEach(e => { e.style.padding = "2px 8px 2px 0"; e.style.borderBottom = "1px solid var(--line)"; if (e.cellIndex) e.style.textAlign = "right"; if (e.tagName === "TH") { e.style.color = "var(--mute)"; e.style.fontWeight = 400; } });
+document.body.dataset.h = Math.ceil(document.documentElement.scrollHeight);
+</script></body></html>

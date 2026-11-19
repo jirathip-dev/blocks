@@ -1,6 +1,6 @@
 use serde_json::Value;
 
-use super::fallback_as;
+use super::fallback::fallback_as;
 use crate::site::write::{get, W};
 
 pub(super) fn draw(w: &mut W<'_>, b: &Value) {

@@ -2,7 +2,7 @@ use std::sync::OnceLock;
 
 use serde::{Deserialize, Serialize};
 
-use super::Style;
+use super::{Easing, Fills, LabelCase, LabelRole, Marks, Sections, Style, Surface, TypeDesign};
 
 /// A colour as `#rrggbb` or `#rrggbbaa`: nothing else parses.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -198,7 +198,7 @@ pub const DEFAULT_STYLE: [(&str, &str); 11] = [
     ("--stagger", "40ms"),
     ("--build", "200ms"),
     ("--enter", "160ms"),
-    ("--ease", "cubic-bezier(0.2, 0, 0, 1)"),
+    ("--ease", Easing::Standard.curve()),
 ];
 
 fn neutral(label: &str, mode: Mode, hex: &[&str; 19]) -> Scheme {
@@ -249,17 +249,81 @@ fn vars(s: &Scheme) -> String {
         .collect()
 }
 
-/// Every token as a CSS variable: the tile style and the light scheme on `:root`, the dark one under `prefers-color-scheme: dark`.
+/// Every token as a CSS variable: the tile style and the light scheme on `:root`, the dark one under `prefers-color-scheme: dark`, then the style's axes.
 pub fn css(schemes: &PerMode<Scheme>, style: &Style) -> String {
+    let mut tiles: std::collections::BTreeMap<&str, String> =
+        DEFAULT_STYLE.iter().map(|(k, v)| (*k, (*v).to_owned())).collect();
+    tiles.insert("--radius", format!("{}px", f64::from(style.radius) * 12.0));
+    tiles.insert("--ease", style.easing.curve().to_owned());
     format!(
-        ":root{{color-scheme:light dark;--space:{};--motion:{};{}{}}}@media (prefers-color-scheme: dark){{:root{{{}}}}}",
+        ":root{{color-scheme:light dark;--space:{};--motion:{};{}{}}}@media (prefers-color-scheme: dark){{:root{{{}}}}}{}",
         f64::from(style.space),
         f64::from(style.motion),
-        std::collections::BTreeMap::from(DEFAULT_STYLE)
-            .iter()
-            .map(|(k, v)| format!("{k}:{v};"))
-            .collect::<String>(),
+        tiles.iter().map(|(k, v)| format!("{k}:{v};")).collect::<String>(),
         vars(&schemes.light),
-        vars(&schemes.dark)
+        vars(&schemes.dark),
+        axes(style)
     )
+}
+
+const TILES: &str = ":is(.card,.st,.list>.row,.list>.rw,.form:not(.say),.choice,.secret,.run,.tbl)";
+
+fn axes(style: &Style) -> String {
+    let mut out = String::new();
+    match style.type_ {
+        TypeDesign::Default => {
+            out.push_str(":root{font-family:system-ui,-apple-system,\"Segoe UI\",Roboto,sans-serif}");
+        }
+        TypeDesign::Mono => {}
+        TypeDesign::Serif => out.push_str(":root{font-family:ui-serif,Georgia,Cambria,serif}"),
+    }
+    match style.surface {
+        Surface::Glass => {}
+        Surface::Dashed => out.push_str(&format!("{TILES}{{border-style:dashed}}")),
+        Surface::Solid => out.push_str(&format!("{TILES}{{border-width:2px}}")),
+    }
+    if style.fills == Fills::Outline {
+        out.push_str(
+            ".chips button.on,.spi.done .spm{background:none;color:var(--l);box-shadow:inset 0 0 0 1px var(--l)}",
+        );
+    }
+    if style.marks == Marks::Text {
+        out.push_str(
+            ".spi.done .spm{width:auto;font-size:0}.spi.done .spm::after{content:\"done\";font-size:var(--fs-meta)}",
+        );
+    }
+    if style.sections == Sections::Quiet {
+        out.push_str(".sh{font-size:var(--fs-meta);font-weight:400}");
+    }
+    for (role, label) in &style.labels {
+        let Some(at) = drawn(*role) else {
+            continue;
+        };
+        let case = match label.case {
+            LabelCase::AsIs => "none",
+            LabelCase::Lower => "lowercase",
+            LabelCase::Upper => "uppercase",
+        };
+        out.push_str(&format!("{at}{{text-transform:{case}}}"));
+        for (side, affix) in [("before", &label.prefix), ("after", &label.suffix)] {
+            let text = String::from(affix.clone());
+            if !text.is_empty() {
+                let text = text.replace('\\', "\\\\").replace('"', "\\\"");
+                out.push_str(&format!("{at}::{side}{{content:\"{text}\"}}"));
+            }
+        }
+    }
+    out
+}
+
+fn drawn(role: LabelRole) -> Option<&'static str> {
+    match role {
+        LabelRole::Header => Some(".sec>.sh"),
+        LabelRole::Section => Some(":is(.sp,.pg,.scn)>.sh"),
+        LabelRole::Title => Some(":is(.ch>b,.rt)"),
+        LabelRole::Button => Some(".b-button>span"),
+        LabelRole::Chip => Some(".chips button>span"),
+        LabelRole::Picked => Some(".dgn.picked .dgl"),
+        LabelRole::Kind | LabelRole::Group | LabelRole::Back | LabelRole::Said => None,
+    }
 }

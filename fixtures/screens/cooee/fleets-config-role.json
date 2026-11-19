@@ -82,6 +82,7 @@
    "blocks": [
     {
      "type": "list",
+     "id": "accounts",
      "rows": [
       {
        "type": "row",

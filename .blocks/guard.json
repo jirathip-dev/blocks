@@ -1,0 +1,5 @@
+{
+  "screens": ["fixtures/screens/cooee", "fixtures/screens/drover", "fixtures/guard/ok"],
+  "harness": [["node", "--no-warnings", "web/shot/cli.ts"]],
+  "examples": ["lanes"]
+}
