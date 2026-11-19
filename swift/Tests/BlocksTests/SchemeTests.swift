@@ -3,13 +3,6 @@ import BlocksUI
 import XCTest
 
 final class SchemeTests: XCTestCase {
-    func testEveryBuiltInSchemeHasEveryToken() {
-        XCTAssertEqual(blocksSchemes.count, 12)
-        for (name, scheme) in blocksSchemes {
-            XCTAssertEqual(scheme.tokens.count, 19, name)
-        }
-    }
-
     func testTheDefaultPairIsBuiltInAndThePaletteDefaultsToIt() {
         XCTAssertEqual(blocksDefaultLight.mode, .light)
         XCTAssertEqual(blocksDefaultDark.mode, .dark)

@@ -9,10 +9,6 @@ gen: web-install
     cargo run -q --locked -p blocks --features schema --bin blocks-codegen
     npm --prefix web run build
 
-# `just swag <sha>`: vendor swag's packs/ at that commit into theme/packs/, with SOURCE and SHA256SUMS.
-swag sha:
-    scripts/swag.sh {{sha}}
-
 fmt:
     cargo fmt --check
 

@@ -13,7 +13,7 @@ crates/blocks/src/
   behave.rs tree.rs             a screen's local state as a view; the tree a renderer must draw, the harness's shapes
   site/<kind>.rs                one static HTML writer per kind; site/page.rs the document; site/mod.rs generated
   layout.rs                     layout.json: the types, `check`, `merge`, `resolved`
-  theme/                        scheme.rs (tokens, the gate, `css`), style.rs, pack.rs (theme.json, the vendored packs)
+  theme/                        scheme.rs (tokens, the gate, `css`), style.rs, pack.rs (theme.json, `check_pack`)
   web.rs                        `JS` and `CSS`: web/dist as two strings
   codegen.rs, bin/codegen.rs    behind the `schema` feature, as blocks#1 has it
 schema/blocks.schema.json       generated
@@ -25,10 +25,8 @@ web/dist/blocks.{js,css}        generated: the bundle for a host with no Node
 swift/Sources/Blocks/           Gen/ (generated types and decoders), JSONValue, Mirror, Layout, Expr
 swift/Sources/BlocksUI/         BlocksView, SlotView, Look, Palette, BlockStyle, Behave, Island; Kinds/<Kind>.swift
 swift/Sources/BlocksSnapshot/   the SwiftUI harness; swift/Sources/blocks-snap/ its CLI (macOS)
-theme/schemes/<name>.json       the 12 built-in schemes, one file each
-theme/packs/<name>/             swag's `packs/` at the commit theme/packs/SOURCE names, with SHA256SUMS
 fixtures/                       generated: blocks/<kind>.json, trees/, html/. Kept: screens/ (both apps' goldens),
-                                protocol/, behave/, site/, layouts/, schemes/, styles/ (the bad ones are hand-made inputs)
+                                protocol/, behave/, site/, layouts/, schemes/, styles/, packs/ (hand-made test inputs)
 docs/                           one file per area: schema, layout, theme, html, swift, site, behave, islands, headless, consume
 ```
 
@@ -267,16 +265,14 @@ pub struct Tokens { pub bg: Hex, pub card: Hex, pub edge: Hex, pub line: Hex, pu
 pub struct Hex(String);                                  // #rrggbb or #rrggbbaa: nothing else parses
 pub struct Miss { pub what: String, pub got: f64, pub min: f64 }
 pub fn gate(s: &Scheme) -> Vec<Miss>;                    // text 4.5:1, state colours 3:1, ΔE2000 20 apart
-pub fn schemes() -> &'static [(&'static str, Scheme)];   // theme/schemes/*.json
 pub fn default() -> &'static PerMode<Scheme>;            // the built-in neutral grey pair, light and dark
 pub const DEFAULT_STYLE: [(&str, &str); 11];             // its tile style: radius, seam, dot grid, motion
 
 pub struct Style { format, label, icon, type_, space, radius, motion, surface, fills, marks, figures, sections, labels, stage }
 pub fn css(schemes: &PerMode<Scheme>, style: &Style) -> String;   // every token as a CSS variable, both modes
 pub struct Theme { label, scheme: PerMode<String>, sprites: bool, moments: bool, words: BTreeMap<String, String>, scene, style }
-pub struct Pack { pub name: &'static str, pub files: &'static [(&'static str, &'static [u8])] }
-pub fn packs() -> &'static [Pack];                       // theme/packs/: theme.json, sprites.svg, scene.svg, icon.png
-pub fn check_pack(files: &[(&str, &[u8])]) -> Vec<String>;   // cooee's theme gate: words, sprites, sizes, schemes
+pub fn check_pack(files: &[(&str, &[u8])], schemes: &[(&str, Scheme)]) -> Vec<String>;   // words, sprites, sizes,
+                                                         // and the pack's schemes, found in `schemes` and gated
 ```
 
 - A scheme's 19 tokens and their gate are the same in both apps today; `Style` and `Theme` are cooee's
@@ -286,7 +282,8 @@ pub fn check_pack(files: &[(&str, &[u8])]) -> Vec<String>;   // cooee's theme ga
 - `default()` is blocks' one theme of its own (q2118, q2119): a neutral grey pair with ink as the only accent and
   the five state colours muted and used small, plus the tile style values in `DEFAULT_STYLE` (`docs/theme.md`).
   It paints when no theme is supplied: blocks' tests, the headless PNGs, the showcase and an app's first paint.
-  Both schemes pass the gate; the 12 named schemes leave for swag in their own issue.
+  Both schemes pass the gate. Every named scheme and pack is swag's (q2115): an app parses swag's text with these
+  types and hands `check_pack` the schemes a pack may name. `fixtures/packs/plain` tests it here.
 - The gate is this one function. The page and the Swift app never run it: a server serves only what passed.
 - A renderer reads the theme through a port, so it never knows which art an app has:
 
@@ -303,7 +300,7 @@ export function packs(look: { theme: ThemeJson; base: string }): Theme;      // 
 | `schema/blocks.schema.json` | the Rust types | `blocks-codegen` (schemars, the `schema` feature) |
 | `web/src/gen/types.ts`, `swift/Sources/Blocks/Gen/Blocks.swift` | the schema | `blocks-codegen` |
 | `web/src/gen/hooks.ts` and the `site` writers' names | each kind file's `parts` and `variant` | `blocks-codegen` |
-| `web/src/gen/schemes.ts`, `swift/Sources/Blocks/Gen/Schemes.swift` | `theme/schemes/*.json` and `theme::default()` | `blocks-codegen` |
+| `web/src/gen/schemes.ts`, `swift/Sources/Blocks/Gen/Schemes.swift` | `theme::default()` and `DEFAULT_STYLE` | `blocks-codegen` |
 | `fixtures/blocks/<kind>.json` | each kind file's typed sample (it replaces blocks#1's `sample.json`) | `blocks-codegen` |
 | `fixtures/trees/<kind>.json`, `fixtures/html/<kind>.html` | those fixtures, through `tree::expect` and `site` | `blocks-codegen` |
 | `web/dist/blocks.js`, `web/dist/blocks.css` | `web/src` | `npm run build` (esbuild, pinned) |
