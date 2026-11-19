@@ -25,6 +25,7 @@ export const hooks: Record<Kind, Hook> = {
     scene: { variant: null, parts: [] },
     diagram: { variant: null, parts: ["title"] },
     composer: { variant: null, parts: [] },
+    lines: { variant: null, parts: [] },
     prose: { variant: null, parts: [] },
     hero: { variant: null, parts: ["title", "subtitle", "actions"] },
     media: { variant: null, parts: [] },

@@ -102,6 +102,7 @@ extension Block {
         case .scene(let b): ("scene", b.id, nil, Source())
         case .diagram(let b): ("diagram", b.id, nil, Source())
         case .composer(let b): ("composer", b.id, nil, Source(action: b.action, values: b.values))
+        case .lines(let b): ("lines", b.id, nil, Source(action: b.action))
         case .prose(let b): ("prose", b.id, nil, Source())
         case .hero(let b): ("hero", b.id, nil, Source())
         case .media(let b): ("media", b.id, nil, Source())
@@ -152,6 +153,7 @@ extension Block {
         case .scene(let b): [b.label]
         case .diagram(let b): [b.title]
         case .composer(let b): [b.label, b.placeholder]
+        case .lines(let b): [b.label, b.name]
         case .hero(let b): [b.title]
         case .media(let b): [b.alt]
         case .island(let b): [b.name]

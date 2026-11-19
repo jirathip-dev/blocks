@@ -18,7 +18,7 @@ const GROUPS: [(&str, &[&str]); 4] = [
         &["text", "prose", "hero", "nav", "media", "images", "diagram"],
     ),
     ("Lists and figures", &["list", "row", "stat", "steps", "chips"]),
-    ("Input", &["button", "choice", "form", "composer", "run"]),
+    ("Input", &["button", "choice", "form", "lines", "composer", "run"]),
 ];
 
 fn about(kind: &str) -> &'static str {
@@ -48,6 +48,7 @@ fn about(kind: &str) -> &'static str {
         "secret" => "A secret's input; its value is never sent back.",
         "diff" => "A file's diff.",
         "editor" => "A text editor and its errors.",
+        "lines" => "Rows of fields with add and remove, totals and a balance check.",
         "web" => "A web view of a fixed height.",
         "scene" => "Workers at work, each in its state.",
         "island" => "An app's own component, its props in and events out.",
@@ -451,7 +452,12 @@ fn others() -> Vec<Block> {
 
 /// Every core kind's sample, one or more blocks each, in `Block::KINDS` order.
 pub fn samples() -> Vec<(String, Vec<Block>)> {
-    let all = [holders(), words(), figures(), input(), others()].concat();
+    let lines = blocks::samples()
+        .into_iter()
+        .filter(|(k, _)| *k == "lines")
+        .map(|(_, b)| b)
+        .collect();
+    let all = [holders(), words(), figures(), input(), lines, others()].concat();
     Block::KINDS
         .iter()
         .map(|k| {

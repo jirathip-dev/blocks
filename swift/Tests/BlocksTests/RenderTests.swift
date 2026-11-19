@@ -13,7 +13,7 @@ private struct Red: BlockStyle {
 final class RenderTests: XCTestCase {
     private static let core = [
         "screen", "sheet", "section", "list", "row", "card", "choice", "form", "config", "secret", "run", "button",
-        "chips", "stat", "text", "images", "web", "diff", "editor", "scene", "diagram", "composer",
+        "chips", "stat", "text", "images", "web", "diff", "editor", "scene", "diagram", "composer", "lines",
     ]
     private static let content = ["prose", "hero", "media", "nav", "steps"]
     private let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent().appendingPathComponent("../../..")
@@ -69,7 +69,8 @@ final class RenderTests: XCTestCase {
     }
 
     func testEveryCoreKindInTheFixturesDraws() throws {
-        let found = try samples()
+        var found = try samples()
+        found["lines"] = try found["lines"] ?? fixture("lines")
         XCTAssertEqual(Set(found.keys), Set(Self.core))
         for (kind, sample) in found.sorted(by: { $0.key < $1.key }) {
             XCTAssertGreaterThan(try pixels(BlocksView(sample, source: .core)), 0, "\(kind) draws nothing")

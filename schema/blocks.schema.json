@@ -192,6 +192,7 @@
               "scene",
               "diagram",
               "composer",
+              "lines",
               "prose",
               "hero",
               "media",
@@ -523,6 +524,19 @@
           "properties": {
             "type": {
               "const": "composer",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/Lines",
+          "properties": {
+            "type": {
+              "const": "lines",
               "type": "string"
             }
           },
@@ -1573,6 +1587,23 @@
         {
           "additionalProperties": false,
           "properties": {
+            "mul": {
+              "items": {
+                "$ref": "#/$defs/Expr"
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": "array"
+            }
+          },
+          "required": [
+            "mul"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
             "cat": {
               "items": {
                 "$ref": "#/$defs/Expr"
@@ -2432,6 +2463,163 @@
       "required": [
         "line",
         "message"
+      ],
+      "type": "object"
+    },
+    "LineItem": {
+      "description": "One row of a `lines` block: its id and its values by column name.",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "values": {
+          "additionalProperties": true,
+          "type": "object"
+        }
+      },
+      "required": [
+        "id",
+        "values"
+      ],
+      "type": "object"
+    },
+    "Lines": {
+      "additionalProperties": true,
+      "description": "Repeating rows of fields with add and remove, running totals and a balance check.",
+      "properties": {
+        "action": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "add": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "balance": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 2,
+          "minItems": 2,
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "calc": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Expr"
+          },
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "columns": {
+          "items": {
+            "$ref": "#/$defs/Field"
+          },
+          "type": "array"
+        },
+        "empty": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "errors": {
+          "items": {
+            "$ref": "#/$defs/RowError"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "items": {
+          "items": {
+            "$ref": "#/$defs/LineItem"
+          },
+          "type": "array"
+        },
+        "label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "max": {
+          "format": "uint32",
+          "minimum": 0,
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "min": {
+          "format": "uint32",
+          "minimum": 0,
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "scale": {
+          "format": "uint8",
+          "maximum": 255,
+          "minimum": 0,
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "submit": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Submit"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "sum": {
+          "items": {
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "name",
+        "columns",
+        "items"
       ],
       "type": "object"
     },
@@ -3456,6 +3644,30 @@
       },
       "required": [
         "title"
+      ],
+      "type": "object"
+    },
+    "RowError": {
+      "description": "An app's check on a `lines` block: on a row and a column, or on the whole block.",
+      "properties": {
+        "message": {
+          "type": "string"
+        },
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "row": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "message"
       ],
       "type": "object"
     },
