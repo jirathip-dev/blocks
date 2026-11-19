@@ -74,7 +74,8 @@ under a new name?
    hooks, kinds, fixtures). Each area returns its files as paths and text; `mod.rs` writes them.
 8. **Docs.** `docs/schema.md` keeps its first paragraph and a table of links, and is frozen. Its five sections
    become `docs/schema/generated.md`, `blocks.md`, `behaviours.md`, `stream.md` and `versioning.md`, word for word.
-   `README.md` is frozen at its 46 lines: it can be reworded, and a new subject is a file in `docs/`.
+   `README.md` is shared under a 70-line limit (q2278): approved work still adds a line to it; a new subject is a
+   file in `docs/`.
 9. **Shared files.** A file that is one concern, not a list, is marked `shared` under its own limit, set just above
    its size today: `patch.ts`, `patch.test.ts`, `dom.ts` and `shot.ts` at 200 lines, `sim.rs` at 520, and after
    their slices `tests/site.rs` at 200 and the three `mod.rs` files that hold a list at 80. When one is full, the
@@ -125,11 +126,10 @@ under a new name?
 
 ## The `.drover/arch.toml` lines
 
-Slice 0, this PR. The two top-level keys replace today's; the tables go below the existing ones. With "leave them
+Slice 0, this PR. The top-level `shared` replaces today's; the tables go below the existing ones. With "leave them
 listed" on question 1, drop `.drover/arch.toml` and `justfile` from `shared` and drop the last table.
 
 ```toml
-frozen = ["ci/cap.toml", "README.md"]
 shared = [
     "crates/blocks/src/lib.rs",
     "crates/*/tests/support/**",
@@ -140,6 +140,7 @@ shared = [
     "web/shot/shot.ts",
     ".drover/arch.toml",
     "justfile",
+    "README.md",
 ]
 
 [[collect]]
@@ -157,6 +158,10 @@ max_file_lines = 520
 [[size]]
 paths = [".drover/arch.toml", "justfile"]
 max_file_lines = 300
+
+[[size]]
+paths = ["README.md"]
+max_file_lines = 70
 ```
 
 Slice 1, the generator. `codegen.rs` is deleted. The `codegen` layer and the `std::fs` ban name the folder:

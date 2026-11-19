@@ -32,7 +32,7 @@ time, one slot per file (`crates/core/src/queue.rs:307` in drover), so 19 listed
 | `web/test/dom.ts` | 5 | 0 | a kind's test needed one more DOM method | shared, 200 lines |
 | `crates/blocks/src/codegen.rs` | 6 | 4 | a new output each: a function and a line in `write` | a folder by area |
 | `docs/schema.md` | 6 | 2 | a paragraph per wire change | one file per section |
-| `README.md` | 5 | 0 | reworded in place | frozen at 46 lines |
+| `README.md` | 5 | 0 | reworded in place | shared, 70 lines (q2278) |
 | `web/shot/shot.ts` | 6 | 3 | a hook on the in-page harness per feature | shared, 200 lines |
 | `web/src/patch.ts` | 5 | 0 | built in two PRs, then 8 lines for three features | shared, 200 lines |
 | `web/test/patch.test.ts` | 5 | 0 | follows `patch.ts` | shared, 200 lines |
@@ -93,8 +93,8 @@ web/src/patch.ts:1: `web/src/patch.ts` is 204 lines, over 200 (baseline None)
 ## Slices
 
 This PR, slice 0: the `.drover/arch.toml` lines that need no move. `shared` with a size limit for `patch.ts`,
-`patch.test.ts`, `dom.ts`, `shot.ts`, `sim.rs`, and (open question 1) `arch.toml` and the `justfile`; `frozen` for
-`README.md`. Eight files leave the list when it merges.
+`patch.test.ts`, `dom.ts`, `shot.ts`, `sim.rs`, `README.md` (q2278: approved work still adds to it), and (open
+question 1) `arch.toml` and the `justfile`. Eight files leave the list when it merges.
 
 Then six issues, which the orchestrator files on approve. Each moves code and changes no behaviour, so each is
 queued `--refactor` (its tests only move), and each adds its own `arch.toml` lines (`adr.md`, the last section).
