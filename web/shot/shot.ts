@@ -7,14 +7,17 @@ const BASE = "http://blocks.test/";
 const BUDGET_MS = 16.7;
 const dist = (f) => readFileSync(new URL(`../dist/${f}`, import.meta.url));
 const LOOK = `${tiles}${wear(defaultPair.light)}@media (prefers-color-scheme: dark){${wear(defaultPair.dark)}}html{color:var(--fg)}`;
+const ECHO = `customElements.define("x-echo", class extends HTMLElement {
+  set props(p) { this.textContent = JSON.stringify(p); this.dispatchEvent(new CustomEvent("blocks-event", { bubbles: true, detail: { name: "echo", values: p } })); }
+});`;
 const PAGE = (css) =>
   `<!doctype html><meta charset=utf-8><link rel=stylesheet href=blocks.css><link rel=stylesheet href=look.css>${css.map((_, i) => `<link rel=stylesheet href=css/${i}>`).join("")}` +
-  `<body><div id=root></div><script type=module>import * as B from "./blocks.js"; window.B = B;</script>`;
+  `<body><div id=root></div><script type=module>import * as B from "./blocks.js"; window.B = B;</script><script>${ECHO}</script>`;
 
 function boot(screen) {
   const B = window.B;
   const root = document.getElementById("root");
-  const h = { model: screen, sent: [] };
+  const h = { model: screen, sent: [], dropped: [] };
   const ctx = {
     screen: String(screen.id ?? ""),
     act: async (a) => (h.sent.push({ screen: ctx.screen, action: a.action, block: a.block ?? null, values: a.values ?? null }), true),
@@ -22,6 +25,7 @@ function boot(screen) {
     open: new Set(),
     theme: B.plain,
     store: { get: () => null, put: () => {} },
+    drop: (what) => h.dropped.push(what),
   };
   const sync = B.behave(root, () => h.model);
   h.paint = () => (root.replaceChildren(...[B.render(h.model, ctx)].filter(Boolean)), sync());
@@ -164,6 +168,7 @@ export async function shot({ screen, steps = [], name = "shot", size = "390x844"
       report.timings.steps_ms.push(performance.now() - t0);
     }
     report.sent = await page.evaluate(() => window.h.sent);
+    report.dropped.push(...(await page.evaluate(() => window.h.dropped)));
     if (frames.length) {
       report.timings.longest_frame_ms = Math.max(...frames);
       report.timings.frames_over_budget = frames.filter((f) => f > BUDGET_MS).length;

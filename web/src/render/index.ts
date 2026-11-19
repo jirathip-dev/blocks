@@ -1,5 +1,6 @@
 import { hooks } from "../gen/hooks.ts";
 import type { Block, Fallback, Kind, Label, Tap, Toned } from "../gen/types.ts";
+import { island, isTag } from "../island.ts";
 import type { Theme } from "../theme.ts";
 import { button } from "./button.ts";
 import { card } from "./card.ts";
@@ -39,6 +40,7 @@ export type Ctx = {
   theme: Theme;
   store: Store;
   apps?: Record<string, Renderer>;
+  drop?: (what: string) => void;
 };
 
 export const isBlk = (v: unknown): v is Blk => typeof v === "object" && v !== null;
@@ -177,7 +179,10 @@ export const R: { [K in Kind]: (b: Of<K>, c: Ctx) => HTMLElement | null } = {
   hero,
   media,
   nav,
-  island: gap(21),
+  island: (b, c) =>
+    isTag(b.name)
+      ? island(b, [...fallback(b, c).childNodes], (action, values) => void c.act({ action, block: b.id, values }), (n) => c.drop?.(`event ${b.id ?? ""} ${n}`))
+      : fallback(b, c),
 };
 
 const core = (b: Blk): b is Of<Kind> => Object.prototype.hasOwnProperty.call(hooks, String(b.type));
