@@ -1,0 +1,4 @@
+Decided: merged origin/staging twice, keeping both sides' arch excepts, deps lines and check recipes; staging's toast kind is a gap file
+Because: crates/blocks-desktop/src/draw.rs:71
+Rejected: none
+Owner: The desktop renderer branch is caught up with staging and now covers the new toast kind as a placeholder.
