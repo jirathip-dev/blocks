@@ -1,0 +1,4 @@
+Decided: merge origin/staging into issue-14, keeping both the layout layer and B1b/B9b in arch.toml, codegen.rs, lib.rs and docs/schema.md
+Because: crates/blocks/src/codegen.rs:603
+Rejected: none
+Owner: The layout work now sits on top of the latest shared branch; nothing about it changed.
