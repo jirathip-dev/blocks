@@ -26,11 +26,11 @@ pub(super) fn files(root: &Path, s: &Value) -> std::io::Result<Files> {
     let mut out = kinds(s)?;
     out.push(("rules.md".into(), rules()));
     out.extend(examples(root)?);
-    let list: String = out
-        .iter()
-        .map(|(p, _)| format!("    (\"{p}\", include_str!(\"../../../../{DIR}/{p}\")),\n"))
-        .collect();
-    let bin = format!("pub(crate) static FILES: &[(&str, &str)] = &[\n{list}];\n");
+    let paths: String = out.iter().map(|(p, _)| format!("    {p:?},\n")).collect();
+    let texts: String = out.iter().map(|(_, t)| format!("    {t:?},\n")).collect();
+    let bin = format!(
+        "pub(crate) static PATHS: &[&str] = &[\n{paths}];\n\npub(crate) static TEXTS: &[&str] = &[\n{texts}];\n"
+    );
     let mut out: Files = out.into_iter().map(|(p, t)| (format!("{DIR}/{p}"), t)).collect();
     out.push((BIN.into(), bin));
     Ok(out)

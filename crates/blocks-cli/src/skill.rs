@@ -4,6 +4,7 @@ use std::path::Path;
 use blocks::guard::{self, Config};
 
 use crate::files;
+use crate::gen::skill as gen;
 
 pub(crate) fn run(args: &[String]) -> Result<bool, String> {
     let [flag, to] = args else {
@@ -15,8 +16,9 @@ pub(crate) fn run(args: &[String]) -> Result<bool, String> {
     let config: Config = files::read(files::CONFIG)?.unwrap_or_default();
     let screens = files::screens(&config, &mut vec![])?;
     let kinds: Vec<&str> = config.kinds.iter().map(String::as_str).collect();
-    let mut pages: Vec<(String, String)> = crate::gen::skill::FILES
+    let mut pages: Vec<(String, String)> = gen::PATHS
         .iter()
+        .zip(gen::TEXTS)
         .map(|(p, t)| ((*p).into(), (*t).into()))
         .collect();
     let mut pass = true;
