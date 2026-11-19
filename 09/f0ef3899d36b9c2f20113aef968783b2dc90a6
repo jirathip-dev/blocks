@@ -1,0 +1,7 @@
+Decided: ci/cap.d/2026-11-19-15000.toml raises line_cap to 15000; the commit carries Cap: 13500 → 15000 (#87, q2227)
+Because: q2227
+Decided: scripts/line-cap.sh counts web/shot/*.ts beside web/src, skipping *.test.ts
+Because: "`scripts/line-cap.sh` also counts `web/shot/**/*.ts` (non-test), in the same PR"
+Rejected: a separate find for web/shot — the web/src find takes a second path with the same filters
+Check: scripts/line-cap.test.sh counts web/shot/s.ts, skips web/shot/s.test.ts and fails against the old script
+Owner: the line cap is now 15000 and the screenshot tool's TypeScript counts toward it
