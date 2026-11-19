@@ -1,0 +1,7 @@
+Decided: the PR body's For apps section now opens with a "For apps:" line, which scripts/for-apps.sh greps for
+Because: scripts/for-apps.sh:12
+Decided: merged origin/staging (chart kind) and rebuilt web/dist from the merged sources with the gen steps
+Because: "optional in style.json so format 1 and 2 files read unchanged"
+Rejected: rerunning the failed job — a rerun reuses the old event payload and so the old PR body
+Check: the rust job's For apps step passes at 72280c8 with this body
+Owner: the easing branch carries its app note in the form CI checks and sits on current staging
