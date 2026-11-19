@@ -4,8 +4,8 @@ blocks is an opinionated, server-driven UI framework for live app UI and static 
 
 Shipped: the crate (typed blocks, their row diff and ops, the device stream protocol) with the codegen that turns its
 Rust types into JSON Schema, TS and Swift; the theme rules (scheme tokens, the gate, styles, the pack check) and one
-neutral default pair; the SwiftUI package. Still to come: the HTML renderer and shell, the static site renderer, and the headless harnesses
-(`docs/architecture/blocks/migration.md`).
+neutral default pair; the SwiftUI package; the HTML renderer and shell, the static site renderer, and the headless
+harnesses (`docs/architecture/blocks/migration.md`).
 
 ## Intent
 
@@ -21,15 +21,17 @@ neutral default pair; the SwiftUI package. Still to come: the HTML renderer and 
 
 ## Gates
 
-`just check` runs them all locally (it needs `just`, `cargo-deny`, `actionlint`, node 24, and `drover` on PATH or in `$DROVER`).
+`just check` runs them all locally but `just sim`, whose fixed seeds run inside `just test` (it needs `just`, `cargo-deny`, `actionlint`, node 24, and `drover` on PATH or in `$DROVER`).
 
 - `just fmt`, `just clippy`: rustfmt, clippy pedantic, and the banned APIs (`.drover/rules.md`)
 - `just fixtures`: each lint fixture in `ci/lint-fixtures/rust/` and `web/lint-fixtures/` must fail
 - `just test`, `just perf`, `just soak`: the tests, the release perf budgets and the flat-memory soak
 - `just sim 2000`: random op sequences on random screens, also run nightly (`.github/workflows/sim.yml`)
 - `just deps`, `just deny`: the allow-list in `docs/deps.md`, then licences, advisories, duplicates and sources
-- `just web`: strict tsc and `web/lint.mjs` on the generated TS
-- `just arch`, `just cap`: drover's arch-check (`.drover/arch.toml`), and the line cap in `ci/cap.toml` (`scripts/line-cap.sh`)
+- `just web`: strict tsc and `web/lint.mjs` on `web/src` (the generated `gen/` and the hand-written renderer, stream
+  and patcher), then the node tests in `web/test/`
+- `just arch`, `just cap`: drover's arch-check (`.drover/arch.toml`), and the line cap: the highest `line_cap` in `ci/cap.toml`
+  and `ci/cap.d/*.toml`, now 15,000 (`scripts/line-cap.sh`)
 - `just actionlint`, `just swift`: the workflows, and the Swift package on macOS (op apply, the generated types, a
   render test per core kind), warnings as errors
 

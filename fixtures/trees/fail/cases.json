@@ -1,0 +1,368 @@
+[
+  {
+    "findings": [
+      "tree: drew card#home native, expected screen#home native"
+    ],
+    "name": "another kind at the root",
+    "tree": {
+      "children": [],
+      "drawn": "native",
+      "id": "home",
+      "kind": "card",
+      "variant": null
+    },
+    "want": {
+      "children": [
+        {
+          "children": [],
+          "drawn": "native",
+          "id": "hint",
+          "kind": "text",
+          "variant": null
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "drawn": "native",
+              "id": "r1",
+              "kind": "row",
+              "variant": null
+            }
+          ],
+          "drawn": "native",
+          "id": "rows",
+          "kind": "list",
+          "variant": null
+        }
+      ],
+      "drawn": "native",
+      "id": "home",
+      "kind": "screen",
+      "variant": null
+    }
+  },
+  {
+    "findings": [
+      "tree/screen#home: drew text#hint fallback, expected text#hint native"
+    ],
+    "name": "a fallback where a view was expected",
+    "tree": {
+      "children": [
+        {
+          "children": [],
+          "drawn": "fallback",
+          "id": "hint",
+          "kind": "text",
+          "variant": null
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "drawn": "native",
+              "id": "r1",
+              "kind": "row",
+              "variant": null
+            }
+          ],
+          "drawn": "native",
+          "id": "rows",
+          "kind": "list",
+          "variant": null
+        }
+      ],
+      "drawn": "native",
+      "id": "home",
+      "kind": "screen",
+      "variant": null
+    },
+    "want": {
+      "children": [
+        {
+          "children": [],
+          "drawn": "native",
+          "id": "hint",
+          "kind": "text",
+          "variant": null
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "drawn": "native",
+              "id": "r1",
+              "kind": "row",
+              "variant": null
+            }
+          ],
+          "drawn": "native",
+          "id": "rows",
+          "kind": "list",
+          "variant": null
+        }
+      ],
+      "drawn": "native",
+      "id": "home",
+      "kind": "screen",
+      "variant": null
+    }
+  },
+  {
+    "findings": [
+      "tree/screen#home: drew text#hint hidden, expected text#hint native"
+    ],
+    "name": "a hidden block",
+    "tree": {
+      "children": [
+        {
+          "children": [],
+          "drawn": "hidden",
+          "id": "hint",
+          "kind": "text",
+          "variant": null
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "drawn": "native",
+              "id": "r1",
+              "kind": "row",
+              "variant": null
+            }
+          ],
+          "drawn": "native",
+          "id": "rows",
+          "kind": "list",
+          "variant": null
+        }
+      ],
+      "drawn": "native",
+      "id": "home",
+      "kind": "screen",
+      "variant": null
+    },
+    "want": {
+      "children": [
+        {
+          "children": [],
+          "drawn": "native",
+          "id": "hint",
+          "kind": "text",
+          "variant": null
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "drawn": "native",
+              "id": "r1",
+              "kind": "row",
+              "variant": null
+            }
+          ],
+          "drawn": "native",
+          "id": "rows",
+          "kind": "list",
+          "variant": null
+        }
+      ],
+      "drawn": "native",
+      "id": "home",
+      "kind": "screen",
+      "variant": null
+    }
+  },
+  {
+    "findings": [
+      "tree/screen#home: 1 children, expected 2",
+      "tree/screen#home: drew nothing, expected list#rows native"
+    ],
+    "name": "a missing block",
+    "tree": {
+      "children": [
+        {
+          "children": [],
+          "drawn": "native",
+          "id": "hint",
+          "kind": "text",
+          "variant": null
+        }
+      ],
+      "drawn": "native",
+      "id": "home",
+      "kind": "screen",
+      "variant": null
+    },
+    "want": {
+      "children": [
+        {
+          "children": [],
+          "drawn": "native",
+          "id": "hint",
+          "kind": "text",
+          "variant": null
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "drawn": "native",
+              "id": "r1",
+              "kind": "row",
+              "variant": null
+            }
+          ],
+          "drawn": "native",
+          "id": "rows",
+          "kind": "list",
+          "variant": null
+        }
+      ],
+      "drawn": "native",
+      "id": "home",
+      "kind": "screen",
+      "variant": null
+    }
+  },
+  {
+    "findings": [
+      "tree/screen#home/list#rows: 2 children, expected 1"
+    ],
+    "name": "an extra block",
+    "tree": {
+      "children": [
+        {
+          "children": [],
+          "drawn": "native",
+          "id": "hint",
+          "kind": "text",
+          "variant": null
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "drawn": "native",
+              "id": "r1",
+              "kind": "row",
+              "variant": null
+            },
+            {
+              "children": [],
+              "drawn": "native",
+              "id": "r2",
+              "kind": "row",
+              "variant": null
+            }
+          ],
+          "drawn": "native",
+          "id": "rows",
+          "kind": "list",
+          "variant": null
+        }
+      ],
+      "drawn": "native",
+      "id": "home",
+      "kind": "screen",
+      "variant": null
+    },
+    "want": {
+      "children": [
+        {
+          "children": [],
+          "drawn": "native",
+          "id": "hint",
+          "kind": "text",
+          "variant": null
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "drawn": "native",
+              "id": "r1",
+              "kind": "row",
+              "variant": null
+            }
+          ],
+          "drawn": "native",
+          "id": "rows",
+          "kind": "list",
+          "variant": null
+        }
+      ],
+      "drawn": "native",
+      "id": "home",
+      "kind": "screen",
+      "variant": null
+    }
+  },
+  {
+    "findings": [
+      "tree/screen#home/list#rows: drew row#r9 native, expected row#r1 native"
+    ],
+    "name": "another id",
+    "tree": {
+      "children": [
+        {
+          "children": [],
+          "drawn": "native",
+          "id": "hint",
+          "kind": "text",
+          "variant": null
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "drawn": "native",
+              "id": "r9",
+              "kind": "row",
+              "variant": null
+            }
+          ],
+          "drawn": "native",
+          "id": "rows",
+          "kind": "list",
+          "variant": null
+        }
+      ],
+      "drawn": "native",
+      "id": "home",
+      "kind": "screen",
+      "variant": null
+    },
+    "want": {
+      "children": [
+        {
+          "children": [],
+          "drawn": "native",
+          "id": "hint",
+          "kind": "text",
+          "variant": null
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "drawn": "native",
+              "id": "r1",
+              "kind": "row",
+              "variant": null
+            }
+          ],
+          "drawn": "native",
+          "id": "rows",
+          "kind": "list",
+          "variant": null
+        }
+      ],
+      "drawn": "native",
+      "id": "home",
+      "kind": "screen",
+      "variant": null
+    }
+  }
+]
