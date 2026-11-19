@@ -1,0 +1,15 @@
+Decided: README.md is shared under a 70-line limit, not frozen as the ADR first said
+Because: q2278
+Because: "README.md is not frozen: it is a size-limited shared file"
+Decided: slice 0's arch.toml lines added as written in the ADR, below the existing tables
+Because: docs/architecture/hotspots-2026-11-16/adr.md:128
+Decided: ADR text updated to match q2278 so config and ADR agree
+Rejected: README limit at 55 — approved work still adds lines (guard kit, desktop renderer)
+Check: arch-check exit 0 at the head; lowering the 200 limit to 150 fails shot.ts, patch.ts, dom.ts
+Check: the drover issue from q2278 (3) is not filed by this lane; the orchestrator files it
+Owner: Eight busy files are marked shared with size limits, so their changes stop queueing.
+
+Decided: kept both sides of the .drover/arch.toml conflict: slice 0's shared list and size limits plus staging's codegen/mod.rs entry
+Because: .drover/arch.toml:28
+Rejected: none
+Owner: The branch is brought up to date with the latest shared changes; nothing else changes.
