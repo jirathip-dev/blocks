@@ -119,6 +119,9 @@ export async function shot({ screen, steps = [], name = "shot", size = "390x844"
       if (p === "blocks.js" || p === "blocks.css") return r.fulfill({ body: dist(p), contentType: p.endsWith(".css") ? "text/css" : "text/javascript" });
       return r.fulfill({ status: 404 });
     });
+    const logged = [];
+    if (probes || check) page.on("pageerror", (e) => logged.push(e.message));
+    if (probes || check) page.on("console", (m) => m.type() === "error" && !m.text().startsWith("Failed to load resource") && logged.push(m.text()));
     await page.goto(BASE);
     await page.waitForFunction(() => window.B);
     const report = { shots: [], sent: [], dropped: [], timings: { first_paint_ms: await page.evaluate(boot, screen), steps_ms: [] } };
@@ -155,7 +158,7 @@ export async function shot({ screen, steps = [], name = "shot", size = "390x844"
         trees[n] = await page.evaluate(() => window.h.dump());
         report.shots.push(n);
         const want = expect ?? (probes ? tree(await page.evaluate(() => window.h.model), [...native, ...kinds]) : undefined);
-        const cx = { page, width, tree: trees[n], want, blocks: trees[n] ? blocks(trees[n]) : [] };
+        const cx = { page, width, logged, tree: trees[n], want, blocks: trees[n] ? blocks(trees[n]) : [] };
         for (const p of PROBES.filter((p) => p.shot && (probes || (check && CHECKED.includes(p.rule))))) seen.push(...(await p.shot(cx)).map((s) => ({ rule: p.rule, shot: n, ...s })));
         if (check && look) faults.push(...measure(pngs[n], trees[n], defaultPair[scheme].tokens, await declared(page)).map((f) => `${n}: ${f}`));
         const drew = ids && (await page.evaluate(() => window.h.ids()));

@@ -1,4 +1,5 @@
 mod draw;
+mod explore;
 mod files;
 mod skill;
 
@@ -12,7 +13,7 @@ use std::process::ExitCode;
 
 use blocks::guard::{self, Baseline, Finding, Held, Outcome, Scope, Severity};
 
-const USAGE: &str = "usage: blocks check [--base <ref>] [--all] [--render] [--tighten] [--format text|json|sarif] [--out <file>] | blocks check --shot <fixture>… | blocks skill --to <dir>";
+const USAGE: &str = "usage: blocks check [--base <ref>] [--all] [--render] [--explore [--seed <n>] [--minutes <n>]] [--tighten] [--format text|json|sarif] [--out <file>] | blocks check --replay <steps.json> [--render] | blocks check --shot <fixture>… | blocks skill --to <dir>";
 
 #[derive(Default)]
 enum Format {
@@ -27,6 +28,10 @@ struct Flags {
     base: Option<String>,
     all: bool,
     render: bool,
+    explore: bool,
+    seed: u64,
+    minutes: Option<u64>,
+    replay: Option<String>,
     shot: Vec<String>,
     tighten: bool,
     format: Format,
@@ -52,6 +57,11 @@ fn value(it: &mut std::slice::Iter<String>, flag: &str) -> Result<String, String
     it.next().cloned().ok_or_else(|| format!("{flag} needs a value"))
 }
 
+fn number(it: &mut std::slice::Iter<String>, flag: &str) -> Result<u64, String> {
+    let v = value(it, flag)?;
+    v.parse().map_err(|_| format!("{flag} {v}: not a whole number"))
+}
+
 fn flags(args: &[String]) -> Result<Flags, String> {
     let mut it = args.iter();
     let mut f = Flags::default();
@@ -60,6 +70,10 @@ fn flags(args: &[String]) -> Result<Flags, String> {
             "--base" => f.base = Some(value(&mut it, a)?),
             "--all" => f.all = true,
             "--render" => f.render = true,
+            "--explore" => f.explore = true,
+            "--seed" => f.seed = number(&mut it, a)?,
+            "--minutes" => f.minutes = Some(number(&mut it, a)?),
+            "--replay" => f.replay = Some(value(&mut it, a)?),
             "--shot" => f.shot.push(value(&mut it, a)?),
             "--tighten" => f.tighten = true,
             "--out" => f.out = Some(value(&mut it, a)?),
@@ -95,6 +109,13 @@ fn check(args: &[String]) -> Result<bool, String> {
     let mut screens = files::screens(&config, &mut scope.skipped)?;
     if !f.shot.is_empty() {
         return write(f.out.as_ref(), &draw::shots(&config, &screens, &f.shot)?).map(|()| true);
+    }
+    if let Some(file) = &f.replay {
+        let (name, found) = explore::replay(&config, &screens, file, f.render)?;
+        scope
+            .fixtures
+            .extend(screens.get(&name).map(|fx| (name, fx.path.clone())));
+        return report(&f, &guard::judge(&found, &Held::default(), &scope));
     }
     let names: Vec<String> = screens.keys().cloned().collect();
     let base = f.base.as_deref().map(files::merge_base).transpose()?;
@@ -145,18 +166,25 @@ fn check(args: &[String]) -> Result<bool, String> {
     if f.render {
         found.extend(draw::render(&config, &screens)?);
     }
+    if f.explore {
+        let how = (f.seed, f.minutes, f.render);
+        explore::run(&config, &screens, how, &mut found, &mut scope.skipped)?;
+    }
     let mut outcome = guard::judge(&found, &held, &scope);
     if f.tighten {
         held.baselines = tighten(&outcome, &held.baselines, &scope)?;
         outcome = guard::judge(&found, &held, &scope);
     }
+    report(&f, &outcome)
+}
+
+fn report(f: &Flags, outcome: &Outcome) -> Result<bool, String> {
     let body = match f.format {
-        Format::Text => text(&outcome),
-        Format::Json => json(&outcome)?,
-        Format::Sarif => json(&guard::sarif(&outcome))?,
+        Format::Text => text(outcome),
+        Format::Json => json(outcome)?,
+        Format::Sarif => json(&guard::sarif(outcome))?,
     };
-    write(f.out.as_ref(), &body)?;
-    Ok(outcome.pass)
+    write(f.out.as_ref(), &body).map(|()| outcome.pass)
 }
 
 fn write(out: Option<&String>, body: &str) -> Result<(), String> {
@@ -214,6 +242,9 @@ fn text(o: &Outcome) -> String {
         let sev = if f.severity == Severity::Error { "error" } else { "warn" };
         s.push_str(&format!("  {sev:<5}  {:<24} {}\n", f.rule, f.at));
         s.push_str(&format!("         {}\n         fix: {}\n", f.message, f.fix));
+        if let Some(steps) = &f.steps {
+            s.push_str(&format!("         replay: blocks check --replay {steps}\n"));
+        }
     }
     let verdict = if o.pass { "PASS" } else { "FAIL" };
     s.push_str(&format!(
