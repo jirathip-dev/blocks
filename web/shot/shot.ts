@@ -120,8 +120,8 @@ export async function shot({ screen, steps = [], name = "shot", size = "390x844"
       return r.fulfill({ status: 404 });
     });
     const logged = [];
-    page.on("pageerror", (e) => logged.push(e.message));
-    page.on("console", (m) => m.type() === "error" && !m.text().startsWith("Failed to load resource") && logged.push(m.text()));
+    if (probes || check) page.on("pageerror", (e) => logged.push(e.message));
+    if (probes || check) page.on("console", (m) => m.type() === "error" && !m.text().startsWith("Failed to load resource") && logged.push(m.text()));
     await page.goto(BASE);
     await page.waitForFunction(() => window.B);
     const report = { shots: [], sent: [], dropped: [], timings: { first_paint_ms: await page.evaluate(boot, screen), steps_ms: [] } };
