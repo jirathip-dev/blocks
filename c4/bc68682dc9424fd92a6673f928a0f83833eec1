@@ -1,0 +1,4 @@
+Decided: merged origin/staging; theme.rs imports both Easing and Fills, and web/dist is regenerated from the merged sources
+Because: "optional in style.json so format 1 and 2 files read unchanged"
+Rejected: none
+Owner: the easing branch now sits on current staging with nothing changed in behaviour
