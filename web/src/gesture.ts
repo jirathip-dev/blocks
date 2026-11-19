@@ -153,17 +153,14 @@ export function zoomed(el: HTMLElement, keep: Record<string, unknown>, o: { min:
   let still: ReturnType<typeof setTimeout> | undefined;
   el.addEventListener("pointerup", up);
   el.addEventListener("pointercancel", up);
-  el.addEventListener(
-    "wheel",
-    (e) => {
-      if (!e.ctrlKey) return;
-      e.preventDefault();
-      to(z() * Math.exp(-e.deltaY / 100), true);
-      clearTimeout(still);
-      still = setTimeout(() => to(z()), 150);
-    },
-    { passive: false },
-  );
+  const wheel = (e: WheelEvent) => {
+    if (!e.ctrlKey) return;
+    e.preventDefault();
+    to(z() * Math.exp(-e.deltaY / 100), true);
+    clearTimeout(still);
+    still = setTimeout(() => to(z()), 150);
+  };
+  el.addEventListener("wheel", wheel, { passive: false });
   el.addEventListener("dblclick", () => to(z() > o.min ? o.min : 2.5));
   el.addEventListener("keydown", (e) => {
     const k: Record<string, number> = { "+": z() * 1.25, "=": z() * 1.25, "-": z() / 1.25, "0": o.min };

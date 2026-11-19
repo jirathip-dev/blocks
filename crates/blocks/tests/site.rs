@@ -603,7 +603,7 @@ fn pages_write_read_only_with_the_pdf_link_each_page_named_and_framed_at_its_siz
     let quote = blocks::samples().into_iter().find(|(k, _)| *k == "pages").unwrap().1;
     let h = site::fragment(&Built::of(&Screen::new().id("s").blocks(vec![quote])), "/act");
     assert!(h.contains("<span class=\"dcc\">3 pages</span>"), "{h}");
-    assert!(h.contains("<a class=\"btn\" href=\"/q/0418.pdf\" target=\"_blank\" rel=\"noopener\" aria-label=\"download Q-2026-0418 rev 3 as PDF\"><span>pdf</span></a>"), "{h}");
+    assert!(h.contains("<a class=\"btn\" aria-label=\"download Q-2026-0418 rev 3 as PDF\" href=\"/q/0418.pdf\" target=\"_blank\" rel=\"noopener\"><span>pdf</span></a>"), "{h}");
     assert!(
         h.contains("<div class=\"dcw\" role=\"region\" aria-label=\"Q-2026-0418 rev 3, 3 pages\">"),
         "{h}"

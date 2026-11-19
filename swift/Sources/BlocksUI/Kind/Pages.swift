@@ -17,13 +17,11 @@ internal struct PagesBlock: View {
             VStack(alignment: .leading, spacing: 0) {
                 head(count, proxy)
                 if let note = block.note, !note.isEmpty {
-                    Text(note).ui(13, .regular, look).foregroundStyle(palette.foreground).padding(8)
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                    Text(note).ui(13, .regular, look).foregroundStyle(palette.foreground).padding(8).frame(maxWidth: .infinity, alignment: .leading)
                         .overlay(alignment: .leading) { Rectangle().fill(palette.lead).frame(width: 3) }
                 }
                 if count == 0 {
-                    Text("No pages yet").ui(13, .regular, look).foregroundStyle(palette.mute).padding(32)
-                        .frame(maxWidth: .infinity).background(palette.line)
+                    Text("No pages yet").ui(13, .regular, look).foregroundStyle(palette.mute).padding(32).frame(maxWidth: .infinity).background(palette.line)
                 } else {
                     sheets(count, proxy)
                 }
@@ -36,8 +34,7 @@ internal struct PagesBlock: View {
         HStack(spacing: 8) {
             Text(title).ui(13, .semibold, look).foregroundStyle(look.palette.foreground).lineLimit(1)
                 .frame(maxWidth: .infinity, alignment: .leading)
-            Text(count == 0 ? "no pages" : "page \(at + 1) of \(count)").ui(12, .regular, look)
-                .foregroundStyle(look.palette.mute).monospacedDigit()
+            Text(count == 0 ? "no pages" : "page \(at + 1) of \(count)").ui(12, .regular, look).foregroundStyle(look.palette.mute).monospacedDigit()
             if count > 0 {
                 key("‹", "previous page", at == 0) { go(at - 1, count, proxy) }
                 key("›", "next page", at == count - 1) { go(at + 1, count, proxy) }
@@ -46,8 +43,7 @@ internal struct PagesBlock: View {
                 key("+", "zoom in", zoom >= 4) { zoom = min(4, zoom * 1.25) }
             }
             if let file = block.file, let url = URL(string: file) {
-                Link(destination: url) { Text("[pdf]").ui(13, .regular, look) }
-                    .accessibilityLabel("download \(title) as PDF")
+                Link(destination: url) { Text("[pdf]").ui(13, .regular, look) }.accessibilityLabel("download \(title) as PDF")
             }
         }
         .padding(.horizontal, 8).frame(minHeight: 44)
@@ -56,31 +52,25 @@ internal struct PagesBlock: View {
 
     private func key(_ label: String, _ name: String, _ off: Bool, _ run: @escaping () -> Void) -> some View {
         Button(action: run) { Text("[\(label)]").ui(13, .regular, look).monospacedDigit() }
-            .buttonStyle(.plain).foregroundStyle(off ? look.palette.mute : look.palette.foreground)
-            .disabled(off).accessibilityLabel(name)
+            .buttonStyle(.plain).foregroundStyle(off ? look.palette.mute : look.palette.foreground).disabled(off).accessibilityLabel(name)
     }
 
     private func sheets(_ count: Int, _ proxy: ScrollViewProxy) -> some View {
         let widest = max(CGFloat(block.pages.map(\.width).max() ?? 1), 1)
         let tall = block.pages.reduce(0) { $0 + CGFloat($1.height) / widest }
-        let gaps = 16 * CGFloat(count + 1)
-        return Fitted(height: { gaps + max(0, $0 - 32) * zoom * tall }) {
+        return Fitted(height: { 16 * CGFloat(count + 1) + max(0, $0 - 32) * zoom * tall }) {
             ScrollView(.horizontal) {
                 VStack(spacing: 16) {
                     ForEach(Array(block.pages.enumerated()), id: \.offset) { index, page in
                         Picture(src: page.src, alt: page.alt, fit: true)
                             .aspectRatio(CGFloat(page.width) / max(CGFloat(page.height), 1), contentMode: .fit)
-                            .containerRelativeFrame(.horizontal) { length, _ in
-                                max(0, length - 32) * zoom * CGFloat(page.width) / widest
-                            }
+                            .containerRelativeFrame(.horizontal) { length, _ in max(0, length - 32) * zoom * CGFloat(page.width) / widest }
                             .background(Color.white).overlay(Rectangle().strokeBorder(look.palette.edge, lineWidth: 1))
                             .accessibilityElement(children: .ignore).accessibilityAddTraits(.isImage)
-                            .accessibilityLabel("Page \(index + 1) of \(count). \(page.alt)")
-                            .id(index)
+                            .accessibilityLabel("Page \(index + 1) of \(count). \(page.alt)").id(index)
                     }
                 }
-                .padding(16)
-                .modifier(Zoomed(scale: $zoom, most: 4))
+                .padding(16).modifier(Zoomed(scale: $zoom, most: 4))
             }
         }
         .background(look.palette.line)
@@ -91,10 +81,8 @@ internal struct PagesBlock: View {
 
     private func go(_ index: Int, _ count: Int, _ proxy: ScrollViewProxy) {
         at = min(count - 1, max(0, index))
-        let still = reduce || look.motion == 0
-        withAnimation(still ? nil : (look.tiles ?? .default).curve((look.tiles ?? .default).settle * look.motion)) {
-            proxy.scrollTo(at, anchor: .top)
-        }
+        let tiles = look.tiles ?? .default
+        withAnimation(reduce || look.motion == 0 ? nil : tiles.curve(tiles.settle * look.motion)) { proxy.scrollTo(at, anchor: .top) }
     }
 }
 
@@ -107,6 +95,6 @@ private struct Fitted: SwiftUI.Layout {
     }
 
     func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: LayoutSubviews, cache: inout ()) {
-        for view in subviews { view.place(at: bounds.origin, proposal: ProposedViewSize(bounds.size)) }
+        subviews.forEach { $0.place(at: bounds.origin, proposal: ProposedViewSize(bounds.size)) }
     }
 }

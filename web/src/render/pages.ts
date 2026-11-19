@@ -5,8 +5,9 @@ import { btn, el, h, linkable } from "./index.ts";
 const views = new Map<string, Record<string, unknown>>();
 const MOST = 4;
 
-const named = <E extends HTMLElement>(e: E, name: string): E => {
+const named = <E extends HTMLElement>(e: E, name: string, role = ""): E => {
   e.setAttribute("aria-label", name);
+  if (role) e.setAttribute("role", role);
   return e;
 };
 
@@ -20,23 +21,17 @@ const scroller = (e: Element): Element => {
 };
 
 const sheet = (p: Pages["pages"][number], i: number, n: number, wide: number) => {
-  const f = h("figure", "dc");
   const alt = `Page ${i + 1} of ${n}. ${p.alt}`;
-  f.style.cssText = `--pw:${p.width / wide};--a:${p.width} / ${p.height}`;
   const im = Object.assign(el("img"), { loading: "lazy", alt, width: p.width, height: p.height, src: linkable(p.src) ? p.src : "" });
-  im.addEventListener("error", () => {
-    const x = named(h("div", "dcx bad", `Page ${i + 1} didn't load. ${p.alt}`), `${alt} Not loaded.`);
-    x.setAttribute("role", "img");
-    im.replaceWith(x);
-  });
-  f.append(im);
+  const f = h("figure", "dc", im);
+  f.style.cssText = `--pw:${p.width / wide};--a:${p.width} / ${p.height}`;
+  im.addEventListener("error", () => im.replaceWith(named(h("div", "dcx bad", `Page ${i + 1} didn't load. ${p.alt}`), `${alt} Not loaded.`, "img")));
   return f;
 };
 
 const zoom = (s: HTMLElement, well: HTMLElement, col: HTMLElement, keep: Record<string, unknown>, drawn: (z: number) => void) => {
   let w = typeof keep.zoom === "number" ? keep.zoom : 1;
-  let o = [0, 0];
-  let shown = 1;
+  let [o, shown] = [[0, 0], 1];
   const write = (z: number) => {
     const k = z / w;
     [w, shown] = [z, 1];
@@ -75,28 +70,14 @@ export function pages(b: Pages): HTMLElement {
   const had = old?.contains(document.activeElement) ? (document.activeElement?.getAttribute("aria-label") ?? null) : null;
   const s = el("section", "dcs");
   const count = el("span", "dcc", "no pages");
-  const [prev, next, out, fit, into] = [
-    key("‹", "previous page"),
-    key("›", "next page"),
-    key("−", "zoom out"),
-    key("fit", "fit to width"),
-    key("+", "zoom in"),
-  ];
+  const [prev, next, out, fit, into] = [key("‹", "previous page"), key("›", "next page"), key("−", "zoom out"), key("fit", "fit to width"), key("+", "zoom in")];
   const bar = h("div", "dcb");
   if (n) bar.append(prev, next, el("i"), out, fit, into);
-  if (b.file && linkable(b.file)) {
-    if (n) bar.append(el("i"));
-    bar.append(named(btn("pdf", "", b.file), `download ${title} as PDF`));
-  }
+  if (b.file && linkable(b.file)) bar.append(...(n ? [el("i")] : []), named(btn("pdf", "", b.file), `download ${title} as PDF`));
   s.append(h("div", "dch", h("b", "dct", title), count, ...(bar.childElementCount ? [bar] : [])));
   if (b.note) s.append(h("p", "dcn", b.note));
-  if (!n) {
-    s.append(h("div", "dce", "No pages yet"));
-    return s;
-  }
-  const well = named(h("div", "dcw"), `${title}, ${n} pages`);
-  well.setAttribute("role", "region");
-  well.tabIndex = 0;
+  if (!n) return (s.append(h("div", "dce", "No pages yet")), s);
+  const well = Object.assign(named(h("div", "dcw"), `${title}, ${n} pages`, "region"), { tabIndex: 0 });
   const wide = Math.max(1, ...b.pages.map((p) => p.width));
   const figs = b.pages.map((p, i) => sheet(p, i, n, wide));
   const col = h("div", "dck", ...figs);
@@ -118,18 +99,12 @@ export function pages(b: Pages): HTMLElement {
   };
   const seen = () => {
     if (!s.isConnected) return s.ownerDocument.removeEventListener("scroll", seen, true);
-    const shown = figs.map((f) => {
-      const r = f.getBoundingClientRect();
-      return Math.min(r.bottom, innerHeight) - Math.max(r.top, 0);
-    });
+    const shown = figs.map((f) => f.getBoundingClientRect()).map((r) => Math.min(r.bottom, innerHeight) - Math.max(r.top, 0));
     keep.at = shown.indexOf(Math.max(...shown));
     sync();
   };
   s.ownerDocument?.addEventListener("scroll", seen, { capture: true, passive: true });
-  zoom(s, well, col, keep, (z) => {
-    w = z;
-    sync();
-  });
+  zoom(s, well, col, keep, (z) => ((w = z), sync()));
   well.addEventListener("keydown", (e) => {
     if (e.key !== "PageDown" && e.key !== "PageUp") return;
     e.preventDefault();

@@ -1,6 +1,6 @@
 use serde_json::Value;
 
-use super::{get, link, list, W};
+use super::{get, link, list, Go, W};
 
 pub(super) fn pages(w: &mut W<'_>, b: &Value) {
     let title = get(b, "title").filter(|t| !t.is_empty()).unwrap_or("Document");
@@ -11,30 +11,16 @@ pub(super) fn pages(w: &mut W<'_>, b: &Value) {
     w.open_block("section", "dcs", b, &[]);
     w.open("div", "dch", &[]);
     w.el("b", "dct", title);
-    w.el(
-        "span",
-        "dcc",
-        &match n {
-            0 => "no pages".to_string(),
-            1 => "1 page".to_string(),
-            _ => format!("{n} pages"),
-        },
-    );
+    let count = match n {
+        0 => "no pages".to_string(),
+        1 => "1 page".to_string(),
+        _ => format!("{n} pages"),
+    };
+    w.el("span", "dcc", &count);
     if let Some(file) = link(b, "file") {
         let name = format!("download {title} as PDF");
         w.open("div", "dcb", &[]);
-        w.open(
-            "a",
-            "btn",
-            &[
-                ("href", file),
-                ("target", "_blank"),
-                ("rel", "noopener"),
-                ("aria-label", &name),
-            ],
-        );
-        w.el("span", "", "pdf");
-        w.close("a");
+        w.btn("pdf", "", &Go::Url(file.into()), &[("aria-label", &name)], None);
         w.close("div");
     }
     w.close("div");
@@ -43,8 +29,7 @@ pub(super) fn pages(w: &mut W<'_>, b: &Value) {
     }
     if n == 0 {
         w.el("div", "dce", "No pages yet");
-        w.close("section");
-        return;
+        return w.close("section");
     }
     let region = format!("{title}, {n} pages");
     w.open("div", "dcw", &[("role", "region"), ("aria-label", &region)]);
@@ -52,22 +37,17 @@ pub(super) fn pages(w: &mut W<'_>, b: &Value) {
     for (i, p) in all.iter().enumerate() {
         let (wd, ht) = (size(p, "width"), size(p, "height"));
         let pw = u32::try_from(wd).map_or(1.0, f64::from) / u32::try_from(widest).map_or(1.0, f64::from);
-        let style = format!("--pw:{pw};--a:{wd} / {ht}");
-        w.open("figure", "dc", &[("style", &style)]);
+        w.open("figure", "dc", &[("style", &format!("--pw:{pw};--a:{wd} / {ht}"))]);
         let alt = format!("Page {} of {n}. {}", i + 1, get(p, "alt").unwrap_or_default());
-        let (wd, ht) = (wd.to_string(), ht.to_string());
-        let src = link(p, "src").unwrap_or_default();
-        w.open(
-            "img",
-            "",
-            &[
-                ("src", src),
-                ("alt", &alt),
-                ("width", &wd),
-                ("height", &ht),
-                ("loading", "lazy"),
-            ],
-        );
+        let (wd, ht, src) = (wd.to_string(), ht.to_string(), link(p, "src").unwrap_or_default());
+        let at = [
+            ("src", src),
+            ("alt", &alt),
+            ("width", &wd),
+            ("height", &ht),
+            ("loading", "lazy"),
+        ];
+        w.open("img", "", &at);
         w.close("figure");
     }
     w.close("div");

@@ -513,17 +513,16 @@ fn pages() -> Block {
         width: 1240,
         height: 1754,
     };
-    let quote = vec![
-        page(1, "Cover and priced items: 8 lines, total 51,092.50 including VAT"),
-        page(2, "Terms and conditions, clauses 1 to 6"),
-        page(3, "Programme of works and the acceptance signature box"),
-    ];
     Block::Pages(Box::new(
-        Pages::new(quote)
-            .id("quote")
-            .title("Q-2026-0418 rev 3")
-            .file("/q/0418.pdf")
-            .note("Out of date: the prices changed after this was drawn."),
+        Pages::new(vec![
+            page(1, "Cover and priced items: 8 lines, total 51,092.50 including VAT"),
+            page(2, "Terms and conditions, clauses 1 to 6"),
+            page(3, "Programme of works and the acceptance signature box"),
+        ])
+        .id("quote")
+        .title("Q-2026-0418 rev 3")
+        .file("/q/0418.pdf")
+        .note("Out of date: the prices changed after this was drawn."),
     ))
 }
 
