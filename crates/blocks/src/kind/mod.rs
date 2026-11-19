@@ -8,6 +8,7 @@ use crate::expr::{Expr, State};
 #[macro_use]
 mod macros;
 mod content;
+mod list;
 mod parts;
 mod sample;
 mod table;
@@ -67,7 +68,7 @@ kind! {
     pub struct List {
         id: Option<String>,
         rows: Vec<Block>,
-        reorder: Option<Reorder>,
+        reorder: Option<Gesture>,
     }
 }
 

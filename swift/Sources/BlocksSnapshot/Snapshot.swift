@@ -139,6 +139,11 @@ public struct Snapshot {
                 try screen.apply(answer.ops ?? [])
                 seen = hear(draw(screen, edits))
             case .shot(let shot): try take(shot.name)
+            case .gesture(let g):
+                let block = try? Self.find(try JSONValue(screen), g.id)?.decode(Block.self)
+                let ways = Self.gestured(block, g).map { Self.sent(key, g.id, $0) }
+                if ways.isEmpty { dropped.append("gesture \(g.via.rawValue) \(g.id)") } else { sent += ways }
+            case .refuse: seen = hear(draw(screen, edits))
             case .unknown(let value): dropped.append("unknown \(value)")
             }
             times.append(ms(clock.now - begun))
@@ -164,6 +169,40 @@ public struct Snapshot {
 
     private func ms(_ d: Duration) -> Double {
         Double(d.components.seconds) * 1000 + Double(d.components.attoseconds) / 1e15
+    }
+
+    private static func gestured(_ block: Block?, _ g: StepGesture) -> [(Blocks.Gesture, JSONValue)] {
+        guard case .list(let l)? = block, let reorder = l.reorder, let grab = g.grab.string else { return [] }
+        return ways(l, grab, g).map { (reorder, .array($0.map(JSONValue.string))) }
+    }
+
+    private static func ways<R: Rules>(_ rules: R, _ grab: R.Grab, _ g: StepGesture) -> [R.Change] {
+        guard var d = Driven(rules, grab) else { return [] }
+        switch g.via {
+        case .keys:
+            d.on(.press)
+            for r in g.reach {
+                if let dir = r.string("dir").flatMap(Nudge.Dir.init(rawValue:)) { d.nudge(Nudge(dir, big: r["big"]?.bool ?? false)) }
+            }
+            guard case .send(let c)? = d.on(.release) else { return [] }
+            return [c]
+        case .action:
+            let steps = rules.steps(grab)
+            return g.reach.compactMap { name in
+                guard var one = Driven(rules, grab), let n = steps.first(where: { $0.0 == name.string })?.1,
+                    case .send(let c)? = one.named(n)
+                else { return nil }
+                return c
+            }
+        default: return []
+        }
+    }
+
+    private static func sent(_ screen: String, _ id: String, _ way: (Blocks.Gesture, JSONValue)) -> JSONValue {
+        .object([
+            "screen": .string(screen), "action": .string(way.0.action), "block": .string(id),
+            "values": .object([way.0.name: way.1]),
+        ])
     }
 
     private static func find(_ b: JSONValue, _ id: String) -> JSONValue? {
