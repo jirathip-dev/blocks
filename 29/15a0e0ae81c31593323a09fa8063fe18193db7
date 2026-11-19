@@ -1,0 +1,11 @@
+Decided: blocks-desk writes the tree and report per shot but no PNG; the rasteriser and PNG writer stay in S3.
+Because: docs/architecture/desktop/design.md:186
+Decided: main returns Result, so exit 1 on any fault or bad flag, no exit 2.
+Because: .drover/arch.toml:260
+Rejected: an arch.toml exception for std::process in main.rs — no shared file is edited outside what the ADR gives this slice.
+Decided: an empty list draws one line of height, so --check passes stress/list-empty.
+Because: crates/blocks-desktop/src/draw/list.rs:9
+Decided: CI checks fixtures/stress/*-*.json, as swift.yml does; stress/table.json is the stress table, not a screen.
+Because: .github/workflows/swift.yml:38
+Check: desktop.yml is green on ubuntu, windows and macos at the head.
+Owner: The desktop harness and its three-OS CI job are in; screenshots come with the next slice.
