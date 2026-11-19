@@ -29,10 +29,10 @@ extension View {
     }
 
     @ViewBuilder internal func chip(
-        _ look: Look, fill: Color, edge: Color, radius: CGFloat? = nil, paper: Color = .clear, dash: [CGFloat] = []
+        _ look: Look, fill: Color, edge: Color, radius: CGFloat? = nil, ground: Color = .clear, dash: [CGFloat] = []
     ) -> some View {
         if look.outline {
-            background(paper).overlay(Rectangle().strokeBorder(edge, style: StrokeStyle(lineWidth: 1, dash: dash)))
+            background(ground).overlay(Rectangle().strokeBorder(edge, style: StrokeStyle(lineWidth: 1, dash: dash)))
         } else if let radius {
             background(fill, in: .rect(cornerRadius: radius))
         } else {
@@ -40,11 +40,11 @@ extension View {
         }
     }
 
-    @ViewBuilder internal func accent(_ look: Look, _ tint: Color, fill: Color, radius: CGFloat, paper: Color = .clear)
+    @ViewBuilder internal func accent(_ look: Look, _ tint: Color, fill: Color, radius: CGFloat, ground: Color = .clear)
         -> some View
     {
         if look.outline {
-            background(paper, in: .rect(cornerRadius: radius))
+            background(ground, in: .rect(cornerRadius: radius))
                 .overlay(alignment: .leading) { Rectangle().fill(tint).frame(width: 3) }
         } else {
             background(fill, in: .rect(cornerRadius: radius))

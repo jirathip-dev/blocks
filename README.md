@@ -3,8 +3,8 @@
 blocks is an opinionated, server-driven UI framework for live app UI and static sites. drover and cooee depend on it.
 
 Shipped: the crate (typed blocks, their row diff and ops, the device stream protocol) with the codegen that turns its
-Rust types into JSON Schema, TS and Swift; the theme (schemes, styles, swag packs); the SwiftUI package. Still to
-come: the HTML renderer and shell, the static site renderer, and the headless harnesses
+Rust types into JSON Schema, TS and Swift; the theme rules (scheme tokens, the gate, styles, the pack check) and one
+neutral default pair; the SwiftUI package. Still to come: the HTML renderer and shell, the static site renderer, and the headless harnesses
 (`docs/architecture/blocks/migration.md`).
 
 ## Intent
@@ -17,6 +17,7 @@ come: the HTML renderer and shell, the static site renderer, and the headless ha
 
 - No drover or cooee imports. They depend on blocks, never the other way.
 - No transport: no tokio, HTTP or sockets. Streams are carried by drover and cooee.
+- No named colour scheme or theme pack: those live in jirathip-dev/swag, which an app pins beside blocks.
 
 ## Gates
 

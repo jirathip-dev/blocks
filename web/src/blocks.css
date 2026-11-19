@@ -161,6 +161,18 @@ input[type=checkbox]{width:var(--s4);height:var(--s4);accent-color:var(--l)}
 .b-toast{position:fixed;left:var(--s4);right:var(--s4);bottom:calc(var(--hit) * 2);z-index:8;padding:var(--s2) var(--s4);background:var(--card);border:1px solid var(--g);border-radius:6px}
 .b-toast.bad{border-color:var(--r)}
 
+.prose{line-height:1.5}
+.prose blockquote{margin:var(--s2) 0;padding-left:var(--s3);border-left:2px solid var(--edge);color:var(--mute)}
+.prose hr{border:0;border-top:1px solid var(--edge)}
+.hero{padding:var(--s4) var(--s2)}
+.hero h1{margin:0 0 var(--s2)}
+.media{margin:var(--s2) 0}
+.media img,.media video{display:block;max-width:100%;height:auto}
+.media figcaption{color:var(--mute);font-size:var(--fs-meta)}
+.nav{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s4);padding:var(--s2)}
+.nav .brand{margin-right:auto;font-weight:700}
+.nav a[aria-current=page]{color:var(--fg)}
+
 @keyframes s{to{transform:rotate(1turn)}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 }
