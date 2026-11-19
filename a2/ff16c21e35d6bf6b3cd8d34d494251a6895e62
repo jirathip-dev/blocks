@@ -1,0 +1,14 @@
+Decided: a fixture is known by its file name, so fixtures/guard/ok/queue.json and sheet.json became ok-queue and ok-sheet; a duplicate name is exit 2
+Because: crates/blocks-cli/src/files.rs:59
+Decided: Outcome.ignored carries each ignore's reason, so the SARIF suppression has its justification
+Because: docs/architecture/guard/shapes.md:121
+Decided: a fixture is in scope when it, its ignore or its baseline changed, so a baseline-only edit is still judged against base
+Because: crates/blocks-cli/src/lib.rs:81
+Decided: a fixture with no baseline at base may record nothing; a base without .blocks/guard.json is adopting
+Because: docs/architecture/guard/shapes.md:94
+Decided: --tighten writes the baselines, then judges again, so it exits 0 only when what is left is clean
+Because: crates/blocks-cli/src/lib.rs:112
+Rejected: Outcome in the generated schema now — the G3 slice row does not list it, and it would regenerate TS and Swift
+Rejected: a JSON Schema crate for the SARIF check — a new dependency; the test walks the OASIS schema fixture itself
+Check: crates/blocks-cli/tests/check.rs drives the real binary in temp git repos for each AC case
+Owner: Apps can now run one command that fails a branch only for new screen problems, with a baseline that only shrinks.
