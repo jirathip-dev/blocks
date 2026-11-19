@@ -1,0 +1,31 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>scene: drover's lanes</title>
+<link rel="stylesheet" href="../../../web/src/blocks.css"><link rel="stylesheet" href="scene.css"><link rel="stylesheet" href="page.css">
+<script src="scene.js"></script></head>
+<body><main class="scr" id="page">
+<div class="tile"><div class="tabh"><span class="tw">blocks · lanes</span><button type="button"><span>queue</span></button><button type="button"><span>board</span></button></div></div>
+<div class="tile one st"><b>5</b><span class="m">lanes live</span></div><div class="tile one st warn"><b>1</b><span class="m">needs you</span></div><div class="tile one st"><b>37</b><span class="m">merged · 14d</span></div>
+<div class="tile" id="a"></div>
+<div class="tile" id="b"></div>
+</main>
+<script>
+const now = Date.parse("2026-11-19T12:00:00Z");
+const ago = (m) => new Date(now - m * 60000).toISOString();
+const t = (id) => ({ open: id });
+const live = { type: "scene", id: "live", label: "Lanes · main host", lanes: [
+  { id: "impl-38", title: "#38 B14: web: HTML view for scene", state: "working", stage: "impl", tool: "claude", since: ago(14), tap: t("impl-38") },
+  { id: "rev-24", title: "#24 B14: web: composer", state: "working", stage: "review(2)", tool: "claude", since: ago(6), tap: t("rev-24") },
+  { id: "fix-23", title: "#23 B14: web: diagram", state: "needs", stage: "fix(3)", tool: "hermes", since: ago(47), tap: t("fix-23") },
+  { id: "design-39", title: "#39 B14: web: hero", state: "idle", stage: "design", tool: "claude", since: ago(190), tap: t("design-39") },
+  { id: "verify-61", title: "#61 B52: frame budget", state: "fail", stage: "verify(1)", tool: "claude", since: ago(3), tap: t("verify-61") },
+]};
+const done = { type: "scene", id: "landed", label: "Landed today", lanes: [
+  { id: "impl-63", title: "#63 theme: one neutral default pair", state: "merged", stage: "merged", since: ago(220), tap: { url: "#63" } },
+  { id: "impl-65", title: "#65 B14: web: draw diagram natively", state: "merged", stage: "merged", since: ago(130), tap: { url: "#65" } },
+  { id: "rev-60", title: "#60 B16: the HTML renderer reads generated types", state: "done", stage: "review", since: ago(400) },
+]};
+document.getElementById("a").append(scene(live, now));
+document.getElementById("b").append(scene(done, now));
+document.querySelectorAll(".tile").forEach((x, i) => x.style.setProperty("--i", i));
+document.body.dataset.h = Math.ceil(document.documentElement.scrollHeight);
+</script></body></html>

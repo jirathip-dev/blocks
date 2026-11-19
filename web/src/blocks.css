@@ -142,6 +142,27 @@ input[type=checkbox]{width:var(--s4);height:var(--s4);accent-color:var(--l)}
 .dgn.timer{flex-direction:row;justify-content:flex-start;align-items:center;gap:var(--s1);border:1px dashed var(--link);background:transparent;color:var(--link)}
 .dgn.timer .dgv{font-weight:600}
 .dgn.timer>span{display:flex;flex-direction:column;min-width:0}
+.scn{container-type:inline-size;margin:var(--s2) 0 0}
+.scn>.sh{margin-top:0}
+.scl{display:flex;flex-wrap:wrap;gap:var(--s2);margin:0;padding:0;list-style:none}
+.ln{box-sizing:border-box;display:flex;align-items:center;gap:var(--s2);max-width:100%;min-height:var(--hit);padding:var(--s1) var(--s3) var(--s1) 10px;border:1px solid var(--edge);border-radius:0;background:var(--bg);color:var(--fg);text-decoration:none}
+.ln.tap{cursor:pointer}
+.ln.tap:hover{border-color:var(--mute)}
+.ln.tap:focus-visible{outline:2px solid var(--l);outline-offset:2px}
+.lnm{flex:none;width:8px;height:8px;background:var(--mute)}
+.ln.working .lnm,.ln.merged .lnm{background:var(--g)}
+.ln.needs .lnm{background:var(--a)}
+.ln.fail .lnm{background:var(--r)}
+.ln.done .lnm{background:var(--l)}
+.ln.idle .lnm{background:none;box-shadow:inset 0 0 0 1px var(--mute)}
+.lnb{min-width:0;display:flex;flex-direction:column}
+.lnh{display:flex;align-items:baseline;gap:var(--s2);min-width:0}
+.lnt{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:32ch}
+.lns{flex:none;color:var(--mute);font-size:var(--fs-meta)}
+.ln.needs .lns{color:var(--fk-a)}
+.ln.fail .lns{color:var(--r)}
+.lnx{color:var(--mute);font-size:var(--fs-meta);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@container (width < 600px){.scl>li{flex:1 1 100%;min-width:0}.scl>li>.ln{width:100%}.lnb{flex:1}.lnh{justify-content:space-between}.lnt{max-width:none}}
 .b-tabs{position:sticky;bottom:0;display:flex;gap:var(--s2);padding:var(--s2) 0 env(safe-area-inset-bottom);background:var(--bg);border-top:1px solid var(--line)}
 .b-tab{flex:1}
 .b-tab.on{box-shadow:inset 0 -2px var(--g);color:var(--g)}
