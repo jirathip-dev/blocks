@@ -1,0 +1,8 @@
+Decided: add ci/cap.d/2026-11-19-19000.toml with line_cap = 19000, nothing else in ci/cap.d or ci/cap.toml
+Because: q2269
+Because: "One new `ci/cap.d/2026-11-19-19000.toml` with `line_cap = 19000`"
+Decided: commit trailer Cap: 17000 → 19000 (#120, q2269), the format of the 17000 raise
+Because: scripts/line-cap.sh:4
+Rejected: editing ci/cap.toml — lanes never edit it; cap.d files stack and the highest line_cap wins
+Check: sh scripts/line-cap.sh prints 16091 / cap 19000 and exits 0
+Owner: the repo's line limit rises from 17,000 to 19,000 for the guard work
