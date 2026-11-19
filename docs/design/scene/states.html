@@ -1,0 +1,38 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>scene: every state</title>
+<link rel="stylesheet" href="../../../web/src/blocks.css"><link rel="stylesheet" href="scene.css"><link rel="stylesheet" href="page.css">
+<script src="scene.js"></script></head>
+<body><main class="scr" id="page">
+<div class="tile"><div class="tabh"><span class="tw">scene · every case</span></div></div>
+</main>
+<script>
+const now = Date.parse("2026-11-19T12:00:00Z");
+const ago = (m) => new Date(now - m * 60000).toISOString();
+const cases = [
+  ["1 each state: the marker carries the colour; needs and fail also colour the state word; idle is a hollow square", { id: "s1", label: "States", lanes:
+    ["working", "needs", "fail", "done", "merged", "idle"].map((s) => ({ id: s, title: s === "idle" ? "#12 parked" : `#${s.length} ${s} lane`, state: s, stage: "impl", tool: "claude", since: ago(9) })) }],
+  ["2 the second line holds only the fields that are set: stage, tool, age", { id: "s2", label: "Optional fields", lanes: [
+    { id: "a", title: "all three", state: "working", stage: "review(1)", tool: "claude", since: ago(75) },
+    { id: "b", title: "stage only", state: "working", stage: "impl" },
+    { id: "c", title: "age only", state: "needs", since: ago(2) },
+    { id: "d", title: "title and state only", state: "done" } ] }],
+  ["3 tap: `open`, `sheet` or `action` is a button (focus ring shown on the first); `url` is a link; no tap is plain", { id: "s3", label: "Tap", lanes: [
+    { id: "t1", title: "opens the lane", state: "working", stage: "impl", tap: { open: "impl" } },
+    { id: "t2", title: "links to the PR", state: "merged", stage: "merged", tap: { url: "#" } },
+    { id: "t3", title: "not tappable", state: "idle", stage: "design" } ] }],
+  ["4 a long title is cut with … at 32 characters wide; at phone width each lane takes a full line, its state at the right edge", { id: "s4", label: "Long titles", lanes: [
+    { id: "l1", title: "#1318 screen hub: the pin, tokio, the hub and the device stream", state: "working", stage: "impl", tool: "claude", since: ago(31) },
+    { id: "l2", title: "#5", state: "needs", stage: "fix(2)" } ] }],
+  ["5 no label: the lanes alone", { id: "s5", lanes: [{ id: "n", title: "#7 unlabelled", state: "working" }] }],
+  ["6 no lanes: the label alone, as on Swift", { id: "s6", label: "Lanes · cloud host", lanes: [] }],
+];
+const page = document.getElementById("page");
+for (const [note, b] of cases) {
+  const tile = document.createElement("div"); tile.className = "tile";
+  const n = document.createElement("div"); n.className = "note"; n.textContent = note;
+  tile.append(n, scene({ type: "scene", ...b }, now)); page.append(tile);
+}
+document.querySelector('[data-id="t1"]').style.cssText = "outline:2px solid var(--l);outline-offset:2px";
+document.querySelectorAll(".tile").forEach((x, i) => x.style.setProperty("--i", i));
+document.body.dataset.h = Math.ceil(document.documentElement.scrollHeight);
+</script></body></html>

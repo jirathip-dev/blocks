@@ -2,6 +2,6 @@
   "kind": "scene",
   "id": "scene",
   "variant": null,
-  "drawn": "fallback",
+  "drawn": "native",
   "children": []
 }
