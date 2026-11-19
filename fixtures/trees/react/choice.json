@@ -1,0 +1,9 @@
+{
+  "kind": "choice",
+  "id": "ask",
+  "variant": null,
+  "drawn": "fallback",
+  "role": "group",
+  "name": "Merge it?",
+  "children": []
+}

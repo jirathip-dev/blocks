@@ -140,6 +140,33 @@ fn trees(root: &Path) -> std::io::Result<Files> {
         .collect();
     let mut out = expected("fixtures/trees", &web)?;
     out.extend(expected("fixtures/trees/swift", &swift)?);
+    out.extend(react(root)?);
+    Ok(out)
+}
+
+fn react(root: &Path) -> std::io::Result<Files> {
+    let dir = root.join("web/react/src/kinds");
+    let mut kinds = vec![];
+    if dir.is_dir() {
+        for f in std::fs::read_dir(dir)? {
+            let name = f?.file_name().to_string_lossy().into_owned();
+            kinds.extend(name.strip_suffix(".ts").map(String::from));
+        }
+    }
+    kinds.sort();
+    let mut views = String::from("import type { Views } from \"../block.ts\";\n");
+    for k in &kinds {
+        views += &format!("import {{ {k} }} from \"../kinds/{k}.ts\";\n");
+    }
+    let list = if kinds.is_empty() {
+        String::new()
+    } else {
+        format!(" {} ", kinds.join(", "))
+    };
+    views += &format!("\nexport const views: Views = {{{list}}};\n");
+    let drawn: Vec<&str> = kinds.iter().map(String::as_str).collect();
+    let mut out = expected("fixtures/trees/react", &drawn)?;
+    out.push(("web/react/src/gen/views.ts".into(), views));
     Ok(out)
 }
 
