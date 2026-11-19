@@ -17,7 +17,7 @@ export function card(b: Card, c: Ctx): HTMLElement {
       if (!(e.target instanceof Element && e.target.closest("button"))) toggle(k, b.id, c, true);
     };
     if (main && shut) {
-      const m = btn(main.label, "main");
+      const m = btn(main.label, "main", undefined, main.action);
       m.onclick = () => c.act({ action: main.action, block: main.block, values: { ...main.values, choice: main.value } }, m);
       line.append(m);
     }

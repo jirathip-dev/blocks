@@ -152,7 +152,7 @@ internal struct BlockNode: View {
             case .appBlock(let block): AppBlockView(block: block)
             }
         }
-        .modifier(Styled(type: block.type)).modifier(Reported(block: block))
+        .modifier(Styled(type: block.type)).modifier(Reported(block: block)).modifier(Identified(id: block.id))
     }
 }
 

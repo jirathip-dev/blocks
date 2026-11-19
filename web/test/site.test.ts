@@ -55,11 +55,11 @@ test("site and render give the same element per kind: tag, classes, hooks and te
         const B = await import("/blocks.js");
         const sig = (e) =>
           [e, ...e.querySelectorAll("*")]
-            .filter((x) => x.hasAttribute("data-block") || [...x.classList].some((c) => c.startsWith("b-")))
+            .filter((x) => x.hasAttribute("data-block") || x.hasAttribute("data-action") || [...x.classList].some((c) => c.startsWith("b-")))
             .map((x) => ({
               tag: x.tagName,
               cls: [...x.classList].sort().join(" "),
-              hooks: ["data-block", "data-variant", "data-tone", "data-fallback"].map((a) => x.getAttribute(a)),
+              hooks: ["data-block", "data-variant", "data-tone", "data-fallback", "data-action"].map((a) => x.getAttribute(a)),
               id: x.dataset.id || "",
               text: x.textContent.replace(/\s+/g, " ").trim(),
             }));

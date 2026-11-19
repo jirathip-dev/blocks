@@ -1,5 +1,5 @@
 import type { Screen } from "../gen/types.ts";
-import { btn, type Ctx, el, kids, urlOf } from "./index.ts";
+import { btn, type Ctx, el, kids, sends, urlOf } from "./index.ts";
 
 export function screen(b: Screen, c: Ctx): HTMLElement {
   const s = el("div", "scr");
@@ -10,7 +10,7 @@ export function screen(b: Screen, c: Ctx): HTMLElement {
   head.append(title);
   for (const a of b.actions ?? [])
     for (const m of a.menu ?? [a]) {
-      const x = btn(m.label, "b-screen__actions", urlOf(m.tap));
+      const x = btn(m.label, "b-screen__actions", urlOf(m.tap), sends(m.tap, m.action));
       x.onclick = () => (m.tap ? c.tap(m.tap) : c.act({ action: m.action, values: m.values, confirm: m.confirm }, x));
       head.append(x);
     }

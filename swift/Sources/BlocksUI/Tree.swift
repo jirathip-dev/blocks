@@ -133,3 +133,35 @@ extension FieldValue {
         }
     }
 }
+
+/// Every `block:<id>` and `action:<id>` drawn under a view, in drawn order, for the harness.
+package struct DrawnIds: PreferenceKey {
+    package static var defaultValue: [String] { [] }
+
+    package static func reduce(value: inout [String], nextValue: () -> [String]) {
+        value.append(contentsOf: nextValue())
+    }
+}
+
+internal struct Identified: ViewModifier {
+    @Environment(\.reportsBlocks) private var reports
+    internal let id: String?
+    internal var action = false
+
+    @ViewBuilder
+    internal func body(content: Content) -> some View {
+        if let id, !id.isEmpty {
+            let name = "\(action ? "action" : "block"):\(id)"
+            let marked = Group {
+                if action {
+                    content.accessibilityIdentifier(name)
+                } else {
+                    content.accessibilityElement(children: .contain).accessibilityIdentifier(name)
+                }
+            }
+            if reports { marked.transformPreference(DrawnIds.self) { $0.insert(name, at: 0) } } else { marked }
+        } else {
+            content
+        }
+    }
+}

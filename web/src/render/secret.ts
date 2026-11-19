@@ -6,7 +6,7 @@ export function secret(b: Secret, c: Ctx): HTMLElement {
   Object.assign(i, { type: "password", name: b.name, placeholder: b.set ? "paste to replace" : (b.placeholder ?? ""), autocomplete: "new-password", spellcheck: false });
   const k = h("span", "fk", b.label ?? b.name);
   if (b.set) k.append(h("span", "set", "set ✓"));
-  const go = btn("send");
+  const go = btn("send", "", undefined, b.action);
   const word = go.firstElementChild ?? go;
   const send = () => {
     if (!i.value) return i.focus();

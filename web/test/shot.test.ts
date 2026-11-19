@@ -36,6 +36,19 @@ test("--check exits 1 when the drawn tree is not the expected one", () => {
   ok(r.stderr.includes("drew list#rows native, expected card#card native"), r.stderr);
 });
 
+test("each fixtures/ids file is the block and action ids its screen draws, and --check fails on others", () => {
+  const ids = at("../../fixtures/ids/");
+  const names = readdirSync(ids).map((f) => f.replace(/\.json$/, ""));
+  deepStrictEqual(names.sort(), ["button", "screen"]);
+  for (const k of names) {
+    const r = run("--screen", join(blocks, `${k}.json`), "--ids", join(ids, `${k}.json`), "--check", "--out", join(out, `ids-${k}`));
+    strictEqual(r.status, 0, `${k}: ${r.stderr}`);
+  }
+  const r = run("--screen", join(blocks, "button.json"), "--ids", join(ids, "screen.json"), "--check", "--out", join(out, "ids-wrong"));
+  strictEqual(r.status, 1);
+  strictEqual(r.stderr, 'button: drew ids {"blocks":["save"],"actions":["save"]}, expected {"blocks":["home","hint"],"actions":[]}\n');
+});
+
 test("a scripted tap sends the button's action and an answer's ops are drawn", () => {
   const script = join(out, "tap.json");
   const ops = [{ op: "merge", id: "save", fields: { label: "Saved" } }];

@@ -73,6 +73,7 @@ internal struct MenuItems: View {
     internal var body: some View {
         ForEach(Array(acts.enumerated()), id: \.offset) { _, item in
             Button(item.label, role: item.tone?.rawValue == "bad" ? .destructive : nil) { run(item) }
+                .modifier(Identified(id: Source(item).sent()?.action, action: true))
         }
     }
 }
@@ -94,6 +95,7 @@ private struct SwipeButtons: View {
                         .background(look.palette.tone(item.tone?.rawValue) ?? look.palette.link)
                 }
                 .buttonStyle(.plain)
+                .modifier(Identified(id: Source(item).sent()?.action, action: true))
             }
         }
     }

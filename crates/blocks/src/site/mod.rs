@@ -147,10 +147,15 @@ pub(crate) fn on(v: &Value, k: &str) -> bool {
     v.get(k).and_then(Value::as_bool).unwrap_or(false)
 }
 
+pub(crate) fn sends(t: Option<&Value>) -> Option<&str> {
+    t.filter(|t| ["url", "open", "sheet"].iter().all(|k| get(t, k).is_none()))
+        .and_then(|t| get(t, "action"))
+}
+
 pub(crate) enum Go {
     Url(String),
     Open(String),
-    Post(String),
+    Post(String, String),
     Sheet(String),
     Stay,
 }
@@ -276,8 +281,11 @@ impl<'a> W<'a> {
                 all.push(("href", u.as_str()));
                 true
             }
-            Go::Post(f) => {
+            Go::Post(f, x) => {
                 all.extend([("type", "submit"), ("form", f.as_str())]);
+                if !x.is_empty() {
+                    all.push(("data-action", x.as_str()));
+                }
                 false
             }
             Go::Sheet(s) => {
@@ -314,7 +322,7 @@ impl<'a> W<'a> {
         let go = if action.is_empty() {
             Go::Stay
         } else {
-            Go::Post(self.post(b, action, v))
+            Go::Post(self.post(b, action, v), action.into())
         };
         self.btn(label, cls, &go, at, None);
     }
@@ -338,7 +346,7 @@ impl<'a> W<'a> {
             return Go::Sheet(s.into());
         }
         match get(t, "action") {
-            Some(a) => Go::Post(self.post(block, a, &fields(&[t.get("values")]))),
+            Some(a) => Go::Post(self.post(block, a, &fields(&[t.get("values")])), a.into()),
             None => Go::Stay,
         }
     }
@@ -346,7 +354,7 @@ impl<'a> W<'a> {
     pub(crate) fn act(&mut self, a: &Value, cls: &str, block: Option<&Value>) {
         let go = match (a.get("tap"), get(a, "action")) {
             (Some(t), _) => self.tap(Some(t), block),
-            (None, Some(x)) => Go::Post(self.post(block, x, &fields(&[a.get("values")]))),
+            (None, Some(x)) => Go::Post(self.post(block, x, &fields(&[a.get("values")])), x.into()),
             (None, None) => Go::Stay,
         };
         self.btn(&shown(a.get("label")), cls, &go, &[], None);
