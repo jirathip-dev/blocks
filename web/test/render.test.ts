@@ -464,6 +464,27 @@ test("a config with a submit sends every field over its values from its button, 
   strictEqual(off.querySelector("button").hasAttribute("disabled"), true);
 });
 
+test("a form sends on its own field rules whatever their names, and not while a check fails or nothing is typed", async () => {
+  const sent = [];
+  const c = ctx({ act: async (a) => (sent.push(a), true) });
+  const qty = { type: "text", name: "qty", checks: [{ ok: { is: { pattern: "number", value: { get: "qty" } } }, say: "a number" }] };
+  const order = { type: "form", id: "order", fields: [{ type: "text", name: "name" }, qty], submit: { label: "order", action: "order" } };
+  const e = render(order, c);
+  ctl(rows(e)[0]).value = "ada";
+  ctl(rows(e)[1]).value = "many";
+  e.querySelector("button").onclick();
+  await later();
+  deepStrictEqual(sent, []);
+  ctl(rows(e)[1]).value = "3";
+  e.querySelector("button").onclick();
+  await later();
+  deepStrictEqual(sent, [{ action: "order", block: "order", values: { name: "ada", qty: "3" } }]);
+  const say = render({ type: "form", id: "say", fields: [{ type: "text", name: "text", value: "" }], submit: { label: "Send", action: "say" } }, c);
+  say.querySelector("button").onclick();
+  await later();
+  strictEqual(sent.length, 1);
+});
+
 test("a secret draws its label, a masked field and a send line, and set says so with a replace hint", () => {
   const e = render(fixture("secret"), ctx());
   ok(!e.hasAttribute("data-fallback"));

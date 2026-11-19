@@ -22,11 +22,27 @@ generated = [
     "fixtures/behave/sim.json",
 ]
 generate = "just gen"
-shared = ["crates/blocks/src/lib.rs", "crates/*/tests/support/**", "crates/blocks/src/codegen/mod.rs"]
+shared = [
+    "crates/blocks/src/lib.rs",
+    "crates/*/tests/support/**",
+    "crates/blocks/src/codegen/mod.rs",
+    "crates/blocks/tests/sim.rs",
+    "web/src/patch.ts",
+    "web/test/patch.test.ts",
+    "web/test/dom.ts",
+    "web/shot/shot.ts",
+    ".drover/arch.toml",
+    "justfile",
+    "README.md",
+]
 
 [[collect]]
 dir = "ci/cap.d"
 glob = "*.toml"
+
+[[collect]]
+dir = "docs"
+glob = "*.md"
 
 [comments]
 policy = "strict"
@@ -231,6 +247,22 @@ max_fn_lines = 80
 [[size]]
 paths = ["swift/Tests/**/*.swift"]
 max_file_lines = 1000
+
+[[size]]
+paths = ["web/src/patch.ts", "web/test/patch.test.ts", "web/test/dom.ts", "web/shot/shot.ts"]
+max_file_lines = 200
+
+[[size]]
+paths = ["crates/blocks/tests/sim.rs"]
+max_file_lines = 520
+
+[[size]]
+paths = [".drover/arch.toml", "justfile"]
+max_file_lines = 300
+
+[[size]]
+paths = ["README.md"]
+max_file_lines = 70
 
 [[size]]
 paths = ["crates/blocks/src/codegen/mod.rs"]
