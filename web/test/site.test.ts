@@ -8,6 +8,7 @@ const at = (p) => new URL(p, import.meta.url);
 const read = (p) => readFileSync(at(p), "utf8");
 const live = read("../../fixtures/site/live.html");
 const still = read("../../fixtures/site/index.html");
+const PNG = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==", "base64");
 let browser;
 before(async () => (browser = await webkit.launch()));
 after(() => browser.close());
@@ -25,13 +26,18 @@ async function open({ js = true, page: doc = live } = {}) {
       return r.fulfill({ body: q.headers()["content-type"]?.startsWith("application/json") ? "{}" : "posted", contentType: "text/html" });
     }
     if (p === "") return r.fulfill({ body: doc, contentType: "text/html" });
+    if (p.startsWith("media/")) return r.fulfill({ body: PNG, contentType: "image/png" });
     if (p === "docs") return r.fulfill({ body: "<!doctype html><p>docs", contentType: "text/html" });
     if (p === "blocks.js" || p === "blocks.css") return r.fulfill({ body: read(`../dist/${p}`), contentType: p.endsWith(".css") ? "text/css" : "text/javascript" });
     return r.fulfill({ status: 404 });
   });
   await page.goto(BASE);
+  if (js) await settled(page);
   return { page, posts, close: () => ctx.close() };
 }
+
+const settled = (page) =>
+  page.waitForFunction(() => Array.from(document.images).every((i) => i.complete), null, { timeout: 5000 });
 
 const tree = (page) =>
   page.evaluate(async () => {
