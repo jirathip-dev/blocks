@@ -1,0 +1,9 @@
+Decided: generate builders from the schema's Block and Expr defs in codegen/builders.rs
+Because: "`gen/builders.ts`; `built()` and `share()`"
+Decided: the crate writes fixtures/built/every.json from Built::of and the TS test compares built() with it
+Because: "`built()` writes the same fallbacks as `Built::of`"
+Decided: fix round: the build job's red was the runner's apt fetch of WebKit deps, so an empty commit reruns CI with no code change
+Because: .github/workflows/pages.yml:27
+Rejected: changing the workflow to retry apt — out of this issue's scope
+Check: 56ae0cc has the same tree as 075ea4f (git diff exit 0) and CI is green at it
+Owner: TypeScript apps get typed block builders and the same fallback writing the Rust server does.
