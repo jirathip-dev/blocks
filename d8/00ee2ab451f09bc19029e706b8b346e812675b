@@ -1,0 +1,50 @@
+Decided: one core kind `steps` that draws a stepper (`steps` with `current` or `done`) or progress bars (`bars`), with a `fallback` row when empty or unplaced.
+Decided: bar fill stays ink; the tone colours only the number, the tick and a warn or bad note.
+Because: q2295
+Decided: a stepper with neither current nor done, or a current naming no step, is a Built::check Shape fault and draws its fallback.
+Because: crates/blocks/src/built.rs:124
+Rejected: a separate top-level label/value/tone for one bar — a one-item `bars` says the same, so there is one way.
+Rejected: naming the step type `Step` — the shot script already owns `Step` in the generated TS, which would rename it Step2.
+Decided: the sample is a finished stepper because the stress many-variant suffixes every id, so no `current` could match there.
+Because: crates/blocks/tests/fixtures.rs:580
+Check: web/test/site.test.ts compares the static writer's element with the live render for the steps fixture.
+Check: the fill and tick move by transform, since web/lint.mjs bans animating width and left.
+Owner: Screens can now show a stepper or progress bars, drawn the same on web, the static site and Apple.
+
+Decided: a compact stepper too long for the width scrolls sideways as a third ViewThatFits choice, keeping the summary line below it.
+Because: swift/Sources/BlocksUI/BlockSteps.swift:46
+Rejected: dropping markers past a count — it hides steps the web line still lists.
+Check: blocks-snap --check on fixtures/stress/steps-many.json at 390 passes; steps with 5 to ~12 entries still draw the unscrolled compact line.
+Owner: A very long stepper on Apple now scrolls sideways instead of running off the screen.
+
+Decided: the showcase test expects 34 pages, since the steps kind adds one docs-site page.
+Because: web/test/pages/showcase.test.ts:51
+Rejected: deriving the count from the files — the fixed number is what catches a page that silently drops.
+Check: cargo run -p blocks-site builds 34 pages and test/pages/showcase.test.ts passes on them.
+Owner: The docs site's page check now counts the new stepper page.
+
+Decided: merged origin/staging, keeping both the steps site tests and staging's link test in the site test file.
+Because: crates/blocks/tests/site.rs:298
+Decided: web/dist/blocks.js is rebuilt from the merged sources, never hand-merged.
+Rejected: taking either side of web/dist/blocks.js — it is a bundle, so each side alone drops the other's code.
+Check: cargo test, the web suite and the showcase page test pass on the merged tree.
+Owner: The stepper branch is up to date with the latest shared work again.
+
+Decided: no code change for the perf FAIL; the HTML-write budget miss was CI runner noise.
+Because: crates/blocks/tests/perf.rs:89
+Check: locally in release the 500 KB HTML write takes 4687 µs on staging and 4724 µs at this head, under the 10 ms budget.
+Rejected: raising the perf budget — the head is within 1% of staging, so nothing regressed.
+Decided: merged origin/staging (the codegen split into a folder); clean, and the codegen rerun leaves no diff.
+Owner: The stepper branch is up to date again; the red speed check was a slow CI machine, not this change.
+
+Decided: merged origin/staging; only web/dist/blocks.js conflicted and it is rebuilt from the merged sources, never hand-merged.
+Because: web/package.json:6
+Rejected: none
+Check: npm --prefix web test, cargo test --workspace and blocks-codegen (no diff) pass at the merged head.
+Owner: The stepper branch is up to date with the latest shared work again.
+
+Decided: merged origin/staging; both sides added a kind, so each conflict keeps both lines and steps (29 kinds), and the generated types and web/dist are rerun, never hand-merged.
+Because: crates/blocks/tests/fixtures.rs:380
+Rejected: none
+Check: the kind, page and stress counts in the tests (29, 35, 57) count both new kinds; cargo test, the web suite, swift test and codegen (no diff) pass at the merged head.
+Owner: The stepper branch is up to date with the new line-item editor work, and both new kinds now show side by side.
