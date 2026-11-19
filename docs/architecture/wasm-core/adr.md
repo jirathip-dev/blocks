@@ -111,6 +111,7 @@ feature list, no CSP change, no new route.
 
 1. File the follow-up (the sim's fixed seeds as generated protocol fixtures, and random expressions as a
    `fixtures/behave` file, for TS and Swift)? It answers the issue's Problem at no bundle cost. Recommended: yes.
+   Answered (q2240): yes, filed as its own issue.
 
 ## `.drover/arch.toml` lines
 
