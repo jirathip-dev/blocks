@@ -1,0 +1,13 @@
+Decided: one rule, tree::a11y, gives each block root its role and name; web render, site open_block and Swift Reported all apply it
+Because: crates/blocks/src/tree.rs:41
+Decided: an existing role or a native button or link on the web root keeps its own role, so link rows stay links
+Because: web/src/render/index.ts:198
+Decided: the name is the first set of label, title, header, question, alt, file, command, placeholder or name, else the id, else the kind
+Because: "every actionable element has a name; every image has a label or is marked decorative"
+Decided: blocks-shot also fails unnamed buttons, links and fields and images with no alt; blocks-snap checks each node's role and name only
+Because: web/shot/shot.ts:118
+Decided: the composer's empty send button gets the name "send"; the editor's name is now its name field, not "edit name"
+Because: web/src/render/composer.ts:161
+Rejected: generating the rule into Swift as well — its typed per-kind fields would mean a new codegen path; blocks-snap --check holds it to the Rust trees
+Check: shot.test runs all 27 fixtures at 390 and 1440; base vs head PNGs are byte-identical in WebKit and SwiftUI
+Owner: Screen readers now hear a role and a name for every block on every renderer, with no visual change.
