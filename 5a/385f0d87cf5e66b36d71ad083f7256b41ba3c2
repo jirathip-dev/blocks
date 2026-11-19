@@ -1,0 +1,7 @@
+Decided: the showcase test counts 38 site pages; the chart kind adds its kind page.
+Because: web/test/pages/showcase.test.ts:51
+Decided: merge origin/staging and regenerate the schema, TS and Swift rather than hand-merge them.
+Because: .drover/arch.toml:9
+Rejected: deriving the count from the kind list — the hard count is staging's own pattern and a lane change.
+Check: SITE=<built site> node --test web/test/pages/showcase.test.ts passes with 38 pages.
+Owner: The site's page check now expects the new chart page, so the build goes green.
