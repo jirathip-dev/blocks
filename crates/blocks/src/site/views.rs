@@ -2,7 +2,7 @@ use serde_json::{Map, Value};
 
 use crate::behave;
 
-use super::{esc, fields, get, kids, list, on, one, shown, Go, W};
+use super::{esc, fields, get, kids, list, on, one, rounds, shown, Go, W};
 
 fn toned(v: Option<&Value>) -> (String, String) {
     match v {
@@ -97,17 +97,47 @@ fn figure(w: &mut W<'_>, f: &Value) {
 }
 
 pub(super) fn row(w: &mut W<'_>, b: &Value) {
-    row_of(w, b, true);
+    if list(b, "rounds").is_empty() {
+        row_of(w, b, true);
+    } else {
+        rounds::row(w, b);
+    }
 }
 
-pub(super) fn row_of(w: &mut W<'_>, b: &Value, hooked: bool) {
+pub(super) fn face(w: &mut W<'_>, b: &Value, sub: bool) {
+    if let Some(f) = b.get("figure").filter(|f| f.is_object()) {
+        figure(w, f);
+    }
+    w.open("span", "rm", &[]);
+    w.el("span", "rt b-row__title", &shown(b.get("title")));
+    badge(w, "b-row__badge", b.get("badge"));
+    if let Some(sub) = b.get("subtitle").filter(|v| sub && !v.is_null()) {
+        let cls = format!("rs b-row__subtitle {}", toned(Some(sub)).1);
+        ticked(
+            w,
+            "span",
+            &cls,
+            if sub.is_object() { sub.get("text") } else { Some(sub) },
+        );
+    }
+    w.close("span");
+    if let Some(v) = b.get("value").filter(|v| !v.is_null()) {
+        ticked(w, "span", "rv b-row__value", Some(v));
+    }
+}
+
+pub(super) fn classes(b: &Value) -> String {
     let indent = b.get("indent").and_then(Value::as_u64).filter(|i| *i > 0);
-    let mut cls = format!(
+    format!(
         "row{}{}{}",
         if get(b, "style") == Some("link") { " link" } else { "" },
         if on(b, "sticky") { " sticky" } else { "" },
         indent.map_or(String::new(), |i| format!(" in{}", i.min(3)))
-    );
+    )
+}
+
+pub(super) fn row_of(w: &mut W<'_>, b: &Value, hooked: bool) {
+    let mut cls = classes(b);
     let swipe = list(b, "swipe");
     let go = match b.get("tap") {
         Some(t) if get(t, "url").is_none() && get(t, "open").is_none() => Go::Stay,
@@ -141,25 +171,7 @@ pub(super) fn row_of(w: &mut W<'_>, b: &Value, hooked: bool) {
     } else {
         w.open(tag, &cls, &attrs);
     }
-    if let Some(f) = b.get("figure").filter(|f| f.is_object()) {
-        figure(w, f);
-    }
-    w.open("span", "rm", &[]);
-    w.el("span", "rt b-row__title", &shown(b.get("title")));
-    badge(w, "b-row__badge", b.get("badge"));
-    if let Some(sub) = b.get("subtitle").filter(|v| !v.is_null()) {
-        let cls = format!("rs b-row__subtitle {}", toned(Some(sub)).1);
-        ticked(
-            w,
-            "span",
-            &cls,
-            if sub.is_object() { sub.get("text") } else { Some(sub) },
-        );
-    }
-    w.close("span");
-    if let Some(v) = b.get("value").filter(|v| !v.is_null()) {
-        ticked(w, "span", "rv b-row__value", Some(v));
-    }
+    face(w, b, true);
     w.close(tag);
     if swipe.is_empty() {
         return;

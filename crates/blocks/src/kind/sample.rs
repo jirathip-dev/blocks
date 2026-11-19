@@ -1,7 +1,8 @@
 use super::{
     Act, Block, Button, Card, CardKind, ChipOption, Chips, Choice, ChoiceOption, Composer, Diagram, Diff, Editor,
-    Fallback, Field, FieldKind, Form, Hero, Hunk, Image, Images, Island, Lane, LaneState, List, Media, Nav, NavLink,
-    Part, Prose, Row, Run, Scene, Screen, Secret, Section, Sheet, Shown, Span, Stat, Text, Toned, Web,
+    Fallback, Field, FieldKind, Form, Hero, Hunk, Image, Images, Island, Lane, LaneState, Link, List, Media, Nav,
+    NavLink, Part, Prose, Round, RoundLane, Row, Run, Scene, Screen, Secret, Section, Sheet, Shown, Span, Stat, Tap,
+    Text, Toned, Web,
 };
 use crate::expr::{Expr, Lit, State};
 
@@ -137,6 +138,37 @@ fn views() -> Vec<Block> {
         state: LaneState::Working,
         ..Lane::default()
     };
+    let past = Round {
+        id: "r1".into(),
+        name: "impl".into(),
+        state: LaneState::Done,
+        summary: Some("pushed".into()),
+        tap: Some(Tap {
+            url: Some("/runs/1".into()),
+            ..Tap::default()
+        }),
+        ..Round::default()
+    };
+    let now = Round {
+        id: "r2".into(),
+        name: "review 1".into(),
+        state: LaneState::Needs,
+        summary: Some("one finding".into()),
+        lane: Some(RoundLane {
+            name: Some("rev-1".into()),
+            lines: Some(vec!["reading the diff".into()]),
+            ..RoundLane::default()
+        }),
+        blocks: Some(vec![text("finding", "Fix the test")]),
+        links: Some(vec![Link {
+            label: "verdict".into(),
+            tap: Tap {
+                url: Some("/verdict".into()),
+                ..Tap::default()
+            },
+        }]),
+        ..Round::default()
+    };
     let image = Image {
         src: "/media/a.png".into(),
         alt: Some("a".into()),
@@ -154,7 +186,7 @@ fn views() -> Vec<Block> {
     vec![
         Block::Row(Box::new(row.clone())),
         Block::List(Box::new(
-            List::new(vec![Block::Row(Box::new(row.id("row")))]).id("rows"),
+            List::new(vec![Block::Row(Box::new(row.id("row").rounds(vec![past, now])))]).id("rows"),
         )),
         Block::Card(Box::new(card)),
         Block::Stat(Box::new(
