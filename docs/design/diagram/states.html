@@ -12,7 +12,7 @@ const cases = [
     source: "stateDiagram-v2\n[*] --> queued\nqueued --> impl\nimpl --> review\nreview --> ready\nready --> merged",
     counts: { queued: 2, impl: 3, review: 1, ready: 0, merged: 12 },
     nodes: { impl: { state: "working" }, review: { state: "needs" }, ready: { state: "done" }, merged: { state: "merged" } } }],
-  ["2 · moved and selected", "A count that changed since the last draw gets its tone's border and \"was N\"; `selected` gets a 2px ink ring; a node with a tap is focusable.", {
+  ["2 · moved and selected", "A count that changed since the last draw gets a 3px edge marker in its tone and \"was N\"; `selected` gets a 2px ink ring; a node with a tap is focusable.", {
     source: "stateDiagram-v2\n[*] --> impl\nimpl --> review\nreview --> merged",
     counts: { impl: 1, review: 3, merged: 8 }, selected: "impl",
     nodes: { impl: { state: "working", tap: { open: "impl" } }, review: { state: "working", tap: { open: "review" } }, merged: { state: "merged" } } }, { review: 2, merged: 8 }],

@@ -20,10 +20,10 @@
 .dgn.fail .dgc,.dgn.bad .dgc{color:var(--r)}
 .dgn.done .dgc{color:var(--l)}
 .dgn.zero .dgc{color:var(--mute);font-weight:500}
-.dgn.moved{border-color:var(--mute)}
-.dgn.moved.working,.dgn.moved.ok,.dgn.moved.merged{border-color:var(--g)}
-.dgn.moved.needs,.dgn.moved.warn{border-color:var(--a)}
-.dgn.moved.fail,.dgn.moved.bad{border-color:var(--r)}
+.dgn.moved{--mk:var(--mute);box-shadow:inset 3px 0 0 var(--mk)}
+.dgn.moved.working,.dgn.moved.ok,.dgn.moved.merged{--mk:var(--g)}
+.dgn.moved.needs,.dgn.moved.warn{--mk:var(--a)}
+.dgn.moved.fail,.dgn.moved.bad{--mk:var(--r)}
 .dgn.picked{border:2px solid var(--l)}
 .dgn.timer{flex-direction:row;justify-content:flex-start;align-items:center;gap:var(--s1);border:1px dashed var(--link);background:transparent;color:var(--link)}
 .dgn.timer .dgv{font-weight:600}
