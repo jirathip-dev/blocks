@@ -1,0 +1,13 @@
+Decided: config reuses form.ts's field(), extended there with the note, keyboard, set, open and aria-invalid, so one function draws a field
+Because: docs/design/config/README.md:27
+Decided: .fl is display:contents and .fn hidden outside .cfg, so form looks as before
+Because: web/src/blocks.css:88
+Decided: text and secret fields save on change (blur or Enter), toggles and pickers at once; an open field takes focus once per screen and block
+Because: q2183
+Decided: values() leaves out an empty secret for every caller, so a save never clears a stored secret
+Because: web/src/render/form.ts:69
+Decided: the static writer gains config through the same form_of as form, with a .bar and a disabled off button; an open field gets autofocus
+Because: crates/blocks/src/site/views.rs:265
+Rejected: a separate config field function — the design asks for one field function, never two ways
+Check: built view against docs/design/config PNGs at 1440 and 390, light and dark (only the pinned saving… differs)
+Owner: Plugin settings now show as a real settings list on the web, saving as you change them or with a save button.
