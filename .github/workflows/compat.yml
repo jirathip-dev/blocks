@@ -1,0 +1,46 @@
+name: compat
+on:
+  push:
+    branches: [main, staging]
+  pull_request:
+
+permissions:
+  contents: read
+
+env:
+  GH_TOKEN: ${{ github.token }}
+
+jobs:
+  protocol:
+    runs-on: ubuntu-latest
+    outputs:
+      snap: ${{ steps.snap.outputs.snap }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: dtolnay/rust-toolchain@1.99.1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: "the release tag rule (scripts/release.sh with a stand-in gh)"
+        run: sh scripts/release.test.sh
+      - name: "the last release tag's crate and TS (this version and the one before) on today's fixtures/protocol"
+        run: scripts/compat.sh protocol "$RUNNER_TEMP/compat"
+      - name: "the last release's blocks-shot on today's fixtures/screens, once a release carries it"
+        run: scripts/compat.sh harness "$RUNNER_TEMP/shot" blocks-shot-x86_64-unknown-linux-gnu
+      - id: snap
+        name: does a release carry blocks-snap
+        run: |
+          if scripts/compat.sh carries blocks-snap-aarch64-apple-darwin; then echo snap=true >> "$GITHUB_OUTPUT"; fi
+
+  snap:
+    needs: protocol
+    if: needs.protocol.outputs.snap == 'true'
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: "the last release's blocks-snap on today's fixtures/screens"
+        run: scripts/compat.sh harness "$RUNNER_TEMP/snap" blocks-snap-aarch64-apple-darwin

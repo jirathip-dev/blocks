@@ -23,7 +23,7 @@ None is closed. Three carry a slice as they are; their text needs these lines (t
 #1, #7 ─> B1 (#4) ─> B2 ─┬─> B3 layout ─────┬──────────> B6 shell ──┐
                          ├─> B4 (#6) theme ─┼─> B5 html ─> B7 shot ─┼─> B8 site ─┐
                          │                  └─> B9 (#5) swift ─> B10 snap ───────┴─> B11 behaviours ─> B12 islands
-                         │                                        release v1.0 ─> B13 compat ;  B14, B15 gaps ;  B16
+                         │                                        B13 compat (from the first tag, q2100) ;  B14, B15 gaps ;  B16
 drover:  #1318 slices 1–7 (B1, B2) ─> D1 (B4) ─> D2 (B5) ─> D3 (B3, B6) ;  D4 (B1) ;  D5 (C5) ;  D6 (owner) ;  D7 (B7)
 cooee:   C1 (B2) ─> C2 (B3) ─> C3 (B4) ─> C4 (B9) ─> C5 (#1318 slice 4) ;  C6 (B6, owner) ;  C7 (B10)
 ```
@@ -46,7 +46,7 @@ drover #1318 is the urgent path and needs only B1 and B2. Everything after B2 ca
 | **B10** SwiftUI headless | `BlocksSnapshot` (`Snapshot`: PNG, tree, steps), `blocks-snap` | cooee `Tests/CooeeUITests/Frames.swift` and `SnapshotTests.swift`, as the reference | every `fixtures/blocks` file passes `--check`; its tree equals the one B7's harness gives |
 | **B11** behaviours | `behave` (`view`); `behave.ts`; Swift `eval` and `view`; `site` writes `hidden`, `required`, `type`, `maxlength` | | `fixtures/behave` has one value in Rust, TS and Swift; scripted typing and taps in both harnesses; sim: no expression panics |
 | **B12** islands | `island.ts`; the Swift registry; `site`'s element with its fallback; a test component `x-echo` in both harnesses | | props in, a named event out as an action, an unnamed one dropped, the fallback with no component and on the static page |
-| **B13** compatibility | the release tag rule in `docs/consume.md`; `compat.yml`; a `fixtures/protocol` case per version rule | | the last release's `blocks-shot` and `blocks-snap` pass today's fixtures. Starts at the first release, cut after B12 |
+| **B13** compatibility | the release tag rule in `docs/consume.md`; `release.yml`; `compat.yml`; a `fixtures/protocol` case per version rule | | the last release's crate and TS pass today's `fixtures/protocol`, and its `blocks-shot` and `blocks-snap` today's fixtures once a release carries them. Starts at the first tag, not after B12 (q2100) |
 | **B14** HTML gaps | `diagram` first (drover's server sends it); then one issue per kind: `scene`, `secret`, `config`, `web`, `diff`, `editor`, and `rounds` on a row | cooee's views, as the reference | no `gap(` left in `web/src/render`; a design stage each (new drawings) |
 | **B15** SwiftUI gaps | `composer`; `prose`, `hero`, `media`, `nav` | drover's `composer`, the HTML content kinds, as the reference | no `Gap(` left; a design stage |
 | **B16** typed reads | each renderer file reads its generated type, not keys (`--refactor`, one issue per renderer) | | the apps' goldens and frames unchanged |
