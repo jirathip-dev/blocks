@@ -37,6 +37,7 @@ input[type=checkbox]{width:var(--s4);height:var(--s4);accent-color:var(--l)}
 .sh .thw{color:inherit}
 .foot{font-size:var(--fs-meta)}
 .list{display:flex;flex-direction:column;gap:var(--seam)}
+.list:empty,.chips:empty,.imgs:empty,.prose:empty{display:none}
 .row{display:flex;align-items:center;gap:var(--s2);min-height:var(--hit);padding:var(--s1) 0;border-bottom:1px solid var(--line)}
 .list>.row,.list>.rw{padding:var(--s1) var(--s3)}
 .row.tap{cursor:pointer}a.row{color:inherit;text-decoration:none}
@@ -235,6 +236,8 @@ input[type=checkbox]{width:var(--s4);height:var(--s4);accent-color:var(--l)}
 .b-tab.on{box-shadow:inset 0 -2px var(--l);color:var(--fg)}
 .b-sheet{position:fixed;inset:0;z-index:5;display:flex;align-items:flex-end;justify-content:center;background:var(--scrim)}
 .b-sheet[hidden]{display:none}
+.b-sheet.shb{flex-direction:column;justify-content:flex-start;align-items:center;overflow-y:auto}
+.b-sheet.shb>:first-child{margin-top:auto}
 .b-sheet__card{width:100%;max-width:640px;max-height:90%;overflow-y:auto;padding:var(--s2) var(--s4);background:var(--bg);border-radius:var(--radius) var(--radius) 0 0}
 .b-sheet__head{display:flex;align-items:center;gap:var(--s3);min-height:var(--hit)}
 .b-sheet__title{flex:1}

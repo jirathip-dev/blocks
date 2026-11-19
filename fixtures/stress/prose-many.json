@@ -1,0 +1,1776 @@
+{
+  "id": "about",
+  "parts": [
+    {
+      "level": 2,
+      "part": "heading",
+      "spans": [
+        {
+          "text": "Blocks"
+        }
+      ]
+    },
+    {
+      "part": "para",
+      "spans": [
+        {
+          "text": "Typed "
+        },
+        {
+          "bold": true,
+          "text": "screens"
+        }
+      ]
+    },
+    {
+      "items": [
+        [
+          {
+            "text": "one"
+          }
+        ],
+        [
+          {
+            "text": "two"
+          }
+        ]
+      ],
+      "ordered": false,
+      "part": "list"
+    },
+    {
+      "part": "quote",
+      "spans": [
+        {
+          "text": "Built by type."
+        }
+      ]
+    },
+    {
+      "lang": "rust",
+      "part": "code",
+      "text": "Row::new(\"a\")"
+    },
+    {
+      "part": "rule"
+    },
+    {
+      "level": 2,
+      "part": "heading",
+      "spans": [
+        {
+          "text": "Blocks"
+        }
+      ]
+    },
+    {
+      "part": "para",
+      "spans": [
+        {
+          "text": "Typed "
+        },
+        {
+          "bold": true,
+          "text": "screens"
+        }
+      ]
+    },
+    {
+      "items": [
+        [
+          {
+            "text": "one"
+          }
+        ],
+        [
+          {
+            "text": "two"
+          }
+        ]
+      ],
+      "ordered": false,
+      "part": "list"
+    },
+    {
+      "part": "quote",
+      "spans": [
+        {
+          "text": "Built by type."
+        }
+      ]
+    },
+    {
+      "lang": "rust",
+      "part": "code",
+      "text": "Row::new(\"a\")"
+    },
+    {
+      "part": "rule"
+    },
+    {
+      "level": 2,
+      "part": "heading",
+      "spans": [
+        {
+          "text": "Blocks"
+        }
+      ]
+    },
+    {
+      "part": "para",
+      "spans": [
+        {
+          "text": "Typed "
+        },
+        {
+          "bold": true,
+          "text": "screens"
+        }
+      ]
+    },
+    {
+      "items": [
+        [
+          {
+            "text": "one"
+          }
+        ],
+        [
+          {
+            "text": "two"
+          }
+        ]
+      ],
+      "ordered": false,
+      "part": "list"
+    },
+    {
+      "part": "quote",
+      "spans": [
+        {
+          "text": "Built by type."
+        }
+      ]
+    },
+    {
+      "lang": "rust",
+      "part": "code",
+      "text": "Row::new(\"a\")"
+    },
+    {
+      "part": "rule"
+    },
+    {
+      "level": 2,
+      "part": "heading",
+      "spans": [
+        {
+          "text": "Blocks"
+        }
+      ]
+    },
+    {
+      "part": "para",
+      "spans": [
+        {
+          "text": "Typed "
+        },
+        {
+          "bold": true,
+          "text": "screens"
+        }
+      ]
+    },
+    {
+      "items": [
+        [
+          {
+            "text": "one"
+          }
+        ],
+        [
+          {
+            "text": "two"
+          }
+        ]
+      ],
+      "ordered": false,
+      "part": "list"
+    },
+    {
+      "part": "quote",
+      "spans": [
+        {
+          "text": "Built by type."
+        }
+      ]
+    },
+    {
+      "lang": "rust",
+      "part": "code",
+      "text": "Row::new(\"a\")"
+    },
+    {
+      "part": "rule"
+    },
+    {
+      "level": 2,
+      "part": "heading",
+      "spans": [
+        {
+          "text": "Blocks"
+        }
+      ]
+    },
+    {
+      "part": "para",
+      "spans": [
+        {
+          "text": "Typed "
+        },
+        {
+          "bold": true,
+          "text": "screens"
+        }
+      ]
+    },
+    {
+      "items": [
+        [
+          {
+            "text": "one"
+          }
+        ],
+        [
+          {
+            "text": "two"
+          }
+        ]
+      ],
+      "ordered": false,
+      "part": "list"
+    },
+    {
+      "part": "quote",
+      "spans": [
+        {
+          "text": "Built by type."
+        }
+      ]
+    },
+    {
+      "lang": "rust",
+      "part": "code",
+      "text": "Row::new(\"a\")"
+    },
+    {
+      "part": "rule"
+    },
+    {
+      "level": 2,
+      "part": "heading",
+      "spans": [
+        {
+          "text": "Blocks"
+        }
+      ]
+    },
+    {
+      "part": "para",
+      "spans": [
+        {
+          "text": "Typed "
+        },
+        {
+          "bold": true,
+          "text": "screens"
+        }
+      ]
+    },
+    {
+      "items": [
+        [
+          {
+            "text": "one"
+          }
+        ],
+        [
+          {
+            "text": "two"
+          }
+        ]
+      ],
+      "ordered": false,
+      "part": "list"
+    },
+    {
+      "part": "quote",
+      "spans": [
+        {
+          "text": "Built by type."
+        }
+      ]
+    },
+    {
+      "lang": "rust",
+      "part": "code",
+      "text": "Row::new(\"a\")"
+    },
+    {
+      "part": "rule"
+    },
+    {
+      "level": 2,
+      "part": "heading",
+      "spans": [
+        {
+          "text": "Blocks"
+        }
+      ]
+    },
+    {
+      "part": "para",
+      "spans": [
+        {
+          "text": "Typed "
+        },
+        {
+          "bold": true,
+          "text": "screens"
+        }
+      ]
+    },
+    {
+      "items": [
+        [
+          {
+            "text": "one"
+          }
+        ],
+        [
+          {
+            "text": "two"
+          }
+        ]
+      ],
+      "ordered": false,
+      "part": "list"
+    },
+    {
+      "part": "quote",
+      "spans": [
+        {
+          "text": "Built by type."
+        }
+      ]
+    },
+    {
+      "lang": "rust",
+      "part": "code",
+      "text": "Row::new(\"a\")"
+    },
+    {
+      "part": "rule"
+    },
+    {
+      "level": 2,
+      "part": "heading",
+      "spans": [
+        {
+          "text": "Blocks"
+        }
+      ]
+    },
+    {
+      "part": "para",
+      "spans": [
+        {
+          "text": "Typed "
+        },
+        {
+          "bold": true,
+          "text": "screens"
+        }
+      ]
+    },
+    {
+      "items": [
+        [
+          {
+            "text": "one"
+          }
+        ],
+        [
+          {
+            "text": "two"
+          }
+        ]
+      ],
+      "ordered": false,
+      "part": "list"
+    },
+    {
+      "part": "quote",
+      "spans": [
+        {
+          "text": "Built by type."
+        }
+      ]
+    },
+    {
+      "lang": "rust",
+      "part": "code",
+      "text": "Row::new(\"a\")"
+    },
+    {
+      "part": "rule"
+    },
+    {
+      "level": 2,
+      "part": "heading",
+      "spans": [
+        {
+          "text": "Blocks"
+        }
+      ]
+    },
+    {
+      "part": "para",
+      "spans": [
+        {
+          "text": "Typed "
+        },
+        {
+          "bold": true,
+          "text": "screens"
+        }
+      ]
+    },
+    {
+      "items": [
+        [
+          {
+            "text": "one"
+          }
+        ],
+        [
+          {
+            "text": "two"
+          }
+        ]
+      ],
+      "ordered": false,
+      "part": "list"
+    },
+    {
+      "part": "quote",
+      "spans": [
+        {
+          "text": "Built by type."
+        }
+      ]
+    },
+    {
+      "lang": "rust",
+      "part": "code",
+      "text": "Row::new(\"a\")"
+    },
+    {
+      "part": "rule"
+    },
+    {
+      "level": 2,
+      "part": "heading",
+      "spans": [
+        {
+          "text": "Blocks"
+        }
+      ]
+    },
+    {
+      "part": "para",
+      "spans": [
+        {
+          "text": "Typed "
+        },
+        {
+          "bold": true,
+          "text": "screens"
+        }
+      ]
+    },
+    {
+      "items": [
+        [
+          {
+            "text": "one"
+          }
+        ],
+        [
+          {
+            "text": "two"
+          }
+        ]
+      ],
+      "ordered": false,
+      "part": "list"
+    },
+    {
+      "part": "quote",
+      "spans": [
+        {
+          "text": "Built by type."
+        }
+      ]
+    },
+    {
+      "lang": "rust",
+      "part": "code",
+      "text": "Row::new(\"a\")"
+    },
+    {
+      "part": "rule"
+    },
+    {
+      "level": 2,
+      "part": "heading",
+      "spans": [
+        {
+          "text": "Blocks"
+        }
+      ]
+    },
+    {
+      "part": "para",
+      "spans": [
+        {
+          "text": "Typed "
+        },
+        {
+          "bold": true,
+          "text": "screens"
+        }
+      ]
+    },
+    {
+      "items": [
+        [
+          {
+            "text": "one"
+          }
+        ],
+        [
+          {
+            "text": "two"
+          }
+        ]
+      ],
+      "ordered": false,
+      "part": "list"
+    },
+    {
+      "part": "quote",
+      "spans": [
+        {
+          "text": "Built by type."
+        }
+      ]
+    },
+    {
+      "lang": "rust",
+      "part": "code",
+      "text": "Row::new(\"a\")"
+    },
+    {
+      "part": "rule"
+    },
+    {
+      "level": 2,
+      "part": "heading",
+      "spans": [
+        {
+          "text": "Blocks"
+        }
+      ]
+    },
+    {
+      "part": "para",
+      "spans": [
+        {
+          "text": "Typed "
+        },
+        {
+          "bold": true,
+          "text": "screens"
+        }
+      ]
+    },
+    {
+      "items": [
+        [
+          {
+            "text": "one"
+          }
+        ],
+        [
+          {
+            "text": "two"
+          }
+        ]
+      ],
+      "ordered": false,
+      "part": "list"
+    },
+    {
+      "part": "quote",
+      "spans": [
+        {
+          "text": "Built by type."
+        }
+      ]
+    },
+    {
+      "lang": "rust",
+      "part": "code",
+      "text": "Row::new(\"a\")"
+    },
+    {
+      "part": "rule"
+    },
+    {
+      "level": 2,
+      "part": "heading",
+      "spans": [
+        {
+          "text": "Blocks"
+        }
+      ]
+    },
+    {
+      "part": "para",
+      "spans": [
+        {
+          "text": "Typed "
+        },
+        {
+          "bold": true,
+          "text": "screens"
+        }
+      ]
+    },
+    {
+      "items": [
+        [
+          {
+            "text": "one"
+          }
+        ],
+        [
+          {
+            "text": "two"
+          }
+        ]
+      ],
+      "ordered": false,
+      "part": "list"
+    },
+    {
+      "part": "quote",
+      "spans": [
+        {
+          "text": "Built by type."
+        }
+      ]
+    },
+    {
+      "lang": "rust",
+      "part": "code",
+      "text": "Row::new(\"a\")"
+    },
+    {
+      "part": "rule"
+    },
+    {
+      "level": 2,
+      "part": "heading",
+      "spans": [
+        {
+          "text": "Blocks"
+        }
+      ]
+    },
+    {
+      "part": "para",
+      "spans": [
+        {
+          "text": "Typed "
+        },
+        {
+          "bold": true,
+          "text": "screens"
+        }
+      ]
+    },
+    {
+      "items": [
+        [
+          {
+            "text": "one"
+          }
+        ],
+        [
+          {
+            "text": "two"
+          }
+        ]
+      ],
+      "ordered": false,
+      "part": "list"
+    },
+    {
+      "part": "quote",
+      "spans": [
+        {
+          "text": "Built by type."
+        }
+      ]
+    },
+    {
+      "lang": "rust",
+      "part": "code",
+      "text": "Row::new(\"a\")"
+    },
+    {
+      "part": "rule"
+    },
+    {
+      "level": 2,
+      "part": "heading",
+      "spans": [
+        {
+          "text": "Blocks"
+        }
+      ]
+    },
+    {
+      "part": "para",
+      "spans": [
+        {
+          "text": "Typed "
+        },
+        {
+          "bold": true,
+          "text": "screens"
+        }
+      ]
+    },
+    {
+      "items": [
+        [
+          {
+            "text": "one"
+          }
+        ],
+        [
+          {
+            "text": "two"
+          }
+        ]
+      ],
+      "ordered": false,
+      "part": "list"
+    },
+    {
+      "part": "quote",
+      "spans": [
+        {
+          "text": "Built by type."
+        }
+      ]
+    },
+    {
+      "lang": "rust",
+      "part": "code",
+      "text": "Row::new(\"a\")"
+    },
+    {
+      "part": "rule"
+    },
+    {
+      "level": 2,
+      "part": "heading",
+      "spans": [
+        {
+          "text": "Blocks"
+        }
+      ]
+    },
+    {
+      "part": "para",
+      "spans": [
+        {
+          "text": "Typed "
+        },
+        {
+          "bold": true,
+          "text": "screens"
+        }
+      ]
+    },
+    {
+      "items": [
+        [
+          {
+            "text": "one"
+          }
+        ],
+        [
+          {
+            "text": "two"
+          }
+        ]
+      ],
+      "ordered": false,
+      "part": "list"
+    },
+    {
+      "part": "quote",
+      "spans": [
+        {
+          "text": "Built by type."
+        }
+      ]
+    },
+    {
+      "lang": "rust",
+      "part": "code",
+      "text": "Row::new(\"a\")"
+    },
+    {
+      "part": "rule"
+    },
+    {
+      "level": 2,
+      "part": "heading",
+      "spans": [
+        {
+          "text": "Blocks"
+        }
+      ]
+    },
+    {
+      "part": "para",
+      "spans": [
+        {
+          "text": "Typed "
+        },
+        {
+          "bold": true,
+          "text": "screens"
+        }
+      ]
+    },
+    {
+      "items": [
+        [
+          {
+            "text": "one"
+          }
+        ],
+        [
+          {
+            "text": "two"
+          }
+        ]
+      ],
+      "ordered": false,
+      "part": "list"
+    },
+    {
+      "part": "quote",
+      "spans": [
+        {
+          "text": "Built by type."
+        }
+      ]
+    },
+    {
+      "lang": "rust",
+      "part": "code",
+      "text": "Row::new(\"a\")"
+    },
+    {
+      "part": "rule"
+    },
+    {
+      "level": 2,
+      "part": "heading",
+      "spans": [
+        {
+          "text": "Blocks"
+        }
+      ]
+    },
+    {
+      "part": "para",
+      "spans": [
+        {
+          "text": "Typed "
+        },
+        {
+          "bold": true,
+          "text": "screens"
+        }
+      ]
+    },
+    {
+      "items": [
+        [
+          {
+            "text": "one"
+          }
+        ],
+        [
+          {
+            "text": "two"
+          }
+        ]
+      ],
+      "ordered": false,
+      "part": "list"
+    },
+    {
+      "part": "quote",
+      "spans": [
+        {
+          "text": "Built by type."
+        }
+      ]
+    },
+    {
+      "lang": "rust",
+      "part": "code",
+      "text": "Row::new(\"a\")"
+    },
+    {
+      "part": "rule"
+    },
+    {
+      "level": 2,
+      "part": "heading",
+      "spans": [
+        {
+          "text": "Blocks"
+        }
+      ]
+    },
+    {
+      "part": "para",
+      "spans": [
+        {
+          "text": "Typed "
+        },
+        {
+          "bold": true,
+          "text": "screens"
+        }
+      ]
+    },
+    {
+      "items": [
+        [
+          {
+            "text": "one"
+          }
+        ],
+        [
+          {
+            "text": "two"
+          }
+        ]
+      ],
+      "ordered": false,
+      "part": "list"
+    },
+    {
+      "part": "quote",
+      "spans": [
+        {
+          "text": "Built by type."
+        }
+      ]
+    },
+    {
+      "lang": "rust",
+      "part": "code",
+      "text": "Row::new(\"a\")"
+    },
+    {
+      "part": "rule"
+    },
+    {
+      "level": 2,
+      "part": "heading",
+      "spans": [
+        {
+          "text": "Blocks"
+        }
+      ]
+    },
+    {
+      "part": "para",
+      "spans": [
+        {
+          "text": "Typed "
+        },
+        {
+          "bold": true,
+          "text": "screens"
+        }
+      ]
+    },
+    {
+      "items": [
+        [
+          {
+            "text": "one"
+          }
+        ],
+        [
+          {
+            "text": "two"
+          }
+        ]
+      ],
+      "ordered": false,
+      "part": "list"
+    },
+    {
+      "part": "quote",
+      "spans": [
+        {
+          "text": "Built by type."
+        }
+      ]
+    },
+    {
+      "lang": "rust",
+      "part": "code",
+      "text": "Row::new(\"a\")"
+    },
+    {
+      "part": "rule"
+    },
+    {
+      "level": 2,
+      "part": "heading",
+      "spans": [
+        {
+          "text": "Blocks"
+        }
+      ]
+    },
+    {
+      "part": "para",
+      "spans": [
+        {
+          "text": "Typed "
+        },
+        {
+          "bold": true,
+          "text": "screens"
+        }
+      ]
+    },
+    {
+      "items": [
+        [
+          {
+            "text": "one"
+          }
+        ],
+        [
+          {
+            "text": "two"
+          }
+        ]
+      ],
+      "ordered": false,
+      "part": "list"
+    },
+    {
+      "part": "quote",
+      "spans": [
+        {
+          "text": "Built by type."
+        }
+      ]
+    },
+    {
+      "lang": "rust",
+      "part": "code",
+      "text": "Row::new(\"a\")"
+    },
+    {
+      "part": "rule"
+    },
+    {
+      "level": 2,
+      "part": "heading",
+      "spans": [
+        {
+          "text": "Blocks"
+        }
+      ]
+    },
+    {
+      "part": "para",
+      "spans": [
+        {
+          "text": "Typed "
+        },
+        {
+          "bold": true,
+          "text": "screens"
+        }
+      ]
+    },
+    {
+      "items": [
+        [
+          {
+            "text": "one"
+          }
+        ],
+        [
+          {
+            "text": "two"
+          }
+        ]
+      ],
+      "ordered": false,
+      "part": "list"
+    },
+    {
+      "part": "quote",
+      "spans": [
+        {
+          "text": "Built by type."
+        }
+      ]
+    },
+    {
+      "lang": "rust",
+      "part": "code",
+      "text": "Row::new(\"a\")"
+    },
+    {
+      "part": "rule"
+    },
+    {
+      "level": 2,
+      "part": "heading",
+      "spans": [
+        {
+          "text": "Blocks"
+        }
+      ]
+    },
+    {
+      "part": "para",
+      "spans": [
+        {
+          "text": "Typed "
+        },
+        {
+          "bold": true,
+          "text": "screens"
+        }
+      ]
+    },
+    {
+      "items": [
+        [
+          {
+            "text": "one"
+          }
+        ],
+        [
+          {
+            "text": "two"
+          }
+        ]
+      ],
+      "ordered": false,
+      "part": "list"
+    },
+    {
+      "part": "quote",
+      "spans": [
+        {
+          "text": "Built by type."
+        }
+      ]
+    },
+    {
+      "lang": "rust",
+      "part": "code",
+      "text": "Row::new(\"a\")"
+    },
+    {
+      "part": "rule"
+    },
+    {
+      "level": 2,
+      "part": "heading",
+      "spans": [
+        {
+          "text": "Blocks"
+        }
+      ]
+    },
+    {
+      "part": "para",
+      "spans": [
+        {
+          "text": "Typed "
+        },
+        {
+          "bold": true,
+          "text": "screens"
+        }
+      ]
+    },
+    {
+      "items": [
+        [
+          {
+            "text": "one"
+          }
+        ],
+        [
+          {
+            "text": "two"
+          }
+        ]
+      ],
+      "ordered": false,
+      "part": "list"
+    },
+    {
+      "part": "quote",
+      "spans": [
+        {
+          "text": "Built by type."
+        }
+      ]
+    },
+    {
+      "lang": "rust",
+      "part": "code",
+      "text": "Row::new(\"a\")"
+    },
+    {
+      "part": "rule"
+    },
+    {
+      "level": 2,
+      "part": "heading",
+      "spans": [
+        {
+          "text": "Blocks"
+        }
+      ]
+    },
+    {
+      "part": "para",
+      "spans": [
+        {
+          "text": "Typed "
+        },
+        {
+          "bold": true,
+          "text": "screens"
+        }
+      ]
+    },
+    {
+      "items": [
+        [
+          {
+            "text": "one"
+          }
+        ],
+        [
+          {
+            "text": "two"
+          }
+        ]
+      ],
+      "ordered": false,
+      "part": "list"
+    },
+    {
+      "part": "quote",
+      "spans": [
+        {
+          "text": "Built by type."
+        }
+      ]
+    },
+    {
+      "lang": "rust",
+      "part": "code",
+      "text": "Row::new(\"a\")"
+    },
+    {
+      "part": "rule"
+    },
+    {
+      "level": 2,
+      "part": "heading",
+      "spans": [
+        {
+          "text": "Blocks"
+        }
+      ]
+    },
+    {
+      "part": "para",
+      "spans": [
+        {
+          "text": "Typed "
+        },
+        {
+          "bold": true,
+          "text": "screens"
+        }
+      ]
+    },
+    {
+      "items": [
+        [
+          {
+            "text": "one"
+          }
+        ],
+        [
+          {
+            "text": "two"
+          }
+        ]
+      ],
+      "ordered": false,
+      "part": "list"
+    },
+    {
+      "part": "quote",
+      "spans": [
+        {
+          "text": "Built by type."
+        }
+      ]
+    },
+    {
+      "lang": "rust",
+      "part": "code",
+      "text": "Row::new(\"a\")"
+    },
+    {
+      "part": "rule"
+    },
+    {
+      "level": 2,
+      "part": "heading",
+      "spans": [
+        {
+          "text": "Blocks"
+        }
+      ]
+    },
+    {
+      "part": "para",
+      "spans": [
+        {
+          "text": "Typed "
+        },
+        {
+          "bold": true,
+          "text": "screens"
+        }
+      ]
+    },
+    {
+      "items": [
+        [
+          {
+            "text": "one"
+          }
+        ],
+        [
+          {
+            "text": "two"
+          }
+        ]
+      ],
+      "ordered": false,
+      "part": "list"
+    },
+    {
+      "part": "quote",
+      "spans": [
+        {
+          "text": "Built by type."
+        }
+      ]
+    },
+    {
+      "lang": "rust",
+      "part": "code",
+      "text": "Row::new(\"a\")"
+    },
+    {
+      "part": "rule"
+    },
+    {
+      "level": 2,
+      "part": "heading",
+      "spans": [
+        {
+          "text": "Blocks"
+        }
+      ]
+    },
+    {
+      "part": "para",
+      "spans": [
+        {
+          "text": "Typed "
+        },
+        {
+          "bold": true,
+          "text": "screens"
+        }
+      ]
+    },
+    {
+      "items": [
+        [
+          {
+            "text": "one"
+          }
+        ],
+        [
+          {
+            "text": "two"
+          }
+        ]
+      ],
+      "ordered": false,
+      "part": "list"
+    },
+    {
+      "part": "quote",
+      "spans": [
+        {
+          "text": "Built by type."
+        }
+      ]
+    },
+    {
+      "lang": "rust",
+      "part": "code",
+      "text": "Row::new(\"a\")"
+    },
+    {
+      "part": "rule"
+    },
+    {
+      "level": 2,
+      "part": "heading",
+      "spans": [
+        {
+          "text": "Blocks"
+        }
+      ]
+    },
+    {
+      "part": "para",
+      "spans": [
+        {
+          "text": "Typed "
+        },
+        {
+          "bold": true,
+          "text": "screens"
+        }
+      ]
+    },
+    {
+      "items": [
+        [
+          {
+            "text": "one"
+          }
+        ],
+        [
+          {
+            "text": "two"
+          }
+        ]
+      ],
+      "ordered": false,
+      "part": "list"
+    },
+    {
+      "part": "quote",
+      "spans": [
+        {
+          "text": "Built by type."
+        }
+      ]
+    },
+    {
+      "lang": "rust",
+      "part": "code",
+      "text": "Row::new(\"a\")"
+    },
+    {
+      "part": "rule"
+    },
+    {
+      "level": 2,
+      "part": "heading",
+      "spans": [
+        {
+          "text": "Blocks"
+        }
+      ]
+    },
+    {
+      "part": "para",
+      "spans": [
+        {
+          "text": "Typed "
+        },
+        {
+          "bold": true,
+          "text": "screens"
+        }
+      ]
+    },
+    {
+      "items": [
+        [
+          {
+            "text": "one"
+          }
+        ],
+        [
+          {
+            "text": "two"
+          }
+        ]
+      ],
+      "ordered": false,
+      "part": "list"
+    },
+    {
+      "part": "quote",
+      "spans": [
+        {
+          "text": "Built by type."
+        }
+      ]
+    },
+    {
+      "lang": "rust",
+      "part": "code",
+      "text": "Row::new(\"a\")"
+    },
+    {
+      "part": "rule"
+    },
+    {
+      "level": 2,
+      "part": "heading",
+      "spans": [
+        {
+          "text": "Blocks"
+        }
+      ]
+    },
+    {
+      "part": "para",
+      "spans": [
+        {
+          "text": "Typed "
+        },
+        {
+          "bold": true,
+          "text": "screens"
+        }
+      ]
+    },
+    {
+      "items": [
+        [
+          {
+            "text": "one"
+          }
+        ],
+        [
+          {
+            "text": "two"
+          }
+        ]
+      ],
+      "ordered": false,
+      "part": "list"
+    },
+    {
+      "part": "quote",
+      "spans": [
+        {
+          "text": "Built by type."
+        }
+      ]
+    },
+    {
+      "lang": "rust",
+      "part": "code",
+      "text": "Row::new(\"a\")"
+    },
+    {
+      "part": "rule"
+    },
+    {
+      "level": 2,
+      "part": "heading",
+      "spans": [
+        {
+          "text": "Blocks"
+        }
+      ]
+    },
+    {
+      "part": "para",
+      "spans": [
+        {
+          "text": "Typed "
+        },
+        {
+          "bold": true,
+          "text": "screens"
+        }
+      ]
+    },
+    {
+      "items": [
+        [
+          {
+            "text": "one"
+          }
+        ],
+        [
+          {
+            "text": "two"
+          }
+        ]
+      ],
+      "ordered": false,
+      "part": "list"
+    },
+    {
+      "part": "quote",
+      "spans": [
+        {
+          "text": "Built by type."
+        }
+      ]
+    },
+    {
+      "lang": "rust",
+      "part": "code",
+      "text": "Row::new(\"a\")"
+    },
+    {
+      "part": "rule"
+    },
+    {
+      "level": 2,
+      "part": "heading",
+      "spans": [
+        {
+          "text": "Blocks"
+        }
+      ]
+    },
+    {
+      "part": "para",
+      "spans": [
+        {
+          "text": "Typed "
+        },
+        {
+          "bold": true,
+          "text": "screens"
+        }
+      ]
+    },
+    {
+      "items": [
+        [
+          {
+            "text": "one"
+          }
+        ],
+        [
+          {
+            "text": "two"
+          }
+        ]
+      ],
+      "ordered": false,
+      "part": "list"
+    },
+    {
+      "part": "quote",
+      "spans": [
+        {
+          "text": "Built by type."
+        }
+      ]
+    },
+    {
+      "lang": "rust",
+      "part": "code",
+      "text": "Row::new(\"a\")"
+    },
+    {
+      "part": "rule"
+    },
+    {
+      "level": 2,
+      "part": "heading",
+      "spans": [
+        {
+          "text": "Blocks"
+        }
+      ]
+    },
+    {
+      "part": "para",
+      "spans": [
+        {
+          "text": "Typed "
+        },
+        {
+          "bold": true,
+          "text": "screens"
+        }
+      ]
+    }
+  ],
+  "type": "prose"
+}

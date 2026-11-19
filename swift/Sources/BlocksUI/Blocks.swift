@@ -148,10 +148,20 @@ internal struct BlockNode: View {
     internal let block: Block
 
     internal var body: some View {
-        if let id = block.id, behaved.view.hidden.contains(id) {
+        if bare || block.id.map(behaved.view.hidden.contains) == true {
             Color.clear.frame(width: 0, height: 0).modifier(Reported(block: block, hidden: true))
         } else {
             drawn.disabled(!["form", "config"].contains(block.type) && block.id.map(behaved.view.disabled.contains) == true)
+        }
+    }
+
+    private var bare: Bool {
+        switch block {
+        case .list(let list): list.rows.isEmpty
+        case .chips(let chips): chips.options.isEmpty
+        case .images(let images): images.items.isEmpty
+        case .prose(let prose): prose.parts.isEmpty
+        default: false
         }
     }
 

@@ -14,7 +14,8 @@ export function editor(b: Editor, c: Ctx): HTMLElement {
     [...errs].filter(([n]) => keep(n)).sort((x, y) => x[0] - y[0]).map(([n, m]) => h("p", cls, `line ${n} · ${m}`));
   const root = el("div", "ed");
   const editing = (o: Open) => {
-    for (const a of ["role", "tabindex", "aria-label"]) root.removeAttribute(a);
+    root.removeAttribute("tabindex");
+    root.setAttribute("role", "group");
     root.classList.add("on");
     root.replaceChildren(o.ta, ...notes("ede", () => true));
   };
@@ -35,7 +36,6 @@ export function editor(b: Editor, c: Ctx): HTMLElement {
   root.append(...notes("ede far", (n) => n < first || n >= first + lines.length));
   root.tabIndex = 0;
   root.setAttribute("role", "button");
-  root.setAttribute("aria-label", `edit ${b.name}`);
   const start = () => {
     if (open.has(key)) return;
     const ta = el("textarea");

@@ -24,3 +24,23 @@ jobs:
         run: |
           day=$(( $(date +%s) / 86400 ))
           BLOCKS_SIM_FROM=$(( day * 2000 )) just sim 2000
+  stress-1440:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: "Playwright's WebKit for blocks-shot"
+        run: npm --prefix web ci --no-audit --no-fund && npx --prefix web playwright install webkit
+      - name: "blocks-shot and blocks-snap --check at 1440 on every fixtures/stress variant: inside the width, over no sibling"
+        env:
+          BLOCKS_STRICT: "1"
+        run: |
+          swift build --product blocks-snap
+          snap="$(swift build --show-bin-path)/blocks-snap"
+          for f in fixtures/stress/*-*.json; do
+            k=$(basename "$f" .json)
+            node --no-warnings web/shot/cli.ts --screen "$f" --size 1440x900 --check --out "shots/web/$k"
+            "$snap" --screen "$f" --size 1440x900 --check --out "shots/swift/$k"
+          done

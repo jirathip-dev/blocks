@@ -45,7 +45,7 @@ const tree = (page) =>
     return B.dump(document.querySelector("main"));
   });
 
-test("site and render give the same element per kind: tag, classes, hooks and text", async () => {
+test("site and render give the same element per kind: tag, classes, hooks, role, name and text", async () => {
   const { page, close } = await open({ page: "<!doctype html><body>" });
   const kinds = readdirSync(at("../../fixtures/blocks/")).map((f) => f.replace(/\.json$/, ""));
   strictEqual(kinds.length, 27);
@@ -59,7 +59,7 @@ test("site and render give the same element per kind: tag, classes, hooks and te
             .map((x) => ({
               tag: x.tagName,
               cls: [...x.classList].sort().join(" "),
-              hooks: ["data-block", "data-variant", "data-tone", "data-fallback", "data-action"].map((a) => x.getAttribute(a)),
+              hooks: ["data-block", "data-variant", "data-tone", "data-fallback", "data-action", "role", "aria-label"].map((a) => x.getAttribute(a)),
               id: x.dataset.id || "",
               text: x.textContent.replace(/\s+/g, " ").trim(),
             }));
