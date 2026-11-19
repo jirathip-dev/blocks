@@ -5,7 +5,7 @@ use blocks::guard::{self, Config, Finding, Plan, Run, Seen};
 
 use crate::files::{self, Fixture};
 
-const PHONE: &str = "390x844";
+pub(crate) const PHONE: &str = "390x844";
 const DESK: &str = "1440x900";
 
 fn runs<'a>(
@@ -36,7 +36,7 @@ fn runs<'a>(
     out
 }
 
-fn draw(config: &Config, runs: &[Run], out: &str) -> Result<Vec<Seen>, String> {
+pub(crate) fn draw(config: &Config, runs: &[Run], out: &str) -> Result<Vec<Seen>, String> {
     if config.harness.is_empty() {
         return Err(format!("{}: no `harness` to draw the screens with", files::CONFIG));
     }

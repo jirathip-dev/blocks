@@ -4,6 +4,7 @@ use serde_json::{Map, Value};
 
 use crate::behave::{start, view};
 use crate::built::{children, Built};
+use crate::expr::State;
 
 pub(super) type Fields = Map<String, Value>;
 
@@ -51,7 +52,11 @@ pub(super) fn long(s: &str, max: usize) -> Option<String> {
 
 impl<'a> Cx<'a> {
     pub(super) fn new(screen: &'a Built, app: &'a [&'a str]) -> Cx<'a> {
-        let hidden = view(screen, &start(screen)).hidden;
+        Cx::at(screen, app, &start(screen))
+    }
+
+    pub(super) fn at(screen: &'a Built, app: &'a [&'a str], state: &State) -> Cx<'a> {
+        let hidden = view(screen, state).hidden;
         let mut cx = Cx {
             screen,
             app,
