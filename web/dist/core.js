@@ -29,9 +29,10 @@ var hooks = {
   nav: { variant: null, parts: [] },
   island: { variant: null, parts: [] },
   table: { variant: null, parts: ["title"] },
-  steps: { variant: null, parts: ["title"] }
+  steps: { variant: null, parts: ["title"] },
+  toast: { variant: null, parts: ["title"] }
 };
-var roles = { section: "region", form: "form", config: "form", nav: "navigation" };
+var roles = { section: "region", form: "form", config: "form", nav: "navigation", toast: "status" };
 var names = ["label", "title", "header", "question", "alt", "file", "command", "placeholder", "name"];
 
 // src/gen/schemes.ts

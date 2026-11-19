@@ -5,7 +5,7 @@ use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
-use crate::kind::{Block, Fields, Lane, Round, TableRow};
+use crate::kind::{Block, Fields, Lane, Round, TableRow, Toast};
 use crate::SCHEMA_VERSION;
 
 /// What an `insert` adds: a block, a scene's lane, a row's round or a table's row.
@@ -82,7 +82,7 @@ pub struct Answer {
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub ops: Vec<Op>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub toast: Option<String>,
+    pub toast: Option<Toast>,
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub close: bool,
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -325,10 +325,20 @@ impl MediaType {
         )
     }
 
-    /// `value` in this format and version.
+    /// `value` in this format and version: one version behind, an answer's toast is its plain text.
     pub fn write<T: Serialize>(&self, value: &T) -> Result<Vec<u8>, Broken> {
+        if self.v >= SCHEMA_VERSION {
+            return match self.format {
+                Format::Json => Ok(serde_json::to_vec(value)?),
+            };
+        }
+        let mut v = serde_json::to_value(value)?;
+        if let Some(t) = v.get_mut("toast").filter(|t| t.is_object()) {
+            let text = t.get("title").and_then(Value::as_str).filter(|s| !s.is_empty());
+            *t = Value::from(text.unwrap_or("Done"));
+        }
         match self.format {
-            Format::Json => Ok(serde_json::to_vec(value)?),
+            Format::Json => Ok(serde_json::to_vec(&v)?),
         }
     }
 
