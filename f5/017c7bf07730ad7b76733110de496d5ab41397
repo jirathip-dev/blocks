@@ -1,0 +1,9 @@
+Decided: codegen.rs becomes codegen/ with mod.rs, model.rs, ts.rs, swift.rs, theme.rs, hooks.rs and fixtures.rs; each area returns its (path, text) files and mod.rs writes them
+Because: "`crates/blocks/src/codegen.rs` (about 900 of its 1,000-line cap) becomes the folder `codegen/`, one file per area"
+Decided: the arch.toml lines are the ADR's slice 1: codegen/mod.rs shared under 80 lines, the codegen layer and the std::fs ban on codegen/**
+Because: "This slice's `.drover/arch.toml` lines are added as the ADR writes them"
+Decided: schema/blocks.schema.json is written by model.rs, so mod.rs names no file
+Because: crates/blocks/src/codegen/model.rs:7
+Rejected: a kinds.rs now — its generated web table and render/kind/ listing are slice 2's; today's render listing stays in fixtures.rs trees
+Check: the gen recipe's steps leave the tree clean, so every generated file is byte-identical
+Owner: The generator is split into one file per area; every generated file and app-facing output is unchanged.
