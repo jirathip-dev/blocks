@@ -191,6 +191,7 @@
               "editor",
               "scene",
               "diagram",
+              "chart",
               "composer",
               "prose",
               "hero",
@@ -474,6 +475,19 @@
           "properties": {
             "type": {
               "const": "diagram",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/Chart",
+          "properties": {
+            "type": {
+              "const": "chart",
               "type": "string"
             }
           },
@@ -820,6 +834,134 @@
             "secret",
             "config",
             "proposal"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "string"
+        }
+      ]
+    },
+    "Chart": {
+      "additionalProperties": true,
+      "description": "A chart of named series over x values: bar, stacked, line, combo or donut.",
+      "properties": {
+        "chart": {
+          "$ref": "#/$defs/ChartKind"
+        },
+        "empty": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "era": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Era"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "format": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ChartFormat"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "lang": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "selected": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "series": {
+          "items": {
+            "$ref": "#/$defs/Series"
+          },
+          "type": "array"
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "tap": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Tap"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "title": {
+          "type": "string"
+        },
+        "x": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "title",
+        "chart",
+        "x",
+        "series"
+      ],
+      "type": "object"
+    },
+    "ChartFormat": {
+      "anyOf": [
+        {
+          "enum": [
+            "count",
+            "thb",
+            "thb_m",
+            "percent"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "string"
+        }
+      ]
+    },
+    "ChartKind": {
+      "anyOf": [
+        {
+          "enum": [
+            "bar",
+            "stacked",
+            "line",
+            "combo",
+            "donut"
           ],
           "type": "string"
         },
@@ -1355,6 +1497,20 @@
         "action"
       ],
       "type": "object"
+    },
+    "Era": {
+      "anyOf": [
+        {
+          "enum": [
+            "ce",
+            "be"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "string"
+        }
+      ]
     },
     "Expr": {
       "anyOf": [
@@ -3772,6 +3928,65 @@
         "blocks"
       ],
       "type": "object"
+    },
+    "Series": {
+      "description": "One named series of a chart: a value per x, its tone, a combo's mark and a dashed line.",
+      "properties": {
+        "as": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SeriesMark"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "dash": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "tone": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Tone"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "values": {
+          "items": {
+            "type": "number"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "name",
+        "values"
+      ],
+      "type": "object"
+    },
+    "SeriesMark": {
+      "anyOf": [
+        {
+          "enum": [
+            "bar",
+            "line"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "string"
+        }
+      ]
     },
     "SetState": {
       "description": "A tap's change of local state: `key` becomes the value of `to`; nothing is sent.",

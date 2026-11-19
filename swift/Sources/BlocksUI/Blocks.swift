@@ -188,6 +188,7 @@ internal struct BlockNode: View {
             case .editor(let editor): EditorBlock(block: editor)
             case .scene(let scene): LaneStage(block: scene)
             case .diagram(let diagram): DiagramBlock(block: diagram)
+            case .chart(let chart): ChartBlock(block: chart)
             case .composer(let composer): ComposerBlock(block: composer)
             case .prose(let prose): ProseBlock(block: prose)
             case .hero(let hero): HeroBlock(block: hero)

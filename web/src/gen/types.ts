@@ -12,7 +12,7 @@ export type Answer = { close?: boolean | null; open?: string | null; ops?: Op[] 
 
 export type AppBlock = { fallback?: Fallback | null; id?: string | null; type: string };
 
-export type Block = ({ type: "screen" } & Screen) | ({ type: "sheet" } & Sheet) | ({ type: "section" } & Section) | ({ type: "list" } & List) | ({ type: "row" } & Row) | ({ type: "card" } & Card) | ({ type: "choice" } & Choice) | ({ type: "form" } & Form) | ({ type: "config" } & Form) | ({ type: "secret" } & Secret) | ({ type: "run" } & Run) | ({ type: "button" } & Button) | ({ type: "chips" } & Chips) | ({ type: "stat" } & Stat) | ({ type: "text" } & Text) | ({ type: "images" } & Images) | ({ type: "web" } & Web) | ({ type: "diff" } & Diff) | ({ type: "editor" } & Editor) | ({ type: "scene" } & Scene) | ({ type: "diagram" } & Diagram) | ({ type: "composer" } & Composer) | ({ type: "prose" } & Prose) | ({ type: "hero" } & Hero) | ({ type: "media" } & Media) | ({ type: "nav" } & Nav) | ({ type: "island" } & Island) | (AppBlock & { [key: string]: unknown });
+export type Block = ({ type: "screen" } & Screen) | ({ type: "sheet" } & Sheet) | ({ type: "section" } & Section) | ({ type: "list" } & List) | ({ type: "row" } & Row) | ({ type: "card" } & Card) | ({ type: "choice" } & Choice) | ({ type: "form" } & Form) | ({ type: "config" } & Form) | ({ type: "secret" } & Secret) | ({ type: "run" } & Run) | ({ type: "button" } & Button) | ({ type: "chips" } & Chips) | ({ type: "stat" } & Stat) | ({ type: "text" } & Text) | ({ type: "images" } & Images) | ({ type: "web" } & Web) | ({ type: "diff" } & Diff) | ({ type: "editor" } & Editor) | ({ type: "scene" } & Scene) | ({ type: "diagram" } & Diagram) | ({ type: "chart" } & Chart) | ({ type: "composer" } & Composer) | ({ type: "prose" } & Prose) | ({ type: "hero" } & Hero) | ({ type: "media" } & Media) | ({ type: "nav" } & Nav) | ({ type: "island" } & Island) | (AppBlock & { [key: string]: unknown });
 
 export type Bound = { get: string };
 
@@ -25,6 +25,12 @@ export type Bye = { why: Why };
 export type Card = { badge?: Label | null; blocks?: Block[] | null; buttons?: Block[] | null; fold?: Fold | null; id?: string | null; kind?: CardKind | null; menu?: Act[] | null; meta?: string | null; push?: boolean | null; show?: Expr | null; subtitle?: string | null; tap?: Tap | null; title?: string | null; tone?: Tone | null };
 
 export type CardKind = "ask" | "run" | "secret" | "config" | "proposal";
+
+export type Chart = { chart: ChartKind; empty?: string | null; era?: Era | null; format?: ChartFormat | null; id?: string | null; lang?: string | null; selected?: string | null; series: Series[]; show?: Expr | null; tap?: Tap | null; title: string; x: string[] };
+
+export type ChartFormat = "count" | "thb" | "thb_m" | "percent";
+
+export type ChartKind = "bar" | "stacked" | "line" | "combo" | "donut";
 
 export type Check = { ok: Expr; say: string };
 
@@ -51,6 +57,8 @@ export type Diagram = { counts?: Record<string, number> | null; id?: string | nu
 export type Diff = { file: string; hunks: Hunk[]; id?: string | null; show?: Expr | null; summary?: string | null };
 
 export type Editor = { action: string; errors?: LineError[] | null; first?: number | null; id?: string | null; name: string; show?: Expr | null; text: string };
+
+export type Era = "ce" | "be";
 
 export type Expr = { get: string } | { not: Expr } | { all: Expr[] } | { any: Expr[] } | { eq: Expr[] } | { lt: Expr[] } | { len: Expr } | { has: Expr[] } | { is: Match } | { add: Expr[] } | { sub: Expr[] } | { cat: Expr[] } | { pick: Expr[] } | Lit;
 
@@ -154,6 +162,10 @@ export type Secret = { action: string; id?: string | null; label?: string | null
 
 export type Section = { blocks: Block[]; footer?: string | null; header?: string | null; id?: string | null; show?: Expr | null };
 
+export type Series = { as?: SeriesMark | null; dash?: boolean | null; name: string; tone?: Tone | null; values: number[] };
+
+export type SeriesMark = "bar" | "line";
+
 export type SetState = { key: string; to: Expr };
 
 export type Sheet = { blocks: Block[]; cancel?: string | null; done?: Submit | null; id?: string | null; show?: Expr | null; title: string };
@@ -204,4 +216,4 @@ export type Why = "evicted" | "unpaired" | "handover";
 
 export type Working = { since: string };
 
-export type Kind = "screen" | "sheet" | "section" | "list" | "row" | "card" | "choice" | "form" | "config" | "secret" | "run" | "button" | "chips" | "stat" | "text" | "images" | "web" | "diff" | "editor" | "scene" | "diagram" | "composer" | "prose" | "hero" | "media" | "nav" | "island";
+export type Kind = "screen" | "sheet" | "section" | "list" | "row" | "card" | "choice" | "form" | "config" | "secret" | "run" | "button" | "chips" | "stat" | "text" | "images" | "web" | "diff" | "editor" | "scene" | "diagram" | "chart" | "composer" | "prose" | "hero" | "media" | "nav" | "island";

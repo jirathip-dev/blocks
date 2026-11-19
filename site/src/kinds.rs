@@ -17,7 +17,7 @@ const GROUPS: [(&str, &[&str]); 4] = [
         "Words and pictures",
         &["text", "prose", "hero", "nav", "media", "images", "diagram"],
     ),
-    ("Lists and figures", &["list", "row", "stat", "chips"]),
+    ("Lists and figures", &["list", "row", "stat", "chart", "chips"]),
     ("Input", &["button", "choice", "form", "composer", "run"]),
 ];
 
@@ -37,6 +37,7 @@ fn about(kind: &str) -> &'static str {
         "list" => "A list of rows.",
         "row" => "One row: a title, a line, a value.",
         "stat" => "Figures: one tile, or a list of tiles.",
+        "chart" => "Bars, stacked bars, a line, a combo or a donut, with its legend and table.",
         "chips" => "A row of chips, one or many picked.",
         "button" => "A button that posts its action.",
         "choice" => "A question with options and a free answer.",
@@ -253,12 +254,20 @@ fn figures() -> Vec<Block> {
             tile("p50", 12, Some("ms"), None),
             tile("failing", 2, None, Some(Tone::Warn)),
         ]))),
-        b!(Chips(
-            Chips::new("effort", vec![chip("low"), chip("medium"), chip("high"), chip("max")])
-                .id("effort")
-                .selected(vec!["medium".to_string()])
-        )),
     ]
+    .into_iter()
+    .chain(
+        blocks::samples()
+            .into_iter()
+            .filter(|(k, _)| *k == "chart")
+            .map(|(_, b)| b),
+    )
+    .chain([b!(Chips(
+        Chips::new("effort", vec![chip("low"), chip("medium"), chip("high"), chip("max")])
+            .id("effort")
+            .selected(vec!["medium".to_string()])
+    ))])
+    .collect()
 }
 
 fn input() -> Vec<Block> {

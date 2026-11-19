@@ -23,6 +23,34 @@ words!(Tone {
     Fail,
     Idle
 });
+words!(ChartKind {
+    Bar,
+    Stacked,
+    Line,
+    Combo,
+    Donut
+});
+words!(Era { Ce, Be });
+words!(ChartFormat {
+    Count,
+    Thb,
+    #[serde(rename = "thb_m")]
+    ThbM,
+    Percent
+});
+words!(SeriesMark { Bar, Line });
+
+wire! {
+    /// One named series of a chart: a value per x, its tone, a combo's mark and a dashed line.
+    pub struct Series {
+        name: String,
+        values: Vec<Number>,
+        tone: Option<Tone>,
+        #[serde(rename = "as")]
+        mark: Option<SeriesMark>,
+        dash: Option<bool>,
+    }
+}
 words!(LaneState {
     Working,
     Needs,

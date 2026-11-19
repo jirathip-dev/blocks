@@ -5,6 +5,7 @@ import { island, isTag } from "../island.ts";
 import type { Theme } from "../theme.ts";
 import { button } from "./button.ts";
 import { card } from "./card.ts";
+import { chart } from "./chart.ts";
 import { chips } from "./chips.ts";
 import { choice } from "./choice.ts";
 import { composer } from "./composer.ts";
@@ -186,6 +187,7 @@ export const R: { [K in Kind]: (b: Of<K>, c: Ctx) => HTMLElement | null } = {
   editor,
   scene,
   diagram,
+  chart,
   composer,
   prose,
   hero,

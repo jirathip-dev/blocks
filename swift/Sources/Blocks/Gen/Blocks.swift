@@ -70,6 +70,7 @@ public enum Block: Codable, Equatable, Sendable {
     case editor(Editor)
     case scene(Scene)
     case diagram(Diagram)
+    case chart(Chart)
     case composer(Composer)
     case prose(Prose)
     case hero(Hero)
@@ -103,6 +104,7 @@ public enum Block: Codable, Equatable, Sendable {
         case "editor": self = .editor(try Editor(from: decoder))
         case "scene": self = .scene(try Scene(from: decoder))
         case "diagram": self = .diagram(try Diagram(from: decoder))
+        case "chart": self = .chart(try Chart(from: decoder))
         case "composer": self = .composer(try Composer(from: decoder))
         case "prose": self = .prose(try Prose(from: decoder))
         case "hero": self = .hero(try Hero(from: decoder))
@@ -136,6 +138,7 @@ public enum Block: Codable, Equatable, Sendable {
         case .editor(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("editor", forKey: .tag)
         case .scene(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("scene", forKey: .tag)
         case .diagram(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("diagram", forKey: .tag)
+        case .chart(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("chart", forKey: .tag)
         case .composer(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("composer", forKey: .tag)
         case .prose(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("prose", forKey: .tag)
         case .hero(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("hero", forKey: .tag)
@@ -202,6 +205,42 @@ public struct CardKind: RawRepresentable, Hashable, Codable, Equatable, Sendable
     public static let config = Self(rawValue: "config")
     public static let proposal = Self(rawValue: "proposal")
     public static let all: [Self] = [.ask, .run, .secret, .config, .proposal]
+}
+
+public struct Chart: Codable, Equatable, Sendable {
+    public var chart: ChartKind
+    public var empty: String?
+    public var era: Era?
+    public var format: ChartFormat?
+    public var id: String?
+    public var lang: String?
+    public var selected: String?
+    public var series: [Series]
+    public var show: Expr?
+    public var tap: Tap?
+    public var title: String
+    public var x: [String]
+}
+
+public struct ChartFormat: RawRepresentable, Hashable, Codable, Equatable, Sendable {
+    public let rawValue: String
+    public init(rawValue: String) { self.rawValue = rawValue }
+    public static let count = Self(rawValue: "count")
+    public static let thb = Self(rawValue: "thb")
+    public static let thbM = Self(rawValue: "thb_m")
+    public static let percent = Self(rawValue: "percent")
+    public static let all: [Self] = [.count, .thb, .thbM, .percent]
+}
+
+public struct ChartKind: RawRepresentable, Hashable, Codable, Equatable, Sendable {
+    public let rawValue: String
+    public init(rawValue: String) { self.rawValue = rawValue }
+    public static let bar = Self(rawValue: "bar")
+    public static let stacked = Self(rawValue: "stacked")
+    public static let line = Self(rawValue: "line")
+    public static let combo = Self(rawValue: "combo")
+    public static let donut = Self(rawValue: "donut")
+    public static let all: [Self] = [.bar, .stacked, .line, .combo, .donut]
 }
 
 public struct Check: Codable, Equatable, Sendable {
@@ -319,6 +358,14 @@ public struct Editor: Codable, Equatable, Sendable {
     public var name: String
     public var show: Expr?
     public var text: String
+}
+
+public struct Era: RawRepresentable, Hashable, Codable, Equatable, Sendable {
+    public let rawValue: String
+    public init(rawValue: String) { self.rawValue = rawValue }
+    public static let ce = Self(rawValue: "ce")
+    public static let be = Self(rawValue: "be")
+    public static let all: [Self] = [.ce, .be]
 }
 
 public indirect enum Expr: Codable, Equatable, Sendable {
@@ -955,6 +1002,22 @@ public struct Section: Codable, Equatable, Sendable {
     public var header: String?
     public var id: String?
     public var show: Expr?
+}
+
+public struct Series: Codable, Equatable, Sendable {
+    public var `as`: SeriesMark?
+    public var dash: Bool?
+    public var name: String
+    public var tone: Tone?
+    public var values: [Double]
+}
+
+public struct SeriesMark: RawRepresentable, Hashable, Codable, Equatable, Sendable {
+    public let rawValue: String
+    public init(rawValue: String) { self.rawValue = rawValue }
+    public static let bar = Self(rawValue: "bar")
+    public static let line = Self(rawValue: "line")
+    public static let all: [Self] = [.bar, .line]
 }
 
 public struct SetState: Codable, Equatable, Sendable {

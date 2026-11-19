@@ -376,18 +376,18 @@ fn every_golden_parses_with_no_fault() {
     );
 }
 
-const KINDS_27: [&str; 27] = [
+const KINDS_28: [&str; 28] = [
     "screen", "sheet", "section", "list", "row", "card", "choice", "form", "config", "secret", "run", "button",
-    "chips", "stat", "text", "images", "web", "diff", "editor", "scene", "diagram", "composer", "prose", "hero",
-    "media", "nav", "island",
+    "chips", "stat", "text", "images", "web", "diff", "editor", "scene", "diagram", "chart", "composer", "prose",
+    "hero", "media", "nav", "island",
 ];
 
 #[test]
-fn the_27_kinds_each_have_a_typed_sample_that_is_its_fixture() {
+fn the_28_kinds_each_have_a_typed_sample_that_is_its_fixture() {
     let mut kinds: Vec<&str> = Block::KINDS.iter().copied().chain(["island"]).collect();
     kinds.sort_unstable();
     kinds.dedup();
-    let mut want = KINDS_27.to_vec();
+    let mut want = KINDS_28.to_vec();
     want.sort_unstable();
     assert_eq!(kinds, want);
     let samples = blocks::samples();
@@ -703,5 +703,36 @@ fn a_kind_with_no_stress_row_or_no_why_fails_the_table_check() {
     assert_eq!(
         stress_rows(&quiet, Block::KINDS),
         Err("secret: a variant left out with no why".into())
+    );
+}
+
+#[test]
+fn a_chart_of_six_series_or_a_donut_of_two_fails_its_check() {
+    let series = |n: usize| -> Vec<Value> {
+        (0..n)
+            .map(|i| serde_json::json!({"name": format!("s{i}"), "values": [1]}))
+            .collect()
+    };
+    let faults = |kind: &str, n: usize| {
+        let v = serde_json::json!({"type": "chart", "id": "c", "title": "t", "chart": kind, "x": ["a"], "series": series(n)});
+        Built::new(v).check(&[])
+    };
+    let shape = |why: &str| {
+        vec![Fault::Shape {
+            kind: "chart".into(),
+            why: why.into(),
+        }]
+    };
+    assert_eq!(faults("stacked", 5), vec![]);
+    assert_eq!(faults("bar", 6), shape("a chart of 6 series: at most 5"));
+    assert_eq!(faults("donut", 1), vec![]);
+    assert_eq!(faults("donut", 2), shape("a donut of 2 series: one, over its slices"));
+    let chart = blocks::samples().into_iter().find(|(k, _)| *k == "chart").unwrap().1;
+    let built = Built::of(&blocks::Screen::new().id("s").blocks(vec![chart]));
+    assert_eq!(built.value()["blocks"][0]["fallback"]["tap"]["action"], "sales.month");
+    assert_eq!(
+        built.check(&[]),
+        vec![],
+        "a fallback's tap is the block's own, not a second sender"
     );
 }

@@ -187,7 +187,7 @@ impl Walk<'_> {
                         });
                     }
                 }
-                for (k, x) in o {
+                for (k, x) in o.iter().filter(|(k, _)| *k != "fallback") {
                     if let Some(p) = inner(x, k) {
                         self.sends(x, &p, scope);
                     }
@@ -217,6 +217,10 @@ impl Walk<'_> {
                     field: f.clone(),
                 });
                 self.out.extend(faults.collect::<Vec<_>>());
+                if let Block::Chart(c) = &b {
+                    let why = c.unfit();
+                    self.out.extend(why.map(|why| Fault::Shape { kind: k.into(), why }));
+                }
             }
         }
         let chip = o.get("name").and_then(Value::as_str);

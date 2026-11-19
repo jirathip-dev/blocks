@@ -24,6 +24,7 @@ export const hooks: Record<Kind, Hook> = {
     editor: { variant: null, parts: [] },
     scene: { variant: null, parts: [] },
     diagram: { variant: null, parts: ["title"] },
+    chart: { variant: null, parts: ["title"] },
     composer: { variant: null, parts: [] },
     prose: { variant: null, parts: [] },
     hero: { variant: null, parts: ["title", "subtitle", "actions"] },
@@ -32,6 +33,6 @@ export const hooks: Record<Kind, Hook> = {
     island: { variant: null, parts: [] },
 };
 
-export const roles: Record<string, string> = { section: "region", form: "form", config: "form", nav: "navigation" };
+export const roles: Record<string, string> = { section: "region", form: "form", config: "form", nav: "navigation", chart: "figure" };
 
 export const names = ["label", "title", "header", "question", "alt", "file", "command", "placeholder", "name"] as const;

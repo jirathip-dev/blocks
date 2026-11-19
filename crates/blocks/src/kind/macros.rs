@@ -17,7 +17,7 @@ macro_rules! wire {
 }
 
 macro_rules! words {
-    ($(#[$m:meta])* $name:ident { $first:ident $(, $v:ident)* $(,)? }) => {
+    ($(#[$m:meta])* $name:ident { $first:ident $(, $(#[$vm:meta])* $v:ident)* $(,)? }) => {
         $(#[$m])*
         #[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
         #[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
@@ -25,7 +25,7 @@ macro_rules! words {
         pub enum $name {
             #[default]
             $first,
-            $($v,)*
+            $($(#[$vm])* $v,)*
             #[serde(untagged)]
             Other(String),
         }

@@ -1,3 +1,4 @@
+mod chart;
 mod content;
 mod diagram;
 mod editor;
@@ -419,6 +420,7 @@ pub(crate) fn block(w: &mut W<'_>, b: &Value) {
         "media" => content::media(w, b),
         "nav" => content::nav(w, b),
         "diagram" => diagram::diagram(w, b),
+        "chart" => chart::chart(w, b),
         "editor" => editor::editor(w, b),
         "scene" => scene::scene(w, b),
         "island" => island(w, b),
