@@ -133,7 +133,11 @@ internal struct BlockNode: View {
             case "diff": DiffBlock(block: block)
             case "editor": EditorBlock(block: block)
             case "diagram": DiagramBlock(block: block)
-            case "composer": Gap(title: block.string("placeholder") ?? block.string("label"))
+            case "composer": ComposerBlock(block: block)
+            case "prose": ProseBlock(block: block)
+            case "media": MediaBlock(block: block)
+            case "hero": HeroBlock(block: block)
+            case "nav": NavBlock(block: block)
             default: AppBlockView(block: block)
             }
         }

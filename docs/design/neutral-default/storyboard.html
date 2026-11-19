@@ -1,0 +1,33 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>blocks default: the build-up</title><link rel="stylesheet" href="tokens.css"><link rel="stylesheet" href="page.css">
+<style>.frames{display:grid;grid-template-columns:repeat(5,1fr);gap:var(--seam)}.frames.three{grid-template-columns:repeat(3,1fr);max-width:60%}
+.frame img{display:block;width:100%;border:1px solid var(--edge)}.frame b{display:block;font-size:20px;font-variant-numeric:tabular-nums;margin-bottom:2px}
+.frame p{font-size:13px;color:var(--mute);margin:0 0 10px;min-height:56px}
+section{margin-top:32px}ol{padding-left:20px}li{margin:4px 0}
+@media (max-width:700px){.frames,.frames.three{grid-template-columns:1fr 1fr;max-width:none}}</style></head>
+<body>
+<div class="tiles"><div class="tile"><h1>The build-up</h1>
+<p class="sub">First load of a screen, 390 wide, light. Each tile rises 8 px and fades in over 160 ms; the next starts one step later. The last tile lands by 360 ms, under the 0.4 s limit. <a href="kinds.html">The core kinds</a> · <a href="tokens.html">The tokens</a></p></div></div>
+<section><h2>First load: 11 tiles on the phone screen, step 20 ms (25 tiles at 1440, step 8 ms)</h2>
+<div class="frames">
+<div class="tile frame"><b>0 ms</b><p>First paint: page, dot grid and section labels. Every tile is in the page, still transparent.</p><img src="frame-0.png" alt=""></div>
+<div class="tile frame"><b>90 ms</b><p>The title and the first stats are in; the lower stats are still rising.</p><img src="frame-90.png" alt=""></div>
+<div class="tile frame"><b>180 ms</b><p>Stats done; the rows follow one by one, top to bottom.</p><img src="frame-180.png" alt=""></div>
+<div class="tile frame"><b>270 ms</b><p>The last rows settle.</p><img src="frame-270.png" alt=""></div>
+<div class="tile frame"><b>360 ms</b><p>Done. Nothing moves again on this screen.</p><img src="frame-360.png" alt=""></div>
+</div></section>
+<section><h2>A block that arrives later: fade in place, 160 ms</h2>
+<div class="frames three">
+<div class="tile frame"><b>0 ms</b><p>The new row takes its place at once; the rows below step down without motion.</p><img src="late-0.png" alt=""></div>
+<div class="tile frame"><b>80 ms</b><p>It fades in where it lands. No rise, so nothing else seems to move.</p><img src="late-80.png" alt=""></div>
+<div class="tile frame"><b>160 ms</b><p>Done. Several blocks in one update fade together, with no stagger.</p><img src="late-160.png" alt=""></div>
+</div></section>
+<section><h2>The rules</h2><div class="tiles"><div class="tile"><ol>
+<li>Only the tiles on the first screen take part, ordered top to bottom, then left to right. Tiles below the fold are simply there.</li>
+<li>Step = the smaller of 40 ms and 200 ms ÷ (tiles − 1). So the last tile starts by 200 ms and lands by 360 ms, however many tiles there are.</li>
+<li>Each tile: opacity 0 → 1 and 8 px up → 0, 160 ms, ease-out. Move and fade only: no scale, no blur, no colour change.</li>
+<li>Once per screen load. A static page plays it from its own HTML; the takeover keeps the same tiles and does not play it again, so there is no flash.</li>
+<li>Reduced motion: no build-up and no fade. The page is simply still.</li>
+<li>A block removed later goes at once. A block whose content changes does not animate.</li>
+</ol></div></div></section>
+</body></html>

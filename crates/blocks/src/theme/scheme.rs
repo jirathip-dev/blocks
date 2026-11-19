@@ -142,35 +142,102 @@ pub struct Scheme {
     pub tokens: Tokens,
 }
 
-macro_rules! builtin {
-    ($($name:literal),* $(,)?) => {
-        [$(($name, include_str!(concat!("../../../../theme/schemes/", $name, ".json")))),*]
+const DEFAULT_LIGHT: [&str; 19] = [
+    "#f6f6f6",
+    "#ffffff",
+    "#d0d0d0",
+    "#e4e4e4",
+    "#0000004d",
+    "#1c1c1c",
+    "#5e5e5e",
+    "#3d3d3d",
+    "#3d3d3d",
+    "#547850",
+    "#927236",
+    "#a75953",
+    "#74678e",
+    "#3c797d",
+    "#3d3d3d",
+    "#64597c",
+    "#31666a",
+    "#456642",
+    "#775d2c",
+];
+
+const DEFAULT_DARK: [&str; 19] = [
+    "#161616",
+    "#1f1f1f",
+    "#3a3a3a",
+    "#2a2a2a",
+    "#00000099",
+    "#ececec",
+    "#a3a3a3",
+    "#d6d6d6",
+    "#d6d6d6",
+    "#769672",
+    "#c5a370",
+    "#bb776e",
+    "#a295bb",
+    "#6da1a5",
+    "#d6d6d6",
+    "#b8abce",
+    "#8ab9bc",
+    "#9bb996",
+    "#d1b184",
+];
+
+/// The built-in default's tile style values as CSS variables, the same in light and dark.
+pub const DEFAULT_STYLE: [(&str, &str); 11] = [
+    ("--radius", "0px"),
+    ("--seam", "2px"),
+    ("--dot-size", "2px"),
+    ("--dot-gap", "16px"),
+    ("--dot", "var(--edge)"),
+    ("--settle", "160ms"),
+    ("--rise", "8px"),
+    ("--stagger", "40ms"),
+    ("--build", "200ms"),
+    ("--enter", "160ms"),
+    ("--ease", "cubic-bezier(0.2, 0, 0, 1)"),
+];
+
+fn neutral(label: &str, mode: Mode, hex: &[&str; 19]) -> Scheme {
+    let [bg, card, edge, rule, scrim, fg, mute, l, link, g, a, r, p, c, fk_l, fk_p, fk_c, fk_g, fk_a] =
+        hex.map(|h| Hex(h.to_owned()));
+    let tokens = Tokens {
+        bg,
+        card,
+        edge,
+        line: rule,
+        scrim,
+        fg,
+        mute,
+        l,
+        link,
+        g,
+        a,
+        r,
+        p,
+        c,
+        fk_l,
+        fk_p,
+        fk_c,
+        fk_g,
+        fk_a,
     };
+    Scheme {
+        label: label.to_owned(),
+        mode,
+        tokens,
+    }
 }
 
-const BUILTIN: [(&str, &str); 12] = builtin!(
-    "dracula",
-    "farm",
-    "farm-light",
-    "garden-dark",
-    "garden-light",
-    "github-dark",
-    "gruvbox",
-    "kitchen",
-    "kitchen-light",
-    "nord",
-    "paper",
-    "solarized-dark",
-);
-
-/// The built-in schemes in theme/schemes/, by name.
-pub fn schemes() -> &'static [(&'static str, Scheme)] {
-    static PARSED: OnceLock<Vec<(&'static str, Scheme)>> = OnceLock::new();
-    PARSED.get_or_init(|| {
-        BUILTIN
-            .iter()
-            .filter_map(|(name, text)| Some((*name, serde_json::from_str(text).ok()?)))
-            .collect()
+/// The built-in neutral grey pair, light and dark, for when no theme is supplied.
+pub fn default() -> &'static PerMode<Scheme> {
+    static PAIR: OnceLock<PerMode<Scheme>> = OnceLock::new();
+    PAIR.get_or_init(|| PerMode {
+        dark: neutral("Default dark", Mode::Dark, &DEFAULT_DARK),
+        light: neutral("Default light", Mode::Light, &DEFAULT_LIGHT),
     })
 }
 

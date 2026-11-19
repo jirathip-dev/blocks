@@ -6,7 +6,7 @@ import { install } from "./dom.ts";
 install();
 const { render } = await import("../src/render/index.ts");
 const { css, packs, plain } = await import("../src/theme.ts");
-const { schemes } = await import("../src/gen/schemes.ts");
+const { defaultPair } = await import("../src/gen/schemes.ts");
 
 const dir = new URL("../../fixtures/blocks/", import.meta.url);
 const fixture = (kind) => JSON.parse(readFileSync(new URL(`${kind}.json`, dir), "utf8"));
@@ -14,7 +14,7 @@ const store = { get: () => null, put: () => {} };
 const ctx = (more = {}) => ({ screen: "home", act: async () => true, tap: () => {}, open: new Set(), theme: plain, store, ...more });
 const all = (e) => [e, ...e.children.flatMap(all)];
 const part = (e, cls) => all(e).find((x) => x.classList.contains(cls));
-const gaps = ["config", "secret", "web", "diff", "editor", "scene", "prose", "hero", "media", "nav", "island"];
+const gaps = ["config", "secret", "web", "diff", "editor", "scene", "island"];
 
 test("every fixture is drawn with its hooks, natively or as its fallback", () => {
   const kinds = readdirSync(dir).map((f) => f.replace(/\.json$/, ""));
@@ -80,12 +80,12 @@ test("a row's figure comes from the theme and carries its hook", () => {
 });
 
 test("a pack's words dress the plain word; css writes a scheme's tokens", () => {
-  const theme = JSON.parse(readFileSync(new URL("../../theme/packs/farm/theme.json", import.meta.url), "utf8"));
-  const t = packs({ theme: { ...theme, sprites: false }, base: "/packs/farm/" });
-  strictEqual(t.word("needs", "needs").textContent, "at the gate · needs");
+  const theme = JSON.parse(readFileSync(new URL("../../fixtures/packs/plain/theme.json", import.meta.url), "utf8"));
+  const t = packs({ theme: { ...theme, sprites: false }, base: "/packs/plain/" });
+  strictEqual(t.word("needs", "needs").textContent, "your turn · needs");
   strictEqual(t.word("nope", "plain").textContent, "plain");
-  const s = css(schemes.dracula);
-  ok(s.startsWith(":root{--bg:#282a36;") && s.endsWith(";color-scheme:dark}"), s);
+  const s = css(defaultPair.dark);
+  ok(s.startsWith(":root{--bg:#161616;") && s.endsWith(";color-scheme:dark}"), s);
 });
 
 const flow = (counts) => ({

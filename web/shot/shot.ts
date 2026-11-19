@@ -1,11 +1,14 @@
 import { readFileSync } from "node:fs";
 import { webkit } from "playwright";
+import { defaultPair } from "../src/gen/schemes.ts";
+import { css as wear } from "../src/theme.ts";
 
 const BASE = "http://blocks.test/";
 const BUDGET_MS = 16.7;
 const dist = (f) => readFileSync(new URL(`../dist/${f}`, import.meta.url));
+const LOOK = `${wear(defaultPair.light)}@media (prefers-color-scheme: dark){${wear(defaultPair.dark)}}html{background:var(--bg);color:var(--fg)}`;
 const PAGE = (css) =>
-  `<!doctype html><meta charset=utf-8><link rel=stylesheet href=blocks.css>${css.map((_, i) => `<link rel=stylesheet href=css/${i}>`).join("")}` +
+  `<!doctype html><meta charset=utf-8><link rel=stylesheet href=blocks.css><link rel=stylesheet href=look.css>${css.map((_, i) => `<link rel=stylesheet href=css/${i}>`).join("")}` +
   `<body><div id=root></div><script type=module>import * as B from "./blocks.js"; window.B = B;</script>`;
 
 function boot(screen) {
@@ -109,6 +112,7 @@ export async function shot({ screen, steps = [], name = "shot", size = "390x844"
       const p = r.request().url().slice(BASE.length);
       if (!r.request().url().startsWith(BASE)) return r.abort();
       if (p === "") return r.fulfill({ body: PAGE(css), contentType: "text/html" });
+      if (p === "look.css") return r.fulfill({ body: LOOK, contentType: "text/css" });
       if (p.startsWith("css/")) return r.fulfill({ body: readFileSync(css[Number(p.slice(4))]), contentType: "text/css" });
       if (p === "blocks.js" || p === "blocks.css") return r.fulfill({ body: dist(p), contentType: p.endsWith(".css") ? "text/css" : "text/javascript" });
       return r.fulfill({ status: 404 });

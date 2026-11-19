@@ -2,6 +2,6 @@
   "kind": "nav",
   "id": "nav",
   "variant": null,
-  "drawn": "fallback",
+  "drawn": "native",
   "children": []
 }

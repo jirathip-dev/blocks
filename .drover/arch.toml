@@ -16,6 +16,8 @@ generated = [
     "fixtures/blocks/*.json",
     "fixtures/trees/*.json",
     "fixtures/trees/swift/*.json",
+    "fixtures/html/*.html",
+    "fixtures/site/*.html",
 ]
 generate = "just gen"
 shared = ["crates/blocks/src/lib.rs", "crates/*/tests/support/**"]
@@ -23,10 +25,6 @@ shared = ["crates/blocks/src/lib.rs", "crates/*/tests/support/**"]
 [[collect]]
 dir = "ci/cap.d"
 glob = "*.toml"
-
-[[collect]]
-dir = "theme/schemes"
-glob = "*.json"
 
 [comments]
 policy = "strict"
@@ -90,6 +88,12 @@ mods = ["crate::tree", "blocks::tree"]
 may_use = ["expr", "kind", "built", "wire"]
 
 [[layer]]
+name = "site"
+paths = ["crates/blocks/src/site/**"]
+mods = ["crate::site", "blocks::site"]
+may_use = ["kind", "built", "tree", "theme"]
+
+[[layer]]
 name = "theme"
 paths = ["crates/blocks/src/theme/**"]
 mods = ["crate::theme"]
@@ -108,7 +112,7 @@ mods = ["crate::web", "blocks::web"]
 name = "codegen"
 paths = ["crates/blocks/src/codegen.rs", "crates/blocks/src/bin/**"]
 mods = ["crate::codegen", "blocks::codegen"]
-may_use = ["expr", "kind", "built", "wire", "patch", "diff", "shelf", "mirror", "theme", "layout", "tree"]
+may_use = ["expr", "kind", "built", "wire", "patch", "diff", "shelf", "mirror", "theme", "layout", "tree", "site"]
 
 [[ban]]
 pattern = "drover"
@@ -116,6 +120,12 @@ paths = ["Cargo.toml", "crates/*/Cargo.toml", "crates/*/src/**", "web/src/**", "
 reason = "drover depends on blocks, never the other way: no drover import or type here"
 comments = true
 ignore_case = true
+
+[[ban]]
+pattern = "bench/"
+paths = ["Cargo.toml", "crates/*/Cargo.toml", "crates/*/src/**", "web/src/**", "web/package.json", "swift/Sources/**", "Package.swift"]
+reason = "bench/ is dev only (React, topcoat and the bench servers): the crate, the bundle and the Swift package never import it"
+comments = true
 
 [[ban]]
 pattern = "import SwiftUI"

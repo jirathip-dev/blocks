@@ -13,7 +13,7 @@ const read = (f: File) =>
     r.readAsDataURL(f);
   });
 
-export function composer(b: Composer & { working?: unknown }, c: Ctx): HTMLElement {
+export function composer(b: Composer, c: Ctx): HTMLElement {
   const key = `draft:${c.screen}:${String(b.id)}:text`;
   const act = (k: string) => b.acts?.[k] ?? "";
   const d: Draft = drafts.get(key) ?? { files: [], picks: {} };
