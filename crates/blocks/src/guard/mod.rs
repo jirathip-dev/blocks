@@ -1,4 +1,5 @@
 mod cx;
+pub mod explore;
 mod judge;
 mod rules;
 mod sarif;
