@@ -15,6 +15,7 @@ generated = [
     "web/dist/blocks.css",
     "fixtures/blocks/*.json",
     "fixtures/trees/*.json",
+    "fixtures/trees/swift/*.json",
     "fixtures/html/*.html",
     "fixtures/site/*.html",
 ]

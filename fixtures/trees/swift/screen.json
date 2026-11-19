@@ -1,0 +1,15 @@
+{
+  "kind": "screen",
+  "id": "home",
+  "variant": null,
+  "drawn": "native",
+  "children": [
+    {
+      "kind": "text",
+      "id": "hint",
+      "variant": null,
+      "drawn": "native",
+      "children": []
+    }
+  ]
+}

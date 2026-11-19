@@ -2,6 +2,6 @@
   "kind": "editor",
   "id": "editor",
   "variant": null,
-  "drawn": "fallback",
+  "drawn": "native",
   "children": []
 }

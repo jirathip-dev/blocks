@@ -2,39 +2,29 @@ import Blocks
 import SwiftUI
 import WebKit
 
-internal struct LeafBlock: View {
+internal struct ButtonBlock: View {
     @Environment(\.look) private var look
     @Environment(\.card) private var context
-    internal let block: JSONValue
+    internal let block: Blocks.Button
 
     internal var body: some View {
-        switch block.type {
-        case "row": RowView(row: block)
-        case "text": TextBlock(block: block)
-        case "stat": StatBlock(block: block)
-        case "chips": ChipsBlock(block: block)
-        case "web": WebBlock(block: block)
-        default: button
-        }
-    }
-
-    private var button: some View {
-        let style = block.string("style")
-        let tint = style == "destructive" ? look.palette.red : context.tint
-        return ActButton(source: block) {
-            CardButton(title: block.string("label") ?? "", primary: style == "primary", tint: tint)
+        let destructive = block.style == .destructive
+        let tint = destructive ? look.palette.red : context.tint
+        let confirm = Confirmation(block.confirm, label: block.label, destructive: destructive)
+        ActButton(source: Source(action: block.action, tap: block.tap, values: block.values, confirm: confirm)) {
+            CardButton(title: block.label, primary: block.style == .primary, tint: tint)
         }
     }
 }
 
 internal struct TextBlock: View {
     @Environment(\.look) private var look
-    internal let block: JSONValue
+    internal let block: Blocks.Text
 
     internal var body: some View {
-        let markdown = block.string("markdown") ?? block.string("text") ?? ""
-        let until = block["until"]?.date
-        let footnote = block.string("style") == "footnote"
+        let markdown = block.markdown ?? block.text ?? ""
+        let until = block.until?.date
+        let footnote = block.style?.rawValue == "footnote"
         TimelineView(.everyMinute) { context in
             let text = Relative.filled(markdown, until: until, at: context.date)
             let options = AttributedString.MarkdownParsingOptions(interpretedSyntax: .inlineOnlyPreservingWhitespace)
@@ -47,13 +37,17 @@ internal struct TextBlock: View {
 
 internal struct ListBlock: View {
     @Environment(\.look) private var look
-    internal let block: JSONValue
+    internal let block: Blocks.List
 
     internal var body: some View {
-        let rows = block.list("rows")
+        let rows = block.rows
         VStack(spacing: 0) {
             ForEach(Array(rows.enumerated()), id: \.offset) { index, row in
-                RowView(row: row).modifier(Reordering(list: block, row: row))
+                if case .row(let line) = row {
+                    RowView(row: line).modifier(Reordering(list: block, row: line)).modifier(Reported(block: row))
+                } else {
+                    BlockNode(block: row)
+                }
                 if index < rows.count - 1 {
                     Rectangle().fill(look.palette.line).frame(height: 0.5).padding(.leading, 12)
                 }
@@ -65,26 +59,33 @@ internal struct ListBlock: View {
 
 internal struct StatBlock: View {
     @Environment(\.look) private var look
-    internal let block: JSONValue
+    internal let block: Stat
 
     internal var body: some View {
-        let tiles = block["items"] == nil ? [block] : block.list("items")
         HStack(spacing: 10) {
-            ForEach(Array(tiles.enumerated()), id: \.offset) { _, tile in self.tile(tile) }
+            if let items = block.items {
+                ForEach(Array(items.enumerated()), id: \.offset) { _, item in
+                    tile(item.label, item.value, item.tone, item.unit, item.spark)
+                }
+            } else {
+                tile(block.label, block.value, block.tone, block.unit, block.spark)
+            }
         }
     }
 
-    private func tile(_ tile: JSONValue) -> some View {
+    private func tile(_ label: String?, _ value: Shown?, _ tone: Tone?, _ unit: String?, _ spark: [Double]?)
+        -> some View
+    {
         let palette = look.palette
         return VStack(alignment: .leading, spacing: 4) {
-            Text(tile.string("label") ?? "").ui(12, .regular, look).foregroundStyle(palette.mute)
+            Text(label ?? "").ui(12, .regular, look).foregroundStyle(palette.mute)
             HStack(alignment: .firstTextBaseline, spacing: 4) {
-                RelativeValue(value: tile["value"] ?? .null).ui(22, .semibold, look)
-                    .foregroundStyle(palette.tone(tile.string("tone")) ?? palette.foreground)
-                if let unit = tile.string("unit") { Text(unit).ui(13, .regular, look).foregroundStyle(palette.mute) }
+                RelativeValue { value?.text(at: $0) ?? "" }.ui(22, .semibold, look)
+                    .foregroundStyle(palette.tone(tone?.rawValue) ?? palette.foreground)
+                if let unit { Text(unit).ui(13, .regular, look).foregroundStyle(palette.mute) }
             }
-            if !tile.list("spark").isEmpty {
-                Sparkline(points: tile.list("spark").compactMap(\.number)).frame(height: 22)
+            if let spark, !spark.isEmpty {
+                Sparkline(points: spark).frame(height: 22)
             }
         }
         .padding(12).frame(maxWidth: .infinity, alignment: .leading)
@@ -116,13 +117,13 @@ internal struct ChipsBlock: View {
     @Environment(\.look) private var look
     @Environment(\.act) private var act
     @State private var picked: [String]?
-    internal let block: JSONValue
+    internal let block: Chips
 
     internal var body: some View {
-        let selected = picked ?? block.list("selected").compactMap(\.string)
+        let selected = picked ?? block.selected ?? []
         ScrollView(.horizontal) {
             HStack(spacing: 8) {
-                ForEach(block.list("options").compactMap { $0.string("value") }, id: \.self) { value in
+                ForEach(block.options.map(\.value), id: \.self) { value in
                     Button {
                         pick(value, from: selected)
                     } label: {
@@ -136,7 +137,7 @@ internal struct ChipsBlock: View {
     }
 
     private func chip(_ value: String, selected: Bool) -> some View {
-        let label = block.list("options").first { $0.string("value") == value }?.string("label") ?? value
+        let label = block.options.first { $0.value == value }?.label ?? value
         return Text(label).ui(13, .semibold, look).foregroundStyle(
             selected ? look.palette.background : look.palette.foreground
         )
@@ -145,13 +146,12 @@ internal struct ChipsBlock: View {
     }
 
     private func pick(_ value: String, from selected: [String]) {
-        let multi = block["multi"]?.bool == true
+        let multi = block.multi == true
         let next = multi ? (selected.contains(value) ? selected.filter { $0 != value } : selected + [value]) : [value]
         picked = next
-        let name = block.string("name") ?? ""
         let chosen: JSONValue = multi ? .array(next.map(JSONValue.string)) : .string(value)
-        if let action = block.string("action") {
-            act(BlockAction(action: action, values: [name: chosen]))
+        if let action = block.action {
+            act(BlockAction(action: action, values: [block.name: chosen]))
         }
     }
 }
@@ -163,11 +163,11 @@ internal struct WebBlock: View {
         configuration.websiteDataStore = .nonPersistent()
         return WebPage(configuration: configuration)
     }()
-    internal let block: JSONValue
+    internal let block: Web
 
     internal var body: some View {
-        let height = CGFloat(block["height"]?.number ?? 120)
-        if let url = block.string("src").flatMap(URL.init(string:)), url.scheme == "https" || url.scheme == "http" {
+        let height = CGFloat(block.height)
+        if let url = URL(string: block.src), url.scheme == "https" || url.scheme == "http" {
             WebView(page).frame(height: height)
                 .onAppear { _ = page.load(URLRequest(url: url)) }
         } else {
