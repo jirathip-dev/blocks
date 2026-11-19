@@ -1,0 +1,7 @@
+Decided: ci/cap.d/2026-11-19-23000.toml raises line_cap to 23000; the commit carries Cap: 19000 → 23000 (#143, q2289)
+Because: q2289
+Decided: no change to scripts/line-cap.sh; its find already walks crates/*/src, so new crates count
+Because: scripts/line-cap.sh:8
+Rejected: editing ci/cap.toml — the issue says no other file in ci/cap.d or ci/cap.toml changes
+Check: sh scripts/line-cap.sh reports 17971 / 23000 at the head
+Owner: the line cap is now 23000 so the desktop renderer slices fit
