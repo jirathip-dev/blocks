@@ -173,6 +173,12 @@ paths = ["crates/blocks/src/codegen/**", "crates/blocks/src/bin/**"]
 mods = ["crate::codegen", "blocks::codegen"]
 may_use = ["expr", "kind", "built", "wire", "patch", "diff", "shelf", "mirror", "theme", "layout", "behave", "tree", "site", "guard"]
 
+[[layer]]
+name = "cli"
+paths = ["crates/blocks-cli/src/**"]
+mods = ["blocks_cli"]
+may_use = ["guard", "kind", "built", "tree", "wire"]
+
 [[ban]]
 pattern = "drover"
 paths = ["Cargo.toml", "crates/*/Cargo.toml", "crates/*/src/**", "web/src/**", "swift/Sources/**"]
@@ -210,22 +216,25 @@ reason = "no transport here: streams are carried by drover and cooee"
 [[ban]]
 pattern = "std::process"
 paths = ["crates/*/src/**"]
+except = ["crates/blocks-cli/src/**"]
 reason = "the library is pure: it starts no process"
 
 [[ban]]
 pattern = "std::fs"
 paths = ["crates/*/src/**"]
-except = ["crates/blocks/src/codegen/**"]
-reason = "the library is pure: only codegen writes files"
+except = ["crates/blocks/src/codegen/**", "crates/blocks-cli/src/**"]
+reason = "the library is pure: only codegen and the command write files"
 
 [[ban]]
 pattern = "Instant::now"
 paths = ["crates/*/src/**"]
+except = ["crates/blocks-cli/src/**"]
 reason = "the library is pure: no clock; time is the caller's"
 
 [[ban]]
 pattern = "SystemTime::now"
 paths = ["crates/*/src/**"]
+except = ["crates/blocks-cli/src/**"]
 reason = "the library is pure: no clock; time is the caller's"
 
 [[ban]]

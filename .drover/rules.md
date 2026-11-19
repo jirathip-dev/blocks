@@ -7,7 +7,7 @@
 - don't add a crate with a licence outside deny.toml, a known advisory, a second version or an unknown source (enforced by: CI deny, `cargo deny --locked check`)
 - don't add a direct dependency outside docs/deps.md's allow-list (enforced by: CI deps gate, scripts/deps-gate.sh)
 - don't import bench/ (React, topcoat, the bench servers) from the crate, web/src or the Swift package (enforced by: CI arch-check, the `bench/` ban)
-- don't import drover or a transport (tokio, HTTP, std::net) here, or start a process, read a clock or write a file outside codegen (enforced by: CI arch-check bans, deny.toml bans)
+- don't import drover or a transport (tokio, HTTP, std::net) here, or start a process, read a clock or write a file outside codegen and `crates/blocks-cli` (enforced by: CI arch-check bans, deny.toml bans)
 - don't draw a block without a role and a name, an actionable element without a name, or an image with no alt and not aria-hidden (enforced by: CI web, `blocks-shot --check` at 390 and 1440 and site.test on every fixtures/blocks file; CI swift, `blocks-snap --check` on each node's role and name)
 - don't break .drover/arch.toml's layers (expr <- kind <- built, wire <- patch <- diff <- shelf, mirror; built <- behave <- tree <- site, which also uses theme; theme, layout and web stand alone; codegen uses them all), size limits or frozen files (enforced by: CI arch-check)
 - don't hand-edit a generated file (the schema, its sample, the TS and Swift types): rerun `just gen` (enforced by: CI arch-check, `generated`)

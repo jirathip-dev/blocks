@@ -1,9 +1,15 @@
 mod cx;
+mod judge;
 mod rules;
+mod sarif;
 mod shape;
 
+pub use judge::{judge, tighten};
 pub use rules::RULES;
-pub use shape::{Finding, Rule, Seen, Severity};
+pub use sarif::{sarif, Sarif};
+pub use shape::{
+    Baseline, Config, Finding, Held, Ignore, Ignored, Known, Outcome, Reason, Rule, Scope, Seen, Severity,
+};
 
 use crate::built::Built;
 

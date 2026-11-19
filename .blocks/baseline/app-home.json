@@ -1,0 +1,9 @@
+{
+  "guard": 1,
+  "known": [
+    {
+      "rule": "lint/fault",
+      "at": ""
+    }
+  ]
+}
