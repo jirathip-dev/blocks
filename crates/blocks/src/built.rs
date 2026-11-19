@@ -255,7 +255,7 @@ fn gets<'a>(v: &'a Value, out: &mut Vec<&'a str>) {
     match v {
         Value::Object(o) => match (o.len(), o.get("get").and_then(Value::as_str)) {
             (1, Some(k)) => out.push(k),
-            _ => o.values().for_each(|x| gets(x, out)),
+            _ => o.iter().filter(|(k, _)| *k != "calc").for_each(|(_, x)| gets(x, out)),
         },
         Value::Array(a) => a.iter().for_each(|x| gets(x, out)),
         _ => {}
