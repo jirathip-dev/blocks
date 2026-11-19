@@ -56,9 +56,10 @@ public struct Snapshot {
     {
         var screen = self.screen
         let key = try JSONValue(screen).id ?? ""
+        var edits: BlockState = [:]
         let clock = ContinuousClock()
         let start = clock.now
-        var seen = draw(screen)
+        var seen = draw(screen, edits)
         let paint = ms(clock.now - start)
         var (shots, sent, dropped, times) = ([String](), [JSONValue](), [String](), [Double]())
         var (pngs, trees, faults) = ([String: Data](), [String: TreeNode](), [String]())
@@ -77,23 +78,42 @@ public struct Snapshot {
             let begun = clock.now
             switch step {
             case .tap(let on):
-                if let tap = seen.taps[on.id] {
+                let json = try JSONValue(screen)
+                let state = Behaviour.state(json, edits: edits)
+                let off = Behaviour(json, state: state).disabled.contains(on.id)
+                let block = Self.find(json, on.id)
+                let sets = (try? block?["tap"]?["set"]?.decode([SetState].self)) ?? []
+                let set = Behaviour.tap(sets, state: state)
+                edits.merge(set) { $1 }
+                if !off, let tap = seen.taps[on.id] {
+                    let names = Set(block?.list("fields").compactMap { $0.string("name") } ?? [])
+                    let typed = edits.filter { names.contains($0.key) }.mapValues(\.json)
                     sent.append(
                         .object([
                             "screen": .string(key), "action": .string(tap.action), "block": .string(on.id),
-                            "values": .object(tap.values),
+                            "values": .object(tap.values.merging(typed) { $1 }),
                         ]))
-                } else {
+                } else if off || set.isEmpty {
                     dropped.append("tap \(on.id)")
                 }
-            case .type(let typing): dropped.append("type \(typing.id)")
+                if !off, !set.isEmpty { seen = draw(screen, edits) }
+            case .type(let typing):
+                let json = try JSONValue(screen)
+                let field = Self.find(json, typing.id).flatMap { $0.list("fields").first?.string("name") ?? $0.string("name") }
+                let view = Behaviour(json, state: Behaviour.state(json, edits: edits))
+                if let field, !view.hidden.contains(field), !view.disabled.contains(field) {
+                    edits[field] = .string(typing.text)
+                    seen = draw(screen, edits)
+                } else {
+                    dropped.append("type \(typing.id)")
+                }
             case .scroll(let on): dropped.append("scroll \(on.id)")
             case .frame(let frame):
                 if let new = frame.screen { screen = new } else { try screen.apply(frame.ops ?? []) }
-                seen = draw(screen)
+                seen = draw(screen, edits)
             case .answer(let answer):
                 try screen.apply(answer.ops ?? [])
-                seen = draw(screen)
+                seen = draw(screen, edits)
             case .shot(let shot): try take(shot.name)
             case .unknown(let value): dropped.append("unknown \(value)")
             }
@@ -122,10 +142,16 @@ public struct Snapshot {
         Double(d.components.seconds) * 1000 + Double(d.components.attoseconds) / 1e15
     }
 
-    private func draw(_ screen: Block) -> Seen {
+    private static func find(_ b: JSONValue, _ id: String) -> JSONValue? {
+        if b.id == id { return b }
+        let kids = b.list("blocks") + b.list("rows") + b.list("buttons") + b.list("rounds").flatMap { $0.list("blocks") }
+        return kids.lazy.compactMap { find($0, id) }.first
+    }
+
+    private func draw(_ screen: Block, _ edits: BlockState) -> Seen {
         let seen = Seen()
         var view = AnyView(
-            BlocksView(screen, source: .core).padding(BlocksView.inset)
+            BlocksView(screen, source: .core, state: edits).padding(BlocksView.inset)
                 .frame(width: size.width, height: size.height, alignment: .topLeading))
         for wrap in wraps { view = wrap(view) }
         let root = view.reportsBlocks().background(look.palette.background).environment(\.look, look)
@@ -206,10 +232,10 @@ private final class Seen {
 
     private func node(_ b: DrawnBlock, _ proxy: GeometryProxy) -> JSONValue {
         let r = proxy[b.bounds]
-        if let id = b.id, let tap = b.tap, taps[id] == nil { taps[id] = tap }
+        if let id = b.id, let tap = b.tap, !b.hidden, taps[id] == nil { taps[id] = tap }
         return .object([
             "kind": .string(b.kind), "id": b.id.map(JSONValue.string) ?? .null,
-            "variant": b.variant.map(JSONValue.string) ?? .null, "drawn": .string(b.native ? "native" : "fallback"),
+            "variant": b.variant.map(JSONValue.string) ?? .null, "drawn": .string(b.hidden ? "hidden" : b.native ? "native" : "fallback"),
             "rect": .array([r.minX, r.minY, r.width, r.height].map { .number(Double($0)) }),
             "children": .array(b.children.map { node($0, proxy) }),
         ])

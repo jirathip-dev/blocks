@@ -7,6 +7,7 @@ package struct DrawnBlock {
     package let id: String?
     package let variant: String?
     package let native: Bool
+    package let hidden: Bool
     package let bounds: Anchor<CGRect>
     package let tap: BlockAction?
     package let children: [DrawnBlock]
@@ -34,6 +35,7 @@ internal struct Reported: ViewModifier {
     @Environment(\.reportsBlocks) private var reports
     @Environment(\.appBlocks) private var appBlocks
     internal let block: Block
+    internal var hidden = false
 
     @ViewBuilder
     internal func body(content: Content) -> some View {
@@ -43,11 +45,12 @@ internal struct Reported: ViewModifier {
             let native = core ? !Self.gaps.contains(head.type) : appBlocks?.views[head.type] != nil
             let variant = head.variant.flatMap { $0.isEmpty ? nil : $0 }
             let id = head.id.flatMap { $0.isEmpty ? nil : $0 }
-            let tap = head.source.sent(values: block.fieldValues)
+            let tap = head.source.sent(block.submit, values: block.fieldValues)
             content.transformAnchorPreference(key: DrawnBlocks.self, value: .bounds) { drawn, bounds in
                 drawn = [
                     DrawnBlock(
-                        kind: head.type, id: id, variant: variant, native: native, bounds: bounds, tap: tap,
+                        kind: head.type, id: id, variant: variant, native: native, hidden: hidden, bounds: bounds,
+                        tap: tap,
                         children: drawn)
                 ]
             }
@@ -95,6 +98,13 @@ extension Block {
                 b.type, b.id, nil,
                 Source(action: b.string("action"), tap: try? b["tap"]?.decode(Tap.self), values: b["values"]?.fields)
             )
+        }
+    }
+
+    fileprivate var submit: String? {
+        switch self {
+        case .form(let form), .config(let form): form.submit?.action
+        default: nil
         }
     }
 

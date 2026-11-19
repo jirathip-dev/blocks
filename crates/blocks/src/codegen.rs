@@ -846,7 +846,7 @@ fn swift_keyed(name: &str, cases: &[(&str, Ty<'_>)], rest: Option<&str>) -> Stri
         let case = word(k);
         decl.push_str(&format!("    case {case}({})\n", t.swift()));
         dec.push_str(&format!(
-            "            case \"{k}\": self = .{case}(try c.decode({}.self, forKey: k)); return\n",
+            "            case \"{k}\": if let v = try? c.decode({}.self, forKey: k) {{ self = .{case}(v); return }}\n",
             t.swift()
         ));
         enc.push_str(&format!(
@@ -874,8 +874,8 @@ fn swift_keyed(name: &str, cases: &[(&str, Ty<'_>)], rest: Option<&str>) -> Stri
          init(_ s: String) {{ stringValue = s }}\n        init?(stringValue: String) {{ self.init(stringValue) }}\n        \
          init?(intValue: Int) {{ nil }}\n    }}\n\n    public init(from decoder: any Decoder) throws {{\n        \
          if let c = try? decoder.container(keyedBy: Key.self), c.allKeys.count == 1, let k = c.allKeys.first {{\n            \
-         switch k.stringValue {{\n{dec}            default: self = .unknown(try JSONValue(from: decoder)); return\n            }}\n        \
-         }}\n        {rest_dec}\n    }}\n\n    public func encode(to encoder: any Encoder) throws {{\n        switch self {{\n\
+         switch k.stringValue {{\n{dec}            default: break\n            }}\n            \
+         self = .unknown(try JSONValue(from: decoder)); return\n        }}\n        {rest_dec}\n    }}\n\n    public func encode(to encoder: any Encoder) throws {{\n        switch self {{\n\
          {enc}{rest_enc}        case .unknown(let v): try v.encode(to: encoder)\n        }}\n    }}\n}}\n"
     )
 }

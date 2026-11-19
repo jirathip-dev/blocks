@@ -23,10 +23,11 @@ function boot(screen) {
     theme: B.plain,
     store: { get: () => null, put: () => {} },
   };
-  h.paint = () => root.replaceChildren(...[B.render(h.model, ctx)].filter(Boolean));
+  const sync = B.behave(root, () => h.model);
+  h.paint = () => (root.replaceChildren(...[B.render(h.model, ctx)].filter(Boolean)), sync());
   h.ops = (ops) => ((h.model = (ops?.length && B.apply(h.model, ops)) || h.model), h.paint());
   h.patch = [];
-  const p = B.patcher({ root, draw: (b) => B.render(b, ctx), model: () => ((h.t = performance.now()), h.model), saved: () => h.patch.push(performance.now() - h.t) });
+  const p = B.patcher({ root, draw: (b) => B.render(b, ctx), model: () => ((h.t = performance.now()), h.model), saved: () => (sync(), h.patch.push(performance.now() - h.t)) });
   h.frame = (f) => {
     const next = f.screen ?? (f.ops?.length && B.apply(h.model, f.ops));
     if (next) h.model = next;
@@ -139,9 +140,15 @@ export async function shot({ screen, steps = [], name = "shot", size = "390x844"
       }
       const t0 = performance.now();
       const on = (id) => page.locator(`[data-block][data-id="${id}"]`).first();
-      const hit = (id, what) => on(id).locator(`xpath=descendant-or-self::*[${what}]`).or(on(id)).first();
-      if (s.tap) await hit(s.tap.id, "self::button or self::a or @role='button'").click();
-      if (s.type) await hit(s.type.id, "self::input or self::textarea").fill(s.type.text);
+      const hit = async (id, what) => {
+        const t = on(id).locator(`xpath=descendant-or-self::*[${what}]`).first();
+        return (await t.count()) ? t : on(id);
+      };
+      const live = async (t) => (await t.isVisible()) && (await t.isEnabled());
+      const tap = s.tap && (await hit(s.tap.id, "self::button or self::a or @role='button'"));
+      const type = s.type && (await hit(s.type.id, "self::input or self::textarea"));
+      if (tap) await ((await live(tap)) ? tap.click() : report.dropped.push(`tap ${s.tap.id}`));
+      if (type) await ((await live(type)) ? type.fill(s.type.text) : report.dropped.push(`type ${s.type.id}`));
       if (s.scroll) frames.push(...(await page.evaluate((id) => window.h.scroll(id), s.scroll.id)));
       if (s.answer) await page.evaluate((ops) => window.h.ops(ops), s.answer.ops ?? []);
       if (s.shot) {

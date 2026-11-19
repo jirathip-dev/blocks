@@ -3,8 +3,8 @@ mod support;
 use std::collections::{BTreeMap, VecDeque};
 
 use blocks::expr::{eval, Expr, Lit, Match, Pattern, State};
-use blocks::{apply, diff, Block, Frame, Have, Hello, Mirror, Put, Shelf, Synced, Took};
-use serde_json::Number;
+use blocks::{apply, diff, Block, Built, Frame, Have, Hello, Mirror, Put, Shelf, Synced, Took};
+use serde_json::{json, Number};
 use support::{mutate, screen, Rng};
 
 const SEEDS: &[u64] = &[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
@@ -197,6 +197,15 @@ fn exprs(seed: u64) -> Result<(), String> {
             return Err(format!("{e:?} does not read back as itself"));
         }
     }
+    let mut e = || serde_json::to_value(expr(&mut rng, 3)).unwrap();
+    let screen = Built::new(json!({"type": "screen", "id": "s", "blocks": [
+        {"type": "text", "id": "t", "markdown": "x", "show": e()},
+        {"type": "button", "id": "b", "label": "x", "enabled": e(), "tap": {"set": [{"key": "k0", "to": e()}]}},
+        {"type": "form", "id": "f", "fields": [{"type": "text", "name": "k1", "show": e(), "enabled": e(),
+            "checks": [{"ok": e(), "say": "no"}, {"ok": {"lt": [{"len": {"get": "k1"}}, e()]}, "say": "long"}]}]}
+    ]}));
+    blocks::behave::view(&screen, &state);
+    blocks::site::fragment(&screen, "/act");
     Ok(())
 }
 

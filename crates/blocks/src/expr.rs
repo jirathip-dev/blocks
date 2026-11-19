@@ -64,6 +64,28 @@ pub enum Expr {
     Unknown(Map<String, Value>),
 }
 
+impl Default for Expr {
+    fn default() -> Self {
+        Self::Lit(Lit::Null)
+    }
+}
+
+impl Expr {
+    /// Whether every operation and pattern in the tree is one this version knows; an unknown one counts as absent.
+    pub fn known(&self) -> bool {
+        let all = |xs: &[Expr]| xs.iter().all(Expr::known);
+        match self {
+            Self::Lit(_) | Self::Get(_) => true,
+            Self::Not(x) | Self::Len(x) => x.known(),
+            Self::All(xs) | Self::Any(xs) | Self::Cat(xs) => all(xs),
+            Self::Eq(p) | Self::Lt(p) | Self::Has(p) | Self::Add(p) | Self::Sub(p) => all(&**p),
+            Self::Is(m) => !matches!(m.pattern, Pattern::Other(_)) && m.value.known(),
+            Self::Pick(p) => all(&**p),
+            Self::Unknown(_) => false,
+        }
+    }
+}
+
 fn flag(l: &Lit) -> Option<bool> {
     match l {
         Lit::Null => Some(false),

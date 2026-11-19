@@ -8,6 +8,7 @@ export function form(b: Form, c: Ctx): HTMLElement {
   const s = b.submit;
   if (!s) return f;
   const go = btn(s.label, "", undefined, s.action);
+  go.dataset.submit = "";
   const word = go.firstElementChild ?? go;
   const send = () => {
     const v = values(f);
