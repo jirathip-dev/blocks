@@ -1,0 +1,11 @@
+Decided: one draw/<kind>.rs per Block variant, 30 not 27, since the switch must match every variant and lines, steps and table came after the ADR
+Because: crates/blocks-desktop/src/draw.rs:40
+Decided: Look.style is Option<Style>: the crate has no default Style, so Look::default draws with none
+Because: crates/blocks/src/theme/style.rs:147
+Decided: art.rs, text.rs, act.rs and island.rs are left to S4 and S6, as the slices table gives them
+Because: "`screen`, `section`, `list`, `row` and `text` drawn, the rest as gaps that draw their fallback"
+Decided: the deny font exception is left to S2; egui without default_fonts lays text out in the tests
+Because: "egui 0.37 as a dependency, with the Windows target and the Zlib exception, is approved"
+Rejected: committing the table trees codegen rewrote here — that drift is staging's children() bug, fixed by #186
+Check: tests/stage.rs runs tree::check on Stage::drawn against tree::expect for every fixtures/blocks and fixtures/stress file
+Owner: The desktop renderer's first package is in: five kinds drawn, every other kind a placeholder, nothing new for other apps.
