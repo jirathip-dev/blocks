@@ -1,6 +1,7 @@
 use serde_json::Value;
 
 use super::{get, link, list, on, shown, W};
+use crate::Media;
 
 fn spans(w: &mut W<'_>, all: &[Value]) {
     for s in all.iter().filter(|s| s.is_object()) {
@@ -82,15 +83,16 @@ fn figure(w: &mut W<'_>, m: &Value, hook: Option<&Value>) {
         w.open("video", "", &at);
         w.close("video");
     } else {
-        w.open(
-            "img",
-            "",
-            &[
-                &[("src", src.as_str()), ("alt", alt.as_str()), ("loading", "lazy")],
-                &size[..],
-            ]
-            .concat(),
-        );
+        let marked = serde_json::from_value::<Media>(m.clone())
+            .ok()
+            .filter(|x| x.marks.as_ref().is_some_and(|l| !l.is_empty()));
+        let named = marked.as_ref().map(super::marks::alt);
+        let alt = named.as_deref().unwrap_or(&alt);
+        let img = [&[("src", src.as_str()), ("alt", alt), ("loading", "lazy")], &size[..]].concat();
+        match &marked {
+            Some(x) => super::marks::drawn(w, x, &img),
+            None => w.open("img", "", &img),
+        }
     }
     if let Some(c) = get(m, "caption").filter(|c| !c.is_empty()) {
         w.el("figcaption", "", c);

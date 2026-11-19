@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::{Act, Fallback, Fields};
+use super::{Act, Fallback, Fields, Gesture, Mark, MarkKind};
 use crate::expr::Expr;
 
 wire! {
@@ -78,6 +78,13 @@ kind! {
         video: Option<bool>,
         poster: Option<String>,
         caption: Option<String>,
+        marks: Option<Vec<Mark>>,
+        tools: Option<Vec<MarkKind>>,
+        draw: Option<Gesture>,
+        #[serde(rename = "move")]
+        moves: Option<Gesture>,
+        stretch: Option<Gesture>,
+        remove: Option<Gesture>,
     }
 }
 

@@ -2,6 +2,7 @@ mod content;
 mod diagram;
 mod editor;
 mod lines;
+mod marks;
 mod rounds;
 mod scene;
 mod steps;

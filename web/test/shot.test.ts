@@ -36,7 +36,7 @@ test("every fixtures/blocks file passes --check against its fixtures/trees tree 
 test("every fixtures/stress variant passes --check at 390 in WebKit: inside the width, over no sibling", () => {
   const stress = at("../../fixtures/stress/");
   const names = readdirSync(stress).filter((f) => f !== "table.json").map((f) => f.replace(/\.json$/, ""));
-  strictEqual(names.length, 61);
+  strictEqual(names.length, 63);
   for (const n of names) {
     const r = run("--screen", join(stress, `${n}.json`), "--check", "--out", join(out, n));
     strictEqual(r.status, 0, `${n}: ${r.stderr}`);

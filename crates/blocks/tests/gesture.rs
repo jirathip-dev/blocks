@@ -1,7 +1,7 @@
 use std::path::{Path, PathBuf};
 
 use blocks::gesture::{step, Effect, Event, Nudge, Phase, Rules};
-use blocks::{Action, Block, Built, Fault, List};
+use blocks::{Action, Block, Built, Fault, List, MarkChange, MarkGrab, MarkReach, Media};
 use serde::Deserialize;
 use serde_json::{json, Value};
 
@@ -169,4 +169,43 @@ fn a_gesture_whose_enabled_does_not_hold_joins_the_view_acts() {
     assert!(
         matches!(serde_json::from_value::<Block>(json!({"type": "list", "rows": [], "reorder": reorder})), Ok(Block::List(l)) if l.reorder.as_ref().is_some_and(|g| g.enabled.is_some()))
     );
+}
+
+#[derive(Deserialize)]
+struct MarkCase {
+    grab: MarkGrab,
+    reach: Option<MarkReach>,
+    nudges: Option<Vec<Nudge>>,
+    want: Option<MarkChange>,
+    says: Option<String>,
+}
+
+#[test]
+fn media_rules_give_each_fixture_case_its_change_its_words_its_steps_and_its_names() {
+    let f = read("media.json");
+    let media: Media = serde_json::from_value(f["block"].clone()).unwrap();
+    let cases: Vec<MarkCase> = serde_json::from_value(f["cases"].clone()).unwrap();
+    assert!(cases.len() >= 20);
+    for c in &cases {
+        let got = match (&c.reach, &c.nudges) {
+            (Some(r), _) => media.candidate(&c.grab, r),
+            (None, Some(ns)) => ns.iter().try_fold(media.start(&c.grab).unwrap_or_default(), |from, n| {
+                media.nudge(&c.grab, &from, *n)
+            }),
+            (None, None) => panic!("a case with neither reach nor nudges"),
+        };
+        assert_eq!(got, c.want, "{:?} {:?} {:?}", c.grab, c.reach, c.nudges);
+        let said = got.as_ref().map(|g| media.says(&c.grab, g));
+        assert_eq!(said, c.says, "{:?}", c.grab);
+    }
+    for s in f["steps"].as_array().unwrap() {
+        let grab: MarkGrab = serde_json::from_value(s["grab"].clone()).unwrap();
+        let names: Vec<String> = media.steps(&grab).into_iter().map(|(n, _)| n).collect();
+        assert_eq!(json!(names), s["want"], "{grab:?}");
+    }
+    for (id, want) in f["names"].as_object().unwrap() {
+        assert_eq!(json!(media.named(id)), *want, "{id}");
+    }
+    let screen = json!({"type": "screen", "id": "s", "title": "S", "blocks": [f["block"]]});
+    assert_eq!(Built::new(screen).check(&[]), vec![]);
 }

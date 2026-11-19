@@ -9,11 +9,13 @@ use crate::expr::{Expr, State};
 mod macros;
 mod content;
 mod list;
+mod media;
 mod parts;
 mod sample;
 mod table;
 
 pub use content::*;
+pub use media::*;
 pub use parts::*;
 pub use sample::samples;
 pub use table::*;

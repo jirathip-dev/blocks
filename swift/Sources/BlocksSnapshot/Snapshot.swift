@@ -172,8 +172,15 @@ public struct Snapshot {
     }
 
     private static func gestured(_ block: Block?, _ g: StepGesture) -> [(Blocks.Gesture, JSONValue)] {
-        guard case .list(let l)? = block, let reorder = l.reorder, let grab = g.grab.string else { return [] }
-        return ways(l, grab, g).map { (reorder, .array($0.map(JSONValue.string))) }
+        switch block {
+        case .list(let l)?:
+            guard let reorder = l.reorder, let grab = g.grab.string else { return [] }
+            return ways(l, grab, g).map { (reorder, .array($0.map(JSONValue.string))) }
+        case .media(let m)?:
+            guard let grab = MarkGrab(g.grab), let gesture = m.gesture(grab) else { return [] }
+            return ways(m, grab, g).map { (gesture, $0.value) }
+        default: return []
+        }
     }
 
     private static func ways<R: Rules>(_ rules: R, _ grab: R.Grab, _ g: StepGesture) -> [R.Change] {

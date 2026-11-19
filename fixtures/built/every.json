@@ -491,6 +491,52 @@
       },
       "height": 360,
       "id": "chart",
+      "marks": [
+        {
+          "at": [
+            0.5,
+            0.2
+          ],
+          "id": "peak",
+          "kind": "highlight",
+          "to": [
+            0.62,
+            0.9
+          ],
+          "tone": "warn"
+        },
+        {
+          "at": [
+            0.3,
+            0.15
+          ],
+          "id": "arrow",
+          "kind": "arrow",
+          "to": [
+            0.48,
+            0.3
+          ]
+        },
+        {
+          "at": [
+            0.05,
+            0.08
+          ],
+          "id": "note",
+          "kind": "text",
+          "text": "Release week"
+        },
+        {
+          "at": [
+            0.78,
+            0.7
+          ],
+          "id": "dip",
+          "kind": "pin",
+          "text": "1",
+          "tone": "info"
+        }
+      ],
       "src": "/media/chart.png",
       "type": "media",
       "width": 640

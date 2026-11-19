@@ -14,7 +14,7 @@
   "island": { "long": ["title"], "why": "its props belong to the app's component: no rows the kind draws" },
   "lines": { "long": ["label", "memo", "message"], "empty": "items", "many": "items" },
   "list": { "long": ["title", "subtitle", "value", "summary", "name", "markdown", "label"], "empty": "rows", "many": "rows" },
-  "media": { "long": ["caption"], "why": "one picture: nothing to empty or repeat" },
+  "media": { "long": ["caption", "text"], "empty": "marks", "many": "marks" },
   "nav": { "long": ["label"], "empty": "links", "why": "a nav bar holds a few links, never hundreds" },
   "prose": { "long": ["text"], "empty": "parts", "many": "parts" },
   "row": { "long": ["title", "subtitle", "value"], "why": "one row: its list is the list kind's many" },
