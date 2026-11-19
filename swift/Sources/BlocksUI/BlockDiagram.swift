@@ -4,16 +4,14 @@ import SwiftUI
 internal struct DiagramBlock: View {
     @Environment(\.look) private var look
     @State private var was: [String: Int] = [:]
-    internal let block: JSONValue
+    internal let block: Diagram
 
-    private var counts: [String: Int] {
-        (block["counts"]?.fields ?? [:]).compactMapValues { $0.number.map { Int($0) } }
-    }
+    private var counts: [String: Int] { (block.counts ?? [:]).mapValues { Int($0) } }
 
     internal var body: some View {
-        let diagram = Chart(source: block.string("source") ?? "")
+        let diagram = Chart(source: block.source)
         let map = { (metrics: DiagramMetrics) in
-            DiagramMap(diagram: diagram, block: block, counts: counts, was: was, metrics: metrics)
+            DiagramMap(diagram: diagram, nodes: block.nodes ?? [:], counts: counts, was: was, metrics: metrics)
         }
         ViewThatFits(in: .horizontal) {
             map(.wide)
@@ -24,7 +22,7 @@ internal struct DiagramBlock: View {
             look.outline ? look.palette.background : look.palette.card, in: .rect(cornerRadius: look.radius(16))
         )
         .onChange(of: counts) { old, _ in was = old }
-        .accessibilityElement(children: .contain).accessibilityLabel(block.string("title") ?? "Workflow")
+        .accessibilityElement(children: .contain).accessibilityLabel(block.title ?? "Workflow")
     }
 }
 
@@ -43,7 +41,7 @@ internal struct DiagramMetrics {
 internal struct DiagramMap: View {
     @Environment(\.look) private var look
     internal let diagram: Chart
-    internal let block: JSONValue
+    internal let nodes: [String: Node]
     internal let counts: [String: Int]
     internal let was: [String: Int]
     internal let metrics: DiagramMetrics
@@ -78,8 +76,8 @@ internal struct DiagramMap: View {
         ZStack(alignment: .topLeading) {
             Canvas { context, _ in draw(in: &context) }
             ForEach(diagram.order, id: \.self) { id in
-                let node = block["nodes"]?[id] ?? .null
-                ActButton(source: node) {
+                let node = nodes[id]
+                ActButton(source: Source(tap: node?.tap)) {
                     DiagramNode(
                         name: diagram.name(id), node: node, count: counts[id] ?? 0, was: was[id],
                         optional: diagram.optional.contains(id), height: metrics.height)
@@ -97,7 +95,7 @@ internal struct DiagramMap: View {
             Path(ellipseIn: CGRect(x: first.midX - 6, y: 4, width: 12, height: 12)), with: .color(palette.foreground))
         line([CGPoint(x: first.midX, y: 16), CGPoint(x: first.midX, y: first.minY)], color: palette.mute, in: &context)
         for edge in diagram.edges {
-            let timer = block["nodes"]?[edge.from]?["limit"] != nil || block["nodes"]?[edge.into]?["limit"] != nil
+            let timer = nodes[edge.from]?.limit != nil || nodes[edge.into]?.limit != nil
             let points = route(box(edge.from), box(edge.into), outer: diagram.side[edge.from, default: 0])
             line(points, color: timer ? palette.link : palette.mute, dashed: timer, both: edge.both, in: &context)
         }
@@ -166,16 +164,16 @@ internal struct DiagramNode: View {
     @Environment(\.look) private var look
     @Environment(\.picked) private var picked
     internal let name: String
-    internal let node: JSONValue
+    internal let node: Node?
     internal let count: Int
     internal let was: Int?
     internal let optional: Bool
     internal let height: CGFloat
 
-    private var tone: String { node.string("state") ?? "idle" }
+    private var tone: String { node?.state?.rawValue ?? "idle" }
 
     internal var body: some View {
-        if node["limit"] != nil { timer } else { state }
+        if node?.limit != nil { timer } else { state }
     }
 
     private var timer: some View {
@@ -183,8 +181,8 @@ internal struct DiagramNode: View {
         return HStack(spacing: 4) {
             Mark(text: "⧗", size: 14, weight: .regular) { Text("⏱").ui(14, .regular, look) }
             VStack(alignment: .leading, spacing: 1) {
-                Text(node.string("label") ?? name).ui(10.5, .regular, look).foregroundStyle(palette.mute)
-                Text(node.string("value") ?? "").ui(13, .semibold, look)
+                Text(node?.label ?? name).ui(10.5, .regular, look).foregroundStyle(palette.mute)
+                Text(node?.value ?? "").ui(13, .semibold, look)
             }
             Spacer(minLength: 0)
         }
@@ -192,14 +190,14 @@ internal struct DiagramNode: View {
         .frame(height: height)
         .background(look.outline ? .clear : palette.link.opacity(0.1), in: .rect(cornerRadius: look.radius(height / 2)))
         .overlay(outline(look.radius(height / 2), palette.link, dash: [3, 2]))
-        .accessibilityLabel("\(node.string("label") ?? name) \(node.string("value") ?? ""), opens its setting")
+        .accessibilityLabel("\(node?.label ?? name) \(node?.value ?? ""), opens its setting")
     }
 
     private var state: some View {
         let palette = look.palette
         let tint = palette.tone(tone) ?? palette.mute
         let moved = was.map { $0 != count } ?? false
-        let ring = moved || (picked != nil && node["tap"]?.string("open") == picked)
+        let ring = moved || (picked != nil && node?.tap?.open == picked)
         return VStack(alignment: .leading, spacing: 0) {
             Text(name).ui(12.5, .medium, look).foregroundStyle(palette.mute)
             HStack(alignment: .firstTextBaseline, spacing: 4) {
