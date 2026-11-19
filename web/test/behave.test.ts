@@ -8,7 +8,7 @@ const files = readdirSync(dir).map((f) => [f, JSON.parse(readFileSync(new URL(f,
 
 test("evaluate gives every fixtures/behave case the crate's value", () => {
   const bad = files.flatMap(([f, file]) =>
-    file.cases.filter((c) => !Object.is(evaluate(c.expr, file.state), c.want)).map((c) => `${f}: ${JSON.stringify(c.expr)} gave ${JSON.stringify(evaluate(c.expr, file.state))}, not ${JSON.stringify(c.want)}`),
+    file.cases.filter((c) => !Object.is(evaluate(c.expr, c.state ?? file.state), c.want)).map((c) => `${f}: ${JSON.stringify(c.expr)} gave ${JSON.stringify(evaluate(c.expr, c.state ?? file.state))}, not ${JSON.stringify(c.want)}`),
   );
   deepStrictEqual(bad, []);
   deepStrictEqual(files.reduce((n, [, file]) => n + file.cases.length, 0) >= 50, true);
