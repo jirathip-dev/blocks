@@ -97,7 +97,7 @@ const who = (n) => `${n.kind}${n.id ? `#${n.id}` : ""}`;
 function fit(n, width, at, out) {
   const here = `${at}/${who(n)}`;
   const [x, , w, h] = n.rect ?? [0, 0, 0, 0];
-  if (!(w > 0 && h > 0)) out.push(`${here}: has no size`);
+  if (n.drawn !== "hidden" && !(w > 0 && h > 0)) out.push(`${here}: has no size`);
   if (x < -0.5 || x + w > width + 0.5) out.push(`${here}: leaves the screen's width`);
   const kids = n.children.filter((c) => c.drawn !== "hidden");
   const over = (a, b) => Math.min(a[0] + a[2], b[0] + b[2]) - Math.max(a[0], b[0]) > 0.5 && Math.min(a[1] + a[3], b[1] + b[3]) - Math.max(a[1], b[1]) > 0.5;
