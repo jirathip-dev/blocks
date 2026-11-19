@@ -98,6 +98,11 @@ fixture in `fixtures/guard/bad/render/` (a screen and its CSS) or `fixtures/guar
 screen and prints the `Seen`s of the rules it has always held (`render/tree` against `--expect`, `no-size`,
 `overflow`, `overlap`, `no-name`) as lines.
 
+`blocks-snap --plan <file>` takes the same plan in SwiftUI and reports the four tree rules it can measure (`no-name`,
+`no-size`, `overflow`, `overlap`); a plan's `css` and `scripts` are web only. An app with its own kinds, styles or look
+calls `Snapshot.plan(plan) { run, screen, size in … }` from `BlocksSnapshot` in its own bin and lists that bin in
+`harness`. Run it nightly first and move it onto UI-path PRs once its real time is known.
+
 ## A raw-UI ban, to copy
 
 The guard sees only what is drawn from blocks. An app keeps hand-built UI out with its own `.drover/arch.toml` ban,

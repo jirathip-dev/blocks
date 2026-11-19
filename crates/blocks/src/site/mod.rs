@@ -8,9 +8,11 @@ mod rounds;
 mod scene;
 mod steps;
 mod table;
+mod timeline;
 mod toast;
 mod views;
 
+use serde::Serialize;
 use serde_json::{Map, Value};
 
 use crate::behave::{at_start, View};
@@ -27,15 +29,17 @@ pub struct Head<'a> {
     pub lang: &'a str,
 }
 
-/// Where the live renderer and the stream are (empty: none), and the schemes its look sheet offers by name.
+/// Where the live renderer and the stream are (empty: none), and the looks its switcher and look sheet offer by name.
 pub struct Live<'a> {
     pub js: &'a str,
     pub stream: &'a str,
-    pub looks: &'a [(&'a str, &'a Scheme)],
+    pub looks: &'a [(&'a str, &'a Look)],
 }
 
 /// The schemes for both modes and the style a page wears, as CSS variables in its head.
+#[derive(Serialize)]
 pub struct Look {
+    #[serde(flatten)]
     pub schemes: PerMode<Scheme>,
     pub style: Style,
 }
@@ -444,6 +448,7 @@ pub(crate) fn block(w: &mut W<'_>, b: &Value) {
         "table" => table::table(w, b),
         "steps" => steps::steps(w, b),
         "toast" => toast::toast(w, b),
+        "timeline" => timeline::timeline(w, b),
         _ => fallback(w, b),
     }
 }
