@@ -1,0 +1,6 @@
+Decided: one new ci/cap.d/2026-11-20-38500.toml with line_cap 38500 and the spec's why line
+Because: q2398
+Because: "One new file `ci/cap.d/2026-11-20-38500.toml`"
+Rejected: editing ci/cap.toml — "`ci/cap.toml` is not touched"
+Check: scripts/line-cap.sh reports cap 38500 and exits 0
+Owner: the code-size limit is now 38,500 lines, one raise for the whole queue
