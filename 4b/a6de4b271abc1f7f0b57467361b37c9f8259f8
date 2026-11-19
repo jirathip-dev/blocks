@@ -1,0 +1,25 @@
+Decided: docs/schema.md keeps its title, its first sentence and a table of links; the five sections move to docs/schema/ unchanged
+Because: "`docs/schema.md` keeps its first paragraph and a table of links; its sections move to `docs/schema/`, word for word"
+Decided: each new page opens with a # title, the old ## heading where there was one, else Generated files or Behaviours
+Because: docs/schema/generated.md:1
+Decided: the arch.toml lines are the ADR's slice 6: schema.md frozen, a docs/schema collect, docs/schema/*.md in docs paths
+Because: "This slice's `.drover/arch.toml` lines are added as the ADR writes them"
+Rejected: adding docs/schema/ to .drover/docs.md — the ADR does not list it; a deviation is an ask
+Check: the five pages' lines, minus headings and blank lines, equal the old body's; CI arch-check runs just gen with no drift
+Owner: The schema doc is now an index with five pages, one per subject; its text is unchanged.
+
+Decided: no code change for the perf FAIL; an empty commit reruns CI on the same docs-only tree
+Because: crates/blocks/tests/perf.rs:36
+Rejected: raising the HTML write budget — a refactor slice changes no test body, and the miss was 0.5 ms of runner noise
+Check: the diff against staging touches only docs/schema* and .drover/arch.toml; the perf job is green at the new head
+Owner: The only red check was a timing test that ran slightly slow on the CI machine; nothing in this change can affect it.
+
+Decided: merge origin/staging and keep both [[collect]] entries in .drover/arch.toml, staging's docs and this slice's docs/schema
+Because: .drover/arch.toml:43
+Decided: #133 and #134 schema text goes word for word into docs/schema/blocks.md and behaviours.md; the index stays a table of links
+Because: "`docs/schema.md` keeps its first paragraph and a table of links; its sections move to `docs/schema/`, word for word"
+Rejected: re-adding #133's lines to docs/schema.md — this slice freezes it and they belong to moved sections
+Decided: perf FAIL fixed by rerunning the failed CI job on a643246, which passed; no code or budget change
+Because: "blocks#1's gates green (lints, fixtures, deny, arch-check, cap, generated drift, perf, sim)"
+Check: staging's schema.md body minus title and first paragraph equals the five pages' lines; CI green at the head
+Owner: Brought the branch up to date with staging, including the new line-item text; the slow timing check passed on rerun.
