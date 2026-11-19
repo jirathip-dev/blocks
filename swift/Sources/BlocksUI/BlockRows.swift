@@ -150,9 +150,9 @@ internal struct RowButton: View {
     internal var body: some View {
         let tint = look.palette.tone(button.tone?.rawValue) ?? look.palette.link
         ActButton(source: Source(button)) {
-            Text(button.label).ui(13, .semibold, look).foregroundStyle(tint)
+            Text(button.label).ui(13, .semibold, look).foregroundStyle(look.solid ? look.palette.background : tint)
                 .padding(.horizontal, 12).frame(minHeight: 30)
-                .background(look.outline ? Color.clear : tint.opacity(0.16), in: look.pill)
+                .background(look.outline ? Color.clear : tint.opacity(look.solid ? 1 : 0.16), in: look.pill)
         }
     }
 }
