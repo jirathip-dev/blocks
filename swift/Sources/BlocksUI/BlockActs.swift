@@ -4,24 +4,24 @@ import SwiftUI
 internal struct BlockActs: ViewModifier {
     @Environment(\.act) private var act
     @Environment(\.look) private var look
-    @State private var pending: JSONValue?
+    @State private var pending: Source?
     @State private var open: Bool?
-    internal let block: JSONValue
+    internal let menu: [Act]
+    internal var swipe: [Act] = []
 
-    private var swipe: [JSONValue] { block.list("swipe") }
     private var shown: Bool { !swipe.isEmpty && open == true }
 
-    private var menu: [JSONValue] {
+    private var acts: [Act] {
         #if os(iOS)
-            block.list("menu")
+            menu
         #else
-            block.list("menu") + swipe
+            menu + swipe
         #endif
     }
 
     internal func body(content: Content) -> some View {
         swiping(content)
-            .contextMenu { MenuItems(acts: menu, run: ask) }
+            .contextMenu { MenuItems(acts: acts, run: ask) }
             .modifier(Confirming(pending: $pending, run: run))
     }
 
@@ -56,22 +56,23 @@ internal struct BlockActs: ViewModifier {
         }
     #endif
 
-    private func ask(_ item: JSONValue) {
-        if Confirmation(for: item) == nil { run(item) } else { pending = item }
+    private func ask(_ item: Act) {
+        let source = Source(item)
+        if source.confirm == nil { run(source) } else { pending = source }
     }
 
-    private func run(_ item: JSONValue) {
-        if let action = BlockAction(action: nil, source: item, values: [:]) { act(action) }
+    private func run(_ source: Source) {
+        if let action = source.sent() { act(action) }
     }
 }
 
 internal struct MenuItems: View {
-    internal let acts: [JSONValue]
-    internal let run: (JSONValue) -> Void
+    internal let acts: [Act]
+    internal let run: (Act) -> Void
 
     internal var body: some View {
         ForEach(Array(acts.enumerated()), id: \.offset) { _, item in
-            Button(item.string("label") ?? "", role: item.string("tone") == "bad" ? .destructive : nil) { run(item) }
+            Button(item.label, role: item.tone?.rawValue == "bad" ? .destructive : nil) { run(item) }
         }
     }
 }
@@ -79,8 +80,8 @@ internal struct MenuItems: View {
 private struct SwipeButtons: View {
     fileprivate static let width: CGFloat = 76
     @Environment(\.look) private var look
-    fileprivate let acts: [JSONValue]
-    fileprivate let run: (JSONValue) -> Void
+    fileprivate let acts: [Act]
+    fileprivate let run: (Act) -> Void
 
     fileprivate var body: some View {
         HStack(spacing: 0) {
@@ -88,9 +89,9 @@ private struct SwipeButtons: View {
                 Button {
                     run(item)
                 } label: {
-                    Text(item.string("label") ?? "").ui(13, .semibold, look).foregroundStyle(look.palette.background)
+                    Text(item.label).ui(13, .semibold, look).foregroundStyle(look.palette.background)
                         .frame(width: Self.width).frame(maxHeight: .infinity)
-                        .background(look.palette.tone(item.string("tone")) ?? look.palette.link)
+                        .background(look.palette.tone(item.tone?.rawValue) ?? look.palette.link)
                 }
                 .buttonStyle(.plain)
             }

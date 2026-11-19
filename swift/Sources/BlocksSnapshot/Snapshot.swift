@@ -66,7 +66,8 @@ public struct Snapshot {
                 let state = Behaviour.state(json, edits: edits)
                 let off = Behaviour(json, state: state).disabled.contains(on.id)
                 let block = Self.find(json, on.id)
-                let set = block.map { Behaviour.tap($0, state: state) } ?? [:]
+                let sets = (try? block?["tap"]?["set"]?.decode([SetState].self)) ?? []
+                let set = Behaviour.tap(sets, state: state)
                 edits.merge(set) { $1 }
                 if !off, let tap = seen.taps[on.id] {
                     let names = Set(block?.list("fields").compactMap { $0.string("name") } ?? [])

@@ -134,8 +134,16 @@ class El extends Parent {
   }
   matches(sel) {
     return sel.split(",").some((s) => {
-      const [tag, ...cls] = s.trim().split(".");
-      return (!tag || tag.toUpperCase() === this.tagName) && cls.every((c) => this.classList.contains(c));
+      const [own, ...up] = s.trim().split(/\s+/).reverse();
+      const [tag, ...cls] = own.split(".");
+      if (!((!tag || tag.toUpperCase() === this.tagName) && cls.every((c) => this.classList.contains(c)))) return false;
+      let p = this.parentNode;
+      for (const u of up) {
+        while (p instanceof El && !p.matches(u)) p = p.parentNode;
+        if (!(p instanceof El)) return false;
+        p = p.parentNode;
+      }
+      return true;
     });
   }
   addEventListener(type, f) {
@@ -145,6 +153,11 @@ class El extends Parent {
     return true;
   }
   focus() {}
+  isEqualNode(o) {
+    const same = (a, b) => (a instanceof El ? a.isEqualNode(b) : a.textContent === b?.textContent);
+    const attrs = (e) => JSON.stringify([...e.attrs].sort());
+    return o instanceof El && o.tagName === this.tagName && attrs(o) === attrs(this) && o.childNodes.length === this.childNodes.length && this.childNodes.every((n, i) => same(n, o.childNodes[i]));
+  }
 }
 
 export function install() {

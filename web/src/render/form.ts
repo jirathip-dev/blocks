@@ -28,32 +28,46 @@ export function form(b: Form, c: Ctx): HTMLElement {
   return f;
 }
 
-function field(x: Field, key: string, store: Store): HTMLElement {
-  const l = h("label", "fd", h("span", "fk", x.label ?? x.name));
+const note = (x: Field): [string, string] => (x.error ? ["fn err", x.error] : x.was != null ? ["fn was", `was ${x.was}`] : ["fn", x.doc ?? ""]);
+
+/// A field as a `.fd` label: its name and note, then its control.
+export function field(x: Field, key: string, store: Store): HTMLElement {
+  const [cls, text] = note(x);
+  const l = h("label", `fd${x.type === "toggle" ? " tg" : ""}${x.error ? " err" : ""}${x.open ? " open" : ""}`, h("span", "fl", h("span", "fk", x.label ?? x.name), h("span", cls, text)));
+  let i: HTMLInputElement | HTMLSelectElement;
   if (x.type === "toggle") {
-    const i = el("input");
-    Object.assign(i, { type: "checkbox", name: x.name, checked: !!x.value });
-    l.append(i);
+    i = Object.assign(el("input"), { type: "checkbox", checked: !!x.value });
+    i.setAttribute("role", "switch");
   } else if (x.type === "picker") {
     const s = el("select");
-    s.name = x.name;
-    const opts = [...new Set([x.value, ...(x.options ?? [])].filter((o) => o != null && o !== ""))];
-    for (const o of opts) s.append(Object.assign(el("option"), { value: o, textContent: o, selected: o === x.value }));
-    l.append(s);
+    const opts = [...new Set([x.value, ...(x.options ?? [])].filter((o) => o != null && o !== "").map(String))];
+    for (const o of opts) s.append(Object.assign(el("option"), { value: o, textContent: o, selected: o === String(x.value) }));
+    i = s;
   } else {
-    const i = el("input");
-    Object.assign(i, { type: x.type === "secret" ? "password" : "text", name: x.name, value: x.value ?? "", placeholder: x.placeholder ?? "", autocomplete: "off" });
-    i.dataset.was = i.value;
-    if (x.type !== "secret") draft(i, key + x.name, store);
-    l.append(i);
+    const kb = x.keyboard ?? "default";
+    const secret = x.type === "secret";
+    const t = Object.assign(el("input"), {
+      type: secret ? "password" : kb === "url" ? "url" : "text",
+      value: secret ? "" : String(x.value ?? ""),
+      placeholder: secret && x.set ? "set ✓ · type to replace" : (x.placeholder ?? (secret ? "not set" : "")),
+      autocomplete: "off",
+    });
+    if (kb !== "default") t.inputMode = kb === "number" ? "decimal" : "url";
+    t.dataset.was = t.value;
+    if (!secret) draft(t, key + x.name, store);
+    i = t;
   }
+  i.name = x.name;
+  if (x.error) i.setAttribute("aria-invalid", "true");
+  l.append(i);
   return l;
 }
 
-/// The values of every field under `root`, as an action's `values` (a toggle is a bool).
+/// The values of every field under `root`, as an action's `values` (a toggle is a bool, an empty secret is left out).
 export function values(root: HTMLElement): Blk {
   const v: Blk = {};
   root.querySelectorAll<HTMLInputElement | HTMLSelectElement>(".fd input, .fd select").forEach((i) => {
+    if (i.type === "password" && !i.value) return;
     v[i.name] = i instanceof HTMLInputElement && i.type === "checkbox" ? i.checked : i.value;
   });
   return v;

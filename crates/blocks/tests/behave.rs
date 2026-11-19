@@ -96,7 +96,7 @@ fn site_writes_hidden_required_type_and_maxlength_from_the_start_state() {
     for want in [
         r#"data-id="plans" hidden="""#,
         r#"data-id="box" hidden="""#,
-        r#"<label class="fd" hidden=""><span class="fk">seats"#,
+        r#"<label class="fd" hidden=""><span class="fl"><span class="fk">seats"#,
         r#"name="email" form="b-f1" type="email" autocomplete="off" required="""#,
         r#"name="name" form="b-f1" type="text" autocomplete="off" maxlength="20""#,
     ] {

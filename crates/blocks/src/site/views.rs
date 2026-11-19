@@ -265,8 +265,21 @@ pub(super) fn choice(w: &mut W<'_>, b: &Value) {
 }
 
 pub(super) fn form(w: &mut W<'_>, b: &Value) {
+    let cls = if b.get("submit").is_some_and(Value::is_object) {
+        "form say"
+    } else {
+        "form"
+    };
+    form_of(w, b, cls, false);
+}
+
+pub(super) fn config(w: &mut W<'_>, b: &Value) {
+    form_of(w, b, "form cfg", true);
+}
+
+fn form_of(w: &mut W<'_>, b: &Value, cls: &str, bar: bool) {
     let submit = b.get("submit").filter(|s| s.is_object());
-    w.open_block("div", if submit.is_some() { "form say" } else { "form" }, b, &[]);
+    w.open_block("div", cls, b, &[]);
     let action = submit.and_then(|s| get(s, "action")).or_else(|| get(b, "action"));
     let f = action.map(|a| w.post(b.get("id"), a, &fields(&[submit.and_then(|s| s.get("values"))])));
     let owner = f.clone().unwrap_or_default();
@@ -275,26 +288,79 @@ pub(super) fn form(w: &mut W<'_>, b: &Value) {
         field(w, x, tie);
     }
     if let (Some(s), Some(f)) = (submit, f) {
-        w.btn(&shown(s.get("label")), "", &Go::Post(f), &[], None);
+        if bar {
+            w.open("div", "bar", &[]);
+        }
+        let off: &[(&str, &str)] = if bar && on(s, "off") { &[("disabled", "")] } else { &[] };
+        w.btn(&shown(s.get("label")), "", &Go::Post(f), off, None);
+        if bar {
+            w.close("div");
+        }
     }
     w.close("div");
 }
 
+fn note(x: &Value) -> (&'static str, String) {
+    let was = x.get("was").filter(|v| !v.is_null());
+    match (get(x, "error").filter(|e| !e.is_empty()), was) {
+        (Some(e), _) => ("fn err", e.to_owned()),
+        (None, Some(v)) => ("fn was", format!("was {}", shown(Some(v)))),
+        (None, None) => ("fn", get(x, "doc").unwrap_or_default().to_owned()),
+    }
+}
+
+fn placeholder(x: &Value, secret: bool) -> &str {
+    match (secret && on(x, "set"), get(x, "placeholder")) {
+        (true, _) => "set ✓ · type to replace",
+        (false, Some(p)) => p,
+        (false, None) if secret => "not set",
+        (false, None) => "",
+    }
+}
+
+fn input_type<'a>(secret: bool, kb: &str, hints: &'a [(&'static str, String)]) -> &'a str {
+    let typed = hints.iter().find(|(k, _)| *k == "type").map(|(_, v)| v.as_str());
+    match (secret, kb, typed) {
+        (true, _, _) => "password",
+        (false, _, Some(t)) => t,
+        (false, "url", None) => "url",
+        _ => "text",
+    }
+}
+
 fn field(w: &mut W<'_>, x: &Value, tie: &[(&str, &str)]) {
     let name = shown(x.get("name"));
+    let kind = get(x, "type").unwrap_or_default();
+    let error = get(x, "error").filter(|e| !e.is_empty());
+    let (note_cls, note) = note(x);
+    let row = format!(
+        "fd{}{}{}",
+        if kind == "toggle" { " tg" } else { "" },
+        if error.is_some() { " err" } else { "" },
+        if on(x, "open") { " open" } else { "" },
+    );
     let hidden = w.view.hidden.contains(&name);
-    w.open("label", "fd", if hidden { &[("hidden", "")] } else { &[] });
+    w.open("label", &row, if hidden { &[("hidden", "")] } else { &[] });
+    w.open("span", "fl", &[]);
     w.el(
         "span",
         "fk",
         &get(x, "label").map_or_else(|| name.clone(), String::from),
     );
+    w.el("span", note_cls, &note);
+    w.close("span");
     let mut attrs: Vec<(&str, &str)> = vec![("name", &name)];
     attrs.extend_from_slice(tie);
+    if error.is_some() {
+        attrs.push(("aria-invalid", "true"));
+    }
+    if on(x, "open") {
+        attrs.push(("autofocus", ""));
+    }
     let value = shown(x.get("value"));
-    match get(x, "type").unwrap_or_default() {
+    match kind {
         "toggle" => {
-            attrs.push(("type", "checkbox"));
+            attrs.extend([("type", "checkbox"), ("role", "switch")]);
             if on(x, "value") {
                 attrs.push(("checked", ""));
             }
@@ -315,18 +381,20 @@ fn field(w: &mut W<'_>, x: &Value, tie: &[(&str, &str)]) {
         t => {
             let secret = t == "secret";
             let hints = behave::hints(x);
-            let typed = hints.iter().find(|(k, _)| *k == "type").map(|(_, v)| v.as_str());
-            attrs.extend([
-                ("type", if secret { "password" } else { typed.unwrap_or("text") }),
-                ("autocomplete", "off"),
-            ]);
+            let kb = get(x, "keyboard").unwrap_or_default();
+            attrs.extend([("type", input_type(secret, kb, &hints)), ("autocomplete", "off")]);
             attrs.extend(
                 hints
                     .iter()
                     .filter(|(k, _)| *k != "type")
                     .map(|(k, v)| (*k, v.as_str())),
             );
-            attrs.push(("placeholder", get(x, "placeholder").unwrap_or_default()));
+            match kb {
+                "url" => attrs.push(("inputmode", "url")),
+                "number" => attrs.push(("inputmode", "decimal")),
+                _ => {}
+            }
+            attrs.push(("placeholder", placeholder(x, secret)));
             if !secret && !value.is_empty() {
                 attrs.push(("value", &value));
             }
@@ -557,6 +625,52 @@ pub(super) fn images(w: &mut W<'_>, b: &Value) {
         );
         w.close("a");
     }
+    w.close("div");
+}
+
+pub(super) fn web(w: &mut W<'_>, b: &Value) {
+    let raw = get(b, "src").unwrap_or_default();
+    let src: String = raw
+        .trim_matches(|c: char| c <= ' ')
+        .chars()
+        .filter(|c| !matches!(c, '\t' | '\n' | '\r'))
+        .collect();
+    let src = src.as_str();
+    let height = format!("height:{}px", shown(b.get("height")));
+    let scheme = src.split_once(':').map(|(s, _)| s).filter(|s| {
+        s.starts_with(|c: char| c.is_ascii_alphabetic())
+            && s.chars().all(|c| c.is_ascii_alphanumeric() || "+.-".contains(c))
+    });
+    w.open_block("div", "web", b, &[]);
+    if scheme.is_some_and(|s| !s.eq_ignore_ascii_case("http") && !s.eq_ignore_ascii_case("https")) {
+        w.open("div", "wf none", &[("style", &height)]);
+        w.text("This page can't be shown here.");
+        w.close("div");
+        w.close("div");
+        return;
+    }
+    let rest = scheme.and_then(|s| src.get(s.len() + 1..));
+    let bare = rest.and_then(|r| r.strip_prefix("//")).unwrap_or(src);
+    let addr = bare.split(['?', '#']).next().unwrap_or_default();
+    let addr = addr.strip_suffix('/').unwrap_or(addr);
+    let sandbox = "allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox";
+    let at = [
+        ("style", height.as_str()),
+        ("sandbox", sandbox),
+        ("allow", ""),
+        ("referrerpolicy", "no-referrer"),
+        ("loading", "lazy"),
+        ("title", addr),
+        ("src", src),
+    ];
+    w.open("iframe", "wf", &at);
+    w.close("iframe");
+    w.open("div", "wm", &[]);
+    w.el("span", "wu", addr);
+    w.open("a", "", &[("href", src), ("target", "_blank"), ("rel", "noopener")]);
+    w.text("open ↗");
+    w.close("a");
+    w.close("div");
     w.close("div");
 }
 

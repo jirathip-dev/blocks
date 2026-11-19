@@ -6,7 +6,9 @@ import { card } from "./card.ts";
 import { chips } from "./chips.ts";
 import { choice } from "./choice.ts";
 import { composer } from "./composer.ts";
+import { config } from "./config.ts";
 import { diagram } from "./diagram.ts";
+import { editor } from "./editor.ts";
 import { form } from "./form.ts";
 import { hero } from "./hero.ts";
 import { images } from "./images.ts";
@@ -23,6 +25,7 @@ import { section } from "./section.ts";
 import { sheet } from "./sheet.ts";
 import { stat } from "./stat.ts";
 import { text } from "./text.ts";
+import { web } from "./web.ts";
 
 export type Blk = { [k: string]: unknown };
 export type Post = { action: unknown; block?: unknown; values?: unknown; confirm?: unknown };
@@ -149,7 +152,7 @@ export const R: { [K in Kind]: (b: Of<K>, c: Ctx) => HTMLElement | null } = {
   card,
   choice,
   form,
-  config: gap(40),
+  config,
   secret,
   run,
   button,
@@ -157,9 +160,9 @@ export const R: { [K in Kind]: (b: Of<K>, c: Ctx) => HTMLElement | null } = {
   stat,
   text,
   images,
-  web: gap(41),
+  web,
   diff: gap(42),
-  editor: gap(43),
+  editor,
   scene,
   diagram,
   composer,

@@ -154,14 +154,13 @@ public struct Behaviour: Equatable, Sendable {
         return s.merging(edits.filter { s[$0.key] != nil }) { $1 }
     }
 
-    /// The values `block`'s tap sets, each in the state the ones before it left.
-    public static func tap(_ block: JSONValue, state: BlockState) -> BlockState {
+    /// The values a tap's `sets` give, each in the state the ones before it left; an unknown one is skipped.
+    public static func tap(_ sets: [SetState], state: BlockState) -> BlockState {
         var s = state
         var out: BlockState = [:]
-        for set in block["tap"]?.list("set") ?? [] {
-            guard let key = set.string("key"), let to = try? set["to"]?.decode(Expr.self), to.known else { continue }
-            s[key] = to.eval(s)
-            out[key] = s[key]
+        for set in sets where set.to.known {
+            s[set.key] = set.to.eval(s)
+            out[set.key] = s[set.key]
         }
         return out
     }
