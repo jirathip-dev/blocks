@@ -1,72 +1,74 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>blocks default pair: core kinds</title><link rel="stylesheet" href="tokens.css"><link rel="stylesheet" href="page.css"></head>
+<title>blocks default: core kinds as tiles</title><link rel="stylesheet" href="tokens.css"><link rel="stylesheet" href="page.css"></head>
 <body>
-<h1>blocks default <span class="mode"></span></h1>
-<p class="sub">The built-in neutral pair on the core kinds. Ink is the only accent; colour is kept for state and tone. <a href="tokens.html">The 19 tokens</a></p>
+<div class="tiles head"><div class="tile"><h1>blocks default <span class="mode"></span></h1>
+<p class="sub">Every block is a square tile; the page shows through the seams. Ink is the only accent. <a href="tokens.html">The tokens</a> · <a href="storyboard.html">The build-up</a></p></div></div>
 <div class="grid"><div class="col">
 <section><h2>Stats</h2>
-<div class="card stats">
-<div class="stat"><div class="n">1,284</div><div class="k">Orders today</div><div class="up">▲ 12%</div></div>
-<div class="stat"><div class="n">96.2%</div><div class="k">On time</div><div class="up">▲ 0.8 pt</div></div>
-<div class="stat"><div class="n">37</div><div class="k">Open tickets</div><div class="down">▼ 5 overdue</div></div>
-<div class="stat"><div class="n">4m 10s</div><div class="k">Median reply</div><div class="ph">no change</div></div>
+<div class="tiles stats">
+<div class="tile stat"><div class="n">1,284</div><div class="k">Orders today</div><div class="up">▲ 12%</div></div>
+<div class="tile stat"><div class="n">96.2%</div><div class="k">On time</div><div class="up">▲ 0.8 pt</div></div>
+<div class="tile stat"><div class="n">37</div><div class="k">Open tickets</div><div class="down">▼ 5 overdue</div></div>
+<div class="tile stat"><div class="n">4m 10s</div><div class="k">Median reply</div><div class="ph">no change</div></div>
 </div></section>
 <section><h2>Rows</h2>
-<div class="rows">
-<div class="grp red">Blocked · 2</div>
-<div class="row"><span class="dot" style="background:var(--r)"></span><div class="t">Restock oat milk<div class="m">Supplier did not confirm</div></div><span class="chip r">blocked</span></div>
-<div class="row"><span class="dot" style="background:var(--r)"></span><div class="t">Fix freezer door seal<div class="m">Waiting on the part</div></div><span class="chip r">blocked</span></div>
-<div class="grp amber">Due soon · 1</div>
-<div class="row"><span class="dot" style="background:var(--a)"></span><div class="t">Renew food licence<div class="m">Due Friday</div></div><span class="chip a">due 3d</span></div>
-<div class="row sel"><span class="dot" style="background:var(--l)"></span><div class="t"><strong>Weekly stock count</strong> <span class="m">· selected</span><div class="m">Assigned to Sam</div></div><span class="chip l">in progress</span></div>
-<div class="row"><span class="dot" style="background:var(--g)"></span><div class="t">Clean coffee machine<div class="m">Done 09:12</div></div><span class="chip g">done</span></div>
+<div class="tiles" id="rows">
+<div class="tile grp red">Blocked · 2</div>
+<div class="tile row"><span class="dot" style="background:var(--r)"></span><div class="t">Restock oat milk<div class="m">Supplier did not confirm</div></div><span class="chip r">blocked</span></div>
+<div class="tile row"><span class="dot" style="background:var(--r)"></span><div class="t">Fix freezer door seal<div class="m">Waiting on the part</div></div><span class="chip r">blocked</span></div>
+<div class="tile grp amber">Due soon · 1</div>
+<div class="tile row"><span class="dot" style="background:var(--a)"></span><div class="t">Renew food licence<div class="m">Due Friday</div></div><span class="chip a">due 3d</span></div>
+<div class="tile row sel"><span class="dot" style="background:var(--l)"></span><div class="t"><strong>Weekly stock count</strong> <span class="m">· selected</span><div class="m">Assigned to Sam</div></div><span class="chip l">in progress</span></div>
+<div class="tile row"><span class="dot" style="background:var(--g)"></span><div class="t">Clean coffee machine<div class="m">Done 09:12</div></div><span class="chip g">done</span></div>
 </div></section>
 <div class="pair"><section><h2>Cards</h2>
-<div class="card"><div class="m" style="color:var(--mute);font-size:13px">Shift</div><strong>Morning · 06:00–14:00</strong>
+<div class="tiles">
+<div class="tile"><div class="m">Shift</div><strong>Morning · 06:00–14:00</strong>
 <p style="margin:6px 0 10px;color:var(--mute)">3 of 4 staff in. Bakery delivery at 07:30.</p>
 <div class="bar"><b style="width:75%;background:var(--l)"></b></div>
 <div class="chips" style="margin-top:12px"><span class="chip c">bakery</span><span class="chip p">training</span></div></div>
-<div class="card" style="margin-top:16px"><div style="font-size:13px;color:var(--mute)">Loading</div>
+<div class="tile"><div class="m">Loading</div>
 <div class="skel" style="width:60%"></div><div class="skel"></div><div class="skel" style="width:80%"></div></div>
-</section>
+</div></section>
 <section><h2>Buttons</h2>
-<div class="card"><div class="btns">
+<div class="tiles">
+<div class="tile"><div class="btns">
 <button class="btn pri">Primary</button><button class="btn">Secondary</button><button class="btn bad">Delete</button>
 <button class="btn pri focus">Focused</button><button class="btn" disabled>Disabled</button></div>
 <p style="margin-top:14px">Inline <a href="#">link in body text</a> and <span class="ph">muted help text</span>.</p></div>
-<h2 style="margin-top:24px">Chips</h2>
-<div class="card chips"><span class="chip on">All</span><span class="chip l">neutral</span><span class="chip g">ok</span><span class="chip a">warn</span>
+<div class="tile chips"><span class="chip on">All</span><span class="chip l">neutral</span><span class="chip g">ok</span><span class="chip a">warn</span>
 <span class="chip r">bad</span><span class="chip p">purple</span><span class="chip c">cyan</span></div>
-</section>
+</div></section>
 </div>
 <section><h2>Tones</h2>
-<div class="tones">
-<div class="tone" style="color:var(--fk-l)"><i style="background:var(--l)"></i>l · neutral</div>
-<div class="tone" style="color:var(--fk-g)"><i style="background:var(--g)"></i>g · ok</div>
-<div class="tone" style="color:var(--fk-a)"><i style="background:var(--a)"></i>a · warn</div>
-<div class="tone" style="color:var(--r)"><i style="background:var(--r)"></i>r · bad</div>
-<div class="tone" style="color:var(--fk-p)"><i style="background:var(--p)"></i>p · purple</div>
-<div class="tone" style="color:var(--fk-c)"><i style="background:var(--c)"></i>c · cyan</div>
+<div class="tiles tones">
+<div class="tile tone" style="color:var(--fk-l)"><i style="background:var(--l)"></i>l · neutral</div>
+<div class="tile tone" style="color:var(--fk-g)"><i style="background:var(--g)"></i>g · ok</div>
+<div class="tile tone" style="color:var(--fk-a)"><i style="background:var(--a)"></i>a · warn</div>
+<div class="tile tone" style="color:var(--r)"><i style="background:var(--r)"></i>r · bad</div>
+<div class="tile tone" style="color:var(--fk-p)"><i style="background:var(--p)"></i>p · purple</div>
+<div class="tile tone" style="color:var(--fk-c)"><i style="background:var(--c)"></i>c · cyan</div>
 </div></section>
 </div><div class="col">
 <section><h2>Needs you</h2>
-<div class="needs"><strong>Payment failed for order #4821</strong>
+<div class="tiles"><div class="tile needs"><strong>Payment failed for order #4821</strong>
 <p class="m">The card was declined twice. Retry or contact the customer.</p>
-<div class="btns" style="margin-top:12px"><button class="btn pri">Retry</button><button class="btn">Contact</button></div></div>
+<div class="btns" style="margin-top:12px"><button class="btn pri">Retry</button><button class="btn">Contact</button></div></div></div>
 </section>
 <section><h2>Form</h2>
-<div class="card">
+<div class="tiles"><div class="tile">
 <label>Name</label><div class="in">Corner Café</div>
 <label>Email</label><div class="in focus">hello@corner<span style="border-left:1.5px solid var(--fg);margin-left:1px"></span></div>
 <label>Phone</label><div class="in err">+44 20 7946</div><div class="hint err">Too short: 11 digits expected</div>
 <label>Notes</label><div class="in ph">Optional</div>
-<div class="row" style="padding:12px 0 0;border:0"><div class="t">Email receipts</div><span class="toggle"></span></div>
-<div class="row" style="padding:8px 0 0;border:0"><div class="t">SMS alerts</div><span class="toggle off"></span></div>
+<div class="row" style="padding:12px 0 0"><div class="t">Email receipts</div><span class="toggle"></span></div>
+<div class="row" style="padding:8px 0 0"><div class="t">SMS alerts</div><span class="toggle off"></span></div>
 <div class="btns" style="margin-top:16px"><button class="btn pri">Save</button><button class="btn">Cancel</button></div>
-</div></section>
+</div></div></section>
 <section><h2>Sheet over scrim</h2>
-<div class="stage"><div class="under">Page behind the sheet…<div class="skel"></div><div class="skel" style="width:70%"></div></div>
-<div class="scrim"></div><div class="sheet"><strong>Discard changes?</strong>
-<div class="btns" style="margin-top:10px"><button class="btn bad">Discard</button><button class="btn">Keep editing</button></div></div></div>
+<div class="tiles"><div class="tile stage"><div class="under">Page behind the sheet…<div class="skel"></div><div class="skel" style="width:70%"></div></div>
+<div class="scrim"></div><div class="tile sheet"><strong>Discard changes?</strong>
+<div class="btns" style="margin-top:10px"><button class="btn bad">Discard</button><button class="btn">Keep editing</button></div></div></div></div>
 </section>
-</div></div></body></html>
+</div></div>
+<script src="build.js"></script></body></html>

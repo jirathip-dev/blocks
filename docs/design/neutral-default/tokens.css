@@ -6,3 +6,5 @@
 --bg:#161616;--card:#1f1f1f;--edge:#3a3a3a;--line:#2a2a2a;--scrim:#00000099;--fg:#ececec;--mute:#a3a3a3;
 --l:#d6d6d6;--link:#d6d6d6;--g:#4fb860;--a:#d9a23a;--r:#f06a6a;--p:#b393e6;--c:#4fb8c4;
 --fk-l:#d6d6d6;--fk-p:#b8a0e8;--fk-c:#6cc6d0;--fk-g:#6cc77a;--fk-a:#e0b25a}}
+:root{--radius:0px;--seam:2px;--dot-size:2px;--dot-gap:16px;--dot:var(--edge);
+--settle:160ms;--rise:8px;--stagger:40ms;--build:200ms;--enter:160ms;--ease:cubic-bezier(.2,0,0,1)}

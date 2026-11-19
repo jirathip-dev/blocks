@@ -1,18 +1,51 @@
 ## Summary
 
-Decision: blocks' one built-in pair, "Default light" and "Default dark", is plain neutral grey. Dark-grey ink is the only accent (light grey in dark mode); colour is used only for states (green, amber, red) and the purple and cyan tones. Both pass the gate, and no value comes from the 12 named schemes.
-Screens: the core kinds in light and in dark (stats, rows, needs-you, form, cards, buttons, chips, tones, sheet over scrim), and the table of 19 tokens. Each at 1440 and 390.
-Open questions: links use the ink colour with an underline, not blue, so nothing reads as a brand. Is that what you want, or should `--link` be a quiet blue?
+Decision: blocks' built-in default is the neutral grey pair as drawn (ink is the only accent, links are ink and underlined), plus a tile look: every block is a square-cornered tile, with a 2 px seam where the page shows through and a faint dot grid on the page. On first load a screen's tiles settle in one by one, all done by 360 ms, once; reduced motion keeps the page still.
+Screens: the core kinds as tiles (light and dark), the build-up storyboard with a late block's entry, and the token table (19 colours and 12 style values). Each at 1440 and 390.
+Open questions: a block that arrives later is my proposal: it fades in where it lands over 160 ms with no rise, and the blocks below it step down at once. Is that right, or should they slide?
 
 ## Images
 
 | Image | What it shows |
 |---|---|
-| `kinds-light-1440.png`, `kinds-light-390.png` | Light: grey page, white cards and a dark-ink primary button, selection bar, focus ring and "all" chip. States are coloured: the red needs-you card (15% tint), red and amber group headers (12% tints), the error field, and up and down stats |
-| `kinds-dark-1440.png`, `kinds-dark-390.png` | Dark: the same page. Ink turns to light grey (`#d6d6d6`), so a primary button is light grey with dark text. States and tones are lighter so they stay readable |
-| `tokens-1440.png`, `tokens-390.png` | All 19 values for both modes and what each one is for. The built pair must match them exactly |
+| `kinds-light-1440.png`, `kinds-light-390.png` | Light: every block is a white square tile with a 1 px `--edge` outline. Tiles in a group sit 2 px apart and the grey page shows through the seam. Rows, stats and tones are one tile each, not dividers inside one card. Section labels and the dot grid sit on the page. Buttons, fields, chips, status dots and toggles are square too |
+| `kinds-dark-1440.png`, `kinds-dark-390.png` | Dark: the same tiles. The seam and dots use the dark page and `--edge`, so the grid stays faint |
+| `storyboard-1440.png`, `storyboard-390.png` | The build-up as five frames (0, 90, 180, 270, 360 ms) from the real page at 390 wide, and a late block's entry as three frames (0, 80, 160 ms). The rules are listed under the frames |
+| `tokens-1440.png`, `tokens-390.png` | The 19 colours for both modes (unchanged), then the style values. The built default must match them exactly |
 
-## The 19 tokens
+## The build-up
+
+- Only the tiles on the first screen take part, in reading order: top to bottom, then left to right. A tile below the fold is simply there.
+- Each tile fades from 0 to 1 and rises 8 px over 160 ms, ease-out. Move and fade only.
+- The step between starts is the smaller of 40 ms and 200 ms divided by (tiles on screen − 1). The last tile starts by 200 ms and lands by 360 ms, whatever the count: 11 tiles at 390 (step 20 ms), 25 at 1440 (step 8 ms).
+- It plays once per screen load. The content is in the page HTML from the first paint; a static page plays the build-up itself, and the takeover keeps the same tiles and does not play it again, so there is no flash.
+- Reduced motion: no build-up, no fade.
+- Both renderers can draw it from simple shapes: an opacity and a y offset per tile, a delay from its index. SwiftUI orders tiles by the layout's slot frames.
+
+## A block that arrives later (proposal)
+
+It takes its place at once, so the tiles below step down without motion, and it fades in over 160 ms with no rise. Several blocks in one update fade together, with no stagger. A removed block goes at once; a block whose content changes does not animate. Reduced motion: it simply appears.
+
+## Style values
+
+| Token | Value | Used for |
+|---|---|---|
+| `--radius` | `0px` | tile, button, field and chip corners |
+| `--seam` | `2px` | gap between tiles, where the page shows through |
+| tile edge | `1px` of `--edge` | each tile's outline, so the seam reads in light mode |
+| `--dot-size` | `2px` | grid dot, a square |
+| `--dot-gap` | `16px` | dot spacing; page padding and section gaps are multiples of it |
+| `--dot` | `--edge` | dot colour, so there is no 20th colour |
+| `--settle` | `160ms` | one tile's build-up |
+| `--rise` | `8px` | how far a tile rises as it settles |
+| `--stagger` | `40ms` | most time between two tiles' starts |
+| `--build` | `200ms` | latest start of the last tile |
+| `--enter` | `160ms` | a later block's fade |
+| `--ease` | `cubic-bezier(0.2, 0, 0, 1)` | ease-out for both motions |
+
+`default-style.json` holds these values. They are the same in light and dark.
+
+## The 19 colours
 
 | Token | Light | Dark |
 |---|---|---|
@@ -49,4 +82,4 @@ None of the 38 values is in any of the 12 named schemes.
 
 ## Files
 
-`tokens.css` sets the pair the way `theme::css` writes it: light on `:root`, dark under `prefers-color-scheme: dark`. `page.css` is used only by these mockups; blocks has no renderer CSS yet (#15). The pages are `kinds.html` and `tokens.html`. The dark images were rendered with Chrome headless shell and `--blink-settings=preferredColorScheme=0`.
+`tokens.css` sets the pair the way `theme::css` writes it (light on `:root`, dark under `prefers-color-scheme: dark`), then the style values. `page.css` and `build.js` are used only by these mockups; the HTML and SwiftUI renderers draw the tiles in their own issue. `build.js` runs the build-up; `?t=<ms>` holds the page at that moment, and `?late=<ms>` shows a late row at that moment of its fade. The storyboard frames are `frame-*.png` and `late-*.png`, rendered from `kinds.html` at 390 by 844. The dark images were rendered with Chrome headless shell and `--blink-settings=preferredColorScheme=0`. There is no clip: the host's ffmpeg cannot write a GIF, and the storyboard shows each moment.
