@@ -1,0 +1,45 @@
+Decided: generate builders from the schema's Block and Expr defs in codegen/builders.rs
+Because: "`gen/builders.ts`; `built()` and `share()`"
+Decided: move the table total helpers into core/table.ts so built() can write a table's fallback without importing render
+Because: web/src/core/table.ts:10
+Decided: the crate writes fixtures/built/every.json from Built::of and the TS test compares built() with it
+Because: "`built()` writes the same fallbacks as `Built::of`"
+Rejected: a hand-written expected fallback list — it would drift from the crate
+Rejected: branding with a type guard — a real symbol property brands it without a cast
+Check: web/test/built.test.ts rebuilds all 30 fixtures/blocks files through the builders and deep-equals Built::of's output
+Owner: TypeScript apps get typed block builders and the same fallback writing the Rust server does.
+
+Decided: generate builders from the schema's Block and Expr defs in codegen/builders.rs
+Because: "`gen/builders.ts`; `built()` and `share()`"
+Decided: move the table total helpers into core/table.ts so built() can write a table's fallback without importing render
+Because: web/src/core/table.ts:10
+Decided: the crate writes fixtures/built/every.json from Built::of and the TS test compares built() with it
+Because: "`built()` writes the same fallbacks as `Built::of`"
+Decided: fix round: the PR body carries a plain For apps line, and an empty commit reruns CI with it
+Because: scripts/for-apps.sh:11
+Rejected: a hand-written expected fallback list — it would drift from the crate
+Rejected: rerunning the failed job — it reuses the old event payload's body
+Check: web/test/built.test.ts rebuilds all 30 fixtures/blocks files through the builders and deep-equals Built::of's output
+Owner: TypeScript apps get typed block builders and the same fallback writing the Rust server does.
+
+Decided: generate builders from the schema's Block and Expr defs in codegen/builders.rs
+Because: "`gen/builders.ts`; `built()` and `share()`"
+Decided: move the table total helpers into core/table.ts so built() can write a table's fallback without importing render
+Because: web/src/core/table.ts:10
+Decided: the crate writes fixtures/built/every.json from Built::of and the TS test compares built() with it
+Because: "`built()` writes the same fallbacks as `Built::of`"
+Decided: resolve the web/dist/blocks.js merge conflict by rebuilding it, never by hand-merging build output
+Because: web/package.json:7
+Rejected: a hand-written expected fallback list — it would drift from the crate
+Check: web/test/built.test.ts rebuilds all 30 fixtures/blocks files through the builders and deep-equals Built::of's output
+Owner: TypeScript apps get typed block builders and the same fallback writing the Rust server does.
+
+Decided: generate builders from the schema's Block and Expr defs in codegen/builders.rs
+Because: "`gen/builders.ts`; `built()` and `share()`"
+Decided: the crate writes fixtures/built/every.json from Built::of and the TS test compares built() with it
+Because: "`built()` writes the same fallbacks as `Built::of`"
+Decided: fix round: the build job's red was the runner's apt fetch of WebKit deps, so an empty commit reruns CI with no code change
+Because: .github/workflows/pages.yml:27
+Rejected: changing the workflow to retry apt — out of this issue's scope
+Check: 56ae0cc has the same tree as 075ea4f (git diff exit 0) and CI is green at it
+Owner: TypeScript apps get typed block builders and the same fallback writing the Rust server does.
