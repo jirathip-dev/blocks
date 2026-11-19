@@ -1,0 +1,14 @@
+Decided: site writes each kind over the block's JSON, mirroring render/<kind>.ts, so both writers give one element per kind
+Because: "the two writers give the same element per kind"
+Decided: with no JS an action is a hidden `<form method=post>` after `<main>` that its controls join with the `form` attribute, so a block keeps render's own tag
+Because: crates/blocks/src/site/mod.rs:217
+Decided: the form fields `_screen`, `_block` and `_action` carry the Action; every other field is a string value
+Because: crates/blocks/src/wire.rs:253
+Decided: adopt checks the drawn blocks against the screen and writes nothing to the DOM; the test compares PNG and tree before and after
+Because: "PNG and tree equal before and after `blocks.js`"
+Decided: diagram, drawn natively by #23 mid-PR, is ported to site/diagram.rs line for line; a static page has no previous counts
+Because: q2179
+Rejected: comparing whole outerHTML — a static control needs `type=submit` and `form`, so the test compares tag, classes, hooks and text
+Check: site.test.ts compares the fixture site's workflow diagram element by element with render's (style, ARIA, rounded paths)
+Check: the gutter route for same-column, non-adjacent edges is never drawn: chart drops those edges, so no fixture reaches it
+Owner: Websites can now be served as plain pages that work without JavaScript, the workflow chart included, and the live page takes them over without redrawing.
