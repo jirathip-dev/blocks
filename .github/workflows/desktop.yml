@@ -1,0 +1,40 @@
+name: desktop
+on:
+  push:
+    branches: [main, staging]
+    paths: ["Cargo.toml", "Cargo.lock", "rust-toolchain.toml", "crates/**", "fixtures/blocks/**", "fixtures/stress/**", "fixtures/protocol/**", "fixtures/behave/**", ".github/workflows/desktop.yml"]
+  pull_request:
+    paths: ["Cargo.toml", "Cargo.lock", "rust-toolchain.toml", "crates/**", "fixtures/blocks/**", "fixtures/stress/**", "fixtures/protocol/**", "fixtures/behave/**", ".github/workflows/desktop.yml"]
+
+permissions:
+  contents: read
+
+jobs:
+  desktop:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@1.99.1
+      - uses: Swatinem/rust-cache@v2
+      - name: "the renderer's and the harness's tests (blocks-desktop, blocks-desk)"
+        run: cargo test --locked -p blocks-desktop -p blocks-desk
+      - name: "the blocks crate's protocol and behave tests on this OS"
+        run: cargo test --locked -p blocks --test protocol --test behave
+      - name: "blocks-desk --check on every fixtures/blocks and fixtures/stress file at 390 and 1440, no window, no GPU"
+        run: |
+          cargo build --locked -p blocks-desk
+          desk="target/debug/blocks-desk"
+          if [ "$RUNNER_OS" = Windows ]; then desk="$desk.exe"; fi
+          for size in 390x844 1440x900; do
+            for f in fixtures/blocks/*.json fixtures/stress/*-*.json; do
+              k=$(basename "$f" .json)
+              "$desk" --screen "$f" --size "$size" --check --out "shots/desktop/$size/$k"
+            done
+          done
