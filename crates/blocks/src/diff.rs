@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::kind::{Block, Screen};
+use crate::kind::{Block, Screen, Table, TableRow};
 use crate::patch::apply;
 use crate::wire::{Child, Op};
 
@@ -85,10 +85,12 @@ fn list_ops(old: &Block, new: &Block) -> Option<Vec<Op>> {
         match by_id.get(id) {
             Some((i, o)) => {
                 if *o != b {
-                    ops.push(Op::Replace {
-                        id: id.into(),
-                        block: b.clone(),
-                    });
+                    ops.extend(row_ops(o, b).unwrap_or_else(|| {
+                        vec![Op::Replace {
+                            id: id.into(),
+                            block: b.clone(),
+                        }]
+                    }));
                 }
                 if stay.get(*i) != Some(&true) {
                     ops.push(Op::Move {
@@ -106,6 +108,48 @@ fn list_ops(old: &Block, new: &Block) -> Option<Vec<Op>> {
             }),
         }
         before = Some(id.into());
+    }
+    Some(ops)
+}
+
+fn row_ops(old: &Block, new: &Block) -> Option<Vec<Op>> {
+    let (Block::Table(a), Block::Table(b)) = (old, new) else {
+        return None;
+    };
+    let bare = |t: &Table| Table {
+        rows: vec![],
+        ..t.clone()
+    };
+    let into = b.id.as_deref().filter(|_| bare(a) == bare(b))?;
+    let has = |t: &Table, id: &str| t.rows.iter().any(|r| r.id == id);
+    let kept = a.rows.iter().filter(|r| has(b, &r.id)).map(|r| &r.id);
+    if !kept.eq(b.rows.iter().filter(|r| has(a, &r.id)).map(|r| &r.id)) {
+        return None;
+    }
+    let gone = a.rows.iter().filter(|r| !has(b, &r.id));
+    let mut ops: Vec<Op> = gone.map(|r| Op::Remove { id: r.id.clone() }).collect();
+    let mut before: Option<String> = None;
+    for r in b.rows.iter().rev() {
+        match a.rows.iter().find(|o| o.id == r.id) {
+            Some(o) if o == r => {}
+            Some(_) => {
+                let Ok(serde_json::Value::Object(mut fields)) = serde_json::to_value(r) else {
+                    return None;
+                };
+                fields.entry("tap").or_insert(serde_json::Value::Null);
+                ops.push(Op::Merge {
+                    id: r.id.clone(),
+                    fields,
+                });
+            }
+            None => ops.push(Op::Insert {
+                into: into.into(),
+                before: before.clone(),
+                after: None,
+                block: Child::TableRow(Box::new(TableRow::clone(r))),
+            }),
+        }
+        before = Some(r.id.clone());
     }
     Some(ops)
 }

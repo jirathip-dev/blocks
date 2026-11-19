@@ -195,6 +195,7 @@ internal struct BlockNode: View {
             case .media(let media): MediaBlock(block: media)
             case .nav(let nav): NavBlock(block: nav)
             case .island(let island): IslandView(block: island)
+            case .table(let table): TableBlock(block: table)
             case .steps(let steps): StepsBlock(block: steps)
             case .appBlock(let block): AppBlockView(block: block)
             }

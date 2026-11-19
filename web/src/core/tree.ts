@@ -16,7 +16,7 @@ const str = (b: Blk, k: string) => (typeof b[k] === "string" && b[k] !== "" ? St
 function under(b: Blk, drawn: TreeDrawn): unknown[] {
   if (drawn === "fallback") return Array.isArray(b.blocks) ? b.blocks : [];
   if (drawn === "hidden") return [];
-  const lists = ["blocks", "rows", "buttons"].flatMap((k) => (Array.isArray(b[k]) ? b[k] : []));
+  const lists = ["blocks", b.type === "table" ? "" : "rows", "buttons"].flatMap((k) => (Array.isArray(b[k]) ? b[k] : []));
   return lists.concat(blks(b.rounds).flatMap((r) => (Array.isArray(r.blocks) ? r.blocks : [])));
 }
 

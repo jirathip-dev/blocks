@@ -177,6 +177,7 @@ export function install() {
   g.document = {
     baseURI: "http://blocks.test/",
     body: new El("body"),
+    documentElement: Object.assign(new El("html"), { lang: "" }),
     createElement: (t) => new El(t),
     createElementNS: (_, t) => new El(t),
     createTextNode: (t) => new Text(t),

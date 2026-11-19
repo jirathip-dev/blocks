@@ -28,6 +28,7 @@ import { secret } from "./secret.ts";
 import { section } from "./section.ts";
 import { sheet } from "./sheet.ts";
 import { stat } from "./stat.ts";
+import { table } from "./table.ts";
 import { steps } from "./steps.ts";
 import { text } from "./text.ts";
 import { web } from "./web.ts";
@@ -203,6 +204,7 @@ export const R: { [K in Kind]: (b: Of<K>, c: Ctx) => HTMLElement | null } = {
     isTag(b.name)
       ? island(b, [...fallback(b, c).childNodes], (action, values) => void c.act({ action, block: b.id, values }), (n) => c.drop?.(`event ${b.id ?? ""} ${n}`))
       : fallback(b, c),
+  table,
   steps,
 };
 

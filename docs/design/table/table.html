@@ -1,0 +1,13 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>table: invoices</title>
+<link rel="stylesheet" href="../neutral-default/tokens.css"><link rel="stylesheet" href="../../../web/src/blocks.css"><link rel="stylesheet" href="table.css"><link rel="stylesheet" href="page.css">
+<script src="table.js"></script><script src="data.js"></script></head>
+<body><main class="scr" id="page">
+<div class="tile"><div class="tabh"><span class="tw">Kestrel · billing</span><button type="button"><span>new invoice</span></button></div></div>
+<div class="st"><b>201,000</b><span class="m">outstanding · ฿</span></div><div class="st warn"><b>2</b><span class="m">overdue</span></div><div class="st"><b>48,000</b><span class="m">paid · ฿</span></div>
+<div id="t"></div>
+</main>
+<script>
+document.getElementById("t").replaceWith(table(invoices, { prev: prevInvoices, sel: ["INV-0133", "INV-0137"] }));
+settle();
+</script></body></html>

@@ -4,7 +4,7 @@ A block is a JSON object whose `type` names its kind, as drover and cooee send i
 The core kinds are the superset of both apps': cooee's 21 (`screen`, `sheet`, `section`, `list`, `row`, `card`,
 `choice`, `form`, `config`, `secret`, `run`, `button`, `chips`, `stat`, `text`, `images`, `web`, `diff`, `editor`,
 `scene`, `diagram`), drover's `composer`, the content kinds `prose`, `hero`, `media`, `nav`, the `island`, the
-line-item editor `lines` and `steps` (a stepper or progress bars), 29 in all, with every field either app sends.
+line-item editor `lines`, `steps` (a stepper or progress bars) and the data `table`, 30 in all, with every field either app sends.
 Each kind has `new(<its required fields>)` and a setter per optional one; a server builds its blocks so, never with
 `json!`. Any other `type` is an app's own kind (`AppBlock`): it is
 kept whole, and may carry a `fallback` row. A core kind of the wrong shape is refused, by the types and by the

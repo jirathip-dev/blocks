@@ -7,7 +7,7 @@ type Spot = { list: unknown[]; at: number } | "root";
 export type Draw = (block: Block) => HTMLElement | null;
 
 const walked = ["blocks", "rows", "buttons", "rounds"];
-const hosts: Record<string, string> = { screen: "blocks", sheet: "blocks", section: "blocks", card: "blocks", list: "rows", scene: "lanes", row: "rounds" };
+const hosts: Record<string, string> = { screen: "blocks", sheet: "blocks", section: "blocks", card: "blocks", list: "rows", scene: "lanes", row: "rounds", table: "rows" };
 const isRec = (v: unknown): v is Rec => typeof v === "object" && v !== null && !Array.isArray(v);
 
 function locate(node: Rec, id: string): Spot | undefined {
@@ -118,6 +118,9 @@ function one(v: View, op: Op, model: Block): void {
     if (n) el.replaceWith(n);
     else el.remove();
   };
+  const at = "id" in op ? node(v.root, op.id) : undefined;
+  const host = at && !at.hasAttribute("data-block") ? at.parentElement?.closest<HTMLElement>("[data-block][data-id]")?.dataset.id : undefined;
+  if (host && op.op !== "move") return redraw(host);
   switch (op.op) {
     case "merge": {
       const el = node(v.root, op.id);
