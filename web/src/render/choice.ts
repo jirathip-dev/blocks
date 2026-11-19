@@ -1,18 +1,19 @@
-import { type Blk, blks, btn, type Ctx, draft, el, h, isBlk, obj, sent, ticked } from "./index.ts";
+import type { Choice } from "../gen/types.ts";
+import { btn, type Ctx, draft, el, h, sent, ticked } from "./index.ts";
 
-export function choice(b: Blk, c: Ctx): HTMLElement {
+export function choice(b: Choice, c: Ctx): HTMLElement {
   const s = el("div", "choice");
-  const opts = blks(b.options).sort((x, y) => Number(y.value === b.recommended) - Number(x.value === b.recommended));
+  const opts = [...b.options].sort((x, y) => Number(y.value === b.recommended) - Number(x.value === b.recommended));
   for (const o of opts) {
     const x = btn(`${o.label}${o.value === b.recommended ? " · recommended" : ""}`, "pick");
     x.name = "choice";
-    x.onclick = () => c.act({ action: b.action, block: b.id, values: { ...obj(b.values), ...obj(o.values), choice: o.value }, confirm: o.confirm }, x);
+    x.onclick = () => c.act({ action: b.action, block: b.id, values: { ...b.values, ...o.values, choice: o.value }, confirm: o.confirm }, x);
     s.append(x);
   }
   const dflt = b.default;
   const other = b.other;
-  if (isBlk(dflt)) s.append(h("p", "m", ticked({ until: dflt.until, label: dflt.label })));
-  if (isBlk(other)) {
+  if (dflt) s.append(h("p", "m", ticked({ until: dflt.until, label: dflt.label })));
+  if (other) {
     const f = el("form", "other");
     const i = el("input");
     Object.assign(i, { name: "other", placeholder: other.placeholder ?? "other…", autocomplete: "off" });
@@ -23,7 +24,7 @@ export function choice(b: Blk, c: Ctx): HTMLElement {
     f.onsubmit = (e) => {
       e.preventDefault();
       if (i.value.trim())
-        c.act({ action: b.action, block: b.id, values: { ...obj(b.values), choice: other.for ?? "", other: i.value } }, go).then((ok) => ok && sent(f, c.store));
+        c.act({ action: b.action, block: b.id, values: { ...b.values, choice: other.for ?? "", other: i.value } }, go).then((ok) => ok && sent(f, c.store));
     };
     s.append(f);
   }

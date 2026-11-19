@@ -73,12 +73,18 @@ pub enum Step {
     Shot(Shot),
 }
 
-/// How long the first paint and each step took.
+/// How long the first paint and each step took; the frame fields only where a harness draws real frames.
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
 pub struct Timings {
     pub first_paint_ms: f64,
     pub steps_ms: Vec<f64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub longest_frame_ms: Option<f64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub frames_over_budget: Option<u32>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub longest_patch_ms: Option<f64>,
 }
 
 /// A harness run's `report.json`.

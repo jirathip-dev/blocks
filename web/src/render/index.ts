@@ -1,11 +1,12 @@
 import { hooks } from "../gen/hooks.ts";
-import type { Kind } from "../gen/types.ts";
+import type { Block, Fallback, Kind, Label, Tap, Toned } from "../gen/types.ts";
 import type { Theme } from "../theme.ts";
 import { button } from "./button.ts";
 import { card } from "./card.ts";
 import { chips } from "./chips.ts";
 import { choice } from "./choice.ts";
 import { composer } from "./composer.ts";
+import { diagram } from "./diagram.ts";
 import { form } from "./form.ts";
 import { images } from "./images.ts";
 import { list } from "./list.ts";
@@ -31,10 +32,9 @@ export type Ctx = {
   apps?: Record<string, Renderer>;
 };
 
-export const isList = (v: unknown): v is unknown[] => Array.isArray(v);
 export const isBlk = (v: unknown): v is Blk => typeof v === "object" && v !== null;
 export const obj = (v: unknown): Blk => (isBlk(v) ? v : {});
-export const blks = (v: unknown): Blk[] => (isList(v) ? v.filter(isBlk) : []);
+export const blks = (v: unknown): Blk[] => (Array.isArray(v) ? v.filter(isBlk) : []);
 export const esc = (s: unknown) => String(s ?? "").replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
 export const nodes = (html: string) => Array.from(new DOMParser().parseFromString("<body>" + html, "text/html").body.childNodes);
 
@@ -50,13 +50,13 @@ export const h = <K extends keyof HTMLElementTagNameMap>(tag: K, cls: string, ..
   return e;
 };
 export const href = (a: HTMLAnchorElement, url: string) => Object.assign(a, { href: url, target: "_blank", rel: "noopener" });
-export const urlOf = (t: unknown): string | undefined => (isBlk(t) && typeof t.url === "string" ? t.url : undefined);
+export const urlOf = (t?: Tap | null): string | undefined => t?.url ?? undefined;
 export const btn = (label: unknown, cls = "", url?: string) => {
   const b = url ? href(el("a", `btn ${cls}`), url) : Object.assign(el("button", cls), { type: "button" });
   b.append(h("span", "", String(label ?? "")));
   return b;
 };
-export const tone = (v: unknown): Blk => (isBlk(v) ? v : { text: v });
+export const tone = (v: Toned): Label => (typeof v === "string" ? { text: v } : v);
 
 export function md(s: unknown, refs = false): string {
   const link = new RegExp(String.raw`\[([^\]]+)\]\((https?:[^)\s]+)\)|(https?:\/\/[^\s<]*[^\s<.,;:!?)])|\b(${refs ? "t\\d+" : "(?!)"})\b`, "g");
@@ -118,11 +118,13 @@ export function toggle(e: HTMLElement, id: unknown, c: Ctx, folds = false) {
   else if (e.nextElementSibling instanceof HTMLElement) e.nextElementSibling.hidden = !c.open.has(k);
 }
 
-function fallback(b: Blk, c: Ctx): HTMLElement {
+const isFallback = (v: unknown): v is Fallback => isBlk(v);
+
+export function fallback(b: Blk, c: Ctx): HTMLElement {
   const box = el("div");
   box.dataset.fallback = "";
-  const f = obj(b.fallback ?? { title: b.type });
-  if (f.title != null) box.append(row({ type: "row", title: f.title, subtitle: f.subtitle, tap: f.tap }, c));
+  const f = b.fallback ?? { title: b.type };
+  if (isFallback(f) && f.title != null) box.append(row({ title: f.title, subtitle: f.subtitle, tap: f.tap }, c));
   box.append(...kids(b.blocks, c));
   return box;
 }
@@ -130,7 +132,9 @@ function fallback(b: Blk, c: Ctx): HTMLElement {
 /// A core kind HTML does not draw yet: its fallback, then its children, until `_issue` draws it.
 export const gap = (_issue: number): Renderer => fallback;
 
-export const R: Record<Kind, Renderer> = {
+type Of<K extends Kind> = Extract<Block, { type: K }>;
+
+export const R: { [K in Kind]: (b: Of<K>, c: Ctx) => HTMLElement | null } = {
   screen,
   sheet,
   section,
@@ -151,7 +155,7 @@ export const R: Record<Kind, Renderer> = {
   diff: gap(42),
   editor: gap(43),
   scene: gap(38),
-  diagram: gap(23),
+  diagram,
   composer,
   prose: gap(18),
   hero: gap(18),
@@ -160,17 +164,19 @@ export const R: Record<Kind, Renderer> = {
   island: gap(21),
 };
 
-const core = (t: string): t is Kind => Object.prototype.hasOwnProperty.call(hooks, t);
+const core = (b: Blk): b is Of<Kind> => Object.prototype.hasOwnProperty.call(hooks, String(b.type));
+const view = <K extends Kind>(t: K, b: Of<K>, c: Ctx) => R[t](b, c);
 
 /// A block as DOM with its hooks: its kind's view, the app's, else its fallback and then its children.
 export function render(b: Blk, c: Ctx): HTMLElement | null {
   const t = String(b.type);
-  const e = (core(t) ? R[t] : (c.apps?.[t] ?? fallback))(b, c);
+  const own = core(b);
+  const e = own ? view(b.type, b, c) : (c.apps?.[t] ?? fallback)(b, c);
   if (!e) return null;
-  e.classList.add("b", ...(core(t) ? [] : ["b-app"]), `b-${t}`);
+  e.classList.add("b", ...(own ? [] : ["b-app"]), `b-${t}`);
   e.dataset.block = t;
   if (b.id != null) e.dataset.id = String(b.id);
-  const v = core(t) ? hooks[t].variant : null;
+  const v = own ? hooks[b.type].variant : null;
   if (v && b[v] != null) e.dataset.variant = String(b[v]);
   if (typeof b.tone === "string") e.dataset.tone = b.tone;
   return e;

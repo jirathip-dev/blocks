@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # #809: each banned API's fixture must fail its gate, and clean fixtures must pass.
 # rust: ci/lint-fixtures/rust/<lint>.rs under the workspace's [lints] and clippy.toml must fail clippy naming <lint>.
-# ts: web/lint-fixtures/<name>.ts must fail web/lint.mjs (clean.ts must pass).
+# ts: web/lint-fixtures/<name>.ts and <name>.css must fail web/lint.mjs (clean.ts must pass).
 # Usage: scripts/lint-fixtures.sh rust|ts
 set -euo pipefail
 cd "$(dirname "$0")/.."
@@ -36,8 +36,8 @@ rust)
   done
   ;;
 ts)
-  for f in web/lint-fixtures/*.ts; do
-    name=$(basename "$f" .ts)
+  for f in web/lint-fixtures/*.ts web/lint-fixtures/*.css; do
+    name=$(basename "$f"); name=${name%.*}
     code=0
     out=$(node --no-warnings web/lint.mjs "$f" 2>&1) || code=$?
     case $name in
@@ -50,6 +50,7 @@ ts)
     console-log) want='console.log' ;;
     default-export) want='a default export' ;;
     enum) want='no `enum`' ;;
+    motion) want='motion of `width' ;;
     *) want=$name ;;
     esac
     expect "$name" "$code" "$out" "$f:.*$want"

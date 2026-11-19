@@ -154,7 +154,8 @@ pub enum Drawn { Native, Fallback, Hidden }
 pub enum Step { Tap { id: String }, Type { id: String, text: String }, Scroll { id: String },
                 Frame(Frame), Answer(Answer), Shot { name: String } }      // a stream frame arrives; an action is answered
 pub struct Report { pub shots: Vec<String>, pub sent: Vec<Action>, pub dropped: Vec<String>, pub timings: Timings }
-pub struct Timings { pub first_paint_ms: f64, pub steps_ms: Vec<f64> }
+pub struct Timings { pub first_paint_ms: f64, pub steps_ms: Vec<f64>,                 // the frame fields: optional, additive
+                     pub longest_frame_ms: Option<f64>, pub frames_over_budget: Option<u32>, pub longest_patch_ms: Option<f64> }
 pub fn expect(screen: &Built, kinds: &[&str], state: &State) -> Node;      // the tree to draw: no rect, no text
 ```
 
@@ -167,6 +168,17 @@ pub fn expect(screen: &Built, kinds: &[&str], state: &State) -> Node;      // th
 - **`--check`**: the tree equals `--expect` in kind, id, order and `drawn`; every drawn node has a size; none leaves
   the screen's width; no two siblings overlap. `fixtures/trees/` holds the expected tree of every fixture
   for HTML, `fixtures/trees/swift/` for SwiftUI (#19: its native kinds differ until B14 and B15).
+- **Frames** (q2112): `blocks-shot` meters each animation frame's main-thread time (its tasks, `rAF`, style, layout
+  and paint) through a `scroll` step (a smooth scroll to the block) and a run of `frame` steps (played as a burst, 60
+  a second): `longest_frame_ms`, `frames_over_budget` (over 16.7 ms) and `longest_patch_ms` (the patcher's one pass in
+  a frame). `blocks-snap` draws no real frames: its `steps_ms` is each step's main-thread time, the frame fields absent.
+  This repo's gate: the 200-row screen keeps every frame in 16.7 ms and each patch in 4 ms.
+- **Batching**: every op that arrives within one animation frame is applied in one pass before the next paint, so a
+  burst costs one layout: `stream.ts` hands a key's frames to the view once per frame, the patcher draws them in one
+  pass, and the Swift `Replica.frames` takes a burst in one mutation.
+- **Motion**: CSS animates `transform` and `opacity` only, its durations scaled by `--motion` (the `motion` token), and
+  stops under `prefers-reduced-motion`; `web/lint.mjs` refuses any other property. SwiftUI scales its animation
+  durations by `look.style.motion`.
 - **Test API**, the same thing in process: `shot({ screen, steps })` from `web/shot`, `Snapshot(screen).run(steps)`
   from `BlocksSnapshot`. An app with SwiftUI styles or islands uses the API, since a CLI cannot load its views.
 - **Who calls it**: this repo's `web.yml` and `swift.yml` for every fixture; `compat.yml` (the last release's

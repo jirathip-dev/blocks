@@ -46,9 +46,10 @@ test("a scripted tap sends the button's action and an answer's ops are drawn", (
   strictEqual(JSON.parse(readFileSync(join(out, "tap", "saved.tree.json"), "utf8")).text, "Saved");
 });
 
+const rows = Array.from({ length: 200 }, (_, i) => ({ type: "row", id: `r${i}`, title: `Row ${i}`, subtitle: "green", value: "2m" }));
+const screen = { type: "screen", id: "rows", title: "Rows", blocks: [{ type: "list", id: "all", rows }] };
+
 test("the 200-row screen paints first in under 300 ms warm", async () => {
-  const rows = Array.from({ length: 200 }, (_, i) => ({ type: "row", id: `r${i}`, title: `Row ${i}`, subtitle: "green", value: "2m" }));
-  const screen = { type: "screen", id: "rows", title: "Rows", blocks: [{ type: "list", id: "all", rows }] };
   const browser = await webkit.launch();
   try {
     await shot({ screen, browser });
@@ -59,4 +60,36 @@ test("the 200-row screen paints first in under 300 ms warm", async () => {
   } finally {
     await browser.close();
   }
+});
+
+test("on the 200-row screen a scripted scroll and a 2 s burst of 60 frames a second keep every frame in 16.7 ms, each frame's patch in 4 ms", async () => {
+  const burst = Array.from({ length: 120 }, (_, i) => ({
+    frame: { k: "rows", from: i, rev: i + 1, ops: [{ op: "merge", id: `r${(i * 7) % 200}`, fields: { value: `${i}s` } }] },
+  }));
+  const browser = await webkit.launch();
+  try {
+    await shot({ screen, browser });
+    const scroll = await shot({ screen, browser, steps: [{ scroll: { id: "r199" } }, { scroll: { id: "r0" } }, { shot: { name: "top" } }] });
+    const stream = await shot({ screen, browser, steps: [...burst, { shot: { name: "end" } }] });
+    const { steps_ms: _, ...s } = scroll.report.timings;
+    const { steps_ms, ...b } = stream.report.timings;
+    process.stdout.write(`frame budget: scroll ${JSON.stringify(s)} burst ${JSON.stringify(b)}\n`);
+    strictEqual(steps_ms.length, 121);
+    strictEqual(scroll.report.timings.longest_patch_ms, undefined);
+    for (const t of [scroll.report.timings, stream.report.timings]) {
+      ok(t.longest_frame_ms <= 16.7, `longest frame ${t.longest_frame_ms} ms`);
+      strictEqual(t.frames_over_budget, 0);
+    }
+    ok(b.longest_patch_ms <= 4, `longest patch ${b.longest_patch_ms} ms`);
+    strictEqual(stream.trees.end.children[0].children[33].text?.includes("119s"), true);
+  } finally {
+    await browser.close();
+  }
+});
+
+test("a burst of whole-screen frames on a 2,000-row screen counts its frames over 16.7 ms", async () => {
+  const big = { ...screen, blocks: [{ type: "list", id: "all", rows: Array.from({ length: 2000 }, (_, i) => ({ ...rows[0], id: `r${i}` })) }] };
+  const { report } = await shot({ screen: big, steps: Array.from({ length: 10 }, (_, i) => ({ frame: { k: "rows", rev: i + 1, screen: big } })) });
+  ok(report.timings.frames_over_budget > 0, JSON.stringify(report.timings));
+  ok(report.timings.longest_frame_ms > 16.7);
 });
