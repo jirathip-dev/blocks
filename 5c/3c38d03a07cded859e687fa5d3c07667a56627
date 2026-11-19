@@ -1,0 +1,4 @@
+Decided: merged origin/staging; the conflicting web/dist/blocks.js comes from the gen lines, not a hand merge
+Because: "Generated schema, TS and Swift types from `just gen`"
+Rejected: none
+Owner: The branch is up to date with the latest shared work; nothing it does changes.
