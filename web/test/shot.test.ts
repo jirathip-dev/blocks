@@ -32,9 +32,9 @@ test("each bad fixture fires its probe and no other in WebKit, all in one --plan
   const sheets = readdirSync(join(bad, "css")).map((f) => f.replace(/\.css$/, ""));
   const probes = readdirSync(at("../shot/probe/")).map((f) => f.replace(/\.ts$/, ""));
   deepStrictEqual([...draw, ...sheets].sort(), probes.sort());
-  const own = (n) => (existsSync(join(bad, "render", `${n}.css`)) ? [join(bad, "render", `${n}.css`)] : []);
+  const own = (n, ext) => (existsSync(join(bad, "render", `${n}.${ext}`)) ? [join(bad, "render", `${n}.${ext}`)] : []);
   const runs = [
-    ...draw.map((n) => ({ ...RUN, name: n, screen: join(bad, "render", `${n}.json`), css: own(n), kinds: ["gauge"] })),
+    ...draw.map((n) => ({ ...RUN, name: n, screen: join(bad, "render", `${n}.json`), css: own(n, "css"), scripts: own(n, "js"), kinds: ["gauge"] })),
     ...sheets.map((n) => ({ ...RUN, name: n, screen: join(blocks, "text.json"), css: [join(bad, "css", `${n}.css`)] })),
   ];
   const seen = plan("bad", runs);

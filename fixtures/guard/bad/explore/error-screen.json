@@ -1,0 +1,24 @@
+{
+  "type": "screen",
+  "id": "s",
+  "title": "Explore",
+  "state": { "more": false },
+  "blocks": [
+    {
+      "type": "section",
+      "id": "box",
+      "header": "Box",
+      "blocks": [
+        { "type": "button", "id": "more", "label": "More", "tap": { "set": [{ "key": "more", "to": true }] } },
+        { "type": "button", "id": "a", "label": "Alpha", "action": "a" },
+        { "type": "button", "id": "go", "label": "Go", "action": "go", "show": { "get": "more" } }
+      ]
+    },
+    {
+      "type": "section",
+      "id": "more-box",
+      "header": "More",
+      "blocks": [{ "type": "button", "id": "b", "label": "Beta", "action": "b" }]
+    }
+  ]
+}

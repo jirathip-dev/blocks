@@ -125,7 +125,7 @@ pub struct Baseline {
     pub known: Vec<Known>,
 }
 
-/// `.blocks/guard.json`: the screens, the app's kinds, its CSS and scripts, the harnesses that draw them, the inputs that redraw all and the skill's examples.
+/// `.blocks/guard.json`: the screens, the app's kinds, its CSS and scripts, the harnesses that draw them, the inputs that redraw all, explore's answerer and the skill's examples.
 #[derive(Clone, Debug, Default, PartialEq, Eq, Deserialize)]
 #[serde(deny_unknown_fields, default)]
 pub struct Config {
@@ -135,6 +135,7 @@ pub struct Config {
     pub scripts: Vec<String>,
     pub harness: Vec<Vec<String>>,
     pub inputs: Vec<String>,
+    pub answer: Option<Vec<String>>,
     pub examples: Vec<String>,
 }
 
