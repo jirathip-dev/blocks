@@ -12,7 +12,7 @@ const files = (dir: string) => readdirSync(at(dir)).filter((f) => f.endsWith(".j
 test("tree() is fixtures/trees/<kind>.json for every fixtures/blocks file", () => {
   ok(!("document" in globalThis), "no DOM");
   const kinds = files("blocks");
-  strictEqual(kinds.length, 27);
+  strictEqual(kinds.length, 28);
   for (const f of kinds) deepStrictEqual(tree(json(`blocks/${f}`), native), json(`trees/${f}`), f);
 });
 

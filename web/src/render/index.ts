@@ -15,6 +15,7 @@ import { editor } from "./editor.ts";
 import { form } from "./form.ts";
 import { hero } from "./hero.ts";
 import { images } from "./images.ts";
+import { lines } from "./lines.ts";
 import { list } from "./list.ts";
 import { media } from "./media.ts";
 import { nav } from "./nav.ts";
@@ -192,6 +193,7 @@ export const R: { [K in Kind]: (b: Of<K>, c: Ctx) => HTMLElement | null } = {
   scene,
   diagram,
   composer,
+  lines,
   prose,
   hero,
   media,

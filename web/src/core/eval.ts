@@ -9,7 +9,7 @@ type Rec = { [k: string]: unknown };
 export const own = (o: object, k: string) => Object.prototype.hasOwnProperty.call(o, k);
 export const rec = (v: unknown): v is Rec => typeof v === "object" && v !== null && !Array.isArray(v);
 const UNKNOWN: Rec = { "?": null };
-const PAIRS: Record<string, number> = { eq: 2, lt: 2, has: 2, add: 2, sub: 2, pick: 3 };
+const PAIRS: Record<string, number> = { eq: 2, lt: 2, has: 2, add: 2, sub: 2, mul: 2, pick: 3 };
 const PATTERNS = ["filled", "email", "url", "number"];
 
 export function read(v: unknown): unknown {
@@ -110,6 +110,8 @@ export function ev(e: unknown, s: State): Lit {
       return n ? num(n.x + n.y) : null;
     case "sub":
       return n ? num(n.x - n.y) : null;
+    case "mul":
+      return n ? num(n.x * n.y) : null;
     case "cat":
       return xs.map(text).join("");
     case "pick":
