@@ -1,0 +1,24 @@
+Decided: four looks as data in site/looks.json, loaded into the crate's Scheme and Style; the build gates all eight schemes
+Because: "The looks are the site's own, defined in `site/`, like Paper today."
+Decided: the switcher is four blocks Buttons whose tap sheet is look:<name>; the shell wears the crate's css(pair, style) in place
+Because: "Choosing a look restyles the page in place, with no reload, and the choice holds across pages."
+Decided: borderless, hairlines and grey fills come from each scheme's --edge token, not site CSS per look
+Because: q2359
+Decided: Styles shows a live sample per axis in the worn look plus the four values; only colour is pinned four ways
+Rejected: four pinned samples per axis — type, surface, fills, marks, sections and labels are global rules that leak across cells
+Decided: site.css paddings scale with --space and rows in lists get an inset, so no row touches the card edge
+Because: q2359
+Check: web/test/pages/showcase.test.ts switcher test, and the same-PNG test on all 39 pages
+Owner: A look switcher is in the nav on every page; the schemes page is now a Styles page; Playful per-row accents need a renderer feature.
+
+Decided: merged origin/staging and rebuilt web/dist/blocks.js from the merged sources instead of hand-merging the bundle
+Because: web/dist/blocks.js:1
+Decided: four looks as data in site/looks.json, loaded into the crate's Scheme and Style; the build gates all eight schemes
+Because: "The looks are the site's own, defined in `site/`, like Paper today."
+Decided: the switcher is four blocks Buttons whose tap sheet is look:<name>; the shell wears the crate's css(pair, style) in place
+Because: "Choosing a look restyles the page in place, with no reload, and the choice holds across pages."
+Decided: borderless, hairlines and grey fills come from each scheme's --edge token; site.css paddings scale with --space
+Because: q2359
+Rejected: four pinned samples per axis on Styles — type, surface, fills, marks, sections and labels are global rules that leak across cells
+Check: web/test/pages/showcase.test.ts switcher test, and the same-PNG test on all 39 pages
+Owner: A look switcher is in the nav on every page; the schemes page is now a Styles page; Playful per-row accents need a renderer feature.
