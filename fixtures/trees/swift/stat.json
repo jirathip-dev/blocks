@@ -3,5 +3,7 @@
   "id": "open",
   "variant": null,
   "drawn": "native",
+  "role": "group",
+  "name": "open",
   "children": []
 }

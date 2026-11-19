@@ -3,5 +3,7 @@
   "id": "scene",
   "variant": null,
   "drawn": "native",
+  "role": "group",
+  "name": "lanes",
   "children": []
 }

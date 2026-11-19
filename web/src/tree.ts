@@ -1,7 +1,7 @@
-import { hooks } from "./gen/hooks.ts";
+import { hooks, roles } from "./gen/hooks.ts";
 import type { Block, Lit, TreeDrawn, TreeNode } from "./gen/types.ts";
 import { evaluate, type State } from "./behave.ts";
-import { fallback, R, type Blk, isBlk, blks } from "./render/index.ts";
+import { fallback, R, type Blk, isBlk, blks, named } from "./render/index.ts";
 
 export { evaluate };
 
@@ -22,6 +22,14 @@ function under(b: Blk, drawn: TreeDrawn): unknown[] {
   return lists.concat(blks(b.rounds).flatMap((r) => (Array.isArray(r.blocks) ? r.blocks : [])));
 }
 
+function role(b: Blk, kind: string): string {
+  const tap = isBlk(b.tap) ? b.tap : null;
+  const wrapped = ["rounds", "swipe"].some((k) => Array.isArray(b[k]) && b[k].length > 0);
+  if ((kind === "button" || kind === "row") && tap?.url != null && !wrapped) return "link";
+  if ((kind === "row" && tap && !wrapped) || kind === "button" || kind === "editor") return "button";
+  return roles[kind] ?? "group";
+}
+
 function node(v: unknown, kinds: readonly string[], state: State): TreeNode {
   const b = isBlk(v) ? v : {};
   const kind = str(b, "type") ?? "";
@@ -30,10 +38,10 @@ function node(v: unknown, kinds: readonly string[], state: State): TreeNode {
   const shown = "show" in b && isExpr(b.show) ? evaluate(b.show, state) : true;
   const off = shown === null || shown === false;
   const drawn: TreeDrawn = off ? "hidden" : kinds.includes(kind) ? "native" : "fallback";
-  return { kind, id: str(b, "id"), variant, drawn, children: under(b, drawn).map((c) => node(c, kinds, state)) };
+  return { kind, id: str(b, "id"), variant, drawn, role: role(b, kind), name: named(b, kind), children: under(b, drawn).map((c) => node(c, kinds, state)) };
 }
 
-/// The tree a renderer drawing `kinds` natively must draw for `screen`, as the crate's `tree::expect`: no rect, no text.
+/// The tree a renderer drawing `kinds` natively must draw for `screen`, roles and names included, as the crate's `tree::expect`: no rect, no text.
 export function tree(screen: Block, kinds: readonly string[] = native, state?: State): TreeNode {
   const b: Blk = screen;
   const own: State = {};
@@ -43,13 +51,14 @@ export function tree(screen: Block, kinds: readonly string[] = native, state?: S
 
 const who = (n: TreeNode) => `${n.kind}${n.id ? `#${n.id}` : ""}`;
 
-/// Where `got` differs from `want` in kind, id, drawn or child count, as the crate's `tree::check` words it.
+/// Where `got` differs from `want` in kind, id, drawn, role, name or child count, as the crate's `tree::check` words it.
 export function expect(got: TreeNode | undefined, want: TreeNode, at = "tree", out: string[] = []): string[] {
   if (!got || want.kind !== got.kind || (want.id ?? null) !== (got.id ?? null) || want.drawn !== got.drawn) {
     out.push(`${at}: drew ${got ? `${who(got)} ${got.drawn}` : "nothing"}, expected ${who(want)} ${want.drawn}`);
     return out;
   }
   const here = `${at}/${who(got)}`;
+  if (want.role !== got.role || want.name !== got.name) out.push(`${here}: drew ${got.role} "${got.name}", expected ${want.role} "${want.name}"`);
   if (want.children.length !== got.children.length) out.push(`${here}: ${got.children.length} children, expected ${want.children.length}`);
   want.children.forEach((c, i) => expect(got.children[i], c, here, out));
   return out;

@@ -245,7 +245,7 @@ test("an editor numbers its lines from first, marks an error's line with its mes
     ],
   );
   strictEqual(e.getAttribute("role"), "button");
-  strictEqual(e.getAttribute("aria-label"), "edit main");
+  strictEqual(e.getAttribute("aria-label"), "main");
   const one = render(fixture("editor"), ctx());
   deepStrictEqual(
     one.children.map((k) => k.textContent),
@@ -266,7 +266,7 @@ test("a tapped editor opens a named draft that survives a redraw and posts its a
   ok(ta && e.classList.contains("on"));
   strictEqual(ta.name, "fleet");
   strictEqual(ta.value, "x = 1\ny =");
-  strictEqual(e.getAttribute("role"), null);
+  strictEqual(e.getAttribute("role"), "group");
   deepStrictEqual(
     e.children.slice(1).map((k) => k.textContent),
     ["line 2 · expected a value"],

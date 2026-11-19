@@ -9,7 +9,7 @@ use serde_json::{Map, Value};
 
 use crate::behave::{at_start, View};
 use crate::theme::{css, PerMode, Scheme, Style};
-use crate::tree::VARIANTS;
+use crate::tree::{a11y, VARIANTS};
 use crate::{Block, Built};
 
 /// What a page's head says: its title, description, canonical URL, preview image and language.
@@ -234,7 +234,9 @@ impl<'a> W<'a> {
         if id.as_ref().is_some_and(|i| self.view.hidden.contains(i)) {
             all.push(("hidden", ""));
         }
-        all.extend_from_slice(attrs);
+        let (role, name) = a11y(b);
+        all.extend(attrs.iter().filter(|(k, _)| !["role", "aria-label"].contains(k)));
+        all.extend([("role", role), ("aria-label", name)]);
         self.open(tag, classes.trim_start(), &all);
     }
 
