@@ -289,6 +289,7 @@ kind! {
         chips: Option<Vec<ComposerChip>>,
         queued: Option<Vec<Queued>>,
         values: Option<Fields>,
+        working: Option<Working>,
     }
 }
 

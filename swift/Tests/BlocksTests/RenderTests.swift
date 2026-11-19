@@ -15,9 +15,13 @@ final class RenderTests: XCTestCase {
         "screen", "sheet", "section", "list", "row", "card", "choice", "form", "config", "secret", "run", "button",
         "chips", "stat", "text", "images", "web", "diff", "editor", "scene", "diagram", "composer",
     ]
+    private static let content = ["prose", "hero", "media", "nav"]
     private let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent().appendingPathComponent("../../..")
 
-    private func pixels(_ view: some View, _ match: (UInt8, UInt8, UInt8, UInt8) -> Bool = { $3 > 0 }) throws -> Int {
+    private func pixels(
+        _ view: some View, columns: ClosedRange<Double> = 0...1,
+        _ match: (UInt8, UInt8, UInt8, UInt8) -> Bool = { $3 > 0 }
+    ) throws -> Int {
         let host = NSHostingView(rootView: view.frame(width: 390).environment(\.look, Look(still: true)))
         host.frame.size = host.fittingSize
         host.layout()
@@ -34,8 +38,11 @@ final class RenderTests: XCTestCase {
                 bitmapInfo: info)
             context?.draw(image, in: CGRect(x: 0, y: 0, width: w, height: h))
         }
-        return stride(from: 0, to: data.count, by: 4).filter { match(data[$0], data[$0 + 1], data[$0 + 2], data[$0 + 3]) }
-            .count
+        let across = Int(columns.lowerBound * Double(w))...Int(columns.upperBound * Double(w))
+        return stride(from: 0, to: data.count, by: 4).filter {
+            across.contains($0 / 4 % w) && match(data[$0], data[$0 + 1], data[$0 + 2], data[$0 + 3])
+        }
+        .count
     }
 
     private func block(_ json: String) throws -> Block { try JSONDecoder().decode(Block.self, from: Data(json.utf8)) }
@@ -69,6 +76,47 @@ final class RenderTests: XCTestCase {
         }
     }
 
+    private func height(_ view: some View) -> CGFloat {
+        NSHostingView(rootView: view.frame(width: 390).environment(\.look, Look(still: true))).fittingSize.height
+    }
+
+    private func fixture(_ kind: String) throws -> Block {
+        try JSONDecoder().decode(
+            Block.self, from: Data(contentsOf: root.appendingPathComponent("fixtures/blocks/\(kind).json")))
+    }
+
+    func testEveryContentKindDrawsItsOwnView() throws {
+        for kind in Self.content {
+            XCTAssertGreaterThan(try pixels(BlocksView(fixture(kind), source: .core)), 0, "\(kind) draws nothing")
+        }
+        XCTAssertGreaterThan(height(BlocksView(try fixture("prose"), source: .core)), 150, "every part laid out")
+    }
+
+    func testMediaAndHeroKeepTheMediaBoxBeforeThePictureLoads() throws {
+        XCTAssertGreaterThanOrEqual(height(BlocksView(try fixture("media"), source: .core)), 390 * 360 / 640)
+        XCTAssertGreaterThan(height(BlocksView(try fixture("hero"), source: .core)), 390 * 360 / 640 + 60)
+    }
+
+    func testNavPutsTheBrandLeftAndTheLinksRightOnABareBar() throws {
+        let nav = BlocksView(try fixture("nav"), source: .core)
+        XCTAssertLessThan(height(nav), 60)
+        XCTAssertGreaterThan(try pixels(nav, columns: 0...0.25), 0, "the brand")
+        XCTAssertGreaterThan(try pixels(nav, columns: 0.75...1), 0, "the links")
+        XCTAssertLessThan(try pixels(nav), 390 * 48 / 4, "text only, no filled row")
+    }
+
+    func testAWorkingComposerShowsItsStopInRed() throws {
+        let rgb = try XCTUnwrap(NSColor(Look(still: true).palette.red).usingColorSpace(.sRGB))
+        let red = { (r: UInt8, g: UInt8, b: UInt8, a: UInt8) in
+            let want = [rgb.redComponent, rgb.greenComponent, rgb.blueComponent].map { Int($0 * 255) }
+            return a > 200 && zip([r, g, b].map(Int.init), want).allSatisfy { abs($0 - $1) < 24 }
+        }
+        let idle = #"{"type": "composer", "action": "say", "acts": {"stop": "halt"}, "queued": []}"#
+        let busy = #"{"type": "composer", "action": "say", "acts": {"stop": "halt"}, "working": {"since": "2026-01-01T00:00:00Z"}}"#
+        XCTAssertEqual(try pixels(BlocksView(block(idle), source: .core), red), 0)
+        XCTAssertGreaterThan(try pixels(BlocksView(block(busy), source: .core), red), 0)
+    }
+
     func testAnAppKindDrawsItsRegisteredViewElseItsFallback() throws {
         let pinned = try block(#"{"type": "pinned", "fallback": {"title": "3 pinned"}}"#)
         let red = { (r: UInt8, g: UInt8, b: UInt8, a: UInt8) in r > 200 && g < 40 && b < 40 && a > 200 }
@@ -81,7 +129,7 @@ final class RenderTests: XCTestCase {
     }
 
     func testAnAppKindNamedLikeACoreKindIsRefused() {
-        for kind in Self.core {
+        for kind in Self.core + Self.content {
             XCTAssertThrowsError(try AppBlocks([kind: { _ in AnyView(EmptyView()) }])) {
                 XCTAssertEqual($0 as? AppBlocksError, .clash(kind))
             }
