@@ -1,0 +1,10 @@
+Decided: the sent compare is by action name in order, done once in the crate from each harness's report.json
+Because: crates/blocks/src/guard/explore.rs:282
+Rejected: a compare in each harness — two copies of one verdict, and a harness carries no verdict
+Decided: shrink on the model only; a failure seen only in the harness is written unshrunk as <walk>.drawn.steps.json
+Because: crates/blocks-cli/src/explore.rs:220
+Decided: forms are typed into and never tapped; only text and secret fields are typed
+Because: crates/blocks/src/guard/explore.rs:86
+Check: the crate test shrinks seed 7's walk to exactly [tap more, tap go, answer] within 40 tries
+Check: --replay of the written steps.json exits 1 with the same rule at the same block, with no answerer
+Owner: the nightly now walks each screen for ten minutes and saves the shortest failing steps with a replay command
