@@ -1,0 +1,807 @@
+{
+  "id": "effort",
+  "name": "effort",
+  "options": [
+    {
+      "label": "low",
+      "value": "low-0"
+    },
+    {
+      "label": "high",
+      "value": "high-1"
+    },
+    {
+      "label": "low",
+      "value": "low-2"
+    },
+    {
+      "label": "high",
+      "value": "high-3"
+    },
+    {
+      "label": "low",
+      "value": "low-4"
+    },
+    {
+      "label": "high",
+      "value": "high-5"
+    },
+    {
+      "label": "low",
+      "value": "low-6"
+    },
+    {
+      "label": "high",
+      "value": "high-7"
+    },
+    {
+      "label": "low",
+      "value": "low-8"
+    },
+    {
+      "label": "high",
+      "value": "high-9"
+    },
+    {
+      "label": "low",
+      "value": "low-10"
+    },
+    {
+      "label": "high",
+      "value": "high-11"
+    },
+    {
+      "label": "low",
+      "value": "low-12"
+    },
+    {
+      "label": "high",
+      "value": "high-13"
+    },
+    {
+      "label": "low",
+      "value": "low-14"
+    },
+    {
+      "label": "high",
+      "value": "high-15"
+    },
+    {
+      "label": "low",
+      "value": "low-16"
+    },
+    {
+      "label": "high",
+      "value": "high-17"
+    },
+    {
+      "label": "low",
+      "value": "low-18"
+    },
+    {
+      "label": "high",
+      "value": "high-19"
+    },
+    {
+      "label": "low",
+      "value": "low-20"
+    },
+    {
+      "label": "high",
+      "value": "high-21"
+    },
+    {
+      "label": "low",
+      "value": "low-22"
+    },
+    {
+      "label": "high",
+      "value": "high-23"
+    },
+    {
+      "label": "low",
+      "value": "low-24"
+    },
+    {
+      "label": "high",
+      "value": "high-25"
+    },
+    {
+      "label": "low",
+      "value": "low-26"
+    },
+    {
+      "label": "high",
+      "value": "high-27"
+    },
+    {
+      "label": "low",
+      "value": "low-28"
+    },
+    {
+      "label": "high",
+      "value": "high-29"
+    },
+    {
+      "label": "low",
+      "value": "low-30"
+    },
+    {
+      "label": "high",
+      "value": "high-31"
+    },
+    {
+      "label": "low",
+      "value": "low-32"
+    },
+    {
+      "label": "high",
+      "value": "high-33"
+    },
+    {
+      "label": "low",
+      "value": "low-34"
+    },
+    {
+      "label": "high",
+      "value": "high-35"
+    },
+    {
+      "label": "low",
+      "value": "low-36"
+    },
+    {
+      "label": "high",
+      "value": "high-37"
+    },
+    {
+      "label": "low",
+      "value": "low-38"
+    },
+    {
+      "label": "high",
+      "value": "high-39"
+    },
+    {
+      "label": "low",
+      "value": "low-40"
+    },
+    {
+      "label": "high",
+      "value": "high-41"
+    },
+    {
+      "label": "low",
+      "value": "low-42"
+    },
+    {
+      "label": "high",
+      "value": "high-43"
+    },
+    {
+      "label": "low",
+      "value": "low-44"
+    },
+    {
+      "label": "high",
+      "value": "high-45"
+    },
+    {
+      "label": "low",
+      "value": "low-46"
+    },
+    {
+      "label": "high",
+      "value": "high-47"
+    },
+    {
+      "label": "low",
+      "value": "low-48"
+    },
+    {
+      "label": "high",
+      "value": "high-49"
+    },
+    {
+      "label": "low",
+      "value": "low-50"
+    },
+    {
+      "label": "high",
+      "value": "high-51"
+    },
+    {
+      "label": "low",
+      "value": "low-52"
+    },
+    {
+      "label": "high",
+      "value": "high-53"
+    },
+    {
+      "label": "low",
+      "value": "low-54"
+    },
+    {
+      "label": "high",
+      "value": "high-55"
+    },
+    {
+      "label": "low",
+      "value": "low-56"
+    },
+    {
+      "label": "high",
+      "value": "high-57"
+    },
+    {
+      "label": "low",
+      "value": "low-58"
+    },
+    {
+      "label": "high",
+      "value": "high-59"
+    },
+    {
+      "label": "low",
+      "value": "low-60"
+    },
+    {
+      "label": "high",
+      "value": "high-61"
+    },
+    {
+      "label": "low",
+      "value": "low-62"
+    },
+    {
+      "label": "high",
+      "value": "high-63"
+    },
+    {
+      "label": "low",
+      "value": "low-64"
+    },
+    {
+      "label": "high",
+      "value": "high-65"
+    },
+    {
+      "label": "low",
+      "value": "low-66"
+    },
+    {
+      "label": "high",
+      "value": "high-67"
+    },
+    {
+      "label": "low",
+      "value": "low-68"
+    },
+    {
+      "label": "high",
+      "value": "high-69"
+    },
+    {
+      "label": "low",
+      "value": "low-70"
+    },
+    {
+      "label": "high",
+      "value": "high-71"
+    },
+    {
+      "label": "low",
+      "value": "low-72"
+    },
+    {
+      "label": "high",
+      "value": "high-73"
+    },
+    {
+      "label": "low",
+      "value": "low-74"
+    },
+    {
+      "label": "high",
+      "value": "high-75"
+    },
+    {
+      "label": "low",
+      "value": "low-76"
+    },
+    {
+      "label": "high",
+      "value": "high-77"
+    },
+    {
+      "label": "low",
+      "value": "low-78"
+    },
+    {
+      "label": "high",
+      "value": "high-79"
+    },
+    {
+      "label": "low",
+      "value": "low-80"
+    },
+    {
+      "label": "high",
+      "value": "high-81"
+    },
+    {
+      "label": "low",
+      "value": "low-82"
+    },
+    {
+      "label": "high",
+      "value": "high-83"
+    },
+    {
+      "label": "low",
+      "value": "low-84"
+    },
+    {
+      "label": "high",
+      "value": "high-85"
+    },
+    {
+      "label": "low",
+      "value": "low-86"
+    },
+    {
+      "label": "high",
+      "value": "high-87"
+    },
+    {
+      "label": "low",
+      "value": "low-88"
+    },
+    {
+      "label": "high",
+      "value": "high-89"
+    },
+    {
+      "label": "low",
+      "value": "low-90"
+    },
+    {
+      "label": "high",
+      "value": "high-91"
+    },
+    {
+      "label": "low",
+      "value": "low-92"
+    },
+    {
+      "label": "high",
+      "value": "high-93"
+    },
+    {
+      "label": "low",
+      "value": "low-94"
+    },
+    {
+      "label": "high",
+      "value": "high-95"
+    },
+    {
+      "label": "low",
+      "value": "low-96"
+    },
+    {
+      "label": "high",
+      "value": "high-97"
+    },
+    {
+      "label": "low",
+      "value": "low-98"
+    },
+    {
+      "label": "high",
+      "value": "high-99"
+    },
+    {
+      "label": "low",
+      "value": "low-100"
+    },
+    {
+      "label": "high",
+      "value": "high-101"
+    },
+    {
+      "label": "low",
+      "value": "low-102"
+    },
+    {
+      "label": "high",
+      "value": "high-103"
+    },
+    {
+      "label": "low",
+      "value": "low-104"
+    },
+    {
+      "label": "high",
+      "value": "high-105"
+    },
+    {
+      "label": "low",
+      "value": "low-106"
+    },
+    {
+      "label": "high",
+      "value": "high-107"
+    },
+    {
+      "label": "low",
+      "value": "low-108"
+    },
+    {
+      "label": "high",
+      "value": "high-109"
+    },
+    {
+      "label": "low",
+      "value": "low-110"
+    },
+    {
+      "label": "high",
+      "value": "high-111"
+    },
+    {
+      "label": "low",
+      "value": "low-112"
+    },
+    {
+      "label": "high",
+      "value": "high-113"
+    },
+    {
+      "label": "low",
+      "value": "low-114"
+    },
+    {
+      "label": "high",
+      "value": "high-115"
+    },
+    {
+      "label": "low",
+      "value": "low-116"
+    },
+    {
+      "label": "high",
+      "value": "high-117"
+    },
+    {
+      "label": "low",
+      "value": "low-118"
+    },
+    {
+      "label": "high",
+      "value": "high-119"
+    },
+    {
+      "label": "low",
+      "value": "low-120"
+    },
+    {
+      "label": "high",
+      "value": "high-121"
+    },
+    {
+      "label": "low",
+      "value": "low-122"
+    },
+    {
+      "label": "high",
+      "value": "high-123"
+    },
+    {
+      "label": "low",
+      "value": "low-124"
+    },
+    {
+      "label": "high",
+      "value": "high-125"
+    },
+    {
+      "label": "low",
+      "value": "low-126"
+    },
+    {
+      "label": "high",
+      "value": "high-127"
+    },
+    {
+      "label": "low",
+      "value": "low-128"
+    },
+    {
+      "label": "high",
+      "value": "high-129"
+    },
+    {
+      "label": "low",
+      "value": "low-130"
+    },
+    {
+      "label": "high",
+      "value": "high-131"
+    },
+    {
+      "label": "low",
+      "value": "low-132"
+    },
+    {
+      "label": "high",
+      "value": "high-133"
+    },
+    {
+      "label": "low",
+      "value": "low-134"
+    },
+    {
+      "label": "high",
+      "value": "high-135"
+    },
+    {
+      "label": "low",
+      "value": "low-136"
+    },
+    {
+      "label": "high",
+      "value": "high-137"
+    },
+    {
+      "label": "low",
+      "value": "low-138"
+    },
+    {
+      "label": "high",
+      "value": "high-139"
+    },
+    {
+      "label": "low",
+      "value": "low-140"
+    },
+    {
+      "label": "high",
+      "value": "high-141"
+    },
+    {
+      "label": "low",
+      "value": "low-142"
+    },
+    {
+      "label": "high",
+      "value": "high-143"
+    },
+    {
+      "label": "low",
+      "value": "low-144"
+    },
+    {
+      "label": "high",
+      "value": "high-145"
+    },
+    {
+      "label": "low",
+      "value": "low-146"
+    },
+    {
+      "label": "high",
+      "value": "high-147"
+    },
+    {
+      "label": "low",
+      "value": "low-148"
+    },
+    {
+      "label": "high",
+      "value": "high-149"
+    },
+    {
+      "label": "low",
+      "value": "low-150"
+    },
+    {
+      "label": "high",
+      "value": "high-151"
+    },
+    {
+      "label": "low",
+      "value": "low-152"
+    },
+    {
+      "label": "high",
+      "value": "high-153"
+    },
+    {
+      "label": "low",
+      "value": "low-154"
+    },
+    {
+      "label": "high",
+      "value": "high-155"
+    },
+    {
+      "label": "low",
+      "value": "low-156"
+    },
+    {
+      "label": "high",
+      "value": "high-157"
+    },
+    {
+      "label": "low",
+      "value": "low-158"
+    },
+    {
+      "label": "high",
+      "value": "high-159"
+    },
+    {
+      "label": "low",
+      "value": "low-160"
+    },
+    {
+      "label": "high",
+      "value": "high-161"
+    },
+    {
+      "label": "low",
+      "value": "low-162"
+    },
+    {
+      "label": "high",
+      "value": "high-163"
+    },
+    {
+      "label": "low",
+      "value": "low-164"
+    },
+    {
+      "label": "high",
+      "value": "high-165"
+    },
+    {
+      "label": "low",
+      "value": "low-166"
+    },
+    {
+      "label": "high",
+      "value": "high-167"
+    },
+    {
+      "label": "low",
+      "value": "low-168"
+    },
+    {
+      "label": "high",
+      "value": "high-169"
+    },
+    {
+      "label": "low",
+      "value": "low-170"
+    },
+    {
+      "label": "high",
+      "value": "high-171"
+    },
+    {
+      "label": "low",
+      "value": "low-172"
+    },
+    {
+      "label": "high",
+      "value": "high-173"
+    },
+    {
+      "label": "low",
+      "value": "low-174"
+    },
+    {
+      "label": "high",
+      "value": "high-175"
+    },
+    {
+      "label": "low",
+      "value": "low-176"
+    },
+    {
+      "label": "high",
+      "value": "high-177"
+    },
+    {
+      "label": "low",
+      "value": "low-178"
+    },
+    {
+      "label": "high",
+      "value": "high-179"
+    },
+    {
+      "label": "low",
+      "value": "low-180"
+    },
+    {
+      "label": "high",
+      "value": "high-181"
+    },
+    {
+      "label": "low",
+      "value": "low-182"
+    },
+    {
+      "label": "high",
+      "value": "high-183"
+    },
+    {
+      "label": "low",
+      "value": "low-184"
+    },
+    {
+      "label": "high",
+      "value": "high-185"
+    },
+    {
+      "label": "low",
+      "value": "low-186"
+    },
+    {
+      "label": "high",
+      "value": "high-187"
+    },
+    {
+      "label": "low",
+      "value": "low-188"
+    },
+    {
+      "label": "high",
+      "value": "high-189"
+    },
+    {
+      "label": "low",
+      "value": "low-190"
+    },
+    {
+      "label": "high",
+      "value": "high-191"
+    },
+    {
+      "label": "low",
+      "value": "low-192"
+    },
+    {
+      "label": "high",
+      "value": "high-193"
+    },
+    {
+      "label": "low",
+      "value": "low-194"
+    },
+    {
+      "label": "high",
+      "value": "high-195"
+    },
+    {
+      "label": "low",
+      "value": "low-196"
+    },
+    {
+      "label": "high",
+      "value": "high-197"
+    },
+    {
+      "label": "low",
+      "value": "low-198"
+    },
+    {
+      "label": "high",
+      "value": "high-199"
+    }
+  ],
+  "type": "chips"
+}

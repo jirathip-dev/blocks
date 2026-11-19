@@ -215,7 +215,7 @@ public struct Snapshot {
     private static func fit(_ n: TreeNode, _ width: CGFloat, _ at: String, _ out: inout [String]) {
         let here = "\(at)/\(who(n))"
         let r = rect(n)
-        if !(r.width > 0 && r.height > 0) { out.append("\(here): has no size") }
+        if n.drawn != .hidden, !(r.width > 0 && r.height > 0) { out.append("\(here): has no size") }
         if r.minX < -0.5 || r.maxX > width + 0.5 { out.append("\(here): leaves the screen's width") }
         let kids = n.children.filter { $0.drawn != .hidden }
         for (i, a) in kids.enumerated() {
