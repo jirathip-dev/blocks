@@ -1,0 +1,4 @@
+Decided: merged origin/staging; form submit keeps both data-action (this PR) and data-submit (staging), views.rs imports both behave and sends
+Because: web/src/render/form.ts:10
+Rejected: none
+Owner: The branch now sits on the latest staging with nothing lost from either side; tests still pass.
