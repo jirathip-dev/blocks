@@ -1,0 +1,5 @@
+Decided: merged origin/staging; staging split BlockCards.swift into per-kind files, so the card meta and badge text Shown moved into Kind/Card.swift and Components.swift
+Because: "Every renderer draws them the same"
+Rejected: none
+Check: swift/Sources/BlocksUI/Kind/Card.swift and Components.swift Pill draw through RelativeValue as BlockCards.swift did
+Owner: The branch is up to date with the latest shared work; nothing it does changes.
