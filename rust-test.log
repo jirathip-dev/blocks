@@ -1,0 +1,162 @@
+   Compiling blocks v0.1.0 (/Users/jkmacmini/.local/share/drover/work/blocks/issue-181/crates/blocks)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 10.58s
+     Running unittests src/lib.rs (/Users/jkmacmini/.local/share/herdsman/work/.build/blocks-impl-181/debug/deps/blocks-b54c918809cfa135)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/behave.rs (/Users/jkmacmini/.local/share/herdsman/work/.build/blocks-impl-181/debug/deps/behave-a90e2e2c3ea13052)
+
+running 3 tests
+test start_takes_the_screen_state_each_field_value_and_the_first_chip ... ok
+test site_writes_hidden_disabled_required_type_maxlength_and_bound_values_from_the_start_state ... ok
+test eval_gives_every_fixtures_behave_case_its_value ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.11s
+
+     Running tests/fixtures.rs (/Users/jkmacmini/.local/share/herdsman/work/.build/blocks-impl-181/debug/deps/fixtures-66ff744e8d9b3e3d)
+
+running 16 tests
+test built_of_writes_a_fallback_for_each_kind_a_client_may_not_draw ... ok
+test a_kind_with_no_stress_row_or_no_why_fails_the_table_check ... ok
+test check_finds_each_fault ... ok
+test check_refuses_an_id_twice_and_names_both_paths ... ok
+test a_stepper_must_name_its_current_step_or_be_done_and_never_carry_bars ... ok
+test an_insert_lands_before_then_after_then_at_the_end_as_cooee_draws_it ... ok
+test check_refuses_a_link_that_is_not_http_https_mailto_or_relative_naming_where ... ok
+test an_action_and_its_answer_travel_as_both_apps_send_them ... ok
+test the_queue_stream_patches_the_queue_by_id_as_cooee_reads_it ... ok
+test the_schema_and_the_types_refuse_a_core_kind_of_the_wrong_shape ... ok
+test every_golden_parses_with_no_fault ... ok
+test every_fixture_parses_into_the_types_and_serializes_back_equal ... ok
+test the_29_kinds_each_have_a_typed_sample_that_is_its_fixture ... ok
+test apply_of_the_diff_is_the_new_screen_for_every_pair_of_goldens ... ok
+test every_kind_has_a_stress_row_and_each_variant_is_its_file_and_valid ... ok
+test the_generated_schema_validates_every_fixture ... ok
+
+test result: ok. 16 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.64s
+
+     Running tests/layout.rs (/Users/jkmacmini/.local/share/herdsman/work/.build/blocks-impl-181/debug/deps/layout-cf05d0de0d4c74c3)
+
+running 6 tests
+test cooees_default_passes_with_cooees_contract_and_resolves_per_size ... ok
+test a_refusal_points_at_the_offending_text ... ok
+test a_served_layout_reads_back_the_same ... ok
+test merge_places_a_plugin_the_file_does_not_and_says_why_it_skips_the_rest ... ok
+test the_limits_are_refused ... ok
+test each_bad_fixture_is_refused_with_its_reason ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/perf.rs (/Users/jkmacmini/.local/share/herdsman/work/.build/blocks-impl-181/debug/deps/perf-81198e04b1c36a4e)
+
+running 6 tests
+test a_500_kb_screen_serializes_and_parses_under_budget ... ignored, release only: `just perf`
+test applying_the_ops_of_a_200_row_screen_stays_under_budget ... ignored, release only: `just perf`
+test checking_a_200_node_layout_stays_under_budget ... ignored, release only: `just perf`
+test diffing_a_200_row_screen_stays_under_budget ... ignored, release only: `just perf`
+test viewing_a_200_row_screen_with_a_show_on_every_block_stays_under_budget ... ignored, release only: `just perf`
+test writing_a_500_kb_screen_as_a_site_fragment_stays_under_budget ... ignored, release only: `just perf`
+
+test result: ok. 0 passed; 0 failed; 6 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/protocol.rs (/Users/jkmacmini/.local/share/herdsman/work/.build/blocks-impl-181/debug/deps/protocol-9d40530c30872a3b)
+
+running 2 tests
+test a_media_type_runs_at_the_lower_version_and_refuses_one_more_than_one_apart ... ok
+test the_mirror_runs_every_protocol_fixture ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+     Running tests/shelf.rs (/Users/jkmacmini/.local/share/herdsman/work/.build/blocks-impl-181/debug/deps/shelf-57e72d68b4d9cf3c)
+
+running 4 tests
+test old_turns_a_move_into_a_replace_of_its_parent_and_of_the_root_into_the_screen ... ok
+test a_state_is_current_the_rings_ops_the_whole_screen_or_gone ... ok
+test a_put_is_first_then_same_then_a_delta_on_the_rev_before ... ok
+test the_ring_keeps_sixteen_deltas_and_a_whole_screen_change_clears_it ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/sim.rs (/Users/jkmacmini/.local/share/herdsman/work/.build/blocks-impl-181/debug/deps/sim-f17810b5998c7306)
+
+running 6 tests
+test corpus ... ignored, the nightly corpus: `just sim [n]` writes it, then the TS and Swift runners read it
+test random_seeds ... ignored, the nightly batch: `just sim [n]`
+test the_forced_mismatch_corpus_names_its_shortest_differing_seed ... ok
+test no_expression_panics_and_each_reads_back ... ok
+test the_generated_fixtures_are_the_fixed_seeds_and_expressions ... ok
+test the_fixed_seeds_converge ... ok
+
+test result: ok. 4 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 1.52s
+
+     Running tests/site.rs (/Users/jkmacmini/.local/share/herdsman/work/.build/blocks-impl-181/debug/deps/site-3383c8f36db50330)
+
+running 18 tests
+test a_scene_lane_links_its_url_or_open_marks_any_other_tap_a_button_and_ticks_its_age ... ok
+test a_stepper_writes_done_now_and_to_do_steps_and_links_only_a_done_step_that_opens ... ok
+test a_web_block_whose_src_is_not_http_or_https_writes_a_muted_box_with_no_frame_or_link ... ok
+test from_form_reads_the_post_the_fixture_site_sends ... ok
+test a_link_that_is_not_http_https_mailto_or_relative_is_dropped_and_its_text_drawn ... ok
+test an_action_is_a_submit_of_a_form_that_posts_its_values ... ok
+test a_live_page_carries_the_screen_and_the_module_and_nothing_else ... ok
+test an_island_is_its_element_with_its_props_and_fallback_and_a_bad_name_a_plain_fallback ... ok
+test a_config_writes_each_field_as_a_settings_row_with_its_note_and_a_save_bar ... ok
+test a_lines_block_gets_a_fallback_named_by_its_label ... ok
+test editor_numbers_lines_from_first_and_marks_errors_on_and_off_the_excerpt ... ok
+test a_row_with_rounds_writes_its_fold_open_when_the_last_round_needs_you_and_folded_otherwise ... ok
+test bars_write_a_clamped_progressbar_each_and_no_steps_or_no_bars_write_the_fallback ... ok
+test a_page_links_only_the_stylesheets_it_is_given_and_a_sheet_tap_names_its_sheet ... ok
+test from_form_refuses_a_post_with_no_action_or_a_bad_escape ... ok
+test a_page_has_its_head_escaped_text_and_no_script_without_live ... ok
+test lines_mark_a_row_error_and_turn_remove_off_at_the_minimum ... ok
+test lines_work_out_calc_cells_and_totals_in_minor_units_and_check_the_balance ... ok
+
+test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/soak.rs (/Users/jkmacmini/.local/share/herdsman/work/.build/blocks-impl-181/debug/deps/soak-9a5dd37a07ad6691)
+
+running 1 test
+test a_streams_memory_stays_flat ... ignored, release only: `just soak`
+
+test result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/theme.rs (/Users/jkmacmini/.local/share/herdsman/work/.build/blocks-impl-181/debug/deps/theme-d8f1f14a86ffce9e)
+
+running 10 tests
+test the_default_pair_defines_every_required_token ... ok
+test css_sets_every_token_for_both_modes ... ok
+test the_default_pair_passes_the_gate_and_canonical_solarized_fails_it ... ok
+test every_good_style_fixture_reads_and_format_1_gets_the_default_space_and_motion ... ok
+test gate_gives_the_committed_misses_for_every_fixture_scheme ... ok
+test the_default_pair_and_style_are_the_approved_design ... ok
+test a_scheme_missing_a_token_or_with_a_bad_colour_does_not_parse ... ok
+test check_pack_refuses_a_broken_pack_with_each_reason ... ok
+test the_fixture_pack_passes_check_pack_on_the_schemes_given_and_only_those ... ok
+test each_bad_style_fixture_is_refused_with_its_reason ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/tree.rs (/Users/jkmacmini/.local/share/herdsman/work/.build/blocks-impl-181/debug/deps/tree-5f7451e279021ee7)
+
+running 3 tests
+test a_report_without_frame_timings_still_reads_and_writes_none ... ok
+test expect_marks_native_fallback_and_hidden_blocks_in_drawn_order ... ok
+test check_gives_the_committed_findings_for_each_failing_case ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/web.rs (/Users/jkmacmini/.local/share/herdsman/work/.build/blocks-impl-181/debug/deps/web-1cf9de94aa134001)
+
+running 1 test
+test the_bundle_exports_mount_and_carries_the_shell_style ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests blocks
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
