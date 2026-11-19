@@ -1,0 +1,5 @@
+Decided: shorten composer to its recorded 170 lines instead of raising the baseline
+Because: .drover/arch-baseline.txt:1
+Rejected: raising the baseline to 172 — the size ADR says recorded functions may not grow
+Check: CI rust arch-check passes; composer.ts is whitespace-only, behaviour unchanged
+Owner: Fixes a size-limit failure on staging that blocked every PR, with no behaviour change.
