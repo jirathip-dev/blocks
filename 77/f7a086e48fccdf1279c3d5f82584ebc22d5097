@@ -1,0 +1,23 @@
+Decided: the generator is its own workspace binary in site/, outside crates/*/src
+Because: .drover/arch.toml:154
+Rejected: crates/blocks-site — the std::fs ban covers crates/*/src/** and the generator must write files
+Decided: site::page lists only the stylesheets it is given and the generated pages link them relatively
+Because: "The site works under a sub-path (`/blocks/`): no URL assumes the domain root."
+Decided: the fallback-only group comes from the static renderer's data-fallback on each sample's root element
+Because: q2187
+Decided: adopt wears the stored look and opens the shell's look sheet for a data-sheet button; no stream when data-stream is empty
+Because: "the built-in default pair, light and dark, switched through the shell's look sheet"
+Check: web/test/pages/showcase.test.ts compares PNG and tree JS off vs adopted for all 31 pages under /blocks/
+Owner: GitHub Pages still has to be switched on for the repo by you; the workflow deploys only on a push to main.
+
+Decided: the generator is its own workspace binary in site/, outside crates/*/src
+Because: .drover/arch.toml:154
+Rejected: crates/blocks-site — the std::fs ban covers crates/*/src/** and the generator must write files
+Decided: site::page lists only the stylesheets it is given and the generated pages link them relatively
+Because: "The site works under a sub-path (`/blocks/`): no URL assumes the domain root."
+Decided: the fallback-only group comes from the static renderer's data-fallback on each sample's root element
+Because: q2187
+Decided: web/dist/blocks.js is regenerated after merging staging, never hand-merged
+Because: .drover/arch.toml:15
+Check: web/test/pages/showcase.test.ts compares PNG and tree JS off vs adopted for all 31 pages under /blocks/
+Owner: GitHub Pages still has to be switched on for the repo by you; the workflow deploys only on a push to main.
