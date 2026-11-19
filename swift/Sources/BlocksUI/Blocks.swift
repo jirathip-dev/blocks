@@ -183,7 +183,7 @@ internal struct BlockNode: View {
             case .hero(let hero): HeroBlock(block: hero)
             case .media(let media): MediaBlock(block: media)
             case .nav(let nav): NavBlock(block: nav)
-            case .island(let island): FallbackRow(fallback: island.fallback)
+            case .island(let island): IslandView(block: island)
             case .appBlock(let block): AppBlockView(block: block)
             }
         }

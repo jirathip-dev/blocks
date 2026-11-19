@@ -4,9 +4,9 @@ import { fallback, R, type Blk, isBlk, blks } from "./render/index.ts";
 
 type State = Record<string, Lit>;
 
-/// The kinds the HTML renderer draws natively: the others draw their fallback.
+/// The kinds the HTML renderer draws natively: the others, and an island with no component, draw their fallback.
 export const native: readonly string[] = Object.entries(R)
-  .filter(([, r]) => r !== fallback)
+  .filter(([k, r]) => r !== fallback && k !== "island")
   .map(([k]) => k);
 
 const isLit = (v: unknown): v is Lit => v === null || ["boolean", "number", "string"].includes(typeof v);

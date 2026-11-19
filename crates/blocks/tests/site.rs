@@ -276,3 +276,20 @@ fn a_web_block_whose_src_is_not_http_or_https_writes_a_muted_box_with_no_frame_o
     let b = Built::new(serde_json::json!({"type": "web", "id": "w", "src": "/doc", "height": 9}));
     assert!(site::fragment(&b, "/act").contains("<iframe"));
 }
+
+#[test]
+fn an_island_is_its_element_with_its_props_and_fallback_and_a_bad_name_a_plain_fallback() {
+    let island = |name: &str| {
+        let b = serde_json::json!({"type": "island", "id": "m", "name": name, "props": {"q": "<a&b>"}, "fallback": {"title": "The map"}});
+        site::fragment(&Built::new(b), "/act")
+    };
+    assert_eq!(
+        island("x-map"),
+        "<x-map class=\"b b-island\" data-block=\"island\" data-id=\"m\" data-fallback=\"\" data-props=\"{&#34;q&#34;:&#34;&#60;a&#38;b&#62;&#34;}\"><div class=\"row\" data-id=\"\"><span class=\"rm\"><span class=\"rt b-row__title\">The map</span></span></div></x-map>"
+    );
+    for bad in ["x map", "map", "X-map", "x-<b>", "1-x"] {
+        let h = island(bad);
+        assert!(h.starts_with("<div class=\"b b-island\""), "{bad:?}: {h}");
+        assert!(h.ends_with("</div></div>") && h.contains("The map"), "{bad:?}: {h}");
+    }
+}
