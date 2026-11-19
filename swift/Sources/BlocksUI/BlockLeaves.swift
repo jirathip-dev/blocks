@@ -41,6 +41,23 @@ internal struct ListBlock: View {
 
     internal var body: some View {
         let rows = block.rows
+        if let tiles = look.tiles {
+            VStack(spacing: tiles.seam) {
+                ForEach(Array(rows.enumerated()), id: \.offset) { _, row in
+                    if case .row(let line) = row {
+                        RowView(row: line).surface(look).modifier(Reordering(list: block, row: line))
+                            .modifier(Reported(block: row))
+                    } else {
+                        BlockNode(block: row)
+                    }
+                }
+            }
+        } else {
+            lines(rows)
+        }
+    }
+
+    private func lines(_ rows: [Block]) -> some View {
         VStack(spacing: 0) {
             ForEach(Array(rows.enumerated()), id: \.offset) { index, row in
                 if case .row(let line) = row {
@@ -62,7 +79,7 @@ internal struct StatBlock: View {
     internal let block: Stat
 
     internal var body: some View {
-        HStack(spacing: 10) {
+        HStack(spacing: look.tiles?.seam ?? 10) {
             if let items = block.items {
                 ForEach(Array(items.enumerated()), id: \.offset) { _, item in
                     tile(item.label, item.value, item.tone, item.unit, item.spark)
@@ -79,9 +96,11 @@ internal struct StatBlock: View {
         let palette = look.palette
         return VStack(alignment: .leading, spacing: 4) {
             Text(label ?? "").ui(12, .regular, look).foregroundStyle(palette.mute)
+                .fixedSize(horizontal: false, vertical: true)
             HStack(alignment: .firstTextBaseline, spacing: 4) {
                 RelativeValue { value?.text(at: $0) ?? "" }.ui(22, .semibold, look)
                     .foregroundStyle(palette.tone(tone?.rawValue) ?? palette.foreground)
+                    .fixedSize(horizontal: false, vertical: true)
                 if let unit { Text(unit).ui(13, .regular, look).foregroundStyle(palette.mute) }
             }
             if let spark, !spark.isEmpty {
@@ -142,7 +161,7 @@ internal struct ChipsBlock: View {
             selected ? look.palette.background : look.palette.foreground
         )
         .padding(.horizontal, 12).frame(height: 30)
-        .background(selected ? look.palette.lead : look.palette.edge.opacity(0.35), in: .capsule)
+        .background(selected ? look.palette.lead : look.palette.edge.opacity(0.35), in: look.pill)
     }
 
     private func pick(_ value: String, from selected: [String]) {

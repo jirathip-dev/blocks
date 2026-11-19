@@ -64,7 +64,7 @@ internal struct RowView: View {
         .contentShape(.rect)
         .overlay(alignment: .leading) {
             if row.changed == true {
-                RoundedRectangle(cornerRadius: 2).fill(palette.lead).frame(width: 3).padding(.vertical, 10)
+                RoundedRectangle(cornerRadius: look.radius(2)).fill(palette.lead).frame(width: 3).padding(.vertical, 10)
             }
         }
         .modifier(Lifted(lifted: row.lifted == true))
@@ -135,7 +135,7 @@ internal struct RowButton: View {
         ActButton(source: Source(button)) {
             Text(button.label).ui(13, .semibold, look).foregroundStyle(tint)
                 .padding(.horizontal, 12).frame(minHeight: 30)
-                .background(look.outline ? Color.clear : tint.opacity(0.16), in: .capsule)
+                .background(look.outline ? Color.clear : tint.opacity(0.16), in: look.pill)
         }
     }
 }
@@ -147,7 +147,7 @@ internal struct Lifted: ViewModifier {
     @ViewBuilder
     internal func body(content: Content) -> some View {
         if lifted {
-            content.background(look.palette.background, in: .rect(cornerRadius: 12))
+            content.background(look.palette.background, in: .rect(cornerRadius: look.radius(12)))
                 .shadow(color: .black.opacity(0.4), radius: 12, y: 8).scaleEffect(1.02).offset(y: -6).zIndex(1)
         } else {
             content

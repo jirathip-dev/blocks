@@ -1,4 +1,4 @@
-import type { Scheme } from "./gen/schemes.ts";
+import { defaultStyle, type Scheme } from "./gen/schemes.ts";
 import type { Figure } from "./gen/types.ts";
 
 export type ThemeJson = { label: string; scheme: { dark: string; light: string }; sprites: boolean; moments: boolean; words: Record<string, string> };
@@ -11,6 +11,9 @@ const TONE: Record<string, string> = { working: "g", needs: "r", fail: "r", done
 
 /// A scheme's tokens as CSS variables on `:root`, with its `color-scheme`.
 export const css = (s: Scheme): string => `:root{${Object.entries(s.tokens).map(([k, v]) => `${k}:${v}`).join(";")};color-scheme:${s["color-scheme"]}}`;
+
+/// The default tile style as CSS variables that any `:root` rule of the app's overrides.
+export const tiles = `:where(:root){${Object.entries(defaultStyle).map(([k, v]) => `${k}:${v}`).join(";")}}`;
 
 const tag = (name: string, cls: string, text = "") => {
   const e = document.createElement(name);
