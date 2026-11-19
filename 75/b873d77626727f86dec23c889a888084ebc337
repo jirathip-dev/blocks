@@ -1,0 +1,12 @@
+Decided: a core kind `lines` drawn by the web renderer, the static writer and SwiftUI, with totals summed in whole minor units and a debit = credit balance check
+Because: "Repeating rows of fields (e.g. account, description, qty, amount) with add and remove, a running total, per-row errors, and a balance check"
+Decided: `mul` in expr in all three languages, reached through a column's `calc` expression over its row's values
+Because: q2296
+Decided: the rows are on the wire as `items`, not `rows`
+Because: crates/blocks/src/built.rs:49
+Rejected: `rows` as in the design proposal — Built::check, the fallbacks and the tree treat `rows` as child blocks, so line rows would be checked as blocks
+Decided: the static writer writes the renderer's element, not a read-only table
+Because: web/test/site.test.ts:74
+Rejected: the design README's read-only table — site and render must give the same element per kind so the live page can adopt it without a redraw
+Check: totals and the balance agree across web/src/render/lines.ts, crates/blocks/src/site/lines.rs and swift/Sources/BlocksUI/BlockLines.swift (the same minor/money rules)
+Owner: journals, invoices and purchase requests can now be edited line by line, with totals and a balance check on every screen
