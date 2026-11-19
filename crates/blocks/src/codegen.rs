@@ -3,8 +3,8 @@ use std::path::Path;
 use serde_json::{Map, Value};
 
 use crate::{
-    layout, theme, Action, Answer, Block, Bye, Card, Child, Composer, ComposerChip, Frame, Hello, List, OldFrame, Op, Queued,
-    Row, Screen, Sync, Synced, Text, Tone, SCHEMA_VERSION,
+    layout, theme, Action, Answer, Block, Bye, Card, Child, Composer, ComposerChip, Frame, Hello, List, OldFrame, Op,
+    Queued, Row, Screen, Sync, Synced, Text, Tone, SCHEMA_VERSION,
 };
 
 /// The JSON Schema of a `Frame`; its `$defs` hold `Block`, `Op` and the stream's other messages.
