@@ -1,0 +1,13 @@
+Decided: one table, fixtures/stress/table.json, names per kind the text keys to lengthen and the list key to empty or repeat 200 times; a test in tests/fixtures.rs writes the 51 files from the kind samples and checks they match
+Because: "or written by a small generator under `tests/`: not product code, not counted by the cap"
+Decided: a row that leaves out a variant must carry a why, and a kind with no row or a row for no kind fails the test
+Because: crates/blocks/tests/fixtures.rs:591
+Decided: an empty list, chips, images or prose is not drawn (CSS :empty on the web, hidden in Swift), and the harness size check skips hidden blocks
+Because: web/shot/shot.ts:100
+Rejected: an "empty" placeholder text in those kinds — the schema has no empty-state copy; that would be a feature, not a small fix
+Decided: a sheet drawn as a block stacks its blocks in a scrolling column; the hero's buttons may wrap in Swift
+Because: web/src/blocks.css:239
+Decided: the 1440 run is a new job in the nightly sim.yml, not a per-PR job
+Because: "The 1440 run is in the nightly workflow, not a new per-PR job (q2196)."
+Check: list-empty, sheet-many and hero-long fail blocks-shot or blocks-snap --check on staging and pass here
+Owner: Every block kind now has long-text, empty and many-row samples that both renderers check at phone width; three layout bugs they found are fixed.
