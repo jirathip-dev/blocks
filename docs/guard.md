@@ -31,6 +31,7 @@ Then `.blocks/guard.json`, by hand. Unknown keys are refused (exit 2), so a typo
   `["node", "--no-warnings", "node_modules/@jirathip-dev/blocks/web/shot/cli.ts"]`; with none, `--render` and `--shot`
   are refused.
 - `inputs`: files or folders whose change, like one in `css` or `scripts`, has `--render` in a PR draw every fixture.
+- `examples`: fixture names `blocks skill` adds to the usage skill as examples; each must have no finding.
 
 Write each screen as `<screen>.<seed>.json` from the app's own builders over fixed data, and fail a test when a file
 is not what the builder writes today; then a changed builder is a changed file. On the adopting PR, run
@@ -46,6 +47,7 @@ is not what the builder writes today; then a changed builder is a changed file. 
 | `blocks check --render` | also draw each fixture in scope at 390x844 in one harness run and judge what its probes saw (`render/`, `css/`) |
 | `blocks check --tighten` | rewrite `.blocks/baseline/`: drop what is fixed, then judge again; with `--render` the drawn rules too |
 | `blocks check --shot <fixture>` | draw it at 390 and 1440 into `shots/<width>/<fixture>/`, with no probe and no verdict; repeatable |
+| `blocks skill --to <dir>` | write the usage skill of this pin (`skill/blocks/` in the blocks repo) into `<dir>`, plus a page per `examples` fixture; exit 1 when one has a finding |
 | `--format text\|json\|sarif`, `--out <file>` | the report: text (default), one `Outcome` as JSON, or SARIF 2.1.0; to stdout unless `--out` |
 
 Exit 0 clean, 1 a new error, 2 a broken setup (no config, a file that does not parse, an unknown flag, an ignore
