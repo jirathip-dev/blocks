@@ -1,0 +1,14 @@
+Decided: the pair and its style values are Rust literals in theme/scheme.rs, held by a test to the approved design JSON
+Because: crates/blocks/src/theme/scheme.rs:236
+Rejected: parsing a bundled JSON at run time — the parse returns a Result, and non-test code may not unwrap or panic
+Decided: the headless harness paints every run on the default pair, under any --css it is given
+Because: "blocks' own tests, fixtures and harness runs use the default pair instead of a named scheme"
+Decided: a later block fades in over 160 ms while the blocks below slide down, as the docs say
+Because: q2170
+Check: no test, fixture or harness default names one of the 12 schemes; the shot pixel test reads #f6f6f6
+Owner: blocks has its own grey look built in, and its tests and screenshots now use it instead of a named theme.
+
+Decided: merge origin/staging and rebuild web/dist/blocks.js from the merged sources instead of picking a side
+Because: web/package.json:7
+Rejected: none
+Owner: The theme branch is caught up with the latest shared work; nothing in the theme changed.
