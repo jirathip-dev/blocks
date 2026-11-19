@@ -1,0 +1,13 @@
+Decided: one `Rules` impl on `table` per language: a grab is a cell `{row, column}` or a row id, a change is a `CellEdit` or the new order, held equal by fixtures/gesture/table.json.
+Because: "Built on the approved gesture-to-action ADR from #136, with no new gesture rules outside it."
+Decided: a typed cell runs the same machine as a drag through a new `edited` driver (web) and `Typed` view (SwiftUI): focus presses, typing moves, Enter, Tab or leaving releases, Escape cancels.
+Because: docs/architecture/gestures/boundaries.md:126
+Decided: `calc` columns are worked out in column order, so Price can read the worked-out Cost, the same in Rust, TS and Swift.
+Because: docs/design/grid/data.js:17
+Decided: the grid sample is a second `table` sample, written as fixtures/blocks/table-grid.json with its own stress files, and shown on the gallery beside the invoices.
+Because: q2374
+Rejected: replacing the invoices sample with the grid — every existing table test reads it.
+Rejected: a draggable column width — the design leaves `width` to the app.
+Check: the static page and the live render give the same text per block; site.test now skips the handle column, which the static page never draws.
+Check: in Swift, the money and date formatting moved from BlocksUI into the Blocks module so the rules can speak a cell; BlocksUI keeps a label's time.
+Owner: tables can now be edited like a sheet: type into a cell, drag a row, see totals follow, on web and Apple.
