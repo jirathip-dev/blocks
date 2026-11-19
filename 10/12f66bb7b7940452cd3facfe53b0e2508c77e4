@@ -1,0 +1,4 @@
+Decided: merged origin/staging and kept both sides: diff and scene modules, match arms and tests; rebuilt web/dist from the merged sources
+Because: crates/blocks/src/site/mod.rs:3
+Rejected: none
+Owner: Brought the diff view up to date with the latest shared branch; nothing changes for users beyond the diff view itself.
