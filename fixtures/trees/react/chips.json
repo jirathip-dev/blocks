@@ -1,0 +1,9 @@
+{
+  "kind": "chips",
+  "id": "effort",
+  "variant": null,
+  "drawn": "fallback",
+  "role": "group",
+  "name": "effort",
+  "children": []
+}

@@ -1,0 +1,9 @@
+{
+  "kind": "table",
+  "id": "invoices",
+  "variant": null,
+  "drawn": "fallback",
+  "role": "group",
+  "name": "Invoices",
+  "children": []
+}

@@ -1,0 +1,9 @@
+{
+  "kind": "stat",
+  "id": "open",
+  "variant": null,
+  "drawn": "fallback",
+  "role": "group",
+  "name": "open",
+  "children": []
+}

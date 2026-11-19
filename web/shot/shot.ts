@@ -1,6 +1,8 @@
 import { readdirSync, readFileSync } from "node:fs";
+import { buildSync } from "esbuild";
 import { webkit } from "playwright";
 import { native } from "../src/render/native.ts";
+import { native as drawn } from "../react/src/view.ts";
 import { defaultPair } from "../src/gen/schemes.ts";
 import { tiles, css as wear } from "../src/theme.ts";
 import { tree } from "../src/core/tree.ts";
@@ -17,9 +19,12 @@ const ECHO = `customElements.define("x-echo", class extends HTMLElement {
 });`;
 const CHECKED = ["render/tree", "render/no-size", "render/overflow", "render/overlap", "render/no-name"];
 const PROBES = await Promise.all(readdirSync(new URL("./probe/", import.meta.url)).sort().map((f) => import(`./probe/${f}`)));
-const PAGE = (css, scripts) =>
+let bundled;
+/// The React boot (`shot/react.ts`) as one script that sets `window.R`, built once.
+export const reactJs = () => (bundled ??= buildSync({ entryPoints: [new URL("./react.ts", import.meta.url).pathname], bundle: true, format: "iife", globalName: "R", write: false, define: { "process.env.NODE_ENV": '"production"' } }).outputFiles[0].text);
+const PAGE = (css, scripts, adapter) =>
   `<!doctype html><meta charset=utf-8><link rel=stylesheet href=blocks.css><link rel=stylesheet href=look.css>${css.map((_, i) => `<link rel=stylesheet href=css/${i}>`).join("")}` +
-  `<body><div id=root></div><script type=module>import * as B from "./blocks.js"; window.B = B;</script><script>${ECHO}${at}</script>${scripts.map((_, i) => `<script src=js/${i}></script>`).join("")}`;
+  `<body><div id=root></div><script type=module>import * as B from "./blocks.js"; window.B = B;</script><script>${ECHO}${at}</script>${scripts.map((_, i) => `<script src=js/${i}></script>`).join("")}${adapter === "react" ? "<script src=react.js></script>" : ""}`;
 
 /// What the `css/` probes see in the stylesheet `file`, as `Seen`s.
 export const sheets = (file) => PROBES.filter((p) => p.sheet).flatMap((p) => p.sheet(readFileSync(file, "utf8")).map((s) => ({ rule: p.rule, at: "", file, ...s })));
@@ -39,15 +44,16 @@ function boot(screen) {
     apps: window.blocksApps,
     held: new Map(),
   };
-  const sync = B.behave(root, () => h.model);
-  h.paint = () => (root.replaceChildren(...[B.render(h.model, ctx)].filter(Boolean)), sync());
+  const R = window.R, out = { sent: (a) => (h.sent.push(a), true), dropped: (w) => h.dropped.push(w) };
+  const sync = R ? () => {} : B.behave(root, () => h.model);
+  h.paint = R ? () => (h.react ? h.react.set(h.model) : (h.react = R.boot(root, h.model, out))) : () => (root.replaceChildren(...[B.render(h.model, ctx)].filter(Boolean)), sync());
   h.ops = (ops) => ((h.model = (ops?.length && B.apply(h.model, ops)) || h.model), h.paint());
   h.patch = [];
   const p = B.patcher({ root, draw: (b) => B.render(b, ctx), model: () => ((h.t = performance.now()), h.model), saved: () => (sync(), h.patch.push(performance.now() - h.t)) });
   h.frame = (f) => {
     const next = f.screen ?? (f.ops?.length && B.apply(h.model, f.ops));
     if (next) h.model = next;
-    if (f.screen) h.paint();
+    if (f.screen || R) h.paint();
     else if (next) p.queue(f.ops);
   };
   h.meter = () => {
@@ -104,7 +110,7 @@ function boot(screen) {
 }
 
 /// Draws `screen` in WebKit in `scheme`, runs `steps`, and gives each shot's PNG and tree, the report, what the probes saw and the failed checks.
-export async function shot({ screen, steps = [], name = "shot", size = "390x844", css = [], scripts = [], kinds = [], expect, ids, check = false, probes = false, scheme = "light", look = false, browser }) {
+export async function shot({ screen, steps = [], name = "shot", size = "390x844", css = [], scripts = [], kinds = [], expect, ids, check = false, probes = false, scheme = "light", look = false, adapter = "html", browser }) {
   const [width, height] = size.split("x").map(Number);
   const own = browser ?? (await webkit.launch());
   const page = await own.newPage({ viewport: { width, height }, colorScheme: scheme });
@@ -112,8 +118,9 @@ export async function shot({ screen, steps = [], name = "shot", size = "390x844"
     await page.route("**/*", (r) => {
       const p = r.request().url().slice(BASE.length);
       if (!r.request().url().startsWith(BASE)) return r.abort();
-      if (p === "") return r.fulfill({ body: PAGE(css, scripts), contentType: "text/html" });
+      if (p === "") return r.fulfill({ body: PAGE(css, scripts, adapter), contentType: "text/html" });
       if (p.startsWith("js/")) return r.fulfill({ body: readFileSync(scripts[Number(p.slice(3))]), contentType: "text/javascript" });
+      if (p === "react.js") return r.fulfill({ body: reactJs(), contentType: "text/javascript" });
       if (p === "look.css") return r.fulfill({ body: LOOK, contentType: "text/css" });
       if (p.startsWith("css/")) return r.fulfill({ body: readFileSync(css[Number(p.slice(4))]), contentType: "text/css" });
       if (p === "blocks.js" || p === "blocks.css") return r.fulfill({ body: dist(p), contentType: p.endsWith(".css") ? "text/css" : "text/javascript" });
@@ -154,7 +161,7 @@ export async function shot({ screen, steps = [], name = "shot", size = "390x844"
         pngs[n] = await page.screenshot();
         trees[n] = await page.evaluate(() => window.h.dump());
         report.shots.push(n);
-        const want = expect ?? (probes ? tree(await page.evaluate(() => window.h.model), [...native, ...kinds]) : undefined);
+        const want = expect ?? (probes ? tree(await page.evaluate(() => window.h.model), [...(adapter === "react" ? drawn : native), ...kinds]) : undefined);
         const cx = { page, width, tree: trees[n], want, blocks: trees[n] ? blocks(trees[n]) : [] };
         for (const p of PROBES.filter((p) => p.shot && (probes || (check && CHECKED.includes(p.rule))))) seen.push(...(await p.shot(cx)).map((s) => ({ rule: p.rule, shot: n, ...s })));
         if (check && look) faults.push(...measure(pngs[n], trees[n], defaultPair[scheme].tokens, await declared(page)).map((f) => `${n}: ${f}`));

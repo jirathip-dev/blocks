@@ -17,12 +17,13 @@ const { values: a } = parseArgs({
     check: { type: "boolean", default: false },
     scheme: { type: "string", default: "light" },
     measure: { type: "boolean", default: false },
+    adapter: { type: "string", default: "html" },
     out: { type: "string" },
   },
 });
 if (!a.plan && (!a.screen || !a.out)) {
   process.stderr.write(
-    "usage: blocks-shot --plan <plan.json> | --screen <file> [--size 390x844] [--css <file>]… [--script <steps.json>] [--expect <tree.json>] [--ids <ids.json>] [--check] [--scheme light|dark] [--measure] --out <dir>\n",
+    "usage: blocks-shot --plan <plan.json> | --screen <file> [--size 390x844] [--css <file>]… [--script <steps.json>] [--expect <tree.json>] [--ids <ids.json>] [--check] [--scheme light|dark] [--measure] [--adapter html|react] --out <dir>\n",
   );
   process.exit(2);
 }
@@ -69,6 +70,7 @@ const run = await shot({
   check: a.check,
   scheme: a.scheme,
   look: a.measure,
+  adapter: a.adapter,
 });
 save(a.out, run);
 for (const f of a.check ? [...run.faults, ...a.css.flatMap((f) => sheets(f).map((s) => `${s.file}:${s.line}: ${s.rule}: ${s.detail}`))] : run.faults) process.stderr.write(`${f}\n`);

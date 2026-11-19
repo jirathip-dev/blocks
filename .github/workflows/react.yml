@@ -1,0 +1,23 @@
+name: react
+on:
+  push:
+    branches: [main, staging]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  react:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: "Playwright's WebKit for blocks-shot --adapter react"
+        run: npm --prefix web ci --no-audit --no-fund && npx --prefix web playwright install --with-deps webkit
+      - name: "typecheck and lint web/react/src (tsc --strict, lint.mjs)"
+        run: npm --prefix web run check && npm --prefix web run lint
+      - name: "the adapter contract: fixtures/trees/react and fixtures/ids through blocks-shot --adapter react --check at 390 and 1440, then the frame's cases in WebKit (a thrown block, confirm, busy, local state, islands)"
+        run: npm --prefix web run test:react
