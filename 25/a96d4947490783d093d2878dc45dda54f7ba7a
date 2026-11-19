@@ -1,0 +1,27 @@
+Decided: the PR is the approved ADR in docs/architecture/desktop/ alone; no renderer code and no shared-file edit
+Because: q2289
+Because: docs/architecture/desktop/adr.md:150
+Decided: the .drover/arch.toml, deny.toml, Cargo.toml and docs/deps.md lines wait for S1 (#144), which owns every shared-file edit
+Because: docs/architecture/desktop/design.md:184
+Rejected: building all six slices here — the orchestrator filed them as #144 to #149 behind the cap raise #143, so they would be built twice
+Rejected: adding the arch.toml lines now — #144 makes them, and two PRs would edit one shared file
+Check: the diff against staging is the five files under docs/architecture/desktop/ and nothing else
+Owner: The plan for the desktop renderer is recorded; the renderer itself comes in six follow-up changes after the cap raise.
+
+Decided: the PR stays the approved ADR in docs/architecture/desktop/ alone; no renderer code and no shared-file edit
+Because: q2289
+Because: docs/architecture/desktop/adr.md:150
+Decided: the round-2 perf miss (HTML write 10.8 ms of 10 ms) is runner noise on code this PR does not touch; merged origin/staging and re-ran CI instead of changing code or budgets
+Because: crates/blocks/tests/perf.rs:36
+Rejected: raising the HTML perf budget — out of scope for a docs-only PR, and it passes at 4.4 ms locally
+Check: the diff against staging is the five files under docs/architecture/desktop/ and nothing else, and CI's rust job is green at the new head
+Owner: The plan for the desktop renderer is recorded; a timing check that fails on code this change doesn't touch was run again.
+
+Decided: the PR stays the approved ADR in docs/architecture/desktop/ alone; no renderer code and no shared-file edit
+Because: q2289
+Because: docs/architecture/desktop/adr.md:150
+Decided: the round-3 perf miss (HTML write 10.7 ms of 10 ms) is on code this PR does not touch; merged origin/staging, which carries the site writer speed-up from #199
+Because: crates/blocks/tests/perf.rs:36
+Rejected: raising the HTML perf budget — out of scope for a docs-only PR, and it passes at 4.4 ms locally
+Check: the diff against staging is the five files under docs/architecture/desktop/ and nothing else, and CI's rust job is green at the new head
+Owner: The plan for the desktop renderer is recorded; a timing check that failed on code this change doesn't touch was rerun on top of the latest speed-up.
