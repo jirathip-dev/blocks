@@ -1,0 +1,6 @@
+Decided: merged origin/staging, keeping both the steps site tests and staging's link test in the site test file.
+Because: crates/blocks/tests/site.rs:298
+Decided: web/dist/blocks.js is rebuilt from the merged sources, never hand-merged.
+Rejected: taking either side of web/dist/blocks.js — it is a bundle, so each side alone drops the other's code.
+Check: cargo test, the web suite and the showcase page test pass on the merged tree.
+Owner: The stepper branch is up to date with the latest shared work again.
