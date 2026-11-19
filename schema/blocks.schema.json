@@ -643,6 +643,18 @@
         }
       ]
     },
+    "Bye": {
+      "description": "The stream's last event, and why it ends.",
+      "properties": {
+        "why": {
+          "$ref": "#/$defs/Why"
+        }
+      },
+      "required": [
+        "why"
+      ],
+      "type": "object"
+    },
     "Card": {
       "additionalProperties": true,
       "description": "A card: an ask, a run, a config or a proposal.",
@@ -1785,6 +1797,55 @@
       ],
       "type": "object"
     },
+    "Have": {
+      "description": "A key a client opens, with the rev of its copy when that copy came from the same epoch.",
+      "properties": {
+        "k": {
+          "type": "string"
+        },
+        "rev": {
+          "format": "uint64",
+          "minimum": 0,
+          "type": [
+            "integer",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "k"
+      ],
+      "type": "object"
+    },
+    "Hello": {
+      "description": "The stream's first event: the version it runs at, the stream's id, the server's epoch and its key limit.",
+      "properties": {
+        "epoch": {
+          "type": "string"
+        },
+        "keys": {
+          "format": "uint",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "sid": {
+          "type": "string"
+        },
+        "v": {
+          "format": "uint8",
+          "maximum": 255,
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "v",
+        "sid",
+        "epoch",
+        "keys"
+      ],
+      "type": "object"
+    },
     "Hero": {
       "additionalProperties": true,
       "description": "A page's opening: a title, a line, a picture and its actions.",
@@ -2023,6 +2084,54 @@
           ]
         }
       },
+      "type": "object"
+    },
+    "KeyState": {
+      "description": "A key as the server holds it: current (rev only), the ops since the rev sent, the whole screen, or gone.",
+      "properties": {
+        "gone": {
+          "format": "uint16",
+          "maximum": 65535,
+          "minimum": 0,
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "k": {
+          "type": "string"
+        },
+        "ops": {
+          "items": {
+            "$ref": "#/$defs/Op"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "rev": {
+          "format": "uint64",
+          "minimum": 0,
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "screen": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Block"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "k"
+      ],
       "type": "object"
     },
     "Keyboard": {
@@ -2411,6 +2520,27 @@
           ]
         }
       },
+      "type": "object"
+    },
+    "OldFrame": {
+      "description": "A frame of the old per-screen stream, `{\"seq\", \"ops\"}`, as cooee reads it today.",
+      "properties": {
+        "ops": {
+          "items": {
+            "$ref": "#/$defs/Op"
+          },
+          "type": "array"
+        },
+        "seq": {
+          "format": "uint64",
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "seq",
+        "ops"
+      ],
       "type": "object"
     },
     "Op": {
@@ -3682,6 +3812,43 @@
       ],
       "type": "object"
     },
+    "Sync": {
+      "description": "A client's request: the keys to open, each with the rev it holds, and the keys to close.",
+      "properties": {
+        "close": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "open": {
+          "items": {
+            "$ref": "#/$defs/Have"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "open"
+      ],
+      "type": "object"
+    },
+    "Synced": {
+      "description": "The server's answer to a `Sync`: one state per key opened.",
+      "properties": {
+        "keys": {
+          "items": {
+            "$ref": "#/$defs/KeyState"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "keys"
+      ],
+      "type": "object"
+    },
     "Tap": {
       "description": "What a tap does: open a screen or sheet, send an action, open a thread or a URL, focus, copy.",
       "properties": {
@@ -3969,27 +4136,60 @@
         "height"
       ],
       "type": "object"
+    },
+    "Why": {
+      "description": "Why a stream was ended by the server.",
+      "enum": [
+        "evicted",
+        "unpaired",
+        "handover"
+      ],
+      "type": "string"
     }
   },
   "$id": "https://github.com/jirathip-dev/blocks/schema/v1",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "description": "One message on a device stream: its sequence number and its ops; one that starts with `screen` stands alone.",
+  "description": "One key's change: ops that apply only on rev `from`, or with no `from` the whole screen.",
   "properties": {
+    "from": {
+      "format": "uint64",
+      "minimum": 0,
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "k": {
+      "type": "string"
+    },
     "ops": {
       "items": {
         "$ref": "#/$defs/Op"
       },
-      "type": "array"
+      "type": [
+        "array",
+        "null"
+      ]
     },
-    "seq": {
+    "rev": {
       "format": "uint64",
       "minimum": 0,
       "type": "integer"
+    },
+    "screen": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Block"
+        },
+        {
+          "type": "null"
+        }
+      ]
     }
   },
   "required": [
-    "seq",
-    "ops"
+    "k",
+    "rev"
   ],
   "title": "Frame",
   "type": "object"

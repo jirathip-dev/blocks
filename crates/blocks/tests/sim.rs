@@ -1,61 +1,135 @@
 mod support;
 
+use std::collections::{BTreeMap, VecDeque};
+
 use blocks::expr::{eval, Expr, Lit, Match, Pattern, State};
-use blocks::{apply, diff, Replica, Stream};
+use blocks::{apply, diff, Block, Frame, Have, Hello, Mirror, Put, Shelf, Synced, Took};
 use serde_json::Number;
 use support::{mutate, screen, Rng};
 
 const SEEDS: &[u64] = &[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
+const K: &str = "/screens/sim";
 
 fn env(key: &str) -> Option<u64> {
     std::env::var(key).ok()?.parse().ok()
 }
 
+enum Msg {
+    Frame(Frame),
+    Reply(Vec<Have>, Synced),
+}
+
+struct Net {
+    shelf: Shelf<u8>,
+    epoch: u64,
+    seen: BTreeMap<u64, Block>,
+    wire: VecDeque<Msg>,
+}
+
+impl Net {
+    fn ask(&mut self, have: Vec<Have>) -> Result<(), String> {
+        let keys = have
+            .iter()
+            .map(|h| self.shelf.state(&0, &h.k, h.rev).map_err(|e| e.to_string()))
+            .collect::<Result<_, _>>()?;
+        self.wire.push_back(Msg::Reply(have, Synced { keys }));
+        Ok(())
+    }
+
+    fn hello(&mut self, m: &mut Mirror) -> Result<(), String> {
+        self.wire.clear();
+        let h = Hello {
+            v: 1,
+            sid: "sid".into(),
+            epoch: format!("e{}", self.epoch),
+            keys: 16,
+        };
+        m.hello(&h).map_err(|e| e.to_string())?;
+        self.ask(m.have())
+    }
+
+    fn take(&mut self, m: &mut Mirror, msg: Msg) -> Result<(), String> {
+        let took = match msg {
+            Msg::Frame(f) => vec![m.frame(f)],
+            Msg::Reply(sent, s) => m.synced(&sent, s),
+        };
+        if took.contains(&Took::Gap) {
+            self.ask(m.have())?;
+        }
+        if took.iter().any(|t| matches!(t, Took::Patched | Took::Replaced)) {
+            let rev = m.have().first().and_then(|h| h.rev).ok_or("applied but holds no rev")?;
+            if m.screen(K) != self.seen.get(&rev) {
+                return Err(format!("the mirror's rev {rev} is not the shelf's"));
+            }
+        }
+        Ok(())
+    }
+}
+
 fn run(seed: u64) -> Result<(), String> {
     let mut rng = Rng::new(seed);
     let rows = rng.below(30);
-    let first = screen(&mut rng, rows, 6);
-    let mut truth = first.clone();
-    let mut stream = Stream::new(first, rng.below(8));
-    let mut replica = Replica::default();
-    let (mut connected, mut fresh) = (false, 0);
+    let mut truth = screen(&mut rng, rows, 6);
+    let mut net = Net {
+        shelf: Shelf::default(),
+        epoch: 0,
+        seen: BTreeMap::from([(1, truth.clone())]),
+        wire: VecDeque::new(),
+    };
+    net.shelf.put(&0, K, &truth).map_err(|e| e.to_string())?;
+    let mut m = Mirror::default();
+    m.open(K);
+    net.hello(&mut m)?;
+    let mut fresh = 0;
     for step in 0..300 {
-        match rng.below(10) {
-            0 => connected = false,
-            1 | 2 if !connected => {
-                let from = if rng.below(3) == 0 { None } else { replica.seq };
-                for f in stream.resume(from) {
-                    replica
-                        .receive(&f)
-                        .map_err(|e| format!("step {step}: resume from {from:?}: {e}"))?;
+        let at = |e: String| format!("step {step}: {e}");
+        match rng.below(20) {
+            0 => net.hello(&mut m).map_err(at)?,
+            1 => {
+                net.epoch += 1;
+                net.shelf = Shelf::default();
+                net.shelf.put(&0, K, &truth).map_err(|e| at(e.to_string()))?;
+                net.seen = BTreeMap::from([(1, truth.clone())]);
+                net.hello(&mut m).map_err(at)?;
+            }
+            2..=9 if !net.wire.is_empty() => {
+                let i = if rng.below(4) == 0 {
+                    rng.below(net.wire.len())
+                } else {
+                    0
+                };
+                if let Some(msg) = net.wire.remove(i) {
+                    net.take(&mut m, msg).map_err(at)?;
                 }
-                connected = true;
             }
             _ => {
                 let edits = 1 + rng.below(6);
-                let next = mutate(&mut rng, &truth, &mut fresh, edits);
+                let later = mutate(&mut rng, &truth, &mut fresh, edits);
                 let mut applied = truth.clone();
-                apply(&mut applied, &diff(&truth, &next)).map_err(|e| format!("step {step}: diff/apply: {e}"))?;
-                if applied != next {
-                    return Err(format!("step {step}: apply(diff(a, b), a) is not b"));
+                apply(&mut applied, &diff(&truth, &later)).map_err(|e| at(format!("diff/apply: {e}")))?;
+                if applied != later {
+                    return Err(at("apply(diff(a, b), a) is not b".into()));
                 }
-                let frame = stream.push(next.clone());
-                truth = next;
-                if connected {
-                    replica
-                        .receive(&frame)
-                        .map_err(|e| format!("step {step}: live frame: {e}"))?;
+                truth = later;
+                if let Put::Changed(d) = net.shelf.put(&0, K, &truth).map_err(|e| at(e.to_string()))? {
+                    net.seen.insert(d.rev, truth.clone());
+                    let f: Frame = serde_json::from_str(&d.frame).map_err(|e| at(e.to_string()))?;
+                    let copies = [0, 1, 1, 1, 1, 1, 1, 1, 2, 2][rng.below(10)];
+                    (0..copies).for_each(|_| net.wire.push_back(Msg::Frame(f.clone())));
                 }
             }
         }
     }
-    for f in stream.resume(replica.seq) {
-        replica.receive(&f).map_err(|e| format!("final resume: {e}"))?;
+    for _ in 0..4 {
+        while let Some(msg) = net.wire.pop_front() {
+            net.take(&mut m, msg).map_err(|e| format!("drain: {e}"))?;
+        }
+        if m.screen(K) == Some(&truth) {
+            return Ok(());
+        }
+        net.ask(m.have())?;
     }
-    if replica.screen.as_ref() != Some(&truth) {
-        return Err("the replica did not converge to the stream's screen".into());
-    }
-    Ok(())
+    Err("the mirror did not converge to the shelf's screen".into())
 }
 
 fn lit(rng: &mut Rng) -> Lit {

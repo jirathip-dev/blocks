@@ -1,0 +1,107 @@
+{
+  "why": "a key the server has no screen for is dropped; a key that was never opened is ignored",
+  "v": 1,
+  "steps": [
+    {
+      "hello": {
+        "v": 1,
+        "sid": "s1",
+        "epoch": "e1",
+        "keys": 16
+      },
+      "outdated": null
+    },
+    {
+      "open": "/screens/queue"
+    },
+    {
+      "open": "/screens/nope"
+    },
+    {
+      "sent": [
+        {
+          "k": "/screens/queue"
+        },
+        {
+          "k": "/screens/nope"
+        }
+      ],
+      "synced": {
+        "keys": [
+          {
+            "k": "/screens/queue",
+            "rev": 1,
+            "screen": {
+              "type": "screen",
+              "id": "s",
+              "title": "Queue",
+              "blocks": [
+                {
+                  "type": "list",
+                  "id": "l",
+                  "rows": [
+                    {
+                      "type": "row",
+                      "id": "a",
+                      "title": "A"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "k": "/screens/nope",
+            "gone": 404
+          },
+          {
+            "k": "/screens/never",
+            "rev": 1,
+            "screen": {
+              "type": "screen",
+              "id": "s",
+              "title": "Queue",
+              "blocks": [
+                {
+                  "type": "list",
+                  "id": "l",
+                  "rows": [
+                    {
+                      "type": "row",
+                      "id": "b",
+                      "title": "B"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "took": [
+        "replaced",
+        "old",
+        "old"
+      ]
+    },
+    {
+      "have": [
+        {
+          "k": "/screens/queue",
+          "rev": 1
+        }
+      ]
+    },
+    {
+      "close": "/screens/queue"
+    },
+    {
+      "have": []
+    }
+  ],
+  "screens": {
+    "/screens/queue": null,
+    "/screens/nope": null,
+    "/screens/never": null
+  }
+}

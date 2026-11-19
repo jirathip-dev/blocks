@@ -1,0 +1,91 @@
+{
+  "why": "a client at 2 reads a server at 1: the stream runs at 1",
+  "v": 2,
+  "steps": [
+    {
+      "hello": {
+        "v": 1,
+        "sid": "s1",
+        "epoch": "e1",
+        "keys": 16
+      },
+      "outdated": null
+    },
+    {
+      "open": "/screens/queue"
+    },
+    {
+      "sent": [
+        {
+          "k": "/screens/queue"
+        }
+      ],
+      "synced": {
+        "keys": [
+          {
+            "k": "/screens/queue",
+            "rev": 1,
+            "screen": {
+              "type": "screen",
+              "id": "s",
+              "title": "Queue",
+              "blocks": [
+                {
+                  "type": "list",
+                  "id": "l",
+                  "rows": [
+                    {
+                      "type": "row",
+                      "id": "a",
+                      "title": "A"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "took": [
+        "replaced"
+      ]
+    },
+    {
+      "frame": {
+        "k": "/screens/queue",
+        "from": 1,
+        "rev": 2,
+        "ops": [
+          {
+            "op": "merge",
+            "id": "a",
+            "fields": {
+              "title": "A2"
+            }
+          }
+        ]
+      },
+      "took": "patched"
+    }
+  ],
+  "screens": {
+    "/screens/queue": {
+      "type": "screen",
+      "id": "s",
+      "title": "Queue",
+      "blocks": [
+        {
+          "type": "list",
+          "id": "l",
+          "rows": [
+            {
+              "type": "row",
+              "id": "a",
+              "title": "A2"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -53,6 +53,7 @@ web-install:
 web: web-install
     npm --prefix web run check
     npm --prefix web run lint
+    npm --prefix web run test
 
 # Layers, bans, sizes, frozen and generated files; BASE and PR_BODY narrow the comment and doc checks to a PR.
 arch:

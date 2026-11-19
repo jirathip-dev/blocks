@@ -24,20 +24,9 @@ fn ids(list: &[Block]) -> Option<HashMap<&str, (usize, &Block)>> {
     Some(seen)
 }
 
-fn kids(b: &Block) -> Option<&Vec<Block>> {
-    match b {
-        Block::Screen(x) => x.blocks.as_ref(),
-        Block::Sheet(x) => Some(&x.blocks),
-        Block::Section(x) => Some(&x.blocks),
-        Block::List(x) => Some(&x.rows),
-        Block::Card(x) => x.blocks.as_ref(),
-        _ => None,
-    }
-}
-
 fn list_ops(old: &Block, new: &Block) -> Option<Vec<Op>> {
     let into = new.id().filter(|id| old.id() == Some(id))?;
-    let (was, now) = (kids(old)?, kids(new)?);
+    let (was, now) = (old.kids()?, new.kids()?);
     let (by_id, _) = (ids(was)?, ids(now)?);
     let kept: Vec<(usize, &str)> = now
         .iter()

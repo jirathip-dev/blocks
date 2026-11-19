@@ -1,0 +1,85 @@
+{
+  "why": "a client at 1 told v 2 (the server's lowest) is too far behind: update the app, no sync",
+  "v": 1,
+  "steps": [
+    {
+      "open": "/screens/queue"
+    },
+    {
+      "hello": {
+        "v": 2,
+        "sid": "s1",
+        "epoch": "e1",
+        "keys": 16
+      },
+      "outdated": "app"
+    },
+    {
+      "have": []
+    },
+    {
+      "frame": {
+        "k": "/screens/queue",
+        "rev": 1,
+        "screen": {
+          "type": "screen",
+          "id": "s",
+          "title": "Queue",
+          "blocks": [
+            {
+              "type": "list",
+              "id": "l",
+              "rows": [
+                {
+                  "type": "row",
+                  "id": "a",
+                  "title": "A"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "took": "old"
+    },
+    {
+      "sent": [
+        {
+          "k": "/screens/queue"
+        }
+      ],
+      "synced": {
+        "keys": [
+          {
+            "k": "/screens/queue",
+            "rev": 1,
+            "screen": {
+              "type": "screen",
+              "id": "s",
+              "title": "Queue",
+              "blocks": [
+                {
+                  "type": "list",
+                  "id": "l",
+                  "rows": [
+                    {
+                      "type": "row",
+                      "id": "a",
+                      "title": "A"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "took": [
+        "old"
+      ]
+    }
+  ],
+  "screens": {
+    "/screens/queue": null
+  }
+}

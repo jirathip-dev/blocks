@@ -17,7 +17,7 @@ extension Block {
     }
 }
 
-/// The receiving side, as the crate's `Replica`: the screen as of the last frame applied, its badge and dot.
+/// The old per-screen stream's receiving side: the screen as of the last `OldFrame` applied, its badge and dot.
 public struct Replica: Equatable, Sendable {
     public private(set) var screen: Block?
     public private(set) var seq: UInt64?
@@ -27,7 +27,7 @@ public struct Replica: Equatable, Sendable {
     public init() {}
 
     /// Applies `frame`; one that does not start with `screen` must follow the last one applied, else nothing changes.
-    public mutating func receive(_ frame: Frame) throws(ApplyError) {
+    public mutating func receive(_ frame: OldFrame) throws(ApplyError) {
         let want = seq.map { min($0, .max - 1) + 1 } ?? 0
         var next: Block
         if case .screen(let whole)? = frame.ops.first {

@@ -105,7 +105,7 @@ final class ApplyTests: XCTestCase {
 
     func testReplicaFollowsFramesInOrderAndAsksAgainOnAGap() throws {
         let frames = try JSONDecoder().decode(
-            [Frame].self,
+            [OldFrame].self,
             from: Data(
                 """
                 [{"seq": 0, "ops": [{"op": "screen", "screen": \(base)}]},
@@ -131,7 +131,7 @@ final class ApplyTests: XCTestCase {
         let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent().appendingPathComponent("../../..")
         let data = try Data(contentsOf: root.appendingPathComponent("schema/sample.json"))
         var replica = Replica()
-        for frame in try JSONDecoder().decode([Frame].self, from: data) { try replica.receive(frame) }
+        for frame in try JSONDecoder().decode([OldFrame].self, from: data) { try replica.receive(frame) }
         XCTAssertTrue(replica.dot)
     }
 }

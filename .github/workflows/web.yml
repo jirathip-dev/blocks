@@ -1,0 +1,24 @@
+name: web
+on:
+  push:
+    branches: [main, staging]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: just
+      - name: "typecheck (tsc --strict), lint.mjs on web/src, and node --test: fixtures/protocol, stream.ts and patch.ts"
+        run: just web
+      - name: "lint fixtures (each web/lint-fixtures/<name>.ts fails lint.mjs; clean.ts passes)"
+        run: scripts/lint-fixtures.sh ts

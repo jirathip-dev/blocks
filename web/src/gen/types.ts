@@ -1,6 +1,6 @@
 export const schemaVersion = 1;
 
-export type Frame = { ops: Op[]; seq: number };
+export type Frame = { from?: number | null; k: string; ops?: Op[] | null; rev: number; screen?: Block | null };
 
 export type Accessory = "chevron" | "none";
 
@@ -17,6 +17,8 @@ export type Block = ({ type: "screen" } & Screen) | ({ type: "sheet" } & Sheet) 
 export type Button = { action?: string | null; confirm?: Confirm | null; id?: string | null; label: string; show?: Expr | null; style?: ButtonStyle | null; tap?: Tap | null; values?: Record<string, unknown> | null };
 
 export type ButtonStyle = "primary" | "plain" | "destructive";
+
+export type Bye = { why: Why };
 
 export type Card = { badge?: Label | null; blocks?: Block[] | null; buttons?: Block[] | null; fold?: Fold | null; id?: string | null; kind?: CardKind | null; menu?: Act[] | null; meta?: string | null; push?: boolean | null; show?: Expr | null; subtitle?: string | null; tap?: Tap | null; title?: string | null; tone?: Tone | null };
 
@@ -64,6 +66,10 @@ export type FoldMain = { action: string; block?: string | null; label: string; v
 
 export type Form = { action?: string | null; fields: Field[]; id?: string | null; show?: Expr | null; submit?: Submit | null };
 
+export type Have = { k: string; rev?: number | null };
+
+export type Hello = { epoch: string; keys: number; sid: string; v: number };
+
 export type Hero = { actions?: Act[] | null; id?: string | null; media?: Media | null; show?: Expr | null; subtitle?: string | null; title: string };
 
 export type Hunk = { at: string; lines: string[] };
@@ -77,6 +83,8 @@ export type Images = { id?: string | null; items: Image[]; show?: Expr | null; s
 export type Island = { events?: string[] | null; fallback: Fallback; id?: string | null; name: string; props?: Record<string, unknown> | null; show?: Expr | null; size?: IslandSize | null };
 
 export type IslandSize = { aspect?: string | null; height?: number | null; width?: number | null };
+
+export type KeyState = { gone?: number | null; k: string; ops?: Op[] | null; rev?: number | null; screen?: Block | null };
 
 export type Keyboard = "default" | "url" | "number";
 
@@ -103,6 +111,8 @@ export type Nav = { brand?: NavLink | null; id?: string | null; links: NavLink[]
 export type NavLink = { current?: boolean | null; href: string; label: string };
 
 export type Node = { coat?: string | null; label?: string | null; limit?: string | null; state?: Tone | null; tap?: Tap | null; value?: string | null };
+
+export type OldFrame = { ops: Op[]; seq: number };
 
 export type Op = { op: "merge"; fields: Record<string, unknown>; id: string } | { op: "insert"; after?: string | null; before?: string | null; block: Child; into: string } | { op: "move"; before?: string | null; id: string; into: string } | { op: "remove"; id: string } | { op: "replace"; block: Block; id: string } | { op: "badge"; count: number } | { op: "dot"; on: boolean } | { op: "screen"; screen: Block };
 
@@ -148,6 +158,10 @@ export type Stat = { id?: string | null; items?: Tile[] | null; label?: string |
 
 export type Submit = { action: string; label: string; off?: boolean | null; values?: Record<string, unknown> | null };
 
+export type Sync = { close?: string[] | null; open: Have[] };
+
+export type Synced = { keys: KeyState[] };
+
 export type Tap = { action?: string | null; copy?: string | null; focus?: string | null; open?: string | null; sheet?: string | null; thread?: string | null; url?: string | null; values?: Record<string, unknown> | null };
 
 export type Text = { center?: boolean | null; font?: string | null; id?: string | null; markdown?: string | null; show?: Expr | null; size?: number | null; style?: TextStyle | null; text?: string | null; tone?: Tone | null; top?: number | null; until?: string | null; weight?: string | null };
@@ -163,5 +177,7 @@ export type Tone = "ok" | "warn" | "bad" | "info" | "mute" | "accent" | "working
 export type Toned = string | Label;
 
 export type Web = { height: number; id?: string | null; show?: Expr | null; src: string };
+
+export type Why = "evicted" | "unpaired" | "handover";
 
 export type Kind = "screen" | "sheet" | "section" | "list" | "row" | "card" | "choice" | "form" | "config" | "secret" | "run" | "button" | "chips" | "stat" | "text" | "images" | "web" | "diff" | "editor" | "scene" | "diagram" | "composer" | "prose" | "hero" | "media" | "nav" | "island";

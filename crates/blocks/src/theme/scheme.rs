@@ -2,6 +2,8 @@ use std::sync::OnceLock;
 
 use serde::{Deserialize, Serialize};
 
+use super::Style;
+
 /// A colour as `#rrggbb` or `#rrggbbaa`: nothing else parses.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(try_from = "String", into = "String")]
@@ -181,9 +183,11 @@ fn vars(s: &Scheme) -> String {
 }
 
 /// Every token as a CSS variable: the light scheme on `:root`, the dark one under `prefers-color-scheme: dark`.
-pub fn css(schemes: &PerMode<Scheme>) -> String {
+pub fn css(schemes: &PerMode<Scheme>, style: &Style) -> String {
     format!(
-        ":root{{color-scheme:light dark;{}}}@media (prefers-color-scheme: dark){{:root{{{}}}}}",
+        ":root{{color-scheme:light dark;--space:{};--motion:{};{}}}@media (prefers-color-scheme: dark){{:root{{{}}}}}",
+        f64::from(style.space),
+        f64::from(style.motion),
         vars(&schemes.light),
         vars(&schemes.dark)
     )

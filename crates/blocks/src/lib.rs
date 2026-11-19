@@ -2,10 +2,11 @@ mod built;
 mod diff;
 pub mod expr;
 mod kind;
+mod mirror;
 mod patch;
-mod stream;
+mod shelf;
 pub mod theme;
-mod wire;
+pub mod wire;
 
 #[cfg(feature = "schema")]
 pub mod codegen;
@@ -13,9 +14,13 @@ pub mod codegen;
 pub use built::{Built, Fault};
 pub use diff::diff;
 pub use kind::*;
+pub use mirror::{Mirror, Took};
 pub use patch::{apply, ApplyError};
-pub use stream::{Frame, Replica, Stream};
-pub use wire::{Action, Answer, Child, Op};
+pub use shelf::{Delta, Put, Shelf};
+pub use wire::{
+    Action, Answer, Bye, Child, Format, Frame, Have, Hello, KeyState, MediaType, OldFrame, Op, Outdated, Sync, Synced,
+    Why,
+};
 
 /// The wire schema's version: docs/schema.md says when it changes.
-pub const SCHEMA_VERSION: u32 = 1;
+pub const SCHEMA_VERSION: u8 = 1;
