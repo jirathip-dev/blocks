@@ -1,0 +1,11 @@
+Decided: secret.ts draws the README's markup: div.secret, label.fd with span.fk and a password input, div.ra with the line and send
+Because: docs/design/secret/README.md:17
+Decided: the input takes no draft and autocomplete=new-password, and success clears it while a failure keeps it
+Because: web/src/render/secret.ts:14
+Decided: the site writer gives the same element, with the input and button joined to a hidden post form
+Because: crates/blocks/src/site/views.rs:328
+Rejected: reusing form's field() for the secret — it would add a draft-free text path and lose the set mark and send line
+Decided: the shared controls stay #53's, and show waits for #20 like the other kinds
+Because: q2181
+Check: web/test/site.test.ts compares site and render per kind; fixtures/trees/secret.json is native and comes from codegen
+Owner: A secret on the web is now a hidden password field with a send button, on the live page and the no-JS page alike.
