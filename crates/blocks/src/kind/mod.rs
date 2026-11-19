@@ -15,7 +15,7 @@ mod table;
 
 pub use content::*;
 pub use parts::*;
-pub use sample::samples;
+pub use sample::{fixtures, samples};
 pub use table::*;
 
 kind! {

@@ -1,4 +1,4 @@
-import { deepStrictEqual, ok } from "node:assert/strict";
+import { deepStrictEqual, ok, strictEqual } from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
 import { view } from "../src/core/eval.ts";
@@ -95,5 +95,49 @@ test("the one zoom: Ctrl and wheel, + and 0, and a double tap, clamped and kept 
     deepStrictEqual(got, { drawn: [1, 2.72, 4, 1, 1.25, 1], keep: { zoom: 1 } });
   } finally {
     await browser.close();
+  }
+});
+
+test("table rules give fixtures/gesture/table.json the crate's cells, orders, words, steps and worked cells", async () => {
+  const { grid, worked } = await import("../src/core/kind/table.ts");
+  const { block, cases, steps, worked: want } = read("table.json");
+  ok(cases.length >= 20);
+  for (const c of cases) {
+    const got = c.reach !== undefined ? grid.candidate(block, c.grab, c.reach) : c.nudges.reduce((from, n) => from && grid.nudge(block, c.grab, from, n), grid.start(block, c.grab));
+    deepStrictEqual(got, c.want, `${JSON.stringify(c.grab)} ${JSON.stringify(c.reach ?? c.nudges)}`);
+    deepStrictEqual(got && grid.says(block, c.grab, got), c.says ?? null, JSON.stringify(c.grab));
+  }
+  for (const [g, w] of Object.entries(steps)) deepStrictEqual(grid.steps(block, g).map(([n]) => n), w, g);
+  for (const [id, cells] of Object.entries(want)) {
+    const r = worked(block, block.rows.find((x) => x.id === id));
+    for (const [k, v] of Object.entries(cells)) deepStrictEqual(r.cells[k], v, `${id} ${k}`);
+    strictEqual("cost" in r.cells, !r.group, id);
+  }
+});
+
+const grid = { type: "screen", id: "s", title: "Quote", blocks: [read("table.json").block] };
+const cell = { screen: "s", action: "set-cell", block: "quote", values: { cell: { row: "v2", column: "qty", value: 8 } } };
+const order = { screen: "s", action: "order", block: "quote", values: { rows: ["ga", "p1", "p2", "gb", "v2", "v1", "x"] } };
+
+test("a table's cell edit and row reorder each send the same one action by pointer, keys and named action, in WebKit", async () => {
+  const { shot } = await import("../shot/shot.ts");
+  const edits = [
+    { via: "pointer", reach: ["8"] },
+    { via: "keys", reach: ["8"] },
+    { via: "action", reach: ["8"] },
+  ];
+  for (const w of edits) {
+    const { report, faults } = await shot({ screen: grid, css, size: "1440x900", check: true, steps: [{ gesture: { id: "quote", grab: { row: "v2", column: "qty" }, ...w } }] });
+    deepStrictEqual(report.sent, [cell], `edit ${w.via}`);
+    deepStrictEqual(faults, [], w.via);
+  }
+  const moves = [
+    { via: "pointer", reach: [[0, 20], [0, 50]] },
+    { via: "keys", reach: [{ dir: "down" }] },
+    { via: "action", reach: ["Move down"] },
+  ];
+  for (const w of moves) {
+    const { report } = await shot({ screen: grid, css, size: "1440x900", steps: [{ gesture: { id: "quote", grab: "v1", ...w } }] });
+    deepStrictEqual(report.sent, [order], `reorder ${w.via}`);
   }
 });

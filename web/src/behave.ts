@@ -18,6 +18,7 @@ export function behave(root: HTMLElement, model: () => unknown): () => void {
       if (go instanceof HTMLButtonElement) go.disabled = v.disabled.has(id);
     });
     root.querySelectorAll<HTMLButtonElement>("button[data-act]").forEach((b) => (b.disabled = v.acts.has(b.dataset.act ?? "")));
+    root.querySelectorAll<HTMLElement>("td[data-act]").forEach((t) => t.toggleAttribute("aria-disabled", v.acts.has(t.dataset.act ?? "")));
     root.querySelectorAll<HTMLElement>("[data-get]").forEach((e) => (e.textContent = v.values[e.dataset.get ?? ""] ?? ""));
     root.querySelectorAll<HTMLInputElement | HTMLSelectElement>(".fd input[name], .fd select[name]").forEach((i) => {
       const l = i.closest<HTMLElement>(".fd");

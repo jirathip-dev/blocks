@@ -1,7 +1,9 @@
 use std::path::{Path, PathBuf};
 
 use blocks::gesture::{step, Effect, Event, Nudge, Phase, Rules};
-use blocks::{Action, Block, Built, Fault, List};
+use blocks::{
+    Action, Block, Built, Cell, CellEdit, Fault, GridChange, GridGrab, GridReach, List, SortDir, Table, TableSort,
+};
 use serde::Deserialize;
 use serde_json::{json, Value};
 
@@ -169,4 +171,72 @@ fn a_gesture_whose_enabled_does_not_hold_joins_the_view_acts() {
     assert!(
         matches!(serde_json::from_value::<Block>(json!({"type": "list", "rows": [], "reorder": reorder})), Ok(Block::List(l)) if l.reorder.as_ref().is_some_and(|g| g.enabled.is_some()))
     );
+}
+
+#[derive(Deserialize)]
+struct GridCase {
+    grab: GridGrab,
+    reach: Option<GridReach>,
+    nudges: Option<Vec<Nudge>>,
+    want: Option<GridChange>,
+    says: Option<String>,
+}
+
+#[test]
+fn table_rules_give_each_fixture_case_its_cell_or_order_its_words_and_its_steps() {
+    let f = read("table.json");
+    let t: Table = serde_json::from_value(f["block"].clone()).unwrap();
+    let cases: Vec<GridCase> = serde_json::from_value(f["cases"].clone()).unwrap();
+    assert!(cases.len() >= 20);
+    for c in &cases {
+        let got = match (&c.reach, &c.nudges) {
+            (Some(r), _) => t.candidate(&c.grab, r),
+            (None, Some(ns)) => ns
+                .iter()
+                .try_fold(t.start(&c.grab).unwrap(), |from, n| t.nudge(&c.grab, &from, *n)),
+            (None, None) => panic!("a case with neither reach nor nudges"),
+        };
+        assert_eq!(got, c.want, "{:?} {:?} {:?}", c.grab, c.reach, c.nudges);
+        assert_eq!(got.as_ref().map(|g| t.says(&c.grab, g)), c.says, "{:?}", c.grab);
+    }
+    for (grab, want) in f["steps"].as_object().unwrap() {
+        let names: Vec<String> = t.steps(&GridGrab::Row(grab.clone())).into_iter().map(|(n, _)| n).collect();
+        assert_eq!(json!(names), *want, "{grab}");
+    }
+    for (id, want) in f["worked"].as_object().unwrap() {
+        let row = t.rows.iter().find(|r| &r.id == id).unwrap();
+        let worked = t.worked(row);
+        for (k, v) in want.as_object().unwrap() {
+            assert_eq!(json!(worked.cells[k]), *v, "{id} {k}");
+        }
+        assert_eq!(worked.cells.contains_key("cost"), !row.is_group(), "{id}");
+    }
+}
+
+#[test]
+fn a_cell_edit_is_read_by_its_name_and_a_grid_totals_only_its_items() {
+    let a: Action = serde_json::from_value(
+        json!({"screen": "s", "action": "set-cell", "values": {"cell": {"row": "v2", "column": "qty", "value": 8}}}),
+    )
+    .unwrap();
+    let e = a.read::<CellEdit>("cell").unwrap();
+    assert_eq!((e.row.as_str(), e.column.as_str(), e.value), ("v2", "qty", Cell::Number(8.into())));
+    let t: Table = serde_json::from_value(read("table.json")["block"].clone()).unwrap();
+    let fb = t.fallback();
+    assert_eq!(fb.subtitle.as_deref(), Some("5 rows · total cost ฿11,250.00"));
+    let rows = t.sorted();
+    let cost = t.columns.iter().find(|c| c.id == "cost").unwrap();
+    assert_eq!(Table::subtotal(cost, &rows, 0), Some(("", "50.00".into())));
+    assert_eq!(Table::subtotal(cost, &rows, 3), Some(("", "11,200.00".into())));
+}
+
+#[test]
+fn a_sorted_grid_sorts_items_within_each_group() {
+    let mut t: Table = serde_json::from_value(read("table.json")["block"].clone()).unwrap();
+    t.sort = Some(TableSort {
+        by: "cost".into(),
+        dir: SortDir::Desc,
+    });
+    let ids: Vec<String> = t.sorted().into_iter().map(|r| r.id).collect();
+    assert_eq!(ids, ["ga", "p1", "p2", "gb", "v2", "x", "v1"]);
 }

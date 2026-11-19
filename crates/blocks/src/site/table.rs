@@ -2,7 +2,7 @@ use serde::Serialize;
 use serde_json::Value;
 
 use super::{fallback, W};
-use crate::kind::{Cell, Column, ColumnKind, PhonePart, SortDir, Table, TableRow};
+use crate::kind::{Cell, Column, ColumnKind, PhonePart, SortDir, Table, TableRow, Total};
 
 fn word<T: Serialize>(t: &T) -> String {
     serde_json::to_value(t)
@@ -76,11 +76,29 @@ fn foot(w: &mut W<'_>, cols: &[&Column], roles: &[PhonePart], rows: &[&TableRow]
     w.raw("</tr></tfoot>");
 }
 
+fn group(w: &mut W<'_>, cols: &[&Column], roles: &[PhonePart], rows: &[TableRow], at: usize) {
+    let Some(r) = rows.get(at) else { return };
+    w.open("tr", "grp", &[("data-id", &r.id)]);
+    for (i, (c, role)) in cols.iter().zip(roles).enumerate() {
+        let sub = Table::subtotal(c, rows, at).filter(|_| c.total != Some(Total::Count) && i > 0);
+        let blank = i > 0 && sub.is_none();
+        w.open("td", &class(c, role, blank), &[("data-l", &c.label)]);
+        if i == 0 {
+            let n = rows.iter().skip(at + 1).take_while(|x| !x.is_group()).count();
+            w.text(&r.cells.get(&c.id).map(|v| c.shown(v, w.thai)).unwrap_or_default());
+            w.el("span", "tbgn", &n.to_string());
+        }
+        w.text(&sub.map(|(_, v)| v).unwrap_or_default());
+        w.close("td");
+    }
+    w.close("tr");
+}
+
 pub(super) fn table(w: &mut W<'_>, b: &Value) {
     let Ok(t) = serde_json::from_value::<Table>(b.clone()) else {
         return fallback(w, b);
     };
-    let n = t.rows.len();
+    let n = t.rows.iter().filter(|r| !r.is_group()).count();
     w.open_block("div", "tbl", b, &[]);
     w.open("div", "tbh", &[]);
     if let Some(title) = &t.title {
@@ -108,13 +126,18 @@ pub(super) fn table(w: &mut W<'_>, b: &Value) {
     }
     w.raw("</tr></thead><tbody>");
     let rows = t.sorted();
-    for r in &rows {
+    for (at, r) in rows.iter().enumerate() {
+        if r.is_group() {
+            group(w, &cols, &roles, &rows, at);
+            continue;
+        }
         w.open("tr", if r.tap.is_some() { "tap" } else { "" }, &[("data-id", &r.id)]);
         for (c, role) in cols.iter().zip(&roles) {
             cell(w, &t, c, role, r.cells.get(&c.id));
         }
         w.close("tr");
     }
+    let rows: Vec<&TableRow> = rows.iter().filter(|r| !r.is_group()).collect();
     if rows.is_empty() {
         let span = cols.len().to_string();
         w.raw("<tr class=\"tbe\">");

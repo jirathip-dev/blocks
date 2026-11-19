@@ -1237,6 +1237,12 @@
             "null"
           ]
         },
+        "edit": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
         "era": {
           "anyOf": [
             {
@@ -4981,11 +4987,30 @@
       "additionalProperties": true,
       "description": "A data table: typed columns, rows by id, sort, filter, totals, row select and export.",
       "properties": {
+        "calc": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Expr"
+          },
+          "type": [
+            "object",
+            "null"
+          ]
+        },
         "columns": {
           "items": {
             "$ref": "#/$defs/Column"
           },
           "type": "array"
+        },
+        "edit": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Gesture"
+            },
+            {
+              "type": "null"
+            }
+          ]
         },
         "empty": {
           "type": [
@@ -5012,6 +5037,16 @@
           "type": [
             "string",
             "null"
+          ]
+        },
+        "reorder": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Gesture"
+            },
+            {
+              "type": "null"
+            }
           ]
         },
         "rows": {
@@ -5064,13 +5099,25 @@
       "type": "object"
     },
     "TableRow": {
-      "description": "One row of a table: its id, its cells by column id, and what a tap on it does.",
+      "description": "One row of a table: its id, its cells by column id, what a tap on it does, whether it stays put, or heads a group.",
       "properties": {
         "cells": {
           "additionalProperties": {
             "$ref": "#/$defs/Cell"
           },
           "type": "object"
+        },
+        "fixed": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "group": {
+          "type": [
+            "boolean",
+            "null"
+          ]
         },
         "id": {
           "type": "string"

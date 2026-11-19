@@ -4,6 +4,7 @@ const KEY = { left: "ArrowLeft", right: "ArrowRight", up: "ArrowUp", down: "Arro
 export async function gesture(page, s) {
   if (s.refuse) return page.evaluate(() => window.h.wait?.(false));
   const g = s.gesture;
+  if (typeof g.grab === "object") return typed(page, g);
   const grip = page.locator(`[data-block][data-id="${g.id}"] [data-grab="${JSON.stringify(g.grab).replace(/"/g, '\\"')}"]`).first();
   await page.evaluate(() => (window.h.hold = true));
   if (g.via === "pointer") {
@@ -19,5 +20,17 @@ export async function gesture(page, s) {
     for (const n of g.reach) await page.keyboard.press(`${n.big ? "Shift+" : ""}${KEY[n.dir]}`);
     await page.keyboard.press("Enter");
   } else for (const name of g.reach) await grip.locator("xpath=..").locator("button.b-sr", { hasText: name }).first().dispatchEvent("click");
+  await page.evaluate(() => (window.h.hold = false));
+}
+
+async function typed(page, g) {
+  const td = page.locator(`[data-block][data-id="${g.id}"] tr[data-id="${g.grab.row}"] > td[data-c="${g.grab.column}"]`).first();
+  await page.evaluate(() => (window.h.hold = true));
+  if (g.via === "pointer") await td.click();
+  else (await td.focus(), await page.keyboard.press("Enter"));
+  const input = td.locator("input");
+  await input.fill(String(g.reach[0] ?? ""));
+  if (g.via === "action") await input.evaluate((e) => e.blur());
+  else await page.keyboard.press(g.via === "keys" ? "Tab" : "Enter");
   await page.evaluate(() => (window.h.hold = false));
 }

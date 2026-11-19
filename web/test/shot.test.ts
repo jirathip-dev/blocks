@@ -19,7 +19,7 @@ const run = (...args) => spawnSync(process.execPath, ["--no-warnings", cli, ...a
 
 test("every fixtures/blocks file passes --check against its fixtures/trees tree in WebKit at 390 and 1440", () => {
   const kinds = readdirSync(blocks).map((f) => f.replace(/\.json$/, ""));
-  strictEqual(kinds.length, 31);
+  strictEqual(kinds.length, 32);
   for (const size of ["390x844", "1440x900"])
     for (const k of kinds) {
       const dir = join(out, size, k);
@@ -27,7 +27,7 @@ test("every fixtures/blocks file passes --check against its fixtures/trees tree 
       strictEqual(r.status, 0, `${k} ${size}: ${r.stderr}`);
       ok(existsSync(join(dir, `${k}.png`)), k);
       const tree = JSON.parse(readFileSync(join(dir, `${k}.tree.json`), "utf8"));
-      strictEqual(tree.kind, k);
+      strictEqual(tree.kind, k.split("-")[0]);
       ok(tree.role && tree.name, `${k}: ${tree.role} "${tree.name}"`);
       deepStrictEqual(JSON.parse(readFileSync(join(dir, "report.json"), "utf8")).shots, [k]);
     }
@@ -36,7 +36,7 @@ test("every fixtures/blocks file passes --check against its fixtures/trees tree 
 test("every fixtures/stress variant passes --check at 390 in WebKit: inside the width, over no sibling", () => {
   const stress = at("../../fixtures/stress/");
   const names = readdirSync(stress).filter((f) => f !== "table.json").map((f) => f.replace(/\.json$/, ""));
-  strictEqual(names.length, 61);
+  strictEqual(names.length, 64);
   for (const n of names) {
     const r = run("--screen", join(stress, `${n}.json`), "--check", "--out", join(out, n));
     strictEqual(r.status, 0, `${n}: ${r.stderr}`);
