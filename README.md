@@ -1,8 +1,11 @@
 # blocks
 
-The typed UI blocks a drover screen is made of, their row diff and ops, and the device stream protocol. It also holds
-the codegen that turns the Rust types into JSON Schema, TS and Swift. Later it will hold the one HTML renderer cooee
-embeds and the shared theme package. drover and cooee depend on this crate.
+blocks is an opinionated, server-driven UI framework for live app UI and static sites. drover and cooee depend on it.
+
+Shipped: the crate (typed blocks, their row diff and ops, the device stream protocol) with the codegen that turns its
+Rust types into JSON Schema, TS and Swift; the theme (schemes, styles, swag packs); the SwiftUI package. Still to
+come: the HTML renderer and shell, the static site renderer, and the headless harnesses
+(`docs/architecture/blocks/migration.md`).
 
 ## Intent
 
@@ -12,8 +15,7 @@ embeds and the shared theme package. drover and cooee depend on this crate.
 
 ## Non-goals
 
-- Not a general UI framework: only the blocks drover's screens need.
-- No drover imports. drover depends on blocks, never the other way.
+- No drover or cooee imports. They depend on blocks, never the other way.
 - No transport: no tokio, HTTP or sockets. Streams are carried by drover and cooee.
 
 ## Gates
