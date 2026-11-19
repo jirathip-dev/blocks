@@ -1,0 +1,10 @@
+{
+  "type": "screen",
+  "id": "s",
+  "blocks": [
+    {
+      "type": "text",
+      "markdown": "Nothing queued."
+    }
+  ]
+}

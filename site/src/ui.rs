@@ -16,12 +16,13 @@ pub struct Page {
     pub screen: Screen,
 }
 
-const LINKS: [(&str, &str); 5] = [
+const LINKS: [(&str, &str); 6] = [
     ("gallery", "gallery.html"),
     ("schemes", "schemes.html"),
     ("numbers", "numbers.html"),
     ("behaviours", "behaviours.html"),
     ("islands", "islands.html"),
+    ("layout", "layout.html"),
 ];
 
 fn nav(current: &str) -> Block {

@@ -83,8 +83,10 @@ fn placed(o: &Fields) -> impl Iterator<Item = (String, &Value)> {
 pub(crate) fn children(o: &Fields) -> impl Iterator<Item = &Value> {
     let rounds = o.get("rounds").and_then(Value::as_array).into_iter().flatten();
     let in_rounds = rounds.filter_map(|r| r.get("blocks"));
+    let rows = kind(o) != "table";
     LISTS
         .iter()
+        .filter(move |k| rows || **k != "rows")
         .filter_map(|k| o.get(*k))
         .chain(in_rounds)
         .filter_map(Value::as_array)
@@ -105,7 +107,11 @@ fn plain(o: &Fields) -> Fallback {
         "title", "label", "header", "question", "name", "file", "command", "source", "src",
     ];
     Fallback {
-        title: named.into_iter().find_map(text).unwrap_or(kind(o)).into(),
+        title: named
+            .into_iter()
+            .find_map(text)
+            .unwrap_or(if kind(o) == "toast" { "Done" } else { kind(o) })
+            .into(),
         subtitle: text("subtitle").map(Into::into),
         tap: o.get("tap").and_then(|t| serde_json::from_value::<Tap>(t.clone()).ok()),
     }

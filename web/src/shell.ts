@@ -1,12 +1,13 @@
 import type { LayoutPlace, LayoutTransition } from "./gen/layout.ts";
 import type { Scheme } from "./gen/schemes.ts";
-import type { Answer, Block, Kind, Op } from "./gen/types.ts";
+import type { Answer, Block, Kind, Op, Toast } from "./gen/types.ts";
 import { behave } from "./behave.ts";
 import { choose } from "./core/look.ts";
 import { apply, patcher } from "./patch.ts";
 import { type Blk, blks, btn, type Ctx, el, h, isBlk, linkable, obj, type Post, type Renderer, render, type Store, tick } from "./render/index.ts";
 import { settle } from "./motion.ts";
 import { stream } from "./stream.ts";
+import { toasts } from "./toasts.ts";
 import { plain, type Theme, tiles } from "./theme.ts";
 
 export { behave } from "./behave.ts";
@@ -148,23 +149,18 @@ function draw(o: Mount, store: Store, theme: Theme, wear: (name: string | null) 
   };
   const strip = el("nav", "b-tabs");
   const main = el("main", "b-main");
-  const toastBox = el("p", "b-toast");
+  const notes = toasts();
   const ask = el("div", "b-confirm");
   const sheet = el("div", "b-sheet");
   const head = el("header", "b-sheet__head");
   const sheetBody = el("div", "b-sheet__body");
-  toastBox.hidden = ask.hidden = sheet.hidden = true;
+  ask.hidden = sheet.hidden = true;
   sheet.append(h("div", "b-sheet__card", head, sheetBody));
   sheet.addEventListener("click", (e) => e.target === sheet && closeSheet());
   let sheetView: View | undefined;
-  let toastTimer: ReturnType<typeof setTimeout> | undefined;
-
-  const toast = (text: string, bad = false) => {
-    toastBox.textContent = text;
-    toastBox.className = `b-toast${bad ? " bad" : ""}`;
-    toastBox.hidden = false;
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => (toastBox.hidden = true), bad ? 8000 : 3000);
+  const say = (v: View, t: Toast, first = false) => {
+    const u = t.undo;
+    notes.say(t, u ? (b) => act(v, { action: u.action, values: u.values, confirm: u.confirm }, b, true) : undefined, first);
   };
 
   const confirmed = (c: Blk): Promise<boolean> =>
@@ -282,11 +278,11 @@ function draw(o: Mount, store: Store, theme: Theme, wear: (name: string | null) 
     const x = obj(t);
     if (typeof x.sheet === "string") openSheet(v.source, x.sheet);
     else if (typeof x.open === "string") go(v, x.open);
-    else if (typeof x.copy === "string") void navigator.clipboard?.writeText(x.copy).then(() => toast("copied"));
+    else if (typeof x.copy === "string") void navigator.clipboard?.writeText(x.copy).then(() => say(v, { title: "copied" }));
     else if (typeof x.action === "string") void act(v, { action: x.action, values: x.values });
   };
 
-  const act = async (v: View, a: Post, b?: HTMLElement): Promise<boolean> => {
+  const act = async (v: View, a: Post, b?: HTMLElement, first = false): Promise<boolean> => {
     if (isBlk(a.confirm) && !(await confirmed(a.confirm))) return false;
     b?.setAttribute("aria-busy", "true");
     try {
@@ -294,7 +290,7 @@ function draw(o: Mount, store: Store, theme: Theme, wear: (name: string | null) 
       const r = await fetch(o.url(v.source, "/action"), { method: "POST", headers: { "content-type": "application/json" }, body });
       const j: Answer = await r.json().catch(() => ({}));
       if (!r.ok) {
-        toast(j.toast ?? `action failed: ${r.status}`, true);
+        say(v, { title: `action failed: ${r.status}`, ...j.toast, tone: "bad" }, first);
         return false;
       }
       const next = v.model && j.ops?.length ? apply(v.model, j.ops) : undefined;
@@ -304,10 +300,10 @@ function draw(o: Mount, store: Store, theme: Theme, wear: (name: string | null) 
       }
       if (j.close && v === sheetView) closeSheet();
       if (j.open) tap(v, { open: j.open });
-      if (j.toast) toast(j.toast);
+      if (j.toast) say(v, j.toast, first);
       return true;
     } catch (e) {
-      toast(e instanceof Error ? e.message : String(e), true);
+      say(v, { title: e instanceof Error ? e.message : String(e), tone: "bad" }, first);
       return false;
     } finally {
       b?.removeAttribute("aria-busy");
@@ -370,15 +366,15 @@ function draw(o: Mount, store: Store, theme: Theme, wear: (name: string | null) 
   more.onclick = menu;
   strip.append(more);
 
-  o.root.append(...parts, strip, main, sheet, ask, toastBox);
+  o.root.append(...parts, strip, main, sheet, ask, notes.box);
   const first = tabs.find((t) => `#${t.node.id}` === location.hash) ?? tabs[0];
   if (first) pick(first);
 
   return {
     close() {
       for (const v of [...tabs.map((t) => t.view), ...always, sheetView]) hide(v);
-      for (const e of [...parts, strip, main, sheet, ask, toastBox]) e.remove();
-      clearTimeout(toastTimer);
+      for (const e of [...parts, strip, main, sheet, ask]) e.remove();
+      notes.close();
     },
   };
 }
@@ -422,6 +418,7 @@ export function adopt(o: { theme?: Theme; store?: Store; blocks?: AppBlocks } = 
     if (s) tap({ sheet: s.dataset.sheet });
   });
   const p = patcher({ root, model: () => model, draw: (b) => render(b, ctx) });
+  behave(root, () => model);
   const take = (ops: Op[]) => {
     model = apply(model, ops) ?? model;
     p.queue(ops);
