@@ -1,0 +1,15 @@
+Decided: render/index.ts is a hand-written Record<Kind, Renderer> with one gap(<issue>) line per kind HTML does not draw yet
+Because: "`tsc` (the `Record<Kind, …>`); drover's page goldens unchanged (classes and attributes are only added)"
+Rejected: generating render/index.ts from the folder — gap kinds would need 12 one-line files, and tsc already fails on a missing kind (web/src/render/index.ts:133)
+Decided: drafts go through Ctx.store and art and words through Ctx.theme, so render/* never touches localStorage; arch.toml bans it there
+Because: web/src/render/index.ts:30
+Decided: ages redraw through an exported tick(root) the shell calls each second, not a timer started at import
+Because: web/src/render/index.ts:92
+Rejected: moving drover's morph, drawn and patch maps — a page-level redraw that B6's shell and patch.ts replace; it stays in drover until then
+Decided: theme.ts is the ADR's Theme port: plain (glyphs) and packs() over a swag pack; drover's legacy-board art, coats and scheme picker stay in drover's own port
+Because: web/src/theme.ts:5
+Decided: blocks.css holds only board.css's block rules inside @layer blocks; the header, nav, sheet, toast, threads and herd rules stay drover's
+Because: web/src/blocks.css:1
+Check: every fixtures/blocks file renders with b b-<kind>, data-block and data-id, and exactly the 12 gap kinds carry data-fallback (web/test/render.test.ts)
+Check: old classes (row, rt, rs, tag, card, k-*) are all still there; the hook classes and attributes are only added
+Owner: The web renderer now lives in blocks with stable style hooks; kinds it cannot draw yet show their plain fallback instead of nothing.
