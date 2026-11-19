@@ -91,14 +91,18 @@ fn start_takes_the_screen_state_each_field_value_and_the_first_chip() {
 }
 
 #[test]
-fn site_writes_hidden_required_type_and_maxlength_from_the_start_state() {
+fn site_writes_hidden_disabled_required_type_maxlength_and_bound_values_from_the_start_state() {
     let html = blocks::site::fragment(&screen(), "/act");
     for want in [
         r#"data-id="plans" hidden="""#,
         r#"data-id="box" hidden="""#,
         r#"<label class="fd" hidden=""><span class="fl"><span class="fk">seats"#,
-        r#"name="email" form="b-f1" type="email" autocomplete="off" required="""#,
-        r#"name="name" form="b-f1" type="text" autocomplete="off" maxlength="20""#,
+        r#"name="email" form="b-f3" type="email" autocomplete="off" required="""#,
+        r#"name="name" form="b-f3" type="text" autocomplete="off" maxlength="20""#,
+        r#"<button class="b-screen__actions" disabled="" type="submit" form="b-f1" data-action="save">"#,
+        r#"<button class="b-screen__actions" type="submit" form="b-f2" data-action="help">"#,
+        r#"<span class="rv b-row__value"><span data-get="plan">free</span></span>"#,
+        r#"<b class="b-stat__value"><span data-get="places">3</span></b>"#,
     ] {
         assert!(html.contains(want), "no {want} in {html}");
     }

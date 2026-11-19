@@ -63,13 +63,21 @@ wire! {
     }
 }
 
-/// A row's or a tile's value: a string, a number, or a time.
+wire! {
+    /// A value bound to local state: it shows the text of state key `get`.
+    pub struct Bound {
+        get: String,
+    }
+}
+
+/// A row's or a tile's value: a string, a number, a state key's value, or a time.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
 #[serde(untagged)]
 pub enum Shown {
     Text(String),
     Number(Number),
+    Get(Bound),
     Time(Time),
 }
 
@@ -149,6 +157,7 @@ wire! {
         tap: Option<Tap>,
         confirm: Option<Confirm>,
         menu: Option<Vec<Act>>,
+        enabled: Option<Expr>,
     }
 }
 

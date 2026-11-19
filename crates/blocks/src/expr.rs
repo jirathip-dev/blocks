@@ -104,7 +104,7 @@ fn num(f: f64) -> Lit {
     }
 }
 
-fn text(l: &Lit) -> String {
+pub(crate) fn text(l: &Lit) -> String {
     match l {
         Lit::Null => String::new(),
         Lit::Bool(b) => b.to_string(),

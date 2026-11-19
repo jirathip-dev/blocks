@@ -20,6 +20,13 @@ fn ticked(w: &mut W<'_>, tag: &str, cls: &str, v: Option<&Value>) {
             w.text(label.trim());
             w.close("span");
         }
+        Some(t) if t.get("get").is_some() => {
+            let key = shown(t.get("get"));
+            let text = w.view.values.get(&key).cloned().unwrap_or_default();
+            w.open("span", "", &[("data-get", &key)]);
+            w.text(&text);
+            w.close("span");
+        }
         v => w.text(&shown(v)),
     }
     w.close(tag);

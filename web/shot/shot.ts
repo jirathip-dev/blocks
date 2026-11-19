@@ -139,7 +139,7 @@ export async function shot({ screen, steps = [], name = "shot", size = "390x844"
         continue;
       }
       const t0 = performance.now();
-      const on = (id) => page.locator(`[data-block][data-id="${id}"]`).first();
+      const on = (id) => page.locator(`[data-block][data-id="${id}"], [data-act="${id}"]`).first();
       const hit = async (id, what) => {
         const t = on(id).locator(`xpath=descendant-or-self::*[${what}]`).first();
         return (await t.count()) ? t : on(id);
