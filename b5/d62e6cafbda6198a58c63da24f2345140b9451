@@ -1,0 +1,9 @@
+Decided: make the writer faster rather than steady the measurement; crates/ is unchanged since d800ee2 and the slow CI runner class sits at 10.5 ms on the min of 5 batches every run
+Because: "If the writer got slower: make it fast again, so the test passes with clear room"
+Rejected: more repeats or a trimmed median — the test already takes the min of 5 batches, and the slow runners fail by the same 0.5 ms each time, so steadier numbers stay over 10 ms
+Decided: children walks the same lists in the same order without the per-child path strings placed builds
+Because: crates/blocks/src/built.rs:79
+Decided: esc_into scans bytes, and md's pairs, links and line-break passes hand their input back when their marker is absent
+Because: crates/blocks/src/site/views.rs:590
+Check: fixtures/html and fixtures/site regenerate unchanged; the perf step's write-a-500-KB-screen line is well under 10 ms on CI
+Owner: The page writer runs about a third faster, so the CI speed check passes again on GitHub's slower machines; the pages are unchanged.
