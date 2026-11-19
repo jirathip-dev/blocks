@@ -1,6 +1,17 @@
 import { defaultPair, defaultStyle, type Mode, type Scheme } from "../gen/schemes.ts";
+import { gate } from "./gate.ts";
 
 export type Pair = Record<Mode, Scheme>;
+const passed: unique symbol = Symbol("look");
+/// A light and a dark scheme that passed the gate; the only look a view wears.
+export type Look = Readonly<Pair> & { readonly [passed]: true };
+
+/// Runs the gate on both schemes; throws one error listing every miss.
+export function gated(pair: Pair): Look {
+  const misses = (["light", "dark"] as const).flatMap((m) => gate(pair[m], "tint").map((x) => `${m}: ${x.what} is ${x.got.toFixed(2)}, under ${x.min}`));
+  if (misses.length) throw new Error(`the look fails the gate:\n${misses.join("\n")}`);
+  return { light: pair.light, dark: pair.dark, [passed]: true };
+}
 type Label = { prefix?: string; suffix?: string; case?: "as-is" | "lower" | "upper" };
 export type Scale = {
   space?: number;
