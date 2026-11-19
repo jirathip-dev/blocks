@@ -1,0 +1,4 @@
+Decided: merged origin/staging (#225) into issue-221; the only conflict, web/dist/blocks.js, was rebuilt from source
+Because: "Existing style.json files read unchanged; the default stays `default`."
+Rejected: none
+Owner: The branch is updated onto staging again; serif styles still draw in the device's own serif font.
