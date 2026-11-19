@@ -7,6 +7,7 @@ import { chips } from "./chips.ts";
 import { choice } from "./choice.ts";
 import { composer } from "./composer.ts";
 import { diagram } from "./diagram.ts";
+import { diff } from "./diff.ts";
 import { form } from "./form.ts";
 import { hero } from "./hero.ts";
 import { images } from "./images.ts";
@@ -156,7 +157,7 @@ export const R: { [K in Kind]: (b: Of<K>, c: Ctx) => HTMLElement | null } = {
   text,
   images,
   web: gap(41),
-  diff: gap(42),
+  diff,
   editor: gap(43),
   scene: gap(38),
   diagram,

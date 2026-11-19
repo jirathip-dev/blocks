@@ -1,5 +1,6 @@
 mod content;
 mod diagram;
+mod diff;
 mod views;
 
 use serde_json::{Map, Value};
@@ -369,6 +370,7 @@ pub(crate) fn block(w: &mut W<'_>, b: &Value) {
         "media" => content::media(w, b),
         "nav" => content::nav(w, b),
         "diagram" => diagram::diagram(w, b),
+        "diff" => diff::diff(w, b),
         _ => fallback(w, b),
     }
 }
