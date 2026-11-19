@@ -1,18 +1,23 @@
 /* Sample invoices for the previews. */
 const C = (t, tone) => ({ text: t, tone });
 const PAID = C("paid", "ok"), SENT = C("sent", "done"), LATE = C("overdue", "warn"), DRAFT = C("draft", "mute"), DISPUTED = C("disputed", "bad");
-const inv = (id, client, status, issued, due, hours, amount) => ({ id, cells: { inv: id, client, status, issued, due, hours, amount }, tap: { open: `invoice/${id}` } });
+const TODAY = "2026-11-19";
+const late = (due) => (due && due < TODAY ? Math.round((Date.parse(TODAY) - Date.parse(due)) / 864e5) : null);
+const inv = (id, client, status, issued, due, hours, amount) => ({ id, cells: { inv: id, client, status, issued, due, late: status.tone === "ok" ? null : late(due), hours, amount }, tap: { open: `invoice/${id}` } });
 const invoices = {
   type: "table", id: "invoices", title: "Invoices", empty: "No invoices yet.",
   sort: { by: "due", dir: "asc" },
+  select: { actions: [{ action: "remind", label: "send reminder" }, { action: "paid", label: "mark paid" }, { action: "void", label: "void", bad: true }] },
+  export: ["csv", "xlsx"],
   columns: [
     { id: "inv", label: "Invoice", kind: "text", phone: "meta" },
-    { id: "client", label: "Client", kind: "text", phone: "title" },
+    { id: "client", label: "Client", kind: "text", phone: "title", width: 18 },
     { id: "status", label: "Status", kind: "tone" },
     { id: "issued", label: "Issued", kind: "date", phone: "hide" },
     { id: "due", label: "Due", kind: "date" },
+    { id: "late", label: "Overdue", unit: "days", kind: "bar", tone: "warn", max: 60, digits: 0 },
     { id: "hours", label: "Hours", kind: "number", digits: 1, total: "sum" },
-    { id: "amount", label: "Amount", unit: "฿", kind: "number", total: "sum" },
+    { id: "amount", label: "Amount", kind: "money", currency: "THB", total: "sum" },
   ],
   rows: [
     inv("INV-0131", "Tidewater Bakery", PAID, "2026-09-02", "2026-10-02", 14, 21000),
