@@ -1,0 +1,718 @@
+{
+  "blocks": [
+    {
+      "blocks": [
+        {
+          "id": "hint",
+          "markdown": "Ready",
+          "show": {
+            "get": "ready"
+          },
+          "type": "text"
+        }
+      ],
+      "fallback": {
+        "title": "Home"
+      },
+      "id": "home",
+      "state": {
+        "ready": true
+      },
+      "title": "Home",
+      "type": "screen"
+    },
+    {
+      "blocks": [
+        {
+          "id": "sheet-note",
+          "markdown": "Pick one",
+          "type": "text"
+        }
+      ],
+      "fallback": {
+        "title": "Add a repo"
+      },
+      "id": "add",
+      "title": "Add a repo",
+      "type": "sheet"
+    },
+    {
+      "blocks": [
+        {
+          "id": "today-note",
+          "markdown": "Quiet",
+          "type": "text"
+        }
+      ],
+      "fallback": {
+        "title": "Today"
+      },
+      "header": "Today",
+      "id": "today",
+      "type": "section"
+    },
+    {
+      "fallback": {
+        "title": "list"
+      },
+      "id": "rows",
+      "rows": [
+        {
+          "id": "row",
+          "rounds": [
+            {
+              "id": "r1",
+              "name": "impl",
+              "state": "done",
+              "summary": "pushed",
+              "tap": {
+                "url": "/runs/1"
+              }
+            },
+            {
+              "blocks": [
+                {
+                  "id": "finding",
+                  "markdown": "Fix the test",
+                  "type": "text"
+                }
+              ],
+              "id": "r2",
+              "lane": {
+                "lines": [
+                  "reading the diff"
+                ],
+                "name": "rev-1"
+              },
+              "links": [
+                {
+                  "label": "verdict",
+                  "tap": {
+                    "url": "/verdict"
+                  }
+                }
+              ],
+              "name": "review 1",
+              "state": "needs",
+              "summary": "one finding"
+            }
+          ],
+          "subtitle": "green",
+          "title": "Build",
+          "type": "row",
+          "value": "2m"
+        }
+      ],
+      "type": "list"
+    },
+    {
+      "id": "build",
+      "subtitle": "green",
+      "title": "Build",
+      "type": "row",
+      "value": "2m"
+    },
+    {
+      "fallback": {
+        "subtitle": "waiting",
+        "title": "q1"
+      },
+      "id": "card",
+      "kind": "ask",
+      "subtitle": "waiting",
+      "title": "q1",
+      "type": "card"
+    },
+    {
+      "action": "answer",
+      "fallback": {
+        "title": "Merge it?"
+      },
+      "id": "ask",
+      "options": [
+        {
+          "label": "Yes",
+          "value": "yes"
+        }
+      ],
+      "question": "Merge it?",
+      "type": "choice"
+    },
+    {
+      "action": "sign-up",
+      "fallback": {
+        "title": "form"
+      },
+      "fields": [
+        {
+          "label": "Email",
+          "name": "email",
+          "type": "text"
+        }
+      ],
+      "id": "signup",
+      "type": "form"
+    },
+    {
+      "action": "save",
+      "fallback": {
+        "title": "config"
+      },
+      "fields": [
+        {
+          "label": "Repo",
+          "name": "repo",
+          "type": "text"
+        }
+      ],
+      "id": "settings",
+      "type": "config"
+    },
+    {
+      "action": "save-token",
+      "fallback": {
+        "title": "API token"
+      },
+      "id": "token",
+      "label": "API token",
+      "name": "token",
+      "type": "secret"
+    },
+    {
+      "action": "approve",
+      "command": "cargo test",
+      "dir": "crates",
+      "fallback": {
+        "title": "cargo test"
+      },
+      "id": "run",
+      "sha": "4f2a9c1",
+      "type": "run"
+    },
+    {
+      "action": "save",
+      "fallback": {
+        "title": "Save"
+      },
+      "id": "save",
+      "label": "Save",
+      "type": "button"
+    },
+    {
+      "fallback": {
+        "title": "effort"
+      },
+      "id": "effort",
+      "name": "effort",
+      "options": [
+        {
+          "label": "low",
+          "value": "low"
+        },
+        {
+          "label": "high",
+          "value": "high"
+        }
+      ],
+      "type": "chips"
+    },
+    {
+      "fallback": {
+        "title": "open"
+      },
+      "id": "open",
+      "label": "open",
+      "type": "stat",
+      "value": 3
+    },
+    {
+      "id": "note",
+      "markdown": "**Hello**",
+      "type": "text"
+    },
+    {
+      "fallback": {
+        "title": "images"
+      },
+      "id": "shots",
+      "items": [
+        {
+          "alt": "a",
+          "src": "/media/a.png"
+        }
+      ],
+      "type": "images"
+    },
+    {
+      "fallback": {
+        "title": "/doc"
+      },
+      "height": 240,
+      "id": "doc",
+      "src": "/doc",
+      "type": "web"
+    },
+    {
+      "fallback": {
+        "title": "src/lib.rs"
+      },
+      "file": "src/lib.rs",
+      "hunks": [
+        {
+          "at": "@@ -1 +1 @@",
+          "lines": [
+            "-a",
+            "+b"
+          ]
+        }
+      ],
+      "id": "change",
+      "type": "diff"
+    },
+    {
+      "action": "save-notes",
+      "fallback": {
+        "title": "notes"
+      },
+      "id": "editor",
+      "name": "notes",
+      "text": "hello",
+      "type": "editor"
+    },
+    {
+      "fallback": {
+        "title": "lanes"
+      },
+      "id": "scene",
+      "label": "lanes",
+      "lanes": [
+        {
+          "id": "impl-1",
+          "state": "working",
+          "title": "impl"
+        }
+      ],
+      "type": "scene"
+    },
+    {
+      "fallback": {
+        "title": "Flow"
+      },
+      "id": "flow",
+      "source": "[*] --> a\na --> b",
+      "title": "Flow",
+      "type": "diagram"
+    },
+    {
+      "action": "say",
+      "fallback": {
+        "title": "composer"
+      },
+      "id": "say",
+      "placeholder": "message the team",
+      "type": "composer"
+    },
+    {
+      "action": "check-journal",
+      "add": "add line",
+      "balance": [
+        "debit",
+        "credit"
+      ],
+      "columns": [
+        {
+          "label": "Account",
+          "name": "account",
+          "options": [
+            "6100 Rent",
+            "6200 Utilities",
+            "2100 Payables"
+          ],
+          "type": "picker"
+        },
+        {
+          "label": "Description",
+          "name": "memo",
+          "type": "text"
+        },
+        {
+          "keyboard": "number",
+          "label": "Debit",
+          "name": "debit",
+          "type": "text"
+        },
+        {
+          "keyboard": "number",
+          "label": "Credit",
+          "name": "credit",
+          "type": "text"
+        }
+      ],
+      "errors": [
+        {
+          "message": "pick an account for line 2",
+          "name": "account",
+          "row": "l2"
+        }
+      ],
+      "fallback": {
+        "title": "journal lines"
+      },
+      "id": "journal",
+      "items": [
+        {
+          "id": "l1",
+          "values": {
+            "account": "6100 Rent",
+            "debit": "2400",
+            "memo": "office rent"
+          }
+        },
+        {
+          "id": "l2",
+          "values": {
+            "account": "",
+            "debit": "318.40",
+            "memo": "power and water"
+          }
+        },
+        {
+          "id": "l3",
+          "values": {
+            "account": "2100 Payables",
+            "credit": "2668.50",
+            "memo": "landlord"
+          }
+        }
+      ],
+      "label": "journal lines",
+      "min": 2,
+      "name": "lines",
+      "submit": {
+        "action": "post-journal",
+        "label": "post entry"
+      },
+      "sum": [
+        "debit",
+        "credit"
+      ],
+      "type": "lines"
+    },
+    {
+      "fallback": {
+        "title": "prose"
+      },
+      "id": "about",
+      "parts": [
+        {
+          "level": 2,
+          "part": "heading",
+          "spans": [
+            {
+              "text": "Blocks"
+            }
+          ]
+        },
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Typed "
+            },
+            {
+              "bold": true,
+              "text": "screens"
+            }
+          ]
+        },
+        {
+          "items": [
+            [
+              {
+                "text": "one"
+              }
+            ],
+            [
+              {
+                "text": "two"
+              }
+            ]
+          ],
+          "ordered": false,
+          "part": "list"
+        },
+        {
+          "part": "quote",
+          "spans": [
+            {
+              "text": "Built by type."
+            }
+          ]
+        },
+        {
+          "lang": "rust",
+          "part": "code",
+          "text": "Row::new(\"a\")"
+        },
+        {
+          "part": "rule"
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "actions": [
+        {
+          "action": "start",
+          "label": "Start"
+        }
+      ],
+      "fallback": {
+        "subtitle": "One shape, three renderers",
+        "title": "Blocks"
+      },
+      "id": "hero",
+      "media": {
+        "alt": "a bar chart",
+        "caption": "This week",
+        "height": 360,
+        "src": "/media/chart.png",
+        "width": 640
+      },
+      "subtitle": "One shape, three renderers",
+      "title": "Blocks",
+      "type": "hero"
+    },
+    {
+      "alt": "a bar chart",
+      "caption": "This week",
+      "fallback": {
+        "title": "/media/chart.png"
+      },
+      "height": 360,
+      "id": "chart",
+      "src": "/media/chart.png",
+      "type": "media",
+      "width": 640
+    },
+    {
+      "brand": {
+        "href": "/",
+        "label": "Blocks"
+      },
+      "fallback": {
+        "title": "nav"
+      },
+      "id": "nav",
+      "links": [
+        {
+          "href": "/docs",
+          "label": "Docs"
+        }
+      ],
+      "type": "nav"
+    },
+    {
+      "events": [
+        "pick"
+      ],
+      "fallback": {
+        "title": "The map"
+      },
+      "id": "map",
+      "name": "x-map",
+      "props": {
+        "zoom": 3
+      },
+      "type": "island"
+    },
+    {
+      "columns": [
+        {
+          "id": "inv",
+          "kind": "text",
+          "label": "Invoice",
+          "phone": "meta"
+        },
+        {
+          "id": "client",
+          "kind": "text",
+          "label": "Client",
+          "phone": "title",
+          "width": 18
+        },
+        {
+          "id": "status",
+          "kind": "tone",
+          "label": "Status"
+        },
+        {
+          "era": "be",
+          "id": "due",
+          "kind": "date",
+          "label": "Due"
+        },
+        {
+          "digits": 0,
+          "id": "late",
+          "kind": "bar",
+          "label": "Overdue",
+          "max": 60,
+          "tone": "warn",
+          "unit": "days"
+        },
+        {
+          "currency": "THB",
+          "id": "amount",
+          "kind": "money",
+          "label": "Amount",
+          "total": "sum"
+        }
+      ],
+      "empty": "No invoices yet.",
+      "export": [
+        "csv",
+        "xlsx"
+      ],
+      "fallback": {
+        "subtitle": "5 rows · total amount ฿126,750.00",
+        "title": "Invoices"
+      },
+      "id": "invoices",
+      "rows": [
+        {
+          "cells": {
+            "amount": 48750,
+            "client": "Orchard Lane Clinic",
+            "due": "2026-10-18",
+            "inv": "INV-0133",
+            "late": 32,
+            "status": {
+              "text": "overdue",
+              "tone": "warn"
+            }
+          },
+          "id": "INV-0133",
+          "tap": {
+            "open": "/invoice/INV-0133"
+          }
+        },
+        {
+          "cells": {
+            "amount": 31500,
+            "client": "Bluepeak Logistics",
+            "due": "2026-11-05",
+            "inv": "INV-0136",
+            "late": 14,
+            "status": {
+              "text": "disputed",
+              "tone": "bad"
+            }
+          },
+          "id": "INV-0136",
+          "tap": {
+            "open": "/invoice/INV-0136"
+          }
+        },
+        {
+          "cells": {
+            "amount": 18000,
+            "client": "Saffron & Salt",
+            "due": "2026-11-19",
+            "inv": "INV-0138",
+            "status": {
+              "text": "sent",
+              "tone": "done"
+            }
+          },
+          "id": "INV-0138",
+          "tap": {
+            "open": "/invoice/INV-0138"
+          }
+        },
+        {
+          "cells": {
+            "amount": 15000,
+            "client": "Tidewater Bakery",
+            "due": "2026-11-26",
+            "inv": "INV-0139",
+            "status": {
+              "text": "paid",
+              "tone": "ok"
+            }
+          },
+          "id": "INV-0139",
+          "tap": {
+            "open": "/invoice/INV-0139"
+          }
+        },
+        {
+          "cells": {
+            "amount": 13500,
+            "client": "Moss Hill School",
+            "inv": "INV-0143",
+            "status": {
+              "text": "draft",
+              "tone": "mute"
+            }
+          },
+          "id": "INV-0143",
+          "tap": {
+            "open": "/invoice/INV-0143"
+          }
+        }
+      ],
+      "select": {
+        "actions": [
+          {
+            "action": "remind",
+            "label": "send reminder"
+          },
+          {
+            "action": "void",
+            "bad": true,
+            "label": "void"
+          }
+        ]
+      },
+      "sort": {
+        "by": "due",
+        "dir": "asc"
+      },
+      "title": "Invoices",
+      "type": "table"
+    },
+    {
+      "done": true,
+      "fallback": {
+        "title": "Stop 3 of 8"
+      },
+      "id": "stop",
+      "steps": [
+        {
+          "id": "stop",
+          "label": "Stop",
+          "sub": "arrived 09:42",
+          "tap": {
+            "open": "stop"
+          }
+        },
+        {
+          "id": "lines",
+          "label": "Lines",
+          "sub": "6 checked",
+          "tap": {
+            "open": "lines"
+          }
+        }
+      ],
+      "title": "Stop 3 of 8",
+      "type": "steps"
+    }
+  ],
+  "fallback": {
+    "title": "screen"
+  },
+  "id": "every",
+  "type": "screen"
+}

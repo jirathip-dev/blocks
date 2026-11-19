@@ -4,6 +4,7 @@ use serde_json::{Map, Value};
 
 use crate::{tree, Action, Answer, Block, Bye, Frame, Hello, OldFrame, Sync, Synced, SCHEMA_VERSION};
 
+mod builders;
 mod fixtures;
 mod hooks;
 mod model;
@@ -50,6 +51,7 @@ pub fn write(root: &Path) -> std::io::Result<()> {
     for area in [
         model::files,
         ts::files,
+        builders::files,
         swift::files,
         hooks::files,
         theme::files,

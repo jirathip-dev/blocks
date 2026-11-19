@@ -18,6 +18,8 @@ generated = [
     "swift/Sources/Blocks/Gen/Style.swift",
     "swift/Sources/Blocks/Gen/LayoutShapes.swift",
     "web/src/gen/layout.ts",
+    "web/src/gen/builders.ts",
+    "fixtures/built/*.json",
     "web/dist/blocks.js",
     "web/dist/blocks.css",
     "web/dist/core.js",
