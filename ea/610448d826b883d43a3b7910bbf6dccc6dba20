@@ -1,0 +1,4 @@
+Decided: merged origin/staging; serif now rides staging's axes() in theme::css and the TS css, appending a ui-serif stack on :root
+Because: "web: a CSS font stack, no web font download"
+Rejected: none
+Owner: The branch is updated onto staging; serif styles still draw in the device's own serif font.
