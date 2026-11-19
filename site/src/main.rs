@@ -121,7 +121,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         .map(|t| serde_json::from_str(&t))
         .transpose()?;
     let paper = pages::paper()?;
-    let misses = theme::gate(&paper);
+    let misses = theme::gate(&paper, Fills::Tint);
     if !misses.is_empty() {
         return Err(format!("Paper fails theme::gate: {misses:?}").into());
     }

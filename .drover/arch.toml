@@ -19,6 +19,8 @@ generated = [
     "swift/Sources/Blocks/Gen/LayoutShapes.swift",
     "web/src/gen/layout.ts",
     "web/src/gen/builders.ts",
+    "web/src/gen/shapes.ts",
+    "fixtures/check/*.json",
     "fixtures/built/*.json",
     "web/dist/blocks.js",
     "web/dist/blocks.css",

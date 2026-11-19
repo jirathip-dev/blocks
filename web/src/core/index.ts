@@ -8,3 +8,5 @@ export { choose, css, tiles, type Pair, type Scale } from "./look.ts";
 export * from "../gen/builders.ts";
 export { built, type Built } from "./built.ts";
 export { share } from "./share.ts";
+export { actions, check, linkable } from "./check.ts";
+export type { Fault } from "../gen/shapes.ts";

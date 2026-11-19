@@ -27,7 +27,8 @@ public struct Fills: RawRepresentable, Hashable, Codable, Equatable, Sendable {
     public init(rawValue: String) { self.rawValue = rawValue }
     public static let tint = Self(rawValue: "tint")
     public static let outline = Self(rawValue: "outline")
-    public static let all: [Self] = [.tint, .outline]
+    public static let solid = Self(rawValue: "solid")
+    public static let all: [Self] = [.tint, .outline, .solid]
 }
 
 public struct LabelCase: RawRepresentable, Hashable, Codable, Equatable, Sendable {

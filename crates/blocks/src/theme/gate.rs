@@ -2,7 +2,7 @@ use std::f64::consts::PI;
 
 use serde::Serialize;
 
-use super::{Hex, Scheme};
+use super::{Fills, Hex, Scheme};
 
 type Rgb = [f64; 3];
 
@@ -101,8 +101,8 @@ fn de(c1: Rgb, c2: Rgb) -> f64 {
     ((dl / sl).powi(2) + (dc / sc).powi(2) + (d_h / sh).powi(2) + rt * (dc / sc) * (d_h / sh)).sqrt()
 }
 
-/// The contrast gate (text 4.5:1, state colours 3:1, ΔE2000 20 apart): the misses, empty when it passes.
-pub fn gate(s: &Scheme) -> Vec<Miss> {
+/// The contrast gate (text 4.5:1, state colours 3:1, ΔE2000 20 apart) for a style's fills: the misses, empty when it passes.
+pub fn gate(s: &Scheme, fills: Fills) -> Vec<Miss> {
     let all = s.tokens.all();
     let c = |k: &str| {
         all.iter()
@@ -129,6 +129,11 @@ pub fn gate(s: &Scheme) -> Vec<Miss> {
         }
     }
     checks.push(("--bg on --l".to_owned(), ratio(bg, c("--l")), 4.5));
+    if fills == Fills::Solid {
+        for k in ["--link", "--g", "--a", "--r", "--p", "--c"] {
+            checks.push((format!("--bg on {k}"), ratio(bg, c(k)), 4.5));
+        }
+    }
     for k in ["--fg", "--mute", "--l"] {
         checks.push((format!("{k} on {}", needs.0), ratio(c(k), needs.1), 4.5));
     }

@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::{gate, Mode, PerMode, Scheme};
+use super::{gate, Fills, Mode, PerMode, Scheme};
 
 /// A pack's theme.json: its label, default schemes, art flags and words.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -29,7 +29,7 @@ fn scheme_misses(slot: &str, name: &str, mode: Mode, schemes: &[(&str, Scheme)])
     match schemes.iter().find(|(n, _)| *n == name) {
         None => vec![format!("scheme.{slot}: {name:?} is none of the schemes given")],
         Some((_, s)) if s.mode != mode => vec![format!("scheme.{slot}: {name:?} is not a {slot} scheme")],
-        Some((_, s)) => gate(s)
+        Some((_, s)) => gate(s, Fills::Tint)
             .into_iter()
             .map(|m| format!("scheme.{slot}: {name:?} fails {}: {:.2} < {}", m.what, m.got, m.min))
             .collect(),
