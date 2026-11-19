@@ -1,0 +1,9 @@
+Decided: swift.yml's push and pull_request paths add fixtures/protocol, fixtures/behave and fixtures/sim; no new job
+Because: "also list `fixtures/protocol/**` and `fixtures/behave/**`, and the folder #90/#96 write their corpus"
+Decided: fixtures/sim joins the list since #90 wrote its corpus there and SimTests reads it
+Because: swift/Tests/BlocksTests/SimTests.swift:35
+Decided: the rules line names ci.yml's rust test, the web and swift jobs, and sim.yml's nightly sim job
+Because: .github/workflows/sim.yml:11
+Rejected: adding fixtures/layouts and fixtures/styles too — Swift reads them but the issue did not ask
+Check: this PR edits swift.yml, which is in its own path list, so the swift job runs here
+Owner: Changes to the shared protocol, behaviour or sim test data now also run the Swift tests.
