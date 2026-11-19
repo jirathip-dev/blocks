@@ -1,0 +1,9 @@
+{
+  "guard": 2,
+  "known": [
+    {
+      "rule": "render/tap-target",
+      "at": "screen#thread-new-sendmeter/composer#say"
+    }
+  ]
+}

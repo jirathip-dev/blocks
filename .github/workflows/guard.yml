@@ -1,0 +1,28 @@
+name: guard
+on:
+  schedule:
+    - cron: "23 3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  sweep:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@1.99.1
+      - uses: Swatinem/rust-cache@v2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: "Playwright's WebKit for blocks-shot"
+        run: npm --prefix web ci --no-audit --no-fund && npx --prefix web playwright install webkit
+      - name: "blocks check --all --render: every fixture, static and drawn at 390 in one WebKit launch, against .blocks/"
+        run: cargo run -q --locked -p blocks-cli -- check --all --render
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: guard-shots
+          path: shots/render

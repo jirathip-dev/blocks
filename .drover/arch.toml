@@ -63,6 +63,10 @@ dir = "docs"
 glob = "*.md"
 
 [[collect]]
+dir = "web/shot/probe"
+glob = "*.ts"
+
+[[collect]]
 dir = "docs/schema"
 glob = "*.md"
 
