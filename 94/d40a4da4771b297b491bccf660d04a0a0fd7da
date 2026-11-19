@@ -1,0 +1,8 @@
+Decided: the perf gate runs the 200-row screen five times; each patch's fastest run must be within 4 ms, every pass of every run within 16.7 ms.
+Because: "every pass within 16.7 ms, each patch within 4 ms"
+Decided: CI's red macOS patch was a scheduler spike, not a slow patch: locally a patch is about 1.1 ms but single patches spike to 4.3 ms under host load.
+Because: crates/blocks-desk/tests/perf.rs:49
+Rejected: raising the 4 ms budget — the spec fixes it; only noise is taken out, and a patch slow in every run still fails.
+Rejected: a faster rasteriser — the raster is ~0.5 ms of a ~1.1 ms patch; spikes, not raster speed, made the max exceed 4 ms.
+Check: with PATCH_MS set to 0.3 the perf test exits 101 ("a patch took 0.84 ms in every run").
+Owner: The desktop speed check now ignores one-off machine hiccups but still fails if any update is slow every time.
