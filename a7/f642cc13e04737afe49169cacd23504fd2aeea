@@ -1,0 +1,20 @@
+Decided: Shown::Get is a row or tile value bound to a state key, per the ADR, chosen by the owner
+Because: q2242
+Decided: an act's enabled keys by the action it sends (its own, else its tap's), in View.acts
+Because: crates/blocks/src/behave.rs:44
+Decided: Shown::Get carries a key, Bound {get}, not a whole Expr, so Time and Get never decode as each other
+Because: swift/Sources/Blocks/Gen/Blocks.swift:974
+Rejected: a show/hide shorthand by field name — show: {"get": key} already does it
+Check: fixtures/behave/view.json acts and values match in tests/behave.rs, web/test/behave.test.ts and BehaveTests.swift
+Check: web/test/shot.test.ts taps save while disabled (dropped, nothing sent) and again after more (sent once)
+Owner: Action buttons can be greyed out until a condition holds, and row or tile values can follow a local field, on web, Swift and the static site.
+
+Decided: merge origin/staging, keeping its number formatting in expr.rs and this branch's crate-visible text()
+Because: crates/blocks/src/expr.rs:131
+Rejected: none
+Owner: The branch now includes the latest shared work; no change to what this feature does.
+
+Decided: merge origin/staging, keeping both import sets in render/index.ts and rebuilding web/dist/blocks.js from source
+Because: web/src/render/index.ts:4
+Rejected: none
+Owner: The branch now includes the latest shared work (islands); no change to what this feature does.
