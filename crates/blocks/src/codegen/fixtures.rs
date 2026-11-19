@@ -22,6 +22,11 @@ pub(super) fn files(root: &Path, _: &Value) -> std::io::Result<Files> {
         let text = serde_json::to_string_pretty(&b)? + "\n";
         out.push((format!("fixtures/blocks/{kind}.json"), text));
     }
+    let every = Screen::new()
+        .id("every")
+        .blocks(crate::samples().into_iter().map(|(_, b)| b).collect::<Vec<_>>());
+    let every = serde_json::to_string_pretty(Built::of(&every).value())? + "\n";
+    out.push(("fixtures/built/every.json".into(), every));
     out.extend(trees(root)?);
     out.extend(html(root)?);
     Ok(out)

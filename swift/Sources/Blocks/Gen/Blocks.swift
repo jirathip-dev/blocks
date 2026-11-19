@@ -552,6 +552,17 @@ public struct Figure: Codable, Equatable, Sendable {
     public var tool: String?
 }
 
+public struct Finding: Codable, Equatable, Sendable {
+    public var at: String
+    public var file: String
+    public var fix: String
+    public var line: UInt32?
+    public var message: String
+    public var rule: String
+    public var severity: Severity
+    public var steps: String?
+}
+
 public struct Fold: Codable, Equatable, Sendable {
     public var line: String
     public var main: FoldMain?
@@ -1100,9 +1111,27 @@ public struct Section: Codable, Equatable, Sendable {
     public var show: Expr?
 }
 
+public struct Seen: Codable, Equatable, Sendable {
+    public var at: String
+    public var detail: String
+    public var file: String?
+    public var line: UInt32?
+    public var rule: String
+    public var run: String?
+    public var shot: String?
+}
+
 public struct SetState: Codable, Equatable, Sendable {
     public var key: String
     public var to: Expr
+}
+
+public struct Severity: RawRepresentable, Hashable, Codable, Equatable, Sendable {
+    public let rawValue: String
+    public init(rawValue: String) { self.rawValue = rawValue }
+    public static let error = Self(rawValue: "error")
+    public static let warn = Self(rawValue: "warn")
+    public static let all: [Self] = [.error, .warn]
 }
 
 public struct Sheet: Codable, Equatable, Sendable {

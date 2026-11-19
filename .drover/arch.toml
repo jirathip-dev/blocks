@@ -1,4 +1,11 @@
-frozen = ["ci/cap.toml", "docs/schema.md", "web/src/blocks.css"]
+frozen = [
+    "ci/cap.toml",
+    "docs/schema.md",
+    "swift/Sources/BlocksUI/Blocks.swift",
+    "swift/Sources/BlocksUI/BlockCards.swift",
+    "swift/Sources/BlocksUI/BlockLeaves.swift",
+    "web/src/blocks.css",
+]
 generated = [
     "schema/blocks.schema.json",
     "schema/sample.json",
@@ -11,6 +18,8 @@ generated = [
     "swift/Sources/Blocks/Gen/Style.swift",
     "swift/Sources/Blocks/Gen/LayoutShapes.swift",
     "web/src/gen/layout.ts",
+    "web/src/gen/builders.ts",
+    "fixtures/built/*.json",
     "web/dist/blocks.js",
     "web/dist/blocks.css",
     "web/dist/core.js",
@@ -23,6 +32,7 @@ generated = [
     "fixtures/protocol/sim-*.json",
     "fixtures/behave/sim.json",
     "fixtures/css/*.css",
+    "crates/blocks/src/guard/rules/mod.rs",
 ]
 generate = "just gen"
 shared = [
@@ -44,12 +54,20 @@ dir = "ci/cap.d"
 glob = "*.toml"
 
 [[collect]]
+dir = "crates/blocks/src/guard/rules"
+glob = "*.rs"
+
+[[collect]]
 dir = "docs"
 glob = "*.md"
 
 [[collect]]
 dir = "docs/schema"
 glob = "*.md"
+
+[[collect]]
+dir = "swift/Sources/BlocksUI/Kind"
+glob = "*.swift"
 
 [[collect]]
 dir = "web/src/css"
@@ -144,10 +162,22 @@ paths = ["crates/blocks/src/web.rs"]
 mods = ["crate::web", "blocks::web"]
 
 [[layer]]
+name = "guard"
+paths = ["crates/blocks/src/guard/**"]
+mods = ["crate::guard", "blocks::guard"]
+may_use = ["expr", "kind", "built", "behave", "tree", "wire", "patch"]
+
+[[layer]]
 name = "codegen"
 paths = ["crates/blocks/src/codegen/**", "crates/blocks/src/bin/**"]
 mods = ["crate::codegen", "blocks::codegen"]
-may_use = ["expr", "kind", "built", "wire", "patch", "diff", "shelf", "mirror", "theme", "layout", "behave", "tree", "site"]
+may_use = ["expr", "kind", "built", "wire", "patch", "diff", "shelf", "mirror", "theme", "layout", "behave", "tree", "site", "guard"]
+
+[[layer]]
+name = "cli"
+paths = ["crates/blocks-cli/src/**"]
+mods = ["blocks_cli"]
+may_use = ["guard", "kind", "built", "tree", "wire"]
 
 [[ban]]
 pattern = "drover"
@@ -186,22 +216,25 @@ reason = "no transport here: streams are carried by drover and cooee"
 [[ban]]
 pattern = "std::process"
 paths = ["crates/*/src/**"]
+except = ["crates/blocks-cli/src/**"]
 reason = "the library is pure: it starts no process"
 
 [[ban]]
 pattern = "std::fs"
 paths = ["crates/*/src/**"]
-except = ["crates/blocks/src/codegen/**"]
-reason = "the library is pure: only codegen writes files"
+except = ["crates/blocks/src/codegen/**", "crates/blocks-cli/src/**"]
+reason = "the library is pure: only codegen and the command write files"
 
 [[ban]]
 pattern = "Instant::now"
 paths = ["crates/*/src/**"]
+except = ["crates/blocks-cli/src/**"]
 reason = "the library is pure: no clock; time is the caller's"
 
 [[ban]]
 pattern = "SystemTime::now"
 paths = ["crates/*/src/**"]
+except = ["crates/blocks-cli/src/**"]
 reason = "the library is pure: no clock; time is the caller's"
 
 [[ban]]

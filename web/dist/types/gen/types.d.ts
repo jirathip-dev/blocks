@@ -317,6 +317,16 @@ export type Figure = {
     state?: Tone | null;
     tool?: string | null;
 };
+export type Finding = {
+    at: string;
+    file: string;
+    fix: string;
+    line?: number | null;
+    message: string;
+    rule: string;
+    severity: Severity;
+    steps?: string | null;
+};
 export type Fold = {
     line: string;
     main?: FoldMain | null;
@@ -664,10 +674,20 @@ export type Section = {
     id?: string | null;
     show?: Expr | null;
 };
+export type Seen = {
+    at: string;
+    detail: string;
+    file?: string | null;
+    line?: number | null;
+    rule: string;
+    run?: string | null;
+    shot?: string | null;
+};
 export type SetState = {
     key: string;
     to: Expr;
 };
+export type Severity = "error" | "warn";
 export type Sheet = {
     blocks: Block[];
     cancel?: string | null;

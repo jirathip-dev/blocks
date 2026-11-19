@@ -1,0 +1,13 @@
+{
+  "type": "screen",
+  "id": "s",
+  "title": "Queue",
+  "blocks": [
+    {
+      "type": "button",
+      "id": "go",
+      "label": " ",
+      "action": "go"
+    }
+  ]
+}
