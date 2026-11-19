@@ -1,0 +1,25 @@
+Decided: Fills gains Solid, serialised solid, last in the enum so Tint stays the default
+Because: "Existing style.json files read unchanged; the default stays `tint`"
+Decided: the on-colour for every full accent is --bg, as the gate's existing --bg on --l pairing
+Because: crates/blocks/src/theme/gate.rs:131
+Decided: gate takes the style's fills; Solid adds --bg on --link, --g, --a, --r, --p, --c at 4.5, mirrored in web/src/core/gate.ts
+Because: "passing `theme::gate` contrast in light and dark"
+Rejected: new per-accent on-colour tokens — every scheme file and pack on the wire would change
+Rejected: checking solid pairs for every scheme — the default light amber is 4.15, so the default pair would fail
+Check: the default light scheme fails solid only on --bg on --a; the default pair is left as it is
+Check: SwiftUI CardButton and RowButton draw full tint with background text under solid
+Owner: Styles can ask for solid fills; the colour check verifies label contrast on them.
+
+Decided: Fills gains Solid, serialised solid, last in the enum so Tint stays the default
+Because: "Existing style.json files read unchanged; the default stays `tint`"
+Decided: the on-colour for every full accent is --bg, as the gate's existing --bg on --l pairing
+Because: crates/blocks/src/theme/gate.rs:131
+Decided: gate takes the style's fills; Solid adds --bg on --link, --g, --a, --r, --p, --c at 4.5, mirrored in web/src/core/gate.ts
+Because: "passing `theme::gate` contrast in light and dark"
+Decided: the For apps fix is a PR body edit only; the body now has a line starting "For apps:"
+Because: scripts/for-apps.sh:12
+Rejected: new per-accent on-colour tokens — every scheme file and pack on the wire would change
+Rejected: checking solid pairs for every scheme — the default light amber is 4.15, so the default pair would fail
+Check: the default light scheme fails solid only on --bg on --a; the default pair is left as it is
+Check: SwiftUI CardButton and RowButton draw full tint with background text under solid
+Owner: Styles can ask for solid fills; the colour check verifies label contrast on them.
