@@ -1,0 +1,6 @@
+Decided: SwiftUI x labels lay out at one column's width and draw in an overlay spanning the columns they label, truncated to one line.
+Because: swift/Sources/BlocksUI/BlockChart.swift:182
+Rejected: keeping fixedSize() on the labels — a long x label widened the whole chart past the screen (chart-long at 390).
+Rejected: truncating each label to its own column — at 390 with 12 months a column is ~23px and "Jan 24" would read "J…".
+Check: blocks-snap --check at 390 passes on fixtures/stress/chart-long.json; the fixtures/trees/swift trees still match.
+Owner: A chart with very long month labels now stays inside a phone screen in the Apple app.
