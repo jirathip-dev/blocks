@@ -1,0 +1,19 @@
+Decided: theme::css, the shell and blocks-shot write the tile tokens; blocks.css reads only var(--…), so an app rule on :root wins
+Because: "An app's own style still wins: its tokens, its CSS on the hooks and its `BlockStyle` change or switch off any of it"
+Decided: the shell plays the build-up once per view path; adopt never plays it, so a site page's takeover is the same PNG
+Because: "its takeover by `blocks.js` shows no flash and no second build-up"
+Decided: a later block fades in with no rise, as #53's README proposes; docs/theme.md said slide and now says step down
+Because: docs/design/neutral-default/README.md:30
+Rejected: a CSS-only build-up on static site pages — without layout it can't count the first screen, and replaying it on takeover would flash
+Decided: SwiftUI Look.tiles defaults to Tiles.default parsed from blocksDefaultStyle; tiles: nil gives the app's own Style back
+Check: web/test/look.test.ts fails with the once-per-screen guard removed (mutation run)
+Check: the built PNGs are not pixel-identical to the mockup; type, buttons and kind layout are each renderer's own
+Owner: Pages now draw as square tiles on a dotted page and settle in once on first load; reduced motion turns it off.
+
+Decided: look.test.ts pauses the page's animations so getAnimations() still holds the build-up when settled() reads it
+Because: "The build-up plays once per screen: an update, a tab switch back or a resync does not replay it (a scripted test)"
+Rejected: a longer wait or a looser count in the test — a slow runner would still lose finished animations
+Decided: staging's wearer() writes the tile tokens, so the shell and adopt both carry them
+Because: web/src/shell.ts:96
+Check: with a 600 ms wait before the read, the unpaused test fails 0 !== 15 (CI's failure) and the paused one passes
+Owner: Fixed a test that could miss the first-load animation on slow CI machines; no change to how pages look.
