@@ -6,6 +6,7 @@
 - don't use `any`, a non-null `!`, an `as` cast but `as const`, `@ts-ignore`/`@ts-expect-error`, innerHTML/outerHTML/insertAdjacentHTML, eval/new Function, console.log, a default export or an `enum` in web/src (enforced by: CI web, web/lint.mjs and tsc --strict, web/lint-fixtures)
 - don't add a crate with a licence outside deny.toml, a known advisory, a second version or an unknown source (enforced by: CI deny, `cargo deny --locked check`)
 - don't add a direct dependency outside docs/deps.md's allow-list (enforced by: CI deps gate, scripts/deps-gate.sh)
+- don't import bench/ (React, topcoat, the bench servers) from the crate, web/src or the Swift package (enforced by: CI arch-check, the `bench/` ban)
 - don't import drover or a transport (tokio, HTTP, std::net) here, or start a process, read a clock or write a file outside codegen (enforced by: CI arch-check bans, deny.toml bans)
 - don't break .drover/arch.toml's layers (expr <- kind <- wire <- patch <- diff <- shelf, mirror <- codegen), size limits or frozen files (enforced by: CI arch-check)
 - don't hand-edit a generated file (the schema, its sample, the TS and Swift types): rerun `just gen` (enforced by: CI arch-check, `generated`)
