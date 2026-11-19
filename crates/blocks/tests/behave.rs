@@ -70,7 +70,7 @@ fn eval_gives_every_fixtures_behave_case_its_value() {
     assert!(n >= 50, "only {n} cases");
     assert!(bad.is_empty(), "{}", bad.join("\n"));
     let every = [
-        "get", "not", "all", "any", "eq", "lt", "len", "has", "is", "add", "sub", "cat", "pick", "lit", "fold",
+        "get", "not", "all", "any", "eq", "lt", "len", "has", "is", "add", "sub", "mul", "cat", "pick", "lit", "fold",
     ];
     let missing: Vec<&str> = every.into_iter().filter(|k| !seen.contains(*k)).collect();
     assert!(missing.is_empty(), "no case uses {missing:?}");
