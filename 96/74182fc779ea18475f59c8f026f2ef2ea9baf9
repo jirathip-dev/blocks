@@ -1,0 +1,76 @@
+Decided: render/diff.ts reads the generated Diff and draws div.df > .dfh(.dff,.dfs) and .dfb(.dfk, .dfl.add|.del|.ctx with i.dfm), as the approved design's diff.js
+Because: docs/design/diff/README.md:17
+Decided: a diff with no file string or no hunks array draws its fallback row; one with an empty hunks list draws only its header
+Because: docs/design/diff/states.html:24
+Decided: site::diff in crates/blocks/src/site/diff.rs writes the same element, so fixtures/html/diff.html now holds the native element
+Because: "it writes the same element and `fixtures/html/diff.html` matches"
+Decided: the CSS is diff.css as approved, untinted lines, no line numbers, hunks drawn in full
+Because: q2184
+Rejected: matching the line sign with an index in Rust — the lint bans indexing, so the writer takes the first char from the iterator
+Check: web/test/site.test.ts's per-kind parity now compares a native diff from both writers; render.test.ts no longer lists diff as a gap
+Owner: Code changes now show on the web as a proper diff, with added and removed lines marked, instead of a placeholder row.
+
+Decided: merged origin/staging and kept both sides: diff and scene modules, match arms and tests; rebuilt web/dist from the merged sources
+Because: crates/blocks/src/site/mod.rs:3
+Rejected: none
+Owner: Brought the diff view up to date with the latest shared branch; nothing changes for users beyond the diff view itself.
+
+Decided: merged origin/staging (secret #74, swift harness #59) and kept both sides: the diff and secret tests in render.test.ts, gaps list without diff or secret; rebuilt web/dist from the merged sources
+Because: web/test/render.test.ts:17
+Rejected: none
+Owner: Brought the diff view up to date with the latest shared branch; nothing changes for users beyond the diff view itself.
+
+Decided: merged origin/staging (config #75) and kept both sides: the diff and config tests in site.rs and render.test.ts, gaps list without config or diff; rebuilt web/dist from the merged sources
+Because: web/test/render.test.ts:17
+Rejected: none
+Owner: Brought the diff view up to date with the latest shared branch; nothing changes for users beyond the diff view itself.
+
+Decided: merged origin/staging (web #71, editor #72, swift #76) and kept both sides: diff and editor modules, match arms, imports and tests; gaps list is only island; rebuilt web/dist from the merged sources
+Because: web/test/render.test.ts:17
+Rejected: none
+Check: web/src/render/index.ts maps web, diff and editor to their native views
+Owner: Brought the diff view up to date with the latest shared branch; nothing changes for users beyond the diff view itself.
+
+Decided: merged origin/staging (#111, #112, #98) where only web/dist conflicted; rebuilt web/dist/blocks.js and blocks.css from the merged sources with npm run build
+Because: web/package.json:6
+Rejected: picking either side of the dist conflict by hand — dist is build output of the merged sources
+Check: web/dist matches npm run build at the head; arch-check shows no generated drift
+Owner: Brought the diff view up to date with the latest shared branch; nothing changes for users beyond the diff view itself.
+
+Decided: merged origin/staging (#177 back to #114) and regenerated the conflicted fixtures/html/diff.html, fixtures/trees/diff.json and web/dist with the just gen lines, keeping the native diff plus staging's role and name
+Because: "generated files come from `just gen`, never hand-edited"
+Rejected: picking either side by hand — all four files are generated from the merged sources
+Check: fixtures/trees/diff.json is drawn native with role group and name src/lib.rs; arch-check shows no generated drift
+Owner: Brought the diff view up to date with the latest shared branch; nothing changes for users beyond the diff view itself.
+
+Decided: merged origin/staging (#191 back to #175) and kept both sides of render.test.ts: the diff tests and the steps tests; rebuilt web/dist from the merged sources with the just gen lines
+Because: "generated files come from `just gen`, never hand-edited"
+Rejected: picking either side of the web/dist conflict by hand — dist is build output of the merged sources
+Check: render.test.ts has both the diff and steps tests and the gaps list is only island; arch-check shows no generated drift
+Owner: Brought the diff view up to date with the latest shared branch; nothing changes for users beyond the diff view itself.
+
+Decided: merged origin/staging (table #176, styling ladder #190) where only web/dist conflicted; rebuilt web/dist/blocks.js and blocks.css from the merged sources with the just gen lines
+Because: "generated files come from `just gen`, never hand-edited"
+Rejected: picking either side of the dist conflict by hand — dist is build output of the merged sources
+Check: web/dist matches npm run build at the head; arch-check shows no generated drift
+Owner: Brought the diff view up to date with the latest shared branch; nothing changes for users beyond the diff view itself.
+
+Decided: merged origin/staging (guard #207, stylesheet folder #153); staging deleted web/src/blocks.css, so the diff rules moved unchanged to web/src/css/kind/diff.css, and web/dist was rebuilt with the just gen lines
+Because: web/package.json:7
+Rejected: picking either side of the web/dist conflict by hand — dist is build output of the merged sources
+Check: web/src/css/kind/diff.css holds the same .df rules the branch had in blocks.css; arch-check shows no generated drift
+Owner: Brought the diff view up to date with the latest shared branch; nothing changes for users beyond the diff view itself.
+
+Decided: merged origin/staging (toast #217, guard G3 #208, react R2 #205) where only web/dist conflicted; rebuilt web/dist/blocks.js and blocks.css from the merged sources with the just gen lines
+Because: "generated files come from `just gen`, never hand-edited"
+Rejected: picking either side of the web/dist conflict by hand — dist is build output of the merged sources
+Check: web/dist matches npm run build at the head; arch-check shows no generated drift
+Owner: Brought the diff view up to date with the latest shared branch; nothing changes for users beyond the diff view itself.
+
+Decided: added a For apps line to the PR body: nothing for an app to do, since diff only gains its native web look
+Because: .drover/rules.md:23
+Decided: merged origin/staging (theme #220) where only web/dist conflicted; rebuilt web/dist from the merged sources with the just gen lines
+Because: "generated files come from `just gen`, never hand-edited"
+Rejected: picking either side of the web/dist conflict by hand — dist is build output of the merged sources
+Check: scripts/for-apps.sh passes on the PR body; arch-check shows no generated drift
+Owner: The change note now tells app makers they have nothing to do, and the diff view is up to date with the shared branch again.
