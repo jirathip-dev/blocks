@@ -26,7 +26,7 @@ pick!(
 );
 pick!(
     /// How a tinted part is filled.
-    pub Fills { Tint, Outline }
+    pub Fills { Tint, Outline, Solid }
 );
 pick!(
     /// Whether a mark is a symbol or its text.

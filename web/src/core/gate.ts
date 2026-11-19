@@ -60,8 +60,8 @@ function de(c1: Rgb, c2: Rgb): number {
   return Math.sqrt((dl / sl) ** 2 + (dc / sc) ** 2 + (dH / sh) ** 2 + rt * (dc / sc) * (dH / sh));
 }
 
-/// The contrast gate (text 4.5:1, state colours 3:1, ΔE2000 20 apart), as the crate's `theme::gate`: empty when it passes.
-export function gate(s: Scheme): Miss[] {
+/// The contrast gate (text 4.5:1, state colours 3:1, ΔE2000 20 apart) for a style's fills, as the crate's `theme::gate`.
+export function gate(s: Scheme, fills: "tint" | "outline" | "solid"): Miss[] {
   const c = (k: Token) => rgb(s.tokens[k]);
   const checks: Miss[] = [];
   const [bg, r, a] = [c("--bg"), c("--r"), c("--a")];
@@ -74,6 +74,9 @@ export function gate(s: Scheme): Miss[] {
     for (const k of states) checks.push({ what: `${k} on ${b}`, got: ratio(c(k), c(b)), min: 3 });
   }
   checks.push({ what: "--bg on --l", got: ratio(bg, c("--l")), min: 4.5 });
+  if (fills === "solid") {
+    for (const k of ["--link", "--g", "--a", "--r", "--p", "--c"] as const) checks.push({ what: `--bg on ${k}`, got: ratio(bg, c(k)), min: 4.5 });
+  }
   for (const k of ["--fg", "--mute", "--l"] as const) checks.push({ what: `${k} on ${needs[0]}`, got: ratio(c(k), needs[1]), min: 4.5 });
   (["--r", "--r", "--a"] as const).forEach((k, i) => {
     const [on, tint] = tints[i];

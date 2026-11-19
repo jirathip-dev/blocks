@@ -385,7 +385,7 @@ function de(c1, c2) {
   const rt = -2 * Math.sqrt(cm ** 7 / (cm ** 7 + 25 ** 7)) * Math.sin(60 * Math.exp(-(((hm - 275) / 25) ** 2)) * RAD);
   return Math.sqrt((dl / sl) ** 2 + (dc / sc) ** 2 + (dH / sh) ** 2 + rt * (dc / sc) * (dH / sh));
 }
-function gate(s) {
+function gate(s, fills) {
   const c = (k) => rgb(s.tokens[k]);
   const checks = [];
   const [bg, r, a] = [c("--bg"), c("--r"), c("--a")];
@@ -398,6 +398,9 @@ function gate(s) {
     for (const k of states) checks.push({ what: `${k} on ${b}`, got: ratio(c(k), c(b)), min: 3 });
   }
   checks.push({ what: "--bg on --l", got: ratio(bg, c("--l")), min: 4.5 });
+  if (fills === "solid") {
+    for (const k of ["--link", "--g", "--a", "--r", "--p", "--c"]) checks.push({ what: `--bg on ${k}`, got: ratio(bg, c(k)), min: 4.5 });
+  }
   for (const k of ["--fg", "--mute", "--l"]) checks.push({ what: `${k} on ${needs[0]}`, got: ratio(c(k), needs[1]), min: 4.5 });
   ["--r", "--r", "--a"].forEach((k, i) => {
     const [on, tint] = tints[i];
