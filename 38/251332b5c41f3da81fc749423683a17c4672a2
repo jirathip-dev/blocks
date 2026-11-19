@@ -1,0 +1,5 @@
+Decided: merged origin/staging (#191 back to #175) and kept both sides of render.test.ts: the diff tests and the steps tests; rebuilt web/dist from the merged sources with the just gen lines
+Because: "generated files come from `just gen`, never hand-edited"
+Rejected: picking either side of the web/dist conflict by hand — dist is build output of the merged sources
+Check: render.test.ts has both the diff and steps tests and the gaps list is only island; arch-check shows no generated drift
+Owner: Brought the diff view up to date with the latest shared branch; nothing changes for users beyond the diff view itself.
