@@ -1,0 +1,15 @@
+{
+  "id": "effort",
+  "name": "effort",
+  "options": [
+    {
+      "label": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+      "value": "low"
+    },
+    {
+      "label": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+      "value": "high"
+    }
+  ],
+  "type": "chips"
+}

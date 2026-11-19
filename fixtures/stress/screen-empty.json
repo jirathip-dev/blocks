@@ -1,0 +1,9 @@
+{
+  "blocks": [],
+  "id": "home",
+  "state": {
+    "ready": true
+  },
+  "title": "Home",
+  "type": "screen"
+}

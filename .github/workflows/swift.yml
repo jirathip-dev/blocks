@@ -2,9 +2,9 @@ name: swift
 on:
   push:
     branches: [main, staging]
-    paths: ["Package.swift", "swift/**", "schema/sample.json", "fixtures/screens/**", "fixtures/blocks/**", "fixtures/trees/**", "fixtures/protocol/**", "fixtures/behave/**", "fixtures/sim/**", ".github/workflows/swift.yml"]
+    paths: ["Package.swift", "swift/**", "schema/sample.json", "fixtures/screens/**", "fixtures/blocks/**", "fixtures/trees/**", "fixtures/protocol/**", "fixtures/behave/**", "fixtures/sim/**", "fixtures/stress/**", ".github/workflows/swift.yml"]
   pull_request:
-    paths: ["Package.swift", "swift/**", "schema/sample.json", "fixtures/screens/**", "fixtures/blocks/**", "fixtures/trees/**", "fixtures/protocol/**", "fixtures/behave/**", "fixtures/sim/**", ".github/workflows/swift.yml"]
+    paths: ["Package.swift", "swift/**", "schema/sample.json", "fixtures/screens/**", "fixtures/blocks/**", "fixtures/trees/**", "fixtures/protocol/**", "fixtures/behave/**", "fixtures/sim/**", "fixtures/stress/**", ".github/workflows/swift.yml"]
 
 permissions:
   contents: read
@@ -18,13 +18,23 @@ jobs:
         env:
           BLOCKS_STRICT: "1"
         run: swift test
-      - name: "blocks-snap --check on every fixtures/blocks file against its fixtures/trees/swift tree"
+      - name: "blocks-snap --check on every fixtures/blocks file against its fixtures/trees/swift tree at 390 and 1440"
         env:
           BLOCKS_STRICT: "1"
         run: |
           swift build --product blocks-snap
           snap="$(swift build --show-bin-path)/blocks-snap"
-          for f in fixtures/blocks/*.json; do
-            k=$(basename "$f" .json)
-            "$snap" --screen "$f" --expect "fixtures/trees/swift/$k.json" --check --out "shots/swift/$k"
+          for size in 390x844 1440x900; do
+            for f in fixtures/blocks/*.json; do
+              k=$(basename "$f" .json)
+              "$snap" --screen "$f" --size "$size" --expect "fixtures/trees/swift/$k.json" --check --out "shots/swift/$size/$k"
+            done
+          done
+      - name: "blocks-snap --check at 390 on every fixtures/stress variant: inside the width, over no sibling"
+        env:
+          BLOCKS_STRICT: "1"
+        run: |
+          snap="$(swift build --show-bin-path)/blocks-snap"
+          for f in fixtures/stress/*-*.json; do
+            "$snap" --screen "$f" --check --out "shots/stress/$(basename "$f" .json)"
           done

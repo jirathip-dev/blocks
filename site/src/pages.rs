@@ -150,6 +150,20 @@ pub fn home(kinds: usize, bench: Option<&Value>) -> Page {
             "",
             "numbers.html",
         ),
+        link_row(
+            "to-behaviours",
+            "Behaviours",
+            "a form whose fields show, hide, check and enable in the page, with no server",
+            "",
+            "behaviours.html",
+        ),
+        link_row(
+            "to-islands",
+            "Islands",
+            "an app's own component in a page, with its fallback beside it",
+            "",
+            "islands.html",
+        ),
     ];
     page(
         "home",

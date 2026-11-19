@@ -160,7 +160,5 @@ export function diagram(b: Blk, c: Ctx): HTMLElement {
   const was = !prev ? {} : same(prev.counts, counts) ? prev.was : prev.counts;
   seen.set(key, { counts, was });
   const box = h("div", "dg", map(g, b, c, WIDE, counts, was), map(g, b, c, PHONE, counts, was));
-  box.setAttribute("role", "group");
-  box.setAttribute("aria-label", String(b.title ?? "Workflow"));
   return box;
 }
