@@ -1,0 +1,7 @@
+Decided: merge origin/staging twice and put chart beside toast in every kind list; regenerate the schema, TS, Swift and dist rather than hand-merge them.
+Because: .drover/arch.toml:9
+Decided: the hard kind counts staging added go from 31 to 32, and the stress fixture count to 64.
+Because: site/tests/pages.rs:30
+Rejected: none
+Check: the regenerated files match `just gen`; the cargo, web, swift and showcase tests pass at this head.
+Owner: The chart branch now carries staging's toast and guard work, with no behaviour changes.
