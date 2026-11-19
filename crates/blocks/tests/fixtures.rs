@@ -376,18 +376,18 @@ fn every_golden_parses_with_no_fault() {
     );
 }
 
-const KINDS_27: [&str; 27] = [
+const KINDS_28: [&str; 28] = [
     "screen", "sheet", "section", "list", "row", "card", "choice", "form", "config", "secret", "run", "button",
     "chips", "stat", "text", "images", "web", "diff", "editor", "scene", "diagram", "composer", "prose", "hero",
-    "media", "nav", "island",
+    "media", "nav", "island", "table",
 ];
 
 #[test]
-fn the_27_kinds_each_have_a_typed_sample_that_is_its_fixture() {
+fn the_28_kinds_each_have_a_typed_sample_that_is_its_fixture() {
     let mut kinds: Vec<&str> = Block::KINDS.iter().copied().chain(["island"]).collect();
     kinds.sort_unstable();
     kinds.dedup();
-    let mut want = KINDS_27.to_vec();
+    let mut want = KINDS_28.to_vec();
     want.sort_unstable();
     assert_eq!(kinds, want);
     let samples = blocks::samples();

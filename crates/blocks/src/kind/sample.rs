@@ -1,8 +1,9 @@
 use super::{
-    Act, Block, Button, Card, CardKind, ChipOption, Chips, Choice, ChoiceOption, Composer, Diagram, Diff, Editor,
-    Fallback, Field, FieldKind, Form, Hero, Hunk, Image, Images, Island, Lane, LaneState, Link, List, Media, Nav,
-    NavLink, Part, Prose, Round, RoundLane, Row, Run, Scene, Screen, Secret, Section, Sheet, Shown, Span, Stat, Tap,
-    Text, Toned, Web,
+    Act, Block, BulkAction, Button, Card, CardKind, Cell, ChipOption, Chips, Choice, ChoiceOption, Column, ColumnKind,
+    Composer, Diagram, Diff, Editor, Era, ExportFormat, Fallback, Field, FieldKind, Form, Hero, Hunk, Image, Images,
+    Island, Label, Lane, LaneState, Link, List, Media, Nav, NavLink, Part, PhonePart, Prose, Round, RoundLane, Row,
+    Run, Scene, Screen, Secret, Section, Sheet, Shown, SortDir, Span, Stat, Table, TableRow, TableSelect, TableSort,
+    Tap, Text, Tone, Toned, Total, Web,
 };
 use crate::expr::{Expr, Lit, State};
 
@@ -222,9 +223,131 @@ fn holders() -> Vec<Block> {
     ]
 }
 
+fn table() -> Block {
+    let col = |id: &str, label: &str, kind: ColumnKind| Column {
+        id: id.into(),
+        label: label.into(),
+        kind,
+        ..Column::default()
+    };
+    let label = |text: &str, tone: Tone| {
+        Cell::Label(Label {
+            text: text.into(),
+            tone: Some(tone),
+        })
+    };
+    let row = |id: &str, client: &str, status: Cell, due: Option<&str>, late: Option<u32>, amount: u32| {
+        let mut cells = std::collections::BTreeMap::from([
+            ("inv".to_string(), Cell::Text(id.into())),
+            ("client".into(), Cell::Text(client.into())),
+            ("status".into(), status),
+            ("amount".into(), Cell::Number(amount.into())),
+        ]);
+        cells.extend(due.map(|d| ("due".into(), Cell::Text(d.into()))));
+        cells.extend(late.map(|l| ("late".into(), Cell::Number(l.into()))));
+        TableRow {
+            id: id.into(),
+            cells,
+            tap: Some(Tap {
+                open: Some(format!("/invoice/{id}")),
+                ..Tap::default()
+            }),
+        }
+    };
+    let columns = vec![
+        Column {
+            phone: Some(PhonePart::Meta),
+            ..col("inv", "Invoice", ColumnKind::Text)
+        },
+        Column {
+            width: Some(18),
+            phone: Some(PhonePart::Title),
+            ..col("client", "Client", ColumnKind::Text)
+        },
+        col("status", "Status", ColumnKind::Tone),
+        Column {
+            era: Some(Era::Be),
+            ..col("due", "Due", ColumnKind::Date)
+        },
+        Column {
+            unit: Some("days".into()),
+            tone: Some(Tone::Warn),
+            max: Some(60.into()),
+            digits: Some(0),
+            ..col("late", "Overdue", ColumnKind::Bar)
+        },
+        Column {
+            currency: Some("THB".into()),
+            total: Some(Total::Sum),
+            ..col("amount", "Amount", ColumnKind::Money)
+        },
+    ];
+    let rows = vec![
+        row(
+            "INV-0133",
+            "Orchard Lane Clinic",
+            label("overdue", Tone::Warn),
+            Some("2026-10-18"),
+            Some(32),
+            48_750,
+        ),
+        row(
+            "INV-0136",
+            "Bluepeak Logistics",
+            label("disputed", Tone::Bad),
+            Some("2026-11-05"),
+            Some(14),
+            31_500,
+        ),
+        row(
+            "INV-0138",
+            "Saffron & Salt",
+            label("sent", Tone::Done),
+            Some("2026-11-19"),
+            None,
+            18_000,
+        ),
+        row(
+            "INV-0139",
+            "Tidewater Bakery",
+            label("paid", Tone::Ok),
+            Some("2026-11-26"),
+            None,
+            15_000,
+        ),
+        row(
+            "INV-0143",
+            "Moss Hill School",
+            label("draft", Tone::Mute),
+            None,
+            None,
+            13_500,
+        ),
+    ];
+    let bulk = |action: &str, label: &str, bad: Option<bool>| BulkAction {
+        action: action.into(),
+        label: label.into(),
+        bad,
+    };
+    let select = TableSelect {
+        actions: vec![bulk("remind", "send reminder", None), bulk("void", "void", Some(true))],
+    };
+    let table = Table::new(columns, rows)
+        .id("invoices")
+        .title("Invoices")
+        .sort(TableSort {
+            by: "due".into(),
+            dir: SortDir::Asc,
+        })
+        .empty("No invoices yet.")
+        .select(select)
+        .export(vec![ExportFormat::Csv, ExportFormat::Xlsx]);
+    Block::Table(Box::new(table))
+}
+
 /// One typed sample per kind, keyed by its `type`; `fixtures/blocks` is written from them.
 pub fn samples() -> Vec<(&'static str, Block)> {
-    let all = [holders(), views(), controls(), content()].concat();
+    let all = [holders(), views(), controls(), content(), vec![table()]].concat();
     let kind = |b: &Block| {
         let v = serde_json::to_value(b).ok()?;
         let t = v.get("type")?.as_str()?.to_string();

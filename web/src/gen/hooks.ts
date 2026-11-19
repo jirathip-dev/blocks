@@ -30,4 +30,5 @@ export const hooks: Record<Kind, Hook> = {
     media: { variant: null, parts: [] },
     nav: { variant: null, parts: [] },
     island: { variant: null, parts: [] },
+    table: { variant: null, parts: ["title"] },
 };

@@ -10,10 +10,12 @@ mod macros;
 mod content;
 mod parts;
 mod sample;
+mod table;
 
 pub use content::*;
 pub use parts::*;
 pub use sample::samples;
+pub use table::*;
 
 kind! {
     /// A whole screen.
@@ -379,4 +381,5 @@ kinds! {
     Media(Media) = "media",
     Nav(Nav) = "nav",
     Island(Island) = "island",
+    Table(Table) = "table",
 }

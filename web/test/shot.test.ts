@@ -19,7 +19,7 @@ const run = (...args) => spawnSync(process.execPath, ["--no-warnings", cli, ...a
 
 test("every fixtures/blocks file passes --check against its fixtures/trees tree in WebKit", () => {
   const kinds = readdirSync(blocks).map((f) => f.replace(/\.json$/, ""));
-  strictEqual(kinds.length, 27);
+  strictEqual(kinds.length, 28);
   for (const k of kinds) {
     const r = run("--screen", join(blocks, `${k}.json`), "--expect", join(trees, `${k}.json`), "--check", "--out", join(out, k));
     strictEqual(r.status, 0, `${k}: ${r.stderr}`);
