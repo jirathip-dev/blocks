@@ -1,6 +1,10 @@
 # blocks
 
-blocks is an opinionated, server-driven UI framework for live app UI and static sites. drover and cooee depend on it.
+blocks is an opinionated UI framework whose screens are data: typed blocks, checked, then drawn by a renderer. It has
+two modes. Mode A, server-driven (drover, cooee): a Rust server builds screens and sends row ops over the device
+stream. Mode B, client-built (synergy): TS builders in a route loader build the screen and the React adapter draws it,
+with no server and no stream; it uses the kinds, the generated types, the builders, check, `blocks.css` and the guard
+kit, and not shelf, mirror, the stream, wire versioning or site.
 
 Shipped: the crate (typed blocks, their row diff and ops, the device stream protocol) with the codegen that turns its
 Rust types into JSON Schema, TS and Swift; the theme rules (scheme tokens, the gate, styles, the pack check) and one
@@ -10,7 +14,7 @@ harnesses (`docs/architecture/blocks/migration.md`).
 ## Intent
 
 - One definition of a screen: Rust types, with the schema, TS and Swift generated from them (`docs/schema.md`).
-- Screens change by row ops: `diff` two screens, `apply` the ops, and resume a stream after a reconnect.
+- Screens change by row ops in Mode A: `diff` two screens, `apply` the ops, and resume a stream after a reconnect.
 - Held to drover's standard from the first commit: every gate below runs in CI and in `just check`.
 
 ## Non-goals
