@@ -26,6 +26,7 @@ final class LinesTests: XCTestCase {
         request.usesLanguageCorrection = false
         let lines = try await request.perform(on: try drawn(block)).compactMap { $0.topCandidates(1).first?.string }
         return lines.joined(separator: "\n").replacingOccurrences(of: "•", with: "·")
+            .replacingOccurrences(of: " - ", with: " · ")
     }
 
     private func lit(_ block: Block) throws -> Int {
