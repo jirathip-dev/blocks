@@ -17,7 +17,7 @@ test("evaluate gives every fixtures/behave case the crate's value", () => {
 test("view gives fixtures/behave/view.json the crate's view, and start its start state", () => {
   const [, file] = files.find(([f]) => f === "view.json");
   const v = view(file.screen, file.state);
-  deepStrictEqual({ hidden: [...v.hidden].sort(), disabled: [...v.disabled].sort(), says: v.says }, file.view);
+  deepStrictEqual({ hidden: [...v.hidden].sort(), disabled: [...v.disabled].sort(), says: v.says, acts: [...v.acts].sort(), values: v.values }, file.view);
   const s = start(file.screen);
   deepStrictEqual([s.more, s.plan, s.email], [false, "free", null]);
   deepStrictEqual(view(file.screen, s).says.email, "Enter an email");

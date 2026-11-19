@@ -33,6 +33,16 @@
             }
           ]
         },
+        "enabled": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
         "icon": {
           "type": [
             "string",
@@ -555,6 +565,18 @@
         }
       ],
       "description": "A block: an object whose `type` names its kind; any other `type` is an app's own."
+    },
+    "Bound": {
+      "description": "A value bound to local state: it shows the text of state key `get`.",
+      "properties": {
+        "get": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "get"
+      ],
+      "type": "object"
     },
     "Button": {
       "additionalProperties": true,
@@ -3828,10 +3850,13 @@
           "type": "number"
         },
         {
+          "$ref": "#/$defs/Bound"
+        },
+        {
           "$ref": "#/$defs/Time"
         }
       ],
-      "description": "A row's or a tile's value: a string, a number, or a time."
+      "description": "A row's or a tile's value: a string, a number, a state key's value, or a time."
     },
     "Span": {
       "description": "A run of text and how it is set.",

@@ -20,6 +20,8 @@ private struct Shown: Decodable {
     let hidden: [String]
     let disabled: [String]
     let says: [String: String]
+    let acts: [String]
+    let values: [String: String]
 }
 
 @MainActor
@@ -53,6 +55,8 @@ final class BehaveTests: XCTestCase {
         XCTAssertEqual(v.hidden.sorted(), want.hidden)
         XCTAssertEqual(v.disabled.sorted(), want.disabled)
         XCTAssertEqual(v.says, want.says)
+        XCTAssertEqual(v.acts.sorted(), want.acts)
+        XCTAssertEqual(v.values, want.values)
         let start = Behaviour.state(screen)
         XCTAssertEqual([start["more"], start["plan"], start["email"]], [.bool(false), .string("free"), .null])
         XCTAssertEqual(Behaviour(screen, state: start).says["email"], "Enter an email")

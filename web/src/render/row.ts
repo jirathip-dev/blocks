@@ -1,5 +1,5 @@
 import type { Round, Row, Tap } from "../gen/types.ts";
-import { acts, btn, type Ctx, el, h, href, kids, sends, ticked, toggle, tone, urlOf } from "./index.ts";
+import { acts, btn, type Ctx, el, h, href, kids, offable, sends, ticked, toggle, tone, urlOf } from "./index.ts";
 
 const press = (e: HTMLElement, go: () => void) => {
   e.tabIndex = 0;
@@ -87,7 +87,7 @@ export function row(b: Row, c: Ctx): HTMLElement {
   for (const s of swipe) {
     const x = btn(s.label, s.tone === "bad" ? "bad" : "", undefined, sends(s.tap, s.action));
     x.onclick = () => c.act({ action: s.action, block: b.id, values: s.values ?? {}, confirm: s.confirm }, x);
-    bar.append(x);
+    bar.append(offable(x, s));
   }
   w.append(bar);
   let x0 = 0;

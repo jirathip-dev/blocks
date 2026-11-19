@@ -76,6 +76,7 @@ internal struct ListBlock: View {
 
 internal struct StatBlock: View {
     @Environment(\.look) private var look
+    @Environment(\.behaved) private var behaved
     internal let block: Stat
 
     internal var body: some View {
@@ -98,7 +99,7 @@ internal struct StatBlock: View {
             Text(label ?? "").ui(12, .regular, look).foregroundStyle(palette.mute)
                 .fixedSize(horizontal: false, vertical: true)
             HStack(alignment: .firstTextBaseline, spacing: 4) {
-                RelativeValue { value?.text(at: $0) ?? "" }.ui(22, .semibold, look)
+                RelativeValue { value?.text(at: $0, behaved.view.values) ?? "" }.ui(22, .semibold, look)
                     .foregroundStyle(palette.tone(tone?.rawValue) ?? palette.foreground)
                     .fixedSize(horizontal: false, vertical: true)
                 if let unit { Text(unit).ui(13, .regular, look).foregroundStyle(palette.mute) }

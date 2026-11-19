@@ -1,5 +1,6 @@
 import { hooks } from "../gen/hooks.ts";
-import type { Block, Fallback, Kind, Label, Tap, Toned } from "../gen/types.ts";
+import type { Act, Block, Fallback, Kind, Label, Tap, Toned } from "../gen/types.ts";
+import { actionOf } from "../behave.ts";
 import { island, isTag } from "../island.ts";
 import type { Theme } from "../theme.ts";
 import { button } from "./button.ts";
@@ -69,6 +70,12 @@ export const acts = <E extends HTMLElement>(e: E, action: unknown): E => {
   if (typeof action === "string" && action) e.dataset.action = action;
   return e;
 };
+/// Marks an act's button with the action its `enabled` turns off, as `data-act`.
+export const offable = <E extends HTMLElement>(e: E, a: Act): E => {
+  const k = actionOf(a);
+  if (k) e.dataset.act = k;
+  return e;
+};
 export const btn = (label: unknown, cls = "", url?: string, action?: unknown) => {
   const b = url ? href(el("a", `btn ${cls}`), url) : Object.assign(el("button", cls), { type: "button" });
   b.append(h("span", "", String(label ?? "")));
@@ -101,6 +108,11 @@ export function value(v: unknown): string {
   return String(v ?? "");
 }
 export const ticked = (v: unknown): Node | string => {
+  if (isBlk(v) && typeof v.get === "string") {
+    const s = el("span", "");
+    s.dataset.get = v.get;
+    return s;
+  }
   if (!(isBlk(v) && ("since" in v || "until" in v))) return value(v);
   const s = h("span", "", value(v));
   s.dataset.tick = JSON.stringify(v);
