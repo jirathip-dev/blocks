@@ -33,10 +33,16 @@ perf:
 soak:
     cargo test --release --locked -p blocks --test soak -- --ignored --nocapture
 
-# `just sim [n]`: n (default 500) random seeds of the ops protocol from BLOCKS_SIM_FROM (default 1000); each failure
-# prints its seed and replay line. The fixed seeds in crates/blocks/tests/sim.rs run in `just test`.
+# `just sim [n]`: n (default 500) random seeds from BLOCKS_SIM_FROM (default 1000): the ops protocol (a failure prints its
+# seed and replay line), then one corpus of screens, op sequences and expressions the crate writes and TS and Swift read
+# (a difference prints its seed and the shortest case). The fixed seeds in crates/blocks/tests/sim.rs run in `just test`.
 sim n="500":
-    BLOCKS_SIM_N={{n}} cargo test --release --locked -p blocks --test sim random_seeds -- --ignored
+    #!/usr/bin/env bash
+    set -euo pipefail
+    export BLOCKS_SIM_N={{n}} BLOCKS_SIM_CORPUS="{{justfile_directory()}}/target/sim-corpus.json"
+    cargo test --release --locked -p blocks --test sim -- --ignored
+    node --no-warnings --test web/test/sim.test.ts
+    if [ "$(uname)" = Darwin ]; then swift test --filter SimTests; else echo "sim: Swift is macOS only, skipped"; fi
 
 deps:
     scripts/deps-gate.sh

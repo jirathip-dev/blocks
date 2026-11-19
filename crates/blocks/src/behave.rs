@@ -24,7 +24,8 @@ fn holds(b: &Value, key: &str, state: &State) -> Option<bool> {
 
 fn checks(f: &Value) -> Vec<Check> {
     let all = f.get("checks").and_then(Value::as_array).into_iter().flatten();
-    all.filter_map(|c| Check::deserialize(c).ok()).collect()
+    let written = all.filter(|c| c.get("ok").is_some_and(|ok| !ok.is_null()));
+    written.filter_map(|c| Check::deserialize(c).ok()).collect()
 }
 
 fn acts(o: &serde_json::Map<String, Value>) -> Vec<&Value> {

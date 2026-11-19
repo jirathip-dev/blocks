@@ -36,7 +36,7 @@ extension Lit {
         switch self {
         case .null: ""
         case .bool(let b): b ? "true" : "false"
-        case .number(let n): n == n.rounded() && abs(n) < 1e15 ? String(Int64(n)) : "\(n)"
+        case .number(let n): shown(n)
         case .string(let s): s
         }
     }
@@ -52,6 +52,29 @@ extension Lit {
         default: .null
         }
     }
+}
+
+private func shown(_ v: Double) -> String {
+    let parts = "\(abs(v))".split(separator: "e")
+    let m = parts.first.map(String.init) ?? "0"
+    var x = (parts.count > 1 ? Int(parts[1]) : nil) ?? 0
+    x += (m.split(separator: ".", omittingEmptySubsequences: false).first?.count ?? 1) - 1
+    var d = Array(m.filter(\.isNumber))
+    while d.first == "0", d.count > 1 { d.removeFirst(); x -= 1 }
+    while d.last == "0", d.count > 1 { d.removeLast() }
+    if d == ["0"] { return "0" }
+    let (s, k, n) = (String(d), d.count, x + 1)
+    let body: String
+    if k <= n, n <= 21 {
+        body = s + String(repeating: "0", count: n - k)
+    } else if 0 < n, n <= 21 {
+        body = String(d[..<n]) + "." + String(d[n...])
+    } else if -6 < n, n <= 0 {
+        body = "0." + String(repeating: "0", count: -n) + s
+    } else {
+        body = String(d[0]) + (k > 1 ? "." + String(d[1...]) : "") + "e" + (n > 0 ? "+" : "-") + String(abs(n - 1))
+    }
+    return (v < 0 ? "-" : "") + body
 }
 
 private func trim(_ s: String) -> String { s.trimmingCharacters(in: .whitespacesAndNewlines) }

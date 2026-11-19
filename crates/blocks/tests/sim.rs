@@ -4,7 +4,7 @@ use std::collections::{BTreeMap, VecDeque};
 
 use blocks::expr::{eval, Expr, Lit, Match, Pattern, State};
 use blocks::{apply, diff, Block, Built, Frame, Have, Hello, Mirror, Put, Shelf, Synced, Took};
-use serde_json::{json, Number};
+use serde_json::{json, Number, Value};
 use support::{mutate, screen, Rng};
 
 const SEEDS: &[u64] = &[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
@@ -133,7 +133,19 @@ fn run(seed: u64) -> Result<(), String> {
 }
 
 fn lit(rng: &mut Rng) -> Lit {
-    let nums = [0.0, -1.0, 0.5, 3.0, 1e308, -1e308, f64::MIN_POSITIVE];
+    let nums = [
+        0.0,
+        -1.0,
+        0.5,
+        3.0,
+        1e308,
+        -1e308,
+        f64::MIN_POSITIVE,
+        1e16,
+        1e21,
+        1e-5,
+        1e-7,
+    ];
     let strs = ["", "a", "👍🏽", "ada@example.org", "https://x.org", "3", " 4.5 "];
     match rng.below(4) {
         0 => Lit::Null,
@@ -209,6 +221,147 @@ fn exprs(seed: u64) -> Result<(), String> {
     Ok(())
 }
 
+fn pick<'a>(rng: &mut Rng, xs: &[&'a str]) -> &'a str {
+    xs[rng.below(xs.len())]
+}
+
+fn tree(rng: &mut Rng) -> Value {
+    let rows: Vec<Value> = (0..rng.below(4))
+        .map(|i| json!({"type": "row", "id": format!("l{i}"), "title": format!("row {i}")}))
+        .collect();
+    let buttons: Vec<Value> = (0..rng.below(3))
+        .map(|i| json!({"type": "button", "id": format!("b{i}"), "label": format!("go {i}")}))
+        .collect();
+    let mut blocks = vec![
+        json!({"type": "list", "id": "l", "rows": rows}),
+        json!({"type": "card", "id": "c", "title": "card", "buttons": buttons}),
+    ];
+    blocks
+        .extend((0..rng.below(4)).map(|i| json!({"type": "text", "id": format!("r{i}"), "markdown": format!("t{i}")})));
+    json!({"type": "screen", "id": "s", "title": "sim", "blocks": blocks})
+}
+
+fn op(rng: &mut Rng, fresh: &mut usize) -> Value {
+    let ids = ["s", "l", "c", "l0", "l1", "b0", "r0", "r1", "zz"];
+    let lists = ["s", "l", "c", "s", "l", "c", "r0", "zz"];
+    let text = |rng: &mut Rng| pick(rng, &["", "x", "👍🏽", "a b"]).to_string();
+    let mut child = |rng: &mut Rng| {
+        *fresh += 1;
+        let id = format!("n{fresh}");
+        match rng.below(3) {
+            0 => json!({"type": "row", "id": id, "title": text(rng)}),
+            1 => json!({"type": "button", "id": id, "label": text(rng)}),
+            _ => json!({"type": "text", "id": id, "markdown": text(rng)}),
+        }
+    };
+    let mut o = match rng.below(9) {
+        0 | 1 => {
+            let id = pick(rng, &["s", "c", "l0", "l1", "b0", "b1", "r0", "r1", "zz"]);
+            let field = match id.chars().next() {
+                Some('s') => "title",
+                Some('b') => "label",
+                Some('r') => "markdown",
+                _ => pick(rng, &["title", "subtitle"]),
+            };
+            let to = if field == "subtitle" && rng.below(2) == 0 {
+                Value::Null
+            } else {
+                text(rng).into()
+            };
+            json!({"op": "merge", "id": id, "fields": {field: to}})
+        }
+        2 | 3 => json!({"op": "insert", "into": pick(rng, &lists), "block": child(rng)}),
+        4 => json!({"op": "move", "id": pick(rng, &ids), "into": pick(rng, &lists)}),
+        5 => json!({"op": "remove", "id": pick(rng, &ids)}),
+        6 => json!({"op": "replace", "id": pick(rng, &ids), "block": child(rng)}),
+        7 => json!({"op": pick(rng, &["badge", "dot", "fly"]), "count": 2, "on": true}),
+        _ => json!({"op": "screen", "screen": tree(rng)}),
+    };
+    for k in ["before", "after"] {
+        if matches!(o["op"].as_str(), Some("insert" | "move")) && rng.below(3) == 0 {
+            o[k] = pick(rng, &ids).into();
+        }
+    }
+    o
+}
+
+fn applied(screen: &Value, ops: &Value) -> Value {
+    let mut b: Block = serde_json::from_value(screen.clone()).unwrap();
+    let ops: Vec<blocks::Op> = serde_json::from_value(ops.clone()).unwrap();
+    apply(&mut b, &ops).map_or(Value::Null, |()| serde_json::to_value(&b).unwrap())
+}
+
+fn viewed(screen: &Value, state: &Value) -> Value {
+    let state: State = serde_json::from_value(state.clone()).unwrap();
+    serde_json::to_value(blocks::behave::view(&Built::new(screen.clone()), &state)).unwrap()
+}
+
+fn evaluated(e: &Value, state: &Value) -> Value {
+    let state: State = serde_json::from_value(state.clone()).unwrap();
+    serde_json::to_value(eval(&serde_json::from_value(e.clone()).unwrap(), &state)).unwrap()
+}
+
+fn cases(seed: u64) -> Vec<Value> {
+    let mut rng = Rng::new(seed);
+    let state: State = (0..4).map(|i| (format!("k{i}"), lit(&mut rng))).collect();
+    let state = serde_json::to_value(state).unwrap();
+    let mut out = vec![];
+    let mut fresh = 0;
+    for _ in 0..4 {
+        let screen = tree(&mut rng);
+        let ops: Value = (0..=rng.below(4)).map(|_| op(&mut rng, &mut fresh)).collect();
+        let after = applied(&screen, &ops);
+        out.push(json!({"seed": seed, "screen": screen, "ops": ops, "after": after}));
+    }
+    for _ in 0..10 {
+        let depth = 1 + rng.below(5);
+        let e = serde_json::to_value(expr(&mut rng, depth)).unwrap();
+        let value = evaluated(&e, &state);
+        out.push(json!({"seed": seed, "state": state, "expr": e, "value": value}));
+    }
+    let mut e = || serde_json::to_value(expr(&mut rng, 3)).unwrap();
+    let screen = json!({"type": "screen", "id": "s", "blocks": [
+        {"type": "text", "id": "t", "markdown": "x", "show": e()},
+        {"type": "button", "id": "b", "label": "x", "enabled": e()},
+        {"type": "form", "id": "f", "fields": [{"type": "text", "name": "k1", "show": e(), "enabled": e(),
+            "checks": [{"ok": e(), "say": "no"}, {"ok": {"lt": [{"len": {"get": "k1"}}, e()]}, "say": "long"}]}]}
+    ]});
+    let view = viewed(&screen, &state);
+    out.push(json!({"seed": seed, "state": state, "screen": screen, "view": view}));
+    out
+}
+
+fn differs(c: &Value) -> Option<Value> {
+    let (got, want) = if let Some(ops) = c.get("ops") {
+        (applied(&c["screen"], ops), &c["after"])
+    } else if let Some(e) = c.get("expr") {
+        (evaluated(e, &c["state"]), &c["value"])
+    } else {
+        (viewed(&c["screen"], &c["state"]), &c["view"])
+    };
+    (&got != want).then_some(got)
+}
+
+fn shortest(corpus: &Value) -> Option<String> {
+    let cases = corpus["cases"].as_array().unwrap();
+    let bad: Vec<(String, Value)> = cases
+        .iter()
+        .filter_map(|c| differs(c).map(|got| (c.to_string(), got)))
+        .collect();
+    let (case, got) = bad.iter().min_by_key(|(c, _)| c.len())?;
+    let seed = serde_json::from_str::<Value>(case).unwrap()["seed"].clone();
+    Some(format!(
+        "{} of {} cases differ; the shortest, seed {seed}: {case}\n  gave {got}",
+        bad.len(),
+        cases.len()
+    ))
+}
+
+fn corpus_path() -> std::path::PathBuf {
+    let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
+    root.join(std::env::var("BLOCKS_SIM_CORPUS").unwrap_or_else(|_| "target/sim-corpus.json".into()))
+}
+
 #[test]
 fn no_expression_panics_and_each_reads_back() {
     let seeds = (0..200).chain(env("BLOCKS_SIM_SEED"));
@@ -240,4 +393,25 @@ fn random_seeds() {
         })
         .collect();
     assert!(bad.is_empty(), "{} of {n} seeds failed:\n{}", bad.len(), bad.join("\n"));
+}
+
+#[test]
+fn the_forced_mismatch_corpus_names_its_shortest_differing_seed() {
+    let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../fixtures/sim/mismatch.json");
+    let corpus: Value = serde_json::from_str(&std::fs::read_to_string(path).unwrap()).unwrap();
+    let out = shortest(&corpus).expect("the forced mismatches went unseen");
+    assert!(out.starts_with("3 of 4 cases differ; the shortest, seed 7:"), "{out}");
+}
+
+#[test]
+#[ignore = "the nightly corpus: `just sim [n]` writes it, then the TS and Swift runners read it"]
+fn corpus() {
+    let from = env("BLOCKS_SIM_FROM").unwrap_or(1000);
+    let n = env("BLOCKS_SIM_N").unwrap_or(500);
+    let cases: Vec<Value> = (from..from + n).flat_map(cases).collect();
+    let path = corpus_path();
+    std::fs::create_dir_all(path.parent().unwrap()).unwrap();
+    std::fs::write(&path, json!({"from": from, "n": n, "cases": cases}).to_string()).unwrap();
+    let back: Value = serde_json::from_str(&std::fs::read_to_string(&path).unwrap()).unwrap();
+    assert_eq!(shortest(&back), None);
 }

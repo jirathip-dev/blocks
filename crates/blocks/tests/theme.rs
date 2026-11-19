@@ -49,6 +49,34 @@ fn the_default_pair_passes_the_gate_and_canonical_solarized_fails_it() {
 }
 
 #[test]
+fn gate_gives_the_committed_misses_for_every_fixture_scheme() {
+    let mut seen = 0;
+    for f in std::fs::read_dir(root().join("fixtures/schemes")).unwrap() {
+        let name = f.unwrap().file_name().into_string().unwrap();
+        let Some(stem) = name.strip_suffix(".json") else {
+            continue;
+        };
+        let want: serde_json::Value = read(&format!("fixtures/schemes/misses/{stem}.json"));
+        let text = std::fs::read_to_string(root().join("fixtures/schemes").join(&name)).unwrap();
+        match serde_json::from_str::<Scheme>(&text) {
+            Err(e) => assert!(e.to_string().contains(want["refused"].as_str().unwrap()), "{stem}: {e}"),
+            Ok(s) => {
+                let got = gate(&s);
+                let want = want.as_array().unwrap();
+                assert_eq!(got.len(), want.len(), "{stem}: {got:?}");
+                for (g, w) in got.iter().zip(want) {
+                    assert_eq!(g.what, w["what"].as_str().unwrap());
+                    assert!((g.got - w["got"].as_f64().unwrap()).abs() < 1e-9, "{}", g.what);
+                    assert!((g.min - w["min"].as_f64().unwrap()).abs() < 1e-9, "{}", g.what);
+                }
+            }
+        }
+        seen += 1;
+    }
+    assert_eq!(seen, 2);
+}
+
+#[test]
 fn the_default_pair_and_style_are_the_approved_design() {
     let pair = default();
     let design = "docs/design/neutral-default";
