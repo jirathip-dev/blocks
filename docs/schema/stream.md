@@ -2,8 +2,8 @@
 
 An op names a block by its id: `merge` (fields over it), `insert` into a block's list (`before` an id, else `after`
 one, else at the end), `move`, `remove`, `replace`, `badge` (the place's count), `dot` (its unread dot) and
-`screen` (the whole screen). A container's list is `rows` for a list, `lanes` for a scene, `rounds` for a row, else
-`blocks`.
+`screen` (the whole screen). A container's list is `rows` for a list or a table, `lanes` for a scene, `rounds` for a
+row, else `blocks`; `merge` and `remove` also name a table's row by its id, and `diff` sends a table's changed rows so.
 
 One stream per device carries every key (a screen's path) it opens. The server's `Shelf` keeps each key's rev, its
 JSON and a ring of its last 16 deltas (or 64 KB); the client's `Mirror` (the crate's, `web/src/stream.ts`'s) keeps

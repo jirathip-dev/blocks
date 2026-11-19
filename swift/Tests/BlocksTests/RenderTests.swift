@@ -93,6 +93,15 @@ final class RenderTests: XCTestCase {
         XCTAssertGreaterThan(height(BlocksView(try fixture("prose"), source: .core)), 150, "every part laid out")
     }
 
+    func testATableIsAGridWhenWideAndStackedRowsOnAPhone() throws {
+        let table = BlocksView(try fixture("table"), source: .core).environment(\.look, Look(still: true))
+        let wide = NSHostingView(rootView: table.frame(width: 1440)).fittingSize.height
+        let phone = NSHostingView(rootView: table.frame(width: 390)).fittingSize.height
+        XCTAssertGreaterThan(try pixels(BlocksView(try fixture("table"), source: .core)), 0)
+        XCTAssertGreaterThan(wide, 6 * 20, "a head, five rows and the totals")
+        XCTAssertGreaterThan(phone, wide * 1.4, "each row is a title line and a meta line")
+    }
+
     func testMediaAndHeroKeepTheMediaBoxBeforeThePictureLoads() throws {
         XCTAssertGreaterThanOrEqual(height(BlocksView(try fixture("media"), source: .core)), 390 * 360 / 640)
         XCTAssertGreaterThan(height(BlocksView(try fixture("hero"), source: .core)), 390 * 360 / 640 + 60)
