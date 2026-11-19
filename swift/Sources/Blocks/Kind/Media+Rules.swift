@@ -114,8 +114,9 @@ private func stretched(_ c: MarkChange, end: Bool, _ d: Spot) -> MarkChange? {
     guard let (at, to) = ends(c), let to else { return nil }
     let (p, fixed) = end ? (to, at) : (at, to)
     let s = snap((p.x + d.x, p.y + d.y))
-    let pulled = (s[0], s[1])
-    let (a, t) = end ? (fixed, pulled) : (pulled, fixed)
+    let pulled: Spot = (s[0], s[1])
+    let a = end ? fixed : pulled
+    let t = end ? pulled : fixed
     return big(a, t) ? placed(c, a, t) : nil
 }
 
