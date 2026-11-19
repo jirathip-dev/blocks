@@ -41,6 +41,9 @@ test("each bad fixture fires its probe and no other in WebKit, all in one --plan
   for (const n of draw) deepStrictEqual(rules(seen.filter((s) => s.run === n)), [`render/${n}`], n);
   for (const n of sheets) deepStrictEqual(rules(seen.filter((s) => s.run === n || s.file === join(bad, "css", `${n}.css`))), [`css/${n}`], n);
   deepStrictEqual(seen.filter((s) => s.file).map((s) => [s.rule, s.line, s.at]), sheets.map((n) => [`css/${n}`, 3, ""]));
+  const tree = ["render/no-name", "render/no-size", "render/overflow", "render/overlap"];
+  const snap = JSON.parse(readFileSync(at("../../fixtures/guard/seen.json"), "utf8"));
+  deepStrictEqual(seen.filter((s) => tree.includes(s.rule)).map((s) => ({ rule: s.rule, run: s.run, at: s.at })), snap, "blocks-snap's test holds SwiftUI to the same file");
 });
 
 test("a plan's script registers an app kind's view on window.blocksApps: the gauge draws natively and render/tree is quiet", () => {
