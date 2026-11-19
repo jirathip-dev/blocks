@@ -32,6 +32,7 @@ generated = [
     "fixtures/protocol/sim-*.json",
     "fixtures/behave/sim.json",
     "fixtures/css/*.css",
+    "crates/blocks/src/guard/rules/mod.rs",
 ]
 generate = "just gen"
 shared = [
@@ -51,6 +52,10 @@ shared = [
 [[collect]]
 dir = "ci/cap.d"
 glob = "*.toml"
+
+[[collect]]
+dir = "crates/blocks/src/guard/rules"
+glob = "*.rs"
 
 [[collect]]
 dir = "docs"
@@ -157,10 +162,16 @@ paths = ["crates/blocks/src/web.rs"]
 mods = ["crate::web", "blocks::web"]
 
 [[layer]]
+name = "guard"
+paths = ["crates/blocks/src/guard/**"]
+mods = ["crate::guard", "blocks::guard"]
+may_use = ["expr", "kind", "built", "behave", "tree", "wire", "patch"]
+
+[[layer]]
 name = "codegen"
 paths = ["crates/blocks/src/codegen/**", "crates/blocks/src/bin/**"]
 mods = ["crate::codegen", "blocks::codegen"]
-may_use = ["expr", "kind", "built", "wire", "patch", "diff", "shelf", "mirror", "theme", "layout", "behave", "tree", "site"]
+may_use = ["expr", "kind", "built", "wire", "patch", "diff", "shelf", "mirror", "theme", "layout", "behave", "tree", "site", "guard"]
 
 [[ban]]
 pattern = "drover"

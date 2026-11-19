@@ -2089,6 +2089,52 @@
       },
       "type": "object"
     },
+    "Finding": {
+      "description": "A rule's verdict on one block of one file, carrying the rule's fix.",
+      "properties": {
+        "at": {
+          "type": "string"
+        },
+        "file": {
+          "type": "string"
+        },
+        "fix": {
+          "type": "string"
+        },
+        "line": {
+          "format": "uint32",
+          "minimum": 0,
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "message": {
+          "type": "string"
+        },
+        "rule": {
+          "type": "string"
+        },
+        "severity": {
+          "$ref": "#/$defs/Severity"
+        },
+        "steps": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "rule",
+        "severity",
+        "file",
+        "at",
+        "message",
+        "fix"
+      ],
+      "type": "object"
+    },
     "Fold": {
       "description": "What a folded card shows: one line and its main action.",
       "properties": {
@@ -4281,6 +4327,52 @@
       ],
       "type": "object"
     },
+    "Seen": {
+      "description": "What a rule or a probe measured, with no severity and no fix: only `guard::finding` makes a `Finding`.",
+      "properties": {
+        "at": {
+          "type": "string"
+        },
+        "detail": {
+          "type": "string"
+        },
+        "file": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "line": {
+          "format": "uint32",
+          "minimum": 0,
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "rule": {
+          "type": "string"
+        },
+        "run": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "shot": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "rule",
+        "at",
+        "detail"
+      ],
+      "type": "object"
+    },
     "SetState": {
       "description": "A tap's change of local state: `key` becomes the value of `to`; nothing is sent.",
       "properties": {
@@ -4296,6 +4388,14 @@
         "to"
       ],
       "type": "object"
+    },
+    "Severity": {
+      "description": "How a finding counts: an error fails when it is new, a warning is printed and never fails.",
+      "enum": [
+        "error",
+        "warn"
+      ],
+      "type": "string"
     },
     "Sheet": {
       "additionalProperties": true,
