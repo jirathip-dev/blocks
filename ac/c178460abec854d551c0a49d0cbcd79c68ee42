@@ -1,0 +1,4 @@
+Decided: merged origin/staging (config #75) and kept both sides: the diff and config tests in site.rs and render.test.ts, gaps list without config or diff; rebuilt web/dist from the merged sources
+Because: web/test/render.test.ts:17
+Rejected: none
+Owner: Brought the diff view up to date with the latest shared branch; nothing changes for users beyond the diff view itself.
