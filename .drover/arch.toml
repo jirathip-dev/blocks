@@ -1,4 +1,4 @@
-frozen = ["ci/cap.toml"]
+frozen = ["ci/cap.toml", "docs/schema.md"]
 generated = [
     "schema/blocks.schema.json",
     "schema/sample.json",
@@ -46,12 +46,16 @@ glob = "*.toml"
 dir = "docs"
 glob = "*.md"
 
+[[collect]]
+dir = "docs/schema"
+glob = "*.md"
+
 [comments]
 policy = "strict"
 except = ["ci/lint-fixtures/**", "web/lint-fixtures/**"]
 
 [docs]
-paths = ["docs/*.md", "README.md"]
+paths = ["docs/*.md", "docs/schema/*.md", "README.md"]
 skip = [".drover/**"]
 
 [[layer]]
