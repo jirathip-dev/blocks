@@ -8,6 +8,7 @@ type Label = {
 export type Scale = {
     space?: number;
     motion?: number;
+    easing?: "standard" | "calm" | "bouncy";
     radius?: number;
     type?: "default" | "mono" | "serif";
     surface?: "glass" | "dashed" | "solid";

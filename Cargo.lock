@@ -60,6 +60,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "blocks-desk"
+version = "0.1.0"
+dependencies = [
+ "blocks",
+ "blocks-desktop",
+ "egui",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "blocks-desktop"
 version = "0.1.0"
 dependencies = [
@@ -166,6 +177,7 @@ dependencies = [
  "ahash",
  "ecolor",
  "emath",
+ "epaint_default_fonts",
  "font-types",
  "harfrust",
  "log",
@@ -180,6 +192,12 @@ dependencies = [
  "unicode-segmentation",
  "vello_cpu",
 ]
+
+[[package]]
+name = "epaint_default_fonts"
+version = "0.37.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cfc1cc505827f4c23eedc297975a0fd038268d41293f389dd8ff3b574aefab19"
 
 [[package]]
 name = "euclid"

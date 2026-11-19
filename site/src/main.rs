@@ -9,7 +9,7 @@ use std::fs;
 use std::path::{Path, PathBuf};
 
 use blocks::site::{self, Head, Live, Look, Site};
-use blocks::theme::{self, Fills, Format, Marks, Scale, Scheme, Sections, Style, Surface, TypeDesign};
+use blocks::theme::{self, Easing, Fills, Format, Marks, Scale, Scheme, Sections, Style, Surface, TypeDesign};
 use blocks::Built;
 use serde_json::Value;
 
@@ -24,6 +24,7 @@ fn style() -> Result<Style, String> {
         space: Scale::default(),
         radius: Scale::try_from(0.0)?,
         motion: Scale::default(),
+        easing: Easing::default(),
         surface: Surface::Solid,
         fills: Fills::Tint,
         marks: Marks::Symbols,
