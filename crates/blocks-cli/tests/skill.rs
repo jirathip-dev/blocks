@@ -58,7 +58,7 @@ fn skill_to_on_this_repo_is_the_generated_skill_plus_its_examples() {
     let generated = tree(&root().join("skill/blocks"));
     assert!(generated.contains_key("SKILL.md") && generated.contains_key("rules.md"));
     assert!(generated.contains_key("examples/ok-queue.md") && generated.contains_key("kinds/button.md"));
-    assert_eq!(got, generated);
+    assert_eq!(got, generated, "skill/blocks/ is not what `just gen` writes: rerun it");
 }
 
 #[test]
