@@ -1,0 +1,10 @@
+Decided: the keyed stream (Shelf, Mirror, Frame k/from/rev) replaces Stream and Replica; the old frame stays on the wire as OldFrame
+Because: "Ships: `shelf`, `mirror`, `Frame`, `Hello`, `Sync`, `Format`, `MediaType`, `wire::old`"
+Because: crates/blocks/src/wire.rs:96
+Rejected: bumping SCHEMA_VERSION — the old frame keeps its wire shape, only its type name changed, so no wire form is removed
+Rejected: Shelf::put returning a bare Put — serializing can fail and the crate bans unwrap, so it returns Result
+Decided: TS apply lives in patch.ts beside the patcher, so the TS Mirror ends on the same screen as the crate's
+Because: "Rust and TS run `fixtures/protocol`"
+Check: fixtures/protocol runs in both crates/blocks/tests/protocol.rs and web/test/protocol.test.ts; sim drops, doubles and reorders frames
+Check: Swift Replica decodes OldFrame and swift test passes; the web job moved to web.yml with the same job name
+Owner: Screens stream over one connection per device and recover from lost, doubled or out-of-order updates, on web and in Rust.
