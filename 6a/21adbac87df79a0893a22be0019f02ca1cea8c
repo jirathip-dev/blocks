@@ -1,0 +1,6 @@
+Decided: merge origin/staging; keep both pages and timeline in every kind list, rebuild generated files with the gen steps, bump kind counts 33 to 34 and stress variants 67 to 70
+Because: crates/blocks/tests/fixtures.rs:379
+Decided: the document test pauses the fake clock so the wheel-stop timer fires only on runFor, not in real time under suite load
+Because: web/test/document.test.ts:18
+Rejected: none
+Owner: The document view now sits on the latest staging next to the new timeline kind; nothing changes in how it works.
