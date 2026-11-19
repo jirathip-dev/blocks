@@ -33,6 +33,13 @@ pattern), `add`, `sub`, `cat`, `pick`, or a bare value. `eval` is total: a wrong
 false. `fixtures/behave/` holds its cases (state, expression, value), and an operation a reader does not know
 evaluates to `null`.
 
+A field also takes `show`, `enabled` and `checks` (each `{ok, say}`), a button `enabled`, and a tap `set` (each
+`{key, to}`: local state changes, nothing is sent). `behave::view` gives what a state makes of a screen: the hidden
+ids and field names, the disabled ones (a form whose check fails, for its submit) and each failing field's `say`;
+`behave.ts` and Swift's `Behaviour` give the same for `fixtures/behave/view.json`. A `show`, `enabled`, check or
+`set` that uses an operation or pattern a reader does not know counts as not written. A block's `show` needs its
+`id`. The static page writes the start state: `hidden`, and from checks `required`, `type="email"`, `maxlength`.
+
 `fixtures/screens/` holds both apps' screens as they sent them, copied verbatim (cooee at `8ca09a316`, drover at
 `dd475fcf0`), and `cooee/screen-tests-insert.json`, cooee's `ScreenTests` inserts written out as frames. Each
 parses into the Rust types and serializes back equal, fits the schema, and decodes in Swift. None has a fault a

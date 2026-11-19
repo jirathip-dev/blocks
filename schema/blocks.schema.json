@@ -576,6 +576,16 @@
             }
           ]
         },
+        "enabled": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
         "id": {
           "type": [
             "string",
@@ -795,6 +805,22 @@
           "type": "string"
         }
       ]
+    },
+    "Check": {
+      "description": "A field's test: while `ok` does not hold, the field shows `say` and its form's submit is off.",
+      "properties": {
+        "ok": {
+          "$ref": "#/$defs/Expr"
+        },
+        "say": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "ok",
+        "say"
+      ],
+      "type": "object"
     },
     "Child": {
       "anyOf": [
@@ -1542,10 +1568,29 @@
     "Field": {
       "description": "One input of a form.",
       "properties": {
+        "checks": {
+          "items": {
+            "$ref": "#/$defs/Check"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
         "doc": {
           "type": [
             "string",
             "null"
+          ]
+        },
+        "enabled": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
           ]
         },
         "error": {
@@ -1598,6 +1643,16 @@
           "type": [
             "boolean",
             "null"
+          ]
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
           ]
         },
         "type": {
@@ -3696,6 +3751,22 @@
       ],
       "type": "object"
     },
+    "SetState": {
+      "description": "A tap's change of local state: `key` becomes the value of `to`; nothing is sent.",
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "to": {
+          "$ref": "#/$defs/Expr"
+        }
+      },
+      "required": [
+        "key",
+        "to"
+      ],
+      "type": "object"
+    },
     "Sheet": {
       "additionalProperties": true,
       "description": "A sheet over a screen.",
@@ -4078,6 +4149,15 @@
         "open": {
           "type": [
             "string",
+            "null"
+          ]
+        },
+        "set": {
+          "items": {
+            "$ref": "#/$defs/SetState"
+          },
+          "type": [
+            "array",
             "null"
           ]
         },

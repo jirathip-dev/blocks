@@ -7,7 +7,8 @@ export function form(b: Form, c: Ctx): HTMLElement {
   for (const x of b.fields) f.append(field(x, `draft:${c.screen}:${String(b.id)}:`, c.store));
   const s = b.submit;
   if (!s) return f;
-  const go = btn(s.label);
+  const go = btn(s.label, "", undefined, s.action);
+  go.dataset.submit = "";
   const word = go.firstElementChild ?? go;
   const send = () => {
     const v = values(f);

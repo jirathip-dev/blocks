@@ -130,7 +130,7 @@ fn a_live_page_carries_the_screen_and_the_module_and_nothing_else() {
 #[test]
 fn an_action_is_a_submit_of_a_form_that_posts_its_values() {
     let p = page(None);
-    assert!(p.contains("<button class=\"b b-button\" data-block=\"button\" data-id=\"go\" type=\"submit\" form=\"b-f1\"><span>Go</span></button>"), "{p}");
+    assert!(p.contains("<button class=\"b b-button\" data-block=\"button\" data-id=\"go\" type=\"submit\" form=\"b-f1\" data-action=\"go\"><span>Go</span></button>"), "{p}");
     assert!(p.contains("<form id=\"b-f1\" method=\"post\" action=\"/act\" hidden><input type=\"hidden\" name=\"_screen\" value=\"home\"><input type=\"hidden\" name=\"_block\" value=\"go\"><input type=\"hidden\" name=\"_action\" value=\"go\"></form>"), "{p}");
 }
 
@@ -229,7 +229,7 @@ fn a_scene_lane_links_its_url_or_open_marks_any_other_tap_a_button_and_ticks_its
     assert!(h.contains("<span class=\"lnx\">impl · <span data-tick=\"{&#34;since&#34;:&#34;2026-11-19T12:00:00Z&#34;}\"></span></span>"), "{h}");
     assert!(
         h.contains(
-            "<div class=\"ln needs tap\" data-id=\"c\" aria-label=\"act, needs\" role=\"button\" tabindex=\"0\">"
+            "<div class=\"ln needs tap\" data-id=\"c\" aria-label=\"act, needs\" role=\"button\" tabindex=\"0\" data-action=\"go\">"
         ),
         "{h}"
     );
@@ -250,8 +250,8 @@ fn a_row_with_rounds_writes_its_fold_open_when_the_last_round_needs_you_and_fold
     };
     let open = site::fragment(&row("needs"), "/act");
     assert!(open.starts_with("<div class=\"rr open b b-row\" data-block=\"row\" data-id=\"i\"><div class=\"row tap\" data-id=\"i\" tabindex=\"0\" role=\"button\" aria-expanded=\"true\"><span class=\"rm\"><span class=\"rt b-row__title\">#23</span></span><span class=\"rc\">›</span></div><ol class=\"rds\">"), "{open}");
-    assert!(open.contains("<li class=\"rd done\"><i class=\"rdm\" aria-label=\"done\"></i><div class=\"rdx\"><div class=\"rdl tap\" tabindex=\"0\" role=\"button\"><span class=\"rdn\">impl</span><span class=\"rdu\"></span><span class=\"rdt\"><span data-tick=\"{&#34;since&#34;:&#34;2026-11-19T12:00:00Z&#34;}\"></span></span><span class=\"rc\">›</span></div></div></li>"), "{open}");
-    assert!(open.contains("<li class=\"rd needs now\"><i class=\"rdm\" aria-label=\"needs\"></i><div class=\"rdx\"><div class=\"rdl\"><span class=\"rdn\">rev</span><span class=\"rdu\">busy</span></div><div class=\"rdb\"><div class=\"rdh\">rev-1 · mini</div><div class=\"rdo\"><div>a</div><div>b</div></div><div class=\"rdk\"><button type=\"submit\" form=\"b-f1\"><span>go</span></button></div></div></div></li></ol></div>"), "{open}");
+    assert!(open.contains("<li class=\"rd done\"><i class=\"rdm\" aria-label=\"done\"></i><div class=\"rdx\"><div class=\"rdl tap\" tabindex=\"0\" role=\"button\" data-action=\"see\"><span class=\"rdn\">impl</span><span class=\"rdu\"></span><span class=\"rdt\"><span data-tick=\"{&#34;since&#34;:&#34;2026-11-19T12:00:00Z&#34;}\"></span></span><span class=\"rc\">›</span></div></div></li>"), "{open}");
+    assert!(open.contains("<li class=\"rd needs now\"><i class=\"rdm\" aria-label=\"needs\"></i><div class=\"rdx\"><div class=\"rdl\"><span class=\"rdn\">rev</span><span class=\"rdu\">busy</span></div><div class=\"rdb\"><div class=\"rdh\">rev-1 · mini</div><div class=\"rdo\"><div>a</div><div>b</div></div><div class=\"rdk\"><button type=\"submit\" form=\"b-f1\" data-action=\"go\"><span>go</span></button></div></div></div></li></ol></div>"), "{open}");
     let live = site::fragment(&row("working"), "/act");
     assert!(live.starts_with("<div class=\"rr b b-row\" data-block=\"row\" data-id=\"i\"><div class=\"row tap\" data-id=\"i\" tabindex=\"0\" role=\"button\" aria-expanded=\"false\"><span class=\"rm\"><span class=\"rt b-row__title\">#23</span><span class=\"rs b-row__subtitle \">review</span></span><span class=\"rc\">›</span></div></div>"), "{live}");
 }

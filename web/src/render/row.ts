@@ -1,5 +1,5 @@
 import type { Round, Row, Tap } from "../gen/types.ts";
-import { btn, type Ctx, el, h, href, kids, ticked, toggle, tone, urlOf } from "./index.ts";
+import { acts, btn, type Ctx, el, h, href, kids, sends, ticked, toggle, tone, urlOf } from "./index.ts";
 
 const press = (e: HTMLElement, go: () => void) => {
   e.tabIndex = 0;
@@ -15,7 +15,7 @@ function round(d: Round, now: boolean, c: Ctx): HTMLElement {
   l.append(h("span", "rdn", d.name), h("span", "rdu", d.summary ?? ""));
   if (d.since) l.append(h("span", "rdt", ticked({ since: d.since })));
   if (tap) l.append(h("span", "rc", "›"));
-  if (tap && !url) press(l, () => c.tap(tap));
+  if (tap && !url) press(acts(l, sends(tap)), () => c.tap(tap));
   const m = el("i", "rdm");
   m.setAttribute("aria-label", d.state);
   const x = h("div", "rdx", l);
@@ -35,7 +35,7 @@ function round(d: Round, now: boolean, c: Ctx): HTMLElement {
           "div",
           "rdk",
           ...links.map((k) => {
-            const b = btn(k.label, "", urlOf(k.tap));
+            const b = btn(k.label, "", urlOf(k.tap), sends(k.tap));
             if (!urlOf(k.tap)) b.onclick = () => c.tap(k.tap);
             return b;
           }),
@@ -76,6 +76,7 @@ export function row(b: Row, c: Ctx): HTMLElement {
     r.classList.add("tap");
     r.tabIndex = 0;
     r.setAttribute("role", "button");
+    acts(r, sends(b.tap));
     r.onclick = () => (b.tap ? c.tap(b.tap) : toggle(r, b.id, c));
   }
   if (!swipe.length) return r;
@@ -84,7 +85,7 @@ export function row(b: Row, c: Ctx): HTMLElement {
   const bar = el("div", "ra b-row__actions");
   bar.hidden = !c.open.has(`sw:${b.id}`);
   for (const s of swipe) {
-    const x = btn(s.label, s.tone === "bad" ? "bad" : "");
+    const x = btn(s.label, s.tone === "bad" ? "bad" : "", undefined, sends(s.tap, s.action));
     x.onclick = () => c.act({ action: s.action, block: b.id, values: s.values ?? {}, confirm: s.confirm }, x);
     bar.append(x);
   }

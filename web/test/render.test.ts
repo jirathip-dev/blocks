@@ -583,3 +583,14 @@ test("a last round with no lane, blocks or links draws no body, and a row with n
     deepStrictEqual([e.className, e.children.map((x) => x.className)], ["row b b-row", ["rm", "rv b-row__value"]]);
   }
 });
+
+test("an element whose tap sends an action carries it as data-action; a link or a sheet does not", () => {
+  const row = (tap) => render({ type: "row", id: "r", title: "t", tap }, ctx()).dataset.action;
+  deepStrictEqual([row({ action: "see" }), row({ url: "https://x.test" }), row({ sheet: "s", action: "x" })], ["see", undefined, undefined]);
+  const s = render({ type: "scene", id: "s", lanes: [{ id: "a", title: "a", state: "idle", tap: { action: "go" } }] }, ctx());
+  strictEqual(part(s, "ln").dataset.action, "go");
+  const links = part(part(render(rounds(), ctx()), "rdb"), "rdk").children;
+  deepStrictEqual(links.map((x) => x.dataset.action), ["approve", undefined]);
+  const rds = [{ id: "a", name: "impl", state: "done", tap: { action: "see" } }, { id: "b", name: "rev", state: "needs" }];
+  strictEqual(part(render({ type: "row", id: "x", title: "t", rounds: rds }, ctx()), "rdl").dataset.action, "see");
+});

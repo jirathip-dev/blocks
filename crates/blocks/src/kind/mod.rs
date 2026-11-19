@@ -172,6 +172,7 @@ kind! {
         values: Option<Fields>,
         tap: Option<Tap>,
         confirm: Option<Confirm>,
+        enabled: Option<Expr>,
     }
 }
 

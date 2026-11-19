@@ -36,6 +36,19 @@ test("--check exits 1 when the drawn tree is not the expected one", () => {
   ok(r.stderr.includes("drew list#rows native, expected card#card native"), r.stderr);
 });
 
+test("each fixtures/ids file is the block and action ids its screen draws, and --check fails on others", () => {
+  const ids = at("../../fixtures/ids/");
+  const names = readdirSync(ids).map((f) => f.replace(/\.json$/, ""));
+  deepStrictEqual(names.sort(), ["button", "screen"]);
+  for (const k of names) {
+    const r = run("--screen", join(blocks, `${k}.json`), "--ids", join(ids, `${k}.json`), "--check", "--out", join(out, `ids-${k}`));
+    strictEqual(r.status, 0, `${k}: ${r.stderr}`);
+  }
+  const r = run("--screen", join(blocks, "button.json"), "--ids", join(ids, "screen.json"), "--check", "--out", join(out, "ids-wrong"));
+  strictEqual(r.status, 1);
+  strictEqual(r.stderr, 'button: drew ids {"blocks":["save"],"actions":["save"]}, expected {"blocks":["home","hint"],"actions":[]}\n');
+});
+
 test("a scripted tap sends the button's action and an answer's ops are drawn", () => {
   const script = join(out, "tap.json");
   const ops = [{ op: "merge", id: "save", fields: { label: "Saved" } }];
@@ -46,6 +59,37 @@ test("a scripted tap sends the button's action and an answer's ops are drawn", (
   deepStrictEqual(report.sent, [{ screen: "save", action: "save", block: "save", values: {} }]);
   strictEqual(report.timings.steps_ms.length, 3);
   strictEqual(JSON.parse(readFileSync(join(out, "tap", "saved.tree.json"), "utf8")).text, "Saved");
+});
+
+test("scripted typing and taps change local state: a check's message, a disabled submit, a tap's set", () => {
+  const view = JSON.parse(readFileSync(at("../../fixtures/behave/view.json"), "utf8"));
+  const screen = join(out, "behave.json");
+  const script = join(out, "behave-steps.json");
+  writeFileSync(screen, JSON.stringify(view.screen));
+  const steps = [
+    { shot: { name: "start" } },
+    { type: { id: "join", text: "ada@" } },
+    { shot: { name: "typed" } },
+    { tap: { id: "join" } },
+    { type: { id: "join", text: "ada@example.org" } },
+    { shot: { name: "fixed" } },
+    { tap: { id: "join" } },
+    { tap: { id: "more" } },
+    { shot: { name: "more" } },
+    { tap: { id: "more" } },
+  ];
+  writeFileSync(script, JSON.stringify(steps));
+  const r = run("--screen", screen, "--script", script, "--out", join(out, "behave"));
+  strictEqual(r.status, 0, r.stderr);
+  const tree = (n) => JSON.parse(readFileSync(join(out, "behave", `${n}.tree.json`), "utf8"));
+  const drawn = (n) => Object.fromEntries(tree(n).children.map((c) => [c.id, c.drawn]));
+  deepStrictEqual(drawn("start"), { plan: "native", join: "native", more: "native", plans: "hidden", later: "native", box: "hidden" });
+  ok(!tree("start").children[1].text.includes("Enter an email"), "an untouched field shows no message");
+  ok(tree("typed").children[1].text.includes("Enter an email address"), tree("typed").children[1].text);
+  ok(!tree("fixed").children[1].text.includes("Enter an email"), tree("fixed").children[1].text);
+  deepStrictEqual(drawn("more"), { plan: "native", join: "native", more: "native", plans: "native", later: "native", box: "native" });
+  const report = JSON.parse(readFileSync(join(out, "behave", "report.json"), "utf8"));
+  deepStrictEqual(report.dropped, ["tap join", "tap more"], "the submit is off only while a check fails, the button once its set ran");
 });
 
 const corner = (png) => {

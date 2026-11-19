@@ -98,6 +98,7 @@ internal struct SecretBlock: View {
 internal struct FieldsBlock: View {
     @Environment(\.look) private var look
     @Environment(\.card) private var context
+    @Environment(\.behaved) private var behaved
     @Environment(\.form) private var shared
     @Environment(\.act) private var act
     @State private var own: [String: JSONValue] = [:]
@@ -126,13 +127,14 @@ internal struct FieldsBlock: View {
         let edits = live ?? (block.submit == nil ? shared ?? $own : $own)
         return VStack(alignment: .leading, spacing: 10) {
             ForEach(Array(block.fields.enumerated()), id: \.offset) { _, field in
-                FieldRow(field: field, edits: edits)
+                if !behaved.view.hidden.contains(field.name) { FieldRow(field: field, edits: edits) }
             }
             if let submit = block.submit {
                 let source = Source(action: submit.action, values: submit.values)
                 ActButton(source: source, values: block.fieldValues.merging(own) { $1 }) {
                     CardButton(title: submit.label, primary: true, tint: context.tint)
                 }
+                .disabled(block.id.map(behaved.view.disabled.contains) == true)
             }
         }
     }
@@ -141,13 +143,17 @@ internal struct FieldsBlock: View {
 internal struct FieldRow: View {
     @Environment(\.look) private var look
     @Environment(\.focus) private var focus
+    @Environment(\.behaved) private var behaved
+    @Environment(\.edit) private var edit
     @State private var editing = false
     @State private var draft = ""
     internal let field: Field
     @Binding internal var edits: [String: JSONValue]
 
     private var name: String { field.name }
-    private var value: JSONValue? { edits[name] ?? field.value?.json }
+    private var value: JSONValue? {
+        edits[name] ?? (behaved.edited.contains(name) ? behaved.state[name]?.json : nil) ?? field.value?.json
+    }
 
     private var shown: String {
         switch field.type {
@@ -174,17 +180,18 @@ internal struct FieldRow: View {
                 if focus == name { RoundedRectangle(cornerRadius: look.radius(10)).strokeBorder(palette.lead, lineWidth: 2) }
             }
         }
-        .buttonStyle(.plain).id(name)
+        .buttonStyle(.plain).id(name).disabled(behaved.view.disabled.contains(name))
         .alert(field.label ?? name, isPresented: typing) { editor }
         .confirmationDialog(field.label ?? name, isPresented: picking) {
             ForEach(field.options ?? [], id: \.self) { option in
-                Button(option) { edits[name] = .string(option) }
+                Button(option) { set(.string(option)) }
             }
         }
     }
 
     private var note: (text: String, tint: Color)? {
         let palette = look.palette
+        if behaved.edited.contains(name), let say = behaved.view.says[name] { return (say, palette.red) }
         if let error = field.error { return (error, palette.red) }
         if let was = field.was { return ("was \(was)", palette.lead) }
         return field.doc.map { ($0, palette.mute) }
@@ -204,13 +211,18 @@ internal struct FieldRow: View {
         } else {
             TextField(field.placeholder ?? name, text: $draft)
         }
-        Button("OK") { edits[name] = .string(draft) }
+        Button("OK") { set(.string(draft)) }
         Button("Cancel", role: .cancel) {}
+    }
+
+    private func set(_ v: JSONValue) {
+        edits[name] = v
+        edit([name: Lit(v)])
     }
 
     private func tap() {
         if field.type == .toggle {
-            edits[name] = .bool(value?.bool != true)
+            set(.bool(value?.bool != true))
         } else {
             draft = field.type == .secret ? "" : value?.string ?? ""
             editing = true

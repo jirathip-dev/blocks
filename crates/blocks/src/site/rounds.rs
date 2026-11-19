@@ -1,7 +1,7 @@
 use serde_json::{Map, Value};
 
 use super::views::{classes, face};
-use super::{get, kids, list, shown, Go, W};
+use super::{get, kids, list, sends, shown, Go, W};
 
 fn body(w: &mut W<'_>, d: &Value, state: &str) {
     let lane = d.get("lane").filter(|l| l.is_object());
@@ -61,11 +61,13 @@ fn round(w: &mut W<'_>, d: &Value, now: bool) {
             w.open("a", cls, &[("href", u)]);
             "a"
         }
-        Go::Post(_) | Go::Sheet(_) | Go::Stay if tap.is_some() => {
-            w.open("div", cls, &[("tabindex", "0"), ("role", "button")]);
+        Go::Post(..) | Go::Sheet(_) | Go::Stay if tap.is_some() => {
+            let mut at = vec![("tabindex", "0"), ("role", "button")];
+            at.extend(sends(tap).map(|a| ("data-action", a)));
+            w.open("div", cls, &at);
             "div"
         }
-        Go::Post(_) | Go::Sheet(_) | Go::Stay => {
+        Go::Post(..) | Go::Sheet(_) | Go::Stay => {
             w.open("div", cls, &[]);
             "div"
         }

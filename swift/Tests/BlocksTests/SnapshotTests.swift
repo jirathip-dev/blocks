@@ -42,6 +42,27 @@ final class SnapshotTests: XCTestCase {
         }
     }
 
+    func testEachIdsFixtureIsTheBlockAndActionIdsItsScreenDraws() throws {
+        let names = try FileManager.default.contentsOfDirectory(atPath: fixtures.appendingPathComponent("ids").path)
+            .map { String($0.dropLast(5)) }.sorted()
+        XCTAssertEqual(names, ["button", "screen"])
+        for name in names {
+            let ids = try load(DrawnIdList.self, "ids/\(name).json")
+            let run = try Snapshot(try load(Block.self, "blocks/\(name).json")).run([], name: name, ids: ids, check: true)
+            XCTAssertEqual(run.faults, [], name)
+        }
+    }
+
+    func testCheckFailsWhenTheDrawnIdsAreNotTheExpectedOnes() throws {
+        let run = try Snapshot(try load(Block.self, "blocks/button.json")).run(
+            [], name: "button", ids: try load(DrawnIdList.self, "ids/screen.json"), check: true)
+        XCTAssertEqual(
+            run.faults,
+            [
+                #"button: drew ids DrawnIdList(blocks: ["save"], actions: ["save"]), expected DrawnIdList(blocks: ["home", "hint"], actions: [])"#
+            ])
+    }
+
     func testCheckFailsWhenTheDrawnTreeIsNotTheExpectedOne() throws {
         let run = try Snapshot(try load(Block.self, "blocks/list.json")).run(
             [], name: "list", expect: try load(TreeNode.self, "trees/swift/card.json"), check: true)

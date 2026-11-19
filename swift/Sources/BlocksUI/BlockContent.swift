@@ -21,6 +21,7 @@ internal struct ComposerBlock: View {
                     .ui(15, .regular, look).textFieldStyle(.plain).padding(.horizontal, 12).padding(.vertical, 9)
                     .background(look.palette.background).accessibilityLabel("message")
                 Button { send() } label: { CardButton(title: sendLabel, primary: true).fixedSize() }
+                    .modifier(Identified(id: block.action, action: true))
                     .buttonStyle(.plain).keyboardShortcut(.return, modifiers: .command)
                     .contextMenu {
                         if let steer = name("steer"), working != nil { Button("steer now") { send(steer) } }
@@ -62,6 +63,7 @@ internal struct ComposerBlock: View {
             Spacer(minLength: 4)
             if let stop = name("stop") {
                 Button("stop") { post(stop, [:]) }.buttonStyle(.plain).foregroundStyle(look.palette.red)
+                    .modifier(Identified(id: stop, action: true))
             }
         }
         .foregroundStyle(look.palette.mute)
@@ -73,8 +75,10 @@ internal struct ComposerBlock: View {
             Text(item.text).ui(14, .regular, look).lineLimit(2)
             Spacer(minLength: 4)
             Button("send now") { post(name("steer"), ["q": q]) }.foregroundStyle(look.palette.foreground)
+                .modifier(Identified(id: name("steer"), action: true))
             Button("edit") { (editing, draft) = (item, item.text) }
             Button("remove") { post(name("unqueue"), ["q": q]) }.foregroundStyle(look.palette.red)
+                .modifier(Identified(id: name("unqueue"), action: true))
         }
         .buttonStyle(.plain).ui(13, .regular, look).foregroundStyle(look.palette.mute)
     }
