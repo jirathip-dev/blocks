@@ -7,6 +7,7 @@ mod rounds;
 mod scene;
 mod steps;
 mod table;
+mod toast;
 mod views;
 
 use serde_json::{Map, Value};
@@ -440,6 +441,7 @@ pub(crate) fn block(w: &mut W<'_>, b: &Value) {
         "island" => island(w, b),
         "table" => table::table(w, b),
         "steps" => steps::steps(w, b),
+        "toast" => toast::toast(w, b),
         _ => fallback(w, b),
     }
 }

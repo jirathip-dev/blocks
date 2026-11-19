@@ -1,4 +1,4 @@
-public let blocksSchemaVersion = 1
+public let blocksSchemaVersion = 2
 
 public struct Frame: Codable, Equatable, Sendable {
     public var from: UInt64?
@@ -47,7 +47,7 @@ public struct Answer: Codable, Equatable, Sendable {
     public var close: Bool?
     public var open: String?
     public var ops: [Op]?
-    public var toast: String?
+    public var toast: Toast?
 }
 
 public struct AppBlock: Codable, Equatable, Sendable {
@@ -94,6 +94,7 @@ public enum Block: Codable, Equatable, Sendable {
     case island(Island)
     case table(Table)
     case steps(Steps)
+    case toast(Toast)
     case appBlock(JSONValue)
 
     private enum Tag: String, CodingKey { case tag = "type" }
@@ -130,6 +131,7 @@ public enum Block: Codable, Equatable, Sendable {
         case "island": self = .island(try Island(from: decoder))
         case "table": self = .table(try Table(from: decoder))
         case "steps": self = .steps(try Steps(from: decoder))
+        case "toast": self = .toast(try Toast(from: decoder))
         default: self = .appBlock(try JSONValue(from: decoder))
         }
     }
@@ -166,6 +168,7 @@ public enum Block: Codable, Equatable, Sendable {
         case .island(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("island", forKey: .tag)
         case .table(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("table", forKey: .tag)
         case .steps(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("steps", forKey: .tag)
+        case .toast(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("toast", forKey: .tag)
         case .appBlock(let v): try v.encode(to: encoder)
         }
     }
@@ -1364,6 +1367,15 @@ public struct Timings: Codable, Equatable, Sendable {
     public var steps_ms: [Double]
 }
 
+public struct Toast: Codable, Equatable, Sendable {
+    public var fallback: Fallback?
+    public var id: String?
+    public var show: Expr?
+    public var title: String
+    public var tone: Tone?
+    public var undo: Undo?
+}
+
 public struct Tone: RawRepresentable, Hashable, Codable, Equatable, Sendable {
     public let rawValue: String
     public init(rawValue: String) { self.rawValue = rawValue }
@@ -1425,6 +1437,13 @@ public struct TreeNode: Codable, Equatable, Sendable {
     public var role: String
     public var text: String?
     public var variant: String?
+}
+
+public struct Undo: Codable, Equatable, Sendable {
+    public var action: String
+    public var confirm: Confirm?
+    public var label: String?
+    public var values: [String: JSONValue]?
 }
 
 public struct Web: Codable, Equatable, Sendable {

@@ -1,0 +1,21 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="../neutral-default/tokens.css"><link rel="stylesheet" href="../../../web/dist/blocks.css"><link rel="stylesheet" href="toast.css"><link rel="stylesheet" href="page.css">
+<script src="toast.js"></script><title>toast: archive with undo</title></head>
+<body><main class="scr" style="padding-bottom:calc(var(--hit) * 5)">
+<div class="top"><div class="tabh"><span class="tw">Orders · Harbour Rd depot</span><button type="button"><span>filter</span></button><button type="button"><span>new order</span></button></div></div>
+<div class="sh">Open · 5</div>
+<div class="list">
+<div class="row tap"><span class="rsg"><i class="gl mute">○</i></span><span class="rm"><span class="rt">#4821 · Marlow Bakery</span><span class="rs">due 10:30 · 6 lines</span></span><span class="rv">£212.40</span></div>
+<div class="row tap"><span class="rsg"><i class="gl mute">○</i></span><span class="rm"><span class="rt">#4822 · Quayside Café</span><span class="rs">due 11:00 · 3 lines</span></span><span class="rv">£86.10</span></div>
+<div class="row tap"><span class="rsg"><i class="gl r">!</i></span><span class="rm"><span class="rt">#4825 · The Old Granary</span><span class="rs bad">payment failed</span></span><span class="rv">£340.00</span></div>
+<div class="row tap"><span class="rsg"><i class="gl mute">○</i></span><span class="rm"><span class="rt">#4826 · Pier Deli</span><span class="rs">due 13:15 · 9 lines</span></span><span class="rv">£158.75</span></div>
+<div class="row tap"><span class="rsg"><i class="gl mute">○</i></span><span class="rm"><span class="rt">#4829 · St Anne's School</span><span class="rs">due 14:00 · 12 lines</span></span><span class="rv">£512.00</span></div>
+</div>
+<div class="sh">Delivered · today</div>
+<div class="list">
+<div class="row tap"><span class="rsg"><i class="gl g">✓</i></span><span class="rm"><span class="rt">#4817 · Harbour Fish Bar</span><span class="rs">delivered 08:55 · signed</span></span><span class="rv">£94.20</span></div>
+</div>
+<nav class="b-tabs pin"><button type="button"><span>orders</span></button><button type="button"><span>runs</span></button><button type="button"><span>stock</span></button></nav>
+</main>
+<div data-float='{"type":"toast","id":"archived","tone":"ok","text":"Archived 3 orders","undo":{"label":"undo","action":"unarchive","values":{"ids":["4818","4819","4820"]}},"left":0.6}'></div>
+<script>draw()</script></body></html>

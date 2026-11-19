@@ -110,6 +110,7 @@ extension Block {
         case .island(let b): ("island", b.id, nil, Source())
         case .table(let b): ("table", b.id, nil, Source())
         case .steps(let b): ("steps", b.id, nil, Source())
+        case .toast(let b): ("toast", b.id, nil, Source())
         case .appBlock(let b):
             (
                 b.type, b.id, nil,
@@ -118,7 +119,7 @@ extension Block {
         }
     }
 
-    private static let roles = ["section": "region", "form": "form", "config": "form", "nav": "navigation"]
+    private static let roles = ["section": "region", "form": "form", "config": "form", "nav": "navigation", "toast": "status"]
     private static let names = ["label", "title", "header", "question", "alt", "file", "command", "placeholder", "name"]
 
     /// The accessible role and name every renderer gives this block's root, as `tree::a11y` in Rust.
@@ -160,6 +161,7 @@ extension Block {
         case .island(let b): [b.name]
         case .table(let b): [b.title]
         case .steps(let b): [b.title]
+        case .toast(let b): [b.title]
         case .appBlock(let b): Self.names.map { b.string($0) }
         default: []
         }

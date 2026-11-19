@@ -38,7 +38,7 @@ const frame = () => frames.splice(0).forEach((f) => f());
 
 const row = (id, title) => ({ type: "row", id, title });
 const screen = (...rows) => ({ type: "screen", id: "s", title: "Q", blocks: [{ type: "list", id: "l", rows }] });
-const hello = (v = 1) => ({ v, sid: "x1", epoch: "e1", keys: 16 });
+const hello = (v = 2) => ({ v, sid: "x1", epoch: "e1", keys: 16 });
 
 test("a stream opens on hello, syncs, patches, asks again on a gap, and parks on bye", async () => {
   const states = [];
@@ -46,7 +46,7 @@ test("a stream opens on hello, syncs, patches, asks again on a gap, and parks on
   const s = stream({ url: "/stream", state: (x) => states.push(x) });
   s.open("/q", (screen, ops) => seen.push({ screen, ops }));
   const es = sources.at(-1);
-  deepStrictEqual(es.url, "/stream?v=1");
+  deepStrictEqual(es.url, "/stream?v=2");
 
   replies.push({ keys: [{ k: "/q", rev: 1, screen: screen(row("a", "A")) }] });
   es.emit("hello", hello());
@@ -121,9 +121,9 @@ test("a hello more than one version away parks the stream with no sync", async (
   const s = stream({ url: "/stream?d=1", state: (x) => states.push(x) });
   s.open("/q", () => {});
   const es = sources.at(-1);
-  deepStrictEqual(es.url, "/stream?d=1&v=1");
+  deepStrictEqual(es.url, "/stream?d=1&v=2");
   const before = posts.length;
-  es.emit("hello", hello(2));
+  es.emit("hello", hello(3));
   await settle();
   deepStrictEqual([es.closed, states.at(-1), posts.length], [true, "parked", before]);
 });

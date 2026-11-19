@@ -107,7 +107,11 @@ fn plain(o: &Fields) -> Fallback {
         "title", "label", "header", "question", "name", "file", "command", "source", "src",
     ];
     Fallback {
-        title: named.into_iter().find_map(text).unwrap_or(kind(o)).into(),
+        title: named
+            .into_iter()
+            .find_map(text)
+            .unwrap_or(if kind(o) == "toast" { "Done" } else { kind(o) })
+            .into(),
         subtitle: text("subtitle").map(Into::into),
         tap: o.get("tap").and_then(|t| serde_json::from_value::<Tap>(t.clone()).ok()),
     }
