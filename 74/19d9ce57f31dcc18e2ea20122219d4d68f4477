@@ -1,0 +1,11 @@
+Decided: bench/ is its own Cargo workspace and npm package, so root clippy, deny, the deps gate and the cap never see React, topcoat or tokio
+Because: "React, topcoat and what the bench servers need are new dev-only dependencies, decided by q2111"
+Decided: the blocks screen puts its 200 rows straight under screen.blocks, since diff only diffs the root's own list
+Because: crates/blocks/src/diff.rs:7
+Decided: timed updates are 150 ms apart for all four targets; the patcher draws a burst at most every 100 ms, which docs/bench.md says
+Because: web/src/patch.ts:174
+Decided: topcoat updates by a procedure then a shard rerun on a revision signal, the runtime guide's own todo pattern
+Rejected: a React patch protocol over the wire — the bench uses React's common refetch-the-list; docs/bench.md says so
+Decided: memory is the RSS of the bench page's WebContent process; WebKit has no performance.memory and its XPC processes are not children
+Check: `just bench` passes its same-rows check and the arch-check bench/ ban fires on an import from web/src
+Owner: a benchmark against React and topcoat lives in bench/ and docs/bench.md; the site file carries only blocks' numbers
