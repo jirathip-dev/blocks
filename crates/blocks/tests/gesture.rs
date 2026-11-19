@@ -2,7 +2,8 @@ use std::path::{Path, PathBuf};
 
 use blocks::gesture::{step, Effect, Event, Nudge, Phase, Rules};
 use blocks::{
-    Action, BarGrab, BarPart, Block, Built, DaySpan, Days, Fault, List, MarkChange, MarkGrab, MarkReach, Media, Timeline,
+    Action, BarGrab, BarPart, Block, Built, DaySpan, Days, Fault, List, MarkChange, MarkGrab, MarkReach, Media,
+    Timeline,
 };
 use serde::Deserialize;
 use serde_json::{json, Value};
