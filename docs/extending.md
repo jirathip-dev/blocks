@@ -5,7 +5,7 @@ It never writes its own copy of a core kind.
 
 ## 1. A token
 
-Set it in the app's `Scheme` (colours: `tokens`) or `Style` (type, space, radius, motion, surface, fills).
+Set it in the app's `Scheme` (colours: `tokens`) or `Style` (type, space, radius, motion, surface, fills: `tint`, `outline` or `solid`).
 Every renderer reads the same tokens, so one change reaches the web page, the static site and SwiftUI.
 
 Example: buttons look too round. Set a smaller `radius` in the app's `Style`; no kind changes.

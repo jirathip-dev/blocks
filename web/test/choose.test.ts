@@ -24,7 +24,7 @@ test("choose picks the owner's scheme when it is on offer, else the device's def
 });
 
 test("css writes the crate's theme::css text for the default pair and each scheme in fixtures/schemes", () => {
-  const want = { "default.css": css(defaultPair) };
+  const want = { "default.css": css(defaultPair), "default-serif.css": css(defaultPair, { type: "serif" }) };
   for (const n of ["modern", "still", "terminal"]) want[`default-${n}.css`] = css(defaultPair, JSON.parse(read(`styles/${n}.json`)));
   for (const f of readdirSync(new URL("../../fixtures/schemes", import.meta.url)).filter((f) => f.endsWith(".json"))) {
     const s = JSON.parse(read(`schemes/${f}`));

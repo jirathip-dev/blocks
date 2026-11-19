@@ -9,9 +9,9 @@ export type Scale = {
     space?: number;
     motion?: number;
     radius?: number;
-    type?: "default" | "mono";
+    type?: "default" | "mono" | "serif";
     surface?: "glass" | "dashed" | "solid";
-    fills?: "tint" | "outline";
+    fills?: "tint" | "outline" | "solid";
     marks?: "symbols" | "text";
     sections?: "title" | "quiet";
     labels?: Record<string, Label>;
