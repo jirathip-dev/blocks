@@ -7,7 +7,7 @@
     "build": "esbuild src/shell.ts --bundle --format=esm --minify --legal-comments=none --outfile=dist/blocks.js && esbuild src/blocks.css --minify --outfile=dist/blocks.css && esbuild src/core/index.ts --bundle --format=esm --legal-comments=none --outfile=dist/core.js && rm -rf dist/types && tsc -p tsconfig.types.json",
     "check": "tsc --noEmit",
     "lint": "node --no-warnings lint.mjs src",
-    "test": "node --no-warnings --test test/*.test.ts",
+    "test": "node --no-warnings --test test/*.test.ts test/kind/*.test.ts",
     "shot": "node --no-warnings shot/cli.ts"
   },
   "devDependencies": {

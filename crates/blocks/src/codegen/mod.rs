@@ -6,6 +6,7 @@ use crate::{tree, Action, Answer, Block, Bye, Frame, Hello, OldFrame, Sync, Sync
 
 mod fixtures;
 mod hooks;
+mod kinds;
 mod model;
 mod swift;
 mod theme;
@@ -53,6 +54,7 @@ pub fn write(root: &Path) -> std::io::Result<()> {
         swift::files,
         hooks::files,
         theme::files,
+        kinds::files,
         fixtures::files,
     ] {
         for (path, text) in area(root, &schema)? {

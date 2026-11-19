@@ -1,4 +1,4 @@
-frozen = ["ci/cap.toml", "docs/schema.md"]
+frozen = ["ci/cap.toml", "docs/schema.md", "web/src/render/index.ts", "web/test/render.test.ts"]
 generated = [
     "schema/blocks.schema.json",
     "schema/sample.json",
@@ -11,6 +11,7 @@ generated = [
     "swift/Sources/Blocks/Gen/Style.swift",
     "swift/Sources/Blocks/Gen/LayoutShapes.swift",
     "web/src/gen/layout.ts",
+    "web/src/gen/kinds.ts",
     "web/dist/blocks.js",
     "web/dist/blocks.css",
     "web/dist/core.js",
@@ -49,6 +50,14 @@ glob = "*.md"
 [[collect]]
 dir = "docs/schema"
 glob = "*.md"
+
+[[collect]]
+dir = "web/src/render/kind"
+glob = "*.ts"
+
+[[collect]]
+dir = "web/test/kind"
+glob = "*.test.ts"
 
 [comments]
 policy = "strict"
@@ -208,6 +217,11 @@ reason = "the patcher draws what it is handed; the stream does the network"
 pattern = "fetch("
 paths = ["web/src/render/**"]
 reason = "a renderer draws one block from what it is handed; the shell and the stream do the network"
+
+[[ban]]
+pattern = "gen/kinds.ts"
+paths = ["web/src/render/kind/**"]
+reason = "a kind draws one block; only block.ts reads the table of kinds"
 
 [[ban]]
 pattern = "localStorage"
