@@ -39,7 +39,7 @@ private func nudge(_ v: JSONValue) -> Nudge {
 
 private func doubles(_ v: JSONValue?) -> [Double]? { v.map { $0.items.compactMap(\.number) } }
 
-private func grab(_ v: JSONValue) -> MarkGrab { MarkGrab(v) ?? .body("") }
+private func markGrab(_ v: JSONValue) -> MarkGrab { MarkGrab(v) ?? .body("") }
 
 private func change(_ v: JSONValue?) -> MarkChange? {
     guard let v, v != .null else { return nil }
@@ -96,7 +96,7 @@ final class GestureTests: XCTestCase {
         let media = try XCTUnwrap(f["block"]).decode(Media.self)
         XCTAssertGreaterThanOrEqual(f.list("cases").count, 20)
         for c in f.list("cases") {
-            let g = grab(c["grab"] ?? .null)
+            let g = markGrab(c["grab"] ?? .null)
             let got: MarkChange? =
                 if let r = c["reach"] {
                     media.candidate(g, MarkReach(from: doubles(r["from"]) ?? [], to: doubles(r["to"]) ?? []))
@@ -107,7 +107,7 @@ final class GestureTests: XCTestCase {
             XCTAssertEqual(got.map { media.says(g, $0) }, c.string("says"), "\(g)")
         }
         for s in f.list("steps") {
-            let g = grab(s["grab"] ?? .null)
+            let g = markGrab(s["grab"] ?? .null)
             XCTAssertEqual(media.steps(g).map(\.0), s["want"]?.items.compactMap(\.string), "\(g)")
         }
         for (id, want) in f["names"]?.fields ?? [:] { XCTAssertEqual(media.named(id), want.string, id) }
