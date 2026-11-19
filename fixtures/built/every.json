@@ -708,6 +708,25 @@
       ],
       "title": "Stop 3 of 8",
       "type": "steps"
+    },
+    {
+      "fallback": {
+        "title": "Archived 3 orders"
+      },
+      "id": "archived",
+      "title": "Archived 3 orders",
+      "tone": "ok",
+      "type": "toast",
+      "undo": {
+        "action": "unarchive",
+        "values": {
+          "ids": [
+            "o-4821",
+            "o-4822",
+            "o-4825"
+          ]
+        }
+      }
     }
   ],
   "fallback": {

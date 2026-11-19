@@ -29,9 +29,10 @@ var hooks = {
   nav: { variant: null, parts: [] },
   island: { variant: null, parts: [] },
   table: { variant: null, parts: ["title"] },
-  steps: { variant: null, parts: ["title"] }
+  steps: { variant: null, parts: ["title"] },
+  toast: { variant: null, parts: ["title"] }
 };
-var roles = { section: "region", form: "form", config: "form", nav: "navigation" };
+var roles = { section: "region", form: "form", config: "form", nav: "navigation", toast: "status" };
 var names = ["label", "title", "header", "question", "alt", "file", "command", "placeholder", "name"];
 
 // src/gen/schemes.ts
@@ -445,6 +446,7 @@ var nav = (fields) => ({ type: "nav", ...fields });
 var island = (fields) => ({ type: "island", ...fields });
 var table = (fields) => ({ type: "table", ...fields });
 var steps = (fields) => ({ type: "steps", ...fields });
+var toast = (fields) => ({ type: "toast", ...fields });
 var expr = {
   get: (v) => ({ get: v }),
   not: (v) => ({ not: v }),
@@ -577,6 +579,7 @@ export {
   table,
   text2 as text,
   tiles,
+  toast,
   tree,
   view,
   web

@@ -16,11 +16,12 @@ pub(crate) const VARIANTS: [(&str, &str); 5] = [
     ("images", "size"),
 ];
 
-pub(crate) const ROLES: [(&str, &str); 4] = [
+pub(crate) const ROLES: [(&str, &str); 5] = [
     ("section", "region"),
     ("form", "form"),
     ("config", "form"),
     ("nav", "navigation"),
+    ("toast", "status"),
 ];
 pub(crate) const NAMES: [&str; 9] = [
     "label",
@@ -118,7 +119,7 @@ pub enum Step {
     Type(Typing),
     Scroll(On),
     Frame(Frame),
-    Answer(Answer),
+    Answer(Box<Answer>),
     Shot(Shot),
 }
 

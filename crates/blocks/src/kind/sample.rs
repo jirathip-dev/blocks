@@ -3,7 +3,7 @@ use super::{
     Composer, Diagram, Diff, Editor, Era, ExportFormat, Fallback, Field, FieldKind, Form, Hero, Hunk, Image, Images,
     Island, Keyboard, Label, Lane, LaneState, LineItem, Lines, Link, List, Media, Nav, NavLink, Part, PhonePart, Prose,
     Round, RoundLane, Row, RowError, Run, Scene, Screen, Secret, Section, Sheet, Shown, SortDir, Span, Stage, Stat,
-    Steps, Submit, Table, TableRow, TableSelect, TableSort, Tap, Text, Tone, Toned, Total, Web,
+    Steps, Submit, Table, TableRow, TableSelect, TableSort, Tap, Text, Toast, Tone, Toned, Total, Undo, Web,
 };
 use crate::expr::{Expr, Lit, State};
 
@@ -438,9 +438,29 @@ fn table() -> Block {
     Block::Table(Box::new(table))
 }
 
+fn toast() -> Block {
+    let ids = serde_json::Value::from(vec!["o-4821", "o-4822", "o-4825"]);
+    let undo = Undo {
+        action: "unarchive".into(),
+        values: Some([("ids".to_string(), ids)].into_iter().collect()),
+        ..Undo::default()
+    };
+    Block::Toast(Box::new(
+        Toast::new("Archived 3 orders").id("archived").tone(Tone::Ok).undo(undo),
+    ))
+}
+
 /// One typed sample per kind, keyed by its `type`; `fixtures/blocks` is written from them.
 pub fn samples() -> Vec<(&'static str, Block)> {
-    let all = [holders(), views(), controls(), content(), stepper(), vec![table()]].concat();
+    let all = [
+        holders(),
+        views(),
+        controls(),
+        content(),
+        stepper(),
+        vec![table(), toast()],
+    ]
+    .concat();
     let kind = |b: &Block| {
         let v = serde_json::to_value(b).ok()?;
         let t = v.get("type")?.as_str()?.to_string();

@@ -1,4 +1,4 @@
-import type { Block, Button, Card, Chips, Choice, Composer, Diagram, Diff, Editor, Expr, Form, Hero, Images, Island, Kind, Lines, List, Match, Media, Nav, Prose, Row, Run, Scene, Screen, Secret, Section, Sheet, Stat, Steps, Table, Text, Web } from "./types.ts";
+import type { Block, Button, Card, Chips, Choice, Composer, Diagram, Diff, Editor, Expr, Form, Hero, Images, Island, Kind, Lines, List, Match, Media, Nav, Prose, Row, Run, Scene, Screen, Secret, Section, Sheet, Stat, Steps, Table, Text, Toast, Web } from "./types.ts";
 
 export type Of<K extends Kind> = Extract<Block, { type: K }>;
 
@@ -32,6 +32,7 @@ export const nav = (fields: Nav): Of<"nav"> => ({ type: "nav", ...fields });
 export const island = (fields: Island): Of<"island"> => ({ type: "island", ...fields });
 export const table = (fields: Table): Of<"table"> => ({ type: "table", ...fields });
 export const steps = (fields: Steps): Of<"steps"> => ({ type: "steps", ...fields });
+export const toast = (fields: Toast): Of<"toast"> => ({ type: "toast", ...fields });
 
 export const expr = {
   get: (v: string): Expr => ({ get: v }),

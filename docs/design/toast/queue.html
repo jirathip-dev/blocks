@@ -1,0 +1,24 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="../neutral-default/tokens.css"><link rel="stylesheet" href="../../../web/dist/blocks.css"><link rel="stylesheet" href="toast.css"><link rel="stylesheet" href="page.css">
+<script src="toast.js"></script><title>toast: the queue, frame by frame</title></head>
+<body><main class="scr">
+<div class="top"><div class="tabh"><span class="tw">toast · one at a time, frame by frame</span></div></div>
+<div class="cases">
+<div><h2>1 · Arrives <small>· 0 s</small></h2><p class="note">The answer to archive carries it. It slides up from the bottom edge; the ink line under it is the time left (8 s, because it has an undo).</p>
+<div data-b='{"type":"toast","id":"a","tone":"ok","text":"Archived 3 orders","undo":{"action":"unarchive"},"left":1}'></div></div>
+<div><h2>2 · More arrive <small>· 3 s</small></h2><p class="note">Two more answers carry toasts. They wait behind it, first in first out; "+2" says so. The visible one is never replaced mid-read.</p>
+<div data-b='{"type":"toast","id":"a","tone":"ok","text":"Archived 3 orders","undo":{"action":"unarchive"},"left":0.62,"waiting":2}'></div></div>
+<div><h2>3 · Held <small>· pointer over it, or focus inside</small></h2><p class="note">The clock stops and the line turns grey while the pointer is over the toast or focus is in it, so undo can always be reached in time.</p>
+<div data-b='{"type":"toast","id":"a","tone":"ok","text":"Archived 3 orders","undo":{"action":"unarchive"},"left":0.62,"waiting":2,"held":true,"focus":"undo"}'></div></div>
+<div><h2>4 · Undo pressed</h2><p class="note">Undo sends its action. The button is busy ("undo…") and the clock stays held until the answer comes.</p>
+<div data-b='{"type":"toast","id":"a","tone":"ok","text":"Archived 3 orders","undo":{"action":"unarchive"},"left":0.62,"waiting":2,"held":true,"busy":true}'></div></div>
+<div><h2>5 · Undo's answer</h2><p class="note">The undo's own answer replaces the toast at once (it goes ahead of the queue). With no toast in that answer, the toast just closes.</p>
+<div data-b='{"type":"toast","id":"b","tone":"ok","text":"Restored 3 orders","left":1,"waiting":2}'></div></div>
+<div><h2>6 · Next in the queue <small>· warn, 6 s</small></h2><p class="note">When one closes (time out, × or Escape), the next waiting toast shows after 160 ms.</p>
+<div data-b='{"type":"toast","id":"c","tone":"warn","text":"#4825 is 2 lines short; a credit note was drafted","left":1,"waiting":1}'></div></div>
+<div><h2>7 · Error <small>· stays until dismissed</small></h2><p class="note">An error has no clock and no line. It stays until × or Escape, and is announced at once (alert, not status).</p>
+<div data-b='{"type":"toast","id":"d","tone":"bad","text":"Couldn’t reach the label printer. Nothing was printed."}'></div></div>
+<div><h2>8 · Queue full</h2><p class="note">At most 3 wait. A fourth drops the oldest waiting ok toast (never an error), so a burst cannot pile up.</p>
+<div data-b='{"type":"toast","id":"e","tone":"ok","text":"Saved","left":0.3,"waiting":3}'></div></div>
+</div>
+</main><script>draw()</script></body></html>
