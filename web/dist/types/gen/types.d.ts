@@ -106,7 +106,9 @@ export type Block = ({
     type: "chart";
 } & Chart) | ({
     type: "toast";
-} & Toast) | (AppBlock & {
+} & Toast) | ({
+    type: "timeline";
+} & Timeline) | (AppBlock & {
     [key: string]: unknown;
 });
 export type Bound = {
@@ -247,6 +249,12 @@ export type Confirm = {
     message?: string | null;
     ok?: string | null;
     title: string;
+};
+export type DaySpan = {
+    end: string;
+    id?: string | null;
+    row?: string | null;
+    start: string;
 };
 export type Diagram = {
     counts?: Record<string, number> | null;
@@ -891,6 +899,36 @@ export type Time = {
     since?: string | null;
     until?: string | null;
 };
+export type TimeBar = {
+    end: string;
+    fixed?: boolean | null;
+    id: string;
+    label?: string | null;
+    progress?: number | null;
+    start: string;
+    tap?: Tap | null;
+    tone?: Tone | null;
+};
+export type TimeRow = {
+    bars: TimeBar[];
+    id: string;
+    subtitle?: string | null;
+    tap?: Tap | null;
+    title: string;
+};
+export type Timeline = {
+    draw?: Gesture | null;
+    empty?: string | null;
+    from: string;
+    id?: string | null;
+    move?: Gesture | null;
+    off?: string[] | null;
+    show?: Expr | null;
+    stretch?: Gesture | null;
+    title?: string | null;
+    to: string;
+    tracks: TimeRow[];
+};
 export type Timings = {
     first_paint_ms: number;
     frames_over_budget?: number | null;
@@ -938,4 +976,4 @@ export type Why = "evicted" | "unpaired" | "handover";
 export type Working = {
     since: string;
 };
-export type Kind = "screen" | "sheet" | "section" | "list" | "row" | "card" | "choice" | "form" | "config" | "secret" | "run" | "button" | "chips" | "stat" | "text" | "images" | "web" | "diff" | "editor" | "scene" | "diagram" | "composer" | "lines" | "prose" | "hero" | "media" | "nav" | "island" | "table" | "steps" | "chart" | "toast";
+export type Kind = "screen" | "sheet" | "section" | "list" | "row" | "card" | "choice" | "form" | "config" | "secret" | "run" | "button" | "chips" | "stat" | "text" | "images" | "web" | "diff" | "editor" | "scene" | "diagram" | "composer" | "lines" | "prose" | "hero" | "media" | "nav" | "island" | "table" | "steps" | "chart" | "toast" | "timeline";

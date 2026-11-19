@@ -28,6 +28,14 @@ tap and key zoom; the image viewer uses it.
 | `list` | `reorder` | a row id whose `handle` is true | places | every child id in the new order | Move up, Move down, Move to top, Move to bottom |
 | `table` | `reorder` | a row id not `fixed`; a `group` row takes its items | rows | every row id in the new order; an item stays below the first group row, a group moves between groups | Move up, Move down, Move to top, Move to bottom |
 | `table` | `edit` | `{row, column}`: a column with `edit`, not in `calc`, of text, number, money or date; not a group or `fixed` row | the typed text | a `CellEdit` `{row, column, value}`; a text the column can't take gives none | none: each cell is a text field |
+| `timeline` | `move` | `{bar, part: "body"}` of a bar not `fixed` | `{days}` | `DaySpan` `{id, start, end}`, the same length, inside `from`..`to`, onto no fixed bar | One day earlier, later; One week earlier, later |
+| `timeline` | `stretch` | `{bar, part: "start" or "end"}` | `{days}` | `DaySpan` `{id, start, end}`, at least one day | Start one day earlier, later; End one day earlier, later |
+| `timeline` | `draw` | `{row}` | `{days, from}`, `from` the day pressed, else the row's first free day | `DaySpan` `{row, start, end}` over no bar | Add a bar |
+
+A `timeline`'s days are ISO, `end` the last one drawn, and its rows are `tracks` (`TimeRow`: `id`, `title`,
+`subtitle`, `bars`), since `rows` is the field every walker reads as child blocks. Its day width is view state: fit
+(24 to 48 px) by default, then 48, 32, 24, 16, 8 or 4 px from its zoom buttons; on the web the pointer drags from 24 px up, the
+keys and named actions at every width. The static page draws it read-only.
 
 A `table`'s `calc` maps a column to an `Expr` over its row's cells, worked out in column order (so one may read an
 earlier one) as the user types, before anything is sent; group rows (`group: true`) head the items under them, carry

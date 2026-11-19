@@ -173,6 +173,7 @@ public struct Snapshot {
 
     private static func gestured(_ block: Block?, _ g: StepGesture) -> [(Blocks.Gesture, JSONValue)] {
         if case .table(let t)? = block { return grid(t, g) }
+        if case .timeline(let t)? = block { return timed(t, g) }
         guard case .list(let l)? = block, let reorder = l.reorder, let grab = g.grab.string else { return [] }
         return ways(l, grab, g).map { (reorder, .array($0.map(JSONValue.string))) }
     }
@@ -185,6 +186,16 @@ public struct Snapshot {
         d.reach(.text(text))
         guard case .send(let c)? = d.on(.release) else { return [] }
         return [(edit, c.json)]
+    }
+
+    private static func timed(_ t: Timeline, _ g: StepGesture) -> [(Blocks.Gesture, JSONValue)] {
+        let part = g.grab.string("part").flatMap(BarGrab.Part.init(rawValue:))
+        let (grab, gesture): (BarGrab?, Blocks.Gesture?) =
+            if let row = g.grab.string("row") { (.row(row), t.draw) } else if let bar = g.grab.string("bar"), let part {
+                (.bar(bar, part), part == .body ? t.move : t.stretch)
+            } else { (nil, nil) }
+        guard let grab, let gesture else { return [] }
+        return ways(t, grab, g).compactMap { span in (try? JSONValue(span)).map { (gesture, $0) } }
     }
 
     private static func ways<R: Rules>(_ rules: R, _ grab: R.Grab, _ g: StepGesture) -> [R.Change] {

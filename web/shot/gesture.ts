@@ -4,7 +4,7 @@ const KEY = { left: "ArrowLeft", right: "ArrowRight", up: "ArrowUp", down: "Arro
 export async function gesture(page, s) {
   if (s.refuse) return page.evaluate(() => window.h.wait?.(false));
   const g = s.gesture;
-  if (typeof g.grab === "object") return typed(page, g);
+  if (g.grab?.column) return typed(page, g);
   const grip = page.locator(`[data-block][data-id="${g.id}"] [data-grab="${JSON.stringify(g.grab).replace(/"/g, '\\"')}"]`).first();
   await page.evaluate(() => (window.h.hold = true));
   if (g.via === "pointer") {

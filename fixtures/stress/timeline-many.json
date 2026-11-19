@@ -1,0 +1,3858 @@
+{
+  "draw": {
+    "action": "schedule",
+    "name": "bar"
+  },
+  "from": "2026-12-01",
+  "id": "plan",
+  "move": {
+    "action": "schedule",
+    "name": "bar"
+  },
+  "off": [
+    "2026-12-05",
+    "2026-12-06",
+    "2026-12-10",
+    "2026-12-12",
+    "2026-12-13",
+    "2026-12-19",
+    "2026-12-20",
+    "2026-12-26",
+    "2026-12-27",
+    "2026-12-31"
+  ],
+  "stretch": {
+    "action": "schedule",
+    "name": "bar"
+  },
+  "title": "Crews",
+  "to": "2026-12-31",
+  "tracks": [
+    {
+      "bars": [
+        {
+          "end": "2026-12-04",
+          "id": "b01-0",
+          "label": "Fit-out",
+          "progress": 80,
+          "start": "2026-11-23"
+        }
+      ],
+      "id": "j0-0",
+      "subtitle": "Crew 3 · fit-out",
+      "title": "St Anne's annexe"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-04",
+          "id": "b11-1",
+          "label": "Formwork",
+          "progress": 100,
+          "start": "2026-12-01",
+          "tone": "ok"
+        },
+        {
+          "end": "2026-12-09",
+          "id": "b12-1",
+          "label": "Pour",
+          "start": "2026-12-07"
+        },
+        {
+          "end": "2026-12-22",
+          "id": "b13-1",
+          "label": "Cure",
+          "start": "2026-12-14",
+          "tone": "info"
+        }
+      ],
+      "id": "j1-1",
+      "subtitle": "Crew 1",
+      "title": "Riverside Tower A"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-08",
+          "id": "b21-2",
+          "label": "Excavate",
+          "progress": 60,
+          "start": "2026-12-02"
+        },
+        {
+          "end": "2026-12-18",
+          "id": "b22-2",
+          "label": "Footings",
+          "start": "2026-12-11"
+        }
+      ],
+      "id": "j2-2",
+      "subtitle": "Crew 2",
+      "title": "Riverside Tower B"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-23",
+          "id": "b31-3",
+          "label": "Brickwork",
+          "progress": 30,
+          "start": "2026-12-07",
+          "tone": "warn"
+        },
+        {
+          "end": "2026-12-28",
+          "id": "b32-3",
+          "label": "Inspect",
+          "start": "2026-12-28"
+        }
+      ],
+      "id": "j3-3",
+      "subtitle": "Crew 3 · behind",
+      "title": "Marlow Street flats"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-03",
+          "fixed": true,
+          "id": "b41-4",
+          "label": "Roof",
+          "progress": 100,
+          "start": "2026-12-01",
+          "tone": "ok"
+        },
+        {
+          "end": "2026-12-08",
+          "fixed": true,
+          "id": "b42-4",
+          "label": "Snag list",
+          "progress": 100,
+          "start": "2026-12-07"
+        }
+      ],
+      "id": "j4-4",
+      "subtitle": "Crew 1 · finished",
+      "title": "Kingfisher school hall"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-18",
+          "id": "b51-5",
+          "label": "Resurface · no permit",
+          "start": "2026-12-15",
+          "tone": "bad"
+        },
+        {
+          "end": "2026-12-22",
+          "id": "b52-5",
+          "label": "Lines",
+          "start": "2026-12-21"
+        }
+      ],
+      "id": "j5-5",
+      "subtitle": "Crew 4",
+      "title": "Quayside car park"
+    },
+    {
+      "bars": [],
+      "id": "j6-6",
+      "subtitle": "unassigned",
+      "title": "Old Mill conversion"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-23",
+          "id": "b71-7",
+          "label": "Survey",
+          "start": "2026-12-21"
+        },
+        {
+          "end": "2027-01-08",
+          "id": "b72-7",
+          "label": "Dig",
+          "start": "2026-12-28",
+          "tone": "accent"
+        }
+      ],
+      "id": "j7-7",
+      "subtitle": "Crew 2",
+      "title": "Pier Road drainage"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-04",
+          "id": "b01-8",
+          "label": "Fit-out",
+          "progress": 80,
+          "start": "2026-11-23"
+        }
+      ],
+      "id": "j0-8",
+      "subtitle": "Crew 3 · fit-out",
+      "title": "St Anne's annexe"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-04",
+          "id": "b11-9",
+          "label": "Formwork",
+          "progress": 100,
+          "start": "2026-12-01",
+          "tone": "ok"
+        },
+        {
+          "end": "2026-12-09",
+          "id": "b12-9",
+          "label": "Pour",
+          "start": "2026-12-07"
+        },
+        {
+          "end": "2026-12-22",
+          "id": "b13-9",
+          "label": "Cure",
+          "start": "2026-12-14",
+          "tone": "info"
+        }
+      ],
+      "id": "j1-9",
+      "subtitle": "Crew 1",
+      "title": "Riverside Tower A"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-08",
+          "id": "b21-10",
+          "label": "Excavate",
+          "progress": 60,
+          "start": "2026-12-02"
+        },
+        {
+          "end": "2026-12-18",
+          "id": "b22-10",
+          "label": "Footings",
+          "start": "2026-12-11"
+        }
+      ],
+      "id": "j2-10",
+      "subtitle": "Crew 2",
+      "title": "Riverside Tower B"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-23",
+          "id": "b31-11",
+          "label": "Brickwork",
+          "progress": 30,
+          "start": "2026-12-07",
+          "tone": "warn"
+        },
+        {
+          "end": "2026-12-28",
+          "id": "b32-11",
+          "label": "Inspect",
+          "start": "2026-12-28"
+        }
+      ],
+      "id": "j3-11",
+      "subtitle": "Crew 3 · behind",
+      "title": "Marlow Street flats"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-03",
+          "fixed": true,
+          "id": "b41-12",
+          "label": "Roof",
+          "progress": 100,
+          "start": "2026-12-01",
+          "tone": "ok"
+        },
+        {
+          "end": "2026-12-08",
+          "fixed": true,
+          "id": "b42-12",
+          "label": "Snag list",
+          "progress": 100,
+          "start": "2026-12-07"
+        }
+      ],
+      "id": "j4-12",
+      "subtitle": "Crew 1 · finished",
+      "title": "Kingfisher school hall"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-18",
+          "id": "b51-13",
+          "label": "Resurface · no permit",
+          "start": "2026-12-15",
+          "tone": "bad"
+        },
+        {
+          "end": "2026-12-22",
+          "id": "b52-13",
+          "label": "Lines",
+          "start": "2026-12-21"
+        }
+      ],
+      "id": "j5-13",
+      "subtitle": "Crew 4",
+      "title": "Quayside car park"
+    },
+    {
+      "bars": [],
+      "id": "j6-14",
+      "subtitle": "unassigned",
+      "title": "Old Mill conversion"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-23",
+          "id": "b71-15",
+          "label": "Survey",
+          "start": "2026-12-21"
+        },
+        {
+          "end": "2027-01-08",
+          "id": "b72-15",
+          "label": "Dig",
+          "start": "2026-12-28",
+          "tone": "accent"
+        }
+      ],
+      "id": "j7-15",
+      "subtitle": "Crew 2",
+      "title": "Pier Road drainage"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-04",
+          "id": "b01-16",
+          "label": "Fit-out",
+          "progress": 80,
+          "start": "2026-11-23"
+        }
+      ],
+      "id": "j0-16",
+      "subtitle": "Crew 3 · fit-out",
+      "title": "St Anne's annexe"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-04",
+          "id": "b11-17",
+          "label": "Formwork",
+          "progress": 100,
+          "start": "2026-12-01",
+          "tone": "ok"
+        },
+        {
+          "end": "2026-12-09",
+          "id": "b12-17",
+          "label": "Pour",
+          "start": "2026-12-07"
+        },
+        {
+          "end": "2026-12-22",
+          "id": "b13-17",
+          "label": "Cure",
+          "start": "2026-12-14",
+          "tone": "info"
+        }
+      ],
+      "id": "j1-17",
+      "subtitle": "Crew 1",
+      "title": "Riverside Tower A"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-08",
+          "id": "b21-18",
+          "label": "Excavate",
+          "progress": 60,
+          "start": "2026-12-02"
+        },
+        {
+          "end": "2026-12-18",
+          "id": "b22-18",
+          "label": "Footings",
+          "start": "2026-12-11"
+        }
+      ],
+      "id": "j2-18",
+      "subtitle": "Crew 2",
+      "title": "Riverside Tower B"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-23",
+          "id": "b31-19",
+          "label": "Brickwork",
+          "progress": 30,
+          "start": "2026-12-07",
+          "tone": "warn"
+        },
+        {
+          "end": "2026-12-28",
+          "id": "b32-19",
+          "label": "Inspect",
+          "start": "2026-12-28"
+        }
+      ],
+      "id": "j3-19",
+      "subtitle": "Crew 3 · behind",
+      "title": "Marlow Street flats"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-03",
+          "fixed": true,
+          "id": "b41-20",
+          "label": "Roof",
+          "progress": 100,
+          "start": "2026-12-01",
+          "tone": "ok"
+        },
+        {
+          "end": "2026-12-08",
+          "fixed": true,
+          "id": "b42-20",
+          "label": "Snag list",
+          "progress": 100,
+          "start": "2026-12-07"
+        }
+      ],
+      "id": "j4-20",
+      "subtitle": "Crew 1 · finished",
+      "title": "Kingfisher school hall"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-18",
+          "id": "b51-21",
+          "label": "Resurface · no permit",
+          "start": "2026-12-15",
+          "tone": "bad"
+        },
+        {
+          "end": "2026-12-22",
+          "id": "b52-21",
+          "label": "Lines",
+          "start": "2026-12-21"
+        }
+      ],
+      "id": "j5-21",
+      "subtitle": "Crew 4",
+      "title": "Quayside car park"
+    },
+    {
+      "bars": [],
+      "id": "j6-22",
+      "subtitle": "unassigned",
+      "title": "Old Mill conversion"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-23",
+          "id": "b71-23",
+          "label": "Survey",
+          "start": "2026-12-21"
+        },
+        {
+          "end": "2027-01-08",
+          "id": "b72-23",
+          "label": "Dig",
+          "start": "2026-12-28",
+          "tone": "accent"
+        }
+      ],
+      "id": "j7-23",
+      "subtitle": "Crew 2",
+      "title": "Pier Road drainage"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-04",
+          "id": "b01-24",
+          "label": "Fit-out",
+          "progress": 80,
+          "start": "2026-11-23"
+        }
+      ],
+      "id": "j0-24",
+      "subtitle": "Crew 3 · fit-out",
+      "title": "St Anne's annexe"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-04",
+          "id": "b11-25",
+          "label": "Formwork",
+          "progress": 100,
+          "start": "2026-12-01",
+          "tone": "ok"
+        },
+        {
+          "end": "2026-12-09",
+          "id": "b12-25",
+          "label": "Pour",
+          "start": "2026-12-07"
+        },
+        {
+          "end": "2026-12-22",
+          "id": "b13-25",
+          "label": "Cure",
+          "start": "2026-12-14",
+          "tone": "info"
+        }
+      ],
+      "id": "j1-25",
+      "subtitle": "Crew 1",
+      "title": "Riverside Tower A"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-08",
+          "id": "b21-26",
+          "label": "Excavate",
+          "progress": 60,
+          "start": "2026-12-02"
+        },
+        {
+          "end": "2026-12-18",
+          "id": "b22-26",
+          "label": "Footings",
+          "start": "2026-12-11"
+        }
+      ],
+      "id": "j2-26",
+      "subtitle": "Crew 2",
+      "title": "Riverside Tower B"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-23",
+          "id": "b31-27",
+          "label": "Brickwork",
+          "progress": 30,
+          "start": "2026-12-07",
+          "tone": "warn"
+        },
+        {
+          "end": "2026-12-28",
+          "id": "b32-27",
+          "label": "Inspect",
+          "start": "2026-12-28"
+        }
+      ],
+      "id": "j3-27",
+      "subtitle": "Crew 3 · behind",
+      "title": "Marlow Street flats"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-03",
+          "fixed": true,
+          "id": "b41-28",
+          "label": "Roof",
+          "progress": 100,
+          "start": "2026-12-01",
+          "tone": "ok"
+        },
+        {
+          "end": "2026-12-08",
+          "fixed": true,
+          "id": "b42-28",
+          "label": "Snag list",
+          "progress": 100,
+          "start": "2026-12-07"
+        }
+      ],
+      "id": "j4-28",
+      "subtitle": "Crew 1 · finished",
+      "title": "Kingfisher school hall"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-18",
+          "id": "b51-29",
+          "label": "Resurface · no permit",
+          "start": "2026-12-15",
+          "tone": "bad"
+        },
+        {
+          "end": "2026-12-22",
+          "id": "b52-29",
+          "label": "Lines",
+          "start": "2026-12-21"
+        }
+      ],
+      "id": "j5-29",
+      "subtitle": "Crew 4",
+      "title": "Quayside car park"
+    },
+    {
+      "bars": [],
+      "id": "j6-30",
+      "subtitle": "unassigned",
+      "title": "Old Mill conversion"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-23",
+          "id": "b71-31",
+          "label": "Survey",
+          "start": "2026-12-21"
+        },
+        {
+          "end": "2027-01-08",
+          "id": "b72-31",
+          "label": "Dig",
+          "start": "2026-12-28",
+          "tone": "accent"
+        }
+      ],
+      "id": "j7-31",
+      "subtitle": "Crew 2",
+      "title": "Pier Road drainage"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-04",
+          "id": "b01-32",
+          "label": "Fit-out",
+          "progress": 80,
+          "start": "2026-11-23"
+        }
+      ],
+      "id": "j0-32",
+      "subtitle": "Crew 3 · fit-out",
+      "title": "St Anne's annexe"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-04",
+          "id": "b11-33",
+          "label": "Formwork",
+          "progress": 100,
+          "start": "2026-12-01",
+          "tone": "ok"
+        },
+        {
+          "end": "2026-12-09",
+          "id": "b12-33",
+          "label": "Pour",
+          "start": "2026-12-07"
+        },
+        {
+          "end": "2026-12-22",
+          "id": "b13-33",
+          "label": "Cure",
+          "start": "2026-12-14",
+          "tone": "info"
+        }
+      ],
+      "id": "j1-33",
+      "subtitle": "Crew 1",
+      "title": "Riverside Tower A"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-08",
+          "id": "b21-34",
+          "label": "Excavate",
+          "progress": 60,
+          "start": "2026-12-02"
+        },
+        {
+          "end": "2026-12-18",
+          "id": "b22-34",
+          "label": "Footings",
+          "start": "2026-12-11"
+        }
+      ],
+      "id": "j2-34",
+      "subtitle": "Crew 2",
+      "title": "Riverside Tower B"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-23",
+          "id": "b31-35",
+          "label": "Brickwork",
+          "progress": 30,
+          "start": "2026-12-07",
+          "tone": "warn"
+        },
+        {
+          "end": "2026-12-28",
+          "id": "b32-35",
+          "label": "Inspect",
+          "start": "2026-12-28"
+        }
+      ],
+      "id": "j3-35",
+      "subtitle": "Crew 3 · behind",
+      "title": "Marlow Street flats"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-03",
+          "fixed": true,
+          "id": "b41-36",
+          "label": "Roof",
+          "progress": 100,
+          "start": "2026-12-01",
+          "tone": "ok"
+        },
+        {
+          "end": "2026-12-08",
+          "fixed": true,
+          "id": "b42-36",
+          "label": "Snag list",
+          "progress": 100,
+          "start": "2026-12-07"
+        }
+      ],
+      "id": "j4-36",
+      "subtitle": "Crew 1 · finished",
+      "title": "Kingfisher school hall"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-18",
+          "id": "b51-37",
+          "label": "Resurface · no permit",
+          "start": "2026-12-15",
+          "tone": "bad"
+        },
+        {
+          "end": "2026-12-22",
+          "id": "b52-37",
+          "label": "Lines",
+          "start": "2026-12-21"
+        }
+      ],
+      "id": "j5-37",
+      "subtitle": "Crew 4",
+      "title": "Quayside car park"
+    },
+    {
+      "bars": [],
+      "id": "j6-38",
+      "subtitle": "unassigned",
+      "title": "Old Mill conversion"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-23",
+          "id": "b71-39",
+          "label": "Survey",
+          "start": "2026-12-21"
+        },
+        {
+          "end": "2027-01-08",
+          "id": "b72-39",
+          "label": "Dig",
+          "start": "2026-12-28",
+          "tone": "accent"
+        }
+      ],
+      "id": "j7-39",
+      "subtitle": "Crew 2",
+      "title": "Pier Road drainage"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-04",
+          "id": "b01-40",
+          "label": "Fit-out",
+          "progress": 80,
+          "start": "2026-11-23"
+        }
+      ],
+      "id": "j0-40",
+      "subtitle": "Crew 3 · fit-out",
+      "title": "St Anne's annexe"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-04",
+          "id": "b11-41",
+          "label": "Formwork",
+          "progress": 100,
+          "start": "2026-12-01",
+          "tone": "ok"
+        },
+        {
+          "end": "2026-12-09",
+          "id": "b12-41",
+          "label": "Pour",
+          "start": "2026-12-07"
+        },
+        {
+          "end": "2026-12-22",
+          "id": "b13-41",
+          "label": "Cure",
+          "start": "2026-12-14",
+          "tone": "info"
+        }
+      ],
+      "id": "j1-41",
+      "subtitle": "Crew 1",
+      "title": "Riverside Tower A"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-08",
+          "id": "b21-42",
+          "label": "Excavate",
+          "progress": 60,
+          "start": "2026-12-02"
+        },
+        {
+          "end": "2026-12-18",
+          "id": "b22-42",
+          "label": "Footings",
+          "start": "2026-12-11"
+        }
+      ],
+      "id": "j2-42",
+      "subtitle": "Crew 2",
+      "title": "Riverside Tower B"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-23",
+          "id": "b31-43",
+          "label": "Brickwork",
+          "progress": 30,
+          "start": "2026-12-07",
+          "tone": "warn"
+        },
+        {
+          "end": "2026-12-28",
+          "id": "b32-43",
+          "label": "Inspect",
+          "start": "2026-12-28"
+        }
+      ],
+      "id": "j3-43",
+      "subtitle": "Crew 3 · behind",
+      "title": "Marlow Street flats"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-03",
+          "fixed": true,
+          "id": "b41-44",
+          "label": "Roof",
+          "progress": 100,
+          "start": "2026-12-01",
+          "tone": "ok"
+        },
+        {
+          "end": "2026-12-08",
+          "fixed": true,
+          "id": "b42-44",
+          "label": "Snag list",
+          "progress": 100,
+          "start": "2026-12-07"
+        }
+      ],
+      "id": "j4-44",
+      "subtitle": "Crew 1 · finished",
+      "title": "Kingfisher school hall"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-18",
+          "id": "b51-45",
+          "label": "Resurface · no permit",
+          "start": "2026-12-15",
+          "tone": "bad"
+        },
+        {
+          "end": "2026-12-22",
+          "id": "b52-45",
+          "label": "Lines",
+          "start": "2026-12-21"
+        }
+      ],
+      "id": "j5-45",
+      "subtitle": "Crew 4",
+      "title": "Quayside car park"
+    },
+    {
+      "bars": [],
+      "id": "j6-46",
+      "subtitle": "unassigned",
+      "title": "Old Mill conversion"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-23",
+          "id": "b71-47",
+          "label": "Survey",
+          "start": "2026-12-21"
+        },
+        {
+          "end": "2027-01-08",
+          "id": "b72-47",
+          "label": "Dig",
+          "start": "2026-12-28",
+          "tone": "accent"
+        }
+      ],
+      "id": "j7-47",
+      "subtitle": "Crew 2",
+      "title": "Pier Road drainage"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-04",
+          "id": "b01-48",
+          "label": "Fit-out",
+          "progress": 80,
+          "start": "2026-11-23"
+        }
+      ],
+      "id": "j0-48",
+      "subtitle": "Crew 3 · fit-out",
+      "title": "St Anne's annexe"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-04",
+          "id": "b11-49",
+          "label": "Formwork",
+          "progress": 100,
+          "start": "2026-12-01",
+          "tone": "ok"
+        },
+        {
+          "end": "2026-12-09",
+          "id": "b12-49",
+          "label": "Pour",
+          "start": "2026-12-07"
+        },
+        {
+          "end": "2026-12-22",
+          "id": "b13-49",
+          "label": "Cure",
+          "start": "2026-12-14",
+          "tone": "info"
+        }
+      ],
+      "id": "j1-49",
+      "subtitle": "Crew 1",
+      "title": "Riverside Tower A"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-08",
+          "id": "b21-50",
+          "label": "Excavate",
+          "progress": 60,
+          "start": "2026-12-02"
+        },
+        {
+          "end": "2026-12-18",
+          "id": "b22-50",
+          "label": "Footings",
+          "start": "2026-12-11"
+        }
+      ],
+      "id": "j2-50",
+      "subtitle": "Crew 2",
+      "title": "Riverside Tower B"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-23",
+          "id": "b31-51",
+          "label": "Brickwork",
+          "progress": 30,
+          "start": "2026-12-07",
+          "tone": "warn"
+        },
+        {
+          "end": "2026-12-28",
+          "id": "b32-51",
+          "label": "Inspect",
+          "start": "2026-12-28"
+        }
+      ],
+      "id": "j3-51",
+      "subtitle": "Crew 3 · behind",
+      "title": "Marlow Street flats"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-03",
+          "fixed": true,
+          "id": "b41-52",
+          "label": "Roof",
+          "progress": 100,
+          "start": "2026-12-01",
+          "tone": "ok"
+        },
+        {
+          "end": "2026-12-08",
+          "fixed": true,
+          "id": "b42-52",
+          "label": "Snag list",
+          "progress": 100,
+          "start": "2026-12-07"
+        }
+      ],
+      "id": "j4-52",
+      "subtitle": "Crew 1 · finished",
+      "title": "Kingfisher school hall"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-18",
+          "id": "b51-53",
+          "label": "Resurface · no permit",
+          "start": "2026-12-15",
+          "tone": "bad"
+        },
+        {
+          "end": "2026-12-22",
+          "id": "b52-53",
+          "label": "Lines",
+          "start": "2026-12-21"
+        }
+      ],
+      "id": "j5-53",
+      "subtitle": "Crew 4",
+      "title": "Quayside car park"
+    },
+    {
+      "bars": [],
+      "id": "j6-54",
+      "subtitle": "unassigned",
+      "title": "Old Mill conversion"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-23",
+          "id": "b71-55",
+          "label": "Survey",
+          "start": "2026-12-21"
+        },
+        {
+          "end": "2027-01-08",
+          "id": "b72-55",
+          "label": "Dig",
+          "start": "2026-12-28",
+          "tone": "accent"
+        }
+      ],
+      "id": "j7-55",
+      "subtitle": "Crew 2",
+      "title": "Pier Road drainage"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-04",
+          "id": "b01-56",
+          "label": "Fit-out",
+          "progress": 80,
+          "start": "2026-11-23"
+        }
+      ],
+      "id": "j0-56",
+      "subtitle": "Crew 3 · fit-out",
+      "title": "St Anne's annexe"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-04",
+          "id": "b11-57",
+          "label": "Formwork",
+          "progress": 100,
+          "start": "2026-12-01",
+          "tone": "ok"
+        },
+        {
+          "end": "2026-12-09",
+          "id": "b12-57",
+          "label": "Pour",
+          "start": "2026-12-07"
+        },
+        {
+          "end": "2026-12-22",
+          "id": "b13-57",
+          "label": "Cure",
+          "start": "2026-12-14",
+          "tone": "info"
+        }
+      ],
+      "id": "j1-57",
+      "subtitle": "Crew 1",
+      "title": "Riverside Tower A"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-08",
+          "id": "b21-58",
+          "label": "Excavate",
+          "progress": 60,
+          "start": "2026-12-02"
+        },
+        {
+          "end": "2026-12-18",
+          "id": "b22-58",
+          "label": "Footings",
+          "start": "2026-12-11"
+        }
+      ],
+      "id": "j2-58",
+      "subtitle": "Crew 2",
+      "title": "Riverside Tower B"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-23",
+          "id": "b31-59",
+          "label": "Brickwork",
+          "progress": 30,
+          "start": "2026-12-07",
+          "tone": "warn"
+        },
+        {
+          "end": "2026-12-28",
+          "id": "b32-59",
+          "label": "Inspect",
+          "start": "2026-12-28"
+        }
+      ],
+      "id": "j3-59",
+      "subtitle": "Crew 3 · behind",
+      "title": "Marlow Street flats"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-03",
+          "fixed": true,
+          "id": "b41-60",
+          "label": "Roof",
+          "progress": 100,
+          "start": "2026-12-01",
+          "tone": "ok"
+        },
+        {
+          "end": "2026-12-08",
+          "fixed": true,
+          "id": "b42-60",
+          "label": "Snag list",
+          "progress": 100,
+          "start": "2026-12-07"
+        }
+      ],
+      "id": "j4-60",
+      "subtitle": "Crew 1 · finished",
+      "title": "Kingfisher school hall"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-18",
+          "id": "b51-61",
+          "label": "Resurface · no permit",
+          "start": "2026-12-15",
+          "tone": "bad"
+        },
+        {
+          "end": "2026-12-22",
+          "id": "b52-61",
+          "label": "Lines",
+          "start": "2026-12-21"
+        }
+      ],
+      "id": "j5-61",
+      "subtitle": "Crew 4",
+      "title": "Quayside car park"
+    },
+    {
+      "bars": [],
+      "id": "j6-62",
+      "subtitle": "unassigned",
+      "title": "Old Mill conversion"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-23",
+          "id": "b71-63",
+          "label": "Survey",
+          "start": "2026-12-21"
+        },
+        {
+          "end": "2027-01-08",
+          "id": "b72-63",
+          "label": "Dig",
+          "start": "2026-12-28",
+          "tone": "accent"
+        }
+      ],
+      "id": "j7-63",
+      "subtitle": "Crew 2",
+      "title": "Pier Road drainage"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-04",
+          "id": "b01-64",
+          "label": "Fit-out",
+          "progress": 80,
+          "start": "2026-11-23"
+        }
+      ],
+      "id": "j0-64",
+      "subtitle": "Crew 3 · fit-out",
+      "title": "St Anne's annexe"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-04",
+          "id": "b11-65",
+          "label": "Formwork",
+          "progress": 100,
+          "start": "2026-12-01",
+          "tone": "ok"
+        },
+        {
+          "end": "2026-12-09",
+          "id": "b12-65",
+          "label": "Pour",
+          "start": "2026-12-07"
+        },
+        {
+          "end": "2026-12-22",
+          "id": "b13-65",
+          "label": "Cure",
+          "start": "2026-12-14",
+          "tone": "info"
+        }
+      ],
+      "id": "j1-65",
+      "subtitle": "Crew 1",
+      "title": "Riverside Tower A"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-08",
+          "id": "b21-66",
+          "label": "Excavate",
+          "progress": 60,
+          "start": "2026-12-02"
+        },
+        {
+          "end": "2026-12-18",
+          "id": "b22-66",
+          "label": "Footings",
+          "start": "2026-12-11"
+        }
+      ],
+      "id": "j2-66",
+      "subtitle": "Crew 2",
+      "title": "Riverside Tower B"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-23",
+          "id": "b31-67",
+          "label": "Brickwork",
+          "progress": 30,
+          "start": "2026-12-07",
+          "tone": "warn"
+        },
+        {
+          "end": "2026-12-28",
+          "id": "b32-67",
+          "label": "Inspect",
+          "start": "2026-12-28"
+        }
+      ],
+      "id": "j3-67",
+      "subtitle": "Crew 3 · behind",
+      "title": "Marlow Street flats"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-03",
+          "fixed": true,
+          "id": "b41-68",
+          "label": "Roof",
+          "progress": 100,
+          "start": "2026-12-01",
+          "tone": "ok"
+        },
+        {
+          "end": "2026-12-08",
+          "fixed": true,
+          "id": "b42-68",
+          "label": "Snag list",
+          "progress": 100,
+          "start": "2026-12-07"
+        }
+      ],
+      "id": "j4-68",
+      "subtitle": "Crew 1 · finished",
+      "title": "Kingfisher school hall"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-18",
+          "id": "b51-69",
+          "label": "Resurface · no permit",
+          "start": "2026-12-15",
+          "tone": "bad"
+        },
+        {
+          "end": "2026-12-22",
+          "id": "b52-69",
+          "label": "Lines",
+          "start": "2026-12-21"
+        }
+      ],
+      "id": "j5-69",
+      "subtitle": "Crew 4",
+      "title": "Quayside car park"
+    },
+    {
+      "bars": [],
+      "id": "j6-70",
+      "subtitle": "unassigned",
+      "title": "Old Mill conversion"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-23",
+          "id": "b71-71",
+          "label": "Survey",
+          "start": "2026-12-21"
+        },
+        {
+          "end": "2027-01-08",
+          "id": "b72-71",
+          "label": "Dig",
+          "start": "2026-12-28",
+          "tone": "accent"
+        }
+      ],
+      "id": "j7-71",
+      "subtitle": "Crew 2",
+      "title": "Pier Road drainage"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-04",
+          "id": "b01-72",
+          "label": "Fit-out",
+          "progress": 80,
+          "start": "2026-11-23"
+        }
+      ],
+      "id": "j0-72",
+      "subtitle": "Crew 3 · fit-out",
+      "title": "St Anne's annexe"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-04",
+          "id": "b11-73",
+          "label": "Formwork",
+          "progress": 100,
+          "start": "2026-12-01",
+          "tone": "ok"
+        },
+        {
+          "end": "2026-12-09",
+          "id": "b12-73",
+          "label": "Pour",
+          "start": "2026-12-07"
+        },
+        {
+          "end": "2026-12-22",
+          "id": "b13-73",
+          "label": "Cure",
+          "start": "2026-12-14",
+          "tone": "info"
+        }
+      ],
+      "id": "j1-73",
+      "subtitle": "Crew 1",
+      "title": "Riverside Tower A"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-08",
+          "id": "b21-74",
+          "label": "Excavate",
+          "progress": 60,
+          "start": "2026-12-02"
+        },
+        {
+          "end": "2026-12-18",
+          "id": "b22-74",
+          "label": "Footings",
+          "start": "2026-12-11"
+        }
+      ],
+      "id": "j2-74",
+      "subtitle": "Crew 2",
+      "title": "Riverside Tower B"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-23",
+          "id": "b31-75",
+          "label": "Brickwork",
+          "progress": 30,
+          "start": "2026-12-07",
+          "tone": "warn"
+        },
+        {
+          "end": "2026-12-28",
+          "id": "b32-75",
+          "label": "Inspect",
+          "start": "2026-12-28"
+        }
+      ],
+      "id": "j3-75",
+      "subtitle": "Crew 3 · behind",
+      "title": "Marlow Street flats"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-03",
+          "fixed": true,
+          "id": "b41-76",
+          "label": "Roof",
+          "progress": 100,
+          "start": "2026-12-01",
+          "tone": "ok"
+        },
+        {
+          "end": "2026-12-08",
+          "fixed": true,
+          "id": "b42-76",
+          "label": "Snag list",
+          "progress": 100,
+          "start": "2026-12-07"
+        }
+      ],
+      "id": "j4-76",
+      "subtitle": "Crew 1 · finished",
+      "title": "Kingfisher school hall"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-18",
+          "id": "b51-77",
+          "label": "Resurface · no permit",
+          "start": "2026-12-15",
+          "tone": "bad"
+        },
+        {
+          "end": "2026-12-22",
+          "id": "b52-77",
+          "label": "Lines",
+          "start": "2026-12-21"
+        }
+      ],
+      "id": "j5-77",
+      "subtitle": "Crew 4",
+      "title": "Quayside car park"
+    },
+    {
+      "bars": [],
+      "id": "j6-78",
+      "subtitle": "unassigned",
+      "title": "Old Mill conversion"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-23",
+          "id": "b71-79",
+          "label": "Survey",
+          "start": "2026-12-21"
+        },
+        {
+          "end": "2027-01-08",
+          "id": "b72-79",
+          "label": "Dig",
+          "start": "2026-12-28",
+          "tone": "accent"
+        }
+      ],
+      "id": "j7-79",
+      "subtitle": "Crew 2",
+      "title": "Pier Road drainage"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-04",
+          "id": "b01-80",
+          "label": "Fit-out",
+          "progress": 80,
+          "start": "2026-11-23"
+        }
+      ],
+      "id": "j0-80",
+      "subtitle": "Crew 3 · fit-out",
+      "title": "St Anne's annexe"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-04",
+          "id": "b11-81",
+          "label": "Formwork",
+          "progress": 100,
+          "start": "2026-12-01",
+          "tone": "ok"
+        },
+        {
+          "end": "2026-12-09",
+          "id": "b12-81",
+          "label": "Pour",
+          "start": "2026-12-07"
+        },
+        {
+          "end": "2026-12-22",
+          "id": "b13-81",
+          "label": "Cure",
+          "start": "2026-12-14",
+          "tone": "info"
+        }
+      ],
+      "id": "j1-81",
+      "subtitle": "Crew 1",
+      "title": "Riverside Tower A"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-08",
+          "id": "b21-82",
+          "label": "Excavate",
+          "progress": 60,
+          "start": "2026-12-02"
+        },
+        {
+          "end": "2026-12-18",
+          "id": "b22-82",
+          "label": "Footings",
+          "start": "2026-12-11"
+        }
+      ],
+      "id": "j2-82",
+      "subtitle": "Crew 2",
+      "title": "Riverside Tower B"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-23",
+          "id": "b31-83",
+          "label": "Brickwork",
+          "progress": 30,
+          "start": "2026-12-07",
+          "tone": "warn"
+        },
+        {
+          "end": "2026-12-28",
+          "id": "b32-83",
+          "label": "Inspect",
+          "start": "2026-12-28"
+        }
+      ],
+      "id": "j3-83",
+      "subtitle": "Crew 3 · behind",
+      "title": "Marlow Street flats"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-03",
+          "fixed": true,
+          "id": "b41-84",
+          "label": "Roof",
+          "progress": 100,
+          "start": "2026-12-01",
+          "tone": "ok"
+        },
+        {
+          "end": "2026-12-08",
+          "fixed": true,
+          "id": "b42-84",
+          "label": "Snag list",
+          "progress": 100,
+          "start": "2026-12-07"
+        }
+      ],
+      "id": "j4-84",
+      "subtitle": "Crew 1 · finished",
+      "title": "Kingfisher school hall"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-18",
+          "id": "b51-85",
+          "label": "Resurface · no permit",
+          "start": "2026-12-15",
+          "tone": "bad"
+        },
+        {
+          "end": "2026-12-22",
+          "id": "b52-85",
+          "label": "Lines",
+          "start": "2026-12-21"
+        }
+      ],
+      "id": "j5-85",
+      "subtitle": "Crew 4",
+      "title": "Quayside car park"
+    },
+    {
+      "bars": [],
+      "id": "j6-86",
+      "subtitle": "unassigned",
+      "title": "Old Mill conversion"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-23",
+          "id": "b71-87",
+          "label": "Survey",
+          "start": "2026-12-21"
+        },
+        {
+          "end": "2027-01-08",
+          "id": "b72-87",
+          "label": "Dig",
+          "start": "2026-12-28",
+          "tone": "accent"
+        }
+      ],
+      "id": "j7-87",
+      "subtitle": "Crew 2",
+      "title": "Pier Road drainage"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-04",
+          "id": "b01-88",
+          "label": "Fit-out",
+          "progress": 80,
+          "start": "2026-11-23"
+        }
+      ],
+      "id": "j0-88",
+      "subtitle": "Crew 3 · fit-out",
+      "title": "St Anne's annexe"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-04",
+          "id": "b11-89",
+          "label": "Formwork",
+          "progress": 100,
+          "start": "2026-12-01",
+          "tone": "ok"
+        },
+        {
+          "end": "2026-12-09",
+          "id": "b12-89",
+          "label": "Pour",
+          "start": "2026-12-07"
+        },
+        {
+          "end": "2026-12-22",
+          "id": "b13-89",
+          "label": "Cure",
+          "start": "2026-12-14",
+          "tone": "info"
+        }
+      ],
+      "id": "j1-89",
+      "subtitle": "Crew 1",
+      "title": "Riverside Tower A"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-08",
+          "id": "b21-90",
+          "label": "Excavate",
+          "progress": 60,
+          "start": "2026-12-02"
+        },
+        {
+          "end": "2026-12-18",
+          "id": "b22-90",
+          "label": "Footings",
+          "start": "2026-12-11"
+        }
+      ],
+      "id": "j2-90",
+      "subtitle": "Crew 2",
+      "title": "Riverside Tower B"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-23",
+          "id": "b31-91",
+          "label": "Brickwork",
+          "progress": 30,
+          "start": "2026-12-07",
+          "tone": "warn"
+        },
+        {
+          "end": "2026-12-28",
+          "id": "b32-91",
+          "label": "Inspect",
+          "start": "2026-12-28"
+        }
+      ],
+      "id": "j3-91",
+      "subtitle": "Crew 3 · behind",
+      "title": "Marlow Street flats"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-03",
+          "fixed": true,
+          "id": "b41-92",
+          "label": "Roof",
+          "progress": 100,
+          "start": "2026-12-01",
+          "tone": "ok"
+        },
+        {
+          "end": "2026-12-08",
+          "fixed": true,
+          "id": "b42-92",
+          "label": "Snag list",
+          "progress": 100,
+          "start": "2026-12-07"
+        }
+      ],
+      "id": "j4-92",
+      "subtitle": "Crew 1 · finished",
+      "title": "Kingfisher school hall"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-18",
+          "id": "b51-93",
+          "label": "Resurface · no permit",
+          "start": "2026-12-15",
+          "tone": "bad"
+        },
+        {
+          "end": "2026-12-22",
+          "id": "b52-93",
+          "label": "Lines",
+          "start": "2026-12-21"
+        }
+      ],
+      "id": "j5-93",
+      "subtitle": "Crew 4",
+      "title": "Quayside car park"
+    },
+    {
+      "bars": [],
+      "id": "j6-94",
+      "subtitle": "unassigned",
+      "title": "Old Mill conversion"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-23",
+          "id": "b71-95",
+          "label": "Survey",
+          "start": "2026-12-21"
+        },
+        {
+          "end": "2027-01-08",
+          "id": "b72-95",
+          "label": "Dig",
+          "start": "2026-12-28",
+          "tone": "accent"
+        }
+      ],
+      "id": "j7-95",
+      "subtitle": "Crew 2",
+      "title": "Pier Road drainage"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-04",
+          "id": "b01-96",
+          "label": "Fit-out",
+          "progress": 80,
+          "start": "2026-11-23"
+        }
+      ],
+      "id": "j0-96",
+      "subtitle": "Crew 3 · fit-out",
+      "title": "St Anne's annexe"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-04",
+          "id": "b11-97",
+          "label": "Formwork",
+          "progress": 100,
+          "start": "2026-12-01",
+          "tone": "ok"
+        },
+        {
+          "end": "2026-12-09",
+          "id": "b12-97",
+          "label": "Pour",
+          "start": "2026-12-07"
+        },
+        {
+          "end": "2026-12-22",
+          "id": "b13-97",
+          "label": "Cure",
+          "start": "2026-12-14",
+          "tone": "info"
+        }
+      ],
+      "id": "j1-97",
+      "subtitle": "Crew 1",
+      "title": "Riverside Tower A"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-08",
+          "id": "b21-98",
+          "label": "Excavate",
+          "progress": 60,
+          "start": "2026-12-02"
+        },
+        {
+          "end": "2026-12-18",
+          "id": "b22-98",
+          "label": "Footings",
+          "start": "2026-12-11"
+        }
+      ],
+      "id": "j2-98",
+      "subtitle": "Crew 2",
+      "title": "Riverside Tower B"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-23",
+          "id": "b31-99",
+          "label": "Brickwork",
+          "progress": 30,
+          "start": "2026-12-07",
+          "tone": "warn"
+        },
+        {
+          "end": "2026-12-28",
+          "id": "b32-99",
+          "label": "Inspect",
+          "start": "2026-12-28"
+        }
+      ],
+      "id": "j3-99",
+      "subtitle": "Crew 3 · behind",
+      "title": "Marlow Street flats"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-03",
+          "fixed": true,
+          "id": "b41-100",
+          "label": "Roof",
+          "progress": 100,
+          "start": "2026-12-01",
+          "tone": "ok"
+        },
+        {
+          "end": "2026-12-08",
+          "fixed": true,
+          "id": "b42-100",
+          "label": "Snag list",
+          "progress": 100,
+          "start": "2026-12-07"
+        }
+      ],
+      "id": "j4-100",
+      "subtitle": "Crew 1 · finished",
+      "title": "Kingfisher school hall"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-18",
+          "id": "b51-101",
+          "label": "Resurface · no permit",
+          "start": "2026-12-15",
+          "tone": "bad"
+        },
+        {
+          "end": "2026-12-22",
+          "id": "b52-101",
+          "label": "Lines",
+          "start": "2026-12-21"
+        }
+      ],
+      "id": "j5-101",
+      "subtitle": "Crew 4",
+      "title": "Quayside car park"
+    },
+    {
+      "bars": [],
+      "id": "j6-102",
+      "subtitle": "unassigned",
+      "title": "Old Mill conversion"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-23",
+          "id": "b71-103",
+          "label": "Survey",
+          "start": "2026-12-21"
+        },
+        {
+          "end": "2027-01-08",
+          "id": "b72-103",
+          "label": "Dig",
+          "start": "2026-12-28",
+          "tone": "accent"
+        }
+      ],
+      "id": "j7-103",
+      "subtitle": "Crew 2",
+      "title": "Pier Road drainage"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-04",
+          "id": "b01-104",
+          "label": "Fit-out",
+          "progress": 80,
+          "start": "2026-11-23"
+        }
+      ],
+      "id": "j0-104",
+      "subtitle": "Crew 3 · fit-out",
+      "title": "St Anne's annexe"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-04",
+          "id": "b11-105",
+          "label": "Formwork",
+          "progress": 100,
+          "start": "2026-12-01",
+          "tone": "ok"
+        },
+        {
+          "end": "2026-12-09",
+          "id": "b12-105",
+          "label": "Pour",
+          "start": "2026-12-07"
+        },
+        {
+          "end": "2026-12-22",
+          "id": "b13-105",
+          "label": "Cure",
+          "start": "2026-12-14",
+          "tone": "info"
+        }
+      ],
+      "id": "j1-105",
+      "subtitle": "Crew 1",
+      "title": "Riverside Tower A"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-08",
+          "id": "b21-106",
+          "label": "Excavate",
+          "progress": 60,
+          "start": "2026-12-02"
+        },
+        {
+          "end": "2026-12-18",
+          "id": "b22-106",
+          "label": "Footings",
+          "start": "2026-12-11"
+        }
+      ],
+      "id": "j2-106",
+      "subtitle": "Crew 2",
+      "title": "Riverside Tower B"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-23",
+          "id": "b31-107",
+          "label": "Brickwork",
+          "progress": 30,
+          "start": "2026-12-07",
+          "tone": "warn"
+        },
+        {
+          "end": "2026-12-28",
+          "id": "b32-107",
+          "label": "Inspect",
+          "start": "2026-12-28"
+        }
+      ],
+      "id": "j3-107",
+      "subtitle": "Crew 3 · behind",
+      "title": "Marlow Street flats"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-03",
+          "fixed": true,
+          "id": "b41-108",
+          "label": "Roof",
+          "progress": 100,
+          "start": "2026-12-01",
+          "tone": "ok"
+        },
+        {
+          "end": "2026-12-08",
+          "fixed": true,
+          "id": "b42-108",
+          "label": "Snag list",
+          "progress": 100,
+          "start": "2026-12-07"
+        }
+      ],
+      "id": "j4-108",
+      "subtitle": "Crew 1 · finished",
+      "title": "Kingfisher school hall"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-18",
+          "id": "b51-109",
+          "label": "Resurface · no permit",
+          "start": "2026-12-15",
+          "tone": "bad"
+        },
+        {
+          "end": "2026-12-22",
+          "id": "b52-109",
+          "label": "Lines",
+          "start": "2026-12-21"
+        }
+      ],
+      "id": "j5-109",
+      "subtitle": "Crew 4",
+      "title": "Quayside car park"
+    },
+    {
+      "bars": [],
+      "id": "j6-110",
+      "subtitle": "unassigned",
+      "title": "Old Mill conversion"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-23",
+          "id": "b71-111",
+          "label": "Survey",
+          "start": "2026-12-21"
+        },
+        {
+          "end": "2027-01-08",
+          "id": "b72-111",
+          "label": "Dig",
+          "start": "2026-12-28",
+          "tone": "accent"
+        }
+      ],
+      "id": "j7-111",
+      "subtitle": "Crew 2",
+      "title": "Pier Road drainage"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-04",
+          "id": "b01-112",
+          "label": "Fit-out",
+          "progress": 80,
+          "start": "2026-11-23"
+        }
+      ],
+      "id": "j0-112",
+      "subtitle": "Crew 3 · fit-out",
+      "title": "St Anne's annexe"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-04",
+          "id": "b11-113",
+          "label": "Formwork",
+          "progress": 100,
+          "start": "2026-12-01",
+          "tone": "ok"
+        },
+        {
+          "end": "2026-12-09",
+          "id": "b12-113",
+          "label": "Pour",
+          "start": "2026-12-07"
+        },
+        {
+          "end": "2026-12-22",
+          "id": "b13-113",
+          "label": "Cure",
+          "start": "2026-12-14",
+          "tone": "info"
+        }
+      ],
+      "id": "j1-113",
+      "subtitle": "Crew 1",
+      "title": "Riverside Tower A"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-08",
+          "id": "b21-114",
+          "label": "Excavate",
+          "progress": 60,
+          "start": "2026-12-02"
+        },
+        {
+          "end": "2026-12-18",
+          "id": "b22-114",
+          "label": "Footings",
+          "start": "2026-12-11"
+        }
+      ],
+      "id": "j2-114",
+      "subtitle": "Crew 2",
+      "title": "Riverside Tower B"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-23",
+          "id": "b31-115",
+          "label": "Brickwork",
+          "progress": 30,
+          "start": "2026-12-07",
+          "tone": "warn"
+        },
+        {
+          "end": "2026-12-28",
+          "id": "b32-115",
+          "label": "Inspect",
+          "start": "2026-12-28"
+        }
+      ],
+      "id": "j3-115",
+      "subtitle": "Crew 3 · behind",
+      "title": "Marlow Street flats"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-03",
+          "fixed": true,
+          "id": "b41-116",
+          "label": "Roof",
+          "progress": 100,
+          "start": "2026-12-01",
+          "tone": "ok"
+        },
+        {
+          "end": "2026-12-08",
+          "fixed": true,
+          "id": "b42-116",
+          "label": "Snag list",
+          "progress": 100,
+          "start": "2026-12-07"
+        }
+      ],
+      "id": "j4-116",
+      "subtitle": "Crew 1 · finished",
+      "title": "Kingfisher school hall"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-18",
+          "id": "b51-117",
+          "label": "Resurface · no permit",
+          "start": "2026-12-15",
+          "tone": "bad"
+        },
+        {
+          "end": "2026-12-22",
+          "id": "b52-117",
+          "label": "Lines",
+          "start": "2026-12-21"
+        }
+      ],
+      "id": "j5-117",
+      "subtitle": "Crew 4",
+      "title": "Quayside car park"
+    },
+    {
+      "bars": [],
+      "id": "j6-118",
+      "subtitle": "unassigned",
+      "title": "Old Mill conversion"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-23",
+          "id": "b71-119",
+          "label": "Survey",
+          "start": "2026-12-21"
+        },
+        {
+          "end": "2027-01-08",
+          "id": "b72-119",
+          "label": "Dig",
+          "start": "2026-12-28",
+          "tone": "accent"
+        }
+      ],
+      "id": "j7-119",
+      "subtitle": "Crew 2",
+      "title": "Pier Road drainage"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-04",
+          "id": "b01-120",
+          "label": "Fit-out",
+          "progress": 80,
+          "start": "2026-11-23"
+        }
+      ],
+      "id": "j0-120",
+      "subtitle": "Crew 3 · fit-out",
+      "title": "St Anne's annexe"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-04",
+          "id": "b11-121",
+          "label": "Formwork",
+          "progress": 100,
+          "start": "2026-12-01",
+          "tone": "ok"
+        },
+        {
+          "end": "2026-12-09",
+          "id": "b12-121",
+          "label": "Pour",
+          "start": "2026-12-07"
+        },
+        {
+          "end": "2026-12-22",
+          "id": "b13-121",
+          "label": "Cure",
+          "start": "2026-12-14",
+          "tone": "info"
+        }
+      ],
+      "id": "j1-121",
+      "subtitle": "Crew 1",
+      "title": "Riverside Tower A"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-08",
+          "id": "b21-122",
+          "label": "Excavate",
+          "progress": 60,
+          "start": "2026-12-02"
+        },
+        {
+          "end": "2026-12-18",
+          "id": "b22-122",
+          "label": "Footings",
+          "start": "2026-12-11"
+        }
+      ],
+      "id": "j2-122",
+      "subtitle": "Crew 2",
+      "title": "Riverside Tower B"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-23",
+          "id": "b31-123",
+          "label": "Brickwork",
+          "progress": 30,
+          "start": "2026-12-07",
+          "tone": "warn"
+        },
+        {
+          "end": "2026-12-28",
+          "id": "b32-123",
+          "label": "Inspect",
+          "start": "2026-12-28"
+        }
+      ],
+      "id": "j3-123",
+      "subtitle": "Crew 3 · behind",
+      "title": "Marlow Street flats"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-03",
+          "fixed": true,
+          "id": "b41-124",
+          "label": "Roof",
+          "progress": 100,
+          "start": "2026-12-01",
+          "tone": "ok"
+        },
+        {
+          "end": "2026-12-08",
+          "fixed": true,
+          "id": "b42-124",
+          "label": "Snag list",
+          "progress": 100,
+          "start": "2026-12-07"
+        }
+      ],
+      "id": "j4-124",
+      "subtitle": "Crew 1 · finished",
+      "title": "Kingfisher school hall"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-18",
+          "id": "b51-125",
+          "label": "Resurface · no permit",
+          "start": "2026-12-15",
+          "tone": "bad"
+        },
+        {
+          "end": "2026-12-22",
+          "id": "b52-125",
+          "label": "Lines",
+          "start": "2026-12-21"
+        }
+      ],
+      "id": "j5-125",
+      "subtitle": "Crew 4",
+      "title": "Quayside car park"
+    },
+    {
+      "bars": [],
+      "id": "j6-126",
+      "subtitle": "unassigned",
+      "title": "Old Mill conversion"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-23",
+          "id": "b71-127",
+          "label": "Survey",
+          "start": "2026-12-21"
+        },
+        {
+          "end": "2027-01-08",
+          "id": "b72-127",
+          "label": "Dig",
+          "start": "2026-12-28",
+          "tone": "accent"
+        }
+      ],
+      "id": "j7-127",
+      "subtitle": "Crew 2",
+      "title": "Pier Road drainage"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-04",
+          "id": "b01-128",
+          "label": "Fit-out",
+          "progress": 80,
+          "start": "2026-11-23"
+        }
+      ],
+      "id": "j0-128",
+      "subtitle": "Crew 3 · fit-out",
+      "title": "St Anne's annexe"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-04",
+          "id": "b11-129",
+          "label": "Formwork",
+          "progress": 100,
+          "start": "2026-12-01",
+          "tone": "ok"
+        },
+        {
+          "end": "2026-12-09",
+          "id": "b12-129",
+          "label": "Pour",
+          "start": "2026-12-07"
+        },
+        {
+          "end": "2026-12-22",
+          "id": "b13-129",
+          "label": "Cure",
+          "start": "2026-12-14",
+          "tone": "info"
+        }
+      ],
+      "id": "j1-129",
+      "subtitle": "Crew 1",
+      "title": "Riverside Tower A"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-08",
+          "id": "b21-130",
+          "label": "Excavate",
+          "progress": 60,
+          "start": "2026-12-02"
+        },
+        {
+          "end": "2026-12-18",
+          "id": "b22-130",
+          "label": "Footings",
+          "start": "2026-12-11"
+        }
+      ],
+      "id": "j2-130",
+      "subtitle": "Crew 2",
+      "title": "Riverside Tower B"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-23",
+          "id": "b31-131",
+          "label": "Brickwork",
+          "progress": 30,
+          "start": "2026-12-07",
+          "tone": "warn"
+        },
+        {
+          "end": "2026-12-28",
+          "id": "b32-131",
+          "label": "Inspect",
+          "start": "2026-12-28"
+        }
+      ],
+      "id": "j3-131",
+      "subtitle": "Crew 3 · behind",
+      "title": "Marlow Street flats"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-03",
+          "fixed": true,
+          "id": "b41-132",
+          "label": "Roof",
+          "progress": 100,
+          "start": "2026-12-01",
+          "tone": "ok"
+        },
+        {
+          "end": "2026-12-08",
+          "fixed": true,
+          "id": "b42-132",
+          "label": "Snag list",
+          "progress": 100,
+          "start": "2026-12-07"
+        }
+      ],
+      "id": "j4-132",
+      "subtitle": "Crew 1 · finished",
+      "title": "Kingfisher school hall"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-18",
+          "id": "b51-133",
+          "label": "Resurface · no permit",
+          "start": "2026-12-15",
+          "tone": "bad"
+        },
+        {
+          "end": "2026-12-22",
+          "id": "b52-133",
+          "label": "Lines",
+          "start": "2026-12-21"
+        }
+      ],
+      "id": "j5-133",
+      "subtitle": "Crew 4",
+      "title": "Quayside car park"
+    },
+    {
+      "bars": [],
+      "id": "j6-134",
+      "subtitle": "unassigned",
+      "title": "Old Mill conversion"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-23",
+          "id": "b71-135",
+          "label": "Survey",
+          "start": "2026-12-21"
+        },
+        {
+          "end": "2027-01-08",
+          "id": "b72-135",
+          "label": "Dig",
+          "start": "2026-12-28",
+          "tone": "accent"
+        }
+      ],
+      "id": "j7-135",
+      "subtitle": "Crew 2",
+      "title": "Pier Road drainage"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-04",
+          "id": "b01-136",
+          "label": "Fit-out",
+          "progress": 80,
+          "start": "2026-11-23"
+        }
+      ],
+      "id": "j0-136",
+      "subtitle": "Crew 3 · fit-out",
+      "title": "St Anne's annexe"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-04",
+          "id": "b11-137",
+          "label": "Formwork",
+          "progress": 100,
+          "start": "2026-12-01",
+          "tone": "ok"
+        },
+        {
+          "end": "2026-12-09",
+          "id": "b12-137",
+          "label": "Pour",
+          "start": "2026-12-07"
+        },
+        {
+          "end": "2026-12-22",
+          "id": "b13-137",
+          "label": "Cure",
+          "start": "2026-12-14",
+          "tone": "info"
+        }
+      ],
+      "id": "j1-137",
+      "subtitle": "Crew 1",
+      "title": "Riverside Tower A"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-08",
+          "id": "b21-138",
+          "label": "Excavate",
+          "progress": 60,
+          "start": "2026-12-02"
+        },
+        {
+          "end": "2026-12-18",
+          "id": "b22-138",
+          "label": "Footings",
+          "start": "2026-12-11"
+        }
+      ],
+      "id": "j2-138",
+      "subtitle": "Crew 2",
+      "title": "Riverside Tower B"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-23",
+          "id": "b31-139",
+          "label": "Brickwork",
+          "progress": 30,
+          "start": "2026-12-07",
+          "tone": "warn"
+        },
+        {
+          "end": "2026-12-28",
+          "id": "b32-139",
+          "label": "Inspect",
+          "start": "2026-12-28"
+        }
+      ],
+      "id": "j3-139",
+      "subtitle": "Crew 3 · behind",
+      "title": "Marlow Street flats"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-03",
+          "fixed": true,
+          "id": "b41-140",
+          "label": "Roof",
+          "progress": 100,
+          "start": "2026-12-01",
+          "tone": "ok"
+        },
+        {
+          "end": "2026-12-08",
+          "fixed": true,
+          "id": "b42-140",
+          "label": "Snag list",
+          "progress": 100,
+          "start": "2026-12-07"
+        }
+      ],
+      "id": "j4-140",
+      "subtitle": "Crew 1 · finished",
+      "title": "Kingfisher school hall"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-18",
+          "id": "b51-141",
+          "label": "Resurface · no permit",
+          "start": "2026-12-15",
+          "tone": "bad"
+        },
+        {
+          "end": "2026-12-22",
+          "id": "b52-141",
+          "label": "Lines",
+          "start": "2026-12-21"
+        }
+      ],
+      "id": "j5-141",
+      "subtitle": "Crew 4",
+      "title": "Quayside car park"
+    },
+    {
+      "bars": [],
+      "id": "j6-142",
+      "subtitle": "unassigned",
+      "title": "Old Mill conversion"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-23",
+          "id": "b71-143",
+          "label": "Survey",
+          "start": "2026-12-21"
+        },
+        {
+          "end": "2027-01-08",
+          "id": "b72-143",
+          "label": "Dig",
+          "start": "2026-12-28",
+          "tone": "accent"
+        }
+      ],
+      "id": "j7-143",
+      "subtitle": "Crew 2",
+      "title": "Pier Road drainage"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-04",
+          "id": "b01-144",
+          "label": "Fit-out",
+          "progress": 80,
+          "start": "2026-11-23"
+        }
+      ],
+      "id": "j0-144",
+      "subtitle": "Crew 3 · fit-out",
+      "title": "St Anne's annexe"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-04",
+          "id": "b11-145",
+          "label": "Formwork",
+          "progress": 100,
+          "start": "2026-12-01",
+          "tone": "ok"
+        },
+        {
+          "end": "2026-12-09",
+          "id": "b12-145",
+          "label": "Pour",
+          "start": "2026-12-07"
+        },
+        {
+          "end": "2026-12-22",
+          "id": "b13-145",
+          "label": "Cure",
+          "start": "2026-12-14",
+          "tone": "info"
+        }
+      ],
+      "id": "j1-145",
+      "subtitle": "Crew 1",
+      "title": "Riverside Tower A"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-08",
+          "id": "b21-146",
+          "label": "Excavate",
+          "progress": 60,
+          "start": "2026-12-02"
+        },
+        {
+          "end": "2026-12-18",
+          "id": "b22-146",
+          "label": "Footings",
+          "start": "2026-12-11"
+        }
+      ],
+      "id": "j2-146",
+      "subtitle": "Crew 2",
+      "title": "Riverside Tower B"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-23",
+          "id": "b31-147",
+          "label": "Brickwork",
+          "progress": 30,
+          "start": "2026-12-07",
+          "tone": "warn"
+        },
+        {
+          "end": "2026-12-28",
+          "id": "b32-147",
+          "label": "Inspect",
+          "start": "2026-12-28"
+        }
+      ],
+      "id": "j3-147",
+      "subtitle": "Crew 3 · behind",
+      "title": "Marlow Street flats"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-03",
+          "fixed": true,
+          "id": "b41-148",
+          "label": "Roof",
+          "progress": 100,
+          "start": "2026-12-01",
+          "tone": "ok"
+        },
+        {
+          "end": "2026-12-08",
+          "fixed": true,
+          "id": "b42-148",
+          "label": "Snag list",
+          "progress": 100,
+          "start": "2026-12-07"
+        }
+      ],
+      "id": "j4-148",
+      "subtitle": "Crew 1 · finished",
+      "title": "Kingfisher school hall"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-18",
+          "id": "b51-149",
+          "label": "Resurface · no permit",
+          "start": "2026-12-15",
+          "tone": "bad"
+        },
+        {
+          "end": "2026-12-22",
+          "id": "b52-149",
+          "label": "Lines",
+          "start": "2026-12-21"
+        }
+      ],
+      "id": "j5-149",
+      "subtitle": "Crew 4",
+      "title": "Quayside car park"
+    },
+    {
+      "bars": [],
+      "id": "j6-150",
+      "subtitle": "unassigned",
+      "title": "Old Mill conversion"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-23",
+          "id": "b71-151",
+          "label": "Survey",
+          "start": "2026-12-21"
+        },
+        {
+          "end": "2027-01-08",
+          "id": "b72-151",
+          "label": "Dig",
+          "start": "2026-12-28",
+          "tone": "accent"
+        }
+      ],
+      "id": "j7-151",
+      "subtitle": "Crew 2",
+      "title": "Pier Road drainage"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-04",
+          "id": "b01-152",
+          "label": "Fit-out",
+          "progress": 80,
+          "start": "2026-11-23"
+        }
+      ],
+      "id": "j0-152",
+      "subtitle": "Crew 3 · fit-out",
+      "title": "St Anne's annexe"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-04",
+          "id": "b11-153",
+          "label": "Formwork",
+          "progress": 100,
+          "start": "2026-12-01",
+          "tone": "ok"
+        },
+        {
+          "end": "2026-12-09",
+          "id": "b12-153",
+          "label": "Pour",
+          "start": "2026-12-07"
+        },
+        {
+          "end": "2026-12-22",
+          "id": "b13-153",
+          "label": "Cure",
+          "start": "2026-12-14",
+          "tone": "info"
+        }
+      ],
+      "id": "j1-153",
+      "subtitle": "Crew 1",
+      "title": "Riverside Tower A"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-08",
+          "id": "b21-154",
+          "label": "Excavate",
+          "progress": 60,
+          "start": "2026-12-02"
+        },
+        {
+          "end": "2026-12-18",
+          "id": "b22-154",
+          "label": "Footings",
+          "start": "2026-12-11"
+        }
+      ],
+      "id": "j2-154",
+      "subtitle": "Crew 2",
+      "title": "Riverside Tower B"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-23",
+          "id": "b31-155",
+          "label": "Brickwork",
+          "progress": 30,
+          "start": "2026-12-07",
+          "tone": "warn"
+        },
+        {
+          "end": "2026-12-28",
+          "id": "b32-155",
+          "label": "Inspect",
+          "start": "2026-12-28"
+        }
+      ],
+      "id": "j3-155",
+      "subtitle": "Crew 3 · behind",
+      "title": "Marlow Street flats"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-03",
+          "fixed": true,
+          "id": "b41-156",
+          "label": "Roof",
+          "progress": 100,
+          "start": "2026-12-01",
+          "tone": "ok"
+        },
+        {
+          "end": "2026-12-08",
+          "fixed": true,
+          "id": "b42-156",
+          "label": "Snag list",
+          "progress": 100,
+          "start": "2026-12-07"
+        }
+      ],
+      "id": "j4-156",
+      "subtitle": "Crew 1 · finished",
+      "title": "Kingfisher school hall"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-18",
+          "id": "b51-157",
+          "label": "Resurface · no permit",
+          "start": "2026-12-15",
+          "tone": "bad"
+        },
+        {
+          "end": "2026-12-22",
+          "id": "b52-157",
+          "label": "Lines",
+          "start": "2026-12-21"
+        }
+      ],
+      "id": "j5-157",
+      "subtitle": "Crew 4",
+      "title": "Quayside car park"
+    },
+    {
+      "bars": [],
+      "id": "j6-158",
+      "subtitle": "unassigned",
+      "title": "Old Mill conversion"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-23",
+          "id": "b71-159",
+          "label": "Survey",
+          "start": "2026-12-21"
+        },
+        {
+          "end": "2027-01-08",
+          "id": "b72-159",
+          "label": "Dig",
+          "start": "2026-12-28",
+          "tone": "accent"
+        }
+      ],
+      "id": "j7-159",
+      "subtitle": "Crew 2",
+      "title": "Pier Road drainage"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-04",
+          "id": "b01-160",
+          "label": "Fit-out",
+          "progress": 80,
+          "start": "2026-11-23"
+        }
+      ],
+      "id": "j0-160",
+      "subtitle": "Crew 3 · fit-out",
+      "title": "St Anne's annexe"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-04",
+          "id": "b11-161",
+          "label": "Formwork",
+          "progress": 100,
+          "start": "2026-12-01",
+          "tone": "ok"
+        },
+        {
+          "end": "2026-12-09",
+          "id": "b12-161",
+          "label": "Pour",
+          "start": "2026-12-07"
+        },
+        {
+          "end": "2026-12-22",
+          "id": "b13-161",
+          "label": "Cure",
+          "start": "2026-12-14",
+          "tone": "info"
+        }
+      ],
+      "id": "j1-161",
+      "subtitle": "Crew 1",
+      "title": "Riverside Tower A"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-08",
+          "id": "b21-162",
+          "label": "Excavate",
+          "progress": 60,
+          "start": "2026-12-02"
+        },
+        {
+          "end": "2026-12-18",
+          "id": "b22-162",
+          "label": "Footings",
+          "start": "2026-12-11"
+        }
+      ],
+      "id": "j2-162",
+      "subtitle": "Crew 2",
+      "title": "Riverside Tower B"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-23",
+          "id": "b31-163",
+          "label": "Brickwork",
+          "progress": 30,
+          "start": "2026-12-07",
+          "tone": "warn"
+        },
+        {
+          "end": "2026-12-28",
+          "id": "b32-163",
+          "label": "Inspect",
+          "start": "2026-12-28"
+        }
+      ],
+      "id": "j3-163",
+      "subtitle": "Crew 3 · behind",
+      "title": "Marlow Street flats"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-03",
+          "fixed": true,
+          "id": "b41-164",
+          "label": "Roof",
+          "progress": 100,
+          "start": "2026-12-01",
+          "tone": "ok"
+        },
+        {
+          "end": "2026-12-08",
+          "fixed": true,
+          "id": "b42-164",
+          "label": "Snag list",
+          "progress": 100,
+          "start": "2026-12-07"
+        }
+      ],
+      "id": "j4-164",
+      "subtitle": "Crew 1 · finished",
+      "title": "Kingfisher school hall"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-18",
+          "id": "b51-165",
+          "label": "Resurface · no permit",
+          "start": "2026-12-15",
+          "tone": "bad"
+        },
+        {
+          "end": "2026-12-22",
+          "id": "b52-165",
+          "label": "Lines",
+          "start": "2026-12-21"
+        }
+      ],
+      "id": "j5-165",
+      "subtitle": "Crew 4",
+      "title": "Quayside car park"
+    },
+    {
+      "bars": [],
+      "id": "j6-166",
+      "subtitle": "unassigned",
+      "title": "Old Mill conversion"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-23",
+          "id": "b71-167",
+          "label": "Survey",
+          "start": "2026-12-21"
+        },
+        {
+          "end": "2027-01-08",
+          "id": "b72-167",
+          "label": "Dig",
+          "start": "2026-12-28",
+          "tone": "accent"
+        }
+      ],
+      "id": "j7-167",
+      "subtitle": "Crew 2",
+      "title": "Pier Road drainage"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-04",
+          "id": "b01-168",
+          "label": "Fit-out",
+          "progress": 80,
+          "start": "2026-11-23"
+        }
+      ],
+      "id": "j0-168",
+      "subtitle": "Crew 3 · fit-out",
+      "title": "St Anne's annexe"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-04",
+          "id": "b11-169",
+          "label": "Formwork",
+          "progress": 100,
+          "start": "2026-12-01",
+          "tone": "ok"
+        },
+        {
+          "end": "2026-12-09",
+          "id": "b12-169",
+          "label": "Pour",
+          "start": "2026-12-07"
+        },
+        {
+          "end": "2026-12-22",
+          "id": "b13-169",
+          "label": "Cure",
+          "start": "2026-12-14",
+          "tone": "info"
+        }
+      ],
+      "id": "j1-169",
+      "subtitle": "Crew 1",
+      "title": "Riverside Tower A"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-08",
+          "id": "b21-170",
+          "label": "Excavate",
+          "progress": 60,
+          "start": "2026-12-02"
+        },
+        {
+          "end": "2026-12-18",
+          "id": "b22-170",
+          "label": "Footings",
+          "start": "2026-12-11"
+        }
+      ],
+      "id": "j2-170",
+      "subtitle": "Crew 2",
+      "title": "Riverside Tower B"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-23",
+          "id": "b31-171",
+          "label": "Brickwork",
+          "progress": 30,
+          "start": "2026-12-07",
+          "tone": "warn"
+        },
+        {
+          "end": "2026-12-28",
+          "id": "b32-171",
+          "label": "Inspect",
+          "start": "2026-12-28"
+        }
+      ],
+      "id": "j3-171",
+      "subtitle": "Crew 3 · behind",
+      "title": "Marlow Street flats"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-03",
+          "fixed": true,
+          "id": "b41-172",
+          "label": "Roof",
+          "progress": 100,
+          "start": "2026-12-01",
+          "tone": "ok"
+        },
+        {
+          "end": "2026-12-08",
+          "fixed": true,
+          "id": "b42-172",
+          "label": "Snag list",
+          "progress": 100,
+          "start": "2026-12-07"
+        }
+      ],
+      "id": "j4-172",
+      "subtitle": "Crew 1 · finished",
+      "title": "Kingfisher school hall"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-18",
+          "id": "b51-173",
+          "label": "Resurface · no permit",
+          "start": "2026-12-15",
+          "tone": "bad"
+        },
+        {
+          "end": "2026-12-22",
+          "id": "b52-173",
+          "label": "Lines",
+          "start": "2026-12-21"
+        }
+      ],
+      "id": "j5-173",
+      "subtitle": "Crew 4",
+      "title": "Quayside car park"
+    },
+    {
+      "bars": [],
+      "id": "j6-174",
+      "subtitle": "unassigned",
+      "title": "Old Mill conversion"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-23",
+          "id": "b71-175",
+          "label": "Survey",
+          "start": "2026-12-21"
+        },
+        {
+          "end": "2027-01-08",
+          "id": "b72-175",
+          "label": "Dig",
+          "start": "2026-12-28",
+          "tone": "accent"
+        }
+      ],
+      "id": "j7-175",
+      "subtitle": "Crew 2",
+      "title": "Pier Road drainage"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-04",
+          "id": "b01-176",
+          "label": "Fit-out",
+          "progress": 80,
+          "start": "2026-11-23"
+        }
+      ],
+      "id": "j0-176",
+      "subtitle": "Crew 3 · fit-out",
+      "title": "St Anne's annexe"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-04",
+          "id": "b11-177",
+          "label": "Formwork",
+          "progress": 100,
+          "start": "2026-12-01",
+          "tone": "ok"
+        },
+        {
+          "end": "2026-12-09",
+          "id": "b12-177",
+          "label": "Pour",
+          "start": "2026-12-07"
+        },
+        {
+          "end": "2026-12-22",
+          "id": "b13-177",
+          "label": "Cure",
+          "start": "2026-12-14",
+          "tone": "info"
+        }
+      ],
+      "id": "j1-177",
+      "subtitle": "Crew 1",
+      "title": "Riverside Tower A"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-08",
+          "id": "b21-178",
+          "label": "Excavate",
+          "progress": 60,
+          "start": "2026-12-02"
+        },
+        {
+          "end": "2026-12-18",
+          "id": "b22-178",
+          "label": "Footings",
+          "start": "2026-12-11"
+        }
+      ],
+      "id": "j2-178",
+      "subtitle": "Crew 2",
+      "title": "Riverside Tower B"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-23",
+          "id": "b31-179",
+          "label": "Brickwork",
+          "progress": 30,
+          "start": "2026-12-07",
+          "tone": "warn"
+        },
+        {
+          "end": "2026-12-28",
+          "id": "b32-179",
+          "label": "Inspect",
+          "start": "2026-12-28"
+        }
+      ],
+      "id": "j3-179",
+      "subtitle": "Crew 3 · behind",
+      "title": "Marlow Street flats"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-03",
+          "fixed": true,
+          "id": "b41-180",
+          "label": "Roof",
+          "progress": 100,
+          "start": "2026-12-01",
+          "tone": "ok"
+        },
+        {
+          "end": "2026-12-08",
+          "fixed": true,
+          "id": "b42-180",
+          "label": "Snag list",
+          "progress": 100,
+          "start": "2026-12-07"
+        }
+      ],
+      "id": "j4-180",
+      "subtitle": "Crew 1 · finished",
+      "title": "Kingfisher school hall"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-18",
+          "id": "b51-181",
+          "label": "Resurface · no permit",
+          "start": "2026-12-15",
+          "tone": "bad"
+        },
+        {
+          "end": "2026-12-22",
+          "id": "b52-181",
+          "label": "Lines",
+          "start": "2026-12-21"
+        }
+      ],
+      "id": "j5-181",
+      "subtitle": "Crew 4",
+      "title": "Quayside car park"
+    },
+    {
+      "bars": [],
+      "id": "j6-182",
+      "subtitle": "unassigned",
+      "title": "Old Mill conversion"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-23",
+          "id": "b71-183",
+          "label": "Survey",
+          "start": "2026-12-21"
+        },
+        {
+          "end": "2027-01-08",
+          "id": "b72-183",
+          "label": "Dig",
+          "start": "2026-12-28",
+          "tone": "accent"
+        }
+      ],
+      "id": "j7-183",
+      "subtitle": "Crew 2",
+      "title": "Pier Road drainage"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-04",
+          "id": "b01-184",
+          "label": "Fit-out",
+          "progress": 80,
+          "start": "2026-11-23"
+        }
+      ],
+      "id": "j0-184",
+      "subtitle": "Crew 3 · fit-out",
+      "title": "St Anne's annexe"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-04",
+          "id": "b11-185",
+          "label": "Formwork",
+          "progress": 100,
+          "start": "2026-12-01",
+          "tone": "ok"
+        },
+        {
+          "end": "2026-12-09",
+          "id": "b12-185",
+          "label": "Pour",
+          "start": "2026-12-07"
+        },
+        {
+          "end": "2026-12-22",
+          "id": "b13-185",
+          "label": "Cure",
+          "start": "2026-12-14",
+          "tone": "info"
+        }
+      ],
+      "id": "j1-185",
+      "subtitle": "Crew 1",
+      "title": "Riverside Tower A"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-08",
+          "id": "b21-186",
+          "label": "Excavate",
+          "progress": 60,
+          "start": "2026-12-02"
+        },
+        {
+          "end": "2026-12-18",
+          "id": "b22-186",
+          "label": "Footings",
+          "start": "2026-12-11"
+        }
+      ],
+      "id": "j2-186",
+      "subtitle": "Crew 2",
+      "title": "Riverside Tower B"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-23",
+          "id": "b31-187",
+          "label": "Brickwork",
+          "progress": 30,
+          "start": "2026-12-07",
+          "tone": "warn"
+        },
+        {
+          "end": "2026-12-28",
+          "id": "b32-187",
+          "label": "Inspect",
+          "start": "2026-12-28"
+        }
+      ],
+      "id": "j3-187",
+      "subtitle": "Crew 3 · behind",
+      "title": "Marlow Street flats"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-03",
+          "fixed": true,
+          "id": "b41-188",
+          "label": "Roof",
+          "progress": 100,
+          "start": "2026-12-01",
+          "tone": "ok"
+        },
+        {
+          "end": "2026-12-08",
+          "fixed": true,
+          "id": "b42-188",
+          "label": "Snag list",
+          "progress": 100,
+          "start": "2026-12-07"
+        }
+      ],
+      "id": "j4-188",
+      "subtitle": "Crew 1 · finished",
+      "title": "Kingfisher school hall"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-18",
+          "id": "b51-189",
+          "label": "Resurface · no permit",
+          "start": "2026-12-15",
+          "tone": "bad"
+        },
+        {
+          "end": "2026-12-22",
+          "id": "b52-189",
+          "label": "Lines",
+          "start": "2026-12-21"
+        }
+      ],
+      "id": "j5-189",
+      "subtitle": "Crew 4",
+      "title": "Quayside car park"
+    },
+    {
+      "bars": [],
+      "id": "j6-190",
+      "subtitle": "unassigned",
+      "title": "Old Mill conversion"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-23",
+          "id": "b71-191",
+          "label": "Survey",
+          "start": "2026-12-21"
+        },
+        {
+          "end": "2027-01-08",
+          "id": "b72-191",
+          "label": "Dig",
+          "start": "2026-12-28",
+          "tone": "accent"
+        }
+      ],
+      "id": "j7-191",
+      "subtitle": "Crew 2",
+      "title": "Pier Road drainage"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-04",
+          "id": "b01-192",
+          "label": "Fit-out",
+          "progress": 80,
+          "start": "2026-11-23"
+        }
+      ],
+      "id": "j0-192",
+      "subtitle": "Crew 3 · fit-out",
+      "title": "St Anne's annexe"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-04",
+          "id": "b11-193",
+          "label": "Formwork",
+          "progress": 100,
+          "start": "2026-12-01",
+          "tone": "ok"
+        },
+        {
+          "end": "2026-12-09",
+          "id": "b12-193",
+          "label": "Pour",
+          "start": "2026-12-07"
+        },
+        {
+          "end": "2026-12-22",
+          "id": "b13-193",
+          "label": "Cure",
+          "start": "2026-12-14",
+          "tone": "info"
+        }
+      ],
+      "id": "j1-193",
+      "subtitle": "Crew 1",
+      "title": "Riverside Tower A"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-08",
+          "id": "b21-194",
+          "label": "Excavate",
+          "progress": 60,
+          "start": "2026-12-02"
+        },
+        {
+          "end": "2026-12-18",
+          "id": "b22-194",
+          "label": "Footings",
+          "start": "2026-12-11"
+        }
+      ],
+      "id": "j2-194",
+      "subtitle": "Crew 2",
+      "title": "Riverside Tower B"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-23",
+          "id": "b31-195",
+          "label": "Brickwork",
+          "progress": 30,
+          "start": "2026-12-07",
+          "tone": "warn"
+        },
+        {
+          "end": "2026-12-28",
+          "id": "b32-195",
+          "label": "Inspect",
+          "start": "2026-12-28"
+        }
+      ],
+      "id": "j3-195",
+      "subtitle": "Crew 3 · behind",
+      "title": "Marlow Street flats"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-03",
+          "fixed": true,
+          "id": "b41-196",
+          "label": "Roof",
+          "progress": 100,
+          "start": "2026-12-01",
+          "tone": "ok"
+        },
+        {
+          "end": "2026-12-08",
+          "fixed": true,
+          "id": "b42-196",
+          "label": "Snag list",
+          "progress": 100,
+          "start": "2026-12-07"
+        }
+      ],
+      "id": "j4-196",
+      "subtitle": "Crew 1 · finished",
+      "title": "Kingfisher school hall"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-18",
+          "id": "b51-197",
+          "label": "Resurface · no permit",
+          "start": "2026-12-15",
+          "tone": "bad"
+        },
+        {
+          "end": "2026-12-22",
+          "id": "b52-197",
+          "label": "Lines",
+          "start": "2026-12-21"
+        }
+      ],
+      "id": "j5-197",
+      "subtitle": "Crew 4",
+      "title": "Quayside car park"
+    },
+    {
+      "bars": [],
+      "id": "j6-198",
+      "subtitle": "unassigned",
+      "title": "Old Mill conversion"
+    },
+    {
+      "bars": [
+        {
+          "end": "2026-12-23",
+          "id": "b71-199",
+          "label": "Survey",
+          "start": "2026-12-21"
+        },
+        {
+          "end": "2027-01-08",
+          "id": "b72-199",
+          "label": "Dig",
+          "start": "2026-12-28",
+          "tone": "accent"
+        }
+      ],
+      "id": "j7-199",
+      "subtitle": "Crew 2",
+      "title": "Pier Road drainage"
+    }
+  ],
+  "type": "timeline"
+}

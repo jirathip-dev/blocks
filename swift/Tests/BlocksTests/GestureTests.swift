@@ -80,7 +80,7 @@ final class GestureTests: XCTestCase {
         }
     }
 
-    private func grab(_ v: JSONValue?) -> GridGrab {
+    private func cell(_ v: JSONValue?) -> GridGrab {
         if let id = v?.string { return .row(id) }
         return .cell(row: v?.string("row") ?? "", column: v?.string("column") ?? "")
     }
@@ -91,7 +91,7 @@ final class GestureTests: XCTestCase {
         let cases = f.list("cases")
         XCTAssertGreaterThanOrEqual(cases.count, 20)
         for c in cases {
-            let g = grab(c["grab"])
+            let g = cell(c["grab"])
             let got: GridChange? =
                 if let r = c["reach"] {
                     t.candidate(g, r.string.map(GridReach.text) ?? .rows(Int(r.number ?? 0)))
@@ -151,6 +151,55 @@ final class GestureTests: XCTestCase {
         XCTAssertEqual(named.phase, .sent(["a", "c", "b", "d"]))
         XCTAssertNil(Driven(list, "d"))
     }
+
+    private func grab(_ v: JSONValue?) -> BarGrab {
+        if let row = v?.string("row") { return .row(row) }
+        return .bar(v?.string("bar") ?? "", BarGrab.Part(rawValue: v?.string("part") ?? "") ?? .body)
+    }
+
+    private func span(_ v: JSONValue?) -> DaySpan? {
+        guard let v, v != .null else { return nil }
+        return try? v.decode(DaySpan.self)
+    }
+
+    func testTimelineRulesGiveEveryCaseTheCratesSpanWordsAndSteps() throws {
+        let f = try read("timeline.json")
+        let t = try XCTUnwrap(f["block"]).decode(Timeline.self)
+        XCTAssertGreaterThanOrEqual(f.list("cases").count, 30)
+        for c in f.list("cases") {
+            let g = grab(c["grab"])
+            let got: DaySpan? =
+                if let r = c["reach"], r != .null {
+                    t.candidate(g, Days(number(r["days"]) ?? 0, from: r.string("from")))
+                } else {
+                    c.list("nudges").reduce(t.start(g)) { from, n in from.flatMap { t.nudge(g, from: $0, by: nudge(n)) } }
+                }
+            XCTAssertEqual(got, span(c["want"]), "\(g)")
+            XCTAssertEqual(got.map { t.says(g, $0) }, c.string("says"), "\(g)")
+        }
+        for s in f.list("steps") {
+            XCTAssertEqual(t.steps(grab(s["grab"])).map(\.0), s.list("want").compactMap(\.string), "\(grab(s["grab"]))")
+        }
+    }
+
+    func testATimelinesKeysAndNamedActionSendTheSameSpanAsAPointer() throws {
+        let t = try XCTUnwrap(try read("timeline.json")["block"]).decode(Timeline.self)
+        for (g, name) in [(BarGrab.bar("b7", .body), "One day later"), (.bar("b7", .end), "End one day later")] {
+            var pointer = try XCTUnwrap(Driven(t, g))
+            pointer.on(.press)
+            pointer.reach(Days(1))
+            var keys = try XCTUnwrap(Driven(t, g))
+            keys.on(.press)
+            keys.nudge(Nudge(.right))
+            var named = try XCTUnwrap(Driven(t, g))
+            let n = try XCTUnwrap(t.steps(g).first { $0.0 == name }?.1)
+            let sent = pointer.on(.release)
+            XCTAssertNotNil(sent)
+            XCTAssertEqual(keys.on(.release), sent, "\(g)")
+            XCTAssertEqual(named.named(n), sent, "\(g)")
+        }
+        XCTAssertNil(Driven(t, .bar("b8", .body)), "a fixed bar takes no gesture")
+    }
 }
 
 @MainActor
@@ -193,6 +242,36 @@ final class GridSnapshotTests: XCTestCase {
             let step = try json(#"{"gesture":{"id":"quote","grab":\#(grab),"via":"\#(via)","reach":\#(reach)}}"#).decode(Step.self)
             let run = try Snapshot(screen).run([step])
             XCTAssertEqual(try JSONValue(run.report.sent), want, "\(via) \(grab)")
+        }
+    }
+}
+
+@MainActor
+final class TimelineSnapshotTests: XCTestCase {
+    func testTheHarnessSendsOneSpanByKeysAndByANamedActionAndDropsAPointer() throws {
+        let url = URL(fileURLWithPath: #filePath).deletingLastPathComponent()
+            .appendingPathComponent("../../../fixtures/gesture/timeline.json")
+        let plan = try XCTUnwrap(try JSONDecoder().decode(JSONValue.self, from: Data(contentsOf: url))["block"])
+        let json = { (s: String) in try JSONDecoder().decode(JSONValue.self, from: Data(s.utf8)) }
+        let screen = try JSONValue.object(["type": .string("screen"), "id": .string("s"), "title": .string("P"), "blocks": .array([plan])])
+            .decode(Block.self)
+        let sent = { (span: String) in
+            try json(#"[{"screen":"s","action":"schedule","block":"plan","values":{"bar":\#(span)}}]"#)
+        }
+        let later = #"{"id":"b7","start":"2026-12-04","end":"2026-12-06"}"#
+        let first = #"{"row":"j3","start":"2026-12-01","end":"2026-12-01"}"#
+        let cases: [(String, String, String, String?)] = [
+            (#"{"bar":"b7","part":"body"}"#, "keys", #"[{"dir":"right"}]"#, later),
+            (#"{"bar":"b7","part":"body"}"#, "action", #"["One day later"]"#, later),
+            (#"{"row":"j3"}"#, "keys", #"[{"dir":"right"}]"#, first),
+            (#"{"row":"j3"}"#, "action", #"["Add a bar"]"#, first),
+            (#"{"bar":"b7","part":"body"}"#, "pointer", "[[40, 0]]", nil),
+            (#"{"bar":"b8","part":"body"}"#, "keys", #"[{"dir":"right"}]"#, nil),
+        ]
+        for (grab, via, reach, span) in cases {
+            let step = try json(#"{"gesture":{"id":"plan","grab":\#(grab),"via":"\#(via)","reach":\#(reach)}}"#).decode(Step.self)
+            let run = try Snapshot(screen).run([step])
+            XCTAssertEqual(try JSONValue(run.report.sent), try span.map(sent) ?? .array([]), "\(grab) \(via)")
         }
     }
 }
