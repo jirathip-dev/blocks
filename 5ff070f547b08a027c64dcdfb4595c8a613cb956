@@ -1,0 +1,10 @@
+Decided: Composer gains an optional working { since } so the Swift view can show the timer, stop and queue
+Because: crates/blocks/src/kind/mod.rs:292
+Rejected: reading an off-schema working key in Swift — BlocksView decodes the typed Block, which drops it
+Decided: the five kinds live in one BlockContent.swift on the existing surface, CardButton, ActButton and Picture
+Because: "no `Gap(` left; a design stage"
+Rejected: attach and the sending/sent status line — act returns no acknowledgement and attach is the design's first cut
+Decided: web/dist/blocks.js is rebuilt by just gen after a fresh npm ci, fixing the arch-check generated drift
+Because: "generated files come from `just gen`, never hand-edited"
+Check: removing the five BlockNode cases fails four RenderTests (prose height, media box, nav sides, composer red stop)
+Owner: The Apple app draws the message box and the website kinds itself now, instead of a grey placeholder.
