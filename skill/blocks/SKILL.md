@@ -39,6 +39,7 @@ A screen is data: a `screen` or `sheet` block of typed blocks, checked, then dra
 - [`island`](kinds/island.md): A client component the app hosts: its props in, its named events out.
 - [`table`](kinds/table.md): A data table: typed columns, rows by id, sort, filter, totals, row select and export.
 - [`steps`](kinds/steps.md): A stepper of named steps with its current one, or progress bars.
+- [`chart`](kinds/chart.md): A chart of named series over x values: bar, stacked, line, combo or donut.
 - [`toast`](kinds/toast.md): A short line after an action, in a tone, with an optional undo: an answer's toast, or drawn where it sits.
 
 ## More
