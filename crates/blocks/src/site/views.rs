@@ -298,19 +298,29 @@ fn form_of(w: &mut W<'_>, b: &Value, cls: &str, bar: bool) {
     w.close("div");
 }
 
+fn note(x: &Value) -> (&'static str, String) {
+    let was = x.get("was").filter(|v| !v.is_null());
+    match (get(x, "error").filter(|e| !e.is_empty()), was) {
+        (Some(e), _) => ("fn err", e.to_owned()),
+        (None, Some(v)) => ("fn was", format!("was {}", shown(Some(v)))),
+        (None, None) => ("fn", get(x, "doc").unwrap_or_default().to_owned()),
+    }
+}
+
+fn placeholder(x: &Value, secret: bool) -> &str {
+    match (secret && on(x, "set"), get(x, "placeholder")) {
+        (true, _) => "set ✓ · type to replace",
+        (false, Some(p)) => p,
+        (false, None) if secret => "not set",
+        (false, None) => "",
+    }
+}
+
 fn field(w: &mut W<'_>, x: &Value, tie: &[(&str, &str)]) {
     let name = shown(x.get("name"));
     let kind = get(x, "type").unwrap_or_default();
     let error = get(x, "error").filter(|e| !e.is_empty());
-    let was = x
-        .get("was")
-        .filter(|v| !v.is_null())
-        .map(|v| format!("was {}", shown(Some(v))));
-    let (note_cls, note) = match (error, was) {
-        (Some(e), _) => ("fn err", e.to_owned()),
-        (None, Some(v)) => ("fn was", v),
-        (None, None) => ("fn", get(x, "doc").unwrap_or_default().to_owned()),
-    };
+    let (note_cls, note) = note(x);
     let row = format!(
         "fd{}{}{}",
         if kind == "toggle" { " tg" } else { "" },
@@ -369,13 +379,7 @@ fn field(w: &mut W<'_>, x: &Value, tie: &[(&str, &str)]) {
                 "number" => attrs.push(("inputmode", "decimal")),
                 _ => {}
             }
-            let placeholder = match (secret && on(x, "set"), get(x, "placeholder")) {
-                (true, _) => "set ✓ · type to replace",
-                (false, Some(p)) => p,
-                (false, None) if secret => "not set",
-                (false, None) => "",
-            };
-            attrs.push(("placeholder", placeholder));
+            attrs.push(("placeholder", placeholder(x, secret)));
             if !secret && !value.is_empty() {
                 attrs.push(("value", &value));
             }
