@@ -1,0 +1,9 @@
+Decided: one linkable test per language (http, https, mailto or relative), used by Built::check and at every place a link is written or opened
+Because: "every renderer (HTML, static site, SwiftUI) refuses to write or open one even if it reaches it"
+Because: crates/blocks/src/built.rs:57
+Decided: Built::check faults url, href, link and open strings, naming the JSON path
+Because: "Then `Built::check` returns the fault, naming where"
+Rejected: a TS port of the fault — #81's TS check is not in the tree yet
+Rejected: URL? from Swift linkable — URL(string: "") is nil and would refuse the empty relative link
+Check: the scheme test strips control chars and spaces first, so java\tscript: and leading-space javascript: are refused
+Owner: Screens can no longer carry script or data links; the text shows and the link is dropped everywhere.
