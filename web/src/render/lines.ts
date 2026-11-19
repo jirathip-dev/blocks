@@ -1,5 +1,5 @@
 import type { Field, LineItem, Lines, Lit } from "../gen/types.ts";
-import { evaluate } from "../behave.ts";
+import { evaluate } from "../core/eval.ts";
 import { btn, type Ctx, el, h } from "./index.ts";
 
 type Draft = { base: string; rows: LineItem[] };

@@ -80,6 +80,8 @@ export type Block = ({
 } & Diagram) | ({
     type: "composer";
 } & Composer) | ({
+    type: "lines";
+} & Lines) | ({
     type: "prose";
 } & Prose) | ({
     type: "hero";
@@ -238,6 +240,8 @@ export type Expr = {
 } | {
     sub: Expr[];
 } | {
+    mul: Expr[];
+} | {
     cat: Expr[];
 } | {
     pick: Expr[];
@@ -365,6 +369,29 @@ export type LaneState = "working" | "needs" | "done" | "idle" | "fail" | "merged
 export type LineError = {
     line: number;
     message: string;
+};
+export type LineItem = {
+    id: string;
+    values: Record<string, unknown>;
+};
+export type Lines = {
+    action?: string | null;
+    add?: string | null;
+    balance?: string[] | null;
+    calc?: Record<string, Expr> | null;
+    columns: Field[];
+    empty?: string | null;
+    errors?: RowError[] | null;
+    id?: string | null;
+    items: LineItem[];
+    label?: string | null;
+    max?: number | null;
+    min?: number | null;
+    name: string;
+    scale?: number | null;
+    show?: Expr | null;
+    submit?: Submit | null;
+    sum?: string[] | null;
 };
 export type Link = {
     label: string;
@@ -536,6 +563,11 @@ export type Row = {
     tap?: Tap | null;
     title: string;
     value?: Shown | null;
+};
+export type RowError = {
+    message: string;
+    name?: string | null;
+    row?: string | null;
 };
 export type RowStyle = "link" | "destructive";
 export type Run = {
@@ -726,4 +758,4 @@ export type Why = "evicted" | "unpaired" | "handover";
 export type Working = {
     since: string;
 };
-export type Kind = "screen" | "sheet" | "section" | "list" | "row" | "card" | "choice" | "form" | "config" | "secret" | "run" | "button" | "chips" | "stat" | "text" | "images" | "web" | "diff" | "editor" | "scene" | "diagram" | "composer" | "prose" | "hero" | "media" | "nav" | "island";
+export type Kind = "screen" | "sheet" | "section" | "list" | "row" | "card" | "choice" | "form" | "config" | "secret" | "run" | "button" | "chips" | "stat" | "text" | "images" | "web" | "diff" | "editor" | "scene" | "diagram" | "composer" | "lines" | "prose" | "hero" | "media" | "nav" | "island";

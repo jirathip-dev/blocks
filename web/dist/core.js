@@ -22,6 +22,7 @@ var hooks = {
   scene: { variant: null, parts: [] },
   diagram: { variant: null, parts: ["title"] },
   composer: { variant: null, parts: [] },
+  lines: { variant: null, parts: [] },
   prose: { variant: null, parts: [] },
   hero: { variant: null, parts: ["title", "subtitle", "actions"] },
   media: { variant: null, parts: [] },
@@ -102,7 +103,7 @@ var defaultStyle = {
 var own = (o, k) => Object.prototype.hasOwnProperty.call(o, k);
 var rec = (v) => typeof v === "object" && v !== null && !Array.isArray(v);
 var UNKNOWN = { "?": null };
-var PAIRS = { eq: 2, lt: 2, has: 2, add: 2, sub: 2, pick: 3 };
+var PAIRS = { eq: 2, lt: 2, has: 2, add: 2, sub: 2, mul: 2, pick: 3 };
 var PATTERNS = ["filled", "email", "url", "number"];
 function read(v) {
   if (Array.isArray(v)) return void 0;
@@ -195,6 +196,8 @@ function ev(e, s) {
       return n ? num(n.x + n.y) : null;
     case "sub":
       return n ? num(n.x - n.y) : null;
+    case "mul":
+      return n ? num(n.x * n.y) : null;
     case "cat":
       return xs.map(text).join("");
     case "pick":
