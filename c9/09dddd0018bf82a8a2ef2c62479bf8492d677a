@@ -1,0 +1,6 @@
+Decided: one new ci/cap.d/2026-11-19-29000.toml with line_cap = 29000; no other cap file changes
+Because: q2362
+Because: "no other file in `ci/cap.d` or `ci/cap.toml` changes"
+Rejected: editing ci/cap.toml directly — the spec asks for one new ci/cap.d file and nothing else
+Check: the commit carries Cap: 23000 → 29000 (#209, q2362) and line-cap.sh reports 21463 / cap 29000
+Owner: the repo's code-size limit goes from 23,000 to 29,000 lines, as you decided
