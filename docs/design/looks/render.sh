@@ -1,5 +1,5 @@
 #!/bin/sh
-# Builds the real site from a copy of HEAD with proposal/looks.json and proposal/site.css in place of site/'s, then renders home, gallery and styles in each look at 1440 and 390 wide, settled (reduced motion).
+# Builds the real site from a copy of HEAD with proposal/looks.json, proposal/site.css and proposal/media/ over site/'s, then renders home, gallery and styles in each look at 1440 and 390 wide, settled (reduced motion).
 set -eu
 cd "$(dirname "$0")"
 here=$PWD
@@ -9,6 +9,7 @@ out=$(mktemp -d)
 git -C "$root" archive HEAD | tar -x -C "$src"
 cp proposal/looks.json "$src/site/looks.json"
 cp proposal/site.css "$src/site/site.css"
+cp proposal/media/*.svg "$src/site/media/"
 (cd "$src" && CARGO_TARGET_DIR="$root/target" cargo run -q -p blocks-site -- "$out")
 rm -rf media pages *.html
 cp -R "$out/media" media
