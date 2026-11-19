@@ -4,7 +4,7 @@
   "type": "module",
   "description": "The generated TS types of the blocks schema, the stream client and the patcher; strict tsc, lint.mjs and node --test hold them",
   "scripts": {
-    "build": "esbuild src/shell.ts --bundle --format=esm --minify --legal-comments=none --outfile=dist/blocks.js && export LC_ALL=C && { echo '@layer blocks{'; cat src/css/base/*.css src/css/kind/*.css src/css/shell/*.css src/css/look/*.css; echo '}'; } | esbuild --loader=css --minify > dist/blocks.css && esbuild src/core/index.ts --bundle --format=esm --legal-comments=none --outfile=dist/core.js && rm -rf dist/types && tsc -p tsconfig.types.json",
+    "build": "esbuild src/shell.ts --bundle --format=esm --minify --legal-comments=none --outfile=dist/blocks.js && export LC_ALL=C && { echo '@layer blocks{'; cat src/css/base/*.css src/css/kind/*.css src/css/shell/*.css src/css/look/*.css; echo '}'; } | esbuild --loader=css --minify > dist/blocks.css && { echo '@layer blocks{@scope (.b-view) to (:is(.b-island, .b-app):not([data-fallback]) > *){'; cat src/css/base/*.css src/css/kind/*.css src/css/shell/*.css src/css/look/*.css | sed -e 's/:root/:scope/g' -e 's/^html{/:scope{/'; echo '}}'; } > src/gen/scoped.css && esbuild src/gen/scoped.css --minify > dist/blocks.scoped.css && esbuild src/core/index.ts --bundle --format=esm --legal-comments=none --outfile=dist/core.js && rm -rf dist/types && tsc -p tsconfig.types.json",
     "check": "tsc --noEmit",
     "lint": "node --no-warnings lint.mjs src",
     "test": "node --no-warnings --test test/*.test.ts",

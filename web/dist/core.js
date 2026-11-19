@@ -415,6 +415,13 @@ function gate(s, fills) {
 }
 
 // src/core/look.ts
+var passed = /* @__PURE__ */ Symbol("look");
+function gated(pair) {
+  const misses = ["light", "dark"].flatMap((m) => gate(pair[m], "tint").map((x) => `${m}: ${x.what} is ${x.got.toFixed(2)}, under ${x.min}`));
+  if (misses.length) throw new Error(`the look fails the gate:
+${misses.join("\n")}`);
+  return { light: pair.light, dark: pair.dark, [passed]: true };
+}
 var TILES = ":is(.card,.st,.list>.row,.list>.rw,.form:not(.say),.choice,.secret,.run,.tbl)";
 var DRAWN = {
   header: ".sec>.sh",
@@ -5887,6 +5894,7 @@ export {
   expr,
   form,
   gate,
+  gated,
   hero,
   hooks,
   images,
