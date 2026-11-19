@@ -1,0 +1,6 @@
+Decided: raise via new file ci/cap.d/2026-11-19-13500.toml with line_cap = 13500, ci/cap.toml untouched
+Because: q2175
+Because: "One new file `ci/cap.d/2026-11-19-13500.toml` with `line_cap = 13500`."
+Rejected: editing scripts/line-cap.sh — scripts/line-cap.sh:4 already takes the max line_cap over ci/cap.toml and ci/cap.d/*.toml
+Check: sh scripts/line-cap.sh prints cap 13500 and warn_within still reads 500 from ci/cap.toml
+Owner: blocks' line cap is now 13,500 lines, sized for the whole queue
