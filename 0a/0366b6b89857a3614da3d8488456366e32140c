@@ -1,0 +1,5 @@
+Decided: the showcase test expects 34 pages, the new kind-lines page among them
+Because: web/test/pages/showcase.test.ts:51
+Rejected: leaving kind-lines out of the site — every core kind gets a showcase page from site/src/kinds.rs
+Check: kind-lines.html gives the same PNG and tree before and after blocks.js adopts it
+Owner: the showcase website's check now counts the new line-item editor page
