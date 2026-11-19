@@ -12,7 +12,7 @@ final class SampleTests: XCTestCase {
 
     func testTheRustSampleDecodesAndRoundTrips() throws {
         let data = try Data(contentsOf: root.appendingPathComponent("schema/sample.json"))
-        let frames = try JSONDecoder().decode([Frame].self, from: data)
+        let frames = try JSONDecoder().decode([OldFrame].self, from: data)
         guard case .screen(let first) = frames.first?.ops.first, case .screen(let screen) = first.screen else {
             return XCTFail("frame 0 is no screen")
         }
@@ -25,7 +25,7 @@ final class SampleTests: XCTestCase {
         XCTAssertEqual([before.before, after.after], ["a", "a"])
         guard case .dot(let dot) = ops.last else { return XCTFail("frame 1 ends in no dot") }
         XCTAssertTrue(dot.on)
-        try again([Frame].self, data, "sample.json")
+        try again([OldFrame].self, data, "sample.json")
     }
 
     func testEveryScreenFixtureDecodesAndRoundTrips() throws {

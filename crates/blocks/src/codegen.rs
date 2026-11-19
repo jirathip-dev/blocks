@@ -3,12 +3,19 @@ use std::path::Path;
 use serde_json::{Map, Value};
 
 use crate::{
-    theme, Block, Card, Child, Composer, ComposerChip, Frame, List, Op, Queued, Row, Screen, Text, Tone, SCHEMA_VERSION,
+    theme, Block, Bye, Card, Child, Composer, ComposerChip, Frame, Hello, List, OldFrame, Op, Queued, Row, Screen,
+    Sync, Synced, Text, Tone, SCHEMA_VERSION,
 };
 
-/// The JSON Schema of a `Frame`, the stream's one message type; its `$defs` hold `Block` and `Op`.
+/// The JSON Schema of a `Frame`; its `$defs` hold `Block`, `Op` and the stream's other messages.
 pub fn schema() -> Value {
-    let mut v = schemars::schema_for!(Frame).to_value();
+    let mut g = schemars::SchemaGenerator::default();
+    g.subschema_for::<Hello>();
+    g.subschema_for::<Bye>();
+    g.subschema_for::<Sync>();
+    g.subschema_for::<Synced>();
+    g.subschema_for::<OldFrame>();
+    let mut v = g.into_root_schema_for::<Frame>().to_value();
     if let Some(o) = v.as_object_mut() {
         let id = format!("https://github.com/jirathip-dev/blocks/schema/v{SCHEMA_VERSION}");
         o.insert("$id".into(), Value::String(id));
@@ -36,7 +43,7 @@ pub fn write(root: &Path) -> std::io::Result<()> {
         ("web/src/gen/types.ts", ts(&s).map_err(std::io::Error::other)?),
         (
             "web/src/gen/sample.ts",
-            format!("import type {{ Frame }} from \"./types.ts\";\n\nexport const sample: Frame[] = {sample};\n"),
+            format!("import type {{ OldFrame }} from \"./types.ts\";\n\nexport const sample: OldFrame[] = {sample};\n"),
         ),
         (
             "swift/Sources/Blocks/Gen/Blocks.swift",
@@ -111,7 +118,7 @@ fn row(id: &str, title: &str) -> Block {
     }))
 }
 
-fn sample() -> Vec<Frame> {
+fn sample() -> Vec<OldFrame> {
     let say = Composer {
         id: Some("say".into()),
         action: "thread-say".into(),
@@ -178,13 +185,13 @@ fn sample() -> Vec<Frame> {
         Op::Dot { on: true },
     ];
     vec![
-        Frame {
+        OldFrame {
             seq: 0,
             ops: vec![Op::Screen {
                 screen: Block::Screen(Box::new(screen)),
             }],
         },
-        Frame { seq: 1, ops },
+        OldFrame { seq: 1, ops },
     ]
 }
 

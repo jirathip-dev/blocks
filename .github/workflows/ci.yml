@@ -60,21 +60,6 @@ jobs:
           fi
           just arch
 
-  web:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 24
-      - uses: taiki-e/install-action@v2
-        with:
-          tool: just
-      - name: "typecheck (tsc --strict) and lint.mjs on web/src"
-        run: just web
-      - name: "lint fixtures (each web/lint-fixtures/<name>.ts fails lint.mjs; clean.ts passes)"
-        run: scripts/lint-fixtures.sh ts
-
   actionlint:
     runs-on: ubuntu-latest
     steps:

@@ -1,6 +1,6 @@
 use std::path::{Path, PathBuf};
 
-use blocks::{ApplyError, Block, Frame, Op, Replica};
+use blocks::{apply, Block, OldFrame, Op};
 use serde_json::Value;
 
 fn root() -> PathBuf {
@@ -33,7 +33,7 @@ fn again(v: &Value) -> Result<Value, String> {
             return serde_json::to_value(serde_json::from_value::<Block>(v.clone()).map_err(e)?).map_err(e)
         }
         (Value::Object(o), _) if o.contains_key("seq") => {
-            return serde_json::to_value(serde_json::from_value::<Frame>(v.clone()).map_err(e)?).map_err(e)
+            return serde_json::to_value(serde_json::from_value::<OldFrame>(v.clone()).map_err(e)?).map_err(e)
         }
         (Value::Object(o), Value::Object(w)) if o.contains_key("ops") => {
             let ops: Vec<Op> = serde_json::from_value(o["ops"].clone()).map_err(e)?;
@@ -154,11 +154,12 @@ fn check(root: &Value, s: &Value, v: &Value, at: &str) -> Result<(), String> {
 
 fn valid(s: &Value, v: &Value) -> Result<(), String> {
     let block = serde_json::json!({"$ref": "#/$defs/Block"});
+    let frame = serde_json::json!({"$ref": "#/$defs/OldFrame"});
     let ops = serde_json::json!({"type": "array", "items": {"$ref": "#/$defs/Op"}});
     match v {
         Value::Array(items) => items.iter().try_for_each(|x| valid(s, x)),
         Value::Object(o) if o.contains_key("type") => check(s, &block, v, "block"),
-        Value::Object(o) if o.contains_key("seq") => check(s, s, v, "frame"),
+        Value::Object(o) if o.contains_key("seq") => check(s, &frame, v, "frame"),
         Value::Object(o) if o.contains_key("ops") => check(s, &ops, &o["ops"], "ops"),
         Value::Object(o) if o.contains_key("block") => check(s, &block, &o["block"], "block"),
         _ => Err(format!("neither a block, a frame nor ops: {v}")),
@@ -227,7 +228,7 @@ fn the_schema_and_the_types_refuse_a_core_kind_of_the_wrong_shape() {
     ] {
         let v: Value = serde_json::from_str(bad).unwrap();
         assert!(valid(&s, &v).is_err(), "the schema takes {why}");
-        assert!(serde_json::from_value::<Frame>(v).is_err(), "the types take {why}");
+        assert!(serde_json::from_value::<OldFrame>(v).is_err(), "the types take {why}");
     }
     let app: Value = serde_json::from_str(r#"{"type": "herd", "weather": {"sky": "clear"}}"#).unwrap();
     assert!(valid(&s, &app).is_ok());
@@ -239,13 +240,13 @@ fn the_schema_and_the_types_refuse_a_core_kind_of_the_wrong_shape() {
 
 #[test]
 fn an_insert_lands_before_then_after_then_at_the_end_as_cooee_draws_it() {
-    let frames: Vec<Frame> =
+    let frames: Vec<OldFrame> =
         serde_json::from_value(read(&root().join("fixtures/screens/cooee/screen-tests-insert.json"))).unwrap();
-    let mut replica = Replica::default();
+    let mut screen: Block = serde_json::from_str(r#"{"type": "screen", "title": ""}"#).unwrap();
     for f in &frames {
-        replica.receive(f).unwrap();
+        apply(&mut screen, &f.ops).unwrap();
     }
-    let screen = serde_json::to_value(replica.screen.unwrap()).unwrap();
+    let screen = serde_json::to_value(screen).unwrap();
     let ids: Vec<&str> = screen["blocks"][0]["rows"]
         .as_array()
         .unwrap()
@@ -253,20 +254,6 @@ fn an_insert_lands_before_then_after_then_at_the_end_as_cooee_draws_it() {
         .map(|r| r["id"].as_str().unwrap())
         .collect();
     assert_eq!(ids, ["d", "a", "e", "b", "c"]);
-}
-
-#[test]
-fn an_op_from_a_newer_server_drops_its_frame_and_asks_for_the_whole_screen() {
-    let frames: Vec<Frame> =
-        serde_json::from_value(read(&root().join("fixtures/screens/cooee/screen-tests-insert.json"))).unwrap();
-    let mut replica = Replica::default();
-    replica.receive(&frames[0]).unwrap();
-    let before = replica.clone();
-    let later: Frame =
-        serde_json::from_str(r#"{"seq": 2, "ops": [{"op": "remove", "id": "a"}, {"op": "fold", "id": "l"}]}"#).unwrap();
-    assert_eq!(later.ops[1], Op::Unknown);
-    assert_eq!(replica.receive(&later), Err(ApplyError::Unknown));
-    assert_eq!(replica, before);
 }
 
 fn find<'a>(v: &'a Value, id: &str) -> Option<&'a Value> {
@@ -284,9 +271,9 @@ fn find<'a>(v: &'a Value, id: &str) -> Option<&'a Value> {
 fn the_queue_stream_patches_the_queue_by_id_as_cooee_reads_it() {
     let dir = root().join("fixtures/screens/cooee");
     let mut screen: Block = serde_json::from_value(read(&dir.join("screens-as-data-queue.json"))).unwrap();
-    let frames: Vec<Frame> = serde_json::from_value(read(&dir.join("screens-as-data-queue-stream.json"))).unwrap();
+    let frames: Vec<OldFrame> = serde_json::from_value(read(&dir.join("screens-as-data-queue-stream.json"))).unwrap();
     for f in &frames {
-        blocks::apply(&mut screen, &f.ops).unwrap();
+        apply(&mut screen, &f.ops).unwrap();
     }
     let root = serde_json::to_value(&screen).unwrap();
     let q722 = find(&root, "q-722").unwrap();

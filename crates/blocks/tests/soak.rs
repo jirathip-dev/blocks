@@ -1,6 +1,6 @@
 mod support;
 
-use blocks::{Replica, Stream};
+use blocks::{Frame, Hello, Mirror, Put, Shelf, Synced, Took};
 use support::{mutate, screen, Rng};
 
 fn rss_kb() -> u64 {
@@ -17,26 +17,41 @@ fn rss_kb() -> u64 {
 fn a_streams_memory_stays_flat() {
     let mut rng = Rng::new(3);
     let mut truth = screen(&mut rng, 200, 40);
-    let mut stream = Stream::new(truth.clone(), 64);
-    let mut replica = Replica::default();
-    for f in stream.resume(None) {
-        replica.receive(&f).unwrap();
-    }
+    let mut shelf = Shelf::default();
+    shelf.put(&0u8, "/s", &truth).unwrap();
+    let hello = Hello {
+        v: 1,
+        sid: "sid".into(),
+        epoch: "e".into(),
+        keys: 16,
+    };
+    let sync = |m: &mut Mirror, shelf: &Shelf<u8>| {
+        let have = m.have();
+        let keys = have.iter().map(|h| shelf.state(&0, &h.k, h.rev).unwrap()).collect();
+        assert!(!m.synced(&have, Synced { keys }).contains(&Took::Gap));
+    };
+    let mut m = Mirror::default();
+    m.open("/s");
+    m.hello(&hello).unwrap();
+    sync(&mut m, &shelf);
     let (mut fresh, mut samples) = (0, vec![]);
     for round in 0..10 {
         for i in 0..20_000 {
             truth = mutate(&mut rng, &truth, &mut fresh, 4);
-            let frame = stream.push(truth.clone());
+            let Put::Changed(d) = shelf.put(&0, "/s", &truth).unwrap() else {
+                continue;
+            };
             if i % 500 == 0 {
-                replica = Replica::default();
-                for f in stream.resume(None) {
-                    replica.receive(&f).unwrap();
-                }
+                m = Mirror::default();
+                m.open("/s");
+                m.hello(&hello).unwrap();
+                sync(&mut m, &shelf);
             } else {
-                replica.receive(&frame).unwrap();
+                let f: Frame = serde_json::from_str(&d.frame).unwrap();
+                assert_ne!(m.frame(f), Took::Gap);
             }
         }
-        assert_eq!(replica.screen.as_ref(), Some(&truth));
+        assert_eq!(m.screen("/s"), Some(&truth));
         samples.push(rss_kb());
         eprintln!("round {round}: rss {} KB", rss_kb());
     }
