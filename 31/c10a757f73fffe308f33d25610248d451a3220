@@ -1,0 +1,9 @@
+Decided: docs/schema.md keeps its title, its first sentence and a table of links; the five sections move to docs/schema/ unchanged
+Because: "`docs/schema.md` keeps its first paragraph and a table of links; its sections move to `docs/schema/`, word for word"
+Decided: each new page opens with a # title, the old ## heading where there was one, else Generated files or Behaviours
+Because: docs/schema/generated.md:1
+Decided: the arch.toml lines are the ADR's slice 6: schema.md frozen, a docs/schema collect, docs/schema/*.md in docs paths
+Because: "This slice's `.drover/arch.toml` lines are added as the ADR writes them"
+Rejected: adding docs/schema/ to .drover/docs.md — the ADR does not list it; a deviation is an ask
+Check: the five pages' lines, minus headings and blank lines, equal the old body's; CI arch-check runs just gen with no drift
+Owner: The schema doc is now an index with five pages, one per subject; its text is unchanged.
