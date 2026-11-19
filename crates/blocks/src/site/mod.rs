@@ -3,6 +3,7 @@ mod content;
 mod diagram;
 mod diff;
 mod editor;
+mod field;
 mod lines;
 mod rounds;
 mod scene;
@@ -12,13 +13,13 @@ mod timeline;
 mod toast;
 mod views;
 
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use serde_json::{Map, Value};
 
 use crate::behave::{at_start, View};
 use crate::theme::{css, PerMode, Scheme, Style};
 use crate::tree::{a11y, VARIANTS};
-use crate::{Block, Built};
+use crate::{Block, Built, Locale};
 
 /// What a page's head says: its title, description, canonical URL, preview image and language.
 pub struct Head<'a> {
@@ -182,6 +183,7 @@ pub(crate) enum Go {
 pub(crate) struct W<'a> {
     pub(crate) view: View,
     pub(crate) thai: bool,
+    pub(crate) locale: Locale,
     out: String,
     forms: String,
     n: u32,
@@ -195,6 +197,10 @@ impl<'a> W<'a> {
         Self {
             view: at_start(root),
             thai: false,
+            locale: root
+                .get("locale")
+                .and_then(|l| Locale::deserialize(l).ok())
+                .unwrap_or_default(),
             out: String::new(),
             forms: String::new(),
             n: 0,

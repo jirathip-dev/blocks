@@ -1,10 +1,10 @@
 use super::{
     Act, Block, BulkAction, Button, Card, CardKind, Cell, Chart, ChartFormat, ChartKind, ChipOption, Chips, Choice,
-    ChoiceOption, Column, ColumnKind, Composer, Diagram, Diff, Editor, Era, ExportFormat, Fallback, Field, FieldKind,
-    Form, Hero, Hunk, Image, Images, Island, Keyboard, Label, Lane, LaneState, LineItem, Lines, Link, List, Media, Nav,
-    NavLink, Part, PhonePart, Prose, Round, RoundLane, Row, RowError, Run, Scene, Screen, Secret, Section, Series,
+    ChoiceOption, Column, ColumnKind, Composer, Diagram, Diff, Editor, Era, ExportFormat, Fallback, Field, Form, Hero,
+    Hunk, Image, Images, Island, Keyboard, Label, Lane, LaneState, LineItem, Lines, Link, List, Media, Nav, NavLink,
+    Part, PhonePart, PickerField, Prose, Round, RoundLane, Row, RowError, Run, Scene, Screen, Secret, Section, Series,
     SeriesMark, Sheet, Shown, SortDir, Span, Stage, Stat, Steps, Submit, Table, TableRow, TableSelect, TableSort, Tap,
-    Text, Time, Toast, Tone, Toned, Total, Undo, Web,
+    Text, TextField, Time, Toast, Tone, Toned, Total, Undo, Web,
 };
 use crate::expr::{Expr, Lit, State};
 
@@ -32,28 +32,20 @@ fn step(id: &str, label: &str, sub: &str) -> Stage {
 }
 
 fn field(name: &str, label: &str) -> Field {
-    Field {
-        kind: FieldKind::Text,
-        name: name.into(),
-        label: Some(label.into()),
-        ..Field::default()
-    }
+    TextField::new(name).label(label).into()
 }
 
 fn lines() -> Lines {
-    let money = |name: &str, label: &str| Field {
-        keyboard: Some(Keyboard::Number),
-        ..field(name, label)
-    };
-    let account = Field {
-        kind: FieldKind::Picker,
-        options: Some(vec![
+    let money =
+        |name: &str, label: &str| -> Field { TextField::new(name).label(label).keyboard(Keyboard::Number).into() };
+    let account: Field = PickerField::new("account")
+        .label("Account")
+        .options(vec![
             "6100 Rent".into(),
             "6200 Utilities".into(),
             "2100 Payables".into(),
-        ]),
-        ..field("account", "Account")
-    };
+        ])
+        .into();
     let row = |id: &str, values: &[(&str, &str)]| LineItem {
         id: id.into(),
         values: values.iter().map(|(k, v)| ((*k).to_string(), (*v).into())).collect(),

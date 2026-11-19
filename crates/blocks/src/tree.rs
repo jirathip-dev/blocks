@@ -86,7 +86,31 @@ pub struct Node {
     pub rect: Option<[f64; 4]>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub text: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub fields: Option<Vec<FieldNode>>,
     pub children: Vec<Node>,
+}
+
+/// How a renderer drew a field: its type's own view, a plain text input, or not at all.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
+#[serde(rename_all = "lowercase")]
+pub enum FieldDrawn {
+    Native,
+    Plain,
+    Hidden,
+}
+
+/// One field of a form in the drawn tree.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
+pub struct FieldNode {
+    pub name: String,
+    #[serde(rename = "type")]
+    pub kind: String,
+    pub drawn: FieldDrawn,
+    pub role: String,
+    pub label: String,
 }
 
 /// The block a tap or a scroll goes to.
@@ -179,12 +203,41 @@ pub struct Report {
 
 /// The tree a renderer that draws `kinds` natively must draw for `screen` in `state`, roles and names included: no rect, no text.
 pub fn expect(screen: &Built, kinds: &[&str], state: &State) -> Node {
-    node(screen.value(), kinds, &view(screen, state).hidden)
+    node(screen.value(), kinds, None, &view(screen, state).hidden)
 }
 
-fn node(v: &Value, kinds: &[&str], hide: &BTreeSet<String>) -> Node {
+/// `expect`, with each form's `fields` as a renderer that draws `types` natively must draw them.
+pub fn expect_fields(screen: &Built, kinds: &[&str], types: &[&str], state: &State) -> Node {
+    node(screen.value(), kinds, Some(types), &view(screen, state).hidden)
+}
+
+fn field(f: &Value, types: &[&str], hide: &BTreeSet<String>) -> FieldNode {
+    let (name, kind) = (
+        text_of(f, "name").unwrap_or_default(),
+        text_of(f, "type").unwrap_or_default(),
+    );
+    let known = crate::Field::TYPES.iter().position(|t| *t == kind);
+    let drawn = match (hide.contains(name), types.contains(&kind)) {
+        (true, _) => FieldDrawn::Hidden,
+        (false, true) => FieldDrawn::Native,
+        (false, false) => FieldDrawn::Plain,
+    };
+    let role = known
+        .filter(|_| drawn == FieldDrawn::Native)
+        .and_then(|i| crate::Field::ROLES.get(i));
+    FieldNode {
+        name: name.into(),
+        kind: kind.into(),
+        drawn,
+        role: role.copied().unwrap_or("textbox").into(),
+        label: text_of(f, "label").unwrap_or(name).into(),
+    }
+}
+
+fn node(v: &Value, kinds: &[&str], types: Option<&[&str]>, hide: &BTreeSet<String>) -> Node {
     let text = |k: &str| text_of(v, k).map(String::from);
     let kind = text("type").unwrap_or_default();
+    let form = ["form", "config"].contains(&kind.as_str());
     let variant = VARIANTS.iter().find(|(k, _)| *k == kind).and_then(|(_, f)| text(f));
     let hidden = text("id").is_some_and(|i| hide.contains(&i));
     let native = kinds.contains(&kind.as_str());
@@ -213,7 +266,11 @@ fn node(v: &Value, kinds: &[&str], hide: &BTreeSet<String>) -> Node {
         drawn,
         rect: None,
         text: None,
-        children: under.into_iter().map(|c| node(c, kinds, hide)).collect(),
+        fields: types.filter(|_| form && drawn == Drawn::Native).map(|t| {
+            let all = v.get("fields").and_then(Value::as_array).into_iter().flatten();
+            all.map(|f| field(f, t, hide)).collect()
+        }),
+        children: under.into_iter().map(|c| node(c, kinds, types, hide)).collect(),
     }
 }
 
@@ -222,7 +279,7 @@ fn who(n: &Node) -> String {
         .map_or_else(|| n.kind.clone(), |id| format!("{}#{id}", n.kind))
 }
 
-/// Where `got` differs from `want` in kind, id, drawn, role, name or child count, each as `at/…: what`; empty when it matches.
+/// Where `got` differs from `want` in kind, id, drawn, role, name, fields or child count, each as `at/…: what`; empty when it matches.
 pub fn check(got: Option<&Node>, want: &Node, at: &str) -> Vec<String> {
     let Some(got) = got.filter(|g| g.kind == want.kind && g.id == want.id && g.drawn == want.drawn) else {
         let drew = got.map_or_else(|| "nothing".into(), |g| format!("{} {}", who(g), drawn(g.drawn)));
@@ -239,6 +296,12 @@ pub fn check(got: Option<&Node>, want: &Node, at: &str) -> Vec<String> {
         out.push(format!(
             "{here}: drew {} \"{}\", expected {} \"{}\"",
             g.role, g.name, w.role, w.name
+        ));
+    }
+    if want.fields.is_some() && got.fields != want.fields {
+        out.push(format!(
+            "{here}: drew fields {:?}, expected {:?}",
+            got.fields, want.fields
         ));
     }
     if got.children.len() != want.children.len() {

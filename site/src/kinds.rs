@@ -3,9 +3,10 @@ use std::collections::BTreeMap;
 use blocks::site::fragment;
 use blocks::{
     Act, Bar, Block, Built, Button, ButtonStyle, Card, CardKind, ChipOption, Chips, Choice, ChoiceOption, Composer,
-    ComposerChip, Diagram, Diff, Editor, Fallback, Field, FieldKind, FieldValue, Form, Hero, Hunk, Image, Images,
-    Island, IslandSize, Label, Lane, LaneState, LineError, List, Media, Nav, NavLink, Node, Other, Part, Prose, Queued,
-    Row, Run, Scene, Screen, Secret, Sheet, Shown, Stage, Stat, Steps, Submit, Tap, Text, Tile, Tone, Web,
+    ComposerChip, Diagram, Diff, Editor, Fallback, Field, FieldValue, Form, Hero, Hunk, Image, Images, Island,
+    IslandSize, Label, Lane, LaneState, LineError, List, Media, Nav, NavLink, Node, Other, Part, PickerField, Prose,
+    Queued, Row, Run, Scene, Screen, Secret, Sheet, Shown, Stage, Stat, Steps, Submit, Tap, Text, TextField, Tile,
+    ToggleField, Tone, Web,
 };
 use serde_json::{Number, Value};
 
@@ -82,22 +83,20 @@ fn chip(v: &str) -> ChipOption {
     }
 }
 
-fn field(kind: FieldKind, name: &str, label: &str, value: Option<FieldValue>) -> Field {
-    Field {
-        kind,
-        name: name.into(),
-        label: Some(label.into()),
-        value,
-        ..Field::default()
-    }
+fn field(name: &str, label: &str, value: FieldValue) -> Field {
+    TextField::new(name).label(label).value(value).into()
+}
+
+fn toggle(name: &str, label: &str, on: bool) -> Field {
+    ToggleField::new(name).label(label).value(FieldValue::Flag(on)).into()
 }
 
 fn picker(name: &str, label: &str, options: &[&str]) -> Field {
-    Field {
-        options: Some(options.iter().map(|o| (*o).to_string()).collect()),
-        value: options.first().map(|o| FieldValue::Text((*o).into())),
-        ..field(FieldKind::Picker, name, label, None)
-    }
+    let mut p = PickerField::new(name)
+        .label(label)
+        .options(options.iter().map(|o| (*o).to_string()).collect::<Vec<_>>());
+    p.value = options.first().map(|o| FieldValue::Text((*o).into()));
+    p.into()
 }
 
 fn sample_svg(alt: &str) -> Image {
@@ -342,20 +341,10 @@ fn input() -> Vec<Block> {
         r#for: None,
     });
     let form = Form::new(vec![
-        field(
-            FieldKind::Text,
-            "name",
-            "Name",
-            Some(FieldValue::Text("Ada Lovelace".into())),
-        ),
-        field(
-            FieldKind::Text,
-            "email",
-            "Email",
-            Some(FieldValue::Text("ada@example.com".into())),
-        ),
+        field("name", "Name", FieldValue::Text("Ada Lovelace".into())),
+        field("email", "Email", FieldValue::Text("ada@example.com".into())),
         picker("plan", "Plan", &["team", "solo", "school"]),
-        field(FieldKind::Toggle, "updates", "Updates", Some(FieldValue::Flag(true))),
+        toggle("updates", "Updates", true),
     ])
     .id("signup")
     .submit(Submit {
@@ -398,13 +387,8 @@ fn input() -> Vec<Block> {
 fn others() -> Vec<Block> {
     let settings = Form::new(vec![
         picker("region", "Region", &["eu-west", "us-east"]),
-        field(
-            FieldKind::Text,
-            "retries",
-            "Retries",
-            Some(FieldValue::Number(3.into())),
-        ),
-        field(FieldKind::Toggle, "notify", "Notify", Some(FieldValue::Flag(false))),
+        field("retries", "Retries", FieldValue::Number(3.into())),
+        toggle("notify", "Notify", false),
     ])
     .id("settings")
     .action("save-settings");

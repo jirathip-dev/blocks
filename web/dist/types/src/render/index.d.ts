@@ -1,4 +1,4 @@
-import type { Act, Block, Kind, Label, Tap, Toned } from "../gen/types.ts";
+import type { Act, Block, Kind, Label, Locale, Tap, Toned } from "../gen/types.ts";
 import { linkable } from "../core/check.ts";
 import { type Blk, blks, isBlk, named } from "../core/tree.ts";
 import type { Held } from "../gesture.ts";
@@ -17,6 +17,7 @@ export type Store = {
 export type Renderer = (b: Blk, c: Ctx) => HTMLElement | null;
 export type Ctx = {
     screen: string;
+    locale?: Locale;
     act: (a: Post, el?: HTMLElement) => Promise<boolean>;
     tap: (t: unknown) => void;
     open: Set<string>;

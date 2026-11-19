@@ -17,7 +17,7 @@ internal struct ComposerBlock: View {
             if let working { strip(working) }
             ForEach(Array((block.queued ?? []).enumerated()), id: \.offset) { _, item in queued(item) }
             HStack(alignment: .bottom, spacing: 8) {
-                TextField(block.placeholder ?? "", text: $draft, axis: .vertical).lineLimit(1...6)
+                SwiftUI.TextField(block.placeholder ?? "", text: $draft, axis: .vertical).lineLimit(1...6)
                     .ui(15, .regular, look).textFieldStyle(.plain).padding(.horizontal, 12).padding(.vertical, 9)
                     .background(look.palette.background).accessibilityLabel("message")
                 Button { send() } label: { CardButton(title: sendLabel, primary: true).fixedSize() }
