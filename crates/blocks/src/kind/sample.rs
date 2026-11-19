@@ -223,38 +223,33 @@ fn holders() -> Vec<Block> {
     ]
 }
 
-fn table() -> Block {
+fn invoice(id: &str, client: &str, status: Cell, due: Option<&str>, late: Option<u32>, amount: u32) -> TableRow {
+    let mut cells = std::collections::BTreeMap::from([
+        ("inv".to_string(), Cell::Text(id.into())),
+        ("client".into(), Cell::Text(client.into())),
+        ("status".into(), status),
+        ("amount".into(), Cell::Number(amount.into())),
+    ]);
+    cells.extend(due.map(|d| ("due".into(), Cell::Text(d.into()))));
+    cells.extend(late.map(|l| ("late".into(), Cell::Number(l.into()))));
+    TableRow {
+        id: id.into(),
+        cells,
+        tap: Some(Tap {
+            open: Some(format!("/invoice/{id}")),
+            ..Tap::default()
+        }),
+    }
+}
+
+fn columns() -> Vec<Column> {
     let col = |id: &str, label: &str, kind: ColumnKind| Column {
         id: id.into(),
         label: label.into(),
         kind,
         ..Column::default()
     };
-    let label = |text: &str, tone: Tone| {
-        Cell::Label(Label {
-            text: text.into(),
-            tone: Some(tone),
-        })
-    };
-    let row = |id: &str, client: &str, status: Cell, due: Option<&str>, late: Option<u32>, amount: u32| {
-        let mut cells = std::collections::BTreeMap::from([
-            ("inv".to_string(), Cell::Text(id.into())),
-            ("client".into(), Cell::Text(client.into())),
-            ("status".into(), status),
-            ("amount".into(), Cell::Number(amount.into())),
-        ]);
-        cells.extend(due.map(|d| ("due".into(), Cell::Text(d.into()))));
-        cells.extend(late.map(|l| ("late".into(), Cell::Number(l.into()))));
-        TableRow {
-            id: id.into(),
-            cells,
-            tap: Some(Tap {
-                open: Some(format!("/invoice/{id}")),
-                ..Tap::default()
-            }),
-        }
-    };
-    let columns = vec![
+    vec![
         Column {
             phone: Some(PhonePart::Meta),
             ..col("inv", "Invoice", ColumnKind::Text)
@@ -281,9 +276,18 @@ fn table() -> Block {
             total: Some(Total::Sum),
             ..col("amount", "Amount", ColumnKind::Money)
         },
-    ];
+    ]
+}
+
+fn table() -> Block {
+    let label = |text: &str, tone: Tone| {
+        Cell::Label(Label {
+            text: text.into(),
+            tone: Some(tone),
+        })
+    };
     let rows = vec![
-        row(
+        invoice(
             "INV-0133",
             "Orchard Lane Clinic",
             label("overdue", Tone::Warn),
@@ -291,7 +295,7 @@ fn table() -> Block {
             Some(32),
             48_750,
         ),
-        row(
+        invoice(
             "INV-0136",
             "Bluepeak Logistics",
             label("disputed", Tone::Bad),
@@ -299,7 +303,7 @@ fn table() -> Block {
             Some(14),
             31_500,
         ),
-        row(
+        invoice(
             "INV-0138",
             "Saffron & Salt",
             label("sent", Tone::Done),
@@ -307,7 +311,7 @@ fn table() -> Block {
             None,
             18_000,
         ),
-        row(
+        invoice(
             "INV-0139",
             "Tidewater Bakery",
             label("paid", Tone::Ok),
@@ -315,7 +319,7 @@ fn table() -> Block {
             None,
             15_000,
         ),
-        row(
+        invoice(
             "INV-0143",
             "Moss Hill School",
             label("draft", Tone::Mute),
@@ -332,7 +336,7 @@ fn table() -> Block {
     let select = TableSelect {
         actions: vec![bulk("remind", "send reminder", None), bulk("void", "void", Some(true))],
     };
-    let table = Table::new(columns, rows)
+    let table = Table::new(columns(), rows)
         .id("invoices")
         .title("Invoices")
         .sort(TableSort {

@@ -259,8 +259,7 @@ impl Table {
             .unwrap_or_else(|| top.fold(1.0, f64::max))
     }
 
-    /// Each column's part of a phone row: its `phone`, else the first text the title, the first tone the tag,
-    /// the last number or money with a total (else the last) the value, the rest meta.
+    /// Each column's part of a phone row: its `phone`, else a first text title, tone tag, (totalled) number value.
     pub fn roles(cols: &[&Column]) -> Vec<PhonePart> {
         let mut r: Vec<Option<PhonePart>> = cols.iter().map(|c| c.phone.clone()).collect();
         let has = |r: &[Option<PhonePart>], p: &PhonePart| r.iter().any(|x| x.as_ref() == Some(p));

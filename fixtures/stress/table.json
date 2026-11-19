@@ -24,6 +24,7 @@
   "section": { "long": ["header", "markdown"], "empty": "blocks", "many": "blocks" },
   "sheet": { "long": ["title", "markdown"], "empty": "blocks", "many": "blocks" },
   "stat": { "long": ["label"], "why": "one number and its label: nothing to empty or repeat" },
+  "table": { "long": ["title", "label", "client"], "empty": "rows", "many": "rows" },
   "text": { "long": ["markdown"], "why": "one text: its empty is no block at all" },
   "web": { "why": "an embedded page: its text and rows are the page's, not the kind's" }
 }
