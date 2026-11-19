@@ -1,0 +1,8 @@
+Decided: the PR stays the approved ADR in docs/architecture/desktop/ alone; no renderer code and no shared-file edit
+Because: q2289
+Because: docs/architecture/desktop/adr.md:150
+Decided: the round-2 perf miss (HTML write 10.8 ms of 10 ms) is runner noise on code this PR does not touch; merged origin/staging and re-ran CI instead of changing code or budgets
+Because: crates/blocks/tests/perf.rs:36
+Rejected: raising the HTML perf budget — out of scope for a docs-only PR, and it passes at 4.4 ms locally
+Check: the diff against staging is the five files under docs/architecture/desktop/ and nothing else, and CI's rust job is green at the new head
+Owner: The plan for the desktop renderer is recorded; a timing check that fails on code this change doesn't touch was run again.
