@@ -1,0 +1,5 @@
+Decided: warm WebKit up with one screenshot before the same-PNG loop; the page itself is unchanged
+Because: web/test/pages/showcase.test.ts:52
+Rejected: changing the behaviours page — its off and on PNGs match once it is not the first render
+Check: run the PNG test with kind-form.html sorted first and no warm-up; it fails the same way
+Owner: A flaky screenshot test on the showcase site is fixed; the pages themselves did not change.
