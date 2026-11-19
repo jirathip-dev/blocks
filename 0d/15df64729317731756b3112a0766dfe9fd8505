@@ -1,0 +1,5 @@
+Decided: merged origin/staging; both sides added a kind, so each conflict keeps both lines and steps (29 kinds), and the generated types and web/dist are rerun, never hand-merged.
+Because: crates/blocks/tests/fixtures.rs:380
+Rejected: none
+Check: the kind, page and stress counts in the tests (29, 35, 57) count both new kinds; cargo test, the web suite, swift test and codegen (no diff) pass at the merged head.
+Owner: The stepper branch is up to date with the new line-item editor work, and both new kinds now show side by side.
