@@ -1,0 +1,14 @@
+Decided: a frame's time is its main-thread work (tasks since the last frame, rAF, style, layout, paint), closed by a message posted from the frame's first rAF callback
+Because: web/shot/shot.ts:33
+Rejected: rAF timestamp deltas — headless WebKit ticks unevenly (idle median 10 ms, max 118 ms), so every run would count dropped frames that never happened
+Decided: consecutive frame steps play as one burst at 60 a second through the real patcher; a scroll step is a smooth scroll metered until the block stops moving
+Because: "measured in `blocks-shot` during a scripted scroll and during a burst of stream frames"
+Decided: stream.ts hands a key's frames to the view once per animation frame; the shell flushes the patcher in that same frame so ops land before the next paint
+Because: "apply every op that arrives within one frame in one pass before the next paint"
+Rejected: letting the patcher schedule its own rAF from the stream's rAF — ops would land a frame late
+Decided: the one-layout test counts the patcher's DOM passes and the stream's view calls; browsers expose no layout counter
+Because: web/test/patch.test.ts:94
+Decided: the Swift follower's transaction is Replica.frames, one mutating call per burst
+Because: "The Swift follower applies a burst in one transaction."
+Check: the 10-CI-run spread is not in yet; each web job log prints a `frame budget:` line
+Owner: Screens are now checked for dropped frames while scrolling and streaming; bursts of updates draw once per frame, and animations only move or fade.
