@@ -1,0 +1,24 @@
+/* The host page for these previews only: #53's default pair (../neutral-default/tokens.css) under web/dist/blocks.css, a system font, square tiles on the dot grid. */
+body{margin:0;min-height:100vh;color:var(--fg);font:13px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+main{max-width:1120px;margin:0 auto;padding:var(--s4);display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--seam)}
+main>*{grid-column:1/-1;min-width:0}
+.tile{background:var(--card);border:1px solid var(--edge);padding:var(--s2) var(--s3)}
+.tile>.tabh{margin:0}.tw{font-weight:700}
+main>.st{grid-column:auto;margin:0}.st b{font-size:22px;font-weight:650;font-variant-numeric:tabular-nums}
+main>.tbl,main>.case>.tbl{margin:0}
+.case{display:flex;flex-direction:column;gap:var(--s1);margin-top:var(--s3)}
+.case>.sh{margin:0 0 var(--s1)}.case>.sh b{color:var(--fg)}
+.duo{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--seam)}
+.duo>*{margin:0;min-width:0}
+.note{color:var(--mute);font-size:var(--fs-meta);margin:0}
+.phone{max-width:390px}
+@media (max-width:600px){main{padding:var(--s2);grid-template-columns:minmax(0,1fr)}main>.st{grid-column:1/-1}.duo{grid-template-columns:minmax(0,1fr)}}
+/* Preview-only: a sheet drawn in place, inside a 390-wide box, and the spoken-words and keys boxes. */
+.shb.inl{position:relative;inset:auto;z-index:auto;padding-top:var(--s4)}
+.shb.inl .b-sheet__card{box-sizing:border-box;max-height:none}
+.says{margin:0;padding:var(--s2) var(--s3);background:var(--card);border:1px solid var(--edge);font-size:var(--fs-meta);line-height:1.6}
+.says dt{color:var(--mute)}.says dd{margin:0 0 var(--s1);font-weight:600}
+.keys{display:grid;grid-template-columns:max-content 1fr;gap:var(--s1) var(--s3);margin:0;padding:var(--s2) var(--s3);background:var(--card);border:1px solid var(--edge);font-size:var(--fs-meta)}
+.keys kbd{font:600 var(--fs-meta)/1.6 ui-monospace,Menlo,monospace;padding:0 var(--s1);border:1px solid var(--edge)}
+.keys dd{margin:0}
+.duo>.tst{align-self:start}
