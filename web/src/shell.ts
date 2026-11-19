@@ -422,6 +422,7 @@ export function adopt(o: { theme?: Theme; store?: Store; blocks?: AppBlocks } = 
     if (s) tap({ sheet: s.dataset.sheet });
   });
   const p = patcher({ root, model: () => model, draw: (b) => render(b, ctx) });
+  behave(root, () => model);
   const take = (ops: Op[]) => {
     model = apply(model, ops) ?? model;
     p.queue(ops);
