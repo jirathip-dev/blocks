@@ -1,0 +1,5 @@
+Decided: no code change for the perf FAIL; an empty commit reruns CI on the same docs-only tree
+Because: crates/blocks/tests/perf.rs:36
+Rejected: raising the HTML write budget — a refactor slice changes no test body, and the miss was 0.5 ms of runner noise
+Check: the diff against staging touches only docs/schema* and .drover/arch.toml; the perf job is green at the new head
+Owner: The only red check was a timing test that ran slightly slow on the CI machine; nothing in this change can affect it.
