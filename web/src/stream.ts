@@ -87,12 +87,13 @@ export class Mirror {
 
 type On = (screen: Block, ops?: Op[]) => void;
 
-/// The device's one stream: `hello`, then one sync per change of the keys opened; `on` gets a key's screen and its ops.
+/// The device's one stream: `hello`, then one sync per change of the keys opened; `on` gets a key's screen and an animation frame's ops.
 export function stream(o: { url: string; state?: (s: State) => void }) {
   const m = new Mirror();
   const on = new Map<string, On>();
   let sid: string | undefined;
   let es: EventSource | undefined;
+  let due: Frame[] = [];
   const say = (s: State) => o.state?.(s);
   const tell = (k: string, took: Took, ops?: Op[] | null) => {
     const s = m.screen(k);
@@ -112,6 +113,19 @@ export function stream(o: { url: string; state?: (s: State) => void }) {
     if (again.size) return sync(m.have().filter((h) => again.has(h.k)));
     say("live");
   };
+  const drain = (): void => {
+    const told = new Map<string, Op[] | undefined>();
+    const gaps = new Set<string>();
+    for (const f of due.splice(0)) {
+      const took = m.frame(f);
+      const had = told.has(f.k) ? told.get(f.k) : [];
+      if (took === "gap") gaps.add(f.k);
+      else if (took === "replaced") told.set(f.k, undefined);
+      else if (took === "patched") told.set(f.k, had && [...had, ...(f.ops ?? [])]);
+    }
+    told.forEach((ops, k) => tell(k, ops ? "patched" : "replaced", ops));
+    if (gaps.size) void sync(m.have().filter((h) => gaps.has(h.k)));
+  };
   const connect = (): void => {
     es?.close();
     say("connecting");
@@ -127,10 +141,7 @@ export function stream(o: { url: string; state?: (s: State) => void }) {
       void sync(m.have());
     });
     src.addEventListener("message", (e) => {
-      const f: Frame = JSON.parse(e.data);
-      const took = m.frame(f);
-      if (took === "gap") void sync(m.have().filter((h) => h.k === f.k));
-      else tell(f.k, took, f.ops);
+      if (due.push(JSON.parse(e.data)) === 1) requestAnimationFrame(drain);
     });
     src.addEventListener("bye", (e) => {
       const b: Bye = JSON.parse(e.data);

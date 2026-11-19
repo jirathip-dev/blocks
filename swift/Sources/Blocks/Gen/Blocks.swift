@@ -825,6 +825,13 @@ public struct Reorder: Codable, Equatable, Sendable {
     public var name: String
 }
 
+public struct Report: Codable, Equatable, Sendable {
+    public var dropped: [String]
+    public var sent: [Action]
+    public var shots: [String]
+    public var timings: Timings
+}
+
 public struct Round: Codable, Equatable, Sendable {
     public var blocks: [Block]?
     public var id: String
@@ -980,6 +987,64 @@ public struct Stat: Codable, Equatable, Sendable {
     public var value: Shown?
 }
 
+public indirect enum Step: Codable, Equatable, Sendable {
+    case tap(StepOn)
+    case type(StepType)
+    case scroll(StepOn)
+    case frame(Frame)
+    case answer(Answer)
+    case shot(StepShot)
+    case unknown(JSONValue)
+
+    private struct Key: CodingKey {
+        let stringValue: String
+        var intValue: Int? { nil }
+        init(_ s: String) { stringValue = s }
+        init?(stringValue: String) { self.init(stringValue) }
+        init?(intValue: Int) { nil }
+    }
+
+    public init(from decoder: any Decoder) throws {
+        if let c = try? decoder.container(keyedBy: Key.self), c.allKeys.count == 1, let k = c.allKeys.first {
+            switch k.stringValue {
+            case "tap": self = .tap(try c.decode(StepOn.self, forKey: k)); return
+            case "type": self = .type(try c.decode(StepType.self, forKey: k)); return
+            case "scroll": self = .scroll(try c.decode(StepOn.self, forKey: k)); return
+            case "frame": self = .frame(try c.decode(Frame.self, forKey: k)); return
+            case "answer": self = .answer(try c.decode(Answer.self, forKey: k)); return
+            case "shot": self = .shot(try c.decode(StepShot.self, forKey: k)); return
+            default: self = .unknown(try JSONValue(from: decoder)); return
+            }
+        }
+        self = .unknown(try JSONValue(from: decoder))
+    }
+
+    public func encode(to encoder: any Encoder) throws {
+        switch self {
+        case .tap(let v): var c = encoder.container(keyedBy: Key.self); try c.encode(v, forKey: Key("tap"))
+        case .type(let v): var c = encoder.container(keyedBy: Key.self); try c.encode(v, forKey: Key("type"))
+        case .scroll(let v): var c = encoder.container(keyedBy: Key.self); try c.encode(v, forKey: Key("scroll"))
+        case .frame(let v): var c = encoder.container(keyedBy: Key.self); try c.encode(v, forKey: Key("frame"))
+        case .answer(let v): var c = encoder.container(keyedBy: Key.self); try c.encode(v, forKey: Key("answer"))
+        case .shot(let v): var c = encoder.container(keyedBy: Key.self); try c.encode(v, forKey: Key("shot"))
+        case .unknown(let v): try v.encode(to: encoder)
+        }
+    }
+}
+
+public struct StepOn: Codable, Equatable, Sendable {
+    public var id: String
+}
+
+public struct StepShot: Codable, Equatable, Sendable {
+    public var name: String
+}
+
+public struct StepType: Codable, Equatable, Sendable {
+    public var id: String
+    public var text: String
+}
+
 public struct Submit: Codable, Equatable, Sendable {
     public var action: String
     public var label: String
@@ -1043,6 +1108,14 @@ public struct Time: Codable, Equatable, Sendable {
     public var until: String?
 }
 
+public struct Timings: Codable, Equatable, Sendable {
+    public var first_paint_ms: Double
+    public var frames_over_budget: UInt32?
+    public var longest_frame_ms: Double?
+    public var longest_patch_ms: Double?
+    public var steps_ms: [Double]
+}
+
 public struct Tone: RawRepresentable, Hashable, Codable, Equatable, Sendable {
     public let rawValue: String
     public init(rawValue: String) { self.rawValue = rawValue }
@@ -1074,6 +1147,25 @@ public enum Toned: Codable, Equatable, Sendable {
         case .label(let v): try v.encode(to: encoder)
         }
     }
+}
+
+public struct TreeDrawn: RawRepresentable, Hashable, Codable, Equatable, Sendable {
+    public let rawValue: String
+    public init(rawValue: String) { self.rawValue = rawValue }
+    public static let native = Self(rawValue: "native")
+    public static let fallback = Self(rawValue: "fallback")
+    public static let hidden = Self(rawValue: "hidden")
+    public static let all: [Self] = [.native, .fallback, .hidden]
+}
+
+public struct TreeNode: Codable, Equatable, Sendable {
+    public var children: [TreeNode]
+    public var drawn: TreeDrawn
+    public var id: String?
+    public var kind: String
+    public var rect: [Double]?
+    public var text: String?
+    public var variant: String?
 }
 
 public struct Web: Codable, Equatable, Sendable {

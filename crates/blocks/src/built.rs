@@ -24,7 +24,7 @@ pub struct Built(Value);
 const LISTS: [&str; 3] = ["blocks", "rows", "buttons"];
 const DRAWN: [&str; 3] = ["row", "text", "island"];
 
-fn children(o: &Fields) -> impl Iterator<Item = &Value> {
+pub(crate) fn children(o: &Fields) -> impl Iterator<Item = &Value> {
     let rounds = o.get("rounds").and_then(Value::as_array).into_iter().flatten();
     let in_rounds = rounds.filter_map(|r| r.get("blocks"));
     LISTS
