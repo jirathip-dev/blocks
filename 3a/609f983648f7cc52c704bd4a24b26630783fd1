@@ -1,0 +1,11 @@
+Decided: one file per rule in guard/rules, 39 rows; the 16 lint/ files also hold their check, the others only their table row.
+Because: "rules and the table rows of the others"
+Decided: bad fixtures exist for the lint/ rules only; render/ and css/ rules get theirs with their probes in G4, explore/ in G7, guard/ in G3.
+Because: docs/architecture/guard/slices.md:13
+Decided: a destructive act is an act whose tone is bad, since acts have no style field.
+Because: crates/blocks/src/guard/rules/destructive_unconfirmed.rs:23
+Decided: staging build fix: built::children skips a table's rows again, as placed() does; #199 dropped that and just gen rewrote fixtures/trees/table.json.
+Because: crates/blocks/src/built.rs:86
+Rejected: grouping the 23 non-lint rows into one file per engine — the ADR makes a rule one file in the folder, listed by the generated mod.rs.
+Check: every bad/lint fixture fires exactly its rule (tests/guard.rs), and just gen leaves fixtures/trees and guard/rules/mod.rs unchanged.
+Owner: the crate can now lint a screen and turn each problem into a finding that says how to fix it.
