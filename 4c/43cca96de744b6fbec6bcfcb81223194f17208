@@ -1,0 +1,4 @@
+Decided: merged origin/staging; sample.rs imports keep this branch's Time plus staging's Toast and Undo, and web/dist/blocks.js comes from the gen lines
+Because: "Generated schema, TS and Swift types from `just gen`"
+Rejected: none
+Owner: The branch is up to date with the latest shared work; nothing it does changes.
