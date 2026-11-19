@@ -1797,6 +1797,51 @@
       ],
       "type": "object"
     },
+    "Frame": {
+      "description": "One key's change: ops that apply only on rev `from`, or with no `from` the whole screen.",
+      "properties": {
+        "from": {
+          "format": "uint64",
+          "minimum": 0,
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "k": {
+          "type": "string"
+        },
+        "ops": {
+          "items": {
+            "$ref": "#/$defs/Op"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "rev": {
+          "format": "uint64",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "screen": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Block"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "k",
+        "rev"
+      ],
+      "type": "object"
+    },
     "Have": {
       "description": "A key a client opens, with the rev of its copy when that copy came from the same epoch.",
       "properties": {
@@ -2967,6 +3012,39 @@
       ],
       "type": "object"
     },
+    "Report": {
+      "description": "A harness run's `report.json`.",
+      "properties": {
+        "dropped": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "sent": {
+          "items": {
+            "$ref": "#/$defs/Action"
+          },
+          "type": "array"
+        },
+        "shots": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "timings": {
+          "$ref": "#/$defs/Timings"
+        }
+      },
+      "required": [
+        "shots",
+        "sent",
+        "dropped",
+        "timings"
+      ],
+      "type": "object"
+    },
     "Round": {
       "description": "One round of a row's work: its state, lane, blocks and links.",
       "properties": {
@@ -3783,6 +3861,123 @@
       },
       "type": "object"
     },
+    "Step": {
+      "description": "One scripted input: by block id, a stream frame arriving, an action answered, or a shot.",
+      "oneOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "tap": {
+              "$ref": "#/$defs/StepOn"
+            }
+          },
+          "required": [
+            "tap"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "$ref": "#/$defs/StepType"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "scroll": {
+              "$ref": "#/$defs/StepOn"
+            }
+          },
+          "required": [
+            "scroll"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "frame": {
+              "$ref": "#/$defs/Frame"
+            }
+          },
+          "required": [
+            "frame"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "answer": {
+              "$ref": "#/$defs/Answer"
+            }
+          },
+          "required": [
+            "answer"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "shot": {
+              "$ref": "#/$defs/StepShot"
+            }
+          },
+          "required": [
+            "shot"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "StepOn": {
+      "description": "The block a tap or a scroll goes to.",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "StepShot": {
+      "description": "A PNG and a tree taken under this name.",
+      "properties": {
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object"
+    },
+    "StepType": {
+      "description": "Text typed into a block's field.",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "text"
+      ],
+      "type": "object"
+    },
     "Submit": {
       "description": "A form's or a sheet's submit button.",
       "properties": {
@@ -4068,6 +4263,27 @@
       },
       "type": "object"
     },
+    "Timings": {
+      "description": "How long the first paint and each step took.",
+      "properties": {
+        "first_paint_ms": {
+          "format": "double",
+          "type": "number"
+        },
+        "steps_ms": {
+          "items": {
+            "format": "double",
+            "type": "number"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "first_paint_ms",
+        "steps_ms"
+      ],
+      "type": "object"
+    },
     "Tone": {
       "anyOf": [
         {
@@ -4101,6 +4317,68 @@
         }
       ],
       "description": "A subtitle: plain text, or text with a tone."
+    },
+    "TreeDrawn": {
+      "description": "How a renderer drew a block: its own view, its fallback, or not at all.",
+      "enum": [
+        "native",
+        "fallback",
+        "hidden"
+      ],
+      "type": "string"
+    },
+    "TreeNode": {
+      "description": "One block of the drawn tree; `rect` and `text` come from a harness, never from `expect`.",
+      "properties": {
+        "children": {
+          "items": {
+            "$ref": "#/$defs/TreeNode"
+          },
+          "type": "array"
+        },
+        "drawn": {
+          "$ref": "#/$defs/TreeDrawn"
+        },
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "kind": {
+          "type": "string"
+        },
+        "rect": {
+          "items": {
+            "format": "double",
+            "type": "number"
+          },
+          "maxItems": 4,
+          "minItems": 4,
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "text": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "variant": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "kind",
+        "drawn",
+        "children"
+      ],
+      "type": "object"
     },
     "Web": {
       "additionalProperties": true,

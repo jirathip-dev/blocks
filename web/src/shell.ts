@@ -6,6 +6,8 @@ import { type Blk, btn, type Ctx, el, h, isBlk, obj, type Post, type Renderer, r
 import { stream } from "./stream.ts";
 import { plain, type Theme } from "./theme.ts";
 
+export { dump } from "./dump.ts";
+export { apply } from "./patch.ts";
 export { el, h, kids, render } from "./render/index.ts";
 export { packs, plain } from "./theme.ts";
 

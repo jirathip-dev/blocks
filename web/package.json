@@ -7,10 +7,12 @@
     "build": "esbuild src/shell.ts --bundle --format=esm --minify --legal-comments=none --outfile=dist/blocks.js && esbuild src/blocks.css --minify --outfile=dist/blocks.css",
     "check": "tsc --noEmit",
     "lint": "node --no-warnings lint.mjs src",
-    "test": "node --no-warnings --test test/*.test.ts"
+    "test": "node --no-warnings --test test/*.test.ts",
+    "shot": "node --no-warnings shot/cli.ts"
   },
   "devDependencies": {
     "esbuild": "0.28.2",
+    "playwright": "1.63.0",
     "typescript": "7.0.2"
   }
 }
