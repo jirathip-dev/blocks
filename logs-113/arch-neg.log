@@ -1,0 +1,4 @@
+web/shot/shot.ts:1: `web/shot/shot.ts` is 194 lines, over 150 (baseline None)
+web/src/patch.ts:1: `web/src/patch.ts` is 188 lines, over 150 (baseline None)
+web/test/dom.ts:1: `web/test/dom.ts` is 186 lines, over 150 (baseline None)
+arch-check: 742 files, 3 violations
