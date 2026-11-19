@@ -1,0 +1,13 @@
+Decided: web draws a sandboxed iframe with no allow-same-origin, plus a muted address caption and an open link, as docs/design/web says
+Because: "The embedded page goes in a sandboxed `<iframe>`; nothing adds a script to the host page"
+Decided: the static writer reads src as a browser does before its scheme check: trims control chars and spaces, drops tab, CR and LF
+Because: "Where the static writer `site/web.rs` exists (B8, #18), it writes the same element"
+Rejected: keep the hand-rolled scheme parse on the raw string — java\tscript: became a live link outside the sandbox
+Decided: the caption is src minus http(s)://, query, hash and a trailing slash, the same rule in render and site
+Because: crates/blocks/src/site/views.rs:576
+Decided: the patcher keeps an equal node that holds an iframe, so a redraw with the same src does not reload the page
+Because: web/src/patch.ts:116
+Decided: merged origin/staging (#39 secret); gaps drops both secret and web, both test sets kept
+Because: web/test/render.test.ts:17
+Check: tests/site.rs a_web test fails on the old writer and passes now; render.test's non-http list has the same strings
+Owner: Embedded web pages show in a locked-down frame with their address and an open link; odd addresses that hide a script can no longer slip through on static pages.
