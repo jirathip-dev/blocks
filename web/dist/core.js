@@ -27,7 +27,8 @@ var hooks = {
   hero: { variant: null, parts: ["title", "subtitle", "actions"] },
   media: { variant: null, parts: [] },
   nav: { variant: null, parts: [] },
-  island: { variant: null, parts: [] }
+  island: { variant: null, parts: [] },
+  steps: { variant: null, parts: ["title"] }
 };
 var roles = { section: "region", form: "form", config: "form", nav: "navigation" };
 var names = ["label", "title", "header", "question", "alt", "file", "command", "placeholder", "name"];

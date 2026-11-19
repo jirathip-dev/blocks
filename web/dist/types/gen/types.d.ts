@@ -35,6 +35,12 @@ export type AppBlock = {
     id?: string | null;
     type: string;
 };
+export type Bar = {
+    label: string;
+    sub?: string | null;
+    tone?: Tone | null;
+    value: number;
+};
 export type Block = ({
     type: "screen";
 } & Screen) | ({
@@ -91,7 +97,9 @@ export type Block = ({
     type: "nav";
 } & Nav) | ({
     type: "island";
-} & Island) | (AppBlock & {
+} & Island) | ({
+    type: "steps";
+} & Steps) | (AppBlock & {
     [key: string]: unknown;
 });
 export type Bound = {
@@ -644,6 +652,12 @@ export type Span = {
     link?: string | null;
     text: string;
 };
+export type Stage = {
+    id: string;
+    label: string;
+    sub?: string | null;
+    tap?: Tap | null;
+};
 export type Stat = {
     id?: string | null;
     items?: Tile[] | null;
@@ -676,6 +690,16 @@ export type StepShot = {
 export type StepType = {
     id: string;
     text: string;
+};
+export type Steps = {
+    bars?: Bar[] | null;
+    current?: string | null;
+    done?: boolean | null;
+    fallback?: Fallback | null;
+    id?: string | null;
+    show?: Expr | null;
+    steps?: Stage[] | null;
+    title?: string | null;
 };
 export type Submit = {
     action: string;
@@ -758,4 +782,4 @@ export type Why = "evicted" | "unpaired" | "handover";
 export type Working = {
     since: string;
 };
-export type Kind = "screen" | "sheet" | "section" | "list" | "row" | "card" | "choice" | "form" | "config" | "secret" | "run" | "button" | "chips" | "stat" | "text" | "images" | "web" | "diff" | "editor" | "scene" | "diagram" | "composer" | "lines" | "prose" | "hero" | "media" | "nav" | "island";
+export type Kind = "screen" | "sheet" | "section" | "list" | "row" | "card" | "choice" | "form" | "config" | "secret" | "run" | "button" | "chips" | "stat" | "text" | "images" | "web" | "diff" | "editor" | "scene" | "diagram" | "composer" | "lines" | "prose" | "hero" | "media" | "nav" | "island" | "steps";
