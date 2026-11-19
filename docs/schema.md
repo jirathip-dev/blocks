@@ -21,8 +21,8 @@ The Rust types in `crates/blocks/src/` (`Block` and its kinds in `kind/`, `Expr`
 A block is a JSON object whose `type` names its kind, as drover and cooee send it: `{"type": "row", "title": "Hi"}`.
 The core kinds are the superset of both apps': cooee's 21 (`screen`, `sheet`, `section`, `list`, `row`, `card`,
 `choice`, `form`, `config`, `secret`, `run`, `button`, `chips`, `stat`, `text`, `images`, `web`, `diff`, `editor`,
-`scene`, `diagram`), drover's `composer`, the content kinds `prose`, `hero`, `media`, `nav` and the `island`, 27
-in all, with every field either app sends. Each kind has `new(<its required fields>)` and a setter per optional
+`scene`, `diagram`), drover's `composer`, the content kinds `prose`, `hero`, `media`, `nav`, the `island` and the
+data `table`, 28 in all, with every field either app sends. Each kind has `new(<its required fields>)` and a setter per optional
 one; a server builds its blocks so, never with `json!`. Any other `type` is an app's own kind (`AppBlock`): it is
 kept whole, and may carry a `fallback` row. A core kind of the wrong shape is refused, by the types and by the
 schema. `Built::of` writes a server's own screen with the fallback of each kind a client may not draw, and
@@ -53,8 +53,8 @@ becomes drover's app kind `herd`.
 
 An op names a block by its id: `merge` (fields over it), `insert` into a block's list (`before` an id, else `after`
 one, else at the end), `move`, `remove`, `replace`, `badge` (the place's count), `dot` (its unread dot) and
-`screen` (the whole screen). A container's list is `rows` for a list, `lanes` for a scene, `rounds` for a row, else
-`blocks`.
+`screen` (the whole screen). A container's list is `rows` for a list or a table, `lanes` for a scene, `rounds` for a
+row, else `blocks`; `merge` and `remove` also name a table's row by its id, and `diff` sends a table's changed rows so.
 
 One stream per device carries every key (a screen's path) it opens. The server's `Shelf` keeps each key's rev, its
 JSON and a ring of its last 16 deltas (or 64 KB); the client's `Mirror` (the crate's, `web/src/stream.ts`'s) keeps

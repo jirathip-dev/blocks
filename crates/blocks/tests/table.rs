@@ -57,8 +57,7 @@ fn diff_sends_a_changed_added_and_removed_row_as_row_ops_that_apply() {
     let kinds: Vec<&str> = ops
         .iter()
         .map(|o| match o {
-            Op::Remove { id } => id.as_str(),
-            Op::Merge { id, .. } => id.as_str(),
+            Op::Remove { id } | Op::Merge { id, .. } => id.as_str(),
             Op::Insert {
                 block: Child::TableRow(r),
                 into,
@@ -137,7 +136,7 @@ fn averages_counts_digits_and_an_empty_table_draw_as_designed() {
     let row = |id: &str, v: Option<f64>| TableRow {
         id: id.into(),
         cells: v
-            .map(|v| (["a", "c"].map(|k| (k.to_string(), Cell::Number(serde_json::Number::from_f64(v).unwrap())))))
+            .map(|v| ["a", "c"].map(|k| (k.to_string(), Cell::Number(serde_json::Number::from_f64(v).unwrap()))))
             .into_iter()
             .flatten()
             .collect(),
