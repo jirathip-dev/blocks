@@ -56,10 +56,11 @@ words!(TextStyle { Body, Footnote });
 words!(ImageSize { Small, Large });
 
 wire! {
-    /// A moment a value counts from or to.
+    /// A moment a value counts from or to; `label` shows it, `{}` the age since `since`, `{rel}` what is left until `until`.
     pub struct Time {
         since: Option<String>,
         until: Option<String>,
+        label: Option<String>,
     }
 }
 
@@ -70,7 +71,7 @@ wire! {
     }
 }
 
-/// A row's or a tile's value: a string, a number, a state key's value, or a time.
+/// A shown value (a row's or tile's value, a card's meta, a label's text): a string, a number, a state key's value, or a time.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
 #[serde(untagged)]
@@ -87,10 +88,28 @@ impl Default for Shown {
     }
 }
 
+impl From<&str> for Shown {
+    fn from(s: &str) -> Self {
+        Self::Text(s.into())
+    }
+}
+
+impl From<String> for Shown {
+    fn from(s: String) -> Self {
+        Self::Text(s)
+    }
+}
+
+impl From<Time> for Shown {
+    fn from(t: Time) -> Self {
+        Self::Time(t)
+    }
+}
+
 wire! {
     /// A short text and its tone: a badge, or a toned subtitle.
     pub struct Label {
-        text: String,
+        text: Shown,
         tone: Option<Tone>,
     }
 }

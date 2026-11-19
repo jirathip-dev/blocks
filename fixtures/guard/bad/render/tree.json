@@ -1,0 +1,12 @@
+{
+  "type": "screen",
+  "id": "s",
+  "title": "Bad",
+  "blocks": [
+    {
+      "type": "gauge",
+      "id": "g",
+      "title": "Load"
+    }
+  ]
+}

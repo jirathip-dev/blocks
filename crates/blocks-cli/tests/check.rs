@@ -315,3 +315,169 @@ fn the_sarif_validates_against_the_2_1_0_schema() {
     bad["runs"][0]["results"][0]["level"] = "fatal".into();
     assert!(valid(&schema, &schema, &bad, "").is_err());
 }
+
+const HARNESS: &str =
+    r#"cp "$2" plan.seen; cp seen.json "$(dirname "$2")/seen.json"; exit "$(cat code 2>/dev/null || echo 0)""#;
+
+fn drawn(name: &str) -> Repo {
+    let r = adopted(name);
+    r.write(
+        ".blocks/guard.json",
+        r#"{ "screens": ["screens"], "css": ["app.css"], "harness": [["sh", "harness.sh"]] }"#,
+    );
+    r.write("harness.sh", HARNESS);
+    r.write("app.css", ".b-card{transition:height 1s}\n");
+    r.write("seen.json", "[]");
+    r.write(".gitignore", "shots/\nplan.seen\n");
+    r.commit("draw");
+    r
+}
+
+fn plan(r: &Repo) -> Value {
+    serde_json::from_str(&std::fs::read_to_string(r.0.join("plan.seen")).unwrap()).unwrap()
+}
+
+#[test]
+fn render_hands_the_harness_one_plan_and_judges_what_it_saw() {
+    let r = drawn("render");
+    r.write("screens/b.json", OK);
+    r.write(
+        "seen.json",
+        r#"[{ "rule": "render/tap-target", "at": "screen#s/button#go", "detail": "28 by 28 px", "run": "a", "shot": "a" },
+            { "rule": "css/motion", "at": "", "detail": "transition: height", "file": "app.css", "line": 1 }]"#,
+    );
+    let (code, o) = r.check(&["--render"]);
+    assert_eq!(code, 1, "{o}");
+    assert_eq!(
+        new_rules(&o),
+        ["render/tap-target screens/a.json", "css/motion app.css"]
+    );
+    let p = plan(&r);
+    assert_eq!(p["out"], "shots/render");
+    let runs = p["runs"].as_array().unwrap();
+    assert_eq!(runs.len(), 2);
+    assert_eq!(
+        runs[0],
+        serde_json::json!({ "name": "a", "screen": "screens/a.json", "size": "390x844", "css": ["app.css"],
+            "scripts": [], "kinds": [], "steps": [], "probes": true })
+    );
+    r.write(
+        "seen.json",
+        r#"[{ "rule": "render/nope", "at": "", "detail": "", "run": "a" }]"#,
+    );
+    assert_eq!(r.check(&["--render"]).0, 2, "a rule the table lacks is a broken setup");
+    r.write(
+        "seen.json",
+        r#"[{ "rule": "render/tree", "at": "", "detail": "", "run": "zz" }]"#,
+    );
+    assert_eq!(r.check(&["--render"]).0, 2, "a run the plan lacks is a broken setup");
+    r.write("seen.json", "[]");
+    r.write("code", "1");
+    assert_eq!(
+        r.check(&["--render"]).0,
+        2,
+        "a harness that could not draw is a broken setup"
+    );
+}
+
+#[test]
+fn a_drawn_rules_baseline_entry_goes_stale_only_when_the_screens_are_drawn() {
+    let r = drawn("drawn-stale");
+    r.write("screens/b.json", OK);
+    let tap = r#"[{ "rule": "render/tap-target", "at": "screen#s/button#go", "detail": "", "run": "a" }]"#;
+    r.write("seen.json", tap);
+    assert_eq!(r.check(&["--render", "--tighten"]).0, 0);
+    let b: Value =
+        serde_json::from_str(&std::fs::read_to_string(r.0.join(".blocks/baseline/a.json")).unwrap()).unwrap();
+    assert_eq!(b["known"][0]["rule"], "render/tap-target");
+    assert_eq!(r.check(&[]).0, 0, "a static run keeps the drawn entry");
+    assert_eq!(r.check(&["--tighten"]).0, 0);
+    assert!(
+        r.0.join(".blocks/baseline/a.json").exists(),
+        "a static tighten keeps it too"
+    );
+    r.write("seen.json", "[]");
+    let (code, o) = r.check(&["--render"]);
+    assert_eq!(code, 1, "{o}");
+    assert_eq!(new_rules(&o), ["guard/baseline-stale screens/a.json"]);
+}
+
+#[test]
+fn render_in_a_pr_draws_every_screen_when_the_apps_css_changed() {
+    let r = drawn("redraw");
+    r.write("screens/b.json", OK);
+    r.commit("b fixed");
+    r.branch();
+    r.write("screens/a.json", OK.replace("Queue", "Lanes").as_str());
+    r.commit("a");
+    assert_eq!(
+        r.check(&["--base", "main", "--render"]).1["checked"],
+        serde_json::json!(["screens/a.json"])
+    );
+    r.write("app.css", ".b-card{transition:opacity 1s}\n");
+    r.commit("css");
+    let (_, o) = r.check(&["--base", "main", "--render"]);
+    assert_eq!(o["checked"], serde_json::json!(["screens/a.json", "screens/b.json"]));
+    assert_eq!(
+        r.check(&["--base", "main"]).1["checked"],
+        serde_json::json!(["screens/a.json"])
+    );
+}
+
+#[test]
+fn shot_draws_the_named_fixtures_at_390_and_1440_with_no_probe() {
+    let r = drawn("shot");
+    let out = Command::new(env!("CARGO_BIN_EXE_blocks"))
+        .args(["check", "--shot", "b"])
+        .current_dir(&r.0)
+        .output()
+        .unwrap();
+    assert_eq!(out.status.code(), Some(0));
+    assert_eq!(
+        String::from_utf8_lossy(&out.stdout),
+        "shots/390/b/b.png\nshots/1440/b/b.png\n"
+    );
+    let p = plan(&r);
+    assert_eq!(p["out"], "shots");
+    let runs: Vec<(&str, &str, bool)> = p["runs"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|x| {
+            (
+                x["name"].as_str().unwrap(),
+                x["size"].as_str().unwrap(),
+                x["probes"].as_bool().unwrap(),
+            )
+        })
+        .collect();
+    assert_eq!(runs, [("390/b", "390x844", false), ("1440/b", "1440x900", false)]);
+    assert_eq!(r.check(&["--shot", "nope"]).0, 2);
+}
+
+#[test]
+fn a_fixture_clean_on_base_may_record_a_rule_newer_than_base_and_no_other() {
+    let r = adopted("clean");
+    r.write(
+        ".blocks/baseline/b.json",
+        r#"{ "guard": 1, "known": [{ "rule": "lint/title-long", "at": "screen#s" }] }"#,
+    );
+    r.commit("baseline at guard 1");
+    r.branch();
+    let entry =
+        |rule: &str| format!(r#"{{ "guard": 2, "known": [{{ "rule": "{rule}", "at": "screen#s/card#drive" }}] }}"#);
+    r.write(".blocks/baseline/a.json", &entry("render/tap-target"));
+    let (code, o) = r.base();
+    assert_eq!(code, 0, "{o}");
+    r.write(".blocks/baseline/a.json", &entry("lint/depth"));
+    let (code, o) = r.base();
+    assert_eq!(code, 1, "{o}");
+    let grew = new_rules(&o);
+    assert_eq!(
+        grew,
+        [
+            "guard/baseline-stale screens/a.json",
+            "guard/baseline-grew screens/a.json"
+        ]
+    );
+}

@@ -1,12 +1,15 @@
 use std::collections::{BTreeMap, BTreeSet};
 
+use serde::Serialize;
 use serde_json::{Map, Value};
 
 use crate::gesture::Word;
 use crate::kind::{Block, Fallback, Fields, Screen, Steps, Table, Tap};
 
 /// What makes a screen unfit to send: a server checks its own before it serves it.
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
+#[serde(tag = "fault", rename_all = "kebab-case")]
 pub enum Fault {
     Twice {
         id: String,
@@ -265,7 +268,7 @@ impl Walk<'_> {
                         });
                     }
                 }
-                for (k, x) in o {
+                for (k, x) in o.iter().filter(|(k, _)| *k != "fallback") {
                     if let Some(p) = inner(x, k) {
                         self.sends(x, &p, scope);
                     }
@@ -295,12 +298,12 @@ impl Walk<'_> {
                     field: f.clone(),
                 });
                 self.out.extend(faults.collect::<Vec<_>>());
-                if let Block::Steps(s) = &b {
-                    self.out.extend(unplaced(s).map(|why| Fault::Shape {
-                        kind: k.into(),
-                        why: why.into(),
-                    }));
-                }
+                let why = match &b {
+                    Block::Steps(s) => unplaced(s).map(Into::into),
+                    Block::Chart(c) => c.unfit(),
+                    _ => None,
+                };
+                self.out.extend(why.map(|why| Fault::Shape { kind: k.into(), why }));
             }
         }
         let chip = o.get("name").and_then(Value::as_str);

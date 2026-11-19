@@ -4,7 +4,7 @@ use std::collections::BTreeMap;
 use serde::{Deserialize, Serialize};
 use serde_json::Number;
 
-use super::{Fallback, Fields, Label, Tap, Tone};
+use super::{Fallback, Fields, Label, Shown, Tap, Tone};
 use crate::expr::Expr;
 
 words!(ColumnKind {
@@ -197,7 +197,19 @@ impl Column {
     /// A cell as drawn text; `thai` writes a Buddhist-Era date's month in Thai.
     pub fn shown(&self, c: &Cell, thai: bool) -> String {
         match c {
-            Cell::Label(l) => l.text.clone(),
+            Cell::Label(l) => match &l.text {
+                Shown::Text(s) => s.clone(),
+                Shown::Number(n) => n.to_string(),
+                Shown::Time(t) => t
+                    .label
+                    .as_deref()
+                    .unwrap_or_default()
+                    .replace("{}", "")
+                    .replace("{rel}", "")
+                    .trim()
+                    .into(),
+                Shown::Get(_) => String::new(),
+            },
             Cell::Number(n) => self.number(n.as_f64().unwrap_or_default()),
             Cell::Text(s) if self.kind == ColumnKind::Date => date(s, self.era == Some(Era::Be), thai),
             Cell::Text(s) => s.clone(),

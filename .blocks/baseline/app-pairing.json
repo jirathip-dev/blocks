@@ -1,9 +1,49 @@
 {
-  "guard": 1,
+  "guard": 2,
   "known": [
     {
       "rule": "lint/fault",
       "at": ""
+    },
+    {
+      "rule": "render/no-size",
+      "at": "screen#pairing/step#paired/text#paired"
+    },
+    {
+      "rule": "render/no-size",
+      "at": "screen#pairing/step#paired/text~0"
+    },
+    {
+      "rule": "render/no-size",
+      "at": "screen#pairing/step#paired/text~1"
+    },
+    {
+      "rule": "render/no-size",
+      "at": "screen#pairing/step#scan/text~0"
+    },
+    {
+      "rule": "render/no-size",
+      "at": "screen#pairing/step#waiting/text~0"
+    },
+    {
+      "rule": "render/no-size",
+      "at": "screen#pairing/step#waiting/text~1"
+    },
+    {
+      "rule": "render/no-size",
+      "at": "screen#pairing/step#waiting/text~2"
+    },
+    {
+      "rule": "render/no-size",
+      "at": "screen#pairing/step#welcome/text~0"
+    },
+    {
+      "rule": "render/no-size",
+      "at": "screen#pairing/step#welcome/text~1"
+    },
+    {
+      "rule": "render/no-size",
+      "at": "screen#pairing/step#welcome/text~2"
     }
   ]
 }

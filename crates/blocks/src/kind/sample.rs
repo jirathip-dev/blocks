@@ -1,10 +1,10 @@
 use super::{
-    Act, Block, BulkAction, Button, Card, CardKind, Cell, ChipOption, Chips, Choice, ChoiceOption, Column, ColumnKind,
-    Composer, Diagram, Diff, Editor, Era, ExportFormat, Fallback, Field, FieldKind, Form, Hero, Hunk, Image, Images,
-    Island, Keyboard, Label, Lane, LaneState, LineItem, Lines, Link, List, Media, Nav, NavLink, Page, Pages, Part,
-    PhonePart, Prose, Round, RoundLane, Row, RowError, Run, Scene, Screen, Secret, Section, Sheet, Shown, SortDir,
-    Span, Stage, Stat, Steps, Submit, Table, TableRow, TableSelect, TableSort, Tap, Text, Toast, Tone, Toned, Total,
-    Undo, Web,
+    Act, Block, BulkAction, Button, Card, CardKind, Cell, Chart, ChartFormat, ChartKind, ChipOption, Chips, Choice,
+    ChoiceOption, Column, ColumnKind, Composer, Diagram, Diff, Editor, Era, ExportFormat, Fallback, Field, FieldKind,
+    Form, Hero, Hunk, Image, Images, Island, Keyboard, Label, Lane, LaneState, LineItem, Lines, Link, List, Media, Nav,
+    NavLink, Page, Pages, Part, PhonePart, Prose, Round, RoundLane, Row, RowError, Run, Scene, Screen, Secret, Section,
+    Series, SeriesMark, Sheet, Shown, SortDir, Span, Stage, Stat, Steps, Submit, Table, TableRow, TableSelect,
+    TableSort, Tap, Text, Time, Toast, Tone, Toned, Total, Undo, Web,
 };
 use crate::expr::{Expr, Lit, State};
 
@@ -205,6 +205,37 @@ fn controls() -> Vec<Block> {
     ]
 }
 
+fn card() -> Card {
+    let at = |since: Option<&str>, until: Option<&str>, label: &str| Time {
+        since: since.map(Into::into),
+        until: until.map(Into::into),
+        label: Some(label.into()),
+    };
+    let ago = |label: &str| at(Some("2026-11-09T09:35:00Z"), None, label);
+    let left = |label: &str| at(None, Some("2026-11-09T09:53:00Z"), label);
+    let timed = Row::new("Review")
+        .id("card-row")
+        .subtitle(Toned::Label(Label {
+            text: left("decides in {rel}").into(),
+            tone: None,
+        }))
+        .value(ago("{} ago"));
+    Card::new()
+        .id("card")
+        .kind(CardKind::Ask)
+        .title("q1")
+        .subtitle("waiting")
+        .meta(ago("as of {} ago"))
+        .badge(Label {
+            text: left("lapses in {rel}").into(),
+            tone: None,
+        })
+        .blocks(vec![
+            Block::Row(Box::new(timed)),
+            Block::Stat(Box::new(Stat::new().id("card-up").label("up").value(ago("{}")))),
+        ])
+}
+
 fn views() -> Vec<Block> {
     let row = Row::new("Build")
         .id("build")
@@ -256,17 +287,12 @@ fn views() -> Vec<Block> {
         at: "@@ -1 +1 @@".into(),
         lines: vec!["-a".into(), "+b".into()],
     };
-    let card = Card::new()
-        .id("card")
-        .kind(CardKind::Ask)
-        .title("q1")
-        .subtitle("waiting");
     vec![
         Block::Row(Box::new(row.clone())),
         Block::List(Box::new(
             List::new(vec![Block::Row(Box::new(row.id("row").rounds(vec![past, now])))]).id("rows"),
         )),
-        Block::Card(Box::new(card)),
+        Block::Card(Box::new(card())),
         Block::Stat(Box::new(
             Stat::new().id("open").label("open").value(Shown::Number(3.into())),
         )),
@@ -276,7 +302,36 @@ fn views() -> Vec<Block> {
         Block::Diff(Box::new(Diff::new("src/lib.rs", vec![hunk]).id("change"))),
         Block::Scene(Box::new(Scene::new().id("scene").label("lanes").lanes(vec![lane]))),
         Block::Diagram(Box::new(Diagram::new("[*] --> a\na --> b").id("flow").title("Flow"))),
+        Block::Chart(Box::new(chart())),
     ]
+}
+
+fn chart() -> Chart {
+    let months = ["2024-01", "2024-02", "2024-03", "2024-04", "2024-05", "2024-06"];
+    let series = |name: &str, values: [u32; 6]| Series {
+        name: name.into(),
+        values: values.map(|v| (v * 100_000).into()).to_vec(),
+        ..Series::default()
+    };
+    let target = Series {
+        tone: Some(Tone::Warn),
+        mark: Some(SeriesMark::Line),
+        ..series("Target", [110, 110, 120, 120, 120, 125])
+    };
+    Chart::new(
+        "Revenue and target",
+        ChartKind::Combo,
+        months.map(String::from).to_vec(),
+        vec![series("Revenue", [111, 106, 129, 118, 122, 114]), target],
+    )
+    .id("revenue")
+    .era(Era::Be)
+    .format(ChartFormat::ThbM)
+    .selected("2024-03")
+    .tap(Tap {
+        action: Some("sales.month".into()),
+        ..Tap::default()
+    })
 }
 
 fn stepper() -> Vec<Block> {

@@ -17,7 +17,8 @@ public struct Fills: RawRepresentable, Hashable, Codable, Equatable, Sendable {
     public init(rawValue: String) { self.rawValue = rawValue }
     public static let tint = Self(rawValue: "tint")
     public static let outline = Self(rawValue: "outline")
-    public static let all: [Self] = [.tint, .outline]
+    public static let solid = Self(rawValue: "solid")
+    public static let all: [Self] = [.tint, .outline, .solid]
 }
 
 public struct LabelCase: RawRepresentable, Hashable, Codable, Equatable, Sendable {
@@ -65,7 +66,8 @@ public struct TypeDesign: RawRepresentable, Hashable, Codable, Equatable, Sendab
     public init(rawValue: String) { self.rawValue = rawValue }
     public static let `default` = Self(rawValue: "default")
     public static let mono = Self(rawValue: "mono")
-    public static let all: [Self] = [.`default`, .mono]
+    public static let serif = Self(rawValue: "serif")
+    public static let all: [Self] = [.`default`, .mono, .serif]
 }
 
 public struct LabelRole: RawRepresentable, Hashable, Codable, Equatable, Sendable {

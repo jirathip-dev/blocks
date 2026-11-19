@@ -2,7 +2,7 @@
   "kind": "diff",
   "id": "change",
   "variant": null,
-  "drawn": "fallback",
+  "drawn": "native",
   "role": "group",
   "name": "src/lib.rs",
   "children": []
