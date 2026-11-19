@@ -89,7 +89,7 @@ The walk is boxed by steps (30 a walk) and `--minutes` stops new walks from star
 
 | Hatch | Static | At 390 |
 |---|---|---|
-| app CSS (`css` in `guard.json`) | `css/private-selector` (a `.b-` class that is no generated hook), `css/fixed-width`, `css/motion`, run by the HTML harness on the files | loaded after `blocks.css`, so every `render/` rule sees its effect |
+| app CSS (`css` in `guard.json`) | `css/private-selector` (a `.b-` class that is no generated hook), `css/fixed-width`, `css/motion`, `css/raw-colour` (a colour that is no scheme token), run by the HTML harness on the files | loaded after `blocks.css`, so every `render/` rule sees its effect |
 | an island | every `lint/` rule on its fallback; `lint/island-unsized` | `scripts` in `guard.json` defines the element, so the real component is probed in its box (light DOM and open shadow roots); with no script its fallback is |
 | an app block | every `lint/` rule on its fallback and its child blocks; its own fields are opaque | `scripts` registers its renderer on `window.blocksApps`; with none its fallback is drawn and probed. SwiftUI: the app's own bin calls `BlocksSnapshot`'s plan runner with its views |
 
@@ -150,6 +150,7 @@ Limits come from the 26 golden screens (their largest value in brackets). `fix` 
 | `css/private-selector` | error | an app selector names a `.b-` class that is no generated hook | Style a hook from the renderer contract (`.b-<kind>`, `.b-<kind>__<part>`, `[data-variant]`, `[data-tone]`). |
 | `css/fixed-width` | error | a `width` or `min-width` over 390 px | Use `max-width`, or a width in `%`. |
 | `css/motion` | error | a transition or keyframe of anything but `transform` and `opacity` | Animate `transform` or `opacity` only. |
+| `css/raw-colour` | error | an app colour property set to anything but a scheme token (`var(--fg)`, `var(--card)`, …), `currentColor`, `transparent` or `inherit` | Use the scheme token for that role, or add the colour to the app's scheme so the gate checks it. |
 | `explore/unanswered` | error | the answerer gave no answer to an action the screen declares | Handle the action in the app, or remove the control. |
 | `explore/error-screen` | error | an answer is an error, its ops do not apply, or the screen they give has a fault | Answer with ops that apply to the screen as it is; `Built::check` the result. |
 | `explore/sent-differs` | error | the renderer sent other actions than the screen declares for the step | Send the action from the block that declares it; an app view posts through the `act` it is handed. |

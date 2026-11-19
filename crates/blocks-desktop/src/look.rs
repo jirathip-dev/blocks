@@ -38,6 +38,10 @@ impl Look {
         &s.tokens
     }
 
+    pub(crate) fn bg(&self, ui: &Ui) -> Color32 {
+        color(self.tokens(ui).bg.as_str())
+    }
+
     pub(crate) fn fg(&self, ui: &Ui) -> Color32 {
         color(self.tokens(ui).fg.as_str())
     }

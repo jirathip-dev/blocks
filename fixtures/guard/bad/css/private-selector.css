@@ -1,3 +1,3 @@
-.b-card{color:red}
+.b-card{color:var(--fg)}
 /* .b-nope{} */
-.b-card__title, .b-card__nope{color:red}
+.b-card__title, .b-card__nope{color:var(--fg)}

@@ -1,0 +1,19 @@
+{
+  "kind": "section",
+  "id": "today",
+  "variant": null,
+  "drawn": "fallback",
+  "role": "region",
+  "name": "Today",
+  "children": [
+    {
+      "kind": "text",
+      "id": "today-note",
+      "variant": null,
+      "drawn": "fallback",
+      "role": "group",
+      "name": "today-note",
+      "children": []
+    }
+  ]
+}

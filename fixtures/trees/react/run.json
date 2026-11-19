@@ -1,0 +1,9 @@
+{
+  "kind": "run",
+  "id": "run",
+  "variant": null,
+  "drawn": "fallback",
+  "role": "group",
+  "name": "cargo test",
+  "children": []
+}
