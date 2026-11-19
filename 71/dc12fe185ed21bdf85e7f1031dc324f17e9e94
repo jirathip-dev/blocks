@@ -1,0 +1,5 @@
+Decided: merged origin/staging; only web/dist/blocks.js conflicted and it is rebuilt from the merged sources, never hand-merged.
+Because: web/package.json:6
+Rejected: none
+Check: npm --prefix web test, cargo test --workspace and blocks-codegen (no diff) pass at the merged head.
+Owner: The stepper branch is up to date with the latest shared work again.
