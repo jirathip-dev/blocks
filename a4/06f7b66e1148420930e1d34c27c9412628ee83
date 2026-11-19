@@ -1,0 +1,9 @@
+Decided: merge origin/staging and keep both [[collect]] entries in .drover/arch.toml, staging's docs and this slice's docs/schema
+Because: .drover/arch.toml:43
+Decided: #133 and #134 schema text goes word for word into docs/schema/blocks.md and behaviours.md; the index stays a table of links
+Because: "`docs/schema.md` keeps its first paragraph and a table of links; its sections move to `docs/schema/`, word for word"
+Rejected: re-adding #133's lines to docs/schema.md — this slice freezes it and they belong to moved sections
+Decided: perf FAIL fixed by rerunning the failed CI job on a643246, which passed; no code or budget change
+Because: "blocks#1's gates green (lints, fixtures, deny, arch-check, cap, generated drift, perf, sim)"
+Check: staging's schema.md body minus title and first paragraph equals the five pages' lines; CI green at the head
+Owner: Brought the branch up to date with staging, including the new line-item text; the slow timing check passed on rerun.
