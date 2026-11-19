@@ -1,0 +1,6 @@
+Decided: merged origin/staging, keeping scene and editor side by side in site/mod.rs, blocks.css, render/index.ts and both test files
+Because: web/src/render/index.ts:163
+Decided: the gap fallback test now uses island, as both editor and scene draw natively
+Because: web/test/render.test.ts:56
+Rejected: none
+Owner: The editor change now sits on the latest staging next to the new scene view; nothing changes for users.
