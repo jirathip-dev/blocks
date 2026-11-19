@@ -46,6 +46,8 @@ fn every_fixture_passes_the_check_at_390_and_1440_with_a_sized_tree() {
             run.check(&Want::default());
             assert!(run.faults.is_empty(), "{name} at {w}: {:#?}", run.faults);
             assert_eq!(run.report.shots, ["s"]);
+            let size = [u32::from(w).to_be_bytes(), u32::from(h).to_be_bytes()].concat();
+            assert_eq!(run.shots[0].png[12..24], [b"IHDR".as_slice(), &size].concat(), "{name}");
             every(&run.shots[0].tree, &mut |n| {
                 let sized = n.rect.is_some_and(|[_, _, w, h]| w > 0.0 && h > 0.0);
                 assert_eq!(sized, n.drawn != Drawn::Hidden, "{name}: {n:?}");
@@ -119,7 +121,11 @@ fn a_frame_and_an_answer_land_through_apply_and_a_tap_on_nothing_live_is_dropped
     assert_eq!(ids(1), ["s", "b"]);
     assert_eq!(run.report.shots, ["inserted", "removed"]);
     assert_eq!(run.report.dropped, ["tap a", "tap off", "type b"]);
-    assert_eq!(run.report.timings.steps_ms.len(), 8);
+    let t = &run.report.timings;
+    assert_eq!(t.steps_ms.len(), 8);
+    assert!(t.longest_frame_ms.is_some_and(|f| f > 0.0), "{t:?}");
+    assert!(t.frames_over_budget.is_some());
+    assert!(t.longest_patch_ms.is_some_and(|p| p > 0.0), "{t:?}");
     assert_eq!(run.report.sent, []);
     assert_eq!(run.faults.len(), 1, "{:?}", run.faults);
     run.faults.clear();
@@ -163,6 +169,8 @@ fn the_binary_writes_the_tree_and_the_report_and_exits_1_on_a_fault_or_bad_flags
     let report: serde_json::Value =
         serde_json::from_str(&std::fs::read_to_string(dir.join("report.json")).unwrap()).unwrap();
     assert_eq!(report["shots"], json!(["screen"]));
+    let png = std::fs::read(dir.join("screen.png")).unwrap();
+    assert_eq!(png, run.shots[0].png);
 
     let wrong = [
         "--screen",
