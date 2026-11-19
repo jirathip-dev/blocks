@@ -415,15 +415,19 @@ function sheet(v: View, d: Shown): HTMLElement[] {
   const { b, st } = v;
   const r = d.items.find((i) => i.id === st.sheet);
   if (!r) return [];
-  const card = h("div", "b-sheet__card", h("div", "b-sheet__head", h("b", "b-sheet__title", named(b, r)), ...(r.tap ? [press(btn("open"), () => v.c.tap(r.tap))] : []), go(v, btn("done"), () => (st.sheet = ""))));
+  const g = [...d.rows].reverse().find((x, i, all) => x.group && all.indexOf(r) < i);
+  const mine = g ? itemsOf(d.rows, d.rows.indexOf(g)) : [];
+  const where = g ? [h("span", "shp", `${named(b, g)} · ${mine.indexOf(r) + 1} of ${mine.length}`)] : [];
+  const card = h("div", "b-sheet__card", h("div", "b-sheet__head", h("b", "b-sheet__title", named(b, r), ...where), ...(r.tap ? [press(btn("open"), () => v.c.tap(r.tap))] : []), go(v, btn("done"), () => (st.sheet = ""))));
   card.setAttribute("role", "dialog");
   card.setAttribute("aria-label", `Edit ${named(b, r)}`);
   for (const x of b.columns) {
     const k = role(b, x), u = unit(x);
     const f = h("label", `fd shf ${end(x) ? "end" : "start"}`, h("span", "fk", x.label, ...(u ? [h("span", "tbu", u)] : [])));
-    const box = h("span", "shv", shown(x, at(r, x.id)));
+    const typed = k === "ed" && !r.fixed;
+    const box = h("span", "shv", ...(typed ? [] : [shown(x, at(r, x.id))]));
     f.append(box);
-    if (k === "ed" && !r.fixed) open(v, { row: r.id, col: x.id }, { into: box, field: true });
+    if (typed) open(v, { row: r.id, col: x.id }, { into: box, field: true });
     if (sent(v, r.id, x.id) !== undefined) f.classList.add("sent");
     if (k === "app" && waits(v, r)) f.classList.add("wait");
     card.append(f);

@@ -172,8 +172,19 @@ public struct Snapshot {
     }
 
     private static func gestured(_ block: Block?, _ g: StepGesture) -> [(Blocks.Gesture, JSONValue)] {
+        if case .table(let t)? = block { return grid(t, g) }
         guard case .list(let l)? = block, let reorder = l.reorder, let grab = g.grab.string else { return [] }
         return ways(l, grab, g).map { (reorder, .array($0.map(JSONValue.string))) }
+    }
+
+    private static func grid(_ t: Blocks.Table, _ g: StepGesture) -> [(Blocks.Gesture, JSONValue)] {
+        if let id = g.grab.string, let reorder = t.reorder { return ways(t, .row(id), g).map { (reorder, $0.json) } }
+        let cell = GridGrab.cell(row: g.grab.string("row") ?? "", column: g.grab.string("column") ?? "")
+        guard let edit = t.edit, g.via != .pointer, var d = Driven(t, cell), let text = g.reach.first?.string else { return [] }
+        d.on(.press)
+        d.reach(.text(text))
+        guard case .send(let c)? = d.on(.release) else { return [] }
+        return [(edit, c.json)]
     }
 
     private static func ways<R: Rules>(_ rules: R, _ grab: R.Grab, _ g: StepGesture) -> [R.Change] {

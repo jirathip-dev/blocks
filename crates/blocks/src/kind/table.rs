@@ -314,7 +314,12 @@ impl Table {
 
     /// What a client with no table view draws: the title, the first summed column's total, and the item row count.
     pub fn fallback(&self) -> Fallback {
-        let worked: Vec<TableRow> = self.rows.iter().filter(|r| !r.is_group()).map(|r| self.worked(r)).collect();
+        let worked: Vec<TableRow> = self
+            .rows
+            .iter()
+            .filter(|r| !r.is_group())
+            .map(|r| self.worked(r))
+            .collect();
         let n = worked.len();
         let rows: Vec<&TableRow> = worked.iter().collect();
         let sum = self.columns.iter().find(|c| c.total == Some(Total::Sum));
@@ -450,7 +455,10 @@ impl Table {
     /// Whether a column's cells are typed into: `edit`, not worked out by `calc`, and a kind a text can give.
     pub fn editable(&self, c: &Column) -> bool {
         let worked = self.calc.as_ref().is_some_and(|m| m.contains_key(&c.id));
-        let typed = matches!(c.kind, ColumnKind::Text | ColumnKind::Number | ColumnKind::Money | ColumnKind::Date);
+        let typed = matches!(
+            c.kind,
+            ColumnKind::Text | ColumnKind::Number | ColumnKind::Money | ColumnKind::Date
+        );
         c.edit == Some(true) && !worked && typed
     }
 
@@ -592,7 +600,12 @@ impl Rules for Table {
             GridGrab::Cell { row, column } => GridChange::Cell(CellEdit {
                 row: row.clone(),
                 column: column.clone(),
-                value: self.row(row)?.cells.get(column).cloned().unwrap_or(Cell::Text(String::new())),
+                value: self
+                    .row(row)?
+                    .cells
+                    .get(column)
+                    .cloned()
+                    .unwrap_or(Cell::Text(String::new())),
             }),
             GridGrab::Row(_) => GridChange::Order(self.order()),
         })
@@ -635,7 +648,10 @@ impl Rules for Table {
                 let row = self.row(&e.row).map_or_else(|| e.row.clone(), |r| self.name(r));
                 let col = self.column(&e.column);
                 let shown = col.map(|c| c.shown(&e.value, false)).unwrap_or_default();
-                format!("{}, {row}, {shown}", col.map_or(e.column.as_str(), |c| c.label.as_str()))
+                format!(
+                    "{}, {row}, {shown}",
+                    col.map_or(e.column.as_str(), |c| c.label.as_str())
+                )
             }
             (GridGrab::Cell { .. }, GridChange::Order(_)) => String::new(),
         }

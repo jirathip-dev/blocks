@@ -26,8 +26,15 @@ tap and key zoom; the image viewer uses it.
 | Kind | Word | Grab | Reach | Result | Named steps |
 |---|---|---|---|---|---|
 | `list` | `reorder` | a row id whose `handle` is true | places | every child id in the new order | Move up, Move down, Move to top, Move to bottom |
+| `table` | `reorder` | a row id not `fixed`; a `group` row takes its items | rows | every row id in the new order; an item stays below the first group row, a group moves between groups | Move up, Move down, Move to top, Move to bottom |
+| `table` | `edit` | `{row, column}`: a column with `edit`, not in `calc`, of text, number, money or date; not a group or `fixed` row | the typed text | a `CellEdit` `{row, column, value}`; a text the column can't take gives none | none: each cell is a text field |
 
-The harness steps: `gesture` (`id`, `grab`, `via` and `reach`: `[dx, dy]` px for `pointer`, `{dir, big}` nudges for
+A `table`'s `calc` maps a column to an `Expr` over its row's cells, worked out in column order (so one may read an
+earlier one) as the user types, before anything is sent; group rows (`group: true`) head the items under them, carry
+their subtotals, and sort and filter with them; totals and the row count count items only. `fixtures/gesture/table.json`
+holds the rules equal in Rust, TS and Swift. On a phone a row opens a sheet whose fields each send their own edit.
+
+The harness steps: `gesture` (`id`, `grab`, `via` and `reach`: the typed `[text]` for a cell, `[dx, dy]` px for `pointer`, `{dir, big}` nudges for
 `keys`, step names for `action`) holds the action it sends until the next `answer` (confirms) or `refuse` (fails it).
 The Swift harness runs `keys` and `action` through the rules and drops a `pointer`.
 

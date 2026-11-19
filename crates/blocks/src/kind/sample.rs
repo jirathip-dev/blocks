@@ -1,9 +1,10 @@
 use super::{
     Act, Block, BulkAction, Button, Card, CardKind, Cell, ChipOption, Chips, Choice, ChoiceOption, Column, ColumnKind,
-    Composer, Diagram, Diff, Editor, Era, ExportFormat, Fallback, Field, FieldKind, Form, Hero, Hunk, Image, Images,
-    Island, Keyboard, Label, Lane, LaneState, LineItem, Lines, Link, List, Media, Nav, NavLink, Part, PhonePart, Prose,
-    Round, RoundLane, Row, RowError, Run, Scene, Screen, Secret, Section, Sheet, Shown, SortDir, Span, Stage, Stat,
-    Gesture, Steps, Submit, Table, TableRow, TableSelect, TableSort, Tap, Text, Toast, Tone, Toned, Total, Undo, Web,
+    Composer, Diagram, Diff, Editor, Era, ExportFormat, Fallback, Field, FieldKind, Form, Gesture, Hero, Hunk, Image,
+    Images, Island, Keyboard, Label, Lane, LaneState, LineItem, Lines, Link, List, Media, Nav, NavLink, Part,
+    PhonePart, Prose, Round, RoundLane, Row, RowError, Run, Scene, Screen, Secret, Section, Sheet, Shown, SortDir,
+    Span, Stage, Stat, Steps, Submit, Table, TableRow, TableSelect, TableSort, Tap, Text, Toast, Tone, Toned, Total,
+    Undo, Web,
 };
 use crate::expr::{Expr, Lit, State};
 
@@ -408,8 +409,15 @@ fn markup() -> Vec<Column> {
 }
 
 fn item(id: &str, name: &str, n: [f64; 5]) -> TableRow {
-    let [qty, price, mult, margin, fin] = n.map(|v| Cell::Number(serde_json::from_str(&v.to_string()).unwrap_or(0.into())));
-    let cells = [("qty", qty), ("price", price), ("mult", mult), ("margin", margin), ("final", fin)];
+    let [qty, price, mult, margin, fin] =
+        n.map(|v| Cell::Number(serde_json::from_str(&v.to_string()).unwrap_or(0.into())));
+    let cells = [
+        ("qty", qty),
+        ("price", price),
+        ("mult", mult),
+        ("margin", margin),
+        ("final", fin),
+    ];
     let mut cells: std::collections::BTreeMap<String, Cell> = cells.map(|(k, v)| (k.to_string(), v)).into();
     cells.insert("name".into(), Cell::Text(name.into()));
     TableRow {
@@ -453,7 +461,11 @@ fn grid() -> Block {
     let table = Table::new(markup(), rows)
         .id("grid")
         .title("Mark-up · K-12 tower")
-        .calc([("cost".to_string(), cost), ("sell".to_string(), sell)].into_iter().collect::<std::collections::BTreeMap<_, _>>())
+        .calc(
+            [("cost".to_string(), cost), ("sell".to_string(), sell)]
+                .into_iter()
+                .collect::<std::collections::BTreeMap<_, _>>(),
+        )
         .edit(gesture("set-cell", "cell"))
         .reorder(gesture("order", "rows"));
     Block::Table(Box::new(table))

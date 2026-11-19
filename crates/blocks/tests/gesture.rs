@@ -200,7 +200,11 @@ fn table_rules_give_each_fixture_case_its_cell_or_order_its_words_and_its_steps(
         assert_eq!(got.as_ref().map(|g| t.says(&c.grab, g)), c.says, "{:?}", c.grab);
     }
     for (grab, want) in f["steps"].as_object().unwrap() {
-        let names: Vec<String> = t.steps(&GridGrab::Row(grab.clone())).into_iter().map(|(n, _)| n).collect();
+        let names: Vec<String> = t
+            .steps(&GridGrab::Row(grab.clone()))
+            .into_iter()
+            .map(|(n, _)| n)
+            .collect();
         assert_eq!(json!(names), *want, "{grab}");
     }
     for (id, want) in f["worked"].as_object().unwrap() {
@@ -220,7 +224,10 @@ fn a_cell_edit_is_read_by_its_name_and_a_grid_totals_only_its_items() {
     )
     .unwrap();
     let e = a.read::<CellEdit>("cell").unwrap();
-    assert_eq!((e.row.as_str(), e.column.as_str(), e.value), ("v2", "qty", Cell::Number(8.into())));
+    assert_eq!(
+        (e.row.as_str(), e.column.as_str(), e.value),
+        ("v2", "qty", Cell::Number(8.into()))
+    );
     let t: Table = serde_json::from_value(read("table.json")["block"].clone()).unwrap();
     let fb = t.fallback();
     assert_eq!(fb.subtitle.as_deref(), Some("5 rows · total cost ฿11,250.00"));

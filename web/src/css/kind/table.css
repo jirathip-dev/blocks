@@ -60,17 +60,21 @@
 .tbl td.no{box-shadow:inset 3px 0 0 var(--r)}
 .tbl tr.grp>td{background:var(--bg);font-weight:600}
 .tbl tr.grp>td.nil{font-weight:400}
+.tbl tbody:has(>tr.grp)>tr:not(.grp)>.p-title{padding-inline-start:calc(var(--s3) * 2)}
 .tbl .tbgn{margin-left:1ch;color:var(--mute);font-size:var(--fs-meta);font-weight:400}
 .tbl.ed tbody tr{transition:transform calc(var(--enter) * var(--motion,1)) var(--ease),opacity calc(var(--enter) * var(--motion,1)) var(--ease)}
 .tbl tr:is(.lift,:has(>.tbg>.b-hd[data-phase=pressed])){position:relative;z-index:3}
 .tbl tr:is(.lift,:has(>.tbg>.b-hd[data-phase=pressed]))>td{background:var(--card);box-shadow:inset 0 2px var(--l),inset 0 -2px var(--l)}
 .tbl tr:has(>.tbg>.b-hd[data-phase=dragging]){opacity:.6}
 .tbl tr:has(>.tbg>.b-hd[data-phase=sent]){opacity:.5}
+.tbsh .shp{display:block;color:var(--mute);font-size:var(--fs-meta);font-weight:400}
+.tbsh .shv .tbi{outline:1px solid var(--edge)}
+.tbsh .shv .tbi:focus{outline:2px solid var(--l)}
 .tbsh .b-sheet__card{max-width:none;border:1px solid var(--edge);border-radius:0}
 .tbsh .shf{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s3);min-height:var(--hit);border-bottom:1px solid var(--line)}
 .tbsh .fk{flex:1;text-align:start}
 .tbsh .shv{position:relative;flex:0 1 50%;min-height:var(--ctl);font-variant-numeric:tabular-nums}
-.tbsh .shv .tbi{font-size:var(--fs-input)}
+.tbsh .shv .tbi{position:static;height:calc(var(--ctl) + var(--s1));font-size:var(--fs-input)}
 .tbsh .shf.sent .shv,.tbsh .shf.wait .shv{color:var(--mute)}
 .tbsh .shf.wait .shv::after{content:" ↻"}
 @container (width < 600px){
@@ -113,6 +117,8 @@
 .tbl .tbg+:is(th,td),.tbl .tbg+.tbc+:is(th,td){position:static}
 .tbl tfoot .tbg{visibility:hidden}
 .tbl .tbo{display:block;order:3}
+.tbl .tbo button::before,.tbl .tbo button::after{content:none}
+.tbl tbody:has(>tr.grp)>tr:not(.grp)>.p-title{padding-inline-start:0}
 .tbl .tbo button{min-width:var(--hit);min-height:var(--hit);margin:calc(var(--s2) * -1) 0;border:0;background:none;color:var(--mute);font-weight:700}
 .tbl .tbf{display:inline;margin:0;padding:0;box-shadow:none}
 .tbl td.ing>.tbf{visibility:visible}

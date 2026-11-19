@@ -102,6 +102,15 @@ final class RenderTests: XCTestCase {
         XCTAssertGreaterThan(phone, wide * 1.4, "each row is a title line and a meta line")
     }
 
+    func testAnEditableGridDrawsGroupsHandlesAndFieldsWideAndASheetRowOnAPhone() throws {
+        let grid = BlocksView(try fixture("table-grid"), source: .core).environment(\.look, Look(still: true))
+        let wide = NSHostingView(rootView: grid.frame(width: 1440)).fittingSize.height
+        let phone = NSHostingView(rootView: grid.frame(width: 390)).fittingSize.height
+        XCTAssertGreaterThan(try pixels(BlocksView(try fixture("table-grid"), source: .core)), 0)
+        XCTAssertGreaterThan(wide, 11 * 20, "a head, three groups, six items and the totals")
+        XCTAssertGreaterThan(phone, wide, "each item is a title line and a meta line")
+    }
+
     func testMediaAndHeroKeepTheMediaBoxBeforeThePictureLoads() throws {
         XCTAssertGreaterThanOrEqual(height(BlocksView(try fixture("media"), source: .core)), 390 * 360 / 640)
         XCTAssertGreaterThan(height(BlocksView(try fixture("hero"), source: .core)), 390 * 360 / 640 + 60)
