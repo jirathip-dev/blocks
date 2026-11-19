@@ -26,7 +26,7 @@ harnesses (`docs/architecture/blocks/migration.md`).
 - `just fmt`, `just clippy`: rustfmt, clippy pedantic, and the banned APIs (`.drover/rules.md`)
 - `just fixtures`: each lint fixture in `ci/lint-fixtures/rust/` and `web/lint-fixtures/` must fail
 - `just test`, `just perf`, `just soak`: the tests, the release perf budgets and the flat-memory soak
-- `just sim 2000`: random op sequences on random screens, also run nightly (`.github/workflows/sim.yml`)
+- `just sim 2000`: random op sequences on random screens, then one seeded corpus of screens, ops and expressions through Rust, TS and Swift; also run nightly (`.github/workflows/sim.yml`)
 - `just deps`, `just deny`: the allow-list in `docs/deps.md`, then licences, advisories, duplicates and sources
 - `just web`: strict tsc and `web/lint.mjs` on `web/src` (the generated `gen/` and the hand-written renderer, stream
   and patcher), then the node tests in `web/test/`
