@@ -1,0 +1,18 @@
+Decided: behave::view keys hidden and disabled by block id or field name, and tree::expect, the site writer and both renderers read that one view, so a show needs an id
+Because: crates/blocks/src/tree.rs:117
+Because: crates/blocks/src/behave.rs:72
+Decided: an expression with an operation or pattern this version does not know counts as not written (the block shows, the control works), via Expr::known in Rust, TS and Swift
+Because: crates/blocks/src/expr.rs:75
+Decided: the tap's set lives in the schema as SetState, so the generated TS and Swift types do not shadow the language's own Set
+Rejected: an Expr parser per renderer — the generated Swift decoder now falls back to unknown on a bad payload, as serde does
+Decided: the TS evaluator is named evaluate, since web/lint.mjs bans eval(
+Decided: behave::view perf budget is 1 ms for a 200-row screen with a show on every block (measured about 218 µs); it runs on each keystroke
+Because: crates/blocks/tests/perf.rs:133
+Rejected: enabled on Act and Shown::Get — not in this slice's ships list
+Check: fixtures/behave/view.json gives the same view in tests/behave.rs, web/test/behave.test.ts and BehaveTests.swift; the same typing and tap script runs in blocks-shot and blocks-snap
+Owner: Screens can hide parts, check fields and switch buttons on the device itself, the same on web, Swift and the static site.
+
+Decided: merge origin/staging into issue-20; web/src/shell.ts keeps both the behave sync hook and staging's built set, web/dist rebuilt from source
+Because: web/src/shell.ts:49
+Rejected: none
+Owner: The behaviours branch now sits on top of the latest staging, with every local gate passing.
