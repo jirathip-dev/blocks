@@ -3,9 +3,8 @@ use std::path::Path;
 use serde_json::{Map, Value};
 
 use crate::{
-    layout, site, theme, tree, Action, Answer, Block, Built, Bye, Card, Child, Composer, ComposerChip, Field,
-    FieldKind, Form, Frame, Hello, List, OldFrame, Op, Queued, Row, Screen, Submit, Sync, Synced, Text, Tone,
-    SCHEMA_VERSION,
+    layout, site, theme, tree, Action, Answer, Block, Built, Bye, Card, Child, Composer, ComposerChip, Frame, Hello,
+    List, OldFrame, Op, Queued, Row, Screen, Sync, Synced, Text, Tone, SCHEMA_VERSION,
 };
 
 /// The JSON Schema of a `Frame`; its `$defs` hold `Block`, `Op` and the stream's other messages.
@@ -123,26 +122,12 @@ fn html(root: &Path) -> std::io::Result<()> {
 }
 
 fn site_screen() -> Screen {
-    let mut blocks: Vec<Block> = crate::samples()
-        .into_iter()
-        .filter(|(k, _)| ["nav", "hero", "prose", "media"].contains(k))
-        .map(|(_, b)| b)
-        .collect();
-    let email = Field {
-        kind: FieldKind::Text,
-        name: "email".into(),
-        label: Some("Email".into()),
-        ..Field::default()
-    };
-    let submit = Submit {
-        label: "Sign up".into(),
-        action: "sign-up".into(),
-        ..Submit::default()
-    };
-    blocks.push(Block::Form(Box::new(
-        Form::new(vec![email]).id("signup").submit(submit),
-    )));
-    Screen::new().id("site").title("Blocks").blocks(blocks)
+    let on = ["nav", "hero", "prose", "media", "form"];
+    let blocks = crate::samples().into_iter().filter(|(k, _)| on.contains(k));
+    Screen::new()
+        .id("site")
+        .title("Blocks")
+        .blocks(blocks.map(|(_, b)| b).collect::<Vec<_>>())
 }
 
 fn trees(root: &Path) -> std::io::Result<()> {

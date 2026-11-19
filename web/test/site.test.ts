@@ -76,7 +76,7 @@ test("the fixture site with JS off: a link goes and a form posts", async () => {
   await page.waitForURL(`${BASE}docs`);
   await page.goBack();
   await page.fill('input[name="email"]', "a@b.test");
-  await page.click("text=Sign up");
+  await page.press('input[name="email"]', "Enter");
   await page.waitForURL(`${BASE}act`);
   deepStrictEqual(posts, [{ path: "act", type: "application/x-www-form-urlencoded", body: "email=a%40b.test&_screen=site&_block=signup&_action=sign-up" }]);
   await close();
@@ -95,7 +95,7 @@ test("the fixture site is the same PNG and tree before and after blocks.js takes
   strictEqual(want[0].kind, "screen");
   await on.page.fill('input[name="email"]', "a@b.test");
   const sent = on.page.waitForResponse((r) => r.request().method() === "POST");
-  await on.page.click("text=Sign up");
+  await on.page.press('input[name="email"]', "Enter");
   await sent;
   strictEqual(on.page.url(), BASE);
   deepStrictEqual(
@@ -107,7 +107,7 @@ test("the fixture site is the same PNG and tree before and after blocks.js takes
 
 test("a page whose element differs from its screen stays static", async () => {
   const { page, posts, close } = await open({ page: live.replace('data-block="hero"', 'data-block="card"') });
-  await page.click("text=Sign up");
+  await page.press('input[name="email"]', "Enter");
   await page.waitForURL(`${BASE}act`);
   strictEqual(posts[0].type, "application/x-www-form-urlencoded");
   await close();

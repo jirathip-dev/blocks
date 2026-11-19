@@ -130,7 +130,6 @@ pub(crate) fn on(v: &Value, k: &str) -> bool {
     v.get(k).and_then(Value::as_bool).unwrap_or(false)
 }
 
-/// Where a control goes: a link out, a page of the site, a form to post, or nowhere with no JS.
 pub(crate) enum Go {
     Url(String),
     Open(String),
@@ -192,7 +191,6 @@ impl<'a> W<'a> {
         self.close(tag);
     }
 
-    /// Opens a block's own element with the hooks `render` gives it: its classes, type, id, variant and tone.
     pub(crate) fn open_block(&mut self, tag: &str, cls: &str, b: &Value, attrs: &[(&str, &str)]) {
         let t = get(b, "type").unwrap_or_default();
         let core = Block::KINDS.contains(&t);
@@ -211,7 +209,6 @@ impl<'a> W<'a> {
         self.open(tag, classes.trim_start(), &all);
     }
 
-    /// A hidden form that posts `action` with its values, for the controls that name its id.
     pub(crate) fn post(&mut self, block: Option<&Value>, action: &str, values: &Map<String, Value>) -> String {
         self.n += 1;
         let id = format!("b-f{}", self.n);
@@ -250,7 +247,6 @@ impl<'a> W<'a> {
         id
     }
 
-    /// `btn` of `render/index.ts`: a link styled as a button, or a button; with no JS, a submit of its form.
     pub(crate) fn btn(&mut self, label: &str, cls: &str, go: &Go, attrs: &[(&str, &str)], hook: Option<&Value>) {
         let mut all: Vec<(&str, &str)> = attrs.to_vec();
         let a = match go {
@@ -284,7 +280,30 @@ impl<'a> W<'a> {
         self.close(tag);
     }
 
-    /// Where a tap goes with no JS: its URL, its screen as a page, or its action posted.
+    pub(crate) fn submit(
+        &mut self,
+        label: &str,
+        cls: &str,
+        b: Option<&Value>,
+        action: &str,
+        v: &Map<String, Value>,
+        at: &[(&str, &str)],
+    ) {
+        let go = if action.is_empty() {
+            Go::Stay
+        } else {
+            Go::Post(self.post(b, action, v))
+        };
+        self.btn(label, cls, &go, at, None);
+    }
+
+    pub(crate) fn option(&mut self, value: &str, text: &str, on: bool) {
+        let at = [("value", value), ("selected", "")];
+        self.open("option", "", if on { &at } else { &at[..1] });
+        self.text(text);
+        self.close("option");
+    }
+
     pub(crate) fn tap(&mut self, tap: Option<&Value>, block: Option<&Value>) -> Go {
         let Some(t) = tap else { return Go::Stay };
         if let Some(u) = get(t, "url") {
@@ -299,7 +318,6 @@ impl<'a> W<'a> {
         }
     }
 
-    /// An `Act`: its tap, else its action posted, else a plain button.
     pub(crate) fn act(&mut self, a: &Value, cls: &str, block: Option<&Value>) {
         let go = match (a.get("tap"), get(a, "action")) {
             (Some(t), _) => self.tap(Some(t), block),
@@ -310,7 +328,10 @@ impl<'a> W<'a> {
     }
 }
 
-/// Objects merged left to right, as `{ ...a, ...b }`.
+pub(crate) fn one(k: &str, v: Option<&Value>) -> Value {
+    Value::Object(Map::from_iter([(k.into(), v.cloned().unwrap_or(Value::Null))]))
+}
+
 pub(crate) fn fields(all: &[Option<&Value>]) -> Map<String, Value> {
     let mut m = Map::new();
     for o in all.iter().flatten().filter_map(|v| v.as_object()) {

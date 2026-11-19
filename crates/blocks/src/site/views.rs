@@ -1,6 +1,6 @@
 use serde_json::{Map, Value};
 
-use super::{esc, fields, get, kids, list, on, shown, Go, W};
+use super::{esc, fields, get, kids, list, on, one, shown, Go, W};
 
 fn toned(v: Option<&Value>) -> (String, String) {
     match v {
@@ -9,14 +9,25 @@ fn toned(v: Option<&Value>) -> (String, String) {
     }
 }
 
-fn ticked(w: &mut W<'_>, v: Option<&Value>) {
+fn ticked(w: &mut W<'_>, tag: &str, cls: &str, v: Option<&Value>) {
+    w.open(tag, cls, &[]);
     match v {
         Some(t) if t.get("since").is_some() || t.get("until").is_some() => {
+            let label = shown(t.get("label")).replace("{}", "").replace("{rel}", "");
             w.open("span", "", &[("data-tick", &t.to_string())]);
-            w.text(shown(t.get("label")).replace("{}", "").replace("{rel}", "").trim());
+            w.text(label.trim());
             w.close("span");
         }
         v => w.text(&shown(v)),
+    }
+    w.close(tag);
+}
+
+fn badge(w: &mut W<'_>, cls: &str, v: Option<&Value>) {
+    if let Some(b) = v.filter(|v| !v.is_null()) {
+        let (text, tone) = toned(Some(b));
+        w.raw(" ");
+        w.el("span", &format!("tag {cls} {tone}"), &text);
     }
 }
 
@@ -133,22 +144,19 @@ pub(super) fn row_of(w: &mut W<'_>, b: &Value, hooked: bool) {
     }
     w.open("span", "rm", &[]);
     w.el("span", "rt b-row__title", &shown(b.get("title")));
-    if let Some(badge) = b.get("badge").filter(|v| !v.is_null()) {
-        let (text, tone) = toned(Some(badge));
-        w.raw(" ");
-        w.el("span", &format!("tag b-row__badge {tone}"), &text);
-    }
+    badge(w, "b-row__badge", b.get("badge"));
     if let Some(sub) = b.get("subtitle").filter(|v| !v.is_null()) {
-        let tone = toned(Some(sub)).1;
-        w.open("span", &format!("rs b-row__subtitle {tone}"), &[]);
-        ticked(w, if sub.is_object() { sub.get("text") } else { Some(sub) });
-        w.close("span");
+        let cls = format!("rs b-row__subtitle {}", toned(Some(sub)).1);
+        ticked(
+            w,
+            "span",
+            &cls,
+            if sub.is_object() { sub.get("text") } else { Some(sub) },
+        );
     }
     w.close("span");
     if let Some(v) = b.get("value").filter(|v| !v.is_null()) {
-        w.open("span", "rv b-row__value", &[]);
-        ticked(w, Some(v));
-        w.close("span");
+        ticked(w, "span", "rv b-row__value", Some(v));
     }
     w.close(tag);
     if swipe.is_empty() {
@@ -176,29 +184,28 @@ pub(super) fn card(w: &mut W<'_>, b: &Value) {
         );
         w.el("span", "fl", &shown(fold.get("line")));
         if let Some(m) = fold.get("main").filter(|m| m.is_object()) {
-            let mut v = fields(&[m.get("values")]);
-            v.insert("choice".into(), m.get("value").cloned().unwrap_or(Value::Null));
-            let f = w.post(m.get("block"), &shown(m.get("action")), &v);
-            w.btn(&shown(m.get("label")), "main", &Go::Post(f), &[], None);
+            let v = fields(&[m.get("values"), Some(&one("choice", m.get("value")))]);
+            w.submit(
+                &shown(m.get("label")),
+                "main",
+                m.get("block"),
+                &shown(m.get("action")),
+                &v,
+                &[],
+            );
         }
         w.close("div");
         w.close("div");
         return;
     }
-    let badge = b.get("badge").filter(|v| !v.is_null());
-    if get(b, "title").is_some_and(|t| !t.is_empty()) || badge.is_some() {
+    let mark = b.get("badge").filter(|v| !v.is_null());
+    if get(b, "title").is_some_and(|t| !t.is_empty()) || mark.is_some() {
         w.open("div", "ch", &[]);
         w.el("b", "b-card__title", &shown(b.get("title")));
-        if let Some(badge) = badge {
-            let (text, tone) = toned(Some(badge));
-            w.raw(" ");
-            w.el("span", &format!("tag b-card__badge {tone}"), &text);
-        }
+        badge(w, "b-card__badge", mark);
         if let Some(m) = b.get("meta").filter(|v| !v.is_null()) {
             w.raw(" ");
-            w.open("span", "m", &[]);
-            ticked(w, Some(m));
-            w.close("span");
+            ticked(w, "span", "m", Some(m));
         }
         w.close("div");
     }
@@ -222,25 +229,20 @@ pub(super) fn choice(w: &mut W<'_>, b: &Value) {
     opts.sort_by_key(|o| o.get("value") != rec || rec.is_none());
     let action = shown(b.get("action"));
     for o in opts {
-        let mut v = fields(&[b.get("values"), o.get("values")]);
-        v.insert("choice".into(), o.get("value").cloned().unwrap_or(Value::Null));
+        let v = fields(&[b.get("values"), o.get("values"), Some(&one("choice", o.get("value")))]);
         let mine = rec.is_some() && o.get("value") == rec;
         let label = format!("{}{}", shown(o.get("label")), if mine { " · recommended" } else { "" });
-        let f = w.post(b.get("id"), &action, &v);
-        w.btn(&label, "pick", &Go::Post(f), &[], None);
+        w.submit(&label, "pick", b.get("id"), &action, &v, &[]);
     }
     if let Some(d) = b.get("default").filter(|d| d.is_object()) {
-        w.open("p", "m", &[]);
-        let t = Map::from_iter(
-            [("until", d.get("until")), ("label", d.get("label"))]
-                .map(|(k, v)| (k.into(), v.cloned().unwrap_or(Value::Null))),
-        );
-        ticked(w, Some(&Value::Object(t)));
-        w.close("p");
+        let t = fields(&[Some(&one("until", d.get("until"))), Some(&one("label", d.get("label")))]);
+        ticked(w, "p", "m", Some(&Value::Object(t)));
     }
     if let Some(other) = b.get("other").filter(|o| o.is_object()) {
-        let mut v = fields(&[b.get("values")]);
-        v.insert("choice".into(), Value::from(shown(other.get("for"))));
+        let v = fields(&[
+            b.get("values"),
+            Some(&one("choice", Some(&Value::from(shown(other.get("for")))))),
+        ]);
         let f = w.post(b.get("id"), &action, &v);
         let hint = get(other, "placeholder").unwrap_or("other…");
         w.open("form", "other", &[]);
@@ -300,14 +302,10 @@ fn field(w: &mut W<'_>, x: &Value, tie: &[(&str, &str)]) {
             let mut seen: Vec<String> = vec![];
             for o in std::iter::once(x.get("value")).chain(list(x, "options").iter().map(Some)) {
                 let o = shown(o);
-                if o.is_empty() || seen.contains(&o) {
-                    continue;
+                if !o.is_empty() && !seen.contains(&o) {
+                    w.option(&o, &o, o == value);
+                    seen.push(o);
                 }
-                let pick: &[(&str, &str)] = if o == value { &[("selected", "")] } else { &[] };
-                w.open("option", "", &[&[("value", o.as_str())], pick].concat());
-                w.text(&o);
-                w.close("option");
-                seen.push(o);
             }
             w.close("select");
         }
@@ -343,12 +341,11 @@ pub(super) fn run(w: &mut W<'_>, b: &Value) {
     w.el("p", "m", &meta.join(" · "));
     w.open("div", "bar", &[]);
     for (choice, cls) in [("approve", "primary"), ("deny", "bad")] {
-        let v = Map::from_iter([
-            ("choice".into(), Value::from(choice)),
-            ("sha".into(), b.get("sha").cloned().unwrap_or(Value::Null)),
+        let v = fields(&[
+            Some(&one("choice", Some(&Value::from(choice)))),
+            Some(&one("sha", b.get("sha"))),
         ]);
-        let f = w.post(b.get("id"), &shown(b.get("action")), &v);
-        w.btn(choice, cls, &Go::Post(f), &[], None);
+        w.submit(choice, cls, b.get("id"), &shown(b.get("action")), &v, &[]);
     }
     w.close("div");
     w.close("div");
@@ -369,19 +366,10 @@ pub(super) fn chips(w: &mut W<'_>, b: &Value) {
     for o in list(b, "options").iter().filter(|o| o.is_object()) {
         let v = o.get("value").cloned().unwrap_or(Value::Null);
         let pressed = sel.contains(&v);
-        let f = w.post(
-            b.get("id"),
-            &shown(b.get("action")),
-            &Map::from_iter([(shown(b.get("name")), v)]),
-        );
         let at = [("aria-pressed", if pressed { "true" } else { "false" })];
-        w.btn(
-            &shown(o.get("label")),
-            if pressed { "on" } else { "" },
-            &Go::Post(f),
-            &at,
-            None,
-        );
+        let v = Map::from_iter([(shown(b.get("name")), v)]);
+        let (label, cls) = (shown(o.get("label")), if pressed { "on" } else { "" });
+        w.submit(&label, cls, b.get("id"), &shown(b.get("action")), &v, &at);
     }
     w.close("div");
 }
@@ -395,9 +383,7 @@ pub(super) fn stat(w: &mut W<'_>, b: &Value) {
         .filter(|i| i.is_object())
     {
         w.open("div", &format!("st {}", shown(i.get("tone"))), &[]);
-        w.open("b", "b-stat__value", &[]);
-        ticked(w, i.get("value"));
-        w.close("b");
+        ticked(w, "b", "b-stat__value", i.get("value"));
         if let Some(u) = get(i, "unit").filter(|u| !u.is_empty()) {
             w.raw(" ");
             w.el("small", "", u);
@@ -432,20 +418,15 @@ pub(super) fn text(w: &mut W<'_>, b: &Value) {
     w.close("div");
 }
 
-/// `md` of `render/index.ts`, but thread refs: code fences, inline code, bold, links and line breaks.
 fn md(s: &str) -> String {
     s.split("```")
         .enumerate()
         .map(|(i, part)| {
+            let lang = part.trim_start_matches(|c: char| c.is_ascii_lowercase());
             let part = if i == 0 {
                 part
             } else {
-                part.trim_start_matches(|c: char| c.is_ascii_lowercase())
-            };
-            let part = if i == 0 {
-                part
-            } else {
-                part.strip_prefix('\n').unwrap_or(part)
+                lang.strip_prefix('\n').unwrap_or(lang)
             };
             if i % 2 == 1 {
                 let body = part.strip_suffix('\n').unwrap_or(part);
@@ -539,19 +520,10 @@ pub(super) fn composer(w: &mut W<'_>, b: &Value) {
         let q = shown(m.get("q"));
         w.open("div", "qd", &[("data-q", &q)]);
         w.el("span", "qt", &shown(m.get("text")));
-        let qv = Map::from_iter([("q".into(), m.get("q").cloned().unwrap_or(Value::Null))]);
-        for (label, cls, a) in [
-            ("send now", "primary", act("steer")),
-            ("edit", "", String::new()),
-            ("remove", "bad", act("unqueue")),
-        ] {
-            let go = if a.is_empty() {
-                Go::Stay
-            } else {
-                Go::Post(w.post(b.get("id"), &a, &qv))
-            };
-            w.btn(label, cls, &go, &[], None);
-        }
+        let qv = fields(&[Some(&one("q", m.get("q")))]);
+        w.submit("send now", "primary", b.get("id"), &act("steer"), &qv, &[]);
+        w.btn("edit", "", &Go::Stay, &[], None);
+        w.submit("remove", "bad", b.get("id"), &act("unqueue"), &qv, &[]);
         w.close("div");
     }
     let f = w.post(b.get("id"), &shown(b.get("action")), &fields(&[b.get("values")]));
@@ -575,16 +547,10 @@ pub(super) fn composer(w: &mut W<'_>, b: &Value) {
             let cur = shown(ch.get("cur"));
             w.open("select", "", &[("aria-label", &n), ("name", &n), ("form", &f)]);
             if cur.is_empty() {
-                w.open("option", "", &[("value", ""), ("selected", "")]);
-                w.text(&n);
-                w.close("option");
+                w.option("", &n, true);
             }
-            for o in list(ch, "all") {
-                let o = shown(Some(o));
-                let pick: &[(&str, &str)] = if o == cur { &[("selected", "")] } else { &[] };
-                w.open("option", "", &[&[("value", o.as_str())], pick].concat());
-                w.text(&o);
-                w.close("option");
+            for o in list(ch, "all").iter().map(|o| shown(Some(o))) {
+                w.option(&o, &o, o == cur);
             }
             w.close("select");
         }
