@@ -1,0 +1,8 @@
+Decided: codegen/skill.rs writes skill/blocks/ and crates/blocks-cli/src/gen/skill.rs, and the .rs carries the page texts as literals
+Because: "`codegen/skill.rs` writes `skill/blocks/` from the schema, the rule table and `fixtures/guard/ok`; `blocks skill --to`, with the app's `examples`"
+Rejected: include_str! paths in gen/skill.rs — drover arch-check skipped a committed hand edit to skill/blocks/rules.md, so nothing would catch it
+Decided: guard::example is the one writer of an example page, used by codegen and the command, and it refuses a screen with a finding
+Because: "codegen fails on an example with a finding; `skill --to` on this repo equals `skill/blocks/` plus its examples"
+Check: crates/blocks-cli/tests/skill.rs:61 compares skill --to with skill/blocks/; crates/blocks/tests/guard.rs codegen_refuses_an_example_with_a_finding
+Rejected: blocks check --shot in the README prompt — it is G4's and not merged
+Owner: agents get a generated guide to blocks screens, and apps can copy it with one command
