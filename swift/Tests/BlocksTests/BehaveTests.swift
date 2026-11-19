@@ -6,6 +6,7 @@ import XCTest
 private struct Case: Decodable {
     let expr: JSONValue
     let want: Lit
+    let state: BlockState?
 }
 
 private struct File: Decodable {
@@ -19,6 +20,8 @@ private struct Shown: Decodable {
     let hidden: [String]
     let disabled: [String]
     let says: [String: String]
+    let acts: [String]
+    let values: [String: String]
 }
 
 @MainActor
@@ -36,7 +39,7 @@ final class BehaveTests: XCTestCase {
             let f = try file(name)
             for c in f.cases {
                 n += 1
-                let got = try c.expr.decode(Expr.self).eval(f.state)
+                let got = try c.expr.decode(Expr.self).eval(c.state ?? f.state)
                 if got != c.want { bad.append("\(name): \(c.expr) gave \(got), not \(c.want)") }
             }
         }
@@ -52,6 +55,8 @@ final class BehaveTests: XCTestCase {
         XCTAssertEqual(v.hidden.sorted(), want.hidden)
         XCTAssertEqual(v.disabled.sorted(), want.disabled)
         XCTAssertEqual(v.says, want.says)
+        XCTAssertEqual(v.acts.sorted(), want.acts)
+        XCTAssertEqual(v.values, want.values)
         let start = Behaviour.state(screen)
         XCTAssertEqual([start["more"], start["plan"], start["email"]], [.bool(false), .string("free"), .null])
         XCTAssertEqual(Behaviour(screen, state: start).says["email"], "Enter an email")
