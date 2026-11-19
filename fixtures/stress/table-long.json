@@ -1,0 +1,152 @@
+{
+  "columns": [
+    {
+      "id": "inv",
+      "kind": "text",
+      "label": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+      "phone": "meta"
+    },
+    {
+      "id": "client",
+      "kind": "text",
+      "label": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+      "phone": "title",
+      "width": 18
+    },
+    {
+      "id": "status",
+      "kind": "tone",
+      "label": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it"
+    },
+    {
+      "era": "be",
+      "id": "due",
+      "kind": "date",
+      "label": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it"
+    },
+    {
+      "digits": 0,
+      "id": "late",
+      "kind": "bar",
+      "label": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+      "max": 60,
+      "tone": "warn",
+      "unit": "days"
+    },
+    {
+      "currency": "THB",
+      "id": "amount",
+      "kind": "money",
+      "label": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+      "total": "sum"
+    }
+  ],
+  "empty": "No invoices yet.",
+  "export": [
+    "csv",
+    "xlsx"
+  ],
+  "id": "invoices",
+  "rows": [
+    {
+      "cells": {
+        "amount": 48750,
+        "client": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+        "due": "2026-10-18",
+        "inv": "INV-0133",
+        "late": 32,
+        "status": {
+          "text": "overdue",
+          "tone": "warn"
+        }
+      },
+      "id": "INV-0133",
+      "tap": {
+        "open": "/invoice/INV-0133"
+      }
+    },
+    {
+      "cells": {
+        "amount": 31500,
+        "client": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+        "due": "2026-11-05",
+        "inv": "INV-0136",
+        "late": 14,
+        "status": {
+          "text": "disputed",
+          "tone": "bad"
+        }
+      },
+      "id": "INV-0136",
+      "tap": {
+        "open": "/invoice/INV-0136"
+      }
+    },
+    {
+      "cells": {
+        "amount": 18000,
+        "client": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+        "due": "2026-11-19",
+        "inv": "INV-0138",
+        "status": {
+          "text": "sent",
+          "tone": "done"
+        }
+      },
+      "id": "INV-0138",
+      "tap": {
+        "open": "/invoice/INV-0138"
+      }
+    },
+    {
+      "cells": {
+        "amount": 15000,
+        "client": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+        "due": "2026-11-26",
+        "inv": "INV-0139",
+        "status": {
+          "text": "paid",
+          "tone": "ok"
+        }
+      },
+      "id": "INV-0139",
+      "tap": {
+        "open": "/invoice/INV-0139"
+      }
+    },
+    {
+      "cells": {
+        "amount": 13500,
+        "client": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+        "inv": "INV-0143",
+        "status": {
+          "text": "draft",
+          "tone": "mute"
+        }
+      },
+      "id": "INV-0143",
+      "tap": {
+        "open": "/invoice/INV-0143"
+      }
+    }
+  ],
+  "select": {
+    "actions": [
+      {
+        "action": "remind",
+        "label": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it"
+      },
+      {
+        "action": "void",
+        "bad": true,
+        "label": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it"
+      }
+    ]
+  },
+  "sort": {
+    "by": "due",
+    "dir": "asc"
+  },
+  "title": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+  "type": "table"
+}

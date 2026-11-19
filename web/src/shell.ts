@@ -2,13 +2,15 @@ import type { LayoutPlace, LayoutTransition } from "./gen/layout.ts";
 import type { Scheme } from "./gen/schemes.ts";
 import type { Answer, Block, Kind, Op } from "./gen/types.ts";
 import { behave } from "./behave.ts";
+import { choose } from "./core/look.ts";
 import { apply, patcher } from "./patch.ts";
 import { type Blk, blks, btn, type Ctx, el, h, isBlk, linkable, obj, type Post, type Renderer, render, type Store, tick } from "./render/index.ts";
 import { settle } from "./motion.ts";
 import { stream } from "./stream.ts";
 import { plain, type Theme, tiles } from "./theme.ts";
 
-export { behave, evaluate, start, view } from "./behave.ts";
+export { behave } from "./behave.ts";
+export { evaluate, start, view } from "./core/eval.ts";
 export { dump } from "./dump.ts";
 export { settle } from "./motion.ts";
 export { apply, patcher } from "./patch.ts";
@@ -94,8 +96,8 @@ function wearer(schemes: Record<string, Scheme>, theme: Theme) {
   look.id = "b-look";
   document.head.append(look);
   const wear = (name: string | null) => {
-    const s: Scheme | undefined = name ? schemes[name] : undefined;
-    look.textContent = tiles + (s ? theme.css(s) : "");
+    const dark = typeof matchMedia === "function" && matchMedia("(prefers-color-scheme: dark)").matches;
+    look.textContent = tiles + (name ? theme.css(choose(name, dark, schemes)) : "");
   };
   return { look, wear };
 }

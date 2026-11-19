@@ -1,0 +1,19 @@
+{
+  "name": "@jirathip-dev/blocks",
+  "version": "0.0.0",
+  "description": "The framework-neutral blocks core (generated types, the evaluator, tree tests, choose and the scheme CSS writer) and the HTML renderer and shell a page mounts",
+  "type": "module",
+  "license": "MIT",
+  "exports": {
+    ".": {
+      "types": "./web/dist/types/core/index.d.ts",
+      "default": "./web/dist/core.js"
+    },
+    "./shell": {
+      "types": "./web/dist/types/shell.d.ts",
+      "default": "./web/dist/blocks.js"
+    },
+    "./blocks.css": "./web/dist/blocks.css"
+  },
+  "files": ["web/dist/core.js", "web/dist/blocks.js", "web/dist/blocks.css", "web/dist/types"]
+}

@@ -1,0 +1,11 @@
+.card{color:var(--fg);padding:var(--s2);margin:var(--seam) 0}
+.card.accent{border-top:3px solid var(--g)}
+.card.warn,.card.bad{box-shadow:inset 3px 0 0 var(--r)}
+.card.warn{box-shadow:inset 3px 0 0 var(--a)}
+.card.pending{opacity:.55}
+.ch{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s2)}
+.ch>b{color:var(--fg)}
+.card.warn .ch>b,.card.bad .ch>b{color:var(--fg)}
+.fold{display:flex;align-items:center;gap:var(--s2);min-height:var(--hit);cursor:pointer}
+.fold .fl{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fold .main{max-width:40%}

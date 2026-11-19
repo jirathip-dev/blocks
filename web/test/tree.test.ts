@@ -1,9 +1,9 @@
 import { deepStrictEqual, ok, strictEqual } from "node:assert/strict";
 import { readdirSync, readFileSync } from "node:fs";
 import { test } from "node:test";
-import { gate } from "../src/gate.ts";
 import { defaultPair } from "../src/gen/schemes.ts";
-import { evaluate, expect, native, tree } from "../src/tree.ts";
+import { evaluate, expect, gate, tree } from "../src/core/index.ts";
+import { native } from "../src/render/native.ts";
 
 const at = (p: string) => new URL(`../../fixtures/${p}`, import.meta.url);
 const json = (p: string) => JSON.parse(readFileSync(at(p), "utf8"));
@@ -12,8 +12,8 @@ const files = (dir: string) => readdirSync(at(dir)).filter((f) => f.endsWith(".j
 test("tree() is fixtures/trees/<kind>.json for every fixtures/blocks file", () => {
   ok(!("document" in globalThis), "no DOM");
   const kinds = files("blocks");
-  strictEqual(kinds.length, 29);
-  for (const f of kinds) deepStrictEqual(tree(json(`blocks/${f}`)), json(`trees/${f}`), f);
+  strictEqual(kinds.length, 30);
+  for (const f of kinds) deepStrictEqual(tree(json(`blocks/${f}`), native), json(`trees/${f}`), f);
 });
 
 test("evaluate() gives every fixtures/behave case's value, as the crate's eval", () => {
@@ -27,7 +27,7 @@ test("tree() hides a block whose show is false or null in the screen's state", (
   const screen = json("blocks/screen.json");
   strictEqual(tree(screen, native, { ready: false }).children[0].drawn, "hidden");
   strictEqual(tree(screen, native, {}).children[0].drawn, "hidden");
-  strictEqual(tree({ ...screen, blocks: [{ type: "text", id: "t", show: { all: [{ not: { get: "a" } }, { eq: [{ len: "ab" }, 2] }] } }] }).children[0].drawn, "native");
+  strictEqual(tree({ ...screen, blocks: [{ type: "text", id: "t", show: { all: [{ not: { get: "a" } }, { eq: [{ len: "ab" }, 2] }] } }] }, native).children[0].drawn, "native");
 });
 
 test("expect() gives the crate's findings for each failing case in fixtures/trees/fail", () => {
@@ -37,7 +37,7 @@ test("expect() gives the crate's findings for each failing case in fixtures/tree
     deepStrictEqual(expect(c.tree, c.want), c.findings, c.name);
     deepStrictEqual(expect(c.want, c.want), []);
   }
-  for (const f of files("blocks")) deepStrictEqual(expect(tree(json(`blocks/${f}`)), json(`trees/${f}`)), [], f);
+  for (const f of files("blocks")) deepStrictEqual(expect(tree(json(`blocks/${f}`), native), json(`trees/${f}`)), [], f);
 });
 
 test("gate() gives the crate's misses for every scheme in fixtures/schemes, within rounding", () => {

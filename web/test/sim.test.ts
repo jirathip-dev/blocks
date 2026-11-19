@@ -1,7 +1,7 @@
 import { deepStrictEqual, strictEqual } from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
-import { evaluate, view } from "../src/behave.ts";
+import { evaluate, view } from "../src/core/eval.ts";
 import { apply } from "../src/patch.ts";
 
 const root = new URL("../../", import.meta.url);

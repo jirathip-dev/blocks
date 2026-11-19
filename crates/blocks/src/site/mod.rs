@@ -5,6 +5,7 @@ mod lines;
 mod rounds;
 mod scene;
 mod steps;
+mod table;
 mod views;
 
 use serde_json::{Map, Value};
@@ -47,9 +48,10 @@ pub struct Site<'a> {
 
 /// A built screen as a whole HTML document that reads, links and posts with no JS.
 pub fn page(screen: &Built, site: &Site<'_>) -> String {
-    let mut w = W::new(screen.value(), site.action);
-    block(&mut w, screen.value());
     let h = &site.head;
+    let mut w = W::new(screen.value(), site.action);
+    w.thai = h.lang.starts_with("th");
+    block(&mut w, screen.value());
     let mut out = format!(
         "<!doctype html><html lang=\"{}\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><title>{}</title>",
         esc(h.lang),
@@ -113,7 +115,10 @@ pub(crate) fn esc(s: &str) -> String {
 
 fn esc_into(out: &mut String, s: &str) {
     let mut rest = s;
-    while let Some(at) = rest.find(['&', '<', '>', '"', '\'']) {
+    while let Some(at) = rest
+        .bytes()
+        .position(|b| matches!(b, b'&' | b'<' | b'>' | b'"' | b'\''))
+    {
         let (plain, from) = rest.split_at(at);
         out.push_str(plain);
         let mut c = from.chars();
@@ -169,6 +174,7 @@ pub(crate) enum Go {
 
 pub(crate) struct W<'a> {
     pub(crate) view: View,
+    pub(crate) thai: bool,
     out: String,
     forms: String,
     n: u32,
@@ -181,6 +187,7 @@ impl<'a> W<'a> {
         let screen = shown(root.get("id"));
         Self {
             view: at_start(root),
+            thai: false,
             out: String::new(),
             forms: String::new(),
             n: 0,
@@ -429,6 +436,7 @@ pub(crate) fn block(w: &mut W<'_>, b: &Value) {
         "lines" => lines::lines(w, b),
         "scene" => scene::scene(w, b),
         "island" => island(w, b),
+        "table" => table::table(w, b),
         "steps" => steps::steps(w, b),
         _ => fallback(w, b),
     }

@@ -4,6 +4,7 @@ frozen = [
     "swift/Sources/BlocksUI/Blocks.swift",
     "swift/Sources/BlocksUI/BlockCards.swift",
     "swift/Sources/BlocksUI/BlockLeaves.swift",
+    "web/src/blocks.css",
 ]
 generated = [
     "schema/blocks.schema.json",
@@ -19,6 +20,8 @@ generated = [
     "web/src/gen/layout.ts",
     "web/dist/blocks.js",
     "web/dist/blocks.css",
+    "web/dist/core.js",
+    "web/dist/types/**",
     "fixtures/blocks/*.json",
     "fixtures/trees/*.json",
     "fixtures/trees/swift/*.json",
@@ -26,6 +29,7 @@ generated = [
     "fixtures/site/*.html",
     "fixtures/protocol/sim-*.json",
     "fixtures/behave/sim.json",
+    "fixtures/css/*.css",
 ]
 generate = "just gen"
 shared = [
@@ -57,6 +61,10 @@ glob = "*.md"
 [[collect]]
 dir = "swift/Sources/BlocksUI/Kind"
 glob = "*.swift"
+
+[[collect]]
+dir = "web/src/css"
+glob = "**/*.css"
 
 [comments]
 policy = "strict"
@@ -232,6 +240,21 @@ reason = "one stream per device, opened by stream.ts"
 pattern = "document."
 paths = ["web/src/stream.ts"]
 reason = "the stream touches no DOM; the patcher does"
+
+[[ban]]
+pattern = "document."
+paths = ["web/src/core/**"]
+reason = "the core is framework-neutral: it computes, a renderer draws"
+
+[[ban]]
+pattern = "render/"
+paths = ["web/src/core/**"]
+reason = "the core never imports a renderer; renderers and adapters import the core"
+
+[[ban]]
+pattern = "from \"react"
+paths = ["web/src/**", "web/shot/shot.ts"]
+reason = "React lives in web/react and its harness boot only"
 
 [[size]]
 paths = ["crates/*/src/**/*.rs"]

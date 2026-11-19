@@ -1,0 +1,7 @@
+button.pick{display:flex;width:100%;height:auto;min-height:var(--ctl);padding:calc((var(--ctl) - 1.35em) / 2) 1ch;justify-content:flex-start;text-align:left;white-space:normal;line-height:1.35;text-transform:none}
+button.pick::after{inset:calc(-1 * var(--s1)) calc(-1 * var(--s2));align-items:flex-start;padding-top:calc(var(--s1) + (var(--ctl) - 1.35em) / 2)}
+button.pick::before{top:calc((var(--ctl) - 1.35em) / 2)}
+button.pick>span{display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+.choice{display:flex;flex-direction:column;gap:var(--s2);margin:var(--seam) 0;padding:var(--s2)}
+.other{display:flex;gap:var(--s3);align-items:center}
+.other input{flex:1}
