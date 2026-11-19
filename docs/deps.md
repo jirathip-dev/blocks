@@ -7,6 +7,7 @@ drover and cooee.
 - `serde`: the wire types' derive
 - `serde_json`: the wire format, serialize and parse
 - `schemars`: the JSON Schema behind the `schema` feature, so codegen only; never in drover's build
+- `egui`: the desktop renderer's toolkit, in `blocks-desktop` and `blocks-desk` only; never in the `blocks` crate
 
 ## Dev tools (bench/ only)
 
