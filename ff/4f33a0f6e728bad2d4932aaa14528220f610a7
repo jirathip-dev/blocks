@@ -1,0 +1,27 @@
+Decided: Easing is a pick (standard, calm, bouncy) whose curve() feeds --ease; standard is the old curve, so the default CSS is unchanged
+Because: "the default renders byte-identical to today"
+Decided: easing is #[serde(default)] with no Format bump, like space and motion
+Because: "optional in style.json so format 1 and 2 files read unchanged"
+Rejected: a format 3 — the versioning doc has no style.json rule, and an optional field needs none
+Decided: image zoom now runs on var(--ease); the toast countdown bar stays linear because it is a timer
+Because: "emits it as a CSS variable used by every transition"
+Check: bouncy cubic-bezier(0.34, 1.3, 0.64, 1) overshoots about 3%, tested to stay within -10%..110% in crates/blocks/tests/theme.rs
+Owner: style.json can pick a standard, calm or bouncy motion curve; leaving it out changes nothing
+
+Decided: merged origin/staging; theme.rs imports both Easing and Fills, and web/dist is regenerated from the merged sources
+Because: "optional in style.json so format 1 and 2 files read unchanged"
+Rejected: none
+Owner: the easing branch now sits on current staging with nothing changed in behaviour
+
+Decided: merged origin/staging again; theme.rs imports Easing, Fills and TypeDesign, and web/dist is rebuilt from the merged sources
+Because: "optional in style.json so format 1 and 2 files read unchanged"
+Rejected: none
+Owner: the easing branch now sits on current staging with nothing changed in behaviour
+
+Decided: the PR body's For apps section now opens with a "For apps:" line, which scripts/for-apps.sh greps for
+Because: scripts/for-apps.sh:12
+Decided: merged origin/staging (chart kind) and rebuilt web/dist from the merged sources with the gen steps
+Because: "optional in style.json so format 1 and 2 files read unchanged"
+Rejected: rerunning the failed job — a rerun reuses the old event payload and so the old PR body
+Check: the rust job's For apps step passes at 72280c8 with this body
+Owner: the easing branch carries its app note in the form CI checks and sits on current staging
