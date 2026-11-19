@@ -9,6 +9,18 @@ private struct Red: BlockStyle {
     func body(content: Content) -> some View { content.background(Color(red: 1, green: 0, blue: 0)) }
 }
 
+private struct Squash: BlockStyle {
+    func body(content: Content) -> some View { content.frame(height: 0).clipped() }
+}
+
+private struct Shove: BlockStyle {
+    func body(content: Content) -> some View { content.frame(width: 300).padding(.leading, 200) }
+}
+
+private struct Pin: BlockStyle {
+    func body(content: Content) -> some View { content.frame(width: 340, alignment: .leading) }
+}
+
 @MainActor
 final class SnapshotTests: XCTestCase {
     private let fixtures = URL(fileURLWithPath: #filePath).deletingLastPathComponent()
@@ -75,7 +87,7 @@ final class SnapshotTests: XCTestCase {
         let run = try Snapshot(try load(Block.self, "blocks/button.json")).run([], name: "button", expect: want, check: true)
         XCTAssertEqual(run.faults, [#"button/button#save: drew button "Save", expected link "Send""#])
         let bare = try decode(Block.self, #"{"type": "screen", "id": "bare", "blocks": [{"type": ""}]}"#)
-        XCTAssertEqual(try Snapshot(bare).run([], name: "bare", check: true).faults, ["bare/screen#bare/: has no name"])
+        XCTAssertEqual(try Snapshot(bare).run([], name: "bare", check: true).faults, ["bare: render/no-name screen#bare/~0: the block has no name"])
     }
 
     func testATapSendsTheButtonsActionAndAnAnswersOpsAreDrawn() throws {
@@ -128,5 +140,42 @@ final class SnapshotTests: XCTestCase {
         let plain = try Snapshot(button).run([])
         let red = try Snapshot(button).blockStyle("button", Red()).run([])
         XCTAssertNotEqual(plain.pngs["shot"], red.pngs["shot"])
+    }
+
+    private func plan(_ name: String, _ screens: [String]) throws -> (URL, Plan) {
+        let out = URL(fileURLWithPath: ProcessInfo.processInfo.environment["DROVER_SCRATCH_TARGET"] ?? NSTemporaryDirectory())
+            .appendingPathComponent("snap-\(name)-\(UUID().uuidString)")
+        let runs = screens.map {
+            #"{"name": "\#(URL(fileURLWithPath: $0).deletingPathExtension().lastPathComponent)", "screen": "\#(fixtures.appendingPathComponent($0).path)", "size": "390x844", "css": [], "scripts": [], "kinds": [], "steps": [], "probes": true}"#
+        }
+        return (out, try decode(Plan.self, #"{"out": "\#(out.path)", "runs": [\#(runs.joined(separator: ","))]}"#))
+    }
+
+    func testThePlanRunnerSeesNothingOnEveryFixtureBlockAndWritesEachRunAndAnEmptySeenJson() throws {
+        let kinds = try FileManager.default.contentsOfDirectory(atPath: fixtures.appendingPathComponent("blocks").path).sorted()
+        let (out, plan) = try plan("blocks", kinds.map { "blocks/\($0)" })
+        XCTAssertEqual(try Snapshot.plan(plan), [])
+        XCTAssertEqual(try JSONDecoder().decode([Seen].self, from: Data(contentsOf: out.appendingPathComponent("seen.json"))), [])
+        for kind in kinds.map({ String($0.dropLast(5)) }) {
+            XCTAssertTrue(FileManager.default.fileExists(atPath: out.appendingPathComponent("\(kind)/\(kind).png").path), kind)
+        }
+    }
+
+    func testThePlanRunnerSeesWhatBlocksShotSeesForTheFourTreeRulesOnTheBadFixtures() throws {
+        let bad = ["no-name", "no-size", "overflow", "overlap"]
+        let (out, plan) = try plan("bad", bad.map { "guard/bad/render/\($0).json" })
+        var look = Look(still: true)
+        look.tiles?.dotGap = -15
+        try Snapshot.plan(plan) { run, screen, size in
+            switch run.name {
+            case "no-size": Snapshot(screen, size: size).blockStyle("text", Squash())
+            case "overflow": Snapshot(screen, size: size).blockStyle("text", Shove()).blockStyle("screen", Pin())
+            case "overlap": Snapshot(screen, size: size, look: look)
+            default: Snapshot(screen, size: size)
+            }
+        }
+        let seen = try JSONDecoder().decode([Seen].self, from: Data(contentsOf: out.appendingPathComponent("seen.json")))
+        let want = try load([[String: String]].self, "guard/seen.json")
+        XCTAssertEqual(seen.map { ["rule": $0.rule, "run": $0.run ?? "", "at": $0.at] }, want)
     }
 }
