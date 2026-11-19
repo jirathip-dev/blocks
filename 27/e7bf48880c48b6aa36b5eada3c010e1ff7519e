@@ -1,0 +1,30 @@
+Decided: the timeline's rows field is `tracks`, not the ADR sketch's `rows`
+Because: crates/blocks/src/built.rs:57
+Rejected: keep `rows` and special-case timeline beside table in every walker — eight shared files in three languages
+Decided: the result type is `DaySpan` and the bar `TimeBar`
+Because: crates/blocks/src/kind/content.rs:8
+Decided: draw's target is a hit layer under the bars, so bar events never reach the row's draw machine
+Because: "Built on the approved gesture-to-action ADR from #136, with no new gesture rules outside it."
+Check: fixtures/gesture/timeline.json runs in Rust, TS and Swift; web/test/gesture.test.ts drives the real view three ways in
+Owner: A month planner whose bars move, stretch and draw by drag, keys or VoiceOver, saved only when the app agrees.
+
+Decided: merge origin/staging, keeping both the new chart kind and timeline; generated files taken from staging then regenerated
+Because: crates/blocks-desktop/src/draw.rs:72
+Decided: kind counts in the Rust, web, Swift and site tests go from 32 to 33, stress variants from 64 to 67
+Because: crates/blocks/tests/fixtures.rs:380
+Rejected: none
+Owner: The planner now sits beside the new chart kind; nothing about the planner changed.
+
+Decided: the showcase site test expects 40 pages, the timeline page added to staging's 39
+Because: web/test/pages/showcase.test.ts:51
+Rejected: count pages from the site kind list instead — a refactor the fix does not need
+Check: cargo run -p blocks-site builds 40 pages and test/pages/showcase.test.ts passes 6 of 6 against it
+Owner: A test that counts the showcase pages now counts the planner page too.
+
+Decided: merge origin/staging; the two conflicting files, web/dist/blocks.css and web/dist/blocks.js, are rebuilt with npm run build, not hand-merged
+Because: web/package.json:7
+Decided: the red swift check at e46a859 was a cancel with no runner and no steps; swift test and blocks-snap pass locally, so no code change for it
+Because: .github/workflows/swift.yml:14
+Rejected: hand-merge the minified dist conflicts — build output, the build decides it
+Check: arch-check with a just-gen shim reports 0 violations, so dist and generated files match their sources
+Owner: The planner branch now carries staging's latest changes; nothing about the planner changed.
