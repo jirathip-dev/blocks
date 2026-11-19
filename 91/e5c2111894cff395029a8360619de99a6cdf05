@@ -1,0 +1,13 @@
+Decided: choose, css and tiles live in web/src/core/look.ts and leave the core entry; theme.ts re-exports them
+Because: "from the core entry or a `theme` entry: the lane picks, with one writer only"
+Decided: css takes one scheme (the shell's text, unchanged) or a light/dark pair plus space and motion, writing the crate's theme::css text
+Because: "The TS CSS writer gives the same text as the crate's `theme::css` for the default pair"
+Rejected: a second TS function for the pair text — the spec asks for one writer
+Decided: the crate's css prints DEFAULT_STYLE sorted, the order of the generated defaultStyle; only site fixture declaration order moves
+Because: crates/blocks/src/theme/scheme.rs:258
+Decided: the shell wears nothing for "the app's own" (null) and choose's pick for a name, so every sheet pick writes the text it did
+Because: "the shell's look sheet picks as before (the existing harness and tests pass unchanged)"
+Decided: merged origin/staging; web/dist/blocks.js rebuilt by the gen steps from the merged sources, not picked by hand
+Because: "everything the exports name is a committed, generated file under `web/dist`"
+Check: web/test/consume.test.ts packs the root, installs offline and runs tsc --strict over the package paths; arch-check shows no generated drift
+Owner: An app's page can take blocks' look picker, colour writer and renderer from the package at a pinned commit.
