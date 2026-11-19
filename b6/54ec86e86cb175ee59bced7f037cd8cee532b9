@@ -1,0 +1,12 @@
+Decided: the toast's text is the field `title`, so the fallback, the accessible name and the title hook come from the existing rules in all three languages
+Because: docs/design/toast/README.md:18
+Rejected: a `text` field — `text` is no name field, so the name list would change for every kind that has a `text`
+Decided: SCHEMA_VERSION 2; MediaType::write sends an answer's toast as its title string to a v1 client ("Done" when empty)
+Because: q2360
+Decided: the web shell's answer toasts live in web/src/toasts.ts: one shown at a time, 3 waiting, 4/6/8 s by tone, bad until dismissed, the clock held on hover or focus, the undo's answer shown first
+Because: docs/design/toast/README.md:20
+Decided: in the flow (fixtures, blocks-shot, the static site, SwiftUI) a toast is one quiet line: tick, glyph and title, with no clock, close or undo
+Because: docs/design/toast/README.md:24
+Rejected: a SwiftUI overlay — BlocksUI has no answer path (the host app posts actions), so nothing could feed it; the React adapter (#81 R5) does not exist yet
+Check: an answer written at v=1 has "toast" as a string, at v=2 as an object (crates/blocks/tests/protocol.rs)
+Owner: Apps can send a short success, warning or error message with an undo button after an action; the web app queues and dismisses them, and older apps still get plain text.
