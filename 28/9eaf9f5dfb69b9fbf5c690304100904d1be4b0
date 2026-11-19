@@ -1,0 +1,11 @@
+Decided: the ADR's open questions become decisions: cap raise to 19,000 before G2, SwiftUI render nightly first, G8 last
+Because: q2269
+Decided: render/no-name joins rule list v1 as an error row, built once #91 lands
+Because: "Add render/no-name (an actionable element or image with no accessible name) to the rule list once #91 lands"
+Decided: the README agent prompt is placed in slice G5, the first slice where the skill and blocks check both exist
+Because: q2270
+Decided: no .drover/arch.toml lines in this PR; each slice adds its own, since they name paths that slice creates
+Because: docs/architecture/guard/adr.md:216
+Rejected: adding the G1 to G8 arch.toml lines now — their paths do not exist yet and the layer edits would misdescribe the tree
+Check: drover arch-check's one local violation is just missing on the lane host; CI runs just gen
+Owner: The approved screen-check design now records your answers to its open questions; no code changes yet.
