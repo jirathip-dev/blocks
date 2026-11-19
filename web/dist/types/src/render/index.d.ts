@@ -50,7 +50,6 @@ export declare const btn: (label: unknown, cls?: string, url?: string, action?: 
 });
 export declare const tone: (v: Toned) => Label;
 export declare function md(s: unknown, refs?: boolean): string;
-export declare function value(v: unknown): string;
 export declare const ticked: (v: unknown) => Node | string;
 export declare const tick: (root: ParentNode) => void;
 export declare const draft: (i: HTMLInputElement, key: string, store: Store) => void;

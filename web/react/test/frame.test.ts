@@ -111,9 +111,9 @@ test("a press is ignored while a check of the sender's fields fails", async () =
 });
 
 test("a tap's set changes local state: a block its show hides is drawn when the state turns", async () => {
-  const p = await page({ ...screen({ type: "card", id: "go", title: "Show it", tap: { set: [{ key: "on", to: true }] } }, { type: "card", id: "x", title: "Shown", show: { get: "on" } }), state: { on: false } });
+  const p = await page({ ...screen({ type: "row", id: "go", title: "Show it", tap: { set: [{ key: "on", to: true }] } }, { type: "card", id: "x", title: "Shown", show: { get: "on" } }), state: { on: false } });
   ok(await p.locator('[data-id="x"]').isHidden());
-  await p.click('[data-id="go"] .row');
+  await p.click('[data-id="go"]');
   ok(await p.locator('[data-id="x"]').isVisible());
   deepStrictEqual((await read(p)).sent, []);
   await p.close();
