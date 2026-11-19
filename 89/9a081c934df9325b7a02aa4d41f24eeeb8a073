@@ -1,0 +1,11 @@
+Decided: taps are recorded by the views in act.rs and resolved by Stage after the pass; a set is evaluated only in stage.rs
+Because: docs/architecture/desktop/design.md:116
+Decided: disabled blocks, disabled screen acts and bound values come from behave::view, handed to Cx as plain sets and maps
+Because: docs/architecture/desktop/adr.md:75
+Decided: ages follow web's value() rules: {} as s/m/h/d, {rel} as minutes left, both against the unix_now the app hands show
+Because: crates/blocks-desktop/src/text.rs:14
+Rejected: a date crate for ISO parsing — a new dependency; a 15-line civil-days parser covers the wire's UTC stamps
+Decided: screen.rs draws the screen's actions so fixtures/behave's acts have a control to hold to the crate's view
+Rejected: confirm dialogs and a card's fold — no fixture uses them and S4's criteria do not name them
+Check: tests/stage.rs holds the view fixture's hidden, disabled, acts and values to behave::view through Stage; tests/desk.rs taps each control
+Owner: six desktop controls, taps, pack words and ages; the cap raise (#247, q2393) covers the 588 lines.
