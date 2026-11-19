@@ -28,7 +28,7 @@ export type ButtonStyle = "primary" | "plain" | "destructive";
 
 export type Bye = { why: Why };
 
-export type Card = { badge?: Label | null; blocks?: Block[] | null; buttons?: Block[] | null; fold?: Fold | null; id?: string | null; kind?: CardKind | null; menu?: Act[] | null; meta?: string | null; push?: boolean | null; show?: Expr | null; subtitle?: string | null; tap?: Tap | null; title?: string | null; tone?: Tone | null };
+export type Card = { badge?: Label | null; blocks?: Block[] | null; buttons?: Block[] | null; fold?: Fold | null; id?: string | null; kind?: CardKind | null; menu?: Act[] | null; meta?: Shown | null; push?: boolean | null; show?: Expr | null; subtitle?: string | null; tap?: Tap | null; title?: string | null; tone?: Tone | null };
 
 export type CardKind = "ask" | "run" | "secret" | "config" | "proposal";
 
@@ -112,7 +112,7 @@ export type KeyState = { gone?: number | null; k: string; ops?: Op[] | null; rev
 
 export type Keyboard = "default" | "url" | "number";
 
-export type Label = { text: string; tone?: Tone | null };
+export type Label = { text: Shown; tone?: Tone | null };
 
 export type Lane = { id: string; since?: string | null; stage?: string | null; state: LaneState; tap?: Tap | null; title: string; tool?: string | null };
 
@@ -234,7 +234,7 @@ export type TextStyle = "body" | "footnote";
 
 export type Tile = { label: string; spark?: number[] | null; tone?: Tone | null; unit?: string | null; value: Shown };
 
-export type Time = { since?: string | null; until?: string | null };
+export type Time = { label?: string | null; since?: string | null; until?: string | null };
 
 export type Timings = { first_paint_ms: number; frames_over_budget?: number | null; longest_frame_ms?: number | null; longest_patch_ms?: number | null; steps_ms: number[] };
 

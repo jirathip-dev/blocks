@@ -217,7 +217,7 @@ public struct Card: Codable, Equatable, Sendable {
     public var id: String?
     public var kind: CardKind?
     public var menu: [Act]?
-    public var meta: String?
+    public var meta: Shown?
     public var push: Bool?
     public var show: Expr?
     public var subtitle: String?
@@ -674,7 +674,7 @@ public struct Keyboard: RawRepresentable, Hashable, Codable, Equatable, Sendable
 }
 
 public struct Label: Codable, Equatable, Sendable {
-    public var text: String
+    public var text: Shown
     public var tone: Tone?
 }
 
@@ -1376,6 +1376,7 @@ public struct Tile: Codable, Equatable, Sendable {
 }
 
 public struct Time: Codable, Equatable, Sendable {
+    public var label: String?
     public var since: String?
     public var until: String?
 }
