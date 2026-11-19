@@ -1,0 +1,4 @@
+Decided: merged origin/staging and rebuilt the conflicting generated web/dist/blocks.js with npm run build instead of hand-merging it
+Because: "Generated schema, TS and Swift types from `just gen`"
+Rejected: none
+Owner: The branch is brought up to date with the latest shared work; nothing it does changes.
