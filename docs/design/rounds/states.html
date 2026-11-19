@@ -9,14 +9,14 @@
 <script>
 const R = (name, state, summary, extra = {}) => ({ id: name, name, state, summary, since: "5m", ...extra });
 const cases = [
-  ["1 · markers and tones", "A square marker per round on a 1px rail, 8px; the current (last) round's is 12px. Green: done, merged. Red: fail, needs. Ochre: working. Grey: idle. The summary takes the same tone as text.", [
+  ["1 · markers and tones", "A square marker per round on a 1px rail, 8px; the current (last) round's is 12px. The state table of the scene and the diagram: working and merged green, needs ochre, fail brick red, done ink, idle a hollow square. The summary takes the tone of its marker.", [
     [{ id: "a", title: "every state", rounds: [R("idle", "idle", "not started"), R("done", "done", "pushed 4f1c2e0"), R("merged", "merged", "into staging"), R("fail", "fail", "FAIL · 2 blocking"), R("needs", "needs", "waits on you"), R("working", "working", "running")] }, true]]],
   ["2 · folded and open", "A row with rounds is a fold: a tap toggles it, and its chevron turns. Folded, it is today's row plus the chevron. Open, the subtitle hides (the rounds say it). It opens by itself when the last round needs you.", [
     [{ id: "b", title: "#12 folded", subtitle: "review 2 · PASS", value: "ready", rounds: [R("review 1", "fail", "FAIL"), R("review 2", "done", "PASS")] }],
     [{ id: "c", title: "#23 open by itself", subtitle: "hidden while open", value: "fix(3)", rounds: [R("review 2", "fail", "FAIL"), R("review 3", "needs", "round limit reached", { links: [{ label: "one more round" }, { label: "park" }] })] }]]],
   ["3 · a past round's tap", "A past round with a tap is a button (or a link for a url) with a chevron; one without a tap is plain text. The current round's line never taps: its body holds the actions.", [
     [{ id: "d", title: "#7 taps", rounds: [R("review 1", "fail", "FAIL · tap opens the verdict", { tap: { sheet: "/v/1" } }), R("fix 1", "done", "no tap"), R("review 2", "working", "the current round")] }, true]]],
-  ["4 · the current round's body", "Only the last round draws a body, in order: its lane (name · harness · model · host, then its lines in mono; a working round's last line is live in ochre), its blocks, its links as buttons. A body with none of them is not drawn. A needs round's body gets a 3px red edge marker, never a red border.", [
+  ["4 · the current round's body", "Only the last round draws a body, in order: its lane (name · harness · model · host, then its lines in mono; a working round's last line is live in green), its blocks, its links as buttons. A body with none of them is not drawn. A needs round's body gets a 3px ochre edge marker, never a coloured border.", [
     [{ id: "e", title: "lane only", rounds: [R("impl", "working", "writing", { lane: { name: "blocks-impl-44", harness: "claude", host: "mini", lines: ["web/src/render/row.ts +38", "running just test"] } })] }, true],
     [{ id: "f", title: "nothing to show", rounds: [R("impl", "done", "pushed 1d2e3f4"), R("review 1", "idle", "queued")] }, true]]],
   ["5 · long text", "Name and summary are one line each and end in \"…\"; the name keeps at least 40% of the line, the time never shrinks. Lane lines end in \"…\" too, never wrap.", [

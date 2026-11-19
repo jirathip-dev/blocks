@@ -1,4 +1,4 @@
-/* The host page for these previews only: #53's built-in default pair as merged (web/src/gen/schemes.ts, defaultStyle), light on :root, dark by the OS; square tiles, 2px seam, dot grid. */
+/* The host page for these previews only, with the shared controls as #53/#57 draw them (box buttons, square tags with a grey edge), not today's renderer: #53's built-in default pair as merged (web/src/gen/schemes.ts, defaultStyle), light on :root, dark by the OS; square tiles, 2px seam, dot grid. */
 :root{color-scheme:light dark;
 --bg:#f6f6f6;--card:#ffffff;--edge:#d0d0d0;--line:#e4e4e4;--scrim:#0000004d;--fg:#1c1c1c;--mute:#5e5e5e;
 --l:#3d3d3d;--link:#3d3d3d;--g:#547850;--a:#927236;--r:#a75953;--p:#74678e;--c:#3c797d;
@@ -17,3 +17,8 @@ main{max-width:880px;margin:0 auto;padding:var(--s4);display:grid;grid-template-
 .note{color:var(--mute);font-size:var(--fs-meta);margin:var(--s1) 0 var(--s2)}
 .cases{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:var(--seam)}
 @media (max-width:600px){main{padding:var(--s2)}.tile{padding:var(--s2) var(--s3)}}
+button,a.btn{height:var(--ctl);padding:0 var(--s3);border:1px solid var(--edge);background:var(--card);color:var(--fg);text-transform:none}
+button::before,a.btn::before,button::after,a.btn::after{content:none}
+button:hover,a.btn:hover{border-color:var(--mute)}
+.tag{border:1px solid var(--edge);border-radius:0}
+.tabh{display:flex;align-items:center;gap:var(--s2)}.tabh>.tw{margin-right:auto}
