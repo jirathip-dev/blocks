@@ -2,6 +2,7 @@ pub mod behave;
 mod built;
 mod diff;
 pub mod expr;
+pub mod gesture;
 pub mod guard;
 mod kind;
 pub mod layout;
@@ -29,4 +30,4 @@ pub use wire::{
 };
 
 /// The wire schema's version: docs/schema.md says when it changes.
-pub const SCHEMA_VERSION: u8 = 1;
+pub const SCHEMA_VERSION: u8 = 2;

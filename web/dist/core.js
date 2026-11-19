@@ -30,9 +30,10 @@ var hooks = {
   island: { variant: null, parts: [] },
   table: { variant: null, parts: ["title"] },
   steps: { variant: null, parts: ["title"] },
-  chart: { variant: null, parts: ["title"] }
+  chart: { variant: null, parts: ["title"] },
+  toast: { variant: null, parts: ["title"] }
 };
-var roles = { section: "region", form: "form", config: "form", nav: "navigation", chart: "figure" };
+var roles = { section: "region", form: "form", config: "form", nav: "navigation", chart: "figure", toast: "status" };
 var names = ["label", "title", "header", "question", "alt", "file", "command", "placeholder", "name"];
 
 // src/gen/schemes.ts
@@ -102,11 +103,14 @@ var defaultStyle = {
   "--stagger": "40ms"
 };
 
+// src/core/gesture.ts
+var WORDS = ["reorder", "move", "stretch", "edit", "draw", "remove"];
+
 // src/core/eval.ts
 var own = (o, k) => Object.prototype.hasOwnProperty.call(o, k);
 var rec = (v) => typeof v === "object" && v !== null && !Array.isArray(v);
 var UNKNOWN = { "?": null };
-var PAIRS = { eq: 2, lt: 2, has: 2, add: 2, sub: 2, mul: 2, pick: 3 };
+var PAIRS = { eq: 2, lt: 2, has: 2, add: 2, sub: 2, mul: 2, div: 2, pick: 3 };
 var PATTERNS = ["filled", "email", "url", "number"];
 function read(v) {
   if (Array.isArray(v)) return void 0;
@@ -115,7 +119,7 @@ function read(v) {
   const k = keys[0] ?? "";
   const a = v[k];
   const one = (x) => x === void 0 ? UNKNOWN : { [k]: x };
-  const list2 = (n) => {
+  const list3 = (n) => {
     if (!Array.isArray(a) || n !== void 0 && a.length !== n) return UNKNOWN;
     const xs = a.map(read);
     return xs.includes(void 0) ? UNKNOWN : { [k]: xs };
@@ -123,8 +127,8 @@ function read(v) {
   if (keys.length !== 1) return UNKNOWN;
   if (k === "get") return typeof a === "string" ? v : UNKNOWN;
   if (k === "not" || k === "len") return one(read(a));
-  if (k === "all" || k === "any" || k === "cat") return list2();
-  if (own(PAIRS, k)) return list2(PAIRS[k]);
+  if (k === "all" || k === "any" || k === "cat") return list3();
+  if (own(PAIRS, k)) return list3(PAIRS[k]);
   if (k === "is" && rec(a) && typeof a.pattern === "string" && "value" in a) {
     const x = read(a.value);
     return x === void 0 ? UNKNOWN : { is: { value: x, pattern: a.pattern } };
@@ -151,9 +155,9 @@ function before(a, b) {
   return i < 0 ? x.length < y.length : i < y.length && (x[i] ?? 0) < (y[i] ?? 0);
 }
 function email(s) {
-  const at = s.indexOf("@");
-  if (at < 0) return false;
-  const [user, host] = [s.slice(0, at), s.slice(at + 1)];
+  const at2 = s.indexOf("@");
+  if (at2 < 0) return false;
+  const [user, host] = [s.slice(0, at2), s.slice(at2 + 1)];
   const dot = host.indexOf(".");
   return user !== "" && dot > 0 && dot + 1 < host.length && !host.endsWith(".") && !host.includes("@") && !blank.test(s);
 }
@@ -201,6 +205,8 @@ function ev(e, s) {
       return n ? num(n.x - n.y) : null;
     case "mul":
       return n ? num(n.x * n.y) : null;
+    case "div":
+      return n ? num(n.x / n.y) : null;
     case "cat":
       return xs.map(text).join("");
     case "pick":
@@ -224,24 +230,24 @@ var actionOf = (a) => {
   return typeof k === "string" ? k : void 0;
 };
 var acts = (b) => {
-  const all = [...list(b.actions), ...list(b.swipe), ...list(b.menu), ...rec(b.button) ? [b.button] : []];
+  const all = [...list(b.actions), ...list(b.swipe), ...list(b.menu), ...[b.button, ...WORDS.map((w) => b[w])].filter(rec)];
   return [...all, ...all.flatMap((a) => list(a.menu))];
 };
 var lit = (v) => v === null || typeof v === "boolean" || typeof v === "number" || typeof v === "string" ? v : null;
-function start(screen) {
+function start(screen2) {
   const s = {};
   const seed = (b) => {
     for (const f of named(b)) s[String(f.name)] = lit(f.value);
     if (b.type === "chips" && typeof b.name === "string") s[b.name] = lit(Array.isArray(b.selected) ? b.selected[0] : null);
     kids(b).forEach(seed);
   };
-  if (rec(screen)) {
-    for (const [k, v] of Object.entries(rec(screen.state) ? screen.state : {})) s[k] = lit(v);
-    seed(screen);
+  if (rec(screen2)) {
+    for (const [k, v] of Object.entries(rec(screen2.state) ? screen2.state : {})) s[k] = lit(v);
+    seed(screen2);
   }
   return s;
 }
-function view(screen, s) {
+function view(screen2, s) {
   const v = { hidden: /* @__PURE__ */ new Set(), disabled: /* @__PURE__ */ new Set(), says: {}, acts: /* @__PURE__ */ new Set(), values: {} };
   const walk = (b) => {
     const id = typeof b.id === "string" ? b.id : void 0;
@@ -275,7 +281,7 @@ function view(screen, s) {
     }
     kids(b).forEach(walk);
   };
-  if (rec(screen)) walk(screen);
+  if (rec(screen2)) walk(screen2);
   return v;
 }
 
@@ -309,19 +315,19 @@ function node(v, kinds, state) {
   const drawn = off ? "hidden" : kinds.includes(kind) ? "native" : "fallback";
   return { kind, id: str(b, "id"), variant, drawn, role: role(b, kind), name: named2(b, kind), children: under(b, drawn).map((c) => node(c, kinds, state)) };
 }
-function tree(screen, kinds, state) {
-  const b = screen;
+function tree(screen2, kinds, state) {
+  const b = screen2;
   const own2 = {};
   for (const [k, v] of Object.entries(isBlk(b.state) ? b.state : {})) if (isLit(v)) own2[k] = v;
   return node(b, kinds, state ?? own2);
 }
 var who = (n) => `${n.kind}${n.id ? `#${n.id}` : ""}`;
-function expect(got, want, at = "tree", out = []) {
+function expect(got, want, at2 = "tree", out = []) {
   if (!got || want.kind !== got.kind || (want.id ?? null) !== (got.id ?? null) || want.drawn !== got.drawn) {
-    out.push(`${at}: drew ${got ? `${who(got)} ${got.drawn}` : "nothing"}, expected ${who(want)} ${want.drawn}`);
+    out.push(`${at2}: drew ${got ? `${who(got)} ${got.drawn}` : "nothing"}, expected ${who(want)} ${want.drawn}`);
     return out;
   }
-  const here = `${at}/${who(got)}`;
+  const here = `${at2}/${who(got)}`;
   if (want.role !== got.role || want.name !== got.name) out.push(`${here}: drew ${got.role} "${got.name}", expected ${want.role} "${want.name}"`);
   if (want.children.length !== got.children.length) out.push(`${here}: ${got.children.length} children, expected ${want.children.length}`);
   want.children.forEach((c, i) => expect(got.children[i], c, here, out));
@@ -386,10 +392,10 @@ function gate(s) {
   const [bg, r, a] = [c("--bg"), c("--r"), c("--a")];
   const needs = ["the needs-you card", over(r, bg, 0.15)];
   const tints = [needs, ["a red group header", over(r, bg, 0.12)], ["an amber group header", over(a, bg, 0.12)]];
-  const text2 = ["--fg", "--mute", "--l", "--link", "--fk-l", "--fk-p", "--fk-c", "--fk-g", "--fk-a"];
+  const text4 = ["--fg", "--mute", "--l", "--link", "--fk-l", "--fk-p", "--fk-c", "--fk-g", "--fk-a"];
   const states = ["--g", "--a", "--r"];
   for (const b of ["--bg", "--card"]) {
-    for (const k of text2) checks.push({ what: `${k} on ${b}`, got: ratio(c(k), c(b)), min: 4.5 });
+    for (const k of text4) checks.push({ what: `${k} on ${b}`, got: ratio(c(k), c(b)), min: 4.5 });
     for (const k of states) checks.push({ what: `${k} on ${b}`, got: ratio(c(k), c(b)), min: 3 });
   }
   checks.push({ what: "--bg on --l", got: ratio(bg, c("--l")), min: 4.5 });
@@ -414,19 +420,176 @@ function css(look, style = {}) {
 }
 var tiles = `:where(:root){${vars(defaultStyle).join(";")}}`;
 var choose = (setting, dark, schemes = {}) => (setting !== null && Object.prototype.hasOwnProperty.call(schemes, setting) ? schemes[setting] : void 0) ?? defaultPair[dark ? "dark" : "light"];
+
+// src/gen/builders.ts
+var screen = (fields) => ({ type: "screen", ...fields });
+var sheet = (fields) => ({ type: "sheet", ...fields });
+var section = (fields) => ({ type: "section", ...fields });
+var list2 = (fields) => ({ type: "list", ...fields });
+var row = (fields) => ({ type: "row", ...fields });
+var card = (fields) => ({ type: "card", ...fields });
+var choice = (fields) => ({ type: "choice", ...fields });
+var form = (fields) => ({ type: "form", ...fields });
+var config = (fields) => ({ type: "config", ...fields });
+var secret = (fields) => ({ type: "secret", ...fields });
+var run = (fields) => ({ type: "run", ...fields });
+var button = (fields) => ({ type: "button", ...fields });
+var chips = (fields) => ({ type: "chips", ...fields });
+var stat = (fields) => ({ type: "stat", ...fields });
+var text2 = (fields) => ({ type: "text", ...fields });
+var images = (fields) => ({ type: "images", ...fields });
+var web = (fields) => ({ type: "web", ...fields });
+var diff = (fields) => ({ type: "diff", ...fields });
+var editor = (fields) => ({ type: "editor", ...fields });
+var scene = (fields) => ({ type: "scene", ...fields });
+var diagram = (fields) => ({ type: "diagram", ...fields });
+var composer = (fields) => ({ type: "composer", ...fields });
+var lines = (fields) => ({ type: "lines", ...fields });
+var prose = (fields) => ({ type: "prose", ...fields });
+var hero = (fields) => ({ type: "hero", ...fields });
+var media = (fields) => ({ type: "media", ...fields });
+var nav = (fields) => ({ type: "nav", ...fields });
+var island = (fields) => ({ type: "island", ...fields });
+var table = (fields) => ({ type: "table", ...fields });
+var steps = (fields) => ({ type: "steps", ...fields });
+var chart = (fields) => ({ type: "chart", ...fields });
+var toast = (fields) => ({ type: "toast", ...fields });
+var expr = {
+  get: (v) => ({ get: v }),
+  not: (v) => ({ not: v }),
+  all: (...v) => ({ all: v }),
+  any: (...v) => ({ any: v }),
+  eq: (...v) => ({ eq: v }),
+  lt: (...v) => ({ lt: v }),
+  len: (v) => ({ len: v }),
+  has: (...v) => ({ has: v }),
+  is: (v) => ({ is: v }),
+  add: (...v) => ({ add: v }),
+  sub: (...v) => ({ sub: v }),
+  mul: (...v) => ({ mul: v }),
+  div: (...v) => ({ div: v }),
+  cat: (...v) => ({ cat: v }),
+  pick: (...v) => ({ pick: v })
+};
+
+// src/core/table.ts
+var SIGN = { THB: "\u0E3F", USD: "$", EUR: "\u20AC" };
+var at = (r, id) => r.cells[id];
+var unit = (c) => c.kind === "money" ? c.currency ? SIGN[c.currency] ?? c.currency : null : c.unit;
+var grouped = (v, d, fixed) => v.toLocaleString("en-US", { minimumFractionDigits: fixed ? d : 0, maximumFractionDigits: d });
+var number = (c, v) => c.kind === "money" ? grouped(v, 2, true) : grouped(v, c.digits ?? 2, false);
+function total(c, rows) {
+  const cells = rows.map((r) => at(r, c.id)).filter((v) => v !== void 0);
+  const vs = cells.filter((v) => typeof v === "number");
+  const sum = vs.reduce((a, v) => a + v, 0);
+  if (!c.total) return null;
+  if (c.total === "count") return ["count", String(cells.length)];
+  if (!vs.length) return ["", "\u2014"];
+  return c.total === "avg" ? ["avg", grouped(sum / vs.length, 1, false)] : ["", number(c, sum)];
+}
+
+// src/core/built.ts
+var checked = /* @__PURE__ */ Symbol("built");
+var KINDS = Object.keys(hooks);
+var LISTS = ["blocks", "rows", "buttons"];
+var DRAWN = ["row", "text", "island"];
+var NAMED = ["title", "label", "header", "question", "name", "file", "command", "source", "src"];
+var isObj = (v) => typeof v === "object" && v !== null && !Array.isArray(v);
+var isTable = (o) => o.type === "table" && Array.isArray(o.columns) && Array.isArray(o.rows);
+var text3 = (o, k) => typeof o[k] === "string" && o[k] !== "" ? o[k] : void 0;
+function tabled(t) {
+  const n = t.rows.length;
+  const sum = t.columns.find((c) => c.total === "sum");
+  const v = sum && total(sum, t.rows);
+  const count = `${n} row${n === 1 ? "" : "s"}`;
+  const sub = sum && v ? `${count} \xB7 total ${sum.label.toLowerCase()} ${unit(sum) ?? ""}${v[1]}` : count;
+  return { title: t.title ?? "Table", subtitle: sub };
+}
+function plain(o, kind) {
+  if (isTable(o)) return tabled(o);
+  const subtitle = text3(o, "subtitle");
+  const f = { title: NAMED.map((k) => text3(o, k)).find((t) => t !== void 0) ?? kind };
+  if (subtitle !== void 0) f.subtitle = subtitle;
+  if (isObj(o.tap)) f.tap = o.tap;
+  return f;
+}
+var copy = (v) => isObj(v) ? fill({ ...v }) : v;
+var each = (l) => Array.isArray(l) ? l.map(copy) : l;
+function fill(o) {
+  const kind = typeof o.type === "string" ? o.type : "";
+  if (KINDS.includes(kind) && !DRAWN.includes(kind) && o.fallback === void 0) o.fallback = plain(o, kind);
+  for (const k of LISTS) if (k in o) o[k] = each(o[k]);
+  if (Array.isArray(o.rounds)) o.rounds = o.rounds.map((r) => isObj(r) && "blocks" in r ? { ...r, blocks: each(r.blocks) } : r);
+  return o;
+}
+function built(screen2) {
+  const out = { ...screen2, [checked]: true };
+  fill(out);
+  return out;
+}
+
+// src/core/share.ts
+var isObj2 = (v) => typeof v === "object" && v !== null;
+function share(prev, next) {
+  if (!isObj2(prev) || !isObj2(next) || Array.isArray(prev) !== Array.isArray(next)) return next;
+  const out = next;
+  const keys = Object.keys(next);
+  let same = keys.length === Object.keys(prev).length;
+  for (const k of keys) {
+    const v = share(prev[k], next[k]);
+    if (v !== next[k]) out[k] = v;
+    same = same && k in prev && v === prev[k];
+  }
+  return same ? prev : next;
+}
 export {
+  built,
+  button,
+  card,
+  chart,
+  chips,
+  choice,
   choose,
+  composer,
+  config,
   css,
   defaultPair,
   defaultStyle,
+  diagram,
+  diff,
+  editor,
   evaluate,
   expect,
+  expr,
+  form,
   gate,
+  hero,
   hooks,
+  images,
+  island,
+  lines,
+  list2 as list,
+  media,
   names,
+  nav,
+  prose,
   roles,
+  row,
+  run,
+  scene,
+  screen,
+  secret,
+  section,
+  share,
+  sheet,
   start,
+  stat,
+  steps,
+  table,
+  text2 as text,
   tiles,
+  toast,
   tree,
-  view
+  view,
+  web
 };

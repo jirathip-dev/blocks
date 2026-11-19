@@ -2,13 +2,14 @@ drover := env("DROVER", "drover")
 test_allow := "-A clippy::unwrap_used -A clippy::expect_used -A clippy::panic -A clippy::indexing_slicing -A clippy::as_conversions -A clippy::print_stdout -A clippy::print_stderr -A clippy::let_underscore_must_use"
 
 # Every gate CI runs, in one go; passes on a clean tree.
-check: fmt clippy fixtures test perf soak deps deny web arch cap actionlint swift
+check: fmt clippy fixtures test guard perf soak deps deny web arch cap actionlint swift
 
 # Every generated file (.drover/arch.toml `generated`) from the Rust types; arch-check fails on a difference.
 gen: web-install
     cargo run -q --locked -p blocks --features schema --bin blocks-codegen
     npm --prefix web run build
     BLOCKS_GEN=1 cargo test -q --locked -p blocks --test sim generated
+    BLOCKS_GEN=1 cargo test -q --locked -p blocks --test gesture generated
     BLOCKS_GEN=1 cargo test -q --locked -p blocks --test fixtures every_kind_has_a_stress_row
     BLOCKS_GEN=1 cargo test -q --locked -p blocks --test theme css_writes_each_fixtures_css_file
 
@@ -27,6 +28,10 @@ fixtures: web-install
 
 test:
     cargo test --workspace --all-features --locked
+
+# `blocks check` on this repo's screens (.blocks/guard.json); BASE narrows it to the fixtures a branch changed.
+guard:
+    cargo run -q --locked -p blocks-cli -- check ${BASE:+--base "$BASE"}
 
 # The hard perf gate in release: each budget is in crates/blocks/tests/perf.rs.
 perf:

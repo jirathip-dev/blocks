@@ -21,7 +21,10 @@ const GROUPS: [(&str, &[&str]); 4] = [
         "Lists and figures",
         &["list", "row", "stat", "chart", "table", "steps", "chips"],
     ),
-    ("Input", &["button", "choice", "form", "lines", "composer", "run"]),
+    (
+        "Input",
+        &["button", "choice", "form", "lines", "composer", "run", "toast"],
+    ),
 ];
 
 fn about(kind: &str) -> &'static str {
@@ -57,6 +60,7 @@ fn about(kind: &str) -> &'static str {
         "scene" => "Workers at work, each in its state.",
         "island" => "An app's own component, its props in and events out.",
         "table" => "Typed columns: sort, filter, totals, row select and export; rows on a phone.",
+        "toast" => "A short line after an action, in a tone, with an optional undo.",
         _ => "",
     }
 }
@@ -480,6 +484,7 @@ pub fn samples() -> Vec<(String, Vec<Block>)> {
         picked("lines"),
         others(),
         picked("table"),
+        picked("toast"),
     ]
     .concat();
     Block::KINDS

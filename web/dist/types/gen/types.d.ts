@@ -1,4 +1,4 @@
-export declare const schemaVersion = 1;
+export declare const schemaVersion = 2;
 export type Frame = {
     from?: number | null;
     k: string;
@@ -29,7 +29,7 @@ export type Answer = {
     close?: boolean | null;
     open?: string | null;
     ops?: Op[] | null;
-    toast?: string | null;
+    toast?: Toast | null;
 };
 export type AppBlock = {
     fallback?: Fallback | null;
@@ -104,7 +104,9 @@ export type Block = ({
     type: "steps";
 } & Steps) | ({
     type: "chart";
-} & Chart) | (AppBlock & {
+} & Chart) | ({
+    type: "toast";
+} & Toast) | (AppBlock & {
     [key: string]: unknown;
 });
 export type Bound = {
@@ -138,7 +140,7 @@ export type Card = {
     id?: string | null;
     kind?: CardKind | null;
     menu?: Act[] | null;
-    meta?: string | null;
+    meta?: Shown | null;
     push?: boolean | null;
     show?: Expr | null;
     subtitle?: string | null;
@@ -297,6 +299,8 @@ export type Expr = {
 } | {
     mul: Expr[];
 } | {
+    div: Expr[];
+} | {
     cat: Expr[];
 } | {
     pick: Expr[];
@@ -361,6 +365,11 @@ export type Form = {
     show?: Expr | null;
     submit?: Submit | null;
 };
+export type Gesture = {
+    action: string;
+    enabled?: Expr | null;
+    name: string;
+};
 export type Have = {
     k: string;
     rev?: number | null;
@@ -418,7 +427,7 @@ export type KeyState = {
 };
 export type Keyboard = "default" | "url" | "number";
 export type Label = {
-    text: string;
+    text: Shown;
     tone?: Tone | null;
 };
 export type Lane = {
@@ -464,7 +473,7 @@ export type Link = {
 };
 export type List = {
     id?: string | null;
-    reorder?: Reorder | null;
+    reorder?: Gesture | null;
     rows: Block[];
     show?: Expr | null;
 };
@@ -580,10 +589,6 @@ export type Prose = {
 export type Queued = {
     q: number;
     text: string;
-};
-export type Reorder = {
-    action: string;
-    name: string;
 };
 export type Report = {
     dropped: string[];
@@ -757,9 +762,22 @@ export type Step = {
     answer: Answer;
 } | {
     shot: StepShot;
+} | {
+    gesture: StepGesture;
+} | {
+    refuse: StepRefuse;
+};
+export type StepGesture = {
+    grab: unknown;
+    id: string;
+    reach: unknown[];
+    via: Via;
 };
 export type StepOn = {
     id: string;
+};
+export type StepRefuse = {
+    toast: string;
 };
 export type StepShot = {
     name: string;
@@ -849,6 +867,7 @@ export type Tile = {
     value: Shown;
 };
 export type Time = {
+    label?: string | null;
     since?: string | null;
     until?: string | null;
 };
@@ -858,6 +877,14 @@ export type Timings = {
     longest_frame_ms?: number | null;
     longest_patch_ms?: number | null;
     steps_ms: number[];
+};
+export type Toast = {
+    fallback?: Fallback | null;
+    id?: string | null;
+    show?: Expr | null;
+    title: string;
+    tone?: Tone | null;
+    undo?: Undo | null;
 };
 export type Tone = "ok" | "warn" | "bad" | "info" | "mute" | "accent" | "working" | "needs" | "done" | "fail" | "idle";
 export type Toned = string | Label;
@@ -874,6 +901,13 @@ export type TreeNode = {
     text?: string | null;
     variant?: string | null;
 };
+export type Undo = {
+    action: string;
+    confirm?: Confirm | null;
+    label?: string | null;
+    values?: Record<string, unknown> | null;
+};
+export type Via = "pointer" | "keys" | "action";
 export type Web = {
     height: number;
     id?: string | null;
@@ -884,4 +918,4 @@ export type Why = "evicted" | "unpaired" | "handover";
 export type Working = {
     since: string;
 };
-export type Kind = "screen" | "sheet" | "section" | "list" | "row" | "card" | "choice" | "form" | "config" | "secret" | "run" | "button" | "chips" | "stat" | "text" | "images" | "web" | "diff" | "editor" | "scene" | "diagram" | "composer" | "lines" | "prose" | "hero" | "media" | "nav" | "island" | "table" | "steps" | "chart";
+export type Kind = "screen" | "sheet" | "section" | "list" | "row" | "card" | "choice" | "form" | "config" | "secret" | "run" | "button" | "chips" | "stat" | "text" | "images" | "web" | "diff" | "editor" | "scene" | "diagram" | "composer" | "lines" | "prose" | "hero" | "media" | "nav" | "island" | "table" | "steps" | "chart" | "toast";

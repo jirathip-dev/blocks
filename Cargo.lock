@@ -12,6 +12,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "blocks-cli"
+version = "0.1.0"
+dependencies = [
+ "blocks",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "blocks-site"
 version = "0.1.0"
 dependencies = [

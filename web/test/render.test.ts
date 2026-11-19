@@ -18,7 +18,7 @@ const gaps = ["diff", "island"];
 
 test("every fixture is drawn with its hooks, natively or as its fallback", () => {
   const kinds = readdirSync(dir).map((f) => f.replace(/\.json$/, ""));
-  strictEqual(kinds.length, 31);
+  strictEqual(kinds.length, 32);
   for (const kind of kinds) {
     const b = fixture(kind);
     const e = render(b, ctx());
@@ -228,6 +228,19 @@ test("bars draw a clamped progressbar each with its tone, and an unplaced or emp
     const f = render({ type: "steps", id: "e", fallback: { title: "No steps yet" }, ...x }, ctx());
     ok(f.hasAttribute("data-fallback"), JSON.stringify(x));
     strictEqual(part(f, "b-row__title")?.textContent, "No steps yet");
+  }
+});
+
+test("a toast in the flow is its tick, glyph and text with no clock, close or undo; empty, it draws its fallback", () => {
+  const e = render(fixture("toast"), ctx());
+  deepStrictEqual([e.className, e.getAttribute("role"), e.getAttribute("aria-label"), e.dataset.tone], ["tst inl ok b b-toast", "status", "Archived 3 orders", "ok"]);
+  deepStrictEqual([part(e, "tsg").textContent, part(e, "tsg").getAttribute("aria-hidden"), part(e, "tsx").textContent], ["✓", "true", "Archived 3 orders"]);
+  deepStrictEqual(all(e).filter((x) => x.tagName === "BUTTON" || x.classList.contains("tsk")), []);
+  deepStrictEqual(["warn", "bad", "info", undefined].map((tone) => [render({ type: "toast", title: "x", tone }, ctx()).className.split(" ")[2], part(render({ type: "toast", title: "x", tone }, ctx()), "tsg").textContent]), [["warn", "!"], ["bad", "×"], ["b", ""], ["b", ""]]);
+  for (const [f, want] of [[undefined, "Done"], [{ title: "Saved" }, "Saved"]]) {
+    const x = render({ type: "toast", id: "t", title: "", fallback: f }, ctx());
+    ok(x.hasAttribute("data-fallback"));
+    strictEqual(part(x, "b-row__title")?.textContent, want);
   }
 });
 
@@ -751,4 +764,20 @@ test("a link that is not http, https, mailto or relative is dropped and its text
   const { linkable } = await import("../src/render/index.ts");
   for (const u of f.safe) strictEqual(linkable(u), true, u);
   for (const u of f.unsafe) strictEqual(linkable(u), false, u);
+});
+
+test("a labelled time gives fixtures/times/labels.json's text at its clock, and a card draws one in its badge, meta, row and tile", async () => {
+  const { value } = await import("../src/render/index.ts");
+  const f = JSON.parse(readFileSync(new URL("../../fixtures/times/labels.json", import.meta.url), "utf8"));
+  mock.timers.enable({ apis: ["Date"], now: Date.parse(f.now) });
+  try {
+    for (const c of f.cases) strictEqual(value(c.value), c.want, JSON.stringify(c.value));
+    const e = render(fixture("card"), ctx());
+    deepStrictEqual(
+      ["b-card__badge", "m", "b-row__subtitle", "b-row__value", "b-stat__value"].map((k) => part(e, k).textContent),
+      ["lapses in 13m", "as of 5m ago", "decides in 13m", "5m ago", "5m"],
+    );
+  } finally {
+    mock.timers.reset();
+  }
 });

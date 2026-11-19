@@ -1,0 +1,32 @@
+{
+  "block": {
+    "type": "list",
+    "id": "accounts",
+    "reorder": { "action": "order", "name": "accounts" },
+    "rows": [
+      { "type": "row", "id": "a", "title": "Alpha", "handle": true },
+      { "type": "row", "id": "b", "title": "Beta", "handle": true },
+      { "type": "row", "id": "c", "title": "Gamma", "handle": true },
+      { "type": "row", "id": "d", "title": "Delta" }
+    ]
+  },
+  "cases": [
+    { "grab": "a", "reach": 1, "want": ["b", "a", "c", "d"], "says": "Alpha, 2 of 4" },
+    { "grab": "a", "reach": 9, "want": ["b", "c", "d", "a"], "says": "Alpha, 4 of 4" },
+    { "grab": "c", "reach": -1, "want": ["a", "c", "b", "d"], "says": "Gamma, 2 of 4" },
+    { "grab": "c", "reach": -9, "want": ["c", "a", "b", "d"], "says": "Gamma, 1 of 4" },
+    { "grab": "b", "reach": 0, "want": ["a", "b", "c", "d"], "says": "Beta, 2 of 4" },
+    { "grab": "d", "reach": 1, "want": null },
+    { "grab": "x", "reach": 1, "want": null },
+    { "grab": "b", "nudges": [{ "dir": "down" }], "want": ["a", "c", "b", "d"], "says": "Beta, 3 of 4" },
+    { "grab": "b", "nudges": [{ "dir": "up" }, { "dir": "up" }], "want": null },
+    { "grab": "b", "nudges": [{ "dir": "down", "big": true }], "want": ["a", "c", "d", "b"], "says": "Beta, 4 of 4" },
+    { "grab": "c", "nudges": [{ "dir": "up", "big": true }], "want": ["c", "a", "b", "d"], "says": "Gamma, 1 of 4" },
+    { "grab": "b", "nudges": [{ "dir": "left" }], "want": null }
+  ],
+  "steps": {
+    "a": ["Move down", "Move to bottom"],
+    "b": ["Move up", "Move down", "Move to top", "Move to bottom"],
+    "d": []
+  }
+}

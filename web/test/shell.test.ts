@@ -85,7 +85,7 @@ test("a two-tab layout draws its tabs, opens the first tab's key on one stream a
   const tabs = all(root).filter((e) => e.classList.contains("b-tab"));
   deepStrictEqual(tabs.map((t) => t.textContent), ["Queue", "Done", "menu"]);
   strictEqual(sources.length, 1);
-  strictEqual(sources[0].url, "http://app.test/core/stream?v=1");
+  strictEqual(sources[0].url, "http://app.test/core/stream?v=2");
   answers.push({ status: 200, body: { keys: [{ k: "/screens/queue", rev: 3, screen: queue }] } });
   sources[0].emit("hello", { v: 1, sid: "s1", epoch: "e1", keys: 16 });
   await tick();
@@ -116,24 +116,37 @@ test("a kept copy paints before the stream answers", () => {
   shell.close();
 });
 
-test("an action posts to its source; its answer's ops patch the screen and its toast shows", async () => {
+test("an action posts to its source; its answer's ops patch the screen, its toast shows and its undo posts the undo first", async () => {
   const root = fresh();
   kept.set("b:core/screens/queue", JSON.stringify(queue));
   const shell = mount({ root, layout, url });
-  answers.push({ status: 200, body: { ops: [{ op: "merge", id: "r1", fields: { title: "acted" } }], toast: "went" } });
+  const toast = { title: "went", tone: "ok", undo: { action: "ungo", values: { n: 1 } } };
+  answers.push({ status: 200, body: { ops: [{ op: "merge", id: "r1", fields: { title: "acted" } }], toast } });
   byId(root, "go").onclick();
   await tick();
   deepStrictEqual(posts[0], { url: "http://app.test/core/action", body: { action: "go", block: "go", values: {}, screen: "queue" } });
   strictEqual(find(byId(root, "r1"), (x) => x.classList.contains("b-row__title"))?.textContent, "acted");
-  const toast = find(root, (x) => x.classList.contains("b-toast"));
-  strictEqual(toast.textContent, "went");
-  ok(!toast.hidden);
+  const shown = () => find(root, (x) => x.classList.contains("tst"));
+  const text = (cls) => find(shown(), (x) => x.classList.contains(cls))?.textContent;
+  deepStrictEqual([shown().className, shown().getAttribute("role"), shown().getAttribute("aria-label"), text("tsx")], ["tst ok", "status", "went", "went"]);
+  strictEqual(find(root, (x) => x.classList.contains("tsts")).getAttribute("aria-live"), "polite");
+  const undo = find(shown(), (x) => x.tagName === "BUTTON" && x.textContent === "undo");
+  answers.push({ status: 200, body: { toast: { title: "back" } } });
+  undo.onclick();
+  await tick();
+  deepStrictEqual(posts[1], { url: "http://app.test/core/action", body: { action: "ungo", values: { n: 1 }, screen: "queue" } });
+  deepStrictEqual([text("tsx"), shown().className], ["back", "tst"]);
   answers.push({ status: 500, body: {} });
   byId(root, "go").onclick();
   await tick();
-  strictEqual(toast.textContent, "action failed: 500");
-  ok(toast.classList.contains("bad"));
+  deepStrictEqual([text("tsx"), text("tsn")], ["back", "+1"]);
+  find(shown(), (x) => x.getAttribute("aria-label") === "dismiss").onclick();
+  strictEqual(shown(), undefined);
+  await new Promise((r) => setTimeout(r, 200));
+  deepStrictEqual([text("tsx"), shown().getAttribute("role"), shown().className], ["action failed: 500", "alert", "tst bad"]);
+  strictEqual(find(shown(), (x) => x.classList.contains("tsk")), undefined);
   shell.close();
+  strictEqual(find(root, (x) => x.classList.contains("tsts")), undefined);
 });
 
 test("the menu lists the menu's screens but hidden ones, and the look sheet wears a scheme the app gave", () => {

@@ -2,6 +2,7 @@ use std::collections::{BTreeMap, BTreeSet};
 
 use serde_json::{Map, Value};
 
+use crate::gesture::Word;
 use crate::kind::{Block, Fallback, Fields, Screen, Steps, Table, Tap};
 
 /// What makes a screen unfit to send: a server checks its own before it serves it.
@@ -107,7 +108,11 @@ fn plain(o: &Fields) -> Fallback {
         "title", "label", "header", "question", "name", "file", "command", "source", "src",
     ];
     Fallback {
-        title: named.into_iter().find_map(text).unwrap_or(kind(o)).into(),
+        title: named
+            .into_iter()
+            .find_map(text)
+            .unwrap_or(if kind(o) == "toast" { "Done" } else { kind(o) })
+            .into(),
         subtitle: text("subtitle").map(Into::into),
         tap: o.get("tap").and_then(|t| serde_json::from_value::<Tap>(t.clone()).ok()),
     }
@@ -151,6 +156,24 @@ fn shallow(o: &Fields) -> Value {
         }
     }
     Value::Object(top)
+}
+
+fn sent_once(top: &Value) -> Option<Value> {
+    let mut seen = BTreeSet::new();
+    let action = |w: &str| top.get(w)?.get("action")?.as_str();
+    let twice: Vec<&str> = Word::ALL
+        .into_iter()
+        .filter(|w| action(w).is_some_and(|a| !seen.insert(a)))
+        .collect();
+    if twice.is_empty() {
+        return None;
+    }
+    let mut v = top.clone();
+    let o = v.as_object_mut()?;
+    for w in twice {
+        drop(o.remove(w));
+    }
+    Some(v)
 }
 
 fn unplaced(s: &Steps) -> Option<&'static str> {
@@ -197,7 +220,9 @@ impl Walk<'_> {
                     });
                 }
             }
-            None if k == "island" => self.out.push(Fault::Unnamed { kind: k.clone() }),
+            None if k == "island" || Word::ALL.iter().any(|w| o.get(*w).is_some_and(Value::is_object)) => {
+                self.out.push(Fault::Unnamed { kind: k.clone() });
+            }
             _ => {}
         }
         let bare = || {
@@ -212,7 +237,7 @@ impl Walk<'_> {
         if Block::KINDS.contains(&k.as_str()) {
             let scope = id.filter(|i| !i.is_empty()).unwrap_or(scope);
             let top = shallow(o);
-            self.sends(&top, at, scope);
+            self.sends(sent_once(&top).as_ref().unwrap_or(&top), at, scope);
             self.core(&k, o, top);
             placed(o).for_each(|(p, c)| self.block(c, &format!("{at}/{p}"), scope));
         } else if !self.app.contains(&k.as_str()) {

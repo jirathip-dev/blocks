@@ -1,6 +1,6 @@
 use std::path::Path;
 
-use blocks::{Block, Frame, Have, Hello, MediaType, Mirror, Outdated, Synced};
+use blocks::{Answer, Block, Frame, Have, Hello, MediaType, Mirror, Outdated, Synced, Toast, Tone, Undo};
 use serde_json::Value;
 
 fn took<T: std::fmt::Debug>(t: T) -> Value {
@@ -69,15 +69,19 @@ fn the_mirror_runs_every_protocol_fixture() {
 #[test]
 fn a_media_type_runs_at_the_lower_version_and_refuses_one_more_than_one_apart() {
     let pick = |s: &str| MediaType::pick(s).map(|m| m.to_string());
-    let v1 = Ok("application/vnd.blocks+json;v=1".to_string());
+    let (v1, v2) = (
+        Ok("application/vnd.blocks+json;v=1".to_string()),
+        Ok("application/vnd.blocks+json;v=2".to_string()),
+    );
     assert_eq!(pick("application/vnd.blocks+json;v=1"), v1);
-    assert_eq!(pick("text/html, application/vnd.blocks+json; v=2"), v1);
-    assert_eq!(pick("application/json"), v1);
-    assert_eq!(pick(""), v1);
-    assert_eq!(pick("application/vnd.blocks+json;v=3"), Err(Outdated::Server));
+    assert_eq!(pick("text/html, application/vnd.blocks+json; v=2"), v2);
+    assert_eq!(pick("application/vnd.blocks+json; v=3"), v2);
+    assert_eq!(pick("application/json"), v2);
+    assert_eq!(pick(""), v2);
+    assert_eq!(pick("application/vnd.blocks+json;v=4"), Err(Outdated::Server));
     assert_eq!(pick("application/vnd.blocks+json;v=0"), Err(Outdated::App));
     assert_eq!(
-        pick("application/vnd.blocks+json;v=3, application/vnd.blocks+json;v=1"),
+        pick("application/vnd.blocks+json;v=4, application/vnd.blocks+json;v=1"),
         v1
     );
     let m = MediaType::pick("application/vnd.blocks+json;v=1").unwrap();
@@ -91,4 +95,34 @@ fn a_media_type_runs_at_the_lower_version_and_refuses_one_more_than_one_apart() 
     assert_eq!(m.read::<Hello>(&bytes).unwrap(), hello);
     assert!(m.read::<Hello>(b"{\"v\": 1}").is_err());
     assert_eq!(Outdated::App.to_string(), "update the app");
+}
+
+#[test]
+fn an_answers_toast_is_an_object_at_v2_and_its_plain_text_one_version_behind() {
+    let undo = Undo {
+        action: "unarchive".into(),
+        ..Undo::default()
+    };
+    let answer = |title: &str| Answer {
+        toast: Some(Toast::new(title).tone(Tone::Ok).undo(undo.clone())),
+        close: true,
+        ..Answer::default()
+    };
+    let at = |v: &str, a: &Answer| {
+        let m = MediaType::pick(&format!("application/vnd.blocks+json;v={v}")).unwrap();
+        serde_json::from_slice::<Value>(&m.write(a).unwrap()).unwrap()
+    };
+    let now = at("2", &answer("Archived 3 orders"));
+    assert_eq!(
+        serde_json::from_value::<Answer>(now.clone()).unwrap(),
+        answer("Archived 3 orders")
+    );
+    assert_eq!(now["toast"]["undo"]["action"], "unarchive");
+    let old = at("1", &answer("Archived 3 orders"));
+    assert_eq!(
+        old,
+        serde_json::from_str::<Value>(r#"{"toast": "Archived 3 orders", "close": true}"#).unwrap()
+    );
+    assert_eq!(at("1", &answer(""))["toast"], "Done");
+    assert_eq!(at("1", &Answer::default()), Value::Object(serde_json::Map::new()));
 }
