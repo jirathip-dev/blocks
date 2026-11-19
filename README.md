@@ -26,7 +26,7 @@ neutral default pair; the SwiftUI package. Still to come: the HTML renderer and 
 - `just fmt`, `just clippy`: rustfmt, clippy pedantic, and the banned APIs (`.drover/rules.md`)
 - `just fixtures`: each lint fixture in `ci/lint-fixtures/rust/` and `web/lint-fixtures/` must fail
 - `just test`, `just perf`, `just soak`: the tests, the release perf budgets and the flat-memory soak
-- `just sim 2000`: random op sequences on random screens, also run nightly (`.github/workflows/sim.yml`)
+- `just sim 2000`: random op sequences on random screens, then one seeded corpus of screens, ops and expressions through Rust, TS and Swift; also run nightly (`.github/workflows/sim.yml`)
 - `just deps`, `just deny`: the allow-list in `docs/deps.md`, then licences, advisories, duplicates and sources
 - `just web`: strict tsc and `web/lint.mjs` on the generated TS
 - `just arch`, `just cap`: drover's arch-check (`.drover/arch.toml`), and the line cap in `ci/cap.toml` (`scripts/line-cap.sh`)

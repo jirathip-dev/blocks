@@ -24,7 +24,7 @@
               { "ok": { "is": { "value": { "get": "email" }, "pattern": "email" } }, "say": "Enter an email address" }
             ]
           },
-          { "type": "text", "name": "name", "checks": [{ "ok": { "not": { "lt": [20, { "len": { "get": "name" } }] } }, "say": "20 letters at most" }] },
+          { "type": "text", "name": "name", "checks": [{ "ok": { "not": { "lt": [20, { "len": { "get": "name" } }] } }, "say": "20 letters at most" }, { "ok": null, "say": "a null check is not written" }] },
           { "type": "text", "name": "seats", "show": { "eq": [{ "get": "plan" }, "team"] }, "checks": [{ "ok": false, "say": "never shown" }] },
           { "type": "toggle", "name": "news", "enabled": { "get": "more" } }
         ]
