@@ -1,0 +1,9 @@
+Decided: merged origin/staging twice; sample.rs keeps staging's imports plus Time, web/dist/blocks.js is rebuilt by the gen lines
+Because: "Generated schema, TS and Swift types from `just gen`"
+Decided: staging's table label cells draw a Shown in Rust, web and Swift through the existing value helpers
+Because: "Every renderer draws them the same"
+Decided: staging build fix: children() skips a table's rows again, as placed() does, so the committed table trees stay byte-equal
+Because: crates/blocks/src/built.rs:89
+Rejected: committing the drifted table trees — they turned table rows into empty fallback blocks
+Check: fixtures/trees/table.json and fixtures/trees/swift/table.json equal staging's
+Owner: The branch is up to date with the latest shared work, and a table bug that shared work brought in is fixed.
