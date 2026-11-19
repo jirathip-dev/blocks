@@ -285,7 +285,7 @@ fn an_island_is_its_element_with_its_props_and_fallback_and_a_bad_name_a_plain_f
     };
     assert_eq!(
         island("x-map"),
-        "<x-map class=\"b b-island\" data-block=\"island\" data-id=\"m\" data-fallback=\"\" data-props=\"{&#34;q&#34;:&#34;&#60;a&#38;b&#62;&#34;}\"><div class=\"row\" data-id=\"\"><span class=\"rm\"><span class=\"rt b-row__title\">The map</span></span></div></x-map>"
+        "<x-map class=\"b b-island\" data-block=\"island\" data-id=\"m\" data-fallback=\"\" data-props=\"{&#34;q&#34;:&#34;&#60;a&#38;b&#62;&#34;}\" role=\"group\" aria-label=\"x-map\"><div class=\"row\" data-id=\"\"><span class=\"rm\"><span class=\"rt b-row__title\">The map</span></span></div></x-map>"
     );
     for bad in ["x map", "map", "X-map", "x-<b>", "1-x"] {
         let h = island(bad);
