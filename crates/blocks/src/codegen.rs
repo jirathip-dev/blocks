@@ -58,6 +58,7 @@ pub fn write(root: &Path) -> std::io::Result<()> {
             "swift/Sources/Blocks/Gen/Style.swift",
             style_swift().map_err(std::io::Error::other)?,
         ),
+        ("web/src/gen/layout.ts", layout_ts().map_err(std::io::Error::other)?),
         (
             "swift/Sources/Blocks/Gen/LayoutShapes.swift",
             layout_swift().map_err(std::io::Error::other)?,
@@ -161,6 +162,11 @@ fn schemes_swift() -> serde_json::Result<String> {
 fn style_swift() -> Out {
     let style = swift_defs(&schemars::schema_for!(theme::Style).to_value())?;
     Ok(style + &swift_defs(&schemars::schema_for!(theme::LabelRole).to_value())?)
+}
+
+fn layout_ts() -> Out {
+    let place = ts_defs(&schemars::schema_for!(layout::Place).to_value())?;
+    Ok(place + &ts_defs(&schemars::schema_for!(layout::Transition).to_value())?)
 }
 
 fn layout_swift() -> Out {
@@ -492,7 +498,18 @@ fn ts_props(ps: &[Prop<'_>], tag: Option<String>) -> String {
 }
 
 fn ts(s: &Value) -> Out {
-    let mut out = format!("export const schemaVersion = {SCHEMA_VERSION};\n");
+    let mut out = format!("export const schemaVersion = {SCHEMA_VERSION};\n") + &ts_defs(s)?;
+    let kinds = Block::KINDS
+        .iter()
+        .map(|k| format!("\"{k}\""))
+        .collect::<Vec<_>>()
+        .join(" | ");
+    out.push_str(&format!("\nexport type Kind = {kinds};\n"));
+    Ok(out)
+}
+
+fn ts_defs(s: &Value) -> Out {
+    let mut out = String::new();
     for (name, d) in defs(s)? {
         let body = match &d {
             Def::Struct(ps) => ts_props(ps, None),
@@ -513,12 +530,6 @@ fn ts(s: &Value) -> Out {
         };
         out.push_str(&format!("\nexport type {name} = {body};\n"));
     }
-    let kinds = Block::KINDS
-        .iter()
-        .map(|k| format!("\"{k}\""))
-        .collect::<Vec<_>>()
-        .join(" | ");
-    out.push_str(&format!("\nexport type Kind = {kinds};\n"));
     Ok(out)
 }
 
