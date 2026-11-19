@@ -1,6 +1,8 @@
 use std::path::{Path, PathBuf};
 
-use blocks::theme::{check_pack, css, default, gate, Mode, PerMode, Scheme, Style, Surface, Theme, DEFAULT_STYLE};
+use blocks::theme::{
+    check_pack, css, default, gate, Fills, Mode, PerMode, Scheme, Style, Surface, Theme, DEFAULT_STYLE,
+};
 
 const TOKENS: [&str; 19] = [
     "--bg", "--card", "--edge", "--line", "--scrim", "--fg", "--mute", "--l", "--link", "--g", "--a", "--r", "--p",
@@ -38,10 +40,10 @@ fn a_scheme_missing_a_token_or_with_a_bad_colour_does_not_parse() {
 
 #[test]
 fn the_default_pair_passes_the_gate_and_canonical_solarized_fails_it() {
-    assert_eq!(gate(&default().light), []);
-    assert_eq!(gate(&default().dark), []);
+    assert_eq!(gate(&default().light, Fills::Tint), []);
+    assert_eq!(gate(&default().dark, Fills::Tint), []);
     let text = std::fs::read_to_string(root().join("fixtures/schemes/solarized-canonical.json")).unwrap();
-    let misses = gate(&serde_json::from_str(&text).unwrap());
+    let misses = gate(&serde_json::from_str(&text).unwrap(), Fills::Tint);
     assert!(
         misses.iter().any(|m| m.what == "--mute on --bg" && m.got < m.min),
         "{misses:?}"
@@ -61,7 +63,7 @@ fn gate_gives_the_committed_misses_for_every_fixture_scheme() {
         match serde_json::from_str::<Scheme>(&text) {
             Err(e) => assert!(e.to_string().contains(want["refused"].as_str().unwrap()), "{stem}: {e}"),
             Ok(s) => {
-                let got = gate(&s);
+                let got = gate(&s, Fills::Tint);
                 let want = want.as_array().unwrap();
                 assert_eq!(got.len(), want.len(), "{stem}: {got:?}");
                 for (g, w) in got.iter().zip(want) {
@@ -184,6 +186,28 @@ fn every_good_style_fixture_reads_and_format_1_gets_the_default_space_and_motion
     let t = style("fixtures/styles/terminal.json").unwrap();
     assert_eq!((f64::from(t.space), f64::from(t.motion)), (1.0, 1.0));
     assert_eq!(t.surface, Surface::Dashed);
+}
+
+#[test]
+fn solid_fills_read_as_solid_and_the_default_stays_tint() {
+    assert_eq!(Fills::default(), Fills::Tint);
+    let solid: Style = serde_json::from_str(
+        r#"{"format": 2, "type": "default", "radius": 1, "surface": "glass", "fills": "solid", "marks": "symbols", "sections": "title", "labels": {}}"#,
+    )
+    .unwrap();
+    assert_eq!(solid.fills, Fills::Solid);
+    assert_eq!(serde_json::to_value(solid).unwrap()["fills"], "solid");
+}
+
+#[test]
+fn solid_fills_gate_the_background_on_each_full_accent_in_light_and_dark() {
+    assert_eq!(gate(&default().dark, Fills::Solid), []);
+    let light: Vec<(String, f64)> = gate(&default().light, Fills::Solid)
+        .into_iter()
+        .map(|m| (m.what, m.min))
+        .collect();
+    assert_eq!(light, [("--bg on --a".to_owned(), 4.5)]);
+    assert_eq!(gate(&default().light, Fills::Outline), []);
 }
 
 #[test]

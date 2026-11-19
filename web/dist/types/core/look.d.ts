@@ -11,7 +11,7 @@ export type Scale = {
     radius?: number;
     type?: "default" | "mono";
     surface?: "glass" | "dashed" | "solid";
-    fills?: "tint" | "outline";
+    fills?: "tint" | "outline" | "solid";
     marks?: "symbols" | "text";
     sections?: "title" | "quiet";
     labels?: Record<string, Label>;

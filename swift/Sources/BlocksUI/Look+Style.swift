@@ -5,6 +5,7 @@ extension Look {
     internal var type: TypeDesign { style.type }
     internal var glass: Bool { style.surface == .glass }
     internal var outline: Bool { style.fills == .outline }
+    internal var solid: Bool { style.fills == .solid }
     internal var textMarks: Bool { style.marks == .text }
     internal var quiet: Bool { style.sections == .quiet }
     internal var square: Bool { tiles.map { $0.radius == 0 } ?? (style.radius == 0) }
