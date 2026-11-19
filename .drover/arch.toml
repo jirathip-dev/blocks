@@ -7,6 +7,7 @@ generated = [
     "swift/Sources/Blocks/Gen/Blocks.swift",
     "web/src/gen/schemes.ts",
     "swift/Sources/Blocks/Gen/Schemes.swift",
+    "swift/Sources/Blocks/Gen/Style.swift",
 ]
 generate = "just gen"
 shared = ["crates/blocks/src/lib.rs", "crates/*/tests/support/**"]

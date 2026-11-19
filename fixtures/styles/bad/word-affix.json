@@ -1,0 +1,16 @@
+{
+  "format": 2,
+  "type": "default",
+  "space": 1,
+  "radius": 1,
+  "motion": 1,
+  "surface": "glass",
+  "fills": "tint",
+  "marks": "symbols",
+  "sections": "title",
+  "labels": {
+    "back": {
+      "prefix": "back "
+    }
+  }
+}

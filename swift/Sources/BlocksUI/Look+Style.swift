@@ -10,7 +10,7 @@ extension Look {
     internal var square: Bool { style.radius == 0 }
     internal var pill: AnyShape { square ? AnyShape(Rectangle()) : AnyShape(Capsule()) }
 
-    internal func label(_ role: LabelRole, _ text: String) -> String { style.labels[role]?.apply(text) ?? text }
+    internal func label(_ role: LabelRole, _ text: String) -> String { style.labels[role.rawValue]?.apply(text) ?? text }
 
     internal func radius(_ value: CGFloat, least: CGFloat = 0) -> CGFloat { max(value * style.radius, least) }
 }
@@ -66,9 +66,9 @@ internal struct Surfaced: ViewModifier {
         case .solid:
             content.background(palette.card, in: .rect(cornerRadius: radius * 0.6))
                 .overlay(RoundedRectangle(cornerRadius: radius * 0.6).strokeBorder(palette.edge, lineWidth: 1.5))
-        case .glass where look.still:
+        case _ where look.still:
             content.background(stillGlass(palette)).overlay(stillRim(palette))
-        case .glass:
+        default:
             content.glassEffect(interactive ? .regular.interactive() : .regular, in: .rect(cornerRadius: radius))
         }
     }
