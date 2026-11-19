@@ -35,6 +35,21 @@ final class ApplyTests: XCTestCase {
         try JSONValue(screen).list("blocks").first?.list("rows").compactMap(\.id) ?? []
     }
 
+    func testRowOpsChangeAddAndRemoveATablesRows() throws {
+        let table = """
+            {"type": "screen", "id": "s", "blocks": [{"type": "table", "id": "t", "columns": [{"id": "n", "label": "N", "kind": "number"}],
+              "rows": [{"id": "a", "cells": {"n": 1}}, {"id": "b", "cells": {"n": 2}}]}]}
+            """
+        let screen = try applied(
+            #"""
+            [{"op": "merge", "id": "a", "fields": {"cells": {"n": 5}}}, {"op": "remove", "id": "b"},
+             {"op": "insert", "into": "t", "before": "a", "block": {"id": "c", "cells": {"n": 3}}}]
+            """#, to: table)
+        guard case .screen(let s) = screen, case .table(let t)? = s.blocks?.first else { return XCTFail("no table") }
+        XCTAssertEqual(t.rows.map(\.id), ["c", "a"])
+        XCTAssertEqual(t.rows.last?.cells["n"], .number(5))
+    }
+
     func testMergeSetsFieldsOnANestedBlock() throws {
         let screen = try applied(#"[{"op": "merge", "id": "b", "fields": {"title": "Bee", "subtitle": "new"}}]"#)
         let row = try JSONValue(screen).list("blocks").first?.list("rows").last

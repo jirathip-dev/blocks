@@ -1,0 +1,107 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>table: states</title>
+<link rel="stylesheet" href="../neutral-default/tokens.css"><link rel="stylesheet" href="../../../web/src/blocks.css"><link rel="stylesheet" href="table.css"><link rel="stylesheet" href="page.css">
+<script src="table.js"></script><script src="data.js"></script></head>
+<body><main class="scr" id="page"></main>
+<script>
+const page = document.getElementById("page");
+function add(title, note, ...kids) {
+  const c = h("section", "case", h("h3", "sh", ...title), note ? h("p", "note", note) : null, ...kids);
+  page.append(c);
+  return c;
+}
+const B = (s) => h("b", "", s);
+const sub = (o) => ({ ...invoices, ...o });
+
+const kinds = {
+  type: "table", id: "kinds", title: "Support queue",
+  columns: [
+    { id: "topic", label: "Topic", kind: "text" },
+    { id: "owner", label: "Owner", kind: "text", sort: false },
+    { id: "opened", label: "Opened", kind: "date", era: "be" },
+    { id: "state", label: "State", kind: "tone" },
+    { id: "tickets", label: "Tickets", kind: "number", total: "count" },
+    { id: "wait", label: "Wait", unit: "h", kind: "number", digits: 1, total: "avg" },
+    { id: "load", label: "Load", unit: "%", kind: "bar", max: 100, total: "avg" },
+    { id: "refund", label: "Refunds", kind: "money", currency: "THB", total: "sum" },
+  ],
+  rows: [
+    { id: "a", cells: { topic: "Login loops on iPad", owner: "Mali", opened: "2026-11-02", state: { text: "working", tone: "working" }, tickets: 14, wait: 3.25, load: 82, refund: 1250 } },
+    { id: "b", cells: { topic: "Export drops the last row", owner: null, opened: "2026-11-09", state: { text: "needs triage", tone: "needs" }, tickets: 3, wait: 26, load: 15, refund: null } },
+    { id: "c", cells: { topic: "Receipts in the wrong currency", owner: "Ton", opened: "2026-11-11", state: { text: "failing", tone: "fail" }, tickets: 1207, wait: null, load: 100, refund: 48990.5 } },
+    { id: "d", cells: { topic: "Dark mode on old Android", owner: "Ploy", opened: "2026-10-28", state: { text: "done", tone: "done" }, tickets: null, wait: 0.5, load: 40, refund: 0 } },
+  ],
+};
+add([B("1 columns"), " · text, number, money, date, tone (badge), bar; blanks; totals"],
+  "text and date start, numbers end (tabular, grouped, at most 2 decimals or the column's digits). Money always has 2 decimals and its currency sign (฿ for THB) in the header, not in each cell. Opened has era: be, so the year is the Buddhist Era (2569 = 2026). Tone is a square tag in its colour. A bar cell draws its number with a small bar: value ÷ the column's max (else the largest value in the rows), in the column's tone. Owner has sort: false, so its header is not a button. A blank cell draws nothing. Totals: sum (no word), avg (1 decimal), count (non-blank cells).",
+  table(kinds));
+
+const four = sub({ id: "s", title: "Invoices", rows: [invoices.rows[11], invoices.rows[1], invoices.rows[3], invoices.rows[10], invoices.rows[5]], columns: invoices.columns.filter((c) => c.id !== "issued") });
+add([B("2 sort"), " · tap a header: ↑, then ↓, then back to the order as sent"],
+  "one column at a time, stable, and blank cells last in both directions (INV-0143 and INV-0144 have no due date). The sorted header is ink and says aria-sort; the others are grey with no arrow. On a phone the headers are gone and the sort select carries the same states.",
+  table(four, { sort: null }), table(four, { sort: { by: "due", dir: "asc" } }), table(four, { sort: { by: "due", dir: "desc" } }));
+
+add([B("3 filter"), " · one box: every word must be in some cell"],
+  "case-insensitive, over the text as drawn (so “nov” finds November dates). The count says how many of all, and the totals follow what is shown.",
+  table(invoices, { q: "orchard" }));
+
+add([B("4 no match"), " and ", B("5 empty")],
+  "a filter that hides every row says so and offers clear (it empties the box). A table with no rows draws the block's empty line, with no filter box, no sort select and no totals.",
+  table(invoices, { q: "zzz" }), table(sub({ rows: [] })));
+
+const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const people = [["Mali", 3], ["Ton", 7], ["Ploy", 11], ["Arun", 5]];
+const wide = {
+  type: "table", id: "hours", title: "Hours by month · 2026",
+  columns: [{ id: "who", label: "Person", kind: "text" }, ...months.map((m) => ({ id: m, label: m, kind: "number", total: "sum", phone: "hide" })), { id: "year", label: "Year", kind: "number", total: "sum" }],
+  rows: people.map(([who, s]) => {
+    const cells = { who };
+    let y = 0;
+    months.forEach((m, i) => { const v = 120 + ((s * (i + 3) * 37) % 60); cells[m] = v; y += v; });
+    cells.year = y;
+    return { id: who, cells };
+  }),
+};
+const many = { ...wide, rows: [...wide.rows, ...wide.rows.map((r) => ({ ...r, id: r.id + "2", cells: { ...r.cells, who: r.cells.who + " (contract)" } })), ...wide.rows.map((r) => ({ ...r, id: r.id + "3", cells: { ...r.cells, who: r.cells.who + " (overtime)" } }))] };
+const w = table(many, { sort: { by: "year", dir: "desc" } });
+w.querySelector(".tbw").style.maxHeight = "260px";
+add([B("6 wide and tall"), " · the grid scrolls inside the tile; the header row, the first column and the totals row stay put"],
+  "drawn scrolled part-way down, as on a short window; a grid wider than the tile also scrolls sideways. the grid is at most 70% of the window tall, then scrolls inside the tile. Headers stick to its top, the totals row to its bottom, the first column (with the select box, if any) to its left. On a phone there is no grid: the page scrolls and the bar (filter, sort, bulk actions) sticks to the top of the screen instead; columns marked phone: hide drop out (here the twelve months).", w);
+
+const named = sub({ id: "hw", rows: [inv("INV-0146", "Orchard Lane Clinic · Riverside branch (paediatrics)", { text: "sent", tone: "done" }, "2026-11-17", "2026-12-17", 6, 9000), ...invoices.rows.slice(1, 6)] });
+add([B("7 column hide and width")],
+  "columns starts hidden with hide: true; the columns button lists them and the user can show or hide any but the first. The choice is local, kept per block id like sort, and the button says how many are hidden. width (in characters) fixes a column: longer text ends in … with the whole text on hover (Client is 18). Filter only searches the columns shown. On a phone, hiding a column drops it from the grey line.",
+  table(named, { hidden: ["issued", "hours"], menu: "columns" })).style.paddingBottom = "48px";
+
+const sl = sub({ id: "sl", rows: invoices.rows.slice(0, 6) });
+add([B("8 select and bulk actions")],
+  "a table with select gets a box on each row and one in the header for all the rows shown (a dash when some are). Once a row is ticked, the bar turns grey and becomes the bulk bar: the count, the table's actions (a bad one in red), export and clear. A bulk action sends the action with the ticked row ids; the app answers with ops as for any action. Rows the filter hides drop out of the selection, so an action only ever touches rows on screen. Ticking is separate from the row's tap.",
+  table(sl), table(sl, { sel: ["INV-0133", "INV-0136", "INV-0134"] }), table(sl, { sel: sl.rows.map((r) => r.id) }));
+
+add([B("9 export")],
+  "blocks draws the control and sends the action; the app builds the file. With two formats, export opens a menu; with one, the button names it. The action carries the format, the shown column ids, the sort, the filter text and the ticked row ids (or none, for every row shown), so the file is what is on screen.",
+  table(sl, { menu: "export" }), table(sub({ id: "ex1", rows: invoices.rows.slice(0, 2), export: ["csv"], select: undefined })));
+
+const now = sub({ id: "d", rows: [invoices.rows[4], invoices.rows[6], invoices.rows[7], inv("INV-0145", "Kestrel Studio", { text: "draft", tone: "mute" }, null, null, 3, 4500)], columns: invoices.columns.filter((c) => c.id !== "issued"), sort: null });
+add([B("10 row diff"), " · rows are keyed by id"],
+  "an update patches one row (INV-0139 sent → paid), adds INV-0145 and removes INV-0138 without redrawing the rest. Changed and new rows carry a 3px ink edge until the next update; a new row fades in (b-late), a removed one just goes. Sort and the filter text stay through updates.",
+  table(now, { prev: prevInvoices, added: ["INV-0145"] }));
+
+const p = add([B("11 phone rows"), " · under 600px wide, the same DOM as rows"],
+  "title (the first text column, or phone: title), then the tag, then the value (the last number or money column with a total) and › when the row taps. A grey line under it holds the other cells, each with its column label. Totals become the last row. Filter box and sort select share the bar. With select, the box sits before the title and the select-all box moves into the bar; the bulk bar wraps its buttons.");
+const ph = h("div", "duo");
+for (const t of [table(invoices, { q: "orchard" }), table(sub({ rows: invoices.rows.slice(4, 7) }), { sort: { by: "amount", dir: "desc" }, sel: ["INV-0137"] }), table(sub({ rows: invoices.rows.slice(0, 3) }), { menu: "columns", hidden: ["hours", "late"] })]) ph.append(t);
+p.append(ph);
+
+add([B("12 static page"), " (site writer, JS off)"],
+  "the site writer prints the same table in the block's sort order with the totals worked out, every column (hide is ignored). No filter box, sort select, select boxes, columns or export, and the headers are plain text, the sorted one still marked. The container query still turns it into phone rows.",
+  table(sub({ id: "st", rows: invoices.rows.slice(0, 5) }), { js: false }));
+
+const fbk = h("div", "list");
+fbk.append(fallback(invoices));
+add([B("13 fallback"), " · what a renderer without table draws"],
+  "one row: the title, the first summed column's total, and the row count. The SwiftUI renderer draws the table natively (Grid on a wide window, the same phone rows on an iPhone).", fbk);
+
+const tw = w.querySelector(".tbw"); tw.scrollLeft = 9999; tw.scrollTop = 120;
+settle();
+</script></body></html>

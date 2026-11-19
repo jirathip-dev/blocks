@@ -377,18 +377,18 @@ fn every_golden_parses_with_no_fault() {
     );
 }
 
-const KINDS_27: [&str; 27] = [
+const KINDS: [&str; 30] = [
     "screen", "sheet", "section", "list", "row", "card", "choice", "form", "config", "secret", "run", "button",
     "chips", "stat", "text", "images", "web", "diff", "editor", "scene", "diagram", "composer", "prose", "hero",
-    "media", "nav", "island",
+    "media", "nav", "island", "lines", "steps", "table",
 ];
 
 #[test]
-fn the_27_kinds_each_have_a_typed_sample_that_is_its_fixture() {
+fn the_30_kinds_each_have_a_typed_sample_that_is_its_fixture() {
     let mut kinds: Vec<&str> = Block::KINDS.iter().copied().chain(["island"]).collect();
     kinds.sort_unstable();
     kinds.dedup();
-    let mut want = KINDS_27.to_vec();
+    let mut want = KINDS.to_vec();
     want.sort_unstable();
     assert_eq!(kinds, want);
     let samples = blocks::samples();
@@ -729,4 +729,40 @@ fn a_kind_with_no_stress_row_or_no_why_fails_the_table_check() {
         stress_rows(&quiet, Block::KINDS),
         Err("secret: a variant left out with no why".into())
     );
+}
+
+#[test]
+fn a_stepper_must_name_its_current_step_or_be_done_and_never_carry_bars() {
+    let steps = r#"[{"id": "a", "label": "Stop"}, {"id": "b", "label": "Lines"}]"#;
+    let faults = |extra: &str| {
+        let b = format!(r#"{{"type": "steps", "id": "x", "steps": {steps}{extra}}}"#);
+        let got = Built::new(parse(&format!(r#"{{"type": "screen", "id": "s", "blocks": [{b}]}}"#))).check(&[]);
+        got.into_iter()
+            .map(|f| match f {
+                Fault::Shape { kind, why } => format!("{kind}: {why}"),
+                f => format!("{f:?}"),
+            })
+            .collect::<Vec<_>>()
+    };
+    assert_eq!(faults(r#", "current": "b""#), Vec::<String>::new());
+    assert_eq!(faults(r#", "done": true"#), Vec::<String>::new());
+    assert_eq!(faults(""), ["steps: a stepper with neither a current step nor done"]);
+    assert_eq!(
+        faults(r#", "done": false"#),
+        ["steps: a stepper with neither a current step nor done"]
+    );
+    assert_eq!(
+        faults(r#", "current": "z""#),
+        ["steps: a stepper whose current names no step"]
+    );
+    assert_eq!(
+        faults(r#", "current": "a", "done": true"#),
+        ["steps: a stepper both done and at a current step"]
+    );
+    assert_eq!(
+        faults(r#", "current": "a", "bars": []"#),
+        ["steps: a steps block with both steps and bars"]
+    );
+    let empty = parse(r#"{"type": "screen", "id": "s", "blocks": [{"type": "steps", "id": "x", "steps": []}]}"#);
+    assert_eq!(Built::new(empty).check(&[]), vec![]);
 }

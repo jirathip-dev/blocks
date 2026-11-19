@@ -51,7 +51,8 @@ extension Look {
 }
 
 extension Palette {
-    internal func token(_ name: String) -> Color {
+    /// The colour a tile token such as `--edge` names.
+    public func token(_ name: String) -> Color {
         switch name {
         case "--line": line
         case "--mute": mute
