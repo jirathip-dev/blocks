@@ -144,8 +144,31 @@ fn schemes_ts() -> serde_json::Result<String> {
     Ok(format!(
         "export type Mode = \"dark\" | \"light\";\n\nexport type Token = {tokens};\n\n\
          export type Scheme = {{ label: string; \"color-scheme\": Mode; tokens: Record<Token, string> }};\n\n\
-         export const schemes: Record<string, Scheme> = {};\n",
-        serde_json::to_string_pretty(&all)?
+         export const schemes: Record<string, Scheme> = {};\n\n\
+         export const defaultPair: Record<Mode, Scheme> = {};\n\n\
+         export const defaultStyle: Record<string, string> = {};\n",
+        serde_json::to_string_pretty(&all)?,
+        serde_json::to_string_pretty(theme::default())?,
+        serde_json::to_string_pretty(&std::collections::BTreeMap::from(theme::DEFAULT_STYLE))?
+    ))
+}
+
+fn scheme_swift(s: &theme::Scheme) -> serde_json::Result<String> {
+    let q = |s: &str| serde_json::to_string(s);
+    let mode = match s.mode {
+        theme::Mode::Dark => "dark",
+        theme::Mode::Light => "light",
+    };
+    let tokens = s
+        .tokens
+        .all()
+        .iter()
+        .map(|(k, v)| Ok(format!("{}: {}", q(k)?, q(v.as_str())?)))
+        .collect::<serde_json::Result<Vec<_>>>()?
+        .join(", ");
+    Ok(format!(
+        "Scheme(label: {}, mode: .{mode}, tokens: [{tokens}])",
+        q(&s.label)?
     ))
 }
 
@@ -157,24 +180,20 @@ fn schemes_swift() -> serde_json::Result<String> {
          public let tokens: [String: String]\n}\n\npublic let blocksSchemes: [String: Scheme] = [\n",
     );
     for (name, s) in theme::schemes() {
-        let mode = match s.mode {
-            theme::Mode::Dark => "dark",
-            theme::Mode::Light => "light",
-        };
-        let tokens = s
-            .tokens
-            .all()
-            .iter()
-            .map(|(k, v)| Ok(format!("{}: {}", q(k)?, q(v.as_str())?)))
-            .collect::<serde_json::Result<Vec<_>>>()?
-            .join(", ");
-        out.push_str(&format!(
-            "    {}: Scheme(label: {}, mode: .{mode}, tokens: [{tokens}]),\n",
-            q(name)?,
-            q(&s.label)?
-        ));
+        out.push_str(&format!("    {}: {},\n", q(name)?, scheme_swift(s)?));
     }
-    out.push_str("]\n");
+    let pair = theme::default();
+    let style = theme::DEFAULT_STYLE
+        .iter()
+        .map(|(k, v)| Ok(format!("{}: {}", q(k)?, q(v)?)))
+        .collect::<serde_json::Result<Vec<_>>>()?
+        .join(", ");
+    out.push_str(&format!(
+        "]\n\npublic let blocksDefaultLight = {}\n\npublic let blocksDefaultDark = {}\n\n\
+         public let blocksDefaultStyle: [String: String] = [{style}]\n",
+        scheme_swift(&pair.light)?,
+        scheme_swift(&pair.dark)?
+    ));
     Ok(out)
 }
 

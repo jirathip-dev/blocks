@@ -268,6 +268,8 @@ pub struct Hex(String);                                  // #rrggbb or #rrggbbaa
 pub struct Miss { pub what: String, pub got: f64, pub min: f64 }
 pub fn gate(s: &Scheme) -> Vec<Miss>;                    // text 4.5:1, state colours 3:1, ΔE2000 20 apart
 pub fn schemes() -> &'static [(&'static str, Scheme)];   // theme/schemes/*.json
+pub fn default() -> &'static PerMode<Scheme>;            // the built-in neutral grey pair, light and dark
+pub const DEFAULT_STYLE: [(&str, &str); 11];             // its tile style: radius, seam, dot grid, motion
 
 pub struct Style { format, label, icon, type_, space, radius, motion, surface, fills, marks, figures, sections, labels, stage }
 pub fn css(schemes: &PerMode<Scheme>, style: &Style) -> String;   // every token as a CSS variable, both modes
@@ -281,6 +283,10 @@ pub fn check_pack(files: &[(&str, &[u8])]) -> Vec<String>;   // cooee's theme ga
   (`styles-as-packs/shapes.md`, cooee `docs/themes.md`). `space` and `motion` are new keys with defaults, so
   `style.json` goes to format 2 and a reader takes 1 and 2. These are the tokens q2061 names: colours (`Scheme`);
   type, spacing, radius and motion (`Style`).
+- `default()` is blocks' one theme of its own (q2118, q2119): a neutral grey pair with ink as the only accent and
+  the five state colours muted and used small, plus the tile style values in `DEFAULT_STYLE` (`docs/theme.md`).
+  It paints when no theme is supplied: blocks' tests, the headless PNGs, the showcase and an app's first paint.
+  Both schemes pass the gate; the 12 named schemes leave for swag in their own issue.
 - The gate is this one function. The page and the Swift app never run it: a server serves only what passed.
 - A renderer reads the theme through a port, so it never knows which art an app has:
 
@@ -297,7 +303,7 @@ export function packs(look: { theme: ThemeJson; base: string }): Theme;      // 
 | `schema/blocks.schema.json` | the Rust types | `blocks-codegen` (schemars, the `schema` feature) |
 | `web/src/gen/types.ts`, `swift/Sources/Blocks/Gen/Blocks.swift` | the schema | `blocks-codegen` |
 | `web/src/gen/hooks.ts` and the `site` writers' names | each kind file's `parts` and `variant` | `blocks-codegen` |
-| `web/src/gen/schemes.ts`, `swift/Sources/Blocks/Gen/Schemes.swift` | `theme/schemes/*.json` | `blocks-codegen` |
+| `web/src/gen/schemes.ts`, `swift/Sources/Blocks/Gen/Schemes.swift` | `theme/schemes/*.json` and `theme::default()` | `blocks-codegen` |
 | `fixtures/blocks/<kind>.json` | each kind file's typed sample (it replaces blocks#1's `sample.json`) | `blocks-codegen` |
 | `fixtures/trees/<kind>.json`, `fixtures/html/<kind>.html` | those fixtures, through `tree::expect` and `site` | `blocks-codegen` |
 | `web/dist/blocks.js`, `web/dist/blocks.css` | `web/src` | `npm run build` (esbuild, pinned) |

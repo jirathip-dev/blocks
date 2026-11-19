@@ -6,6 +6,7 @@ import { card } from "./card.ts";
 import { chips } from "./chips.ts";
 import { choice } from "./choice.ts";
 import { composer } from "./composer.ts";
+import { diagram } from "./diagram.ts";
 import { form } from "./form.ts";
 import { images } from "./images.ts";
 import { list } from "./list.ts";
@@ -119,7 +120,7 @@ export function toggle(e: HTMLElement, id: unknown, c: Ctx, folds = false) {
 
 const isFallback = (v: unknown): v is Fallback => isBlk(v);
 
-function fallback(b: Blk, c: Ctx): HTMLElement {
+export function fallback(b: Blk, c: Ctx): HTMLElement {
   const box = el("div");
   box.dataset.fallback = "";
   const f = b.fallback ?? { title: b.type };
@@ -154,7 +155,7 @@ export const R: { [K in Kind]: (b: Of<K>, c: Ctx) => HTMLElement | null } = {
   diff: gap(42),
   editor: gap(43),
   scene: gap(38),
-  diagram: gap(23),
+  diagram,
   composer,
   prose: gap(18),
   hero: gap(18),
