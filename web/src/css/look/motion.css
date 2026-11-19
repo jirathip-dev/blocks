@@ -1,0 +1,6 @@
+.b-in{animation:b-settle calc(var(--settle) * var(--motion,1)) var(--ease) backwards;animation-delay:calc(var(--i,0) * min(var(--stagger),var(--build) / max(1,var(--n,1) - 1)) * var(--motion,1))}
+.b-late{animation:b-enter calc(var(--enter) * var(--motion,1)) var(--ease) backwards}
+@keyframes b-settle{from{opacity:0;transform:translateY(var(--rise))}}
+@keyframes b-enter{from{opacity:0}}
+@keyframes s{to{transform:rotate(1turn)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}

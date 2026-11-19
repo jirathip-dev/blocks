@@ -1,0 +1,2 @@
+.chips{display:flex;flex-wrap:wrap;gap:var(--s4) var(--s4);margin:var(--s4) 0;padding:0 var(--s1)}
+.chips button.on{background:var(--l);color:var(--bg)}
