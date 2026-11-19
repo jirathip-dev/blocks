@@ -22,10 +22,11 @@ clippy:
     cargo clippy --workspace --all-features --lib --bins --locked -- -D warnings
     cargo clippy --workspace --all-features --tests --locked -- -D warnings {{test_allow}}
 
-# Each ci/lint-fixtures/rust/<lint>.rs fails clippy and each web/lint-fixtures/<name>.ts fails web/lint.mjs.
+# Each ci/lint-fixtures/rust/<lint>.rs fails clippy and each web/lint-fixtures/<name>.ts and ci/lint-fixtures/swift/<name>.swift fails web/lint.mjs.
 fixtures: web-install
     scripts/lint-fixtures.sh rust
     scripts/lint-fixtures.sh ts
+    scripts/lint-fixtures.sh swift
 
 test:
     cargo test --workspace --all-features --locked
@@ -92,10 +93,11 @@ cap:
 actionlint:
     actionlint -color
 
-# The Swift package's tests, warnings as errors; macOS only (CI's swift job).
+# The token lint on the SwiftUI views (ci/tokens), then the Swift package's tests, warnings as errors; macOS only (CI's swift job).
 swift:
     #!/usr/bin/env bash
     set -euo pipefail
+    node --no-warnings web/lint.mjs swift/Sources/BlocksUI
     if [ "$(uname)" != Darwin ]; then echo "swift: macOS only, skipped (CI's swift job runs it)"; exit 0; fi
     BLOCKS_STRICT=1 swift test
 
