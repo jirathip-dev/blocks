@@ -1,0 +1,4 @@
+Decided: merge origin/staging, keep both the scene and secret tests, drop both from the fallback list, and rebuild web/dist
+Because: web/test/render.test.ts:17
+Rejected: none
+Owner: Brought the branch up to date with staging; both the scene and secret views now draw natively.
