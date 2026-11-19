@@ -1,0 +1,5 @@
+Decided: merged origin/staging (web #71, editor #72, swift #76) and kept both sides: diff and editor modules, match arms, imports and tests; gaps list is only island; rebuilt web/dist from the merged sources
+Because: web/test/render.test.ts:17
+Rejected: none
+Check: web/src/render/index.ts maps web, diff and editor to their native views
+Owner: Brought the diff view up to date with the latest shared branch; nothing changes for users beyond the diff view itself.
