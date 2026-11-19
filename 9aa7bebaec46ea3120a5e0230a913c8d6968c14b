@@ -1,0 +1,11 @@
+Decided: Replica in Apply.swift is now the keyed B2 follower (hello, have, frame, synced), a line-for-line port of the crate's Mirror; the OldFrame receiver and ApplyError.gap go.
+Because: "on top of `Apply.swift`, the same behaviour as the Rust and TS `mirror`"
+Because: crates/blocks/src/mirror.rs:79
+Decided: badge and dot stay Replica-wide and change only when a patch applies, as the old Replica set them only on a frame that applied.
+Because: "It keeps `badge` and `dot`, as `Replica` does today."
+Decided: the name stays Replica; the README says it is the ADR's Swift Mirror (docs/swift.md does not exist in this repo).
+Because: "a public `Mirror` would shadow Swift's own `Mirror`"
+Rejected: keeping the OldFrame receiver beside the new one — two ways to follow a stream; OldFrame decoding stays covered by SampleTests.
+Check: ApplyTests.testTheReplicaRunsEveryProtocolFixture reads fixtures/protocol at the repo root and checks every took, outdated, have and final screen.
+Check: have is sorted by key, as the crate's BTreeMap orders it.
+Owner: The Apple apps can now follow the same live screen stream as web and Rust, surviving lost, doubled or out-of-order updates.
