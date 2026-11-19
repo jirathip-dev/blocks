@@ -128,7 +128,7 @@ fn shown(f: f64) -> String {
     format!("{}{body}", if f < 0.0 { "-" } else { "" })
 }
 
-fn text(l: &Lit) -> String {
+pub(crate) fn text(l: &Lit) -> String {
     match l {
         Lit::Null => String::new(),
         Lit::Bool(b) => b.to_string(),

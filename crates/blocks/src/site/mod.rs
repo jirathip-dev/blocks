@@ -363,7 +363,14 @@ impl<'a> W<'a> {
             (None, Some(x)) => Go::Post(self.post(block, x, &fields(&[a.get("values")])), x.into()),
             (None, None) => Go::Stay,
         };
-        self.btn(&shown(a.get("label")), cls, &go, &[], None);
+        let off = crate::behave::sends(a).is_some_and(|k| self.view.acts.contains(k));
+        self.btn(
+            &shown(a.get("label")),
+            cls,
+            &go,
+            if off { &[("disabled", "")] } else { &[] },
+            None,
+        );
     }
 }
 

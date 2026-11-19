@@ -159,11 +159,13 @@ extension Expr {
     }
 }
 
-/// What the state makes of a screen, as the crate's `behave::View`: keyed by block id or field name.
+/// What the state makes of a screen, as the crate's `behave::View`: by block id, field name, action or state key.
 public struct Behaviour: Equatable, Sendable {
     public var hidden: Set<String> = []
     public var disabled: Set<String> = []
     public var says: [String: String] = [:]
+    public var acts: Set<String> = []
+    public var values: [String: String] = [:]
 
     public init() {}
 
@@ -226,6 +228,13 @@ public struct Behaviour: Equatable, Sendable {
             }
         }
         if failing, let id { disabled.insert(id) }
+        let all = b.list("actions") + b.list("swipe") + b.list("menu") + (b["button"].map { [$0] } ?? [])
+        for a in all + all.flatMap({ $0.list("menu") }) where Self.holds(a["enabled"], state) == false {
+            if let key = a.string("action") ?? a["tap"]?.string("action") { acts.insert(key) }
+        }
+        for i in [b] + b.list("items") {
+            if let key = i["value"]?.string("get") { values[key] = (state[key] ?? .null).text }
+        }
         for c in Self.kids(b) { walk(c, state) }
     }
 }
