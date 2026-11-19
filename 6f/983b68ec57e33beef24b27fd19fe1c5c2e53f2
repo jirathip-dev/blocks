@@ -1,0 +1,32 @@
+Decided: a core kind `lines` drawn by the web renderer, the static writer and SwiftUI, with totals summed in whole minor units and a debit = credit balance check
+Because: "Repeating rows of fields (e.g. account, description, qty, amount) with add and remove, a running total, per-row errors, and a balance check"
+Decided: `mul` in expr in all three languages, reached through a column's `calc` expression over its row's values
+Because: q2296
+Decided: the rows are on the wire as `items`, not `rows`
+Because: crates/blocks/src/built.rs:49
+Rejected: `rows` as in the design proposal — Built::check, the fallbacks and the tree treat `rows` as child blocks, so line rows would be checked as blocks
+Decided: the static writer writes the renderer's element, not a read-only table
+Because: web/test/site.test.ts:74
+Rejected: the design README's read-only table — site and render must give the same element per kind so the live page can adopt it without a redraw
+Check: totals and the balance agree across web/src/render/lines.ts, crates/blocks/src/site/lines.rs and swift/Sources/BlocksUI/BlockLines.swift (the same minor/money rules)
+Owner: journals, invoices and purchase requests can now be edited line by line, with totals and a balance check on every screen
+
+Decided: the SwiftUI lines test reads OCR's " - " as the balance line's " · ", as it already reads "•"
+Because: swift/Tests/BlocksTests/LinesTests.swift:28
+Rejected: asserting on the accessibility tree only — the test is the SwiftUI render test the issue asks for, so it keeps reading the drawn pixels
+Decided: no change for the perf overrun of the HTML writer budget
+Because: crates/blocks/tests/perf.rs:88
+Rejected: raising the budget — staging's own CI run 44487916781 failed it at 10.84 ms without this PR, and the perf screen has no lines block
+Check: the merge of origin/staging kept both sides' tests in crates/blocks/tests/site.rs and web/test/render.test.ts
+Owner: the line-item editor branch is up to date with staging and its iPhone test no longer trips on how the CI machine reads a dot
+
+Decided: the showcase test expects 34 pages, the new kind-lines page among them
+Because: web/test/pages/showcase.test.ts:51
+Rejected: leaving kind-lines out of the site — every core kind gets a showcase page from site/src/kinds.rs
+Check: kind-lines.html gives the same PNG and tree before and after blocks.js adopts it
+Owner: the showcase website's check now counts the new line-item editor page
+
+Decided: merge origin/staging and rebuild web/dist/blocks.js from the merged sources instead of hand-merging the minified bundle
+Because: web/package.json:7
+Rejected: none
+Owner: the line-item editor branch is up to date with staging again
