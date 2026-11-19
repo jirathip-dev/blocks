@@ -1,0 +1,4 @@
+Decided: merge origin/staging into issue-20; web/src/shell.ts keeps both the behave sync hook and staging's built set, web/dist rebuilt from source
+Because: web/src/shell.ts:49
+Rejected: none
+Owner: The behaviours branch now sits on top of the latest staging, with every local gate passing.
