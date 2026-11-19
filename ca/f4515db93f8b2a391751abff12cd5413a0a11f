@@ -1,0 +1,13 @@
+Decided: the harness rasterises every pass, so pass and patch timings include the pixels, not only egui's layout.
+Because: docs/architecture/desktop/design.md:56
+Decided: the stage paints the scheme's bg token, so a PNG is opaque and a dark scheme has a dark ground.
+Because: crates/blocks-desktop/src/stage.rs:67
+Decided: PNG uses stored deflate blocks; the doc's shot copy is recompressed losslessly to keep the repo small.
+Because: docs/architecture/desktop/adr.md:61
+Decided: Noto Sans Thai (OFL) ships as a test asset in crates/blocks-desk/tests/thai, given by --font, never linked.
+Because: "with a Thai-capable font given to the harness"
+Decided: Thai mid-word wrapping is recorded as egui's defect in docs/desktop.md, not worked around.
+Because: "A defect that is egui's is recorded in `docs/desktop.md` beside the right-to-left note"
+Rejected: drawing the form's field label now — form is S5's kind; this slice draws its fallback row only.
+Check: perf test fails over budget (an earlier slower raster exited 101 at a 13 ms patch); PNG bytes match Python's zlib.
+Owner: Desktop shots are now real PNGs, CI holds the 200-row screen to 60 fps, and Thai wraps mid-word (egui's bug).
