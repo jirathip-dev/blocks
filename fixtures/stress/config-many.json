@@ -1,0 +1,1007 @@
+{
+  "action": "save",
+  "fields": [
+    {
+      "label": "Repo",
+      "name": "repo-0",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-1",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-2",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-3",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-4",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-5",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-6",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-7",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-8",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-9",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-10",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-11",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-12",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-13",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-14",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-15",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-16",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-17",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-18",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-19",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-20",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-21",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-22",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-23",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-24",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-25",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-26",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-27",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-28",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-29",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-30",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-31",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-32",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-33",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-34",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-35",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-36",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-37",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-38",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-39",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-40",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-41",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-42",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-43",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-44",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-45",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-46",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-47",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-48",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-49",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-50",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-51",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-52",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-53",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-54",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-55",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-56",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-57",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-58",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-59",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-60",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-61",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-62",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-63",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-64",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-65",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-66",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-67",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-68",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-69",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-70",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-71",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-72",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-73",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-74",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-75",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-76",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-77",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-78",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-79",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-80",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-81",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-82",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-83",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-84",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-85",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-86",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-87",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-88",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-89",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-90",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-91",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-92",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-93",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-94",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-95",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-96",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-97",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-98",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-99",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-100",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-101",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-102",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-103",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-104",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-105",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-106",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-107",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-108",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-109",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-110",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-111",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-112",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-113",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-114",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-115",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-116",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-117",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-118",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-119",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-120",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-121",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-122",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-123",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-124",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-125",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-126",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-127",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-128",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-129",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-130",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-131",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-132",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-133",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-134",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-135",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-136",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-137",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-138",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-139",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-140",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-141",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-142",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-143",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-144",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-145",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-146",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-147",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-148",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-149",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-150",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-151",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-152",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-153",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-154",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-155",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-156",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-157",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-158",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-159",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-160",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-161",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-162",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-163",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-164",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-165",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-166",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-167",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-168",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-169",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-170",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-171",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-172",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-173",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-174",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-175",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-176",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-177",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-178",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-179",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-180",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-181",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-182",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-183",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-184",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-185",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-186",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-187",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-188",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-189",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-190",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-191",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-192",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-193",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-194",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-195",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-196",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-197",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-198",
+      "type": "text"
+    },
+    {
+      "label": "Repo",
+      "name": "repo-199",
+      "type": "text"
+    }
+  ],
+  "id": "settings",
+  "type": "config"
+}

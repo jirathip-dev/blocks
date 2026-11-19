@@ -1,0 +1,4631 @@
+{
+  "$defs": {
+    "Accessory": {
+      "anyOf": [
+        {
+          "enum": [
+            "chevron",
+            "none"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "string"
+        }
+      ]
+    },
+    "Act": {
+      "description": "A labelled action: a screen's button, a swipe, a menu item.",
+      "properties": {
+        "action": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confirm": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Confirm"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "enabled": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "icon": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "label": {
+          "type": "string"
+        },
+        "menu": {
+          "items": {
+            "$ref": "#/$defs/Act"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "tap": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Tap"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "tone": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Tone"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "values": {
+          "additionalProperties": true,
+          "type": [
+            "object",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "label"
+      ],
+      "type": "object"
+    },
+    "Action": {
+      "description": "What a client sends when a control is used: the screen, the block, the action and its values.",
+      "properties": {
+        "action": {
+          "type": "string"
+        },
+        "block": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "screen": {
+          "type": "string"
+        },
+        "values": {
+          "additionalProperties": true,
+          "type": "object"
+        }
+      },
+      "required": [
+        "screen",
+        "action"
+      ],
+      "type": "object"
+    },
+    "Answer": {
+      "description": "A server's answer to an action: ops on the screen, a toast, close the sheet or open a screen.",
+      "properties": {
+        "close": {
+          "type": "boolean"
+        },
+        "open": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "ops": {
+          "items": {
+            "$ref": "#/$defs/Op"
+          },
+          "type": "array"
+        },
+        "toast": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "AppBlock": {
+      "additionalProperties": true,
+      "description": "A block of a `type` that is no core kind: an app's own, kept whole.",
+      "properties": {
+        "fallback": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Fallback"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "type": {
+          "not": {
+            "enum": [
+              "screen",
+              "sheet",
+              "section",
+              "list",
+              "row",
+              "card",
+              "choice",
+              "form",
+              "config",
+              "secret",
+              "run",
+              "button",
+              "chips",
+              "stat",
+              "text",
+              "images",
+              "web",
+              "diff",
+              "editor",
+              "scene",
+              "diagram",
+              "composer",
+              "prose",
+              "hero",
+              "media",
+              "nav",
+              "island"
+            ]
+          },
+          "type": "string"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "type": "object"
+    },
+    "Block": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Screen",
+          "properties": {
+            "type": {
+              "const": "screen",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/Sheet",
+          "properties": {
+            "type": {
+              "const": "sheet",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/Section",
+          "properties": {
+            "type": {
+              "const": "section",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/List",
+          "properties": {
+            "type": {
+              "const": "list",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/Row",
+          "properties": {
+            "type": {
+              "const": "row",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/Card",
+          "properties": {
+            "type": {
+              "const": "card",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/Choice",
+          "properties": {
+            "type": {
+              "const": "choice",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/Form",
+          "properties": {
+            "type": {
+              "const": "form",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/Form",
+          "properties": {
+            "type": {
+              "const": "config",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/Secret",
+          "properties": {
+            "type": {
+              "const": "secret",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/Run",
+          "properties": {
+            "type": {
+              "const": "run",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/Button",
+          "properties": {
+            "type": {
+              "const": "button",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/Chips",
+          "properties": {
+            "type": {
+              "const": "chips",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/Stat",
+          "properties": {
+            "type": {
+              "const": "stat",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/Text",
+          "properties": {
+            "type": {
+              "const": "text",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/Images",
+          "properties": {
+            "type": {
+              "const": "images",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/Web",
+          "properties": {
+            "type": {
+              "const": "web",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/Diff",
+          "properties": {
+            "type": {
+              "const": "diff",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/Editor",
+          "properties": {
+            "type": {
+              "const": "editor",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/Scene",
+          "properties": {
+            "type": {
+              "const": "scene",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/Diagram",
+          "properties": {
+            "type": {
+              "const": "diagram",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/Composer",
+          "properties": {
+            "type": {
+              "const": "composer",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/Prose",
+          "properties": {
+            "type": {
+              "const": "prose",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/Hero",
+          "properties": {
+            "type": {
+              "const": "hero",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/Media",
+          "properties": {
+            "type": {
+              "const": "media",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/Nav",
+          "properties": {
+            "type": {
+              "const": "nav",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/Island",
+          "properties": {
+            "type": {
+              "const": "island",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/AppBlock"
+        }
+      ],
+      "description": "A block: an object whose `type` names its kind; any other `type` is an app's own."
+    },
+    "Bound": {
+      "description": "A value bound to local state: it shows the text of state key `get`.",
+      "properties": {
+        "get": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "get"
+      ],
+      "type": "object"
+    },
+    "Button": {
+      "additionalProperties": true,
+      "description": "A button.",
+      "properties": {
+        "action": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confirm": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Confirm"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "enabled": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "label": {
+          "type": "string"
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "style": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ButtonStyle"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "tap": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Tap"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "values": {
+          "additionalProperties": true,
+          "type": [
+            "object",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "label"
+      ],
+      "type": "object"
+    },
+    "ButtonStyle": {
+      "anyOf": [
+        {
+          "enum": [
+            "primary",
+            "plain",
+            "destructive"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "string"
+        }
+      ]
+    },
+    "Bye": {
+      "description": "The stream's last event, and why it ends.",
+      "properties": {
+        "why": {
+          "$ref": "#/$defs/Why"
+        }
+      },
+      "required": [
+        "why"
+      ],
+      "type": "object"
+    },
+    "Card": {
+      "additionalProperties": true,
+      "description": "A card: an ask, a run, a config or a proposal.",
+      "properties": {
+        "badge": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Label"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "blocks": {
+          "items": {
+            "$ref": "#/$defs/Block"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "buttons": {
+          "items": {
+            "$ref": "#/$defs/Block"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "fold": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Fold"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "kind": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CardKind"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "menu": {
+          "items": {
+            "$ref": "#/$defs/Act"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "meta": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "push": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "subtitle": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "tap": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Tap"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "title": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "tone": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Tone"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "CardKind": {
+      "anyOf": [
+        {
+          "enum": [
+            "ask",
+            "run",
+            "secret",
+            "config",
+            "proposal"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "string"
+        }
+      ]
+    },
+    "Check": {
+      "description": "A field's test: while `ok` does not hold, the field shows `say` and its form's submit is off.",
+      "properties": {
+        "ok": {
+          "$ref": "#/$defs/Expr"
+        },
+        "say": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "ok",
+        "say"
+      ],
+      "type": "object"
+    },
+    "Child": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Block"
+        },
+        {
+          "$ref": "#/$defs/Lane"
+        },
+        {
+          "$ref": "#/$defs/Round"
+        }
+      ],
+      "description": "What an `insert` adds: a block, or a scene's lane or a row's round."
+    },
+    "ChipOption": {
+      "description": "One chip.",
+      "properties": {
+        "label": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "value",
+        "label"
+      ],
+      "type": "object"
+    },
+    "Chips": {
+      "additionalProperties": true,
+      "description": "A row of chips, one or many selected.",
+      "properties": {
+        "action": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "multi": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "options": {
+          "items": {
+            "$ref": "#/$defs/ChipOption"
+          },
+          "type": "array"
+        },
+        "selected": {
+          "items": {
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "name",
+        "options"
+      ],
+      "type": "object"
+    },
+    "Choice": {
+      "additionalProperties": true,
+      "description": "A question with options, a free answer and a default.",
+      "properties": {
+        "action": {
+          "type": "string"
+        },
+        "default": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ChoiceDefault"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "options": {
+          "items": {
+            "$ref": "#/$defs/ChoiceOption"
+          },
+          "type": "array"
+        },
+        "other": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Other"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "question": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "recommended": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "values": {
+          "additionalProperties": true,
+          "type": [
+            "object",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "action",
+        "options"
+      ],
+      "type": "object"
+    },
+    "ChoiceDefault": {
+      "description": "The answer a choice takes by itself at `until`.",
+      "properties": {
+        "label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "until": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "value",
+        "until"
+      ],
+      "type": "object"
+    },
+    "ChoiceOption": {
+      "description": "One answer of a choice.",
+      "properties": {
+        "confirm": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Confirm"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "label": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        },
+        "values": {
+          "additionalProperties": true,
+          "type": [
+            "object",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "value",
+        "label"
+      ],
+      "type": "object"
+    },
+    "Composer": {
+      "additionalProperties": true,
+      "description": "A message box: its send action, its chips and the messages queued.",
+      "properties": {
+        "action": {
+          "type": "string"
+        },
+        "acts": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "chips": {
+          "items": {
+            "$ref": "#/$defs/ComposerChip"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "placeholder": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "queued": {
+          "items": {
+            "$ref": "#/$defs/Queued"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "values": {
+          "additionalProperties": true,
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "working": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Working"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "action"
+      ],
+      "type": "object"
+    },
+    "ComposerChip": {
+      "description": "A composer's picker: its name, current value and choices.",
+      "properties": {
+        "all": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "cur": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "all"
+      ],
+      "type": "object"
+    },
+    "Confirm": {
+      "description": "The question asked before an action runs.",
+      "properties": {
+        "destructive": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "message": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "ok": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "title": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "type": "object"
+    },
+    "Diagram": {
+      "additionalProperties": true,
+      "description": "A diagram from its source, with counts and nodes by name.",
+      "properties": {
+        "counts": {
+          "additionalProperties": {
+            "type": "number"
+          },
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "nodes": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Node"
+          },
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "selected": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "source": {
+          "type": "string"
+        },
+        "title": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "source"
+      ],
+      "type": "object"
+    },
+    "Diff": {
+      "additionalProperties": true,
+      "description": "A file's diff.",
+      "properties": {
+        "file": {
+          "type": "string"
+        },
+        "hunks": {
+          "items": {
+            "$ref": "#/$defs/Hunk"
+          },
+          "type": "array"
+        },
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "summary": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "file",
+        "hunks"
+      ],
+      "type": "object"
+    },
+    "Editor": {
+      "additionalProperties": true,
+      "description": "A text editor and its errors.",
+      "properties": {
+        "action": {
+          "type": "string"
+        },
+        "errors": {
+          "items": {
+            "$ref": "#/$defs/LineError"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "first": {
+          "format": "uint32",
+          "minimum": 0,
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "text": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "text",
+        "action"
+      ],
+      "type": "object"
+    },
+    "Expr": {
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "get": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "get"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "not": {
+              "$ref": "#/$defs/Expr"
+            }
+          },
+          "required": [
+            "not"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "all": {
+              "items": {
+                "$ref": "#/$defs/Expr"
+              },
+              "type": "array"
+            }
+          },
+          "required": [
+            "all"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "any": {
+              "items": {
+                "$ref": "#/$defs/Expr"
+              },
+              "type": "array"
+            }
+          },
+          "required": [
+            "any"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "eq": {
+              "items": {
+                "$ref": "#/$defs/Expr"
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": "array"
+            }
+          },
+          "required": [
+            "eq"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "lt": {
+              "items": {
+                "$ref": "#/$defs/Expr"
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": "array"
+            }
+          },
+          "required": [
+            "lt"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "len": {
+              "$ref": "#/$defs/Expr"
+            }
+          },
+          "required": [
+            "len"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "has": {
+              "items": {
+                "$ref": "#/$defs/Expr"
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": "array"
+            }
+          },
+          "required": [
+            "has"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "is": {
+              "$ref": "#/$defs/Match"
+            }
+          },
+          "required": [
+            "is"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "add": {
+              "items": {
+                "$ref": "#/$defs/Expr"
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": "array"
+            }
+          },
+          "required": [
+            "add"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "sub": {
+              "items": {
+                "$ref": "#/$defs/Expr"
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": "array"
+            }
+          },
+          "required": [
+            "sub"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "cat": {
+              "items": {
+                "$ref": "#/$defs/Expr"
+              },
+              "type": "array"
+            }
+          },
+          "required": [
+            "cat"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "pick": {
+              "items": {
+                "$ref": "#/$defs/Expr"
+              },
+              "maxItems": 3,
+              "minItems": 3,
+              "type": "array"
+            }
+          },
+          "required": [
+            "pick"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/Lit"
+        }
+      ],
+      "description": "The behaviour language: a tree sent like any field, `{\"get\":\"email\"}` or a bare value."
+    },
+    "Fallback": {
+      "description": "What a client with no view for a block's `type` draws: a plain row.",
+      "properties": {
+        "subtitle": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "tap": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Tap"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "title": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "type": "object"
+    },
+    "Field": {
+      "description": "One input of a form.",
+      "properties": {
+        "checks": {
+          "items": {
+            "$ref": "#/$defs/Check"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "doc": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "enabled": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "keyboard": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Keyboard"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "open": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "options": {
+          "items": {
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "placeholder": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "set": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "type": {
+          "$ref": "#/$defs/FieldKind"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FieldValue"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "was": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "type",
+        "name"
+      ],
+      "type": "object"
+    },
+    "FieldKind": {
+      "anyOf": [
+        {
+          "enum": [
+            "text",
+            "toggle",
+            "picker",
+            "secret"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "string"
+        }
+      ]
+    },
+    "FieldValue": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "boolean"
+        }
+      ],
+      "description": "A field's value: text, a number or a switch."
+    },
+    "Figure": {
+      "description": "A row's figure: its state, tool, icon or avatar.",
+      "properties": {
+        "avatar": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "coat": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "grow": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "icon": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "state": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Tone"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "tool": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "Fold": {
+      "description": "What a folded card shows: one line and its main action.",
+      "properties": {
+        "line": {
+          "type": "string"
+        },
+        "main": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FoldMain"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "line"
+      ],
+      "type": "object"
+    },
+    "FoldMain": {
+      "description": "A folded card's main action.",
+      "properties": {
+        "action": {
+          "type": "string"
+        },
+        "block": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "label": {
+          "type": "string"
+        },
+        "value": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "values": {
+          "additionalProperties": true,
+          "type": [
+            "object",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "label",
+        "action"
+      ],
+      "type": "object"
+    },
+    "Form": {
+      "additionalProperties": true,
+      "description": "A form of fields; also the `config` kind.",
+      "properties": {
+        "action": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "fields": {
+          "items": {
+            "$ref": "#/$defs/Field"
+          },
+          "type": "array"
+        },
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "submit": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Submit"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "fields"
+      ],
+      "type": "object"
+    },
+    "Frame": {
+      "description": "One key's change: ops that apply only on rev `from`, or with no `from` the whole screen.",
+      "properties": {
+        "from": {
+          "format": "uint64",
+          "minimum": 0,
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "k": {
+          "type": "string"
+        },
+        "ops": {
+          "items": {
+            "$ref": "#/$defs/Op"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "rev": {
+          "format": "uint64",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "screen": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Block"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "k",
+        "rev"
+      ],
+      "type": "object"
+    },
+    "Have": {
+      "description": "A key a client opens, with the rev of its copy when that copy came from the same epoch.",
+      "properties": {
+        "k": {
+          "type": "string"
+        },
+        "rev": {
+          "format": "uint64",
+          "minimum": 0,
+          "type": [
+            "integer",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "k"
+      ],
+      "type": "object"
+    },
+    "Hello": {
+      "description": "The stream's first event: the version it runs at, the stream's id, the server's epoch and its key limit.",
+      "properties": {
+        "epoch": {
+          "type": "string"
+        },
+        "keys": {
+          "format": "uint",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "sid": {
+          "type": "string"
+        },
+        "v": {
+          "format": "uint8",
+          "maximum": 255,
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "v",
+        "sid",
+        "epoch",
+        "keys"
+      ],
+      "type": "object"
+    },
+    "Hero": {
+      "additionalProperties": true,
+      "description": "A page's opening: a title, a line, a picture and its actions.",
+      "properties": {
+        "actions": {
+          "items": {
+            "$ref": "#/$defs/Act"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "media": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Media"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "subtitle": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "title": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "type": "object"
+    },
+    "Hunk": {
+      "description": "One hunk of a diff.",
+      "properties": {
+        "at": {
+          "type": "string"
+        },
+        "lines": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "at",
+        "lines"
+      ],
+      "type": "object"
+    },
+    "Image": {
+      "description": "One image.",
+      "properties": {
+        "alt": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "caption": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "src": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "src"
+      ],
+      "type": "object"
+    },
+    "ImageSize": {
+      "anyOf": [
+        {
+          "enum": [
+            "small",
+            "large"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "string"
+        }
+      ]
+    },
+    "Images": {
+      "additionalProperties": true,
+      "description": "A strip of images.",
+      "properties": {
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "items": {
+          "items": {
+            "$ref": "#/$defs/Image"
+          },
+          "type": "array"
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "size": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ImageSize"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "items"
+      ],
+      "type": "object"
+    },
+    "Island": {
+      "additionalProperties": true,
+      "description": "A client component the app hosts: its props in, its named events out.",
+      "properties": {
+        "events": {
+          "items": {
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "fallback": {
+          "$ref": "#/$defs/Fallback"
+        },
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "props": {
+          "additionalProperties": true,
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "size": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/IslandSize"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "name",
+        "fallback"
+      ],
+      "type": "object"
+    },
+    "IslandSize": {
+      "description": "The box an island holds before it loads: a width and height, or an aspect.",
+      "properties": {
+        "aspect": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "height": {
+          "format": "uint32",
+          "minimum": 0,
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "width": {
+          "format": "uint32",
+          "minimum": 0,
+          "type": [
+            "integer",
+            "null"
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "KeyState": {
+      "description": "A key as the server holds it: current (rev only), the ops since the rev sent, the whole screen, or gone.",
+      "properties": {
+        "gone": {
+          "format": "uint16",
+          "maximum": 65535,
+          "minimum": 0,
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "k": {
+          "type": "string"
+        },
+        "ops": {
+          "items": {
+            "$ref": "#/$defs/Op"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "rev": {
+          "format": "uint64",
+          "minimum": 0,
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "screen": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Block"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "k"
+      ],
+      "type": "object"
+    },
+    "Keyboard": {
+      "anyOf": [
+        {
+          "enum": [
+            "default",
+            "url",
+            "number"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "string"
+        }
+      ]
+    },
+    "Label": {
+      "description": "A short text and its tone: a badge, or a toned subtitle.",
+      "properties": {
+        "text": {
+          "type": "string"
+        },
+        "tone": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Tone"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "type": "object"
+    },
+    "Lane": {
+      "description": "A scene's lane.",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "since": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "stage": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "state": {
+          "$ref": "#/$defs/LaneState"
+        },
+        "tap": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Tap"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "title": {
+          "type": "string"
+        },
+        "tool": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "state"
+      ],
+      "type": "object"
+    },
+    "LaneState": {
+      "anyOf": [
+        {
+          "enum": [
+            "working",
+            "needs",
+            "done",
+            "idle",
+            "fail",
+            "merged"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "string"
+        }
+      ]
+    },
+    "LineError": {
+      "description": "An editor's error on a line.",
+      "properties": {
+        "line": {
+          "format": "int64",
+          "type": "integer"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "line",
+        "message"
+      ],
+      "type": "object"
+    },
+    "Link": {
+      "description": "A labelled tap.",
+      "properties": {
+        "label": {
+          "type": "string"
+        },
+        "tap": {
+          "$ref": "#/$defs/Tap"
+        }
+      },
+      "required": [
+        "label",
+        "tap"
+      ],
+      "type": "object"
+    },
+    "List": {
+      "additionalProperties": true,
+      "description": "A list of rows.",
+      "properties": {
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "reorder": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Reorder"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "rows": {
+          "items": {
+            "$ref": "#/$defs/Block"
+          },
+          "type": "array"
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "rows"
+      ],
+      "type": "object"
+    },
+    "Lit": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "string"
+        }
+      ],
+      "description": "A plain value, written bare: null, a switch, a number or a string."
+    },
+    "Match": {
+      "description": "A value and the pattern it is tested against.",
+      "properties": {
+        "pattern": {
+          "$ref": "#/$defs/Pattern"
+        },
+        "value": {
+          "$ref": "#/$defs/Expr"
+        }
+      },
+      "required": [
+        "value",
+        "pattern"
+      ],
+      "type": "object"
+    },
+    "Media": {
+      "additionalProperties": true,
+      "description": "A picture or a video of a known size.",
+      "properties": {
+        "alt": {
+          "type": "string"
+        },
+        "caption": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "height": {
+          "format": "uint32",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "poster": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "src": {
+          "type": "string"
+        },
+        "video": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "width": {
+          "format": "uint32",
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "src",
+        "alt",
+        "width",
+        "height"
+      ],
+      "type": "object"
+    },
+    "Nav": {
+      "additionalProperties": true,
+      "description": "A site's link bar.",
+      "properties": {
+        "brand": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/NavLink"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "links": {
+          "items": {
+            "$ref": "#/$defs/NavLink"
+          },
+          "type": "array"
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "links"
+      ],
+      "type": "object"
+    },
+    "NavLink": {
+      "description": "A link of a site's bar.",
+      "properties": {
+        "current": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "href": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "label",
+        "href"
+      ],
+      "type": "object"
+    },
+    "Node": {
+      "description": "A node of a diagram.",
+      "properties": {
+        "coat": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "limit": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "state": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Tone"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "tap": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Tap"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "value": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "OldFrame": {
+      "description": "A frame of the old per-screen stream, `{\"seq\", \"ops\"}`, as cooee reads it today.",
+      "properties": {
+        "ops": {
+          "items": {
+            "$ref": "#/$defs/Op"
+          },
+          "type": "array"
+        },
+        "seq": {
+          "format": "uint64",
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "seq",
+        "ops"
+      ],
+      "type": "object"
+    },
+    "Op": {
+      "description": "One edit to a screen; a block is named by its id.",
+      "oneOf": [
+        {
+          "properties": {
+            "fields": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "id": {
+              "type": "string"
+            },
+            "op": {
+              "const": "merge",
+              "type": "string"
+            }
+          },
+          "required": [
+            "op",
+            "id",
+            "fields"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "after": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "before": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "block": {
+              "$ref": "#/$defs/Child"
+            },
+            "into": {
+              "type": "string"
+            },
+            "op": {
+              "const": "insert",
+              "type": "string"
+            }
+          },
+          "required": [
+            "op",
+            "into",
+            "block"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "before": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "id": {
+              "type": "string"
+            },
+            "into": {
+              "type": "string"
+            },
+            "op": {
+              "const": "move",
+              "type": "string"
+            }
+          },
+          "required": [
+            "op",
+            "id",
+            "into"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "op": {
+              "const": "remove",
+              "type": "string"
+            }
+          },
+          "required": [
+            "op",
+            "id"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "block": {
+              "$ref": "#/$defs/Block"
+            },
+            "id": {
+              "type": "string"
+            },
+            "op": {
+              "const": "replace",
+              "type": "string"
+            }
+          },
+          "required": [
+            "op",
+            "id",
+            "block"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "count": {
+              "format": "uint64",
+              "minimum": 0,
+              "type": "integer"
+            },
+            "op": {
+              "const": "badge",
+              "type": "string"
+            }
+          },
+          "required": [
+            "op",
+            "count"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "on": {
+              "type": "boolean"
+            },
+            "op": {
+              "const": "dot",
+              "type": "string"
+            }
+          },
+          "required": [
+            "op",
+            "on"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "op": {
+              "const": "screen",
+              "type": "string"
+            },
+            "screen": {
+              "$ref": "#/$defs/Block"
+            }
+          },
+          "required": [
+            "op",
+            "screen"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "Other": {
+      "description": "A choice's free-text answer.",
+      "properties": {
+        "for": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "placeholder": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "Part": {
+      "description": "One part of a prose tree.",
+      "oneOf": [
+        {
+          "properties": {
+            "level": {
+              "format": "uint8",
+              "maximum": 255,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "part": {
+              "const": "heading",
+              "type": "string"
+            },
+            "spans": {
+              "items": {
+                "$ref": "#/$defs/Span"
+              },
+              "type": "array"
+            }
+          },
+          "required": [
+            "part",
+            "level",
+            "spans"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "part": {
+              "const": "para",
+              "type": "string"
+            },
+            "spans": {
+              "items": {
+                "$ref": "#/$defs/Span"
+              },
+              "type": "array"
+            }
+          },
+          "required": [
+            "part",
+            "spans"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "items": {
+              "items": {
+                "items": {
+                  "$ref": "#/$defs/Span"
+                },
+                "type": "array"
+              },
+              "type": "array"
+            },
+            "ordered": {
+              "type": "boolean"
+            },
+            "part": {
+              "const": "list",
+              "type": "string"
+            }
+          },
+          "required": [
+            "part",
+            "ordered",
+            "items"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "part": {
+              "const": "quote",
+              "type": "string"
+            },
+            "spans": {
+              "items": {
+                "$ref": "#/$defs/Span"
+              },
+              "type": "array"
+            }
+          },
+          "required": [
+            "part",
+            "spans"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "lang": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "part": {
+              "const": "code",
+              "type": "string"
+            },
+            "text": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "part",
+            "text"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "part": {
+              "const": "rule",
+              "type": "string"
+            }
+          },
+          "required": [
+            "part"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "Pattern": {
+      "anyOf": [
+        {
+          "enum": [
+            "filled",
+            "email",
+            "url",
+            "number"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "string"
+        }
+      ],
+      "description": "A named test of a value; never a regex."
+    },
+    "Pending": {
+      "description": "A screen's bar of unsaved changes.",
+      "properties": {
+        "count": {
+          "type": "string"
+        },
+        "discard": {
+          "$ref": "#/$defs/Tap"
+        },
+        "review": {
+          "$ref": "#/$defs/Tap"
+        },
+        "text": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "count",
+        "text",
+        "discard",
+        "review"
+      ],
+      "type": "object"
+    },
+    "Prose": {
+      "additionalProperties": true,
+      "description": "Text as a tree of headings, paragraphs, lists, quotes and code.",
+      "properties": {
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "parts": {
+          "items": {
+            "$ref": "#/$defs/Part"
+          },
+          "type": "array"
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "parts"
+      ],
+      "type": "object"
+    },
+    "Queued": {
+      "description": "A message queued for the turn's end.",
+      "properties": {
+        "q": {
+          "format": "uint64",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "text": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "q",
+        "text"
+      ],
+      "type": "object"
+    },
+    "Reorder": {
+      "description": "A reorderable list's action.",
+      "properties": {
+        "action": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "action",
+        "name"
+      ],
+      "type": "object"
+    },
+    "Report": {
+      "description": "A harness run's `report.json`.",
+      "properties": {
+        "dropped": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "sent": {
+          "items": {
+            "$ref": "#/$defs/Action"
+          },
+          "type": "array"
+        },
+        "shots": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "timings": {
+          "$ref": "#/$defs/Timings"
+        }
+      },
+      "required": [
+        "shots",
+        "sent",
+        "dropped",
+        "timings"
+      ],
+      "type": "object"
+    },
+    "Round": {
+      "description": "One round of a row's work: its state, lane, blocks and links.",
+      "properties": {
+        "blocks": {
+          "items": {
+            "$ref": "#/$defs/Block"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "id": {
+          "type": "string"
+        },
+        "lane": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RoundLane"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "links": {
+          "items": {
+            "$ref": "#/$defs/Link"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "since": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "state": {
+          "$ref": "#/$defs/LaneState"
+        },
+        "summary": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "tap": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Tap"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "state"
+      ],
+      "type": "object"
+    },
+    "RoundLane": {
+      "description": "The lane that ran a round.",
+      "properties": {
+        "harness": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "host": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "lines": {
+          "items": {
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "model": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "Row": {
+      "additionalProperties": true,
+      "description": "One row of a list.",
+      "properties": {
+        "accessory": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Accessory"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "badge": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Label"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "button": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Act"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "changed": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "figure": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Figure"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "handle": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "indent": {
+          "format": "uint8",
+          "maximum": 255,
+          "minimum": 0,
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "lifted": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "menu": {
+          "items": {
+            "$ref": "#/$defs/Act"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "rounds": {
+          "items": {
+            "$ref": "#/$defs/Round"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "sticky": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "style": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RowStyle"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "subtitle": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Toned"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "swipe": {
+          "items": {
+            "$ref": "#/$defs/Act"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "tap": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Tap"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "title": {
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Shown"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "type": "object"
+    },
+    "RowStyle": {
+      "anyOf": [
+        {
+          "enum": [
+            "link",
+            "destructive"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "string"
+        }
+      ]
+    },
+    "Run": {
+      "additionalProperties": true,
+      "description": "A command the owner approves to run.",
+      "properties": {
+        "action": {
+          "type": "string"
+        },
+        "command": {
+          "type": "string"
+        },
+        "dir": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "sha": {
+          "type": "string"
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "touches": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "until": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "action",
+        "command",
+        "sha"
+      ],
+      "type": "object"
+    },
+    "Scene": {
+      "additionalProperties": true,
+      "description": "Lanes at work.",
+      "properties": {
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "lanes": {
+          "items": {
+            "$ref": "#/$defs/Lane"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "Screen": {
+      "additionalProperties": true,
+      "description": "A whole screen.",
+      "properties": {
+        "actions": {
+          "items": {
+            "$ref": "#/$defs/Act"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "back": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "badge": {
+          "format": "uint64",
+          "minimum": 0,
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "blocks": {
+          "items": {
+            "$ref": "#/$defs/Block"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "done": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Submit"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "focus": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "large": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "pending": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Pending"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "personas": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "refresh": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "sites": {
+          "format": "uint64",
+          "minimum": 0,
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "source": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "state": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Lit"
+          },
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "stream": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "threads": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "title": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "Secret": {
+      "additionalProperties": true,
+      "description": "A secret's input: its value is never sent back.",
+      "properties": {
+        "action": {
+          "type": "string"
+        },
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "placeholder": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "set": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "values": {
+          "additionalProperties": true,
+          "type": [
+            "object",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "name",
+        "action"
+      ],
+      "type": "object"
+    },
+    "Section": {
+      "additionalProperties": true,
+      "description": "A titled group of blocks.",
+      "properties": {
+        "blocks": {
+          "items": {
+            "$ref": "#/$defs/Block"
+          },
+          "type": "array"
+        },
+        "footer": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "header": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "blocks"
+      ],
+      "type": "object"
+    },
+    "SetState": {
+      "description": "A tap's change of local state: `key` becomes the value of `to`; nothing is sent.",
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "to": {
+          "$ref": "#/$defs/Expr"
+        }
+      },
+      "required": [
+        "key",
+        "to"
+      ],
+      "type": "object"
+    },
+    "Sheet": {
+      "additionalProperties": true,
+      "description": "A sheet over a screen.",
+      "properties": {
+        "blocks": {
+          "items": {
+            "$ref": "#/$defs/Block"
+          },
+          "type": "array"
+        },
+        "cancel": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "done": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Submit"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "title": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "title",
+        "blocks"
+      ],
+      "type": "object"
+    },
+    "Shown": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "$ref": "#/$defs/Bound"
+        },
+        {
+          "$ref": "#/$defs/Time"
+        }
+      ],
+      "description": "A row's or a tile's value: a string, a number, a state key's value, or a time."
+    },
+    "Span": {
+      "description": "A run of text and how it is set.",
+      "properties": {
+        "bold": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "code": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "italic": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "link": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "text": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "type": "object"
+    },
+    "Stat": {
+      "additionalProperties": true,
+      "description": "Figures: a list of tiles, or one tile inline.",
+      "properties": {
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "items": {
+          "items": {
+            "$ref": "#/$defs/Tile"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "spark": {
+          "items": {
+            "type": "number"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "tone": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Tone"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "unit": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "value": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Shown"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "Step": {
+      "description": "One scripted input: by block id, a stream frame arriving, an action answered, or a shot.",
+      "oneOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "tap": {
+              "$ref": "#/$defs/StepOn"
+            }
+          },
+          "required": [
+            "tap"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "$ref": "#/$defs/StepType"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "scroll": {
+              "$ref": "#/$defs/StepOn"
+            }
+          },
+          "required": [
+            "scroll"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "frame": {
+              "$ref": "#/$defs/Frame"
+            }
+          },
+          "required": [
+            "frame"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "answer": {
+              "$ref": "#/$defs/Answer"
+            }
+          },
+          "required": [
+            "answer"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "shot": {
+              "$ref": "#/$defs/StepShot"
+            }
+          },
+          "required": [
+            "shot"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "StepOn": {
+      "description": "The block a tap or a scroll goes to.",
+      "properties": {
+        "id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "type": "object"
+    },
+    "StepShot": {
+      "description": "A PNG and a tree taken under this name.",
+      "properties": {
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object"
+    },
+    "StepType": {
+      "description": "Text typed into a block's field.",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "text"
+      ],
+      "type": "object"
+    },
+    "Submit": {
+      "description": "A form's or a sheet's submit button.",
+      "properties": {
+        "action": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "off": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "values": {
+          "additionalProperties": true,
+          "type": [
+            "object",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "label",
+        "action"
+      ],
+      "type": "object"
+    },
+    "Sync": {
+      "description": "A client's request: the keys to open, each with the rev it holds, and the keys to close.",
+      "properties": {
+        "close": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "open": {
+          "items": {
+            "$ref": "#/$defs/Have"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "open"
+      ],
+      "type": "object"
+    },
+    "Synced": {
+      "description": "The server's answer to a `Sync`: one state per key opened.",
+      "properties": {
+        "keys": {
+          "items": {
+            "$ref": "#/$defs/KeyState"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "keys"
+      ],
+      "type": "object"
+    },
+    "Tap": {
+      "description": "What a tap does: open a screen or sheet, send an action, open a thread or a URL, focus, copy.",
+      "properties": {
+        "action": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "copy": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "focus": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "open": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "set": {
+          "items": {
+            "$ref": "#/$defs/SetState"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "sheet": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "thread": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "values": {
+          "additionalProperties": true,
+          "type": [
+            "object",
+            "null"
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "Text": {
+      "additionalProperties": true,
+      "description": "Text: markdown, or a plain styled line.",
+      "properties": {
+        "center": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "font": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "markdown": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "size": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "style": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TextStyle"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "text": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "tone": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Tone"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "top": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "until": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "weight": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "TextStyle": {
+      "anyOf": [
+        {
+          "enum": [
+            "body",
+            "footnote"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "string"
+        }
+      ]
+    },
+    "Tile": {
+      "description": "One figure of a stat.",
+      "properties": {
+        "label": {
+          "type": "string"
+        },
+        "spark": {
+          "items": {
+            "type": "number"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "tone": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Tone"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "unit": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "value": {
+          "$ref": "#/$defs/Shown"
+        }
+      },
+      "required": [
+        "label",
+        "value"
+      ],
+      "type": "object"
+    },
+    "Time": {
+      "description": "A moment a value counts from or to.",
+      "properties": {
+        "since": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "until": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "Timings": {
+      "description": "How long the first paint and each step took; the frame fields only where a harness draws real frames.",
+      "properties": {
+        "first_paint_ms": {
+          "format": "double",
+          "type": "number"
+        },
+        "frames_over_budget": {
+          "format": "uint32",
+          "minimum": 0,
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "longest_frame_ms": {
+          "format": "double",
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "longest_patch_ms": {
+          "format": "double",
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "steps_ms": {
+          "items": {
+            "format": "double",
+            "type": "number"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "first_paint_ms",
+        "steps_ms"
+      ],
+      "type": "object"
+    },
+    "Tone": {
+      "anyOf": [
+        {
+          "enum": [
+            "ok",
+            "warn",
+            "bad",
+            "info",
+            "mute",
+            "accent",
+            "working",
+            "needs",
+            "done",
+            "fail",
+            "idle"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "string"
+        }
+      ]
+    },
+    "Toned": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "$ref": "#/$defs/Label"
+        }
+      ],
+      "description": "A subtitle: plain text, or text with a tone."
+    },
+    "TreeDrawn": {
+      "description": "How a renderer drew a block: its own view, its fallback, or not at all.",
+      "enum": [
+        "native",
+        "fallback",
+        "hidden"
+      ],
+      "type": "string"
+    },
+    "TreeNode": {
+      "description": "One block of the drawn tree; `rect` and `text` come from a harness, never from `expect`.",
+      "properties": {
+        "children": {
+          "items": {
+            "$ref": "#/$defs/TreeNode"
+          },
+          "type": "array"
+        },
+        "drawn": {
+          "$ref": "#/$defs/TreeDrawn"
+        },
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "kind": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "rect": {
+          "items": {
+            "format": "double",
+            "type": "number"
+          },
+          "maxItems": 4,
+          "minItems": 4,
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "role": {
+          "type": "string"
+        },
+        "text": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "variant": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "kind",
+        "drawn",
+        "role",
+        "name",
+        "children"
+      ],
+      "type": "object"
+    },
+    "Web": {
+      "additionalProperties": true,
+      "description": "A web view of a fixed height.",
+      "properties": {
+        "height": {
+          "format": "uint32",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "src": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "src",
+        "height"
+      ],
+      "type": "object"
+    },
+    "Why": {
+      "description": "Why a stream was ended by the server.",
+      "enum": [
+        "evicted",
+        "unpaired",
+        "handover"
+      ],
+      "type": "string"
+    },
+    "Working": {
+      "description": "A composer's turn in progress: when it started.",
+      "properties": {
+        "since": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "since"
+      ],
+      "type": "object"
+    }
+  },
+  "$id": "https://github.com/jirathip-dev/blocks/schema/v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "One key's change: ops that apply only on rev `from`, or with no `from` the whole screen.",
+  "properties": {
+    "from": {
+      "format": "uint64",
+      "minimum": 0,
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "k": {
+      "type": "string"
+    },
+    "ops": {
+      "items": {
+        "$ref": "#/$defs/Op"
+      },
+      "type": [
+        "array",
+        "null"
+      ]
+    },
+    "rev": {
+      "format": "uint64",
+      "minimum": 0,
+      "type": "integer"
+    },
+    "screen": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Block"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "k",
+    "rev"
+  ],
+  "title": "Frame",
+  "type": "object"
+}

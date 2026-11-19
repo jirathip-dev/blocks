@@ -1,0 +1,59 @@
+{
+  "type": "prose",
+  "id": "about",
+  "parts": [
+    {
+      "part": "heading",
+      "level": 2,
+      "spans": [
+        {
+          "text": "Blocks"
+        }
+      ]
+    },
+    {
+      "part": "para",
+      "spans": [
+        {
+          "text": "Typed "
+        },
+        {
+          "text": "screens",
+          "bold": true
+        }
+      ]
+    },
+    {
+      "part": "list",
+      "ordered": false,
+      "items": [
+        [
+          {
+            "text": "one"
+          }
+        ],
+        [
+          {
+            "text": "two"
+          }
+        ]
+      ]
+    },
+    {
+      "part": "quote",
+      "spans": [
+        {
+          "text": "Built by type."
+        }
+      ]
+    },
+    {
+      "part": "code",
+      "lang": "rust",
+      "text": "Row::new(\"a\")"
+    },
+    {
+      "part": "rule"
+    }
+  ]
+}

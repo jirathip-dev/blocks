@@ -1,0 +1,19 @@
+{
+  "kind": "sheet",
+  "id": "add",
+  "variant": null,
+  "drawn": "native",
+  "role": "group",
+  "name": "Add a repo",
+  "children": [
+    {
+      "kind": "text",
+      "id": "sheet-note",
+      "variant": null,
+      "drawn": "native",
+      "role": "group",
+      "name": "sheet-note",
+      "children": []
+    }
+  ]
+}

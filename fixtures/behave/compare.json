@@ -1,0 +1,14 @@
+{
+  "state": { "n": 3, "half": 1.5, "s": "b", "text3": "3" },
+  "cases": [
+    { "expr": { "eq": [{ "get": "n" }, 3] }, "want": true },
+    { "expr": { "eq": [{ "get": "n" }, 3.0] }, "want": true },
+    { "expr": { "eq": [{ "get": "n" }, { "get": "text3" }] }, "want": false },
+    { "expr": { "eq": [{ "get": "missing" }, null] }, "want": true },
+    { "expr": { "lt": [{ "get": "half" }, { "get": "n" }] }, "want": true },
+    { "expr": { "lt": [{ "get": "n" }, 3] }, "want": false },
+    { "expr": { "lt": ["a", { "get": "s" }] }, "want": true },
+    { "expr": { "lt": [1, "2"] }, "want": null },
+    { "expr": { "lt": [{ "get": "missing" }, 1] }, "want": null }
+  ]
+}

@@ -1,0 +1,538 @@
+[
+  {
+    "findings": [
+      "tree: drew card#home native, expected screen#home native"
+    ],
+    "name": "another kind at the root",
+    "tree": {
+      "children": [],
+      "drawn": "native",
+      "id": "home",
+      "kind": "card",
+      "name": "home",
+      "role": "group",
+      "variant": null
+    },
+    "want": {
+      "children": [
+        {
+          "children": [],
+          "drawn": "native",
+          "id": "hint",
+          "kind": "text",
+          "name": "hint",
+          "role": "group",
+          "variant": null
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "drawn": "native",
+              "id": "r1",
+              "kind": "row",
+              "name": "r1",
+              "role": "group",
+              "variant": null
+            }
+          ],
+          "drawn": "native",
+          "id": "rows",
+          "kind": "list",
+          "name": "rows",
+          "role": "group",
+          "variant": null
+        }
+      ],
+      "drawn": "native",
+      "id": "home",
+      "kind": "screen",
+      "name": "home",
+      "role": "group",
+      "variant": null
+    }
+  },
+  {
+    "findings": [
+      "tree/screen#home: drew text#hint fallback, expected text#hint native"
+    ],
+    "name": "a fallback where a view was expected",
+    "tree": {
+      "children": [
+        {
+          "children": [],
+          "drawn": "fallback",
+          "id": "hint",
+          "kind": "text",
+          "name": "hint",
+          "role": "group",
+          "variant": null
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "drawn": "native",
+              "id": "r1",
+              "kind": "row",
+              "name": "r1",
+              "role": "group",
+              "variant": null
+            }
+          ],
+          "drawn": "native",
+          "id": "rows",
+          "kind": "list",
+          "name": "rows",
+          "role": "group",
+          "variant": null
+        }
+      ],
+      "drawn": "native",
+      "id": "home",
+      "kind": "screen",
+      "name": "home",
+      "role": "group",
+      "variant": null
+    },
+    "want": {
+      "children": [
+        {
+          "children": [],
+          "drawn": "native",
+          "id": "hint",
+          "kind": "text",
+          "name": "hint",
+          "role": "group",
+          "variant": null
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "drawn": "native",
+              "id": "r1",
+              "kind": "row",
+              "name": "r1",
+              "role": "group",
+              "variant": null
+            }
+          ],
+          "drawn": "native",
+          "id": "rows",
+          "kind": "list",
+          "name": "rows",
+          "role": "group",
+          "variant": null
+        }
+      ],
+      "drawn": "native",
+      "id": "home",
+      "kind": "screen",
+      "name": "home",
+      "role": "group",
+      "variant": null
+    }
+  },
+  {
+    "findings": [
+      "tree/screen#home: drew text#hint hidden, expected text#hint native"
+    ],
+    "name": "a hidden block",
+    "tree": {
+      "children": [
+        {
+          "children": [],
+          "drawn": "hidden",
+          "id": "hint",
+          "kind": "text",
+          "name": "hint",
+          "role": "group",
+          "variant": null
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "drawn": "native",
+              "id": "r1",
+              "kind": "row",
+              "name": "r1",
+              "role": "group",
+              "variant": null
+            }
+          ],
+          "drawn": "native",
+          "id": "rows",
+          "kind": "list",
+          "name": "rows",
+          "role": "group",
+          "variant": null
+        }
+      ],
+      "drawn": "native",
+      "id": "home",
+      "kind": "screen",
+      "name": "home",
+      "role": "group",
+      "variant": null
+    },
+    "want": {
+      "children": [
+        {
+          "children": [],
+          "drawn": "native",
+          "id": "hint",
+          "kind": "text",
+          "name": "hint",
+          "role": "group",
+          "variant": null
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "drawn": "native",
+              "id": "r1",
+              "kind": "row",
+              "name": "r1",
+              "role": "group",
+              "variant": null
+            }
+          ],
+          "drawn": "native",
+          "id": "rows",
+          "kind": "list",
+          "name": "rows",
+          "role": "group",
+          "variant": null
+        }
+      ],
+      "drawn": "native",
+      "id": "home",
+      "kind": "screen",
+      "name": "home",
+      "role": "group",
+      "variant": null
+    }
+  },
+  {
+    "findings": [
+      "tree/screen#home: 1 children, expected 2",
+      "tree/screen#home: drew nothing, expected list#rows native"
+    ],
+    "name": "a missing block",
+    "tree": {
+      "children": [
+        {
+          "children": [],
+          "drawn": "native",
+          "id": "hint",
+          "kind": "text",
+          "name": "hint",
+          "role": "group",
+          "variant": null
+        }
+      ],
+      "drawn": "native",
+      "id": "home",
+      "kind": "screen",
+      "name": "home",
+      "role": "group",
+      "variant": null
+    },
+    "want": {
+      "children": [
+        {
+          "children": [],
+          "drawn": "native",
+          "id": "hint",
+          "kind": "text",
+          "name": "hint",
+          "role": "group",
+          "variant": null
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "drawn": "native",
+              "id": "r1",
+              "kind": "row",
+              "name": "r1",
+              "role": "group",
+              "variant": null
+            }
+          ],
+          "drawn": "native",
+          "id": "rows",
+          "kind": "list",
+          "name": "rows",
+          "role": "group",
+          "variant": null
+        }
+      ],
+      "drawn": "native",
+      "id": "home",
+      "kind": "screen",
+      "name": "home",
+      "role": "group",
+      "variant": null
+    }
+  },
+  {
+    "findings": [
+      "tree/screen#home/list#rows: 2 children, expected 1"
+    ],
+    "name": "an extra block",
+    "tree": {
+      "children": [
+        {
+          "children": [],
+          "drawn": "native",
+          "id": "hint",
+          "kind": "text",
+          "name": "hint",
+          "role": "group",
+          "variant": null
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "drawn": "native",
+              "id": "r1",
+              "kind": "row",
+              "name": "r1",
+              "role": "group",
+              "variant": null
+            },
+            {
+              "children": [],
+              "drawn": "native",
+              "id": "r2",
+              "kind": "row",
+              "name": "r2",
+              "role": "group",
+              "variant": null
+            }
+          ],
+          "drawn": "native",
+          "id": "rows",
+          "kind": "list",
+          "name": "rows",
+          "role": "group",
+          "variant": null
+        }
+      ],
+      "drawn": "native",
+      "id": "home",
+      "kind": "screen",
+      "name": "home",
+      "role": "group",
+      "variant": null
+    },
+    "want": {
+      "children": [
+        {
+          "children": [],
+          "drawn": "native",
+          "id": "hint",
+          "kind": "text",
+          "name": "hint",
+          "role": "group",
+          "variant": null
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "drawn": "native",
+              "id": "r1",
+              "kind": "row",
+              "name": "r1",
+              "role": "group",
+              "variant": null
+            }
+          ],
+          "drawn": "native",
+          "id": "rows",
+          "kind": "list",
+          "name": "rows",
+          "role": "group",
+          "variant": null
+        }
+      ],
+      "drawn": "native",
+      "id": "home",
+      "kind": "screen",
+      "name": "home",
+      "role": "group",
+      "variant": null
+    }
+  },
+  {
+    "findings": [
+      "tree/screen#home/list#rows: drew row#r9 native, expected row#r1 native"
+    ],
+    "name": "another id",
+    "tree": {
+      "children": [
+        {
+          "children": [],
+          "drawn": "native",
+          "id": "hint",
+          "kind": "text",
+          "name": "hint",
+          "role": "group",
+          "variant": null
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "drawn": "native",
+              "id": "r9",
+              "kind": "row",
+              "name": "r9",
+              "role": "group",
+              "variant": null
+            }
+          ],
+          "drawn": "native",
+          "id": "rows",
+          "kind": "list",
+          "name": "rows",
+          "role": "group",
+          "variant": null
+        }
+      ],
+      "drawn": "native",
+      "id": "home",
+      "kind": "screen",
+      "name": "home",
+      "role": "group",
+      "variant": null
+    },
+    "want": {
+      "children": [
+        {
+          "children": [],
+          "drawn": "native",
+          "id": "hint",
+          "kind": "text",
+          "name": "hint",
+          "role": "group",
+          "variant": null
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "drawn": "native",
+              "id": "r1",
+              "kind": "row",
+              "name": "r1",
+              "role": "group",
+              "variant": null
+            }
+          ],
+          "drawn": "native",
+          "id": "rows",
+          "kind": "list",
+          "name": "rows",
+          "role": "group",
+          "variant": null
+        }
+      ],
+      "drawn": "native",
+      "id": "home",
+      "kind": "screen",
+      "name": "home",
+      "role": "group",
+      "variant": null
+    }
+  },
+  {
+    "findings": [
+      "tree/screen#home/text#hint: drew button \"Hint\", expected group \"hint\""
+    ],
+    "name": "another role and name",
+    "tree": {
+      "children": [
+        {
+          "children": [],
+          "drawn": "native",
+          "id": "hint",
+          "kind": "text",
+          "name": "Hint",
+          "role": "button",
+          "variant": null
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "drawn": "native",
+              "id": "r1",
+              "kind": "row",
+              "name": "r1",
+              "role": "group",
+              "variant": null
+            }
+          ],
+          "drawn": "native",
+          "id": "rows",
+          "kind": "list",
+          "name": "rows",
+          "role": "group",
+          "variant": null
+        }
+      ],
+      "drawn": "native",
+      "id": "home",
+      "kind": "screen",
+      "name": "home",
+      "role": "group",
+      "variant": null
+    },
+    "want": {
+      "children": [
+        {
+          "children": [],
+          "drawn": "native",
+          "id": "hint",
+          "kind": "text",
+          "name": "hint",
+          "role": "group",
+          "variant": null
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "drawn": "native",
+              "id": "r1",
+              "kind": "row",
+              "name": "r1",
+              "role": "group",
+              "variant": null
+            }
+          ],
+          "drawn": "native",
+          "id": "rows",
+          "kind": "list",
+          "name": "rows",
+          "role": "group",
+          "variant": null
+        }
+      ],
+      "drawn": "native",
+      "id": "home",
+      "kind": "screen",
+      "name": "home",
+      "role": "group",
+      "variant": null
+    }
+  }
+]

@@ -1,0 +1,11 @@
+target*/
+node_modules/
+.build/
+.swiftpm/
+.brief.md
+.mcp.lane.json
+CLAUDE.local.md
+why.md
+.claude/
+shots/
+bench/dist/

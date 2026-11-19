@@ -1,0 +1,51 @@
+{
+  "type": "list",
+  "id": "rows",
+  "rows": [
+    {
+      "type": "row",
+      "id": "row",
+      "title": "Build",
+      "subtitle": "green",
+      "value": "2m",
+      "rounds": [
+        {
+          "id": "r1",
+          "name": "impl",
+          "state": "done",
+          "summary": "pushed",
+          "tap": {
+            "url": "/runs/1"
+          }
+        },
+        {
+          "id": "r2",
+          "name": "review 1",
+          "state": "needs",
+          "summary": "one finding",
+          "lane": {
+            "name": "rev-1",
+            "lines": [
+              "reading the diff"
+            ]
+          },
+          "blocks": [
+            {
+              "type": "text",
+              "id": "finding",
+              "markdown": "Fix the test"
+            }
+          ],
+          "links": [
+            {
+              "label": "verdict",
+              "tap": {
+                "url": "/verdict"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

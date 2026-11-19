@@ -1,0 +1,9 @@
+{
+  "kind": "card",
+  "id": "card",
+  "variant": "ask",
+  "drawn": "native",
+  "role": "group",
+  "name": "q1",
+  "children": []
+}

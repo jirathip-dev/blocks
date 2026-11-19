@@ -1,0 +1,20 @@
+{
+  "state": { "email": "ada@example.org", "url": "https://example.org/a", "num": " 42.5 ", "blank": "  ", "n": 7 },
+  "cases": [
+    { "expr": { "is": { "value": { "get": "email" }, "pattern": "email" } }, "want": true },
+    { "expr": { "is": { "value": "ada@example", "pattern": "email" } }, "want": false },
+    { "expr": { "is": { "value": "a b@example.org", "pattern": "email" } }, "want": false },
+    { "expr": { "is": { "value": "@example.org", "pattern": "email" } }, "want": false },
+    { "expr": { "is": { "value": { "get": "url" }, "pattern": "url" } }, "want": true },
+    { "expr": { "is": { "value": "ftp://example.org", "pattern": "url" } }, "want": false },
+    { "expr": { "is": { "value": "https://", "pattern": "url" } }, "want": false },
+    { "expr": { "is": { "value": { "get": "num" }, "pattern": "number" } }, "want": true },
+    { "expr": { "is": { "value": "4x", "pattern": "number" } }, "want": false },
+    { "expr": { "is": { "value": { "get": "n" }, "pattern": "number" } }, "want": true },
+    { "expr": { "is": { "value": { "get": "blank" }, "pattern": "filled" } }, "want": false },
+    { "expr": { "is": { "value": { "get": "missing" }, "pattern": "filled" } }, "want": false },
+    { "expr": { "is": { "value": { "get": "n" }, "pattern": "filled" } }, "want": true },
+    { "expr": { "is": { "value": { "get": "n" }, "pattern": "email" } }, "want": null },
+    { "expr": { "is": { "value": "x", "pattern": "postcode" } }, "want": null }
+  ]
+}

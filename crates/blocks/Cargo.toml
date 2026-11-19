@@ -1,0 +1,24 @@
+[package]
+name = "blocks"
+description = "Typed UI blocks, row diff and ops, and the device stream protocol"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+repository.workspace = true
+
+[features]
+schema = ["dep:schemars"]
+
+[dependencies]
+schemars = { workspace = true, optional = true }
+serde.workspace = true
+serde_json.workspace = true
+
+[[bin]]
+name = "blocks-codegen"
+path = "src/bin/codegen.rs"
+required-features = ["schema"]
+
+[lints]
+workspace = true

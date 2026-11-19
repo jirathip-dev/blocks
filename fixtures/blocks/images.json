@@ -1,0 +1,10 @@
+{
+  "type": "images",
+  "id": "shots",
+  "items": [
+    {
+      "src": "/media/a.png",
+      "alt": "a"
+    }
+  ]
+}

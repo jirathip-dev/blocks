@@ -1,0 +1,18 @@
+{
+  "state": { "email": "ada@example.org", "emoji": "👍🏽", "word": "héllo", "n": 3, "half": 2.5 },
+  "cases": [
+    { "expr": { "len": { "get": "word" } }, "want": 5 },
+    { "expr": { "len": { "get": "emoji" } }, "want": 2 },
+    { "expr": { "len": "" }, "want": 0 },
+    { "expr": { "len": { "get": "n" } }, "want": null },
+    { "expr": { "has": [{ "get": "email" }, "@"] }, "want": true },
+    { "expr": { "has": [{ "get": "email" }, "#"] }, "want": false },
+    { "expr": { "has": [{ "get": "n" }, "3"] }, "want": null },
+    { "expr": { "cat": ["n = ", { "get": "n" }] }, "want": "n = 3" },
+    { "expr": { "cat": [{ "get": "half" }, " ", true, { "get": "missing" }] }, "want": "2.5 true" },
+    { "expr": { "cat": [] }, "want": "" },
+    { "expr": { "cat": [1e308, " ", 2.2250738585072014e-308] }, "want": "1e+308 2.2250738585072014e-308" },
+    { "expr": { "cat": [1e16, " ", 1e21, " ", -1.5e21] }, "want": "10000000000000000 1e+21 -1.5e+21" },
+    { "expr": { "cat": [1e-5, " ", 1e-7, " ", -0.5] }, "want": "0.00001 1e-7 -0.5" }
+  ]
+}

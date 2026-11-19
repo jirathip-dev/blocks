@@ -1,0 +1,9 @@
+{
+  "type": "media",
+  "id": "chart",
+  "src": "/media/chart.png",
+  "alt": "a bar chart",
+  "width": 640,
+  "height": 360,
+  "caption": "This week"
+}
