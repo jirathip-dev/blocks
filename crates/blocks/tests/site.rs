@@ -73,7 +73,6 @@ fn a_page_links_only_the_stylesheets_it_is_given_and_a_sheet_tap_names_its_sheet
             .id("s")
             .blocks(vec![Block::Button(Box::new(Button::new("look").id("look").tap(tap)))]),
     );
-    let dark = &theme::default().dark;
     let site = Site {
         head: Head {
             title: "t",
@@ -88,7 +87,7 @@ fn a_page_links_only_the_stylesheets_it_is_given_and_a_sheet_tap_names_its_sheet
         live: Some(Live {
             js: "blocks.js",
             stream: "",
-            looks: &[("dark", dark)],
+            looks: &[("still", &look)],
         }),
     };
     let p = site::page(&screen, &site);
@@ -105,7 +104,15 @@ fn a_page_links_only_the_stylesheets_it_is_given_and_a_sheet_tap_names_its_sheet
         .and_then(|s| s.split('"').next())
         .unwrap();
     let looks: serde_json::Value = serde_json::from_str(&looks.replace("&#34;", "\"")).unwrap();
-    assert_eq!(looks["dark"], serde_json::to_value(dark).unwrap());
+    assert_eq!(
+        looks["still"]["dark"],
+        serde_json::to_value(&theme::default().dark).unwrap()
+    );
+    assert_eq!(
+        looks["still"]["light"],
+        serde_json::to_value(&theme::default().light).unwrap()
+    );
+    assert_eq!(looks["still"]["style"], serde_json::to_value(&look.style).unwrap());
 }
 
 #[test]
