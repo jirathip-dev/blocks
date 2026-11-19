@@ -1,0 +1,6 @@
+Decided: merge origin/staging; keep both the a11y role and name and staging's islands and behave evaluate in render and tree
+Because: web/src/tree.ts:41
+Decided: staging's island site test now expects the island root's role and aria-label
+Because: crates/blocks/tests/site.rs:288
+Rejected: none
+Owner: The branch now includes the latest staging work; every block still gets its role and name.
