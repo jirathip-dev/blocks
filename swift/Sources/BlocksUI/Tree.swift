@@ -7,6 +7,7 @@ package struct DrawnBlock {
     package let id: String?
     package let variant: String?
     package let native: Bool
+    package let hidden: Bool
     package let bounds: Anchor<CGRect>
     package let tap: BlockAction?
     package let children: [DrawnBlock]
@@ -35,6 +36,7 @@ internal struct Reported: ViewModifier {
     @Environment(\.reportsBlocks) private var reports
     @Environment(\.appBlocks) private var appBlocks
     internal let block: JSONValue
+    internal var hidden = false
 
     @ViewBuilder
     internal func body(content: Content) -> some View {
@@ -43,11 +45,11 @@ internal struct Reported: ViewModifier {
             let native = AppBlocks.isCore(type) ? !Self.gaps.contains(type) : appBlocks?.views[type] != nil
             let variant = Self.variants[type].flatMap { block.string($0) }.flatMap { $0.isEmpty ? nil : $0 }
             let id = block.id.flatMap { $0.isEmpty ? nil : $0 }
-            let tap = BlockAction(action: nil, source: block, values: block.fieldValues)
+            let tap = BlockAction(action: block["submit"]?.string("action"), source: block, values: block.fieldValues)
             content.transformAnchorPreference(key: DrawnBlocks.self, value: .bounds) { drawn, bounds in
                 drawn = [
                     DrawnBlock(
-                        kind: type, id: id, variant: variant, native: native, bounds: bounds, tap: tap,
+                        kind: type, id: id, variant: variant, native: native, hidden: hidden, bounds: bounds, tap: tap,
                         children: drawn)
                 ]
             }

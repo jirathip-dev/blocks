@@ -3,6 +3,8 @@ import SwiftUI
 
 internal struct ActButton<Label: View>: View {
     @Environment(\.act) private var act
+    @Environment(\.behaved) private var behaved
+    @Environment(\.edit) private var edit
     @Environment(\.openURL) private var openURL
     @Environment(\.openThread) private var openThread
     @Environment(\.open) private var open
@@ -24,6 +26,8 @@ internal struct ActButton<Label: View>: View {
     }
 
     private func fire() {
+        let set = Behaviour.tap(source, state: behaved.state)
+        if !set.isEmpty { edit(set) }
         if let url = source["tap"]?.string("url").flatMap(URL.init(string:)) {
             openURL(url)
         } else if let thread = source["tap"]?.string("thread") {

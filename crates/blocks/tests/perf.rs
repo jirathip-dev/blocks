@@ -3,7 +3,8 @@ mod support;
 use std::io::Write;
 use std::time::{Duration, Instant};
 
-use blocks::{apply, diff, Block};
+use blocks::behave::{start, view};
+use blocks::{apply, diff, Block, Built};
 use support::{mutate, screen, Rng};
 
 fn time<T>(runs: u32, mut f: impl FnMut() -> T) -> Duration {
@@ -105,4 +106,30 @@ fn checking_a_200_node_layout_stays_under_budget() {
     );
     let took = time(200, || blocks::layout::check(&text, &contract).unwrap());
     report("check a 200-node layout", took, Duration::from_micros(300));
+}
+
+#[test]
+#[ignore = "release only: `just perf`"]
+fn viewing_a_200_row_screen_with_a_show_on_every_block_stays_under_budget() {
+    fn shows(v: &mut serde_json::Value) {
+        if let Some(o) = v.as_object_mut() {
+            o.insert("show".into(), serde_json::json!({"not": {"eq": [{"get": "q"}, "x"]}}));
+        }
+        for k in ["blocks", "rows"] {
+            v.get_mut(k)
+                .and_then(|l| l.as_array_mut())
+                .into_iter()
+                .flatten()
+                .for_each(shows);
+        }
+    }
+    let mut v = serde_json::to_value(screens().0).unwrap();
+    shows(&mut v);
+    let screen = Built::new(v);
+    let state = start(&screen);
+    report(
+        "behave::view of a 200-row screen",
+        time(400, || view(&screen, &state)),
+        Duration::from_micros(1000),
+    );
 }

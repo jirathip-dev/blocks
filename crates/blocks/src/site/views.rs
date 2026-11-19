@@ -1,5 +1,7 @@
 use serde_json::{Map, Value};
 
+use crate::behave;
+
 use super::{esc, fields, get, kids, list, on, one, shown, Go, W};
 
 fn toned(v: Option<&Value>) -> (String, String) {
@@ -280,7 +282,8 @@ pub(super) fn form(w: &mut W<'_>, b: &Value) {
 
 fn field(w: &mut W<'_>, x: &Value, tie: &[(&str, &str)]) {
     let name = shown(x.get("name"));
-    w.open("label", "fd", &[]);
+    let hidden = w.view.hidden.contains(&name);
+    w.open("label", "fd", if hidden { &[("hidden", "")] } else { &[] });
     w.el(
         "span",
         "fk",
@@ -311,10 +314,18 @@ fn field(w: &mut W<'_>, x: &Value, tie: &[(&str, &str)]) {
         }
         t => {
             let secret = t == "secret";
+            let hints = behave::hints(x);
+            let typed = hints.iter().find(|(k, _)| *k == "type").map(|(_, v)| v.as_str());
             attrs.extend([
-                ("type", if secret { "password" } else { "text" }),
+                ("type", if secret { "password" } else { typed.unwrap_or("text") }),
                 ("autocomplete", "off"),
             ]);
+            attrs.extend(
+                hints
+                    .iter()
+                    .filter(|(k, _)| *k != "type")
+                    .map(|(k, v)| (*k, v.as_str())),
+            );
             attrs.push(("placeholder", get(x, "placeholder").unwrap_or_default()));
             if !secret && !value.is_empty() {
                 attrs.push(("value", &value));

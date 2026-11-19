@@ -1,11 +1,13 @@
 import type { LayoutPlace, LayoutTransition } from "./gen/layout.ts";
 import type { Scheme } from "./gen/schemes.ts";
 import type { Answer, Block, Kind, Op } from "./gen/types.ts";
+import { behave } from "./behave.ts";
 import { apply, patcher } from "./patch.ts";
 import { type Blk, blks, btn, type Ctx, el, h, isBlk, obj, type Post, type Renderer, render, type Store, tick } from "./render/index.ts";
 import { stream } from "./stream.ts";
 import { plain, type Theme } from "./theme.ts";
 
+export { behave, evaluate, start, view } from "./behave.ts";
 export { dump } from "./dump.ts";
 export { apply, patcher } from "./patch.ts";
 export { el, h, kids, render } from "./render/index.ts";
@@ -42,7 +44,7 @@ export type Mount = {
   store?: Store;
 };
 
-type View = { source: string; path: string; back: string[]; open: Set<string>; box: HTMLElement; body: HTMLElement; model?: Block; stop?: () => void };
+type View = { source: string; path: string; back: string[]; open: Set<string>; box: HTMLElement; body: HTMLElement; model?: Block; stop?: () => void; sync: () => void };
 type Tab = { node: Resolved; button: HTMLElement; pane: HTMLElement; view?: View };
 
 const ALWAYS: LayoutPlace[] = ["cards", "column", "panel", "inline"];
@@ -165,6 +167,7 @@ function draw(o: Mount, store: Store, theme: Theme, wear: (name: string | null) 
   const paint = (v: View) => {
     const e = v.model ? render(v.model, ctx(v)) : null;
     v.body.replaceChildren(...(e ? [e] : []));
+    v.sync();
     const b = btn("‹ back", "b-back");
     b.onclick = () => back(v);
     v.box.replaceChildren(...(v.back.length && v !== sheetView ? [b] : []), v.body);
@@ -172,7 +175,9 @@ function draw(o: Mount, store: Store, theme: Theme, wear: (name: string | null) 
   };
 
   const view = (source: string, path: string, box: HTMLElement): View => {
-    const v: View = { source, path, back: [], open: new Set(), box, body: el("div", "b-view") };
+    const body = el("div", "b-view");
+    const v: View = { source, path, back: [], open: new Set(), box, body, sync: () => {} };
+    v.sync = behave(body, () => v.model);
     v.body.addEventListener("redraw", () => paint(v));
     return v;
   };
@@ -182,7 +187,7 @@ function draw(o: Mount, store: Store, theme: Theme, wear: (name: string | null) 
     const was = store.get(kept);
     if (!v.model && was) v.model = JSON.parse(was);
     paint(v);
-    const p = patcher({ root: v.body, model: () => v.model ?? { type: "screen" }, draw: (b) => render(b, ctx(v)) });
+    const p = patcher({ root: v.body, model: () => v.model ?? { type: "screen" }, draw: (b) => render(b, ctx(v)), saved: v.sync });
     const s = live(v.source);
     s.open(v.path, (screen, ops) => {
       v.model = screen;
