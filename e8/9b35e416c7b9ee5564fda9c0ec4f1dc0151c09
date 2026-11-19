@@ -1,0 +1,13 @@
+Decided: a row with rounds is a fold (div.rr); open is (last round needs) XOR the flip kept in c.open under the row id; the row's own tap is not used then
+Because: docs/design/rounds/README.md:21
+Because: q2186
+Decided: colours follow the scene's state table (working and merged green, needs ochre, fail brick red, done ink, idle hollow); rounds.css is copied into blocks.css as approved
+Because: web/src/blocks.css:213
+Decided: the static writer is site/rounds.rs (no site/row.rs exists; the row writer lives in site/views.rs) and reuses the row's classes and face from views.rs
+Because: "Where the static writer `site/row.rs` exists (B8, #18), it writes the same element and `fixtures/html` matches."
+Decided: the rounds sample sits on the list sample's row, so fixtures/blocks/row.json, row.html and the row trees stay byte-equal
+Because: "a row without them is unchanged (the existing goldens and trees stay equal)"
+Rejected: box buttons and grey-edged tags in this PR — the design README hands them to #57
+Check: web/test/render.test.ts's three rounds tests (fold, flip, taps, body, live line, no body, no rounds) fail on the old row.ts (2 of 3; the third guards the unchanged row)
+Check: fixtures/html/list.html and fixtures/trees{,/swift}/list.json come from blocks-codegen and web build, arch-check clean
+Owner: On the web and static pages, an issue row with review rounds now folds open to show each round on a rail, with the current round's lane, log, notes and buttons.
