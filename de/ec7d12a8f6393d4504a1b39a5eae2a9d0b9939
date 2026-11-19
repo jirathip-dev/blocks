@@ -1,0 +1,11 @@
+Decided: a form holds back only when every field is blank or a field check fails, via behave's view
+Because: "A form sends when its own fields are valid by their declared rules"
+Because: web/src/render/form.ts:16
+Rejected: keep reading go.disabled from behave — the Enter-key path and pages without behave would skip it
+Rejected: change the static writer — it already writes required/type/maxlength from checks (crates/blocks/src/behave.rs:143)
+Decided: an all-blank form sends nothing, so the lane say form acts as today with its fixture unchanged
+Because: "drover's composer-style forms still behave as today (fixtures unchanged)"
+Decided: web/dist/blocks.js conflict with staging resolved by rerunning the gen steps, not by hand
+Check: the name/qty test fails on 76dc3ef's parent code and passes at the head
+Check: rerunning the gen steps at the head leaves web/dist/blocks.js unchanged
+Owner: forms send on their own checks; a blank form still sends nothing
