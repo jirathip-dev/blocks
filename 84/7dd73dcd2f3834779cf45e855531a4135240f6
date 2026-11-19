@@ -1,0 +1,17 @@
+Decided: data-id stays the stable block id beside the data-block kind hook; data-action and SwiftUI block:/action: ids are new
+Because: docs/architecture/blocks/renderers.md:36
+Rejected: data-block=<block id> with the kind moved to data-kind — breaks the documented style hook, dump, adopt and blocks-shot (asked q2223, routine, option 1 recommended)
+Decided: the static writer's Go::Post carries the action name so every posting button writes data-action in one place
+Because: crates/blocks/src/site/mod.rs:287
+Decided: SwiftUI's Identified writes accessibilityIdentifier and, under reportsBlocks, the same string as the DrawnIds preference the harness checks
+Because: swift/Sources/BlocksUI/Tree.swift:146
+Rejected: reading NSHostingView's accessibility tree in swift test — it exposes no children without an AX client (three tries)
+Decided: fixtures/ids holds screen (the AC) and button so action ids are covered too
+Because: "A conformance fixture lists the expected ids for `fixtures/blocks/screen.json`"
+Check: site.test compares data-action between site and render for all 27 kinds; shot.test and SnapshotTests reject a wrong ids file
+Owner: Every drawn block and action now carries its server-given id on web and SwiftUI, so e2e tests can select by it; nothing looks different.
+
+Decided: merged origin/staging; form submit keeps both data-action (this PR) and data-submit (staging), views.rs imports both behave and sends
+Because: web/src/render/form.ts:10
+Rejected: none
+Owner: The branch now sits on the latest staging with nothing lost from either side; tests still pass.
