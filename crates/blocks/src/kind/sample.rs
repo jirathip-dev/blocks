@@ -1,8 +1,8 @@
 use super::{
     Act, Block, Button, Card, CardKind, ChipOption, Chips, Choice, ChoiceOption, Composer, Diagram, Diff, Editor,
-    Fallback, Field, FieldKind, Form, Hero, Hunk, Image, Images, Island, Lane, LaneState, Link, List, Media, Nav,
-    NavLink, Part, Prose, Round, RoundLane, Row, Run, Scene, Screen, Secret, Section, Sheet, Shown, Span, Stat, Tap,
-    Text, Toned, Web,
+    Fallback, Field, FieldKind, Form, Hero, Hunk, Image, Images, Island, Keyboard, Lane, LaneState, LineItem, Lines,
+    Link, List, Media, Nav, NavLink, Part, Prose, Round, RoundLane, Row, RowError, Run, Scene, Screen, Secret, Section,
+    Sheet, Shown, Span, Stage, Stat, Steps, Submit, Tap, Text, Toned, Web,
 };
 use crate::expr::{Expr, Lit, State};
 
@@ -17,6 +17,18 @@ fn text(id: &str, markdown: &str) -> Block {
     Block::Text(Box::new(Text::new().id(id).markdown(markdown)))
 }
 
+fn step(id: &str, label: &str, sub: &str) -> Stage {
+    Stage {
+        id: id.into(),
+        label: label.into(),
+        sub: Some(sub.into()),
+        tap: Some(Tap {
+            open: Some(id.into()),
+            ..Tap::default()
+        }),
+    }
+}
+
 fn field(name: &str, label: &str) -> Field {
     Field {
         kind: FieldKind::Text,
@@ -24,6 +36,69 @@ fn field(name: &str, label: &str) -> Field {
         label: Some(label.into()),
         ..Field::default()
     }
+}
+
+fn lines() -> Lines {
+    let money = |name: &str, label: &str| Field {
+        keyboard: Some(Keyboard::Number),
+        ..field(name, label)
+    };
+    let account = Field {
+        kind: FieldKind::Picker,
+        options: Some(vec![
+            "6100 Rent".into(),
+            "6200 Utilities".into(),
+            "2100 Payables".into(),
+        ]),
+        ..field("account", "Account")
+    };
+    let row = |id: &str, values: &[(&str, &str)]| LineItem {
+        id: id.into(),
+        values: values.iter().map(|(k, v)| ((*k).to_string(), (*v).into())).collect(),
+    };
+    let rows = vec![
+        row(
+            "l1",
+            &[("account", "6100 Rent"), ("memo", "office rent"), ("debit", "2400")],
+        ),
+        row(
+            "l2",
+            &[("account", ""), ("memo", "power and water"), ("debit", "318.40")],
+        ),
+        row(
+            "l3",
+            &[
+                ("account", "2100 Payables"),
+                ("memo", "landlord"),
+                ("credit", "2668.50"),
+            ],
+        ),
+    ];
+    let columns = vec![
+        account,
+        field("memo", "Description"),
+        money("debit", "Debit"),
+        money("credit", "Credit"),
+    ];
+    let error = RowError {
+        row: Some("l2".into()),
+        name: Some("account".into()),
+        message: "pick an account for line 2".into(),
+    };
+    Lines::new("lines", columns, rows)
+        .id("journal")
+        .label("journal lines")
+        .action("check-journal")
+        .sum(vec!["debit".to_string(), "credit".to_string()])
+        .balance(["debit".to_string(), "credit".to_string()])
+        .min(2_u32)
+        .adds("add line")
+        .errors(vec![error])
+        .submit(Submit {
+            label: "post entry".into(),
+            action: "post-journal".into(),
+            ..Submit::default()
+        })
 }
 
 fn content() -> Vec<Block> {
@@ -124,6 +199,7 @@ fn controls() -> Vec<Block> {
         )),
         Block::Editor(Box::new(Editor::new("notes", "hello", "save-notes").id("editor"))),
         Block::Composer(Box::new(Composer::new("say").id("say").placeholder("message the team"))),
+        Block::Lines(Box::new(lines())),
     ]
 }
 
@@ -201,6 +277,19 @@ fn views() -> Vec<Block> {
     ]
 }
 
+fn stepper() -> Vec<Block> {
+    vec![Block::Steps(Box::new(
+        Steps::new()
+            .id("stop")
+            .title("Stop 3 of 8")
+            .steps(vec![
+                step("stop", "Stop", "arrived 09:42"),
+                step("lines", "Lines", "6 checked"),
+            ])
+            .done(true),
+    ))]
+}
+
 fn holders() -> Vec<Block> {
     let shown = Text::new().id("hint").markdown("Ready").show(Expr::Get("ready".into()));
     let state: State = [("ready".to_string(), Lit::Bool(true))].into_iter().collect();
@@ -224,7 +313,7 @@ fn holders() -> Vec<Block> {
 
 /// One typed sample per kind, keyed by its `type`; `fixtures/blocks` is written from them.
 pub fn samples() -> Vec<(&'static str, Block)> {
-    let all = [holders(), views(), controls(), content()].concat();
+    let all = [holders(), views(), controls(), content(), stepper()].concat();
     let kind = |b: &Block| {
         let v = serde_json::to_value(b).ok()?;
         let t = v.get("type")?.as_str()?.to_string();

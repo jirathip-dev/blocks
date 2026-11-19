@@ -1,4 +1,4 @@
-import type { Scheme, Token } from "./gen/schemes.ts";
+import type { Scheme, Token } from "../gen/schemes.ts";
 
 type Rgb = [number, number, number];
 

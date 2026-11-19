@@ -294,6 +294,42 @@ kind! {
     }
 }
 
+kind! {
+    /// A stepper of named steps with its current one, or progress bars.
+    pub struct Steps {
+        id: Option<String>,
+        title: Option<String>,
+        steps: Option<Vec<Stage>>,
+        current: Option<String>,
+        done: Option<bool>,
+        bars: Option<Vec<Bar>>,
+        fallback: Option<Fallback>,
+    }
+}
+
+kind! {
+    /// Repeating rows of fields with add and remove, running totals and a balance check.
+    pub struct Lines {
+        id: Option<String>,
+        name: String,
+        label: Option<String>,
+        action: Option<String>,
+        columns: Vec<Field>,
+        items: Vec<LineItem>,
+        calc: Option<BTreeMap<String, Expr>>,
+        sum: Option<Vec<String>>,
+        balance: Option<[String; 2]>,
+        scale: Option<u8>,
+        min: Option<u32>,
+        max: Option<u32>,
+        #[serde(rename = "add")]
+        adds: Option<String>,
+        empty: Option<String>,
+        errors: Option<Vec<RowError>>,
+        submit: Option<Submit>,
+    }
+}
+
 wire! {
     /// A block of a `type` that is no core kind: an app's own, kept whole.
     pub struct AppBlock {
@@ -374,9 +410,11 @@ kinds! {
     Scene(Scene) = "scene",
     Diagram(Diagram) = "diagram",
     Composer(Composer) = "composer",
+    Lines(Lines) = "lines",
     Prose(Prose) = "prose",
     Hero(Hero) = "hero",
     Media(Media) = "media",
     Nav(Nav) = "nav",
     Island(Island) = "island",
+    Steps(Steps) = "steps",
 }

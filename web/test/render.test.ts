@@ -18,7 +18,7 @@ const gaps = ["diff", "island"];
 
 test("every fixture is drawn with its hooks, natively or as its fallback", () => {
   const kinds = readdirSync(dir).map((f) => f.replace(/\.json$/, ""));
-  strictEqual(kinds.length, 27);
+  strictEqual(kinds.length, 29);
   for (const kind of kinds) {
     const b = fixture(kind);
     const e = render(b, ctx());
@@ -175,6 +175,60 @@ test("a diagram whose source has no state draws its fallback", () => {
   const e = render({ type: "diagram", id: "x", source: "graph TD; a-->b", fallback: { title: "Flow" } }, ctx());
   ok(e.hasAttribute("data-fallback"));
   strictEqual(part(e, "b-row__title")?.textContent, "Flow");
+});
+
+test("a stepper marks steps done, current and to do, and only a done step's tap is pressable", () => {
+  const taps = [];
+  const steps = [
+    { id: "a", label: "Stop", sub: "09:42", tap: { action: "stop" } },
+    { id: "b", label: "Lines", tap: { url: "https://x.test/l" } },
+    { id: "c", label: "Proof", tap: { action: "proof" } },
+    { id: "d", label: "Leave" },
+  ];
+  const e = render({ type: "steps", id: "s", title: "Stop 3", current: "c", steps }, ctx({ tap: (t) => taps.push(t) }));
+  strictEqual(e.getAttribute("role"), "group");
+  strictEqual(e.getAttribute("aria-label"), "Stop 3");
+  const lis = all(e).filter((x) => x.tagName === "LI");
+  deepStrictEqual(
+    lis.map((l) => [l.className, l.getAttribute("aria-current"), l.children[0].getAttribute("aria-label"), l.children[0].getAttribute("role")]),
+    [
+      ["spi done", null, "Stop, step 1 of 4, done", "button"],
+      ["spi done", null, "Lines, step 2 of 4, done", null],
+      ["spi now", "step", "Proof, step 3 of 4, current", null],
+      ["spi todo", null, "Leave, step 4 of 4, to do", null],
+    ],
+  );
+  strictEqual(lis[1].children[0].tagName, "A");
+  strictEqual(lis[1].children[0].href, "https://x.test/l");
+  strictEqual(lis[0].children[0].dataset.action, "stop");
+  deepStrictEqual(lis.map((l) => part(l, "spm").textContent), ["✓", "✓", "3", "4"]);
+  strictEqual(part(lis[2], "sps").textContent, "step 3 of 4");
+  lis[0].children[0].onclick();
+  strictEqual(lis[2].children[0].onclick ?? null, null);
+  deepStrictEqual(taps, [{ action: "stop" }]);
+  strictEqual(part(e, "spx").textContent, "Proofstep 3 of 4");
+  const done = render({ type: "steps", id: "s", done: true, steps: steps.slice(0, 2) }, ctx());
+  deepStrictEqual(all(done).filter((x) => x.tagName === "LI").map((l) => l.className), ["spi done", "spi done"]);
+  strictEqual(part(done, "spx").textContent, "All done2 of 2");
+});
+
+test("bars draw a clamped progressbar each with its tone, and an unplaced or empty steps block its fallback", () => {
+  const e = render({ type: "steps", id: "p", title: "Week 47", bars: [{ label: "Boiler", value: 130, tone: "ok", sub: "done Mon" }, { label: "Lights", value: 0 }] }, ctx());
+  ok(part(e, "pgl").classList.contains("rows"));
+  const [a, b] = all(e).filter((x) => x.getAttribute("role") === "progressbar");
+  deepStrictEqual(
+    ["class", "aria-valuenow", "aria-label", "aria-valuetext"].map((k) => a.getAttribute(k)),
+    ["pgr ok", "100", "Boiler", "100%, done Mon"],
+  );
+  strictEqual(part(a, "pgv").textContent, "100%");
+  strictEqual(part(a, "pgt").getAttribute("style"), "--v:100");
+  deepStrictEqual([b.className, b.getAttribute("aria-valuetext")], ["pgr zero", null]);
+  ok(!part(render({ type: "steps", id: "p", bars: [{ label: "Fire", value: 62 }] }, ctx()), "pgl").classList.contains("rows"));
+  for (const x of [{ steps: [] }, { bars: [] }, {}, { steps: [{ id: "a", label: "Stop" }] }, { steps: [{ id: "a", label: "Stop" }], current: "z" }]) {
+    const f = render({ type: "steps", id: "e", fallback: { title: "No steps yet" }, ...x }, ctx());
+    ok(f.hasAttribute("data-fallback"), JSON.stringify(x));
+    strictEqual(part(f, "b-row__title")?.textContent, "No steps yet");
+  }
 });
 
 test("a web block draws its page in a sandboxed frame at its height, with its address and an open link", () => {
@@ -410,6 +464,27 @@ test("a config with a submit sends every field over its values from its button, 
   strictEqual(off.querySelector("button").hasAttribute("disabled"), true);
 });
 
+test("a form sends on its own field rules whatever their names, and not while a check fails or nothing is typed", async () => {
+  const sent = [];
+  const c = ctx({ act: async (a) => (sent.push(a), true) });
+  const qty = { type: "text", name: "qty", checks: [{ ok: { is: { pattern: "number", value: { get: "qty" } } }, say: "a number" }] };
+  const order = { type: "form", id: "order", fields: [{ type: "text", name: "name" }, qty], submit: { label: "order", action: "order" } };
+  const e = render(order, c);
+  ctl(rows(e)[0]).value = "ada";
+  ctl(rows(e)[1]).value = "many";
+  e.querySelector("button").onclick();
+  await later();
+  deepStrictEqual(sent, []);
+  ctl(rows(e)[1]).value = "3";
+  e.querySelector("button").onclick();
+  await later();
+  deepStrictEqual(sent, [{ action: "order", block: "order", values: { name: "ada", qty: "3" } }]);
+  const say = render({ type: "form", id: "say", fields: [{ type: "text", name: "text", value: "" }], submit: { label: "Send", action: "say" } }, c);
+  say.querySelector("button").onclick();
+  await later();
+  strictEqual(sent.length, 1);
+});
+
 test("a secret draws its label, a masked field and a send line, and set says so with a replace hint", () => {
   const e = render(fixture("secret"), ctx());
   ok(!e.hasAttribute("data-fallback"));
@@ -593,4 +668,87 @@ test("an element whose tap sends an action carries it as data-action; a link or 
   deepStrictEqual(links.map((x) => x.dataset.action), ["approve", undefined]);
   const rds = [{ id: "a", name: "impl", state: "done", tap: { action: "see" } }, { id: "b", name: "rev", state: "needs" }];
   strictEqual(part(render({ type: "row", id: "x", title: "t", rounds: rds }, ctx()), "rdl").dataset.action, "see");
+});
+
+test("lines total in minor units as you type, work out a mul column, and turn the submit on once the entry balances", () => {
+  const b = fixture("lines");
+  const e = render(b, ctx({ screen: "lq1" }));
+  const text = (cls) => all(e).filter((x) => x.classList.contains(cls)).map((x) => x.textContent);
+  const go = () => all(e).find((x) => x.dataset.action === "post-journal");
+  deepStrictEqual(text("lqb"), ["out of balance · credit short by 49.90"]);
+  deepStrictEqual(text("lqw"), ["fix 1 line and balance the entry to post entry"]);
+  ok(go().hasAttribute("disabled"));
+  strictEqual(e.getAttribute("role"), "group");
+  strictEqual(e.getAttribute("aria-label"), "journal lines");
+  const credit = all(e).find((x) => x.getAttribute("aria-label") === "Credit, line 3");
+  strictEqual(credit.value, "2,668.50");
+  credit.value = "2,718.4";
+  credit.oninput();
+  deepStrictEqual(text("lqb"), ["balanced · debit = credit"]);
+  deepStrictEqual(text("lqt"), ["totalDebit2,718.40Credit2,718.40"]);
+  deepStrictEqual(text("lqw"), ["fix 1 line to post entry"]);
+  const account = all(e).find((x) => x.getAttribute("aria-label") === "Account, line 2");
+  strictEqual(account.getAttribute("aria-invalid"), "true");
+  const inv = {
+    type: "lines", id: "inv", name: "items", columns: [{ type: "text", name: "qty", keyboard: "number" }, { type: "text", name: "price", keyboard: "number" }, { type: "text", name: "amount" }],
+    calc: { amount: { mul: [{ get: "qty" }, { get: "price" }] } }, sum: ["amount"], items: [{ id: "a", values: { qty: "2", price: "450" } }, { id: "b", values: { qty: "3", price: "0.1" } }],
+  };
+  const i = render(inv, ctx({ screen: "lq1" }));
+  deepStrictEqual(all(i).filter((x) => x.classList.contains("lqv")).map((x) => x.textContent), ["900.00", "0.30"]);
+  const qty = all(i).find((x) => x.getAttribute("aria-label") === "qty, line 2");
+  qty.value = "1,000";
+  qty.oninput();
+  deepStrictEqual(all(i).filter((x) => x.classList.contains("lqv")).map((x) => x.textContent), ["900.00", "100.00"]);
+  strictEqual(all(i).find((x) => x.classList.contains("lqt")).textContent, "totalamount1,000.00");
+  strictEqual(all(i).some((x) => x.classList.contains("lqx")), false, "no add, no remove");
+});
+
+test("lines add a row at the end, remove one down to the minimum, and post the check 400ms after the last change", () => {
+  mock.timers.enable({ apis: ["setTimeout"] });
+  const posts = [];
+  const c = ctx({ screen: "lq2", act: async (a) => (posts.push(a), true) });
+  const b = { ...fixture("lines"), max: 4 };
+  const e = render(b, c);
+  const rows = () => all(e).filter((x) => x.classList.contains("lqr")).map((x) => x.getAttribute("aria-label"));
+  const add = all(e).find((x) => x.textContent === "add line" && x.tagName === "BUTTON");
+  add.onclick();
+  deepStrictEqual(rows(), ["line 1", "line 2", "line 3", "line 4"]);
+  ok(all(e).find((x) => x.textContent === "add line" && x.tagName === "BUTTON").hasAttribute("disabled"), "at max");
+  mock.timers.tick(399);
+  strictEqual(posts.length, 0);
+  const memo = all(e).find((x) => x.getAttribute("aria-label") === "Description, line 4");
+  memo.value = "fees";
+  memo.oninput();
+  mock.timers.tick(400);
+  strictEqual(posts.length, 1);
+  strictEqual(posts[0].action, "check-journal");
+  deepStrictEqual(posts[0].values.lines[3], { id: "new-4", values: { account: "", memo: "fees", debit: "", credit: "" } });
+  all(e).find((x) => x.getAttribute("aria-label") === "remove line 1").onclick();
+  all(e).find((x) => x.getAttribute("aria-label") === "remove line 1").onclick();
+  deepStrictEqual(rows(), ["line 1", "line 2"]);
+  ok(all(e).find((x) => x.getAttribute("aria-label") === "remove line 1").hasAttribute("disabled"), "at min");
+  const again = render({ ...b, errors: [] }, c);
+  deepStrictEqual(
+    all(again).filter((x) => x.getAttribute("aria-label")?.startsWith("Description")).map((x) => x.value),
+    ["landlord", "fees"],
+    "a redraw with new errors keeps the draft",
+  );
+  mock.timers.reset();
+});
+
+test("lines with no rows say so and total zero", () => {
+  const e = render({ ...fixture("lines"), items: [], errors: [] }, ctx({ screen: "lq3" }));
+  strictEqual(all(e).find((x) => x.classList.contains("lqz")).textContent, "no lines yet");
+  strictEqual(all(e).find((x) => x.classList.contains("lqt")).textContent, "totalDebit0.00Credit0.00");
+});
+
+test("a link that is not http, https, mailto or relative is dropped and its text drawn", async () => {
+  const f = JSON.parse(readFileSync(new URL("../../fixtures/links/screen.json", import.meta.url), "utf8"));
+  const e = render(f.screen, ctx());
+  const hrefs = all(e).filter((x) => x.tagName === "A").map((a) => a.href);
+  deepStrictEqual(hrefs, ["https://example.org/a", "mailto:ops@example.org", "/docs", "/about"]);
+  for (const t of f.texts) ok(e.textContent.includes(t), t);
+  const { linkable } = await import("../src/render/index.ts");
+  for (const u of f.safe) strictEqual(linkable(u), true, u);
+  for (const u of f.unsafe) strictEqual(linkable(u), false, u);
 });

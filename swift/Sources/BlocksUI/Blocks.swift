@@ -189,11 +189,13 @@ internal struct BlockNode: View {
             case .scene(let scene): LaneStage(block: scene)
             case .diagram(let diagram): DiagramBlock(block: diagram)
             case .composer(let composer): ComposerBlock(block: composer)
+            case .lines(let lines): LinesBlock(block: lines)
             case .prose(let prose): ProseBlock(block: prose)
             case .hero(let hero): HeroBlock(block: hero)
             case .media(let media): MediaBlock(block: media)
             case .nav(let nav): NavBlock(block: nav)
             case .island(let island): IslandView(block: island)
+            case .steps(let steps): StepsBlock(block: steps)
             case .appBlock(let block): AppBlockView(block: block)
             }
         }

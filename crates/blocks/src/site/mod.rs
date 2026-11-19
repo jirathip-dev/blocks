@@ -1,8 +1,10 @@
 mod content;
 mod diagram;
 mod editor;
+mod lines;
 mod rounds;
 mod scene;
+mod steps;
 mod views;
 
 use serde_json::{Map, Value};
@@ -129,6 +131,10 @@ fn esc_into(out: &mut String, s: &str) {
 
 pub(crate) fn get<'v>(v: &'v Value, k: &str) -> Option<&'v str> {
     v.get(k).and_then(Value::as_str)
+}
+
+pub(crate) fn link<'v>(v: &'v Value, k: &str) -> Option<&'v str> {
+    get(v, k).filter(|u| crate::built::linkable(u))
 }
 
 pub(crate) fn list<'v>(v: &'v Value, k: &str) -> &'v [Value] {
@@ -344,10 +350,10 @@ impl<'a> W<'a> {
 
     pub(crate) fn tap(&mut self, tap: Option<&Value>, block: Option<&Value>) -> Go {
         let Some(t) = tap else { return Go::Stay };
-        if let Some(u) = get(t, "url") {
+        if let Some(u) = link(t, "url") {
             return Go::Url(u.into());
         }
-        if let Some(o) = get(t, "open") {
+        if let Some(o) = link(t, "open") {
             return Go::Open(o.into());
         }
         if let Some(s) = get(t, "sheet") {
@@ -420,8 +426,10 @@ pub(crate) fn block(w: &mut W<'_>, b: &Value) {
         "nav" => content::nav(w, b),
         "diagram" => diagram::diagram(w, b),
         "editor" => editor::editor(w, b),
+        "lines" => lines::lines(w, b),
         "scene" => scene::scene(w, b),
         "island" => island(w, b),
+        "steps" => steps::steps(w, b),
         _ => fallback(w, b),
     }
 }

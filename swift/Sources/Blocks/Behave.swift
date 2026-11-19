@@ -137,6 +137,7 @@ extension Expr {
         case .is(let m): return m.value.eval(state).matches(m.pattern)
         case .add(let xs): return sum(xs, +)
         case .sub(let xs): return sum(xs, -)
+        case .mul(let xs): return sum(xs, *)
         case .cat(let xs): return .string(xs.map { of($0).text }.joined())
         case .pick(let xs):
             guard xs.count == 3, let f = of(xs[0]).flag else { return .null }
@@ -151,7 +152,7 @@ extension Expr {
         case .lit, .get: true
         case .not(let x), .len(let x): x.known
         case .all(let xs), .any(let xs), .cat(let xs): xs.allSatisfy(\.known)
-        case .eq(let xs), .lt(let xs), .has(let xs), .add(let xs), .sub(let xs): xs.count == 2 && xs.allSatisfy(\.known)
+        case .eq(let xs), .lt(let xs), .has(let xs), .add(let xs), .sub(let xs), .mul(let xs): xs.count == 2 && xs.allSatisfy(\.known)
         case .pick(let xs): xs.count == 3 && xs.allSatisfy(\.known)
         case .is(let m): Pattern.all.contains(m.pattern) && m.value.known
         case .unknown: false
