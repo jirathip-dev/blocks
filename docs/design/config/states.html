@@ -1,0 +1,43 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>config: every state of a field</title>
+<link rel="stylesheet" href="../../../web/src/blocks.css"><link rel="stylesheet" href="config.css"><link rel="stylesheet" href="page.css">
+<script src="config.js"></script></head>
+<body><main class="scr">
+<div class="tile"><div class="tabh"><span class="tw">config · states</span></div></div>
+<div class="cases" id="cases"></div>
+</main>
+<script>
+const t = (o) => ({ type: "text", name: o.label ?? "f", ...o });
+const cases = [
+  ["1 · text", "Value, placeholder, url and number keyboards. A number value is shown as text.", { fields: [
+    t({ label: "Repo", value: "jirathip-dev/blocks" }), t({ label: "Branch", placeholder: "staging" }),
+    t({ label: "Docs", keyboard: "url", value: "https://blocks.dev" }), t({ label: "Workers", keyboard: "number", value: 4 })] }],
+  ["2 · notes", "One note under the label: error, else was, else doc. An error also marks the control.", { fields: [
+    t({ label: "Doc", value: "8", doc: "Lanes at once, per host" }), t({ label: "Was", value: "12", was: "8", doc: "hidden by was" }),
+    t({ label: "Error", value: "-1", error: "Must be 1 or more", was: "8" })] }],
+  ["3 · toggle and picker", "A toggle is a square switch, ink when on. A picker's value comes first if it is not in its options.", { fields: [
+    { type: "toggle", name: "on", label: "Alerts", value: true }, { type: "toggle", name: "off", label: "Sounds", value: false },
+    { type: "picker", name: "p", label: "Theme", value: "paper", options: ["neutral", "dusk"] }] }],
+  ["4 · secret", "The value is never sent to the page. Unset: its placeholder, else \"not set\". Set: \"set ✓\".", { fields: [
+    { type: "secret", name: "a", label: "Token" }, { type: "secret", name: "b", label: "Token", set: true }] }],
+  ["5 · open", "An open field has the focus and the ink ring when it is drawn.", { fields: [
+    t({ label: "Name", value: "edgar" }), t({ label: "Contact", placeholder: "you@example.com", open: true })] }],
+  ["6 · live save (action)", "A change sends only that field. Until the reply: \"saving…\"; a failed send: \"not saved\".", { action: "set", fields: [
+    { type: "toggle", name: "x", label: "Saving", value: true }, { type: "picker", name: "y", label: "Not saved", value: "weekly", options: ["daily"] }] },
+    { saving: "x", unsaved: "y" }],
+  ["7 · submit", "A submit sends every field. Sending: the button's ↻. off: disabled.", { submit: { label: "Save", action: "s" }, fields: [
+    t({ label: "Name", value: "edgar" })] }, { sending: true }],
+  ["", "", { submit: { label: "Save", action: "s", off: true }, fields: [t({ label: "Name", value: "" })] }],
+  ["8 · fixture", "fixtures/blocks/config.json as it is: one text field, a live action, no value.", { action: "save", fields: [t({ name: "repo", label: "Repo" })] }],
+];
+const host = document.getElementById("cases");
+for (const [title, note, b, show] of cases) {
+  const tile = document.createElement("div"); tile.className = "tile";
+  if (title) { const h = document.createElement("div"); h.className = "sh"; h.innerHTML = `<b class="thw">${title}</b>`; tile.append(h); }
+  if (note) { const p = document.createElement("p"); p.className = "note"; p.textContent = note; tile.append(p); }
+  tile.append(config({ type: "config", id: "c", ...b }, show));
+  host.append(tile);
+}
+document.querySelectorAll(".tile").forEach((t, i) => t.style.setProperty("--i", i));
+document.body.dataset.h = Math.ceil(document.documentElement.scrollHeight);
+</script></body></html>

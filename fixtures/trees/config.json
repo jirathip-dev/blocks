@@ -2,6 +2,6 @@
   "kind": "config",
   "id": "settings",
   "variant": null,
-  "drawn": "fallback",
+  "drawn": "native",
   "children": []
 }
