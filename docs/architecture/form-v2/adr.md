@@ -7,7 +7,7 @@ date, days, hours, combo, tags; multi-line and rich are options of text. The ren
 app (calendar, filter, hours, labels); the app answers a search or a long list with a new screen. Files and signature
 PNGs go to a file handler the app passes in and travel as ids. Language, era and today are set once on the screen.
 Slices: ten, about 3,200 counted lines: the fields folder, then search, slider, upload, signature, date, hours, combo, multi-line, rich.
-Open questions: (1) one cap raise; (2) hours takes a break off, as synergy does; (3) table (#80) reads the screen's era.
+Decided (q2301): (1) one cap raise; (2) hours takes a break off, as synergy does; (3) table (#80) reads the screen's era.
 
 ## Question
 
@@ -144,7 +144,15 @@ where do language and era come in, and in what order is it built so that hub, th
   changes what drover's server reads, so it is its own issue; until then one ban below names the composer as its
   exception.
 
-## Open questions for the owner
+## Open questions, decided by the owner (q2301)
+
+All three recommendations were approved: (1) one cap raise, sized by `drover cap blocks`, in one orchestrator-filed
+issue covering these slices and #81's R5, before whichever of R5 and F2 starts first; (2) hours takes the `rest`
+option, so 08:00 to 17:00 shows 8 h and the over-8 flag matches synergy's overtime; (3) #80's date cells read the
+screen's `locale` and the per-column `era` goes, made by whichever of #80 and F1 lands second. Also accepted: rich
+text keeps bold, italic and bullets only, and underline is lost at synergy's edge; the composer's base64
+attachments moving to the file handler is its own issue. The questions as they were put:
+
 
 1. **Cap.** The ten slices add about 3,200 counted lines. Today's total is 16,464 of 19,000, and the 2,492 left
    were sized for the guard and React slices (#120). Recommended: one raise, sized by `drover cap blocks`, in one

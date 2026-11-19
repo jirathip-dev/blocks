@@ -7,7 +7,7 @@ date, days, hours, combo, tags; multi-line and rich are options of text. The ren
 app (calendar, filter, hours, labels); the app answers a search or a long list with a new screen. Files and signature
 PNGs go to a file handler the app passes in and travel as ids. Language, era and today are set once on the screen.
 Slices: ten, about 3,200 counted lines: the fields folder, then search, slider, upload, signature, date, hours, combo, multi-line, rich.
-Open questions: (1) one cap raise; (2) hours takes a break off, as synergy does; (3) table (#80) reads the screen's era.
+Decided (q2301): (1) one cap raise; (2) hours takes a break off, as synergy does; (3) table (#80) reads the screen's era.
 
 ## Read in this order
 
