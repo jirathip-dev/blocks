@@ -1,0 +1,11 @@
+{
+  "type": "screen",
+  "id": "s",
+  "title": "Queue",
+  "blocks": [
+    {
+      "type": "gizmo",
+      "id": "g"
+    }
+  ]
+}
