@@ -1,0 +1,17 @@
+{
+  "guard": 2,
+  "known": [
+    {
+      "rule": "render/contrast",
+      "at": "screen#fleets/section~1/list~0/row#f-drover"
+    },
+    {
+      "rule": "render/contrast",
+      "at": "screen#fleets/section~1/list~0/row#f-sendmeter"
+    },
+    {
+      "rule": "render/tap-target",
+      "at": "screen#fleets/section~0/card#c12/choice#c12-a"
+    }
+  ]
+}

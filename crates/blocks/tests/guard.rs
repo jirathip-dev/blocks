@@ -127,3 +127,22 @@ fn a_seen_of_no_rule_makes_no_finding() {
     assert_eq!((f.file.as_str(), f.line), ("app.css", Some(7)));
     assert_eq!(f.fix, "Use `max-width`, or a width in `%`.");
 }
+
+#[cfg(feature = "schema")]
+#[test]
+fn codegen_refuses_an_example_with_a_finding() {
+    let tmp = Path::new(env!("CARGO_TARGET_TMPDIR")).join("skill-bad-example");
+    let ok = tmp.join("fixtures/guard/ok");
+    std::fs::create_dir_all(&ok).unwrap();
+    std::fs::copy(
+        root().join("fixtures/guard/bad/lint/title-long.json"),
+        ok.join("long.json"),
+    )
+    .unwrap();
+    let e = blocks::codegen::write(&tmp).unwrap_err().to_string();
+    assert!(
+        e.contains("fixtures/guard/ok/long.json: an example with a finding: lint/title-long"),
+        "{e}"
+    );
+    assert!(!tmp.join("skill/blocks/examples").exists());
+}

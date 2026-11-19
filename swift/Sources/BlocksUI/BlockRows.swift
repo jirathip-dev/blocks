@@ -34,9 +34,9 @@ internal struct RowView: View {
 
     private var line: some View {
         let palette = look.palette
-        let subtitle: (text: String, tone: Tone?)? =
+        let subtitle: (text: Shown, tone: Tone?)? =
             switch unfolded ? nil : row.subtitle {
-            case .string(let text): (text, nil)
+            case .string(let text): (.string(text), nil)
             case .label(let label): (label.text, label.tone)
             case nil: nil
             }
@@ -48,7 +48,7 @@ internal struct RowView: View {
                     .foregroundStyle(
                         style == "destructive" ? palette.red : style == "link" ? palette.link : palette.foreground)
                 if let subtitle {
-                    Text(subtitle.text).ui(12, .regular, look).foregroundStyle(
+                    RelativeValue { subtitle.text.text(at: $0, behaved.view.values) }.ui(12, .regular, look).foregroundStyle(
                         palette.tone(subtitle.tone?.rawValue) ?? palette.mute
                     ).lineLimit(1)
                 }
@@ -96,15 +96,30 @@ extension Shown {
         case .string(let string): string
         case .number(let number): number.formatted()
         case .bound(let bound): values[bound.get] ?? ""
-        case .time(let time): Relative.text(since: time.since, until: time.until, at: now)
+        case .time(let time): Relative.text(since: time.since, until: time.until, label: time.label, at: now)
         }
     }
 }
 
 extension Relative {
-    internal static func text(since: String?, until: String? = nil, at now: Date) -> String {
-        if let since = since?.date { return text(now.timeIntervalSince(since)) }
+    internal static func text(since: String?, until: String? = nil, label: String? = nil, at now: Date) -> String {
+        if let label, let until = until?.date {
+            let left = max(0, Int((until.timeIntervalSince(now) / 60).rounded()))
+            return label.replacingOccurrences(of: "{rel}", with: "\(left)m")
+        }
+        if let since = since?.date {
+            let age = now.timeIntervalSince(since)
+            return label.map { $0.replacingOccurrences(of: "{}", with: aged(age)) } ?? text(age)
+        }
         return until?.date.map { text($0.timeIntervalSince(now)) } ?? ""
+    }
+
+    private static func aged(_ seconds: TimeInterval) -> String {
+        let s = Int(max(0, seconds))
+        if s < 120 { return "\(s)s" }
+        if s < 7200 { return "\(s / 60)m" }
+        if s < 172_800 { return "\(s / 3600)h" }
+        return "\(s / 86400)d"
     }
 }
 
@@ -135,9 +150,9 @@ internal struct RowButton: View {
     internal var body: some View {
         let tint = look.palette.tone(button.tone?.rawValue) ?? look.palette.link
         ActButton(source: Source(button)) {
-            Text(button.label).ui(13, .semibold, look).foregroundStyle(tint)
+            Text(button.label).ui(13, .semibold, look).foregroundStyle(look.solid ? look.palette.background : tint)
                 .padding(.horizontal, 12).frame(minHeight: 30)
-                .background(look.outline ? Color.clear : tint.opacity(0.16), in: look.pill)
+                .background(look.outline ? Color.clear : tint.opacity(look.solid ? 1 : 0.16), in: look.pill)
         }
     }
 }

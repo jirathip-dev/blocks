@@ -1,0 +1,49 @@
+{
+  "guard": 2,
+  "known": [
+    {
+      "rule": "render/contrast",
+      "at": "screen#queue/card#fleet-herdsman/section#needs/list~0/row#q-730"
+    },
+    {
+      "rule": "render/contrast",
+      "at": "screen#queue/stat#stats"
+    },
+    {
+      "rule": "render/tap-target",
+      "at": "screen#queue"
+    },
+    {
+      "rule": "render/tap-target",
+      "at": "screen#queue/card#fleet-herdsman/button#drive"
+    },
+    {
+      "rule": "render/tap-target",
+      "at": "screen#queue/card#fleet-herdsman/button#pause"
+    },
+    {
+      "rule": "render/tap-target",
+      "at": "screen#queue/card#fleet-herdsman/section#needs/list~0/row#q-730"
+    },
+    {
+      "rule": "render/tap-target",
+      "at": "screen#queue/card#fleet-herdsman/section#needs/list~0/row#q-730/choice#a1092"
+    },
+    {
+      "rule": "render/tap-target",
+      "at": "screen#queue/chips#repo"
+    },
+    {
+      "rule": "render/tree",
+      "at": "screen#queue/card#fleet-herdsman/section#needs/list~0/row#q-655"
+    },
+    {
+      "rule": "render/tree",
+      "at": "screen#queue/card#fleet-herdsman/section#needs/list~0/row#q-655/choice#a1094"
+    },
+    {
+      "rule": "render/tree",
+      "at": "screen#queue/card#fleet-herdsman/section#needs/list~0/row#q-655/text~0"
+    }
+  ]
+}

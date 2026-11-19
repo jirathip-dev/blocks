@@ -1,0 +1,25 @@
+{
+  "guard": 2,
+  "known": [
+    {
+      "rule": "render/overlap",
+      "at": "screen#s/island#map"
+    },
+    {
+      "rule": "render/tap-target",
+      "at": "screen#s"
+    },
+    {
+      "rule": "render/tap-target",
+      "at": "screen#s/button#rm"
+    },
+    {
+      "rule": "render/tap-target",
+      "at": "screen#s/card#drive/button#drive-now"
+    },
+    {
+      "rule": "render/tap-target",
+      "at": "screen#s/card#drive/button#pause"
+    }
+  ]
+}

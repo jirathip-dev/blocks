@@ -103,6 +103,8 @@ export type Block = ({
 } & Table) | ({
     type: "steps";
 } & Steps) | ({
+    type: "chart";
+} & Chart) | ({
     type: "toast";
 } & Toast) | (AppBlock & {
     [key: string]: unknown;
@@ -138,7 +140,7 @@ export type Card = {
     id?: string | null;
     kind?: CardKind | null;
     menu?: Act[] | null;
-    meta?: string | null;
+    meta?: Shown | null;
     push?: boolean | null;
     show?: Expr | null;
     subtitle?: string | null;
@@ -148,6 +150,22 @@ export type Card = {
 };
 export type CardKind = "ask" | "run" | "secret" | "config" | "proposal";
 export type Cell = string | number | Label;
+export type Chart = {
+    chart: ChartKind;
+    empty?: string | null;
+    era?: Era | null;
+    format?: ChartFormat | null;
+    id?: string | null;
+    lang?: string | null;
+    selected?: string | null;
+    series: Series[];
+    show?: Expr | null;
+    tap?: Tap | null;
+    title: string;
+    x: string[];
+};
+export type ChartFormat = "count" | "thb" | "thb_m" | "percent";
+export type ChartKind = "bar" | "stacked" | "line" | "combo" | "donut";
 export type Check = {
     ok: Expr;
     say: string;
@@ -409,7 +427,7 @@ export type KeyState = {
 };
 export type Keyboard = "default" | "url" | "number";
 export type Label = {
-    text: string;
+    text: Shown;
     tone?: Tone | null;
 };
 export type Lane = {
@@ -581,6 +599,20 @@ export type Pending = {
     text: string;
 };
 export type PhonePart = "title" | "tag" | "value" | "meta" | "hide";
+export type Plan = {
+    out: string;
+    runs: PlanRun[];
+};
+export type PlanRun = {
+    css: string[];
+    kinds: string[];
+    name: string;
+    probes: boolean;
+    screen: string;
+    scripts: string[];
+    size: string;
+    steps: Step[];
+};
 export type Prose = {
     id?: string | null;
     parts: Part[];
@@ -704,6 +736,14 @@ export type Seen = {
     run?: string | null;
     shot?: string | null;
 };
+export type Series = {
+    as?: SeriesMark | null;
+    dash?: boolean | null;
+    name: string;
+    tone?: Tone | null;
+    values: number[];
+};
+export type SeriesMark = "bar" | "line";
 export type SetState = {
     key: string;
     to: Expr;
@@ -859,6 +899,7 @@ export type Tile = {
     value: Shown;
 };
 export type Time = {
+    label?: string | null;
     since?: string | null;
     until?: string | null;
 };
@@ -909,4 +950,4 @@ export type Why = "evicted" | "unpaired" | "handover";
 export type Working = {
     since: string;
 };
-export type Kind = "screen" | "sheet" | "section" | "list" | "row" | "card" | "choice" | "form" | "config" | "secret" | "run" | "button" | "chips" | "stat" | "text" | "images" | "web" | "diff" | "editor" | "scene" | "diagram" | "composer" | "lines" | "prose" | "hero" | "media" | "nav" | "island" | "table" | "steps" | "toast";
+export type Kind = "screen" | "sheet" | "section" | "list" | "row" | "card" | "choice" | "form" | "config" | "secret" | "run" | "button" | "chips" | "stat" | "text" | "images" | "web" | "diff" | "editor" | "scene" | "diagram" | "composer" | "lines" | "prose" | "hero" | "media" | "nav" | "island" | "table" | "steps" | "chart" | "toast";

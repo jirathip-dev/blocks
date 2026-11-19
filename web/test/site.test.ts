@@ -48,7 +48,7 @@ const tree = (page) =>
 test("site and render give the same element per kind: tag, classes, hooks, role, name and text", async () => {
   const { page, close } = await open({ page: "<!doctype html><body>" });
   const kinds = readdirSync(at("../../fixtures/blocks/")).map((f) => f.replace(/\.json$/, ""));
-  strictEqual(kinds.length, 31);
+  strictEqual(kinds.length, 32);
   for (const k of kinds) {
     const [written, drawn] = await page.evaluate(
       async ([html, b]) => {
@@ -71,7 +71,8 @@ test("site and render give the same element per kind: tag, classes, hooks, role,
         const t = document.createElement("template");
         t.innerHTML = html;
         const ctx = { screen: String(b.id ?? ""), act: async () => true, tap: () => {}, open: new Set(), theme: B.plain, store: { get: () => null, put: () => {} } };
-        return [sig(t.content.querySelector("[data-block]")), sig(B.render(b, ctx))];
+        const still = (e) => (e.querySelectorAll("[data-tick]").forEach((x) => (x.textContent = JSON.stringify(Object.entries(JSON.parse(x.dataset.tick)).sort()))), e);
+        return [sig(still(t.content.querySelector("[data-block]"))), sig(still(B.render(b, ctx)))];
       },
       [read(`../../fixtures/html/${k}.html`), JSON.parse(read(`../../fixtures/blocks/${k}.json`))],
     );
@@ -103,6 +104,46 @@ test("the site's workflow diagram is the one render lays out: every element, its
   ok(written.filter((x) => x.cls.includes("dgn")).length >= 16, `${written.length} elements`);
   ok(written.some((x) => x.cls.includes("timer")) && written.some((x) => x.text === "optional") && written.some((x) => x.cls.includes("picked")));
   deepStrictEqual(written, drawn);
+  await close();
+});
+
+test("a chart: site and render write the same marks, labels and table; a tap sends its month and picks it, a hover moves the legend", async () => {
+  const { page, close } = await open({ page: '<!doctype html><link rel="stylesheet" href="/blocks.css"><body>' });
+  const b = JSON.parse(read("../../fixtures/blocks/chart.json"));
+  const got = await page.evaluate(
+    async ([html, b]) => {
+      const B = await import("/blocks.js");
+      const sig = (e) =>
+        [e, ...e.querySelectorAll("*")].map((x) => ({
+          tag: x.tagName.toLowerCase(),
+          cls: [...x.classList].sort().join(" "),
+          at: ["aria-label", "aria-pressed", "style", "d", "x", "y", "width", "height", "viewBox"].map((a) => x.getAttribute(a)),
+          text: x.children.length ? "" : x.textContent,
+        }));
+      const t = document.createElement("template");
+      t.innerHTML = html;
+      const sent = [];
+      const ctx = { screen: "s", act: async (a) => (sent.push(a), true), tap: () => {}, open: new Set(), theme: B.plain, store: { get: () => null, put: () => {} } };
+      const e = B.render(b, ctx);
+      document.body.append(e);
+      window.sent = sent;
+      return [sig(t.content.querySelector("[data-block]")), sig(e)];
+    },
+    [read("../../fixtures/html/chart.html"), b],
+  );
+  deepStrictEqual(got[0], got[1]);
+  ok(got[1].filter((x) => x.tag === "rect").length === 6 && got[1].some((x) => x.tag === "path"), "six bars and the target line");
+  const legend = () => page.textContent(".chl .chx");
+  const pressed = () => page.$$eval(".chc", (cs) => cs.map((c) => c.getAttribute("aria-pressed")));
+  strictEqual(await legend(), "Mar 2567");
+  await page.click(".chc >> nth=0");
+  deepStrictEqual(await page.evaluate(() => window.sent), [{ action: "sales.month", block: "revenue", values: { x: "2024-01" } }]);
+  deepStrictEqual(await pressed(), ["true", null, null, null, null, null]);
+  strictEqual(await page.textContent(".chx2 .sel"), "Jan 67");
+  await page.hover(".chc >> nth=5");
+  strictEqual(await legend(), "Jun 2567");
+  await page.mouse.move(0, 0);
+  strictEqual(await legend(), "Jan 2567");
   await close();
 });
 

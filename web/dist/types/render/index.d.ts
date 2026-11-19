@@ -1,4 +1,5 @@
 import type { Act, Block, Kind, Label, Tap, Toned } from "../gen/types.ts";
+import { linkable } from "../core/check.ts";
 import { type Blk, blks, isBlk, named } from "../core/tree.ts";
 import type { Held } from "../gesture.ts";
 import type { Theme } from "../theme.ts";
@@ -36,7 +37,7 @@ export declare const href: (a: HTMLAnchorElement, url: string) => HTMLAnchorElem
     target: string;
     rel: string;
 };
-export declare const linkable: (url: string) => boolean;
+export { linkable };
 export declare const urlOf: (t?: Tap | null) => string | undefined;
 export declare const sends: (t?: Tap | null, action?: unknown) => unknown;
 export declare const acts: <E extends HTMLElement>(e: E, action: unknown) => E;

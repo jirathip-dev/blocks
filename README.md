@@ -36,8 +36,14 @@ harnesses (`docs/architecture/blocks/migration.md`).
   and patcher), then the node tests in `web/test/`
 - `just arch`, `just cap`: drover's arch-check (`.drover/arch.toml`), and the line cap: the highest `line_cap` in `ci/cap.toml`
   and `ci/cap.d/*.toml`, now 15,000 (`scripts/line-cap.sh`)
+- `just desktop`: the desktop renderer's tests (`crates/blocks-desktop`, egui), and no egui in the `blocks` crate's tree
 - `just actionlint`, `just swift`: the workflows, and the Swift package on macOS (op apply, the generated types, a
   render test per core kind), warnings as errors
+
+## For agents
+
+Start a screen with the usage skill `skill/blocks/` (an app's lanes get it from `blocks skill --to <dir>`), from an
+example screen in `skill/blocks/examples/`, and check it headlessly with `blocks check --shot` (`docs/guard.md`).
 
 ## The Swift package
 

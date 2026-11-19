@@ -5,5 +5,24 @@
   "drawn": "native",
   "role": "group",
   "name": "q1",
-  "children": []
+  "children": [
+    {
+      "kind": "row",
+      "id": "card-row",
+      "variant": null,
+      "drawn": "native",
+      "role": "group",
+      "name": "Review",
+      "children": []
+    },
+    {
+      "kind": "stat",
+      "id": "card-up",
+      "variant": null,
+      "drawn": "native",
+      "role": "group",
+      "name": "up",
+      "children": []
+    }
+  ]
 }

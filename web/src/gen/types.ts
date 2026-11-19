@@ -16,7 +16,7 @@ export type AppBlock = { fallback?: Fallback | null; id?: string | null; type: s
 
 export type Bar = { label: string; sub?: string | null; tone?: Tone | null; value: number };
 
-export type Block = ({ type: "screen" } & Screen) | ({ type: "sheet" } & Sheet) | ({ type: "section" } & Section) | ({ type: "list" } & List) | ({ type: "row" } & Row) | ({ type: "card" } & Card) | ({ type: "choice" } & Choice) | ({ type: "form" } & Form) | ({ type: "config" } & Form) | ({ type: "secret" } & Secret) | ({ type: "run" } & Run) | ({ type: "button" } & Button) | ({ type: "chips" } & Chips) | ({ type: "stat" } & Stat) | ({ type: "text" } & Text) | ({ type: "images" } & Images) | ({ type: "web" } & Web) | ({ type: "diff" } & Diff) | ({ type: "editor" } & Editor) | ({ type: "scene" } & Scene) | ({ type: "diagram" } & Diagram) | ({ type: "composer" } & Composer) | ({ type: "lines" } & Lines) | ({ type: "prose" } & Prose) | ({ type: "hero" } & Hero) | ({ type: "media" } & Media) | ({ type: "nav" } & Nav) | ({ type: "island" } & Island) | ({ type: "table" } & Table) | ({ type: "steps" } & Steps) | ({ type: "toast" } & Toast) | (AppBlock & { [key: string]: unknown });
+export type Block = ({ type: "screen" } & Screen) | ({ type: "sheet" } & Sheet) | ({ type: "section" } & Section) | ({ type: "list" } & List) | ({ type: "row" } & Row) | ({ type: "card" } & Card) | ({ type: "choice" } & Choice) | ({ type: "form" } & Form) | ({ type: "config" } & Form) | ({ type: "secret" } & Secret) | ({ type: "run" } & Run) | ({ type: "button" } & Button) | ({ type: "chips" } & Chips) | ({ type: "stat" } & Stat) | ({ type: "text" } & Text) | ({ type: "images" } & Images) | ({ type: "web" } & Web) | ({ type: "diff" } & Diff) | ({ type: "editor" } & Editor) | ({ type: "scene" } & Scene) | ({ type: "diagram" } & Diagram) | ({ type: "composer" } & Composer) | ({ type: "lines" } & Lines) | ({ type: "prose" } & Prose) | ({ type: "hero" } & Hero) | ({ type: "media" } & Media) | ({ type: "nav" } & Nav) | ({ type: "island" } & Island) | ({ type: "table" } & Table) | ({ type: "steps" } & Steps) | ({ type: "chart" } & Chart) | ({ type: "toast" } & Toast) | (AppBlock & { [key: string]: unknown });
 
 export type Bound = { get: string };
 
@@ -28,11 +28,17 @@ export type ButtonStyle = "primary" | "plain" | "destructive";
 
 export type Bye = { why: Why };
 
-export type Card = { badge?: Label | null; blocks?: Block[] | null; buttons?: Block[] | null; fold?: Fold | null; id?: string | null; kind?: CardKind | null; menu?: Act[] | null; meta?: string | null; push?: boolean | null; show?: Expr | null; subtitle?: string | null; tap?: Tap | null; title?: string | null; tone?: Tone | null };
+export type Card = { badge?: Label | null; blocks?: Block[] | null; buttons?: Block[] | null; fold?: Fold | null; id?: string | null; kind?: CardKind | null; menu?: Act[] | null; meta?: Shown | null; push?: boolean | null; show?: Expr | null; subtitle?: string | null; tap?: Tap | null; title?: string | null; tone?: Tone | null };
 
 export type CardKind = "ask" | "run" | "secret" | "config" | "proposal";
 
 export type Cell = string | number | Label;
+
+export type Chart = { chart: ChartKind; empty?: string | null; era?: Era | null; format?: ChartFormat | null; id?: string | null; lang?: string | null; selected?: string | null; series: Series[]; show?: Expr | null; tap?: Tap | null; title: string; x: string[] };
+
+export type ChartFormat = "count" | "thb" | "thb_m" | "percent";
+
+export type ChartKind = "bar" | "stacked" | "line" | "combo" | "donut";
 
 export type Check = { ok: Expr; say: string };
 
@@ -112,7 +118,7 @@ export type KeyState = { gone?: number | null; k: string; ops?: Op[] | null; rev
 
 export type Keyboard = "default" | "url" | "number";
 
-export type Label = { text: string; tone?: Tone | null };
+export type Label = { text: Shown; tone?: Tone | null };
 
 export type Lane = { id: string; since?: string | null; stage?: string | null; state: LaneState; tap?: Tap | null; title: string; tool?: string | null };
 
@@ -158,6 +164,10 @@ export type Pending = { count: string; discard: Tap; review: Tap; text: string }
 
 export type PhonePart = "title" | "tag" | "value" | "meta" | "hide";
 
+export type Plan = { out: string; runs: PlanRun[] };
+
+export type PlanRun = { css: string[]; kinds: string[]; name: string; probes: boolean; screen: string; scripts: string[]; size: string; steps: Step[] };
+
 export type Prose = { id?: string | null; parts: Part[]; show?: Expr | null };
 
 export type Queued = { q: number; text: string };
@@ -185,6 +195,10 @@ export type Secret = { action: string; id?: string | null; label?: string | null
 export type Section = { blocks: Block[]; footer?: string | null; header?: string | null; id?: string | null; show?: Expr | null };
 
 export type Seen = { at: string; detail: string; file?: string | null; line?: number | null; rule: string; run?: string | null; shot?: string | null };
+
+export type Series = { as?: SeriesMark | null; dash?: boolean | null; name: string; tone?: Tone | null; values: number[] };
+
+export type SeriesMark = "bar" | "line";
 
 export type SetState = { key: string; to: Expr };
 
@@ -238,7 +252,7 @@ export type TextStyle = "body" | "footnote";
 
 export type Tile = { label: string; spark?: number[] | null; tone?: Tone | null; unit?: string | null; value: Shown };
 
-export type Time = { since?: string | null; until?: string | null };
+export type Time = { label?: string | null; since?: string | null; until?: string | null };
 
 export type Timings = { first_paint_ms: number; frames_over_budget?: number | null; longest_frame_ms?: number | null; longest_patch_ms?: number | null; steps_ms: number[] };
 
@@ -264,4 +278,4 @@ export type Why = "evicted" | "unpaired" | "handover";
 
 export type Working = { since: string };
 
-export type Kind = "screen" | "sheet" | "section" | "list" | "row" | "card" | "choice" | "form" | "config" | "secret" | "run" | "button" | "chips" | "stat" | "text" | "images" | "web" | "diff" | "editor" | "scene" | "diagram" | "composer" | "lines" | "prose" | "hero" | "media" | "nav" | "island" | "table" | "steps" | "toast";
+export type Kind = "screen" | "sheet" | "section" | "list" | "row" | "card" | "choice" | "form" | "config" | "secret" | "run" | "button" | "chips" | "stat" | "text" | "images" | "web" | "diff" | "editor" | "scene" | "diagram" | "composer" | "lines" | "prose" | "hero" | "media" | "nav" | "island" | "table" | "steps" | "chart" | "toast";
