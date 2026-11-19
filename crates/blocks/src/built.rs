@@ -81,7 +81,16 @@ fn placed(o: &Fields) -> impl Iterator<Item = (String, &Value)> {
 }
 
 pub(crate) fn children(o: &Fields) -> impl Iterator<Item = &Value> {
-    placed(o).map(|(_, v)| v)
+    let rounds = o.get("rounds").and_then(Value::as_array).into_iter().flatten();
+    let in_rounds = rounds.filter_map(|r| r.get("blocks"));
+    let rows = kind(o) != "table";
+    LISTS
+        .iter()
+        .filter(move |k| rows || **k != "rows")
+        .filter_map(|k| o.get(*k))
+        .chain(in_rounds)
+        .filter_map(Value::as_array)
+        .flatten()
 }
 
 fn kind(o: &Fields) -> &str {

@@ -116,7 +116,10 @@ pub(crate) fn esc(s: &str) -> String {
 
 fn esc_into(out: &mut String, s: &str) {
     let mut rest = s;
-    while let Some(at) = rest.find(['&', '<', '>', '"', '\'']) {
+    while let Some(at) = rest
+        .bytes()
+        .position(|b| matches!(b, b'&' | b'<' | b'>' | b'"' | b'\''))
+    {
         let (plain, from) = rest.split_at(at);
         out.push_str(plain);
         let mut c = from.chars();

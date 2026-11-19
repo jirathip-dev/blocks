@@ -1,0 +1,12 @@
+{
+  "type": "screen",
+  "id": "s",
+  "title": "Queue",
+  "blocks": [
+    {
+      "type": "list",
+      "id": "rows",
+      "rows": []
+    }
+  ]
+}

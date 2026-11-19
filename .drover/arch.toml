@@ -1,4 +1,11 @@
-frozen = ["ci/cap.toml", "docs/schema.md"]
+frozen = [
+    "ci/cap.toml",
+    "docs/schema.md",
+    "swift/Sources/BlocksUI/Blocks.swift",
+    "swift/Sources/BlocksUI/BlockCards.swift",
+    "swift/Sources/BlocksUI/BlockLeaves.swift",
+    "web/src/blocks.css",
+]
 generated = [
     "schema/blocks.schema.json",
     "schema/sample.json",
@@ -22,6 +29,8 @@ generated = [
     "fixtures/site/*.html",
     "fixtures/protocol/sim-*.json",
     "fixtures/behave/sim.json",
+    "fixtures/css/*.css",
+    "crates/blocks/src/guard/rules/mod.rs",
 ]
 generate = "just gen"
 shared = [
@@ -43,12 +52,24 @@ dir = "ci/cap.d"
 glob = "*.toml"
 
 [[collect]]
+dir = "crates/blocks/src/guard/rules"
+glob = "*.rs"
+
+[[collect]]
 dir = "docs"
 glob = "*.md"
 
 [[collect]]
 dir = "docs/schema"
 glob = "*.md"
+
+[[collect]]
+dir = "swift/Sources/BlocksUI/Kind"
+glob = "*.swift"
+
+[[collect]]
+dir = "web/src/css"
+glob = "**/*.css"
 
 [comments]
 policy = "strict"
@@ -139,10 +160,16 @@ paths = ["crates/blocks/src/web.rs"]
 mods = ["crate::web", "blocks::web"]
 
 [[layer]]
+name = "guard"
+paths = ["crates/blocks/src/guard/**"]
+mods = ["crate::guard", "blocks::guard"]
+may_use = ["expr", "kind", "built", "behave", "tree", "wire", "patch"]
+
+[[layer]]
 name = "codegen"
 paths = ["crates/blocks/src/codegen/**", "crates/blocks/src/bin/**"]
 mods = ["crate::codegen", "blocks::codegen"]
-may_use = ["expr", "kind", "built", "wire", "patch", "diff", "shelf", "mirror", "theme", "layout", "behave", "tree", "site"]
+may_use = ["expr", "kind", "built", "wire", "patch", "diff", "shelf", "mirror", "theme", "layout", "behave", "tree", "site", "guard"]
 
 [[ban]]
 pattern = "drover"

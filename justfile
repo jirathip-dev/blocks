@@ -10,6 +10,7 @@ gen: web-install
     npm --prefix web run build
     BLOCKS_GEN=1 cargo test -q --locked -p blocks --test sim generated
     BLOCKS_GEN=1 cargo test -q --locked -p blocks --test fixtures every_kind_has_a_stress_row
+    BLOCKS_GEN=1 cargo test -q --locked -p blocks --test theme css_writes_each_fixtures_css_file
 
 fmt:
     cargo fmt --check
