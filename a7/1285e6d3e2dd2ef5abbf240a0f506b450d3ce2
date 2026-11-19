@@ -1,0 +1,13 @@
+Decided: web draws a sandboxed iframe with no allow-same-origin, plus a muted address caption and an open link, as docs/design/web says
+Because: "The embedded page goes in a sandboxed `<iframe>`; nothing adds a script to the host page"
+Decided: the caption is src minus http(s)://, query, hash and a trailing slash, the same rule in render and site
+Because: crates/blocks/src/site/views.rs:532
+Rejected: host and path resolved against the page — the static writer has no page address, so site.test's same-text check would fail
+Decided: the patcher keeps an equal node that holds an iframe, so a redraw with the same src does not reload the page
+Because: web/src/patch.ts:116
+Decided: site/web.rs writes the same element now that B8 has landed
+Because: "Where the static writer `site/web.rs` exists (B8, #18), it writes the same element"
+Decided: merged origin/staging (#38 scene); render.test keeps both the scene and web tests, and the gap list drops both kinds
+Because: web/test/render.test.ts:17
+Check: render.test's three web tests, and site.test's per-kind comparison including web
+Owner: Embedded web pages now show in a locked-down frame with their address and an open link, on live and static pages.
