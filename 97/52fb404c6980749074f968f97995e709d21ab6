@@ -1,0 +1,14 @@
+Decided: BlockNode switches on the generated Block and hands each view its own struct; GroupBlock, LeafBlock and AnswerBlock go
+Because: "Each `BlocksUI` view reads its generated type from `Blocks/Gen`, not `JSONValue` keys."
+Decided: a tap's action, tap, values and confirmation travel as one internal Source, built from each typed block
+Because: swift/Sources/BlocksUI/Components.swift:52
+Decided: the harness's kind, id, variant and tap come from one switch on Block
+Because: swift/Sources/BlocksUI/Tree.swift:64
+Decided: JSONValue's fieldValues, rowOrder, text(at:), date and BlockAction(source:) are deleted, since no caller is left
+Because: swift/Sources/Blocks/JSONValue.swift:85
+Decided: an app block keeps its JSON (it has no generated type); its fallback and an island's decode into a Row
+Because: swift/Sources/BlocksUI/Blocks.swift:151
+Rejected: drawing a non-row list child as a row read from its keys — no typed row exists for it, so it draws as its own kind; no fixture has one
+Because: swift/Sources/BlocksUI/BlockLeaves.swift:49
+Check: blocks-snap --check passes on all 27 fixtures; the old and new builds give byte-identical PNGs and trees, and identical taps
+Owner: Nothing changes on screen; the iPhone and Mac views now read the typed blocks directly, which makes the code safer to change.
