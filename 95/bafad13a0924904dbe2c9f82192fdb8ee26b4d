@@ -1,0 +1,10 @@
+Decided: rules split by shapes.md's table, matched by content; steps, lines and table, newer than the ADR, get kind files
+Because: docs/architecture/hotspots-2026-11-16/adr.md:62
+Decided: the table rules, unlayered on staging, join the one layer the build writes
+Because: docs/architecture/hotspots-2026-11-16/adr.md:64
+Rejected: keeping the table rules outside the layer — the ADR's build has no place for unlayered rules
+Decided: ci/for-apps.paths keeps web/src/blocks.css beside web/src/css/* since the for-apps test names that path
+Because: scripts/for-apps.test.sh:9
+Decided: the trees drift from codegen is left out; an untouched staging checkout writes the same drift
+Check: 182 of 182 fixture PNGs at 390 and 1440 are byte-identical before and after; dist has the same 471 rules
+Owner: The stylesheet is now one small file per kind, built into the same single stylesheet apps load.
