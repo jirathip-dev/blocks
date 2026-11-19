@@ -134,8 +134,16 @@ class El extends Parent {
   }
   matches(sel) {
     return sel.split(",").some((s) => {
-      const [tag, ...cls] = s.trim().split(".");
-      return (!tag || tag.toUpperCase() === this.tagName) && cls.every((c) => this.classList.contains(c));
+      const [own, ...up] = s.trim().split(/\s+/).reverse();
+      const [tag, ...cls] = own.split(".");
+      if (!((!tag || tag.toUpperCase() === this.tagName) && cls.every((c) => this.classList.contains(c)))) return false;
+      let p = this.parentNode;
+      for (const u of up) {
+        while (p instanceof El && !p.matches(u)) p = p.parentNode;
+        if (!(p instanceof El)) return false;
+        p = p.parentNode;
+      }
+      return true;
     });
   }
   addEventListener(type, f) {

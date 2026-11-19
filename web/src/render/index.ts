@@ -6,6 +6,7 @@ import { card } from "./card.ts";
 import { chips } from "./chips.ts";
 import { choice } from "./choice.ts";
 import { composer } from "./composer.ts";
+import { config } from "./config.ts";
 import { diagram } from "./diagram.ts";
 import { form } from "./form.ts";
 import { images } from "./images.ts";
@@ -143,7 +144,7 @@ export const R: { [K in Kind]: (b: Of<K>, c: Ctx) => HTMLElement | null } = {
   card,
   choice,
   form,
-  config: gap(40),
+  config,
   secret: gap(39),
   run,
   button,
