@@ -410,6 +410,27 @@ test("a config with a submit sends every field over its values from its button, 
   strictEqual(off.querySelector("button").hasAttribute("disabled"), true);
 });
 
+test("a form sends on its own field rules whatever their names, and not while a check fails or nothing is typed", async () => {
+  const sent = [];
+  const c = ctx({ act: async (a) => (sent.push(a), true) });
+  const qty = { type: "text", name: "qty", checks: [{ ok: { is: { pattern: "number", value: { get: "qty" } } }, say: "a number" }] };
+  const order = { type: "form", id: "order", fields: [{ type: "text", name: "name" }, qty], submit: { label: "order", action: "order" } };
+  const e = render(order, c);
+  ctl(rows(e)[0]).value = "ada";
+  ctl(rows(e)[1]).value = "many";
+  e.querySelector("button").onclick();
+  await later();
+  deepStrictEqual(sent, []);
+  ctl(rows(e)[1]).value = "3";
+  e.querySelector("button").onclick();
+  await later();
+  deepStrictEqual(sent, [{ action: "order", block: "order", values: { name: "ada", qty: "3" } }]);
+  const say = render({ type: "form", id: "say", fields: [{ type: "text", name: "text", value: "" }], submit: { label: "Send", action: "say" } }, c);
+  say.querySelector("button").onclick();
+  await later();
+  strictEqual(sent.length, 1);
+});
+
 test("a secret draws its label, a masked field and a send line, and set says so with a replace hint", () => {
   const e = render(fixture("secret"), ctx());
   ok(!e.hasAttribute("data-fallback"));
@@ -593,4 +614,15 @@ test("an element whose tap sends an action carries it as data-action; a link or 
   deepStrictEqual(links.map((x) => x.dataset.action), ["approve", undefined]);
   const rds = [{ id: "a", name: "impl", state: "done", tap: { action: "see" } }, { id: "b", name: "rev", state: "needs" }];
   strictEqual(part(render({ type: "row", id: "x", title: "t", rounds: rds }, ctx()), "rdl").dataset.action, "see");
+});
+
+test("a link that is not http, https, mailto or relative is dropped and its text drawn", async () => {
+  const f = JSON.parse(readFileSync(new URL("../../fixtures/links/screen.json", import.meta.url), "utf8"));
+  const e = render(f.screen, ctx());
+  const hrefs = all(e).filter((x) => x.tagName === "A").map((a) => a.href);
+  deepStrictEqual(hrefs, ["https://example.org/a", "mailto:ops@example.org", "/docs", "/about"]);
+  for (const t of f.texts) ok(e.textContent.includes(t), t);
+  const { linkable } = await import("../src/render/index.ts");
+  for (const u of f.safe) strictEqual(linkable(u), true, u);
+  for (const u of f.unsafe) strictEqual(linkable(u), false, u);
 });
