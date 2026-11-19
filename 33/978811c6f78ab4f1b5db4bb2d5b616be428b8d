@@ -1,0 +1,17 @@
+Decided: the scoped sheet is a mechanical wrap in web's build script, written to web/src/gen/scoped.css and minified to web/dist/blocks.scoped.css
+Because: docs/architecture/react/adr.md:191
+Decided: the wrap rewrites `:root` and `html` to `:scope`, so the tokens and background land on the view's root
+Because: docs/architecture/react/shapes.md:156
+Decided: gated gates both schemes against the default tint fills and throws one error listing every miss
+Because: docs/architecture/react/shapes.md:147
+Decided: the root package's ./blocks.css export now gives the scoped sheet
+Because: docs/architecture/react/shapes.md:29
+Rejected: wrapping in Rust codegen — the CSS concatenation already lives in web's build script, and doing it there keeps src/ net at +11
+Check: web/test/scoped.test.ts fails on `beside` when pointed at the unscoped blocks.css
+Owner: React apps get a blocks stylesheet that styles only inside a blocks view, and brand colours must pass the contrast check.
+
+Decided: the scoped test checks the button's lowercase look, not its 28px height
+Because: web/test/scoped.test.ts:36
+Rejected: keeping the height check — CI's Linux WebKit gives a plain button 28px too, so `beside` matched
+Check: web/test/scoped.test.ts still fails on `beside` when pointed at the unscoped blocks.css
+Owner: The test that proves blocks styles stay inside a blocks view now passes on CI's Linux browser.
