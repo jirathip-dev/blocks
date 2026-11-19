@@ -436,10 +436,11 @@ wire! {
 }
 
 wire! {
-    /// A reorderable list's action.
-    pub struct Reorder {
+    /// A gesture a block allows: the action its result is sent as, under `name` in the action's values.
+    pub struct Gesture {
         action: String,
         name: String,
+        enabled: Option<Expr>,
     }
 }
 

@@ -31,6 +31,7 @@ generated = [
     "fixtures/site/*.html",
     "fixtures/protocol/sim-*.json",
     "fixtures/behave/sim.json",
+    "fixtures/gesture/sim.json",
     "fixtures/css/*.css",
     "crates/blocks/src/guard/rules/mod.rs",
 ]
@@ -91,16 +92,21 @@ paths = ["crates/blocks/src/expr.rs"]
 mods = ["crate::expr", "blocks::expr"]
 
 [[layer]]
+name = "gesture"
+paths = ["crates/blocks/src/gesture.rs"]
+mods = ["crate::gesture", "blocks::gesture"]
+
+[[layer]]
 name = "kind"
 paths = ["crates/blocks/src/kind/**"]
 mods = ["crate::kind"]
-may_use = ["expr"]
+may_use = ["expr", "gesture"]
 
 [[layer]]
 name = "built"
 paths = ["crates/blocks/src/built.rs"]
 mods = ["crate::built"]
-may_use = ["kind"]
+may_use = ["kind", "gesture"]
 
 [[layer]]
 name = "wire"
@@ -136,7 +142,7 @@ may_use = ["kind", "wire", "patch"]
 name = "behave"
 paths = ["crates/blocks/src/behave.rs"]
 mods = ["crate::behave", "blocks::behave"]
-may_use = ["expr", "kind", "built"]
+may_use = ["expr", "kind", "built", "gesture"]
 
 [[layer]]
 name = "tree"
@@ -175,7 +181,7 @@ may_use = ["expr", "kind", "built", "behave", "tree", "wire", "patch"]
 name = "codegen"
 paths = ["crates/blocks/src/codegen/**", "crates/blocks/src/bin/**"]
 mods = ["crate::codegen", "blocks::codegen"]
-may_use = ["expr", "kind", "built", "wire", "patch", "diff", "shelf", "mirror", "theme", "layout", "behave", "tree", "site", "guard"]
+may_use = ["expr", "kind", "built", "wire", "patch", "diff", "shelf", "mirror", "theme", "layout", "behave", "tree", "site", "guard", "gesture"]
 
 [[layer]]
 name = "cli"
@@ -281,6 +287,34 @@ reason = "the core never imports a renderer; renderers and adapters import the c
 pattern = "from \"react"
 paths = ["web/src/**", "web/shot/shot.ts"]
 reason = "React lives in web/react and its harness boot only"
+
+[[ban]]
+pattern = "setPointerCapture"
+paths = ["web/src/**"]
+except = ["web/src/gesture.ts"]
+reason = "a drag goes through gesture.ts, which runs the one gesture machine: no view writes its own"
+
+[[ban]]
+pattern = ".draggable("
+paths = ["swift/Sources/BlocksUI/**"]
+reason = "a drag goes through Gestured.swift, which runs the one gesture machine: no view writes its own"
+
+[[ban]]
+pattern = "DragGesture("
+paths = ["swift/Sources/BlocksUI/**"]
+except = ["swift/Sources/BlocksUI/Gestured.swift", "swift/Sources/BlocksUI/BlockActs.swift"]
+reason = "a drag goes through Gestured.swift; BlockActs.swift's is a row's swipe, which opens its buttons"
+
+[[ban]]
+pattern = "MagnifyGesture("
+paths = ["swift/Sources/BlocksUI/**"]
+except = ["swift/Sources/BlocksUI/Gestured.swift"]
+reason = "one pinch zoom, in Gestured.swift: pages, marks and the image viewer share it"
+
+[[ban]]
+pattern = "setTimeout"
+paths = ["web/src/core/gesture.ts", "web/src/core/kind/**"]
+reason = "the gesture machine and a kind's rules have no clock: the driver owns the one touch hold"
 
 [[size]]
 paths = ["crates/*/src/**/*.rs"]

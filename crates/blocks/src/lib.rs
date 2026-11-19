@@ -2,6 +2,7 @@ pub mod behave;
 mod built;
 mod diff;
 pub mod expr;
+pub mod gesture;
 pub mod guard;
 mod kind;
 pub mod layout;

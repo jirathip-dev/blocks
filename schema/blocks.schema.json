@@ -1852,6 +1852,23 @@
         {
           "additionalProperties": false,
           "properties": {
+            "div": {
+              "items": {
+                "$ref": "#/$defs/Expr"
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": "array"
+            }
+          },
+          "required": [
+            "div"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
             "cat": {
               "items": {
                 "$ref": "#/$defs/Expr"
@@ -2300,6 +2317,32 @@
       "required": [
         "k",
         "rev"
+      ],
+      "type": "object"
+    },
+    "Gesture": {
+      "description": "A gesture a block allows: the action its result is sent as, under `name` in the action's values.",
+      "properties": {
+        "action": {
+          "type": "string"
+        },
+        "enabled": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "action",
+        "name"
       ],
       "type": "object"
     },
@@ -2946,7 +2989,7 @@
         "reorder": {
           "anyOf": [
             {
-              "$ref": "#/$defs/Reorder"
+              "$ref": "#/$defs/Gesture"
             },
             {
               "type": "null"
@@ -3699,22 +3742,6 @@
       "required": [
         "q",
         "text"
-      ],
-      "type": "object"
-    },
-    "Reorder": {
-      "description": "A reorderable list's action.",
-      "properties": {
-        "action": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "action",
-        "name"
       ],
       "type": "object"
     },
@@ -4784,8 +4811,55 @@
             "shot"
           ],
           "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "gesture": {
+              "$ref": "#/$defs/StepGesture"
+            }
+          },
+          "required": [
+            "gesture"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "refuse": {
+              "$ref": "#/$defs/StepRefuse"
+            }
+          },
+          "required": [
+            "refuse"
+          ],
+          "type": "object"
         }
       ]
+    },
+    "StepGesture": {
+      "description": "A gesture on one item of a block: pointer offsets `[dx, dy]` in px, key nudges, or named actions, in turn.",
+      "properties": {
+        "grab": true,
+        "id": {
+          "type": "string"
+        },
+        "reach": {
+          "items": true,
+          "type": "array"
+        },
+        "via": {
+          "$ref": "#/$defs/Via"
+        }
+      },
+      "required": [
+        "id",
+        "grab",
+        "reach",
+        "via"
+      ],
+      "type": "object"
     },
     "StepOn": {
       "description": "The block a tap or a scroll goes to.",
@@ -4796,6 +4870,18 @@
       },
       "required": [
         "id"
+      ],
+      "type": "object"
+    },
+    "StepRefuse": {
+      "description": "The action out fails, with its toast as the reason.",
+      "properties": {
+        "toast": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "toast"
       ],
       "type": "object"
     },
@@ -5591,6 +5677,15 @@
         "action"
       ],
       "type": "object"
+    },
+    "Via": {
+      "description": "How a scripted gesture comes in: a pointer, the keys, or a named accessibility action.",
+      "enum": [
+        "pointer",
+        "keys",
+        "action"
+      ],
+      "type": "string"
     },
     "Web": {
       "additionalProperties": true,

@@ -68,7 +68,7 @@ export type Era = "be";
 
 export type ExportFormat = "csv" | "xlsx";
 
-export type Expr = { get: string } | { not: Expr } | { all: Expr[] } | { any: Expr[] } | { eq: Expr[] } | { lt: Expr[] } | { len: Expr } | { has: Expr[] } | { is: Match } | { add: Expr[] } | { sub: Expr[] } | { mul: Expr[] } | { cat: Expr[] } | { pick: Expr[] } | Lit;
+export type Expr = { get: string } | { not: Expr } | { all: Expr[] } | { any: Expr[] } | { eq: Expr[] } | { lt: Expr[] } | { len: Expr } | { has: Expr[] } | { is: Match } | { add: Expr[] } | { sub: Expr[] } | { mul: Expr[] } | { div: Expr[] } | { cat: Expr[] } | { pick: Expr[] } | Lit;
 
 export type Fallback = { subtitle?: string | null; tap?: Tap | null; title: string };
 
@@ -87,6 +87,8 @@ export type Fold = { line: string; main?: FoldMain | null };
 export type FoldMain = { action: string; block?: string | null; label: string; value?: string | null; values?: Record<string, unknown> | null };
 
 export type Form = { action?: string | null; fields: Field[]; id?: string | null; show?: Expr | null; submit?: Submit | null };
+
+export type Gesture = { action: string; enabled?: Expr | null; name: string };
 
 export type Have = { k: string; rev?: number | null };
 
@@ -124,7 +126,7 @@ export type Lines = { action?: string | null; add?: string | null; balance?: str
 
 export type Link = { label: string; tap: Tap };
 
-export type List = { id?: string | null; reorder?: Reorder | null; rows: Block[]; show?: Expr | null };
+export type List = { id?: string | null; reorder?: Gesture | null; rows: Block[]; show?: Expr | null };
 
 export type Lit = null | boolean | number | string;
 
@@ -159,8 +161,6 @@ export type PlanRun = { css: string[]; kinds: string[]; name: string; probes: bo
 export type Prose = { id?: string | null; parts: Part[]; show?: Expr | null };
 
 export type Queued = { q: number; text: string };
-
-export type Reorder = { action: string; name: string };
 
 export type Report = { dropped: string[]; sent: Action[]; shots: string[]; timings: Timings };
 
@@ -202,9 +202,13 @@ export type Stage = { id: string; label: string; sub?: string | null; tap?: Tap 
 
 export type Stat = { id?: string | null; items?: Tile[] | null; label?: string | null; show?: Expr | null; spark?: number[] | null; tone?: Tone | null; unit?: string | null; value?: Shown | null };
 
-export type Step = { tap: StepOn } | { type: StepType } | { scroll: StepOn } | { frame: Frame } | { answer: Answer } | { shot: StepShot };
+export type Step = { tap: StepOn } | { type: StepType } | { scroll: StepOn } | { frame: Frame } | { answer: Answer } | { shot: StepShot } | { gesture: StepGesture } | { refuse: StepRefuse };
+
+export type StepGesture = { grab: unknown; id: string; reach: unknown[]; via: Via };
 
 export type StepOn = { id: string };
+
+export type StepRefuse = { toast: string };
 
 export type StepShot = { name: string };
 
@@ -251,6 +255,8 @@ export type TreeDrawn = "native" | "fallback" | "hidden";
 export type TreeNode = { children: TreeNode[]; drawn: TreeDrawn; id?: string | null; kind: string; name: string; rect?: number[] | null; role: string; text?: string | null; variant?: string | null };
 
 export type Undo = { action: string; confirm?: Confirm | null; label?: string | null; values?: Record<string, unknown> | null };
+
+export type Via = "pointer" | "keys" | "action";
 
 export type Web = { height: number; id?: string | null; show?: Expr | null; src: string };
 

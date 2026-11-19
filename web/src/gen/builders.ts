@@ -47,6 +47,7 @@ export const expr = {
   add: (...v: Expr[]): Expr => ({ add: v }),
   sub: (...v: Expr[]): Expr => ({ sub: v }),
   mul: (...v: Expr[]): Expr => ({ mul: v }),
+  div: (...v: Expr[]): Expr => ({ div: v }),
   cat: (...v: Expr[]): Expr => ({ cat: v }),
   pick: (...v: Expr[]): Expr => ({ pick: v }),
 };
