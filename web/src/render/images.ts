@@ -1,9 +1,13 @@
 import type { Images } from "../gen/types.ts";
-import { btn, el, href } from "./index.ts";
+import { btn, el, h, href, linkable } from "./index.ts";
 
 export function images(b: Images): HTMLElement {
   const s = el("div", "imgs");
   for (const i of b.items) {
+    if (!linkable(i.src)) {
+      s.append(h("span", "", i.alt ?? ""));
+      continue;
+    }
     const a = href(el("a"), new URL(i.src.replace(/^[/]/, ""), document.baseURI).href);
     a.onclick = (e) => {
       e.preventDefault();
