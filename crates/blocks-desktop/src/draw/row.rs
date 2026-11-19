@@ -20,7 +20,7 @@ fn draw(b: &Row, ui: &mut Ui, cx: &mut Cx<'_>) {
             ui.label(RichText::new(&b.title).color(look.fg(ui)));
             match &b.subtitle {
                 Some(Toned::Text(s)) => ui.label(RichText::new(s).color(look.mute(ui))),
-                Some(Toned::Label(l)) => ui.label(RichText::new(&l.text).color(look.tone(ui, l.tone.as_ref()))),
+                Some(Toned::Label(l)) => ui.label(RichText::new(shown(&l.text).unwrap_or_default()).color(look.tone(ui, l.tone.as_ref()))),
                 None => return,
             };
         });
@@ -28,7 +28,7 @@ fn draw(b: &Row, ui: &mut Ui, cx: &mut Cx<'_>) {
             ui.label(RichText::new(v).color(look.mute(ui)));
         }
         if let Some(l) = &b.badge {
-            ui.label(RichText::new(&l.text).color(look.tone(ui, l.tone.as_ref())));
+            ui.label(RichText::new(shown(&l.text).unwrap_or_default()).color(look.tone(ui, l.tone.as_ref())));
         }
     });
     for r in b.rounds.iter().flatten() {

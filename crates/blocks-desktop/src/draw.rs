@@ -68,4 +68,5 @@ switch! {
     Island => island,
     Table => table,
     Steps => steps,
+    Toast => toast,
 }
