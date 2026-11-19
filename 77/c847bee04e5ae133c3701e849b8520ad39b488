@@ -1,0 +1,9 @@
+Decided: two pages written with the typed API in site/src/live.rs; blocks-shot runs scripted steps on each page's own screen JSON
+Because: "with `blocks.js` both work, checked by scripted steps in `blocks-shot`"
+Decided: the email starts valid so the static start state matches what blocks.js draws on adoption
+Because: web/test/pages/showcase.test.ts:59
+Rejected: a form submit for "enable" — a form with a submit draws as an inline bar that overflows at 390 px, and Pages has no server
+Decided: the fallback beside x-echo is a second island, x-later, that never loads, so it takes the real fallback path
+Because: "the test component `x-echo` hosted in a page, with its fallback beside it"
+Check: the blocks-shot test drops `tap sign-up` while the email check fails, and x-echo is drawn native while x-later is drawn fallback
+Owner: The showcase site has two new pages, behaviours and islands, built like every other page and tested with JS off and on.
