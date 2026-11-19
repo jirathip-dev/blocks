@@ -9,6 +9,7 @@ import { composer } from "./composer.ts";
 import { config } from "./config.ts";
 import { diagram } from "./diagram.ts";
 import { diff } from "./diff.ts";
+import { editor } from "./editor.ts";
 import { form } from "./form.ts";
 import { hero } from "./hero.ts";
 import { images } from "./images.ts";
@@ -25,6 +26,7 @@ import { section } from "./section.ts";
 import { sheet } from "./sheet.ts";
 import { stat } from "./stat.ts";
 import { text } from "./text.ts";
+import { web } from "./web.ts";
 
 export type Blk = { [k: string]: unknown };
 export type Post = { action: unknown; block?: unknown; values?: unknown; confirm?: unknown };
@@ -159,9 +161,9 @@ export const R: { [K in Kind]: (b: Of<K>, c: Ctx) => HTMLElement | null } = {
   stat,
   text,
   images,
-  web: gap(41),
+  web,
   diff,
-  editor: gap(43),
+  editor,
   scene,
   diagram,
   composer,

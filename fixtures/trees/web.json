@@ -2,6 +2,6 @@
   "kind": "web",
   "id": "doc",
   "variant": null,
-  "drawn": "fallback",
+  "drawn": "native",
   "children": []
 }

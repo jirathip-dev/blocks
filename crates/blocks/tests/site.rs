@@ -129,6 +129,26 @@ fn a_diff_writes_its_summary_and_lines_its_header_alone_with_no_hunks_and_its_fa
 }
 
 #[test]
+fn editor_numbers_lines_from_first_and_marks_errors_on_and_off_the_excerpt() {
+    let b = serde_json::json!({
+        "type": "editor", "id": "src", "name": "main", "action": "check", "first": 40,
+        "text": "fn main() {\n    let n = 1\n\n}",
+        "errors": [{"line": 41, "message": "expected `;`"}, {"line": 41, "message": "second"}, {"line": 9, "message": "unknown <key>"}]
+    });
+    assert_eq!(
+        site::fragment(&Built::new(b), "/act"),
+        concat!(
+            r#"<div class="ed b b-editor" data-block="editor" data-id="src" tabindex="0" role="button" aria-label="edit main">"#,
+            r#"<div class="edl"><i>40</i><span>fn main() {</span></div>"#,
+            r#"<div class="edl err"><i>41</i><span>    let n = 1</span></div><p class="ede">expected `;`</p>"#,
+            r#"<div class="edl"><i>42</i><span> </span></div>"#,
+            r#"<div class="edl"><i>43</i><span>}</span></div>"#,
+            r#"<p class="ede far">line 9 · unknown &#60;key&#62;</p></div>"#,
+        )
+    );
+}
+
+#[test]
 fn a_config_writes_each_field_as_a_settings_row_with_its_note_and_a_save_bar() {
     let b = serde_json::json!({
         "type": "config", "id": "edgar",
@@ -186,4 +206,25 @@ fn a_scene_lane_links_its_url_or_open_marks_any_other_tap_a_button_and_ticks_its
     );
     assert!(h.contains("<span class=\"lnx\">claude</span>"), "{h}");
     assert!(h.contains("<div class=\"ln idle\" data-id=\"d\" aria-label=\"plain, idle\"><i class=\"lnm\"></i><span class=\"lnb\"><span class=\"lnh\"><span class=\"lnt\">plain</span><span class=\"lns\">idle</span></span></span></div>"), "{h}");
+}
+
+#[test]
+fn a_web_block_whose_src_is_not_http_or_https_writes_a_muted_box_with_no_frame_or_link() {
+    for src in [
+        "javascript:alert(1)",
+        "java\tscript:alert(1)",
+        "java\nscript:alert(1)",
+        " \u{1}JavaScript:alert(1)",
+        "data:text/html,x",
+    ] {
+        let b = Built::new(serde_json::json!({"type": "web", "id": "w", "src": src, "height": 120}));
+        let h = site::fragment(&b, "/act");
+        assert!(!h.contains("<iframe") && !h.contains("<a "), "{src:?}: {h}");
+        assert!(
+            h.contains("<div class=\"wf none\" style=\"height:120px\">This page can&#39;t be shown here.</div>"),
+            "{src:?}: {h}"
+        );
+    }
+    let b = Built::new(serde_json::json!({"type": "web", "id": "w", "src": "/doc", "height": 9}));
+    assert!(site::fragment(&b, "/act").contains("<iframe"));
 }

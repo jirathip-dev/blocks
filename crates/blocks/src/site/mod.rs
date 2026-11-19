@@ -1,6 +1,7 @@
 mod content;
 mod diagram;
 mod diff;
+mod editor;
 mod scene;
 mod views;
 
@@ -367,6 +368,7 @@ pub(crate) fn block(w: &mut W<'_>, b: &Value) {
         "stat" => views::stat(w, b),
         "text" => views::text(w, b),
         "images" => views::images(w, b),
+        "web" => views::web(w, b),
         "composer" => views::composer(w, b),
         "prose" => content::prose(w, b),
         "hero" => content::hero(w, b),
@@ -374,6 +376,7 @@ pub(crate) fn block(w: &mut W<'_>, b: &Value) {
         "nav" => content::nav(w, b),
         "diagram" => diagram::diagram(w, b),
         "diff" => diff::diff(w, b),
+        "editor" => editor::editor(w, b),
         "scene" => scene::scene(w, b),
         _ => fallback(w, b),
     }

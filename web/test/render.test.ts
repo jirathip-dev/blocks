@@ -1,6 +1,6 @@
 import { deepStrictEqual, ok, strictEqual } from "node:assert/strict";
 import { readdirSync, readFileSync } from "node:fs";
-import { test } from "node:test";
+import { mock, test } from "node:test";
 import { install } from "./dom.ts";
 
 install();
@@ -14,7 +14,7 @@ const store = { get: () => null, put: () => {} };
 const ctx = (more = {}) => ({ screen: "home", act: async () => true, tap: () => {}, open: new Set(), theme: plain, store, ...more });
 const all = (e) => [e, ...e.children.flatMap(all)];
 const part = (e, cls) => all(e).find((x) => x.classList.contains(cls));
-const gaps = ["web", "editor", "island"];
+const gaps = ["island"];
 
 test("every fixture is drawn with its hooks, natively or as its fallback", () => {
   const kinds = readdirSync(dir).map((f) => f.replace(/\.json$/, ""));
@@ -53,7 +53,7 @@ test("children of a container are drawn through render, with their hooks", () =>
 });
 
 test("a gap draws its fallback as a row, then its children", () => {
-  const b = { type: "editor", id: "flow", fallback: { title: "Flow", subtitle: "2 nodes" }, blocks: [fixture("text")] };
+  const b = { type: "island", id: "flow", fallback: { title: "Flow", subtitle: "2 nodes" }, blocks: [fixture("text")] };
   const e = render(b, ctx());
   ok(e.hasAttribute("data-fallback"));
   strictEqual(part(e, "b-row__title")?.textContent, "Flow");
@@ -197,6 +197,124 @@ test("a diff with no hunks draws only its header, and one with no file or hunks 
   const f = render({ type: "diff", id: "x", file: "a", fallback: { title: "Change" } }, ctx());
   ok(f.hasAttribute("data-fallback"));
   strictEqual(part(f, "b-row__title")?.textContent, "Change");
+});
+
+test("a web block draws its page in a sandboxed frame at its height, with its address and an open link", () => {
+  const e = render(fixture("web"), ctx());
+  const f = e.querySelector("iframe");
+  deepStrictEqual(
+    ["src", "sandbox", "allow", "referrerpolicy", "loading", "title"].map((k) => f?.getAttribute(k)),
+    ["http://blocks.test/doc", "allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox", "", "no-referrer", "lazy", "/doc"],
+  );
+  strictEqual(f?.style.height, "240px");
+  strictEqual(part(e, "wu")?.textContent, "/doc");
+  const abs = render({ type: "web", src: "https://cooee.app/doc/?v=1#top", height: 9 }, ctx());
+  strictEqual(part(abs, "wu")?.textContent, "cooee.app/doc");
+  const a = e.querySelector("a");
+  deepStrictEqual([a?.href, a?.target, a?.rel, a?.textContent], ["http://blocks.test/doc", "_blank", "noopener", "open ↗"]);
+});
+
+test("a web block whose src is not http or https draws a muted box at its height, with no frame or link", () => {
+  for (const src of ["javascript:alert(1)", "java\tscript:alert(1)", " \u0001JavaScript:x", "data:text/html,x", "http://["]) {
+    const e = render({ type: "web", id: "x", src, height: 120 }, ctx());
+    strictEqual(e.querySelector("iframe"), null, src);
+    strictEqual(e.querySelector("a"), null, src);
+    strictEqual(part(e, "none")?.textContent, "This page can't be shown here.");
+    strictEqual(part(e, "none")?.style.height, "120px");
+  }
+});
+
+test("a redraw of a web block with the same src keeps its frame; a new src replaces it", async () => {
+  const { apply, patcher } = await import("../src/patch.ts");
+  let model = { type: "screen", id: "s", title: "Q", blocks: [{ ...fixture("web"), show: null }] };
+  const root = document.createElement("div");
+  const draw = (b) => render(b, ctx());
+  root.replaceChildren(draw(model));
+  globalThis.requestAnimationFrame = () => 0;
+  const p = patcher({ root, model: () => model, draw });
+  const send = (fields) => {
+    const ops = [{ op: "merge", id: "doc", fields }];
+    model = apply(model, ops);
+    p.queue(ops);
+    p.flush();
+    return root.querySelector("iframe");
+  };
+  const f = root.querySelector("iframe");
+  ok(f);
+  strictEqual(send({ show: null }), f);
+  const g = send({ src: "https://example.com/x" });
+  ok(g !== f);
+  strictEqual(g?.getAttribute("src"), "https://example.com/x");
+});
+
+test("an editor numbers its lines from first, marks an error's line with its message, and lists errors off the excerpt", () => {
+  const errors = [
+    { line: 41, message: "expected `;`" },
+    { line: 41, message: "second" },
+    { line: 9, message: "unknown key" },
+  ];
+  const e = render({ type: "editor", id: "src", name: "main", action: "check", first: 40, text: "fn main() {\n    let n = 1\n\n}", errors }, ctx());
+  strictEqual(e.hasAttribute("data-fallback"), false);
+  deepStrictEqual(
+    e.children.map((k) => [k.className, k.textContent]),
+    [
+      ["edl", "40fn main() {"],
+      ["edl err", "41    let n = 1"],
+      ["ede", "expected `;`"],
+      ["edl", "42 "],
+      ["edl", "43}"],
+      ["ede far", "line 9 · unknown key"],
+    ],
+  );
+  strictEqual(e.getAttribute("role"), "button");
+  strictEqual(e.getAttribute("aria-label"), "edit main");
+  const one = render(fixture("editor"), ctx());
+  deepStrictEqual(
+    one.children.map((k) => k.textContent),
+    ["1hello"],
+  );
+});
+
+test("a tapped editor opens a named draft that survives a redraw and posts its action 400ms after typing stops", () => {
+  mock.timers.enable({ apis: ["setTimeout"] });
+  const posts = [];
+  const c = ctx({ screen: "ed", act: async (a) => (posts.push(a), true) });
+  const b = { type: "editor", id: "cfg", name: "fleet", action: "check-fleet", text: "x = 1\ny =", errors: [{ line: 2, message: "expected a value" }] };
+  const e = render(b, c);
+  e.onkeydown({ key: "a", preventDefault() {} });
+  strictEqual(e.querySelector("textarea"), null);
+  e.onkeydown({ key: "Enter", preventDefault() {} });
+  const ta = e.querySelector("textarea");
+  ok(ta && e.classList.contains("on"));
+  strictEqual(ta.name, "fleet");
+  strictEqual(ta.value, "x = 1\ny =");
+  strictEqual(e.getAttribute("role"), null);
+  deepStrictEqual(
+    e.children.slice(1).map((k) => k.textContent),
+    ["line 2 · expected a value"],
+  );
+  ta.value = "x = 1\ny = 2";
+  ta.oninput();
+  mock.timers.tick(399);
+  strictEqual(posts.length, 0);
+  ta.value = "x = 1\ny = 3";
+  ta.oninput();
+  mock.timers.tick(399);
+  strictEqual(posts.length, 0);
+  mock.timers.tick(1);
+  deepStrictEqual(posts, [{ action: "check-fleet", block: "cfg", values: { fleet: "x = 1\ny = 3" } }]);
+  const again = render({ ...b, action: "check-2", errors: [] }, c);
+  strictEqual(again.querySelector("textarea"), ta);
+  strictEqual(again.children.length, 1);
+  ta.value = b.text;
+  ta.oninput();
+  mock.timers.tick(400);
+  strictEqual(posts.length, 1);
+  ta.value = "z";
+  ta.oninput();
+  mock.timers.tick(400);
+  strictEqual(posts[1].action, "check-2");
+  mock.timers.reset();
 });
 
 const settings = (more = {}) => ({

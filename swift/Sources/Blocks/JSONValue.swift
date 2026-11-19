@@ -84,38 +84,7 @@ public enum JSONValue: Codable, Hashable, Sendable {
 
     public func list(_ key: String) -> [Self] { self[key]?.items ?? [] }
 
-    /// The values a form's fields start with, its own and its children's.
-    public var fieldValues: [String: Self] {
-        let own = list("fields").reduce(into: [String: Self]()) { values, field in
-            if let name = field.string("name"), let value = field["value"] { values[name] = value }
-        }
-        return list("blocks").reduce(own) { $0.merging($1.fieldValues) { old, _ in old } }
-    }
-
     public var id: String? { self["id"]?.string }
-
-    /// A shown value as text: a string, a number, or a time since or until `now`.
-    public func text(at now: Date) -> String? {
-        switch self {
-        case .string(let string): return string
-        case .number(let number): return number.formatted()
-        case .object:
-            if let since = self["since"]?.date { return Relative.text(now.timeIntervalSince(since)) }
-            return self["until"]?.date.map { Relative.text($0.timeIntervalSince(now)) }
-        default: return nil
-        }
-    }
-
-    public var date: Date? { string.flatMap { try? Date($0, strategy: .iso8601) } }
-
-    /// A list's row ids once the row `moved` is dropped in the place of the row `target`.
-    public func rowOrder(moving moved: String, onto target: String) -> [String] {
-        var ids = list("rows").compactMap(\.id)
-        guard let from = ids.firstIndex(of: moved), let place = ids.firstIndex(of: target) else { return ids }
-        ids.remove(at: from)
-        ids.insert(moved, at: place)
-        return ids
-    }
 }
 
 /// Short relative times: `now`, `5m`, `3h`, `2d`.
@@ -142,13 +111,5 @@ public struct BlockAction: Sendable, Equatable {
     public init(action: String, values: [String: JSONValue]) {
         self.action = action
         self.values = values
-    }
-
-    public init?(action: String?, source: JSONValue, values: [String: JSONValue]) {
-        let tap = source["tap"] ?? .null
-        guard let name = action ?? source.string("action") ?? tap.string("action") else { return nil }
-        let own =
-            tap["values"]?.fields.merging(source["values"]?.fields ?? [:]) { $1 } ?? source["values"]?.fields ?? [:]
-        self.init(action: name, values: own.merging(values) { $1 })
     }
 }

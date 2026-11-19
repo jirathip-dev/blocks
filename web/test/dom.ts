@@ -153,6 +153,11 @@ class El extends Parent {
     return true;
   }
   focus() {}
+  isEqualNode(o) {
+    const same = (a, b) => (a instanceof El ? a.isEqualNode(b) : a.textContent === b?.textContent);
+    const attrs = (e) => JSON.stringify([...e.attrs].sort());
+    return o instanceof El && o.tagName === this.tagName && attrs(o) === attrs(this) && o.childNodes.length === this.childNodes.length && this.childNodes.every((n, i) => same(n, o.childNodes[i]));
+  }
 }
 
 export function install() {

@@ -113,6 +113,7 @@ function one(v: View, op: Op, model: Block): void {
     if (!el) return;
     if (el === v.root || b === model) return whole(v, model);
     const n = b && isBlock(b) ? v.draw(b) : null;
+    if (el.querySelector("iframe") && n?.isEqualNode(el)) return;
     if (n) el.replaceWith(n);
     else el.remove();
   };
