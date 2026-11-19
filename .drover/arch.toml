@@ -10,6 +10,9 @@ generated = [
     "swift/Sources/Blocks/Gen/Schemes.swift",
     "swift/Sources/Blocks/Gen/Style.swift",
     "swift/Sources/Blocks/Gen/LayoutShapes.swift",
+    "web/src/gen/layout.ts",
+    "web/dist/blocks.js",
+    "web/dist/blocks.css",
     "fixtures/blocks/*.json",
 ]
 generate = "just gen"
@@ -87,6 +90,11 @@ mods = ["crate::theme"]
 name = "layout"
 paths = ["crates/blocks/src/layout.rs"]
 mods = ["crate::layout", "blocks::layout"]
+
+[[layer]]
+name = "web"
+paths = ["crates/blocks/src/web.rs"]
+mods = ["crate::web", "blocks::web"]
 
 [[layer]]
 name = "codegen"

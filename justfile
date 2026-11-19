@@ -5,8 +5,9 @@ test_allow := "-A clippy::unwrap_used -A clippy::expect_used -A clippy::panic -A
 check: fmt clippy fixtures test perf soak deps deny web arch cap actionlint swift
 
 # Every generated file (.drover/arch.toml `generated`) from the Rust types; arch-check fails on a difference.
-gen:
+gen: web-install
     cargo run -q --locked -p blocks --features schema --bin blocks-codegen
+    npm --prefix web run build
 
 # `just swag <sha>`: vendor swag's packs/ at that commit into theme/packs/, with SOURCE and SHA256SUMS.
 swag sha:
