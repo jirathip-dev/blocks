@@ -1,0 +1,4 @@
+Decided: merged origin/staging (secret #39), dropping secret and editor from the gap list and keeping both kinds' tests; web/dist rebuilt
+Because: web/test/render.test.ts:17
+Rejected: none
+Owner: The editor change now sits on the latest staging next to the new secret field view; nothing changes for users.
