@@ -30,9 +30,10 @@ var hooks = {
   island: { variant: null, parts: [] },
   table: { variant: null, parts: ["title"] },
   steps: { variant: null, parts: ["title"] },
+  chart: { variant: null, parts: ["title"] },
   toast: { variant: null, parts: ["title"] }
 };
-var roles = { section: "region", form: "form", config: "form", nav: "navigation", toast: "status" };
+var roles = { section: "region", form: "form", config: "form", nav: "navigation", chart: "figure", toast: "status" };
 var names = ["label", "title", "header", "question", "alt", "file", "command", "placeholder", "name"];
 
 // src/gen/schemes.ts
@@ -484,6 +485,7 @@ var nav = (fields) => ({ type: "nav", ...fields });
 var island = (fields) => ({ type: "island", ...fields });
 var table = (fields) => ({ type: "table", ...fields });
 var steps = (fields) => ({ type: "steps", ...fields });
+var chart = (fields) => ({ type: "chart", ...fields });
 var toast = (fields) => ({ type: "toast", ...fields });
 var expr = {
   get: (v) => ({ get: v }),
@@ -578,6 +580,7 @@ function share(prev, next) {
 var kinds = {
   "button": "Button",
   "card": "Card",
+  "chart": "Chart",
   "chips": "Chips",
   "choice": "Choice",
   "composer": "Composer",
@@ -768,6 +771,7 @@ var defs = {
             "island",
             "table",
             "steps",
+            "chart",
             "toast"
           ]
         },
@@ -1205,6 +1209,19 @@ var defs = {
         "type": "object"
       },
       {
+        "$ref": "#/$defs/Chart",
+        "properties": {
+          "type": {
+            "const": "chart",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      {
         "$ref": "#/$defs/Toast",
         "properties": {
           "type": {
@@ -1504,6 +1521,133 @@ var defs = {
       },
       {
         "$ref": "#/$defs/Label"
+      }
+    ]
+  },
+  "Chart": {
+    "additionalProperties": true,
+    "properties": {
+      "chart": {
+        "$ref": "#/$defs/ChartKind"
+      },
+      "empty": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "era": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Era"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "format": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/ChartFormat"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "id": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "lang": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "selected": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "series": {
+        "items": {
+          "$ref": "#/$defs/Series"
+        },
+        "type": "array"
+      },
+      "show": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "tap": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Tap"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "title": {
+        "type": "string"
+      },
+      "x": {
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      }
+    },
+    "required": [
+      "title",
+      "chart",
+      "x",
+      "series"
+    ],
+    "type": "object"
+  },
+  "ChartFormat": {
+    "anyOf": [
+      {
+        "enum": [
+          "count",
+          "thb",
+          "thb_m",
+          "percent"
+        ],
+        "type": "string"
+      },
+      {
+        "type": "string"
+      }
+    ]
+  },
+  "ChartKind": {
+    "anyOf": [
+      {
+        "enum": [
+          "bar",
+          "stacked",
+          "line",
+          "combo",
+          "donut"
+        ],
+        "type": "string"
+      },
+      {
+        "type": "string"
       }
     ]
   },
@@ -4405,6 +4549,64 @@ var defs = {
     ],
     "type": "object"
   },
+  "Series": {
+    "properties": {
+      "as": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/SeriesMark"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "dash": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "name": {
+        "type": "string"
+      },
+      "tone": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Tone"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "values": {
+        "items": {
+          "type": "number"
+        },
+        "type": "array"
+      }
+    },
+    "required": [
+      "name",
+      "values"
+    ],
+    "type": "object"
+  },
+  "SeriesMark": {
+    "anyOf": [
+      {
+        "enum": [
+          "bar",
+          "line"
+        ],
+        "type": "string"
+      },
+      {
+        "type": "string"
+      }
+    ]
+  },
   "SetState": {
     "properties": {
       "key": {
@@ -5408,7 +5610,7 @@ var Walk = class {
       this.acts.set(key, at2);
       if (first !== void 0) this.out.push({ fault: "act-twice", block: scope, action, at: [first, at2] });
     }
-    for (const k of sorted(v)) if (isObj3(v[k]) || Array.isArray(v[k])) this.sends(v[k], `${at2}/${k}`, scope);
+    for (const k of sorted(v)) if (k !== "fallback" && (isObj3(v[k]) || Array.isArray(v[k]))) this.sends(v[k], `${at2}/${k}`, scope);
   }
   core(kind, o, top) {
     const def = defs[kinds[kind] ?? ""];
@@ -5463,6 +5665,7 @@ export {
   built,
   button,
   card,
+  chart,
   check,
   chips,
   choice,
