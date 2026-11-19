@@ -1,0 +1,9 @@
+/* The host page for these previews: Dracula tokens on :root, Farm light on .light; the drover page sets its own font. */
+:root{--bg:#282a36;--card:#303341;--edge:#44475a;--line:#343746;--scrim:#14151baa;--fg:#f8f8f2;--mute:#a9b1d6;--l:#bd93f9;--link:#8be9fd;--g:#50fa7b;--a:#ffb86c;--r:#ff5555;--p:#ff79c6;--c:#8be9fd;color-scheme:dark}
+.light{--bg:#f5efda;--card:#ebe2c4;--edge:#cbbd90;--line:#e0d6b4;--fg:#29251a;--mute:#5c573f;--l:#6b3410;--link:#1f639b;--g:#2a6d1c;--a:#7a5f00;--r:#b81d3c;color-scheme:light;background:var(--bg);color:var(--fg);padding:var(--s2) var(--s3);border-radius:8px}
+body{margin:0;background:var(--bg);color:var(--fg);font:13px/1.4 ui-monospace,Menlo,monospace}
+main{max-width:880px;margin:0 auto;padding:var(--s3)}
+.tw{font-weight:700}
+.note{color:var(--mute);font-size:var(--fs-meta);margin:var(--s1) 0 var(--s3)}
+.cases{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:var(--s3)}
+.cases>div>.sh{margin-top:0}

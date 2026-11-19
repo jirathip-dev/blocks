@@ -1,0 +1,46 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>diagram: drover's issue chart</title>
+<link rel="stylesheet" href="../../../web/src/blocks.css"><link rel="stylesheet" href="diagram.css"><link rel="stylesheet" href="page.css">
+<script src="diagram.js"></script></head>
+<body><main class="scr" id="page">
+<div class="tabh"><span class="tw">blocks · issues</span><button type="button"><span>queue</span></button><button type="button"><span>board</span></button></div>
+<div class="stats"><div class="st"><b>9</b><span class="m">open</span></div><div class="st warn"><b>1</b><span class="m">needs you</span></div><div class="st"><b>37</b><span class="m">merged · 14d</span></div></div>
+<div class="sec"><div class="sh">Workflow</div><div id="d"></div></div>
+<div class="sec"><div class="sh r"><b class="thw">needs you</b> · 1</div>
+<div class="row tap"><span class="rsg"><i class="gl r">!</i></span><span class="rm"><span class="rt">#23 B14: web: HTML gaps: diagram</span><span class="tag needs">needs human</span><span class="rs">review round 3 of 3 failed · 12m</span></span><span class="rv">fix(3)</span></div></div>
+</main>
+<script>
+const flow = {
+  type: "diagram", id: "flow", title: "Issue workflow", selected: "impl",
+  source: `stateDiagram-v2
+  [*] --> queued
+  queued --> design
+  design --> design_review
+  design_review --> impl
+  queued --> impl
+  impl --> review
+  review --> fix
+  fix --> review
+  review --> verify
+  verify --> ready
+  review --> ready
+  ready --> merged
+  merged --> [*]
+  impl --> stall
+  blocked --> impl
+  review --> rounds
+  fix --> needs_human
+  state "design review" as design_review
+  state "needs human" as needs_human`,
+  counts: { queued: 4, design: 1, design_review: 0, impl: 2, review: 1, fix: 1, verify: 0, ready: 1, merged: 37, blocked: 0, needs_human: 1 },
+  nodes: {
+    queued: { tap: { open: "queue" } }, impl: { state: "working", tap: { open: "impl" } }, review: { state: "working", tap: { open: "review" } },
+    fix: { state: "working", tap: { open: "fix" } }, ready: { state: "done", tap: { open: "ready" } }, merged: { state: "merged" },
+    needs_human: { state: "needs", tap: { open: "needs" } }, blocked: { state: "fail" },
+    stall: { limit: "stall_minutes", label: "stall", value: "20 min", tap: { open: "config" } },
+    rounds: { limit: "review_rounds", label: "review rounds", value: "3", tap: { open: "config" } },
+  },
+};
+document.getElementById("d").replaceWith(diagram(flow, { review: 2 }));
+document.body.dataset.h = Math.ceil(document.documentElement.scrollHeight);
+</script></body></html>

@@ -1,0 +1,44 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>diagram: every state of a node and an edge</title>
+<link rel="stylesheet" href="../../../web/src/blocks.css"><link rel="stylesheet" href="diagram.css"><link rel="stylesheet" href="page.css">
+<script src="diagram.js"></script></head>
+<body><main class="scr">
+<div class="tabh"><span class="tw">diagram · states</span></div>
+<div id="cases"></div>
+</main>
+<script>
+const cases = [
+  ["1 · tones", "The count takes the node's state tone; a count of 0 is muted whatever its tone.", {
+    source: "stateDiagram-v2\n[*] --> queued\nqueued --> impl\nimpl --> review\nreview --> ready\nready --> merged",
+    counts: { queued: 2, impl: 3, review: 1, ready: 0, merged: 12 },
+    nodes: { impl: { state: "working" }, review: { state: "needs" }, ready: { state: "done" }, merged: { state: "merged" } } }],
+  ["2 · moved and selected", "A count that changed since the last draw gets its tone's border and \"was N\"; `selected` gets a 2px ink ring; a node with a tap is focusable.", {
+    source: "stateDiagram-v2\n[*] --> impl\nimpl --> review\nreview --> merged",
+    counts: { impl: 1, review: 3, merged: 8 }, selected: "impl",
+    nodes: { impl: { state: "working", tap: { open: "impl" } }, review: { state: "working", tap: { open: "review" } }, merged: { state: "merged" } } }, { review: 2, merged: 8 }],
+  ["3 · an optional step", "An edge that skips a step on the main column is not drawn: the steps it skips say \"optional\".", {
+    source: "stateDiagram-v2\n[*] --> queued\nqueued --> design\ndesign --> impl\nqueued --> impl\nimpl --> merged",
+    counts: { queued: 1, design: 0, impl: 2, merged: 5 }, nodes: { impl: { state: "working" } } }],
+  ["4 · both ways, side columns, the gutter", "A pair of opposite edges is one line with two heads. A side step that returns to the main column goes right; one that only leaves it goes left; two side steps far apart join through the gutter.", {
+    source: "stateDiagram-v2\n[*] --> impl\nimpl --> review\nreview --> verify\nverify --> merged\nreview --> fix\nfix --> review\nimpl --> parked\nverify --> held\nheld --> parked",
+    counts: { impl: 2, review: 1, verify: 0, merged: 9, fix: 1, parked: 1, held: 0 },
+    nodes: { impl: { state: "working" }, review: { state: "working" }, fix: { state: "working" }, parked: { state: "needs" }, merged: { state: "merged" } } }],
+  ["5 · a timer", "A node with `limit` is a setting, not a state: a dashed link-coloured pill with its label and value, and dashed edges. Its tap opens the setting.", {
+    source: "stateDiagram-v2\n[*] --> impl\nimpl --> review\nreview --> merged\nreview --> fix\nfix --> review\nreview --> rounds\nimpl --> stall",
+    counts: { impl: 2, review: 1, fix: 0, merged: 4 },
+    nodes: { impl: { state: "working" }, review: { state: "working" }, stall: { limit: "stall_minutes", label: "stall", value: "20 min" }, merged: { state: "merged" }, rounds: { limit: "review_rounds", label: "review rounds", value: "3", tap: { open: "config" } } } }],
+  ["6 · a light scheme", "The same rules on Farm light: only the tokens change.", null],
+  ["7 · nothing to draw", "A source with no state this subset reads (here the B1 sample's flowchart line) draws the block's fallback row, as the gap does today.", {
+    source: "graph TD; a-->b", fallback: { title: "Flow", subtitle: "open it on the phone app" } }],
+];
+const box = document.getElementById("cases");
+for (const [head, note, block, was] of cases) {
+  const sec = document.createElement("div");
+  sec.className = "sec";
+  sec.innerHTML = `<div class=sh>${head}</div><div class=note>${note}</div>`;
+  if (block) sec.append(diagram({ type: "diagram", ...block }, was));
+  else { const l = document.createElement("div"); l.className = "light"; l.append(diagram({ type: "diagram", ...cases[0][2] }), diagram({ type: "diagram", ...cases[4][2] })); sec.append(l); }
+  box.append(sec);
+}
+document.body.dataset.h = Math.ceil(document.documentElement.scrollHeight);
+</script></body></html>
