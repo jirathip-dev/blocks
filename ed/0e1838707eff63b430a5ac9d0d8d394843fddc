@@ -1,0 +1,4 @@
+Decided: merged origin/staging; tree.test.ts keeps staging's 29 kinds and this PR's tree(..., native); dist rebuilt
+Because: web/src/render/native.ts:4
+Rejected: none
+Owner: The branch is brought up to date with staging; nothing new changes for users.
