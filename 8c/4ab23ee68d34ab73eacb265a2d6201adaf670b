@@ -1,0 +1,8 @@
+Decided: no code ships; the PR is the approved no-go ADR plus the L2 row in migration.md marked no-go
+Because: q2240
+Because: "A no-go closes this issue with the numbers recorded."
+Decided: no .drover/arch.toml lines are added
+Because: docs/architecture/wasm-core/adr.md:117
+Rejected: building the wasm core anyway — the owner approved the no-go
+Check: migration.md L2 row links the ADR and states 264 KB gzipped against 2.8 KB of TS
+Owner: The WebAssembly plan for the web client is dropped, with its measured sizes kept in the docs.
