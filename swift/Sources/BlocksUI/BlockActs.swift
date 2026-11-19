@@ -3,6 +3,7 @@ import SwiftUI
 
 internal struct BlockActs: ViewModifier {
     @Environment(\.act) private var act
+    @Environment(\.look) private var look
     @State private var pending: JSONValue?
     @State private var open: Bool?
     internal let block: JSONValue
@@ -42,7 +43,7 @@ internal struct BlockActs: ViewModifier {
                 #if os(iOS)
                     .simultaneousGesture(drag)
                 #endif
-                .animation(.snappy, value: shown)
+                .animation(.snappy(duration: 0.5 * (look.style.motion ?? 1)), value: shown)
         }
     }
 

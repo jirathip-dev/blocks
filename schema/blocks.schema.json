@@ -4264,11 +4264,33 @@
       "type": "object"
     },
     "Timings": {
-      "description": "How long the first paint and each step took.",
+      "description": "How long the first paint and each step took; the frame fields only where a harness draws real frames.",
       "properties": {
         "first_paint_ms": {
           "format": "double",
           "type": "number"
+        },
+        "frames_over_budget": {
+          "format": "uint32",
+          "minimum": 0,
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "longest_frame_ms": {
+          "format": "double",
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "longest_patch_ms": {
+          "format": "double",
+          "type": [
+            "number",
+            "null"
+          ]
         },
         "steps_ms": {
           "items": {

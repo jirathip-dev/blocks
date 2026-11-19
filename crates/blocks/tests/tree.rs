@@ -1,5 +1,5 @@
 use blocks::expr::{Lit, State};
-use blocks::tree::{expect, Drawn};
+use blocks::tree::{expect, Drawn, Report};
 use blocks::Built;
 use serde_json::json;
 
@@ -36,4 +36,16 @@ fn expect_marks_native_fallback_and_hidden_blocks_in_drawn_order() {
     assert!(t.children.iter().all(|c| c.rect.is_none() && c.text.is_none()));
     let off = expect(&screen(), &kinds, &State::new());
     assert_eq!(off.children[0].drawn, Drawn::Hidden);
+}
+
+#[test]
+fn a_report_without_frame_timings_still_reads_and_writes_none() {
+    let old = json!({"shots": [], "sent": [], "dropped": [], "timings": {"first_paint_ms": 9.0, "steps_ms": [1.0]}});
+    let r: Report = serde_json::from_value(old.clone()).unwrap();
+    assert_eq!(r.timings.longest_frame_ms, None);
+    assert_eq!(serde_json::to_value(&r).unwrap(), old);
+    let new = json!({"first_paint_ms": 9.0, "steps_ms": [], "longest_frame_ms": 5.0, "frames_over_budget": 0, "longest_patch_ms": 1.0});
+    let t: blocks::tree::Timings = serde_json::from_value(new.clone()).unwrap();
+    assert_eq!((t.frames_over_budget, t.longest_patch_ms), (Some(0), Some(1.0)));
+    assert_eq!(serde_json::to_value(&t).unwrap(), new);
 }

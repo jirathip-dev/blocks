@@ -16,12 +16,28 @@ const code = [
 ];
 
 const files = (p) =>
-  statSync(p).isDirectory() ? readdirSync(p).flatMap((f) => files(join(p, f))) : p.endsWith(".ts") ? [p] : [];
+  statSync(p).isDirectory() ? readdirSync(p).flatMap((f) => files(join(p, f))) : /\.(ts|css)$/.test(p) ? [p] : [];
 
 const lineOf = (src, i) => src.slice(0, i).split("\n").length;
 
+const moves = (p) => p === "transform" || p === "opacity" || p === "none";
+
+function lintCss(path, src) {
+  const bad = [];
+  const at = (i, what) => bad.push(`${path}:${lineOf(src, i)}: motion of \`${what}\` (animate only transform and opacity)`);
+  for (const m of src.matchAll(/\btransition(?:-property)?\s*:([^;}]+)/g))
+    for (const item of m[1].split(/,(?![^(]*\))/)) if (!moves(item.trim().split(/[\s!]+/)[0])) at(m.index, item.trim());
+  for (const m of src.matchAll(/@keyframes[^{]*\{/g)) {
+    let depth = 1, i = m.index + m[0].length, from = i;
+    for (; i < src.length && depth; i++) depth += src[i] === "{" ? 1 : src[i] === "}" ? -1 : 0;
+    for (const d of src.slice(from, i).matchAll(/([\w-]+)\s*:/g)) if (!moves(d[1])) at(m.index, d[1]);
+  }
+  return bad;
+}
+
 function lint(path) {
   const src = readFileSync(path, "utf8");
+  if (path.endsWith(".css")) return lintCss(path, src);
   let js;
   try {
     js = stripTypeScriptTypes(src, { mode: "strip" });

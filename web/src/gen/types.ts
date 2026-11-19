@@ -182,7 +182,7 @@ export type Tile = { label: string; spark?: number[] | null; tone?: Tone | null;
 
 export type Time = { since?: string | null; until?: string | null };
 
-export type Timings = { first_paint_ms: number; steps_ms: number[] };
+export type Timings = { first_paint_ms: number; frames_over_budget?: number | null; longest_frame_ms?: number | null; longest_patch_ms?: number | null; steps_ms: number[] };
 
 export type Tone = "ok" | "warn" | "bad" | "info" | "mute" | "accent" | "working" | "needs" | "done" | "fail" | "idle";
 
