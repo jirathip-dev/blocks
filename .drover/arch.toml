@@ -1,4 +1,4 @@
-frozen = ["ci/cap.toml", "docs/schema.md", "web/src/blocks.css"]
+frozen = ["ci/cap.toml", "docs/schema.md", "web/src/blocks.css", "crates/blocks/src/site/views.rs"]
 generated = [
     "schema/blocks.schema.json",
     "schema/sample.json",
@@ -37,6 +37,9 @@ shared = [
     ".drover/arch.toml",
     "justfile",
     "README.md",
+    "crates/blocks/src/site/mod.rs",
+    "crates/blocks/src/site/kind/mod.rs",
+    "crates/blocks/tests/site.rs",
 ]
 
 [[collect]]
@@ -54,6 +57,14 @@ glob = "*.md"
 [[collect]]
 dir = "web/src/css"
 glob = "**/*.css"
+
+[[collect]]
+dir = "crates/blocks/src/site/kind"
+glob = "*.rs"
+
+[[collect]]
+dir = "crates/blocks/tests"
+glob = "site_*.rs"
 
 [comments]
 policy = "strict"
@@ -275,7 +286,7 @@ paths = ["swift/Tests/**/*.swift"]
 max_file_lines = 1000
 
 [[size]]
-paths = ["web/src/patch.ts", "web/test/patch.test.ts", "web/test/dom.ts", "web/shot/shot.ts"]
+paths = ["web/src/patch.ts", "web/test/patch.test.ts", "web/test/dom.ts", "web/shot/shot.ts", "crates/blocks/tests/site.rs"]
 max_file_lines = 200
 
 [[size]]
@@ -291,5 +302,5 @@ paths = ["README.md"]
 max_file_lines = 70
 
 [[size]]
-paths = ["crates/blocks/src/codegen/mod.rs"]
+paths = ["crates/blocks/src/codegen/mod.rs", "crates/blocks/src/site/mod.rs", "crates/blocks/src/site/kind/mod.rs"]
 max_file_lines = 80

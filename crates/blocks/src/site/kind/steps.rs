@@ -1,6 +1,7 @@
 use serde_json::Value;
 
-use super::{fallback, get, list, sends, Go, W};
+use super::fallback;
+use crate::site::write::{get, list, sends, Go, W};
 
 fn step(w: &mut W<'_>, s: &Value, i: usize, n: usize, at: usize) {
     let label = get(s, "label").unwrap_or_default();
@@ -107,7 +108,7 @@ fn bar(w: &mut W<'_>, r: &Value) {
     w.close("div");
 }
 
-pub(super) fn steps(w: &mut W<'_>, b: &Value) {
+pub(super) fn draw(w: &mut W<'_>, b: &Value) {
     let (steps, bars) = (list(b, "steps"), list(b, "bars"));
     let at = match get(b, "current") {
         Some(c) => steps.iter().position(|s| get(s, "id") == Some(c)),

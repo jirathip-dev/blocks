@@ -1,6 +1,6 @@
 use serde_json::Value;
 
-use super::{fields, get, list, shown, Go, W};
+use crate::site::write::{fields, get, list, shown, Go, W};
 use crate::behave;
 
 fn minor(s: &str, scale: usize) -> Option<i128> {
@@ -237,7 +237,7 @@ fn head(w: &mut W<'_>, k: &Cols<'_>, fixed: bool) {
     w.close("div");
 }
 
-pub(super) fn lines(w: &mut W<'_>, b: &Value) {
+pub(super) fn draw(w: &mut W<'_>, b: &Value) {
     let scale = b
         .get("scale")
         .and_then(Value::as_u64)
