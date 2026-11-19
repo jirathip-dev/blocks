@@ -1,0 +1,9 @@
+{
+  "kind": "steps",
+  "id": "stop",
+  "variant": null,
+  "drawn": "native",
+  "role": "group",
+  "name": "Stop 3 of 8",
+  "children": []
+}
