@@ -1,0 +1,57 @@
+Decided: Time gains an optional label; Card.meta and Label.text are a Shown, which reads and writes a plain string as before
+Because: "A plain string still reads and writes as before: no screen that sends a string changes on the wire"
+Decided: SwiftUI's labelled time copies the HTML formats ({} as 30s/5m/24h/8d, {rel} as rounded minutes) so both give one text
+Because: "with the placeholders the HTML renderer already reads"
+Decided: the card sample carries a labelled time in its meta, badge, a row's toned subtitle and value, and a tile; card-long follows
+Because: "a `fixtures/blocks` sample and a stress variant that carry a labelled time in each of the four places"
+Decided: fixtures/times/labels.json is the fixed-clock check both the web and Swift tests read
+Because: "for a fixed clock (a tree or fixture check), for `since` and for `until`"
+Decided: site.test compares a ticking span by its time, not its text: the static page writes the start value, render the age
+Because: web/test/site.test.ts:69
+Rejected: changing HTML to Swift's formats — drover's screens are drawn by HTML today
+Check: only the card's goldens changed (blocks, html, trees, stress); every other golden is byte-equal
+Owner: Times shown on a card's corner, a badge or a coloured subtitle can now carry words around them, the same on web and iPhone.
+
+Decided: merged origin/staging and rebuilt the conflicting generated web/dist/blocks.js with npm run build instead of hand-merging it
+Because: "Generated schema, TS and Swift types from `just gen`"
+Rejected: none
+Owner: The branch is brought up to date with the latest shared work; nothing it does changes.
+
+Decided: merged origin/staging twice; sample.rs keeps staging's imports plus Time, web/dist/blocks.js is rebuilt by the gen lines
+Because: "Generated schema, TS and Swift types from `just gen`"
+Decided: staging's table label cells draw a Shown in Rust, web and Swift through the existing value helpers
+Because: "Every renderer draws them the same"
+Decided: staging build fix: children() skips a table's rows again, as placed() does, so the committed table trees stay byte-equal
+Because: crates/blocks/src/built.rs:89
+Rejected: committing the drifted table trees — they turned table rows into empty fallback blocks
+Check: fixtures/trees/table.json and fixtures/trees/swift/table.json equal staging's
+Owner: The branch is up to date with the latest shared work, and a table bug that shared work brought in is fixed.
+
+Decided: merged origin/staging; staging split BlockCards.swift into per-kind files, so the card meta and badge text Shown moved into Kind/Card.swift and Components.swift
+Because: "Every renderer draws them the same"
+Rejected: none
+Check: swift/Sources/BlocksUI/Kind/Card.swift and Components.swift Pill draw through RelativeValue as BlockCards.swift did
+Owner: The branch is up to date with the latest shared work; nothing it does changes.
+
+Decided: each site pages test builds into its own folder instead of one shared showcase folder
+Because: site/tests/pages.rs:5
+Decided: merged origin/staging; the conflicting web/dist/blocks.js was rebuilt by the gen lines, not hand-merged
+Because: "Generated schema, TS and Swift types from `just gen`"
+Rejected: a OnceLock single build shared by the tests — still one folder; per-test folders are the smaller change
+Check: three runs of cargo test -p blocks-site --test pages pass; no src/ change this round
+Owner: A site test that sometimes failed, because two checks wrote the same pages at once, now passes reliably.
+
+Decided: merged origin/staging; table.ts keeps this branch's value import and staging's core/table helpers, web/dist/blocks.js and fixtures/built/every.json come from the gen lines
+Because: "Generated schema, TS and Swift types from `just gen`"
+Rejected: none
+Owner: The branch is up to date with the latest shared work; nothing it does changes.
+
+Decided: merged origin/staging; sample.rs imports keep this branch's Time plus staging's Toast and Undo, and web/dist/blocks.js comes from the gen lines
+Because: "Generated schema, TS and Swift types from `just gen`"
+Rejected: none
+Owner: The branch is up to date with the latest shared work; nothing it does changes.
+
+Decided: merged origin/staging; the conflicting web/dist/blocks.js comes from the gen lines, not a hand merge
+Because: "Generated schema, TS and Swift types from `just gen`"
+Rejected: none
+Owner: The branch is up to date with the latest shared work; nothing it does changes.
