@@ -2,6 +2,6 @@
   "kind": "prose",
   "id": "about",
   "variant": null,
-  "drawn": "fallback",
+  "drawn": "native",
   "children": []
 }

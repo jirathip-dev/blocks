@@ -1,0 +1,15 @@
+{
+  "kind": "section",
+  "id": "today",
+  "variant": null,
+  "drawn": "native",
+  "children": [
+    {
+      "kind": "text",
+      "id": "today-note",
+      "variant": null,
+      "drawn": "native",
+      "children": []
+    }
+  ]
+}

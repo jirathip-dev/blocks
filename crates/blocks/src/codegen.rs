@@ -1,10 +1,11 @@
+use std::collections::BTreeMap;
 use std::path::Path;
 
-use serde_json::{Map, Value};
+use serde_json::{Map, Number, Value};
 
 use crate::{
-    layout, theme, tree, Action, Answer, Block, Built, Bye, Card, Child, Composer, ComposerChip, Frame, Hello, List,
-    OldFrame, Op, Queued, Row, Screen, Sync, Synced, Text, Tone, SCHEMA_VERSION,
+    layout, site, theme, tree, Action, Answer, Block, Built, Bye, Card, Child, Composer, ComposerChip, Diagram, Frame,
+    Hello, List, Node, OldFrame, Op, Queued, Row, Screen, Sync, Synced, Tap, Text, Tone, SCHEMA_VERSION,
 };
 
 /// The JSON Schema of a `Frame`; its `$defs` hold `Block`, `Op` and the stream's other messages.
@@ -75,8 +76,103 @@ pub fn write(root: &Path) -> std::io::Result<()> {
         let text = serde_json::to_string_pretty(&b)? + "\n";
         std::fs::write(root.join(format!("fixtures/blocks/{kind}.json")), text)?;
     }
-    trees(root)
+    trees(root)?;
+    html(root)
 }
+
+fn html(root: &Path) -> std::io::Result<()> {
+    std::fs::create_dir_all(root.join("fixtures/html"))?;
+    for (kind, b) in crate::samples() {
+        let text = site::fragment(&Built::new(serde_json::to_value(&b)?), "/act") + "\n";
+        std::fs::write(root.join(format!("fixtures/html/{kind}.html")), text)?;
+    }
+    let style = serde_json::from_str(&std::fs::read_to_string(root.join("fixtures/styles/still.json"))?)?;
+    let look = site::Look {
+        schemes: theme::default().clone(),
+        style,
+    };
+    let screen = Built::of(&site_screen());
+    std::fs::create_dir_all(root.join("fixtures/site"))?;
+    let live = site::Live {
+        js: "/blocks.js",
+        stream: "/stream",
+    };
+    for (file, live) in [("index.html", None), ("live.html", Some(live))] {
+        let head = site::Head {
+            title: "Blocks",
+            description: "One shape, three renderers",
+            canonical: "https://blocks.test/",
+            image: Some("/og.png"),
+            lang: "en",
+        };
+        let s = site::Site {
+            head,
+            look: &look,
+            css: &[],
+            action: "/act",
+            live,
+        };
+        std::fs::write(root.join("fixtures/site").join(file), site::page(&screen, &s) + "\n")?;
+    }
+    Ok(())
+}
+
+fn site_screen() -> Screen {
+    let on = ["nav", "hero", "prose", "media", "form"];
+    let mut blocks: Vec<Block> = crate::samples()
+        .into_iter()
+        .filter(|(k, _)| on.contains(k))
+        .map(|(_, b)| b)
+        .collect();
+    blocks.push(Block::Diagram(Box::new(workflow())));
+    Screen::new().id("site").title("Blocks").blocks(blocks)
+}
+
+fn workflow() -> Diagram {
+    let source = "[*] --> queued\nqueued --> impl\nimpl --> review\nstate \"in review\" as review\nreview --> fix\nfix --> review\nreview --> ready\nimpl --> ready\nready --> merged\nqueued --> blocked\nstate stall\nimpl --> stall";
+    let counts = [
+        ("queued", 3),
+        ("impl", 2),
+        ("review", 1),
+        ("fix", 0),
+        ("ready", 1),
+        ("merged", 9),
+        ("blocked", 1),
+    ];
+    let node = |state: Option<Tone>, limit: Option<&str>| Node {
+        state,
+        limit: limit.map(String::from),
+        value: limit.map(|_| "45m".into()),
+        tap: Some(Tap {
+            open: Some("/settings".into()),
+            ..Tap::default()
+        }),
+        ..Node::default()
+    };
+    let nodes = [
+        ("impl", node(Some(Tone::Working), None)),
+        ("blocked", node(Some(Tone::Needs), None)),
+        ("stall", node(None, Some("stall_minutes"))),
+    ];
+    Diagram::new(source)
+        .id("workflow")
+        .title("Workflow")
+        .selected("review")
+        .counts(
+            counts
+                .map(|(k, n)| (k.to_string(), Number::from(n)))
+                .into_iter()
+                .collect::<BTreeMap<_, _>>(),
+        )
+        .nodes(
+            nodes
+                .map(|(k, n)| (k.to_string(), n))
+                .into_iter()
+                .collect::<BTreeMap<_, _>>(),
+        )
+}
+
+const SWIFT_FALLBACKS: [&str; 6] = ["composer", "prose", "hero", "media", "nav", "island"];
 
 fn trees(root: &Path) -> std::io::Result<()> {
     let mut drawn = vec![];
@@ -84,8 +180,18 @@ fn trees(root: &Path) -> std::io::Result<()> {
         let name = f?.file_name().to_string_lossy().into_owned();
         drawn.extend(name.strip_suffix(".ts").filter(|k| *k != "index").map(String::from));
     }
-    let kinds: Vec<&str> = drawn.iter().map(String::as_str).collect();
-    std::fs::create_dir_all(root.join("fixtures/trees"))?;
+    let web: Vec<&str> = drawn.iter().map(String::as_str).collect();
+    let swift: Vec<&str> = Block::KINDS
+        .iter()
+        .copied()
+        .filter(|k| !SWIFT_FALLBACKS.contains(k))
+        .collect();
+    expected(root, "fixtures/trees", &web)?;
+    expected(root, "fixtures/trees/swift", &swift)
+}
+
+fn expected(root: &Path, dir: &str, kinds: &[&str]) -> std::io::Result<()> {
+    std::fs::create_dir_all(root.join(dir))?;
     for (kind, b) in crate::samples() {
         let v = serde_json::to_value(&b)?;
         let state = v
@@ -94,9 +200,9 @@ fn trees(root: &Path) -> std::io::Result<()> {
             .map(serde_json::from_value)
             .transpose()?
             .unwrap_or_default();
-        let t = tree::expect(&Built::new(v), &kinds, &state);
+        let t = tree::expect(&Built::new(v), kinds, &state);
         let text = serde_json::to_string_pretty(&t)? + "\n";
-        std::fs::write(root.join(format!("fixtures/trees/{kind}.json")), text)?;
+        std::fs::write(root.join(format!("{dir}/{kind}.json")), text)?;
     }
     Ok(())
 }
@@ -136,18 +242,17 @@ fn hooks(s: &Value) -> Out {
 }
 
 fn schemes_ts() -> serde_json::Result<String> {
-    let all: std::collections::BTreeMap<_, _> = theme::schemes().iter().map(|(n, s)| (*n, s)).collect();
-    let tokens = theme::schemes()
-        .first()
-        .map(|(_, s)| s.tokens.all().map(|(k, _)| format!("\"{k}\"")).join(" | "))
-        .unwrap_or_default();
+    let tokens = theme::default()
+        .light
+        .tokens
+        .all()
+        .map(|(k, _)| format!("\"{k}\""))
+        .join(" | ");
     Ok(format!(
         "export type Mode = \"dark\" | \"light\";\n\nexport type Token = {tokens};\n\n\
          export type Scheme = {{ label: string; \"color-scheme\": Mode; tokens: Record<Token, string> }};\n\n\
-         export const schemes: Record<string, Scheme> = {};\n\n\
          export const defaultPair: Record<Mode, Scheme> = {};\n\n\
          export const defaultStyle: Record<string, string> = {};\n",
-        serde_json::to_string_pretty(&all)?,
         serde_json::to_string_pretty(theme::default())?,
         serde_json::to_string_pretty(&std::collections::BTreeMap::from(theme::DEFAULT_STYLE))?
     ))
@@ -177,11 +282,8 @@ fn schemes_swift() -> serde_json::Result<String> {
     let mut out = String::from(
         "public enum SchemeMode: String, Codable, Equatable, Sendable {\n    case dark, light\n}\n\n\
          public struct Scheme: Equatable, Sendable {\n    public let label: String\n    public let mode: SchemeMode\n    \
-         public let tokens: [String: String]\n}\n\npublic let blocksSchemes: [String: Scheme] = [\n",
+         public let tokens: [String: String]\n}\n\n",
     );
-    for (name, s) in theme::schemes() {
-        out.push_str(&format!("    {}: {},\n", q(name)?, scheme_swift(s)?));
-    }
     let pair = theme::default();
     let style = theme::DEFAULT_STYLE
         .iter()
@@ -189,7 +291,7 @@ fn schemes_swift() -> serde_json::Result<String> {
         .collect::<serde_json::Result<Vec<_>>>()?
         .join(", ");
     out.push_str(&format!(
-        "]\n\npublic let blocksDefaultLight = {}\n\npublic let blocksDefaultDark = {}\n\n\
+        "public let blocksDefaultLight = {}\n\npublic let blocksDefaultDark = {}\n\n\
          public let blocksDefaultStyle: [String: String] = [{style}]\n",
         scheme_swift(&pair.light)?,
         scheme_swift(&pair.dark)?

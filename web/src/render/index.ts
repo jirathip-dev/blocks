@@ -6,17 +6,26 @@ import { card } from "./card.ts";
 import { chips } from "./chips.ts";
 import { choice } from "./choice.ts";
 import { composer } from "./composer.ts";
+import { config } from "./config.ts";
 import { diagram } from "./diagram.ts";
+import { editor } from "./editor.ts";
 import { form } from "./form.ts";
+import { hero } from "./hero.ts";
 import { images } from "./images.ts";
 import { list } from "./list.ts";
+import { media } from "./media.ts";
+import { nav } from "./nav.ts";
+import { prose } from "./prose.ts";
 import { row } from "./row.ts";
 import { run } from "./run.ts";
+import { scene } from "./scene.ts";
 import { screen } from "./screen.ts";
+import { secret } from "./secret.ts";
 import { section } from "./section.ts";
 import { sheet } from "./sheet.ts";
 import { stat } from "./stat.ts";
 import { text } from "./text.ts";
+import { web } from "./web.ts";
 
 export type Blk = { [k: string]: unknown };
 export type Post = { action: unknown; block?: unknown; values?: unknown; confirm?: unknown };
@@ -143,24 +152,24 @@ export const R: { [K in Kind]: (b: Of<K>, c: Ctx) => HTMLElement | null } = {
   card,
   choice,
   form,
-  config: gap(40),
-  secret: gap(39),
+  config,
+  secret,
   run,
   button,
   chips,
   stat,
   text,
   images,
-  web: gap(41),
+  web,
   diff: gap(42),
-  editor: gap(43),
-  scene: gap(38),
+  editor,
+  scene,
   diagram,
   composer,
-  prose: gap(18),
-  hero: gap(18),
-  media: gap(18),
-  nav: gap(18),
+  prose,
+  hero,
+  media,
+  nav,
   island: gap(21),
 };
 

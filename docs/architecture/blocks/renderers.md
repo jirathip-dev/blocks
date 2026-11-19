@@ -166,7 +166,8 @@ pub fn expect(screen: &Built, kinds: &[&str], state: &State) -> Node;      // th
 - **Input** is by block id. WebKit gets real events on the element; SwiftUI calls the handler or binding the block
   registered with the same wrapper. The harness answers actions from the script and never opens a network.
 - **`--check`**: the tree equals `--expect` in kind, id, order and `drawn`; every drawn node has a size; none leaves
-  the screen's width; no two siblings overlap. `fixtures/trees/` holds the expected tree of every fixture.
+  the screen's width; no two siblings overlap. `fixtures/trees/` holds the expected tree of every fixture
+  for HTML, `fixtures/trees/swift/` for SwiftUI (#19: its native kinds differ until B14 and B15).
 - **Frames** (q2112): `blocks-shot` meters each animation frame's main-thread time (its tasks, `rAF`, style, layout
   and paint) through a `scroll` step (a smooth scroll to the block) and a run of `frame` steps (played as a burst, 60
   a second): `longest_frame_ms`, `frames_over_budget` (over 16.7 ms) and `longest_patch_ms` (the patcher's one pass in

@@ -62,22 +62,16 @@ internal struct AppBlockView: View {
             draw(block)
         } else {
             let fallback = block["fallback"] ?? .null
-            RowView(row: fallback.with("title", fallback["title"] ?? .string(block.type)))
+            let title = fallback["title"] ?? .string(block.type)
+            FallbackRow(fallback: JSONValue.object(fallback.fields.merging(["title": title]) { $1 }))
         }
     }
 }
 
-internal struct Gap: View {
-    @Environment(\.look) private var look
-    internal let title: String?
+internal struct FallbackRow: View {
+    internal let fallback: any Encodable
 
     internal var body: some View {
-        Text(title ?? "").ui(15, .regular, look).foregroundStyle(look.palette.mute)
-            .padding(.horizontal, 14).frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
-            .surface(look, radius: 22)
+        if let row = try? JSONValue(fallback).decode(Row.self) { RowView(row: row) }
     }
-}
-
-extension JSONValue {
-    fileprivate func with(_ key: String, _ value: Self) -> Self { .object(fields.merging([key: value]) { $1 }) }
 }

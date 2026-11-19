@@ -36,7 +36,7 @@ export type ChoiceDefault = { label?: string | null; until: string; value: strin
 
 export type ChoiceOption = { confirm?: Confirm | null; label: string; value: string; values?: Record<string, unknown> | null };
 
-export type Composer = { action: string; acts?: Record<string, string> | null; chips?: ComposerChip[] | null; id?: string | null; label?: string | null; placeholder?: string | null; queued?: Queued[] | null; show?: Expr | null; values?: Record<string, unknown> | null };
+export type Composer = { action: string; acts?: Record<string, string> | null; chips?: ComposerChip[] | null; id?: string | null; label?: string | null; placeholder?: string | null; queued?: Queued[] | null; show?: Expr | null; values?: Record<string, unknown> | null; working?: Working | null };
 
 export type ComposerChip = { all: string[]; cur?: string | null; name: string };
 
@@ -195,5 +195,7 @@ export type TreeNode = { children: TreeNode[]; drawn: TreeDrawn; id?: string | n
 export type Web = { height: number; id?: string | null; show?: Expr | null; src: string };
 
 export type Why = "evicted" | "unpaired" | "handover";
+
+export type Working = { since: string };
 
 export type Kind = "screen" | "sheet" | "section" | "list" | "row" | "card" | "choice" | "form" | "config" | "secret" | "run" | "button" | "chips" | "stat" | "text" | "images" | "web" | "diff" | "editor" | "scene" | "diagram" | "composer" | "prose" | "hero" | "media" | "nav" | "island";

@@ -1,0 +1,30 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>editor: every state</title>
+<link rel="stylesheet" href="../../../web/src/blocks.css"><link rel="stylesheet" href="../neutral-default/tokens.css"><link rel="stylesheet" href="editor.css"><link rel="stylesheet" href="page.css">
+<script src="editor.js"></script></head>
+<body><main class="scr">
+<div class="tile"><div class="tabh"><span class="tw">editor · states</span></div></div>
+<div class="cases" id="cases"></div>
+</main>
+<script>
+const ed = (o) => ({ type: "editor", id: "e", name: "notes", action: "save-notes", ...o });
+const cases = [
+  ["1 · the fixture", "fixtures/blocks/editor.json: one line, numbered from 1, no errors.", ed({ text: "hello" })],
+  ["2 · first and errors", "`first: 40` numbers from 40. An error line gets a 3px brick edge marker and a brick number, its message right under it. Two errors on one line: the first wins.", ed({ first: 40, text: "fn main() {\n    let n = 1\n    println!(\"{n}\");\n}", errors: [{ line: 41, message: "expected `;`" }, { line: 41, message: "ignored: second error on line 41" }] })],
+  ["3 · an error off the excerpt", "An error whose line is not shown goes after the lines as \"line N · message\".", ed({ first: 3, text: "c = 3\nd = 4", errors: [{ line: 9, message: "unknown key `z`" }] })],
+  ["4 · empty text", "Empty text still draws line 1, so the block keeps its height and can be tapped.", ed({ text: "" })],
+  ["5 · keyboard focus", "The read view is one button (\"edit notes\"); Tab gives it a 2px ink ring, Enter or a tap opens the draft.", ed({ text: "first line\nsecond line" }), { focus: true }],
+  ["6 · editing", "A textarea named `name`, at least 320px tall, ink edge. 400ms after typing stops it posts `action` with { name: draft }; the errors list under it by line.", ed({ text: "x = 1\ny = ", errors: [{ line: 2, message: "expected a value" }] }), { editing: true }],
+];
+const host = document.getElementById("cases");
+for (const [h, n, b, o] of cases) {
+  const t = document.createElement("div");
+  t.className = "tile";
+  t.innerHTML = `<div class="sh"></div><p class="note"></p>`;
+  t.firstChild.textContent = h;
+  t.children[1].textContent = n;
+  t.append(editor(b, o));
+  host.append(t);
+}
+document.body.dataset.h = Math.ceil(document.documentElement.scrollHeight);
+</script></body></html>

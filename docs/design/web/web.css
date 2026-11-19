@@ -1,0 +1,6 @@
+/* The rules impl adds to web/src/blocks.css for `web`: tokens only, no new colour, square corners; the block sits in its tile. */
+.web{margin:var(--s2) 0 0}
+.web .wf{display:block;box-sizing:border-box;width:100%;max-height:80svh;border:1px solid var(--edge);border-radius:0;background:var(--bg)}
+.web .wf.none{display:flex;align-items:center;justify-content:center;padding:var(--s3);color:var(--mute);font-size:var(--fs-meta);text-align:center}
+.web .wm{display:flex;align-items:center;gap:var(--s3);min-height:var(--ctl);font-size:var(--fs-meta);color:var(--mute)}
+.web .wu{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-variant-numeric:tabular-nums}

@@ -1,0 +1,30 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>web: every state</title>
+<link rel="stylesheet" href="../../../web/src/blocks.css"><link rel="stylesheet" href="web.css"><link rel="stylesheet" href="page.css">
+<script src="web.js"></script></head>
+<body><main class="scr">
+<div class="tile"><div class="tabh"><span class="tw">web · states</span></div></div>
+<div class="cases" id="cases"></div>
+<div class="tile"><div class="sh">6 · the frame</div><div class="note">Every frame is the same sandboxed iframe. The page runs in an opaque origin: no cookies, no storage, no access to the host page, like Swift's non-persistent store. It may run its own scripts, send forms and open new windows (which leave the sandbox, so links work). It cannot navigate the host page, ask for the camera, microphone or location, or see the host's address. Nothing is added to the host page itself.</div>
+<pre>&lt;iframe class="wf" sandbox="allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox"
+        allow="" referrerpolicy="no-referrer" loading="lazy" title="cooee.app/doc" style="height:240px"&gt;</pre></div>
+</main>
+<script>
+const cases = [
+  ["1 · drawn", "The page at `height` px, full width, in a 1px edge box with square corners. Under it, a muted caption: the address (host and path, cut with … when long) and \"open ↗\", which opens the page in a new tab.", { src: "doc.html", height: 240 }, { shown: "cooee.app/doc" }],
+  ["2 · loading", "Until the page paints, the box shows the page colour. Nothing spins and the height does not change, so nothing below moves.", { src: "doc.html", height: 160 }, { loading: true, shown: "cooee.app/doc" }],
+  ["3 · refused", "A site that refuses to be framed shows the browser's own error page; the renderer cannot see this. The caption's \"open ↗\" is the way out.", { src: "refused.html", height: 160 }, { shown: "pay.example.com/checkout" }],
+  ["4 · not shown", "A `src` that is not http or https (a `javascript:` or `data:` address, or one that does not parse) draws no frame and no link: a muted box at the same height. A relative `src` like `/doc` is read against the page's address.", { src: "javascript:alert(1)", height: 120 }],
+  ["5 · a long address, tall page", "The caption cuts a long address with …. A frame taller than the window is held to 80% of the window height (here an 800px window: 640px), so a phone can still scroll past it.", { src: "doc.html", height: 1400 }, { shown: "docs.example.com/guides/getting-started/install-on-a-shared-host-with-a-proxy-and-a-custom-domain" }],
+];
+const box = document.getElementById("cases");
+for (const [head, note, block, opts] of cases) {
+  const sec = document.createElement("div");
+  sec.className = "tile";
+  sec.innerHTML = `<div class=sh>${head}</div><div class=note>${note.replace(/`([^`]+)`/g, "<code>$1</code>")}</div>`;
+  sec.append(web({ type: "web", ...block }, opts));
+  box.append(sec);
+}
+document.querySelectorAll(".tile").forEach((t, i) => t.style.setProperty("--i", i));
+document.body.dataset.h = Math.ceil(document.documentElement.scrollHeight);
+</script></body></html>
