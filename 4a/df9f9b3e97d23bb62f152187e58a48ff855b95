@@ -1,0 +1,11 @@
+Decided: the Swift half runs through web/lint.mjs in the swift job, sharing one baseline and one allowed list under ci/tokens
+Because: "the Swift half is a script CI runs in the swift job"
+Rejected: a second Swift-only script — it would repeat the baseline compare in another language
+Decided: the baseline has one sorted `path what` line per occurrence; each linted file must match its lines exactly
+Because: "removing one and not updating the baseline fails (it must shrink), adding one fails"
+Decided: a web CI step fails when the baseline gains a line against the PR base; it skips while the base has no baseline
+Because: "the baseline may only shrink"
+Decided: :root custom properties, @media/@container conditions and Theme.swift are exempt, as the tokens, var-free breakpoints and the palette itself
+Because: ci/tokens/allowed.txt:8
+Check: scripts/lint-fixtures.sh ts and swift refuse raw-colour, raw-size and stale, and pass clean
+Owner: CI now rejects a new hard-coded colour or size in blocks' own styles and SwiftUI views; today's are listed and may only shrink.
