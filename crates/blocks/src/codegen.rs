@@ -1,10 +1,11 @@
+use std::collections::BTreeMap;
 use std::path::Path;
 
-use serde_json::{Map, Value};
+use serde_json::{Map, Number, Value};
 
 use crate::{
-    layout, site, theme, tree, Action, Answer, Block, Built, Bye, Card, Child, Composer, ComposerChip, Frame, Hello,
-    List, OldFrame, Op, Queued, Row, Screen, Sync, Synced, Text, Tone, SCHEMA_VERSION,
+    layout, site, theme, tree, Action, Answer, Block, Built, Bye, Card, Child, Composer, ComposerChip, Diagram, Frame,
+    Hello, List, Node, OldFrame, Op, Queued, Row, Screen, Sync, Synced, Tap, Text, Tone, SCHEMA_VERSION,
 };
 
 /// The JSON Schema of a `Frame`; its `$defs` hold `Block`, `Op` and the stream's other messages.
@@ -123,11 +124,57 @@ fn html(root: &Path) -> std::io::Result<()> {
 
 fn site_screen() -> Screen {
     let on = ["nav", "hero", "prose", "media", "form"];
-    let blocks = crate::samples().into_iter().filter(|(k, _)| on.contains(k));
-    Screen::new()
-        .id("site")
-        .title("Blocks")
-        .blocks(blocks.map(|(_, b)| b).collect::<Vec<_>>())
+    let mut blocks: Vec<Block> = crate::samples()
+        .into_iter()
+        .filter(|(k, _)| on.contains(k))
+        .map(|(_, b)| b)
+        .collect();
+    blocks.push(Block::Diagram(Box::new(workflow())));
+    Screen::new().id("site").title("Blocks").blocks(blocks)
+}
+
+fn workflow() -> Diagram {
+    let source = "[*] --> queued\nqueued --> impl\nimpl --> review\nstate \"in review\" as review\nreview --> fix\nfix --> review\nreview --> ready\nimpl --> ready\nready --> merged\nqueued --> blocked\nstate stall\nimpl --> stall";
+    let counts = [
+        ("queued", 3),
+        ("impl", 2),
+        ("review", 1),
+        ("fix", 0),
+        ("ready", 1),
+        ("merged", 9),
+        ("blocked", 1),
+    ];
+    let node = |state: Option<Tone>, limit: Option<&str>| Node {
+        state,
+        limit: limit.map(String::from),
+        value: limit.map(|_| "45m".into()),
+        tap: Some(Tap {
+            open: Some("/settings".into()),
+            ..Tap::default()
+        }),
+        ..Node::default()
+    };
+    let nodes = [
+        ("impl", node(Some(Tone::Working), None)),
+        ("blocked", node(Some(Tone::Needs), None)),
+        ("stall", node(None, Some("stall_minutes"))),
+    ];
+    Diagram::new(source)
+        .id("workflow")
+        .title("Workflow")
+        .selected("review")
+        .counts(
+            counts
+                .map(|(k, n)| (k.to_string(), Number::from(n)))
+                .into_iter()
+                .collect::<BTreeMap<_, _>>(),
+        )
+        .nodes(
+            nodes
+                .map(|(k, n)| (k.to_string(), n))
+                .into_iter()
+                .collect::<BTreeMap<_, _>>(),
+        )
 }
 
 fn trees(root: &Path) -> std::io::Result<()> {

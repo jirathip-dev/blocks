@@ -49,8 +49,7 @@ test("site and render give the same element per kind: tag, classes, hooks and te
   const { page, close } = await open({ page: "<!doctype html><body>" });
   const kinds = readdirSync(at("../../fixtures/blocks/")).map((f) => f.replace(/\.json$/, ""));
   strictEqual(kinds.length, 27);
-  ok(read("../../fixtures/html/diagram.html").includes("data-fallback"), "the static diagram is its fallback until site lays one out");
-  for (const k of kinds.filter((k) => k !== "diagram")) {
+  for (const k of kinds) {
     const [written, drawn] = await page.evaluate(
       async ([html, b]) => {
         const B = await import("/blocks.js");
@@ -74,6 +73,31 @@ test("site and render give the same element per kind: tag, classes, hooks and te
     ok(written.length > 0, k);
     deepStrictEqual(written, drawn, k);
   }
+  await close();
+});
+
+test("the site's workflow diagram is the one render lays out: every element, its place and its lines", async () => {
+  const { page, close } = await open();
+  const [written, drawn] = await page.evaluate(async () => {
+    const B = await import("/blocks.js");
+    const round = (d) => (d ?? "").replace(/-?\d+(\.\d+)?(e-?\d+)?/g, (n) => String(Math.round(Number(n) * 100) / 100));
+    const sig = (e) =>
+      [e, ...e.querySelectorAll("*")].map((x) => ({
+        tag: x.tagName.toLowerCase(),
+        cls: [...x.classList].sort().join(" "),
+        at: ["aria-label", "aria-hidden", "role", "tabindex", "title", "width", "height", "cx", "cy", "r"].map((a) => x.getAttribute(a)),
+        style: x.style?.cssText ?? "",
+        d: round(x.getAttribute("d")),
+        text: x.children.length ? "" : x.textContent,
+      }));
+    const screen = JSON.parse(document.getElementById("blocks-screen").textContent);
+    const b = screen.blocks.find((x) => x.type === "diagram");
+    const ctx = { screen: "site", act: async () => true, tap: () => {}, open: new Set(), theme: B.plain, store: { get: () => null, put: () => {} } };
+    return [sig(document.querySelector('[data-id="workflow"]')), sig(B.render(b, ctx))];
+  });
+  ok(written.filter((x) => x.cls.includes("dgn")).length >= 16, `${written.length} elements`);
+  ok(written.some((x) => x.cls.includes("timer")) && written.some((x) => x.text === "optional") && written.some((x) => x.cls.includes("picked")));
+  deepStrictEqual(written, drawn);
   await close();
 });
 

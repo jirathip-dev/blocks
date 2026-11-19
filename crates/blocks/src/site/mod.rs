@@ -1,4 +1,5 @@
 mod content;
+mod diagram;
 mod views;
 
 use serde_json::{Map, Value};
@@ -367,11 +368,12 @@ pub(crate) fn block(w: &mut W<'_>, b: &Value) {
         "hero" => content::hero(w, b),
         "media" => content::media(w, b),
         "nav" => content::nav(w, b),
+        "diagram" => diagram::diagram(w, b),
         _ => fallback(w, b),
     }
 }
 
-fn fallback(w: &mut W<'_>, b: &Value) {
+pub(crate) fn fallback(w: &mut W<'_>, b: &Value) {
     w.open_block("div", "", b, &[("data-fallback", "")]);
     let f = b.get("fallback").filter(|f| !f.is_null());
     let title = f.map_or_else(|| b.get("type"), |f| f.get("title"));
