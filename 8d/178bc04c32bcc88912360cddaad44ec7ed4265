@@ -1,0 +1,5 @@
+Decided: merged origin/staging to rerun CI; no code change for the perf FAIL
+Because: crates/blocks/tests/perf.rs:36
+Rejected: raising the HTML write budget — out of scope; this PR touches no Rust and the overshoot was 0.47 ms on a shared runner
+Check: the rust perf job is green at the new head; git diff origin/staging...HEAD -- crates is empty
+Owner: The branch is brought up to date with staging and CI reruns; the earlier red check was a timing blip in code this change does not touch.
