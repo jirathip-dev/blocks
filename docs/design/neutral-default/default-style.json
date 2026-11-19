@@ -1,3 +1,0 @@
-{"label":"Default style","style":{
-"--radius":"0px","--seam":"2px","--dot-size":"2px","--dot-gap":"16px","--dot":"var(--edge)",
-"--settle":"160ms","--rise":"8px","--stagger":"40ms","--build":"200ms","--enter":"160ms","--ease":"cubic-bezier(0.2, 0, 0, 1)"}}
