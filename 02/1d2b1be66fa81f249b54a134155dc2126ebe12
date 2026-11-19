@@ -1,0 +1,14 @@
+Decided: build G1, the core slice, here: the machine and list rules in Rust, TS and Swift, div, check and behave rules, Action::read, two harness steps, both drivers, held, the zoom and the bans
+Because: q2355
+Decided: a gesture step's reach is px offsets for a pointer, nudges for keys and step names for a named action
+Because: crates/blocks/src/tree.rs:126
+Rejected: reach in the kind's units for a pointer — the harness cannot turn places or days into px without the view's own scale
+Decided: no Ctx.view yet; zoomed takes the record that keeps its zoom, and a block will pass its view state there
+Because: web/src/gesture.ts:128
+Rejected: an unused Ctx field now — the viewer is an overlay no patch redraws, so nothing in this slice keeps view state by block
+Decided: SwiftUI keeps the held order in the list's own view state, and learns of a refusal through a new optional BlocksView acted
+Because: swift/Sources/BlocksUI/BlocksView.swift:14
+Decided: the generated behave sim skips a case whose value serde_json does not read back exactly, which div first produced
+Because: crates/blocks/tests/sim.rs:239
+Check: web/test/gesture.test.ts drives the real list in WebKit by pointer, keys and named action and wants one same action; refused it goes back, answered it keeps the data
+Owner: Lists can now be reordered by drag, keyboard or screen-reader action on web and Apple, through one shared gesture model the next kinds build on.
