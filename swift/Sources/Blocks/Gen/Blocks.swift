@@ -48,6 +48,13 @@ public struct AppBlock: Codable, Equatable, Sendable {
     public var type: String
 }
 
+public struct Bar: Codable, Equatable, Sendable {
+    public var label: String
+    public var sub: String?
+    public var tone: Tone?
+    public var value: UInt8
+}
+
 public enum Block: Codable, Equatable, Sendable {
     case screen(Screen)
     case sheet(Sheet)
@@ -77,6 +84,7 @@ public enum Block: Codable, Equatable, Sendable {
     case media(Media)
     case nav(Nav)
     case island(Island)
+    case steps(Steps)
     case appBlock(JSONValue)
 
     private enum Tag: String, CodingKey { case tag = "type" }
@@ -111,6 +119,7 @@ public enum Block: Codable, Equatable, Sendable {
         case "media": self = .media(try Media(from: decoder))
         case "nav": self = .nav(try Nav(from: decoder))
         case "island": self = .island(try Island(from: decoder))
+        case "steps": self = .steps(try Steps(from: decoder))
         default: self = .appBlock(try JSONValue(from: decoder))
         }
     }
@@ -145,6 +154,7 @@ public enum Block: Codable, Equatable, Sendable {
         case .media(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("media", forKey: .tag)
         case .nav(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("nav", forKey: .tag)
         case .island(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("island", forKey: .tag)
+        case .steps(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("steps", forKey: .tag)
         case .appBlock(let v): try v.encode(to: encoder)
         }
     }
@@ -1036,6 +1046,13 @@ public struct Span: Codable, Equatable, Sendable {
     public var text: String
 }
 
+public struct Stage: Codable, Equatable, Sendable {
+    public var id: String
+    public var label: String
+    public var sub: String?
+    public var tap: Tap?
+}
+
 public struct Stat: Codable, Equatable, Sendable {
     public var id: String?
     public var items: [Tile]?
@@ -1104,6 +1121,17 @@ public struct StepShot: Codable, Equatable, Sendable {
 public struct StepType: Codable, Equatable, Sendable {
     public var id: String
     public var text: String
+}
+
+public struct Steps: Codable, Equatable, Sendable {
+    public var bars: [Bar]?
+    public var current: String?
+    public var done: Bool?
+    public var fallback: Fallback?
+    public var id: String?
+    public var show: Expr?
+    public var steps: [Stage]?
+    public var title: String?
 }
 
 public struct Submit: Codable, Equatable, Sendable {

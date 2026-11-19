@@ -295,6 +295,19 @@ kind! {
 }
 
 kind! {
+    /// A stepper of named steps with its current one, or progress bars.
+    pub struct Steps {
+        id: Option<String>,
+        title: Option<String>,
+        steps: Option<Vec<Stage>>,
+        current: Option<String>,
+        done: Option<bool>,
+        bars: Option<Vec<Bar>>,
+        fallback: Option<Fallback>,
+    }
+}
+
+kind! {
     /// Repeating rows of fields with add and remove, running totals and a balance check.
     pub struct Lines {
         id: Option<String>,
@@ -403,4 +416,5 @@ kinds! {
     Media(Media) = "media",
     Nav(Nav) = "nav",
     Island(Island) = "island",
+    Steps(Steps) = "steps",
 }

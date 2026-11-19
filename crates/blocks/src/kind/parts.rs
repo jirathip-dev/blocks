@@ -350,6 +350,26 @@ wire! {
 }
 
 wire! {
+    /// One step of a stepper: a done one with a tap can be pressed.
+    pub struct Stage {
+        id: String,
+        label: String,
+        sub: Option<String>,
+        tap: Option<Tap>,
+    }
+}
+
+wire! {
+    /// One progress bar: its value from 0 to 100 and its tone.
+    pub struct Bar {
+        label: String,
+        value: u8,
+        tone: Option<Tone>,
+        sub: Option<String>,
+    }
+}
+
+wire! {
     /// One image.
     pub struct Image {
         src: String,
