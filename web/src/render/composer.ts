@@ -161,10 +161,8 @@ export function composer(b: Composer, c: Ctx): HTMLElement {
     const said = d.q != null ? "save" : b.working ? "queue" : (b.label ?? "");
     (go.firstElementChild ?? go).textContent = said;
     go.setAttribute("aria-label", said || "send");
-    if (d.st === "sending") go.setAttribute("aria-busy", "true");
-    else go.removeAttribute("aria-busy");
-    if (d.steer) row.append(st);
-    else st.remove();
+    if (d.st === "sending") go.setAttribute("aria-busy", "true"); else go.removeAttribute("aria-busy");
+    if (d.steer) row.append(st); else st.remove();
     const picks = el("div", "pk");
     for (const ch of b.chips ?? []) {
       const n = ch.name;
