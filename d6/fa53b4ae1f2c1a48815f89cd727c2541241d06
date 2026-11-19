@@ -1,0 +1,5 @@
+Decided: merged origin/staging (guard #207, stylesheet folder #153); staging deleted web/src/blocks.css, so the diff rules moved unchanged to web/src/css/kind/diff.css, and web/dist was rebuilt with the just gen lines
+Because: web/package.json:7
+Rejected: picking either side of the web/dist conflict by hand — dist is build output of the merged sources
+Check: web/src/css/kind/diff.css holds the same .df rules the branch had in blocks.css; arch-check shows no generated drift
+Owner: Brought the diff view up to date with the latest shared branch; nothing changes for users beyond the diff view itself.
