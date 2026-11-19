@@ -1,20 +1,16 @@
 import type { Cell, Column, SortDir, Table, TableRow, TableSort } from "../gen/types.ts";
 import { btn, type Ctx, el, h, value } from "./index.ts";
+import { at, number, total, unit } from "../core/table.ts";
 
 type St = { sort: TableSort | null; q: string; hidden: Set<string>; sel: Set<string>; menu: string; seen: Map<string, string>; changed: Set<string>; fresh: Set<string> };
 
 const MON = "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec".split(" ");
 const THAI = "ม.ค. ก.พ. มี.ค. เม.ย. พ.ค. มิ.ย. ก.ค. ส.ค. ก.ย. ต.ค. พ.ย. ธ.ค.".split(" ");
-const SIGN: Record<string, string> = { THB: "฿", USD: "$", EUR: "€" };
 const FORMAT: Record<string, string> = { csv: "CSV", xlsx: "Excel" };
 const states = new Map<string, St>();
 
-const at = (r: TableRow, id: string): Cell | undefined => r.cells[id];
 const numeric = (c: Column) => c.kind === "number" || c.kind === "money" || c.kind === "bar";
 const end = (c: Column) => (c.align ?? (numeric(c) ? "end" : "start")) === "end";
-const unit = (c: Column) => (c.kind === "money" ? (c.currency ? (SIGN[c.currency] ?? c.currency) : null) : c.unit);
-const grouped = (v: number, d: number, fixed: boolean) => v.toLocaleString("en-US", { minimumFractionDigits: fixed ? d : 0, maximumFractionDigits: d });
-const number = (c: Column, v: number) => (c.kind === "money" ? grouped(v, 2, true) : grouped(v, c.digits ?? 2, false));
 
 function shown(c: Column, v: Cell | undefined): string {
   if (v === undefined) return "";
@@ -37,16 +33,6 @@ function sorted(rows: TableRow[], c?: Column, dir?: SortDir): TableRow[] {
     if (a === undefined || b === undefined) return Number(a === undefined) - Number(b === undefined);
     return dir === "desc" ? cmp(c, b, a) : cmp(c, a, b);
   });
-}
-
-function total(c: Column, rows: TableRow[]): [string, string] | null {
-  const cells = rows.map((r) => at(r, c.id)).filter((v) => v !== undefined);
-  const vs = cells.filter((v) => typeof v === "number");
-  const sum = vs.reduce((a, v) => a + v, 0);
-  if (!c.total) return null;
-  if (c.total === "count") return ["count", String(cells.length)];
-  if (!vs.length) return ["", "—"];
-  return c.total === "avg" ? ["avg", grouped(sum / vs.length, 1, false)] : ["", number(c, sum)];
 }
 
 function roles(cols: Column[]): string[] {
