@@ -3,10 +3,10 @@
 <link rel="stylesheet" href="../../../web/src/blocks.css"><link rel="stylesheet" href="diagram.css"><link rel="stylesheet" href="page.css">
 <script src="diagram.js"></script></head>
 <body><main class="scr" id="page">
-<div class="tabh"><span class="tw">blocks · issues</span><button type="button"><span>queue</span></button><button type="button"><span>board</span></button></div>
-<div class="stats"><div class="st"><b>9</b><span class="m">open</span></div><div class="st warn"><b>1</b><span class="m">needs you</span></div><div class="st"><b>37</b><span class="m">merged · 14d</span></div></div>
-<div class="sec"><div class="sh">Workflow</div><div id="d"></div></div>
-<div class="sec"><div class="sh r"><b class="thw">needs you</b> · 1</div>
+<div class="tile"><div class="tabh"><span class="tw">blocks · issues</span><button type="button"><span>queue</span></button><button type="button"><span>board</span></button></div></div>
+<div class="tile one st"><b>9</b><span class="m">open</span></div><div class="tile one st warn"><b>1</b><span class="m">needs you</span></div><div class="tile one st"><b>37</b><span class="m">merged · 14d</span></div>
+<div class="tile"><div class="sh">Workflow · <a href="#">open the board</a></div><div id="d"></div></div>
+<div class="tile"><div class="sh r"><b class="thw">needs you</b> · 1</div>
 <div class="row tap"><span class="rsg"><i class="gl r">!</i></span><span class="rm"><span class="rt">#23 B14: web: HTML gaps: diagram</span><span class="tag needs">needs human</span><span class="rs">review round 3 of 3 failed · 12m</span></span><span class="rv">fix(3)</span></div></div>
 </main>
 <script>
@@ -42,5 +42,6 @@ const flow = {
   },
 };
 document.getElementById("d").replaceWith(diagram(flow, { review: 2 }));
+document.querySelectorAll(".tile").forEach((t, i) => t.style.setProperty("--i", i));
 document.body.dataset.h = Math.ceil(document.documentElement.scrollHeight);
 </script></body></html>

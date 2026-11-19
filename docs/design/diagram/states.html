@@ -3,8 +3,8 @@
 <link rel="stylesheet" href="../../../web/src/blocks.css"><link rel="stylesheet" href="diagram.css"><link rel="stylesheet" href="page.css">
 <script src="diagram.js"></script></head>
 <body><main class="scr">
-<div class="tabh"><span class="tw">diagram · states</span></div>
-<div id="cases"></div>
+<div class="tile"><div class="tabh"><span class="tw">diagram · states</span></div></div>
+<div class="cases" id="cases"></div>
 </main>
 <script>
 const cases = [
@@ -23,22 +23,23 @@ const cases = [
     source: "stateDiagram-v2\n[*] --> impl\nimpl --> review\nreview --> verify\nverify --> merged\nreview --> fix\nfix --> review\nimpl --> parked\nverify --> held\nheld --> parked",
     counts: { impl: 2, review: 1, verify: 0, merged: 9, fix: 1, parked: 1, held: 0 },
     nodes: { impl: { state: "working" }, review: { state: "working" }, fix: { state: "working" }, parked: { state: "needs" }, merged: { state: "merged" } } }],
-  ["5 · a timer", "A node with `limit` is a setting, not a state: a dashed link-coloured pill with its label and value, and dashed edges. Its tap opens the setting.", {
+  ["5 · a timer", "A node with `limit` is a setting, not a state: a dashed box in the link colour (ink), with its label and value, and dashed edges. Its tap opens the setting.", {
     source: "stateDiagram-v2\n[*] --> impl\nimpl --> review\nreview --> merged\nreview --> fix\nfix --> review\nreview --> rounds\nimpl --> stall",
     counts: { impl: 2, review: 1, fix: 0, merged: 4 },
     nodes: { impl: { state: "working" }, review: { state: "working" }, stall: { limit: "stall_minutes", label: "stall", value: "20 min" }, merged: { state: "merged" }, rounds: { limit: "review_rounds", label: "review rounds", value: "3", tap: { open: "config" } } } }],
-  ["6 · a light scheme", "The same rules on Farm light: only the tokens change.", null],
+  ["6 · on first load", "The diagram is one tile: it settles in with the page's other tiles, 6px up and faded in, 0.2 s each, 30 ms apart, all done under 0.4 s, once. Its nodes do not move on their own. With reduced motion it is drawn in place.", null],
   ["7 · nothing to draw", "A source with no state this subset reads (here the B1 sample's flowchart line) draws the block's fallback row, as the gap does today.", {
     source: "graph TD; a-->b", fallback: { title: "Flow", subtitle: "open it on the phone app" } }],
 ];
 const box = document.getElementById("cases");
 for (const [head, note, block, was] of cases) {
   const sec = document.createElement("div");
-  sec.className = "sec";
+  sec.className = "tile";
   sec.innerHTML = `<div class=sh>${head}</div><div class=note>${note}</div>`;
   if (block) sec.append(diagram({ type: "diagram", ...block }, was));
-  else { const l = document.createElement("div"); l.className = "light"; l.append(diagram({ type: "diagram", ...cases[0][2] }), diagram({ type: "diagram", ...cases[4][2] })); sec.append(l); }
+  else { const f = document.createElement("div"); f.className = "frames"; f.innerHTML = ["0", ".2", ".6", "1"].map((t) => `<div style="opacity:${t};transform:translateY(${6 - 6 * t}px)"></div>`).join("") + ["0 ms", "60 ms", "140 ms", "200 ms"].map((t) => `<span>${t}</span>`).join(""); sec.append(f); }
   box.append(sec);
 }
+document.querySelectorAll(".tile").forEach((t, i) => t.style.setProperty("--i", i));
 document.body.dataset.h = Math.ceil(document.documentElement.scrollHeight);
 </script></body></html>
