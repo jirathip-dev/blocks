@@ -1,0 +1,126 @@
+{
+  "cases": [
+    {
+      "name": "a press and a release is a tap",
+      "start": 0,
+      "events": [{ "on": "press" }, { "on": "release" }],
+      "want": [[{ "at": "pressed" }, null], [{ "at": "idle" }, "tap"]]
+    },
+    {
+      "name": "a drag to a result is sent on release, answered and settled",
+      "start": 0,
+      "events": [{ "on": "press" }, { "on": "move", "c": 2 }, { "on": "move", "c": 3 }, { "on": "release" }, { "on": "answer", "ok": true }, { "on": "settled" }],
+      "want": [
+        [{ "at": "pressed" }, null],
+        [{ "at": "previewing", "c": 2 }, null],
+        [{ "at": "previewing", "c": 3 }, null],
+        [{ "at": "sent", "c": 3 }, { "send": 3 }],
+        [{ "at": "confirmed" }, null],
+        [{ "at": "idle" }, null]
+      ]
+    },
+    {
+      "name": "a release on the value it started with sends nothing",
+      "start": 0,
+      "events": [{ "on": "press" }, { "on": "move", "c": 1 }, { "on": "move", "c": 0 }, { "on": "release" }],
+      "want": [[{ "at": "pressed" }, null], [{ "at": "previewing", "c": 1 }, null], [{ "at": "previewing", "c": 0 }, null], [{ "at": "idle" }, null]]
+    },
+    {
+      "name": "a release where no result is allowed sends nothing",
+      "start": 0,
+      "events": [{ "on": "press" }, { "on": "move", "c": null }, { "on": "release" }],
+      "want": [[{ "at": "pressed" }, null], [{ "at": "dragging" }, null], [{ "at": "idle" }, null]]
+    },
+    {
+      "name": "in and out of a result, then refused with a reason",
+      "start": 0,
+      "events": [
+        { "on": "press" },
+        { "on": "move" },
+        { "on": "move", "c": 2 },
+        { "on": "move", "c": null },
+        { "on": "move", "c": 2 },
+        { "on": "release" },
+        { "on": "answer", "ok": false, "why": "The day is full" },
+        { "on": "settled" }
+      ],
+      "want": [
+        [{ "at": "pressed" }, null],
+        [{ "at": "dragging" }, null],
+        [{ "at": "previewing", "c": 2 }, null],
+        [{ "at": "dragging" }, null],
+        [{ "at": "previewing", "c": 2 }, null],
+        [{ "at": "sent", "c": 2 }, { "send": 2 }],
+        [{ "at": "refused", "why": "The day is full" }, null],
+        [{ "at": "idle" }, null]
+      ]
+    },
+    {
+      "name": "refused with no reason",
+      "start": 0,
+      "events": [{ "on": "press" }, { "on": "move", "c": 1 }, { "on": "release" }, { "on": "answer", "ok": false }],
+      "want": [[{ "at": "pressed" }, null], [{ "at": "previewing", "c": 1 }, null], [{ "at": "sent", "c": 1 }, { "send": 1 }], [{ "at": "refused", "why": "" }, null]]
+    },
+    {
+      "name": "a cancel from each phase before the release",
+      "start": 0,
+      "events": [{ "on": "press" }, { "on": "cancel" }, { "on": "press" }, { "on": "move" }, { "on": "cancel" }, { "on": "press" }, { "on": "move", "c": 1 }, { "on": "cancel" }],
+      "want": [
+        [{ "at": "pressed" }, null],
+        [{ "at": "idle" }, null],
+        [{ "at": "pressed" }, null],
+        [{ "at": "dragging" }, null],
+        [{ "at": "idle" }, null],
+        [{ "at": "pressed" }, null],
+        [{ "at": "previewing", "c": 1 }, null],
+        [{ "at": "idle" }, null]
+      ]
+    },
+    {
+      "name": "an item whose action is out ignores press, move, release, cancel and settled",
+      "start": 0,
+      "events": [
+        { "on": "press" },
+        { "on": "move", "c": 1 },
+        { "on": "release" },
+        { "on": "press" },
+        { "on": "move", "c": 5 },
+        { "on": "release" },
+        { "on": "cancel" },
+        { "on": "settled" },
+        { "on": "answer", "ok": true }
+      ],
+      "want": [
+        [{ "at": "pressed" }, null],
+        [{ "at": "previewing", "c": 1 }, null],
+        [{ "at": "sent", "c": 1 }, { "send": 1 }],
+        [{ "at": "sent", "c": 1 }, null],
+        [{ "at": "sent", "c": 1 }, null],
+        [{ "at": "sent", "c": 1 }, null],
+        [{ "at": "sent", "c": 1 }, null],
+        [{ "at": "sent", "c": 1 }, null],
+        [{ "at": "confirmed" }, null]
+      ]
+    },
+    {
+      "name": "idle ignores all but a press, and an answer settles only after it",
+      "start": 0,
+      "events": [{ "on": "release" }, { "on": "move", "c": 1 }, { "on": "cancel" }, { "on": "answer", "ok": true }, { "on": "settled" }],
+      "want": [[{ "at": "idle" }, null], [{ "at": "idle" }, null], [{ "at": "idle" }, null], [{ "at": "idle" }, null], [{ "at": "idle" }, null]]
+    },
+    {
+      "name": "confirmed and refused wait for settled",
+      "start": 0,
+      "events": [{ "on": "press" }, { "on": "move", "c": 1 }, { "on": "release" }, { "on": "answer", "ok": true }, { "on": "press" }, { "on": "answer", "ok": false }, { "on": "settled" }],
+      "want": [
+        [{ "at": "pressed" }, null],
+        [{ "at": "previewing", "c": 1 }, null],
+        [{ "at": "sent", "c": 1 }, { "send": 1 }],
+        [{ "at": "confirmed" }, null],
+        [{ "at": "confirmed" }, null],
+        [{ "at": "confirmed" }, null],
+        [{ "at": "idle" }, null]
+      ]
+    }
+  ]
+}

@@ -8,6 +8,7 @@ use crate::expr::{Expr, State};
 #[macro_use]
 mod macros;
 mod content;
+mod list;
 mod parts;
 mod sample;
 mod table;
@@ -67,7 +68,7 @@ kind! {
     pub struct List {
         id: Option<String>,
         rows: Vec<Block>,
-        reorder: Option<Reorder>,
+        reorder: Option<Gesture>,
     }
 }
 
@@ -103,7 +104,7 @@ kind! {
         tone: Option<Tone>,
         title: Option<String>,
         subtitle: Option<String>,
-        meta: Option<String>,
+        meta: Option<Shown>,
         badge: Option<Label>,
         buttons: Option<Vec<Block>>,
         tap: Option<Tap>,
@@ -332,6 +333,17 @@ kind! {
     }
 }
 
+kind! {
+    /// A short line after an action, in a tone, with an optional undo: an answer's toast, or drawn where it sits.
+    pub struct Toast {
+        id: Option<String>,
+        tone: Option<Tone>,
+        title: String,
+        undo: Option<Undo>,
+        fallback: Option<Fallback>,
+    }
+}
+
 wire! {
     /// A block of a `type` that is no core kind: an app's own, kept whole.
     pub struct AppBlock {
@@ -428,4 +440,5 @@ kinds! {
     Island(Island) = "island",
     Table(Table) = "table",
     Steps(Steps) = "steps",
+    Toast(Toast) = "toast",
 }

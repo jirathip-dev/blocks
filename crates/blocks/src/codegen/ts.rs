@@ -17,7 +17,7 @@ pub(super) fn files(_: &Path, s: &Value) -> std::io::Result<Files> {
 }
 
 impl Ty<'_> {
-    fn ts(&self) -> String {
+    pub(super) fn ts(&self) -> String {
         match self {
             Self::Null => "null".into(),
             Self::Str => "string".into(),

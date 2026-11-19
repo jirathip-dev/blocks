@@ -3,6 +3,7 @@ import type { Act, Block, Fallback, Kind, Label, Tap, Toned } from "../gen/types
 import { actionOf } from "../core/eval.ts";
 import { type Blk, blks, isBlk, named } from "../core/tree.ts";
 import { island, isTag } from "../island.ts";
+import type { Held } from "../gesture.ts";
 import type { Theme } from "../theme.ts";
 import { button } from "./button.ts";
 import { card } from "./card.ts";
@@ -31,6 +32,7 @@ import { stat } from "./stat.ts";
 import { table } from "./table.ts";
 import { steps } from "./steps.ts";
 import { text } from "./text.ts";
+import { toast } from "./toast.ts";
 import { web } from "./web.ts";
 
 export { type Blk, blks, isBlk, named };
@@ -46,6 +48,7 @@ export type Ctx = {
   store: Store;
   apps?: Record<string, Renderer>;
   drop?: (what: string) => void;
+  held?: Map<string, Held>;
 };
 
 export const obj = (v: unknown): Blk => (isBlk(v) ? v : {});
@@ -206,6 +209,7 @@ export const R: { [K in Kind]: (b: Of<K>, c: Ctx) => HTMLElement | null } = {
       : fallback(b, c),
   table,
   steps,
+  toast,
 };
 
 

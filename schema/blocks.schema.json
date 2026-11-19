@@ -153,9 +153,13 @@
           "type": "array"
         },
         "toast": {
-          "type": [
-            "string",
-            "null"
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Toast"
+            },
+            {
+              "type": "null"
+            }
           ]
         }
       },
@@ -213,7 +217,8 @@
               "nav",
               "island",
               "table",
-              "steps"
+              "steps",
+              "toast"
             ]
           },
           "type": "string"
@@ -652,6 +657,19 @@
           "type": "object"
         },
         {
+          "$ref": "#/$defs/Toast",
+          "properties": {
+            "type": {
+              "const": "toast",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
           "$ref": "#/$defs/AppBlock"
         }
       ],
@@ -868,9 +886,13 @@
           ]
         },
         "meta": {
-          "type": [
-            "string",
-            "null"
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Shown"
+            },
+            {
+              "type": "null"
+            }
           ]
         },
         "push": {
@@ -1834,6 +1856,23 @@
         {
           "additionalProperties": false,
           "properties": {
+            "div": {
+              "items": {
+                "$ref": "#/$defs/Expr"
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": "array"
+            }
+          },
+          "required": [
+            "div"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
             "cat": {
               "items": {
                 "$ref": "#/$defs/Expr"
@@ -2089,6 +2128,52 @@
       },
       "type": "object"
     },
+    "Finding": {
+      "description": "A rule's verdict on one block of one file, carrying the rule's fix.",
+      "properties": {
+        "at": {
+          "type": "string"
+        },
+        "file": {
+          "type": "string"
+        },
+        "fix": {
+          "type": "string"
+        },
+        "line": {
+          "format": "uint32",
+          "minimum": 0,
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "message": {
+          "type": "string"
+        },
+        "rule": {
+          "type": "string"
+        },
+        "severity": {
+          "$ref": "#/$defs/Severity"
+        },
+        "steps": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "rule",
+        "severity",
+        "file",
+        "at",
+        "message",
+        "fix"
+      ],
+      "type": "object"
+    },
     "Fold": {
       "description": "What a folded card shows: one line and its main action.",
       "properties": {
@@ -2236,6 +2321,32 @@
       "required": [
         "k",
         "rev"
+      ],
+      "type": "object"
+    },
+    "Gesture": {
+      "description": "A gesture a block allows: the action its result is sent as, under `name` in the action's values.",
+      "properties": {
+        "action": {
+          "type": "string"
+        },
+        "enabled": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "action",
+        "name"
       ],
       "type": "object"
     },
@@ -2595,7 +2706,7 @@
       "description": "A short text and its tone: a badge, or a toned subtitle.",
       "properties": {
         "text": {
-          "type": "string"
+          "$ref": "#/$defs/Shown"
         },
         "tone": {
           "anyOf": [
@@ -2882,7 +2993,7 @@
         "reorder": {
           "anyOf": [
             {
-              "$ref": "#/$defs/Reorder"
+              "$ref": "#/$defs/Gesture"
             },
             {
               "type": "null"
@@ -3564,22 +3675,6 @@
       "required": [
         "q",
         "text"
-      ],
-      "type": "object"
-    },
-    "Reorder": {
-      "description": "A reorderable list's action.",
-      "properties": {
-        "action": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "action",
-        "name"
       ],
       "type": "object"
     },
@@ -4281,6 +4376,52 @@
       ],
       "type": "object"
     },
+    "Seen": {
+      "description": "What a rule or a probe measured, with no severity and no fix: only `guard::finding` makes a `Finding`.",
+      "properties": {
+        "at": {
+          "type": "string"
+        },
+        "detail": {
+          "type": "string"
+        },
+        "file": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "line": {
+          "format": "uint32",
+          "minimum": 0,
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "rule": {
+          "type": "string"
+        },
+        "run": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "shot": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "rule",
+        "at",
+        "detail"
+      ],
+      "type": "object"
+    },
     "SetState": {
       "description": "A tap's change of local state: `key` becomes the value of `to`; nothing is sent.",
       "properties": {
@@ -4296,6 +4437,14 @@
         "to"
       ],
       "type": "object"
+    },
+    "Severity": {
+      "description": "How a finding counts: an error fails when it is new, a warning is printed and never fails.",
+      "enum": [
+        "error",
+        "warn"
+      ],
+      "type": "string"
     },
     "Sheet": {
       "additionalProperties": true,
@@ -4364,7 +4513,7 @@
           "$ref": "#/$defs/Time"
         }
       ],
-      "description": "A row's or a tile's value: a string, a number, a state key's value, or a time."
+      "description": "A shown value (a row's or tile's value, a card's meta, a label's text): a string, a number, a state key's value, or a time."
     },
     "SortDir": {
       "anyOf": [
@@ -4595,8 +4744,55 @@
             "shot"
           ],
           "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "gesture": {
+              "$ref": "#/$defs/StepGesture"
+            }
+          },
+          "required": [
+            "gesture"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "refuse": {
+              "$ref": "#/$defs/StepRefuse"
+            }
+          },
+          "required": [
+            "refuse"
+          ],
+          "type": "object"
         }
       ]
+    },
+    "StepGesture": {
+      "description": "A gesture on one item of a block: pointer offsets `[dx, dy]` in px, key nudges, or named actions, in turn.",
+      "properties": {
+        "grab": true,
+        "id": {
+          "type": "string"
+        },
+        "reach": {
+          "items": true,
+          "type": "array"
+        },
+        "via": {
+          "$ref": "#/$defs/Via"
+        }
+      },
+      "required": [
+        "id",
+        "grab",
+        "reach",
+        "via"
+      ],
+      "type": "object"
     },
     "StepOn": {
       "description": "The block a tap or a scroll goes to.",
@@ -4607,6 +4803,18 @@
       },
       "required": [
         "id"
+      ],
+      "type": "object"
+    },
+    "StepRefuse": {
+      "description": "The action out fails, with its toast as the reason.",
+      "properties": {
+        "toast": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "toast"
       ],
       "type": "object"
     },
@@ -5130,8 +5338,14 @@
       "type": "object"
     },
     "Time": {
-      "description": "A moment a value counts from or to.",
+      "description": "A moment a value counts from or to; `label` shows it, `{}` the age since `since`, `{rel}` what is left until `until`.",
       "properties": {
+        "label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "since": {
           "type": [
             "string",
@@ -5187,6 +5401,65 @@
       "required": [
         "first_paint_ms",
         "steps_ms"
+      ],
+      "type": "object"
+    },
+    "Toast": {
+      "additionalProperties": true,
+      "description": "A short line after an action, in a tone, with an optional undo: an answer's toast, or drawn where it sits.",
+      "properties": {
+        "fallback": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Fallback"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "title": {
+          "type": "string"
+        },
+        "tone": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Tone"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "undo": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Undo"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "title"
       ],
       "type": "object"
     },
@@ -5309,6 +5582,50 @@
       ],
       "type": "object"
     },
+    "Undo": {
+      "description": "A toast's undo: its label (default \"undo\") and the action it sends, with any confirm.",
+      "properties": {
+        "action": {
+          "type": "string"
+        },
+        "confirm": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Confirm"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "values": {
+          "additionalProperties": true,
+          "type": [
+            "object",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "action"
+      ],
+      "type": "object"
+    },
+    "Via": {
+      "description": "How a scripted gesture comes in: a pointer, the keys, or a named accessibility action.",
+      "enum": [
+        "pointer",
+        "keys",
+        "action"
+      ],
+      "type": "string"
+    },
     "Web": {
       "additionalProperties": true,
       "description": "A web view of a fixed height.",
@@ -5366,7 +5683,7 @@
       "type": "object"
     }
   },
-  "$id": "https://github.com/jirathip-dev/blocks/schema/v1",
+  "$id": "https://github.com/jirathip-dev/blocks/schema/v2",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "description": "One key's change: ops that apply only on rev `from`, or with no `from` the whole screen.",
   "properties": {

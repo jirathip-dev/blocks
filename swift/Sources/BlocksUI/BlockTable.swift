@@ -29,7 +29,7 @@ extension Column {
     internal func shown(_ c: Cell?, thai: Bool) -> String {
         switch c {
         case nil: ""
-        case .label(let l): l.text
+        case .label(let l): l.text.text(at: Date(), [:])
         case .number(let n): number(n)
         case .string(let s) where kind == .date: date(s, thai: thai)
         case .string(let s): s

@@ -55,6 +55,7 @@ internal struct BlockNode: View {
             case .island(let island): IslandView(block: island)
             case .table(let table): TableBlock(block: table)
             case .steps(let steps): StepsBlock(block: steps)
+            case .toast(let toast): ToastBlock(block: toast)
             case .appBlock(let block): AppBlockView(block: block)
             }
         }
