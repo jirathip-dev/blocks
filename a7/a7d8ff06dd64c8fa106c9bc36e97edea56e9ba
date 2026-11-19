@@ -1,0 +1,28 @@
+Decided: the ladder lives in docs/extending.md, 46 lines, no app named, for #162's extending page
+Because: "The section is under 60 lines, in plain words, with no app's name in it"
+Decided: the rules line names Rust, web and SwiftUI only; React is left out
+Because: "The rules line names only enforcers that exist"
+Rejected: naming React — staging has only its ADR (docs/architecture/react), no adapter to refuse
+Decided: web's refusal gets a test running tsc over a clash fixture and an own-kind fixture
+Because: web/src/shell.ts:35
+Rejected: a type assertion in web/test — tsconfig includes src only, so tsc never checks test files
+Decided: Rust and SwiftUI already test the refusal; pointed at, not duplicated
+Because: crates/blocks/tests/fixtures.rs:473
+Because: swift/Tests/BlocksTests/RenderTests.swift:132
+Check: dropping `& { [K in Kind]?: never }` from AppBlocks makes web/test/clash.test.ts fail
+Owner: A written ladder for when blocks lacks a look, and a rule that an app never replaces a core kind.
+
+Decided: the ladder lives in docs/extending.md, 46 lines, no app named, for #162's extending page
+Because: "The section is under 60 lines, in plain words, with no app's name in it"
+Decided: the rules line names Rust, web and SwiftUI only; React is left out
+Because: "The rules line names only enforcers that exist"
+Rejected: naming React — staging has only its ADR (docs/architecture/react), no adapter to refuse
+Decided: web's refusal gets a test running tsc over a clash fixture and an own-kind fixture
+Because: web/src/shell.ts:35
+Decided: Rust and SwiftUI already test the refusal; pointed at, not duplicated
+Because: crates/blocks/tests/fixtures.rs:473
+Decided: the round-2 perf FAIL is runner noise; no Rust changed, HTML write runs 6.7 ms locally
+Rejected: raising the HTML perf budget — out of scope for a docs issue
+Decided: rules.md conflict resolved keeping both staging's look line and this one (25/30)
+Check: dropping `& { [K in Kind]?: never }` from AppBlocks makes web/test/clash.test.ts fail
+Owner: A written ladder for when blocks lacks a look, and a rule that an app never replaces a core kind.
