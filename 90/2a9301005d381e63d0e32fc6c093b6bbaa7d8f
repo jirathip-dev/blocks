@@ -1,0 +1,4 @@
+Decided: merge origin/staging and rebuild the generated web/dist/blocks.js instead of hand-merging it.
+Because: "a fallback, the static site writer's element, and the row diff working on its rows" stays as built; justfile:10 builds the bundle
+Rejected: none
+Owner: The table branch is brought up to date with the latest shared work; nothing changes in how tables look or behave.
