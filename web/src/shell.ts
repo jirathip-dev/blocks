@@ -7,7 +7,7 @@ import { stream } from "./stream.ts";
 import { plain, type Theme } from "./theme.ts";
 
 export { dump } from "./dump.ts";
-export { apply } from "./patch.ts";
+export { apply, patcher } from "./patch.ts";
 export { el, h, kids, render } from "./render/index.ts";
 export { packs, plain } from "./theme.ts";
 
@@ -186,8 +186,9 @@ function draw(o: Mount, store: Store, theme: Theme, wear: (name: string | null) 
     s.open(v.path, (screen, ops) => {
       v.model = screen;
       store.put(kept, JSON.stringify(screen));
-      if (ops) p.queue(ops);
-      else paint(v);
+      if (!ops) return paint(v);
+      p.queue(ops);
+      p.flush();
     });
     v.stop = () => {
       p.drop();

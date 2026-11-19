@@ -14,7 +14,7 @@ button::after,a.btn::after{content:"]";position:absolute;inset:calc(-1 * var(--s
 button:active,a.btn:active{background:var(--l);color:var(--bg)}
 button:disabled{color:var(--mute);opacity:.6}
 button.bad,button.destructive,a.btn.bad{color:var(--r)}
-button[aria-busy=true]>span::after{content:" ↻";display:inline-block;animation:s 1s linear infinite}
+button[aria-busy=true]>span::after{content:" ↻";display:inline-block;animation:s calc(1s * var(--motion,1)) linear infinite}
 button.pick{display:flex;width:100%;height:auto;min-height:var(--ctl);padding:calc((var(--ctl) - 1.35em) / 2) 1ch;justify-content:flex-start;text-align:left;white-space:normal;line-height:1.35;text-transform:none}
 button.pick::after{inset:calc(-1 * var(--s1)) calc(-1 * var(--s2));align-items:flex-start;padding-top:calc(var(--s1) + (var(--ctl) - 1.35em) / 2)}
 button.pick::before{top:calc((var(--ctl) - 1.35em) / 2)}
@@ -103,7 +103,7 @@ input[type=checkbox]{width:var(--s4);height:var(--s4);accent-color:var(--l)}
 .cmp .pk select{flex:1;min-width:0;max-height:var(--hit)}
 
 #iv{position:fixed;inset:0;z-index:6;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--scrim);touch-action:none}
-#iv>img{width:100%;min-height:0;max-height:calc(100% - var(--hit) * 2);object-fit:contain;transition:transform .15s}
+#iv>img{width:100%;min-height:0;max-height:calc(100% - var(--hit) * 2);object-fit:contain;transition:transform calc(.15s * var(--motion,1))}
 #iv.z{overflow:auto}
 #iv>.bar{position:fixed;bottom:env(safe-area-inset-bottom);left:0;right:0;justify-content:center;background:var(--bg)}
 #iv .bar>a{display:inline-flex;align-items:center;height:var(--ctl);color:var(--l);text-decoration:none}
@@ -133,5 +133,5 @@ input[type=checkbox]{width:var(--s4);height:var(--s4);accent-color:var(--l)}
 .nav a[aria-current=page]{color:var(--fg)}
 
 @keyframes s{to{transform:rotate(1turn)}}
-@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 }
