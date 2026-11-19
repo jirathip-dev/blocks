@@ -1,5 +1,6 @@
 
 public struct Style: Codable, Equatable, Sendable {
+    public var easing: Easing?
     public var fills: Fills
     public var format: UInt8
     public var labels: [String: StyleLabel]
@@ -10,6 +11,15 @@ public struct Style: Codable, Equatable, Sendable {
     public var space: Double?
     public var surface: Surface
     public var type: TypeDesign
+}
+
+public struct Easing: RawRepresentable, Hashable, Codable, Equatable, Sendable {
+    public let rawValue: String
+    public init(rawValue: String) { self.rawValue = rawValue }
+    public static let standard = Self(rawValue: "standard")
+    public static let calm = Self(rawValue: "calm")
+    public static let bouncy = Self(rawValue: "bouncy")
+    public static let all: [Self] = [.standard, .calm, .bouncy]
 }
 
 public struct Fills: RawRepresentable, Hashable, Codable, Equatable, Sendable {
