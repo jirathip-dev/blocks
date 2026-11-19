@@ -28,6 +28,6 @@ the ops queued within a frame in one pass; the Swift `Replica.frames` takes a bu
 ## Motion
 
 `blocks.css` animates `transform` and `opacity` only, with durations scaled by `--motion` (the style's `motion`
-token), and stops all motion under `prefers-reduced-motion`. `web/lint.mjs` refuses a transition or keyframe of any
+token) on the `--ease` curve (the style's `easing`), and stops all motion under `prefers-reduced-motion`. `web/lint.mjs` refuses a transition or keyframe of any
 other property (`web/lint-fixtures/motion.css` is its failing fixture). SwiftUI scales its animation durations by
 `look.style.motion`.

@@ -419,6 +419,7 @@ var DRAWN = {
   chip: ".chips button>span",
   picked: ".dgn.picked .dgl"
 };
+var EASE = { standard: "cubic-bezier(0.2, 0, 0, 1)", calm: "cubic-bezier(0.4, 0, 0.2, 1)", bouncy: "cubic-bezier(0.34, 1.3, 0.64, 1)" };
 var CASE = { "as-is": "none", lower: "lowercase", upper: "uppercase" };
 var quote = (t) => `"${t.replace(/[\\"]/g, "\\$&")}"`;
 function axes(s) {
@@ -442,7 +443,7 @@ function css(look, style = {}) {
   if ("tokens" in look) return `:root{${vars(look.tokens).join(";")};color-scheme:${look["color-scheme"]}}`;
   const all = (t) => vars(t).map((d) => `${d};`).join("");
   const head = `color-scheme:light dark;--space:${style.space ?? 1};--motion:${style.motion ?? 1};`;
-  const tiles2 = { ...defaultStyle, "--radius": `${(style.radius ?? 0) * 12}px` };
+  const tiles2 = { ...defaultStyle, "--radius": `${(style.radius ?? 0) * 12}px`, "--ease": EASE[style.easing ?? "standard"] };
   return `:root{${head}${all(tiles2)}${all(look.light.tokens)}}@media (prefers-color-scheme: dark){:root{${all(look.dark.tokens)}}}${axes(style)}`;
 }
 var tiles = `:where(:root){${vars(defaultStyle).join(";")}}`;

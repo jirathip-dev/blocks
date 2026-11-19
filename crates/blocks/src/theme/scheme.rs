@@ -2,7 +2,7 @@ use std::sync::OnceLock;
 
 use serde::{Deserialize, Serialize};
 
-use super::{Fills, LabelCase, LabelRole, Marks, Sections, Style, Surface, TypeDesign};
+use super::{Easing, Fills, LabelCase, LabelRole, Marks, Sections, Style, Surface, TypeDesign};
 
 /// A colour as `#rrggbb` or `#rrggbbaa`: nothing else parses.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -198,7 +198,7 @@ pub const DEFAULT_STYLE: [(&str, &str); 11] = [
     ("--stagger", "40ms"),
     ("--build", "200ms"),
     ("--enter", "160ms"),
-    ("--ease", "cubic-bezier(0.2, 0, 0, 1)"),
+    ("--ease", Easing::Standard.curve()),
 ];
 
 fn neutral(label: &str, mode: Mode, hex: &[&str; 19]) -> Scheme {
@@ -254,6 +254,7 @@ pub fn css(schemes: &PerMode<Scheme>, style: &Style) -> String {
     let mut tiles: std::collections::BTreeMap<&str, String> =
         DEFAULT_STYLE.iter().map(|(k, v)| (*k, (*v).to_owned())).collect();
     tiles.insert("--radius", format!("{}px", f64::from(style.radius) * 12.0));
+    tiles.insert("--ease", style.easing.curve().to_owned());
     format!(
         ":root{{color-scheme:light dark;--space:{};--motion:{};{}{}}}@media (prefers-color-scheme: dark){{:root{{{}}}}}{}",
         f64::from(style.space),
