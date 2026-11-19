@@ -63,7 +63,13 @@ export const h = <K extends keyof HTMLElementTagNameMap>(tag: K, cls: string, ..
   return e;
 };
 export const href = (a: HTMLAnchorElement, url: string) => Object.assign(a, { href: url, target: "_blank", rel: "noopener" });
-export const urlOf = (t?: Tap | null): string | undefined => t?.url ?? undefined;
+/// Whether a link may be written or opened: http, https, mailto or relative.
+export const linkable = (url: string): boolean => {
+  const head = url.replace(/[\u0000-\u0020\u007f-\u009f]/g, "").split(/[/?#]/, 1)[0] ?? "";
+  const at = head.indexOf(":");
+  return at < 0 || ["http", "https", "mailto"].includes(head.slice(0, at).toLowerCase());
+};
+export const urlOf = (t?: Tap | null): string | undefined => (t?.url != null && linkable(t.url) ? t.url : undefined);
 /// The action a tap sends: the tap's own when it goes nowhere else, else `action`.
 export const sends = (t?: Tap | null, action?: unknown): unknown => (t ? (t.url != null || t.open != null || t.sheet != null ? null : t.action) : action);
 /// Marks `e` with the action a tap on it sends, as `data-action`.

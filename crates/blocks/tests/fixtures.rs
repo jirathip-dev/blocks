@@ -360,7 +360,8 @@ fn every_golden_parses_with_no_fault() {
                     | Fault::Extra { .. }
                     | Fault::Unknown { .. }
                     | Fault::Twice { .. }
-                    | Fault::ActTwice { .. } => {
+                    | Fault::ActTwice { .. }
+                    | Fault::Link { .. } => {
                         bad.push(format!("{name}: {f:?}"));
                     }
                     _ => {}
@@ -555,6 +556,30 @@ fn check_refuses_an_id_twice_and_names_both_paths() {
             },
         ]
     );
+}
+
+#[test]
+fn check_refuses_a_link_that_is_not_http_https_mailto_or_relative_naming_where() {
+    let f = read(&root().join("fixtures/links/screen.json"));
+    let got = Built::new(f["screen"].clone()).check(&[]);
+    let want: Vec<Fault> = f["faults"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|p| Fault::Link {
+            at: p[0].as_str().unwrap().into(),
+            url: p[1].as_str().unwrap().into(),
+        })
+        .collect();
+    assert_eq!(got, want);
+    for (list, bad) in [("safe", false), ("unsafe", true)] {
+        for u in f[list].as_array().unwrap() {
+            let row = serde_json::json!({"type": "row", "id": "r", "title": "t", "tap": {"url": u}});
+            let faults = Built::new(row).check(&[]);
+            let flagged = faults.iter().any(|x| matches!(x, Fault::Link { .. }));
+            assert_eq!(flagged, bad, "{u}: {faults:?}");
+        }
+    }
 }
 
 const LONG: &str = "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it";
