@@ -1,0 +1,7 @@
+Decided: look.test.ts pauses the page's animations so getAnimations() still holds the build-up when settled() reads it
+Because: "The build-up plays once per screen: an update, a tab switch back or a resync does not replay it (a scripted test)"
+Rejected: a longer wait or a looser count in the test — a slow runner would still lose finished animations
+Decided: staging's wearer() writes the tile tokens, so the shell and adopt both carry them
+Because: web/src/shell.ts:96
+Check: with a 600 ms wait before the read, the unpaused test fails 0 !== 15 (CI's failure) and the paused one passes
+Owner: Fixed a test that could miss the first-load animation on slow CI machines; no change to how pages look.
