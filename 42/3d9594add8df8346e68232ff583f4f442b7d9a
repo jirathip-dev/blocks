@@ -1,0 +1,5 @@
+Decided: resolved the web/dist/blocks.js conflict with staging by rebuilding it, not by hand
+Because: web/package.json:7
+Rejected: none
+Check: npm --prefix web run build at the head leaves web/dist/blocks.js unchanged
+Owner: branch brought up to date with staging; form behaviour unchanged
