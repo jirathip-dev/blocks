@@ -125,7 +125,7 @@ pub struct Baseline {
     pub known: Vec<Known>,
 }
 
-/// `.blocks/guard.json`: the screens, the app's kinds, its CSS and scripts, the harnesses that draw them and the inputs that redraw all.
+/// `.blocks/guard.json`: the screens, the app's kinds, its CSS and scripts, the harnesses that draw them, the inputs that redraw all and the skill's examples.
 #[derive(Clone, Debug, Default, PartialEq, Eq, Deserialize)]
 #[serde(deny_unknown_fields, default)]
 pub struct Config {
@@ -135,6 +135,7 @@ pub struct Config {
     pub scripts: Vec<String>,
     pub harness: Vec<Vec<String>>,
     pub inputs: Vec<String>,
+    pub examples: Vec<String>,
 }
 
 /// What a harness draws: each run in one process, its shots under `<out>/<run>/` and every `Seen` in `<out>/seen.json`.

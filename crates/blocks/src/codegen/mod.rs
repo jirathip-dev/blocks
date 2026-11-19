@@ -9,6 +9,7 @@ mod fixtures;
 mod hooks;
 mod model;
 mod rules;
+mod skill;
 mod swift;
 mod theme;
 mod ts;
@@ -53,6 +54,7 @@ pub fn schema() -> Value {
 pub fn write(root: &Path) -> std::io::Result<()> {
     let schema = schema();
     for area in [
+        skill::files,
         model::files,
         ts::files,
         builders::files,
