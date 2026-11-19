@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 # #809: each banned API's fixture must fail its gate, and clean fixtures must pass.
 # rust: ci/lint-fixtures/rust/<lint>.rs under the workspace's [lints] and clippy.toml must fail clippy naming <lint>.
-# ts: web/lint-fixtures/<name>.ts and <name>.css must fail web/lint.mjs (clean.ts must pass).
-# Usage: scripts/lint-fixtures.sh rust|ts
+# ts: web/lint-fixtures/<name>.ts and <name>.css must fail web/lint.mjs (clean.ts and clean.css must pass).
+# swift: ci/lint-fixtures/swift/<name>.swift must fail web/lint.mjs's token check (clean.swift must pass).
+# Usage: scripts/lint-fixtures.sh rust|ts|swift
 set -euo pipefail
 cd "$(dirname "$0")/.."
 bad=0
@@ -51,13 +52,30 @@ ts)
     default-export) want='a default export' ;;
     enum) want='no `enum`' ;;
     motion) want='motion of `width' ;;
+    raw-colour) want='raw `color #ff0000`' ;;
+    raw-size) want='raw `padding 6px`' ;;
+    stale) want='shrink the baseline' ;;
+    *) want=$name ;;
+    esac
+    expect "$name" "$code" "$out" "$f:.*$want"
+  done
+  ;;
+swift)
+  for f in ci/lint-fixtures/swift/*.swift; do
+    name=$(basename "$f" .swift)
+    code=0
+    out=$(node --no-warnings web/lint.mjs "$f" 2>&1) || code=$?
+    case $name in
+    raw-colour) want='raw `Color.red`' ;;
+    raw-size) want='raw `spacing: 6`' ;;
+    stale) want='shrink the baseline' ;;
     *) want=$name ;;
     esac
     expect "$name" "$code" "$out" "$f:.*$want"
   done
   ;;
 *)
-  echo "usage: $0 rust|ts" >&2
+  echo "usage: $0 rust|ts|swift" >&2
   exit 2
   ;;
 esac

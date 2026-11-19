@@ -5,6 +5,7 @@ import { view } from "../src/core/eval.ts";
 import { step } from "../src/core/gesture.ts";
 import { list } from "../src/core/kind/list.ts";
 import { media, named } from "../src/core/kind/media.ts";
+import { timeline } from "../src/core/kind/timeline.ts";
 
 const read = (f) => JSON.parse(readFileSync(new URL(`../../fixtures/gesture/${f}`, import.meta.url), "utf8"));
 const run = (c) => {
@@ -44,6 +45,17 @@ test("media rules give fixtures/gesture/media.json the crate's changes, words, s
   }
   for (const s of steps) deepStrictEqual(media.steps(block, s.grab).map(([n]) => n), s.want, JSON.stringify(s.grab));
   for (const [id, want] of Object.entries(names)) deepStrictEqual(named(block, id), want, id);
+});
+
+test("timeline rules give fixtures/gesture/timeline.json the crate's spans, words and steps", () => {
+  const { block, cases, steps } = read("timeline.json");
+  ok(cases.length >= 30);
+  for (const c of cases) {
+    const got = c.reach ? timeline.candidate(block, c.grab, c.reach) : c.nudges.reduce((from, n) => from && timeline.nudge(block, c.grab, from, n), timeline.start(block, c.grab));
+    deepStrictEqual(got, c.want, `${JSON.stringify(c.grab)} ${JSON.stringify(c.reach ?? c.nudges)}`);
+    deepStrictEqual(got && timeline.says(block, c.grab, got), c.says ?? null, JSON.stringify(c.grab));
+  }
+  for (const s of steps) deepStrictEqual(timeline.steps(block, s.grab).map(([n]) => n), s.want, JSON.stringify(s.grab));
 });
 
 test("a gesture whose enabled does not hold joins the view's acts", () => {
@@ -192,4 +204,58 @@ test("a picked mark is deleted by [delete], the Delete key and a named action; t
   } finally {
     await browser.close();
   }
+});
+
+const plan = read("timeline.json").block;
+const plans = { type: "screen", id: "s", title: "Plan", blocks: [plan] };
+const sends = (span) => [{ screen: "s", action: "schedule", block: "plan", values: { bar: span } }];
+const big = "1440x900";
+
+test("a timeline's move, stretch and draw each send one action by pointer, keys and named action, in WebKit", async () => {
+  const { shot } = await import("../shot/shot.ts");
+  const later = { id: "b7", start: "2026-12-04", end: "2026-12-06" };
+  const longer = { id: "b7", start: "2026-12-03", end: "2026-12-06" };
+  const first = { row: "j3", start: "2026-12-01", end: "2026-12-01" };
+  const cases = [
+    [{ bar: "b7", part: "body" }, "pointer", [[20, 0], [40, 0]], later],
+    [{ bar: "b7", part: "body" }, "keys", [{ dir: "right" }], later],
+    [{ bar: "b7", part: "body" }, "action", ["One day later"], later],
+    [{ bar: "b7", part: "end" }, "pointer", [[40, 0]], longer],
+    [{ bar: "b7", part: "end" }, "keys", [{ dir: "right" }], longer],
+    [{ bar: "b7", part: "end" }, "action", ["End one day later"], longer],
+    [{ row: "j3" }, "pointer", [[80, 0]], { row: "j3", start: "2026-12-16", end: "2026-12-18" }],
+    [{ row: "j3" }, "keys", [{ dir: "right" }], first],
+    [{ row: "j3" }, "action", ["Add a bar"], first],
+  ];
+  for (const [grab, via, reach, span] of cases) {
+    const { report, faults } = await shot({ screen: plans, css, size: big, check: true, steps: [{ gesture: { id: "plan", grab, via, reach } }, { shot: { name: via } }] });
+    deepStrictEqual(report.sent, sends(span), `${JSON.stringify(grab)} ${via}`);
+    deepStrictEqual(faults, [], `${JSON.stringify(grab)} ${via}`);
+  }
+});
+
+test("a drop onto a fixed bar or past the range sends nothing", async () => {
+  const { shot } = await import("../shot/shot.ts");
+  const steps = [
+    { gesture: { id: "plan", grab: { bar: "b7", part: "body" }, via: "keys", reach: [{ dir: "right", big: true }] } },
+    { gesture: { id: "plan", grab: { bar: "b7", part: "body" }, via: "pointer", reach: [[4000, 0]] } },
+  ];
+  const { report } = await shot({ screen: plans, css, size: big, steps });
+  deepStrictEqual(report.sent, []);
+});
+
+test("a sent bar stays where it was dropped until refused, then goes back; answered, it is drawn from the data", async () => {
+  const { shot } = await import("../shot/shot.ts");
+  const drop = { gesture: { id: "plan", grab: { bar: "b7", part: "body" }, via: "pointer", reach: [[20, 0], [40, 0]] } };
+  const refused = await shot({ screen: plans, css, size: big, steps: [{ shot: { name: "before" } }, drop, { shot: { name: "dropped" } }, { refuse: { toast: "4 Dec has timesheet hours" } }, { shot: { name: "back" } }] });
+  ok(!refused.pngs.before.equals(refused.pngs.dropped), "dropped somewhere else");
+  ok(refused.pngs.before.equals(refused.pngs.back), "back where it was");
+  const moved = structuredClone(plan.tracks);
+  Object.assign(moved[0].bars[0], { start: "2026-12-04", end: "2026-12-06" });
+  const answer = { answer: { ops: [{ op: "merge", id: "plan", fields: { tracks: moved } }] } };
+  const kept = await shot({ screen: plans, css, size: big, steps: [drop, { shot: { name: "dropped" } }, answer, { shot: { name: "kept" } }] });
+  const there = await shot({ screen: { ...plans, blocks: [{ ...plan, tracks: moved }] }, css, size: big, steps: [{ shot: { name: "there" } }] });
+  deepStrictEqual(kept.report.sent, sends({ id: "b7", start: "2026-12-04", end: "2026-12-06" }));
+  ok(!kept.pngs.dropped.equals(kept.pngs.kept), "no longer dimmed once answered");
+  ok(kept.pngs.kept.equals(there.pngs.there), "drawn from the data");
 });

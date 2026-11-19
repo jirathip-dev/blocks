@@ -28,6 +28,7 @@
   "steps": { "long": ["title", "label", "sub"], "empty": "steps", "many": "steps" },
   "stat": { "long": ["label"], "why": "one number and its label: nothing to empty or repeat" },
   "table": { "long": ["title", "label", "client"], "empty": "rows", "many": "rows" },
+  "timeline": { "long": ["title", "subtitle", "label"], "empty": "tracks", "many": "tracks" },
   "toast": { "long": ["title", "label"], "why": "one line: an empty title draws its fallback, and one toast shows at a time" },
   "text": { "long": ["markdown"], "why": "one text: its empty is no block at all" },
   "web": { "why": "an embedded page: its text and rows are the page's, not the kind's" }

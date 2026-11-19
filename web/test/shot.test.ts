@@ -32,15 +32,18 @@ test("each bad fixture fires its probe and no other in WebKit, all in one --plan
   const sheets = readdirSync(join(bad, "css")).map((f) => f.replace(/\.css$/, ""));
   const probes = readdirSync(at("../shot/probe/")).map((f) => f.replace(/\.ts$/, ""));
   deepStrictEqual([...draw, ...sheets].sort(), probes.sort());
-  const own = (n) => (existsSync(join(bad, "render", `${n}.css`)) ? [join(bad, "render", `${n}.css`)] : []);
+  const own = (n, ext) => (existsSync(join(bad, "render", `${n}.${ext}`)) ? [join(bad, "render", `${n}.${ext}`)] : []);
   const runs = [
-    ...draw.map((n) => ({ ...RUN, name: n, screen: join(bad, "render", `${n}.json`), css: own(n), kinds: ["gauge"] })),
+    ...draw.map((n) => ({ ...RUN, name: n, screen: join(bad, "render", `${n}.json`), css: own(n, "css"), scripts: own(n, "js"), kinds: ["gauge"] })),
     ...sheets.map((n) => ({ ...RUN, name: n, screen: join(blocks, "text.json"), css: [join(bad, "css", `${n}.css`)] })),
   ];
   const seen = plan("bad", runs);
   for (const n of draw) deepStrictEqual(rules(seen.filter((s) => s.run === n)), [`render/${n}`], n);
   for (const n of sheets) deepStrictEqual(rules(seen.filter((s) => s.run === n || s.file === join(bad, "css", `${n}.css`))), [`css/${n}`], n);
   deepStrictEqual(seen.filter((s) => s.file).map((s) => [s.rule, s.line, s.at]), sheets.map((n) => [`css/${n}`, 3, ""]));
+  const tree = ["render/no-name", "render/no-size", "render/overflow", "render/overlap"];
+  const snap = JSON.parse(readFileSync(at("../../fixtures/guard/seen.json"), "utf8"));
+  deepStrictEqual(seen.filter((s) => tree.includes(s.rule)).map((s) => ({ rule: s.rule, run: s.run, at: s.at })), snap, "blocks-snap's test holds SwiftUI to the same file");
 });
 
 test("a plan's script registers an app kind's view on window.blocksApps: the gauge draws natively and render/tree is quiet", () => {
@@ -62,7 +65,7 @@ test("the fixtures/blocks files draw in one --plan launch, each run's PNG, tree 
 
 test("every fixtures/blocks file passes --check against its fixtures/trees tree in WebKit at 390 and 1440", () => {
   const kinds = readdirSync(blocks).map((f) => f.replace(/\.json$/, ""));
-  strictEqual(kinds.length, 32);
+  strictEqual(kinds.length, 33);
   for (const size of ["390x844", "1440x900"])
     for (const k of kinds) {
       const dir = join(out, size, k);
@@ -79,7 +82,7 @@ test("every fixtures/blocks file passes --check against its fixtures/trees tree 
 test("every fixtures/stress variant draws at 390 in one --plan launch with each block sized, inside the width and over no sibling", () => {
   const stress = at("../../fixtures/stress/");
   const names = readdirSync(stress).filter((f) => f !== "table.json").map((f) => f.replace(/\.json$/, ""));
-  strictEqual(names.length, 66);
+  strictEqual(names.length, 69);
   const seen = plan("stress", names.map((n) => ({ ...RUN, name: n, screen: join(stress, `${n}.json`) })));
   deepStrictEqual(seen.filter((s) => ["render/no-size", "render/overlap"].includes(s.rule) || (s.rule === "render/overflow" && s.at)), []);
 });

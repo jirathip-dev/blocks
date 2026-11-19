@@ -26,6 +26,7 @@ mod overflow;
 mod overlap;
 mod primary_twice;
 mod private_selector;
+mod raw_colour;
 mod seed_missing;
 mod sent_differs;
 mod tap_target;
@@ -71,6 +72,7 @@ pub static RULES: &[&Rule] = &[
     &overlap::RULE,
     &primary_twice::RULE,
     &private_selector::RULE,
+    &raw_colour::RULE,
     &seed_missing::RULE,
     &sent_differs::RULE,
     &tap_target::RULE,

@@ -112,6 +112,7 @@ extension Block {
         case .table(let b): ("table", b.id, nil, Source())
         case .steps(let b): ("steps", b.id, nil, Source())
         case .toast(let b): ("toast", b.id, nil, Source())
+        case .timeline(let b): ("timeline", b.id, nil, Source())
         case .appBlock(let b):
             (
                 b.type, b.id, nil,
@@ -164,6 +165,7 @@ extension Block {
         case .table(let b): [b.title]
         case .steps(let b): [b.title]
         case .toast(let b): [b.title]
+        case .timeline(let b): [b.title]
         case .appBlock(let b): Self.names.map { b.string($0) }
         default: []
         }

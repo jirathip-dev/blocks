@@ -219,7 +219,8 @@
               "table",
               "steps",
               "chart",
-              "toast"
+              "toast",
+              "timeline"
             ]
           },
           "type": "string"
@@ -675,6 +676,19 @@
           "properties": {
             "type": {
               "const": "toast",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/Timeline",
+          "properties": {
+            "type": {
+              "const": "timeline",
               "type": "string"
             }
           },
@@ -1628,6 +1642,34 @@
       },
       "required": [
         "title"
+      ],
+      "type": "object"
+    },
+    "DaySpan": {
+      "description": "What a move, a stretch or a draw gives: the bar's `id` for the first two, the `row` for a draw.",
+      "properties": {
+        "end": {
+          "type": "string"
+        },
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "row": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "start": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "start",
+        "end"
       ],
       "type": "object"
     },
@@ -5780,6 +5822,197 @@
           ]
         }
       },
+      "type": "object"
+    },
+    "TimeBar": {
+      "description": "A bar from `start` to `end`, both ISO days and both drawn; `fixed` takes no gesture.",
+      "properties": {
+        "end": {
+          "type": "string"
+        },
+        "fixed": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "id": {
+          "type": "string"
+        },
+        "label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "progress": {
+          "format": "uint8",
+          "maximum": 255,
+          "minimum": 0,
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "start": {
+          "type": "string"
+        },
+        "tap": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Tap"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "tone": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Tone"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "start",
+        "end"
+      ],
+      "type": "object"
+    },
+    "TimeRow": {
+      "description": "One row of a timeline: its title and the bars on it.",
+      "properties": {
+        "bars": {
+          "items": {
+            "$ref": "#/$defs/TimeBar"
+          },
+          "type": "array"
+        },
+        "id": {
+          "type": "string"
+        },
+        "subtitle": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "tap": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Tap"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "title": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "bars"
+      ],
+      "type": "object"
+    },
+    "Timeline": {
+      "additionalProperties": true,
+      "description": "Rows of bars on a day axis from `from` to `to` (ISO days); `move`, `stretch` and `draw` each send a `DaySpan`.",
+      "properties": {
+        "draw": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Gesture"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "empty": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "from": {
+          "type": "string"
+        },
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "move": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Gesture"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "off": {
+          "items": {
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "stretch": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Gesture"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "title": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "to": {
+          "type": "string"
+        },
+        "tracks": {
+          "items": {
+            "$ref": "#/$defs/TimeRow"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "from",
+        "to",
+        "tracks"
+      ],
       "type": "object"
     },
     "Timings": {

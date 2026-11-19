@@ -481,3 +481,128 @@ fn a_fixture_clean_on_base_may_record_a_rule_newer_than_base_and_no_other() {
         ]
     );
 }
+
+const EXPLORE: &str = include_str!("../../../fixtures/guard/bad/explore/error-screen.json");
+const ANSWER: &str = r#"read -r first; echo "$first" > answer.first; [ -n "$REPLY_WITH" ] || REPLY_WITH='{}'
+while read -r line; do
+  case "$line" in
+    *'"action":"go"'*) echo '{"ops":[{"op":"merge","id":"gone","fields":{"title":"x"}}]}' ;;
+    *) echo "$REPLY_WITH" ;;
+  esac
+done"#;
+
+fn explored(name: &str, config: &str) -> Repo {
+    let r = Repo::new(name);
+    r.write(".blocks/guard.json", config);
+    r.write("answer.sh", ANSWER);
+    r.write("screens/bad.json", EXPLORE);
+    r.write("screens/a.json", OK);
+    r
+}
+
+fn read_json(r: &Repo, path: &str) -> Value {
+    serde_json::from_str(&std::fs::read_to_string(r.0.join(path)).unwrap()).unwrap()
+}
+
+#[test]
+fn explore_finds_a_bad_answer_shrinks_it_and_its_steps_json_replays_the_same_way() {
+    let r = explored(
+        "explore",
+        r#"{ "screens": ["screens"], "answer": ["sh", "answer.sh"] }"#,
+    );
+    let (code, o) = r.check(&["--explore", "--seed", "1"]);
+    assert_eq!(code, 1, "{o}");
+    assert_eq!(new_rules(&o), ["explore/error-screen screens/bad.json"]);
+    let f = &o["new"][0];
+    assert_eq!(f["at"], "screen#s/section#box/button#go");
+    let shrunk = f["message"].as_str().unwrap();
+    assert!(shrunk.ends_with("walk 0: 13 steps, shrunk to 3)"), "{shrunk}");
+    let steps = f["steps"].as_str().unwrap();
+    assert_eq!(steps, "shots/explore/bad/0.steps.json");
+    assert_eq!(
+        read_json(&r, steps),
+        serde_json::json!([
+            { "tap": { "id": "more" } }, { "shot": { "name": "step-1" } },
+            { "tap": { "id": "go" } }, { "answer": { "ops": [{ "op": "merge", "id": "gone", "fields": { "title": "x" } }] } },
+            { "shot": { "name": "step-2" } }
+        ])
+    );
+    assert_eq!(read_json(&r, "answer.first")["screen"], "screens/bad.json");
+    let (again, o2) = r.check(&["--explore", "--seed", "1"]);
+    assert_eq!((again, &o2["new"]), (1, &o["new"]), "the same seed walks the same");
+    let (code, replayed) = r.check(&["--replay", steps]);
+    assert_eq!(code, 1, "{replayed}");
+    assert_eq!(replayed["checked"], serde_json::json!(["screens/bad.json"]));
+    let one = &replayed["new"][0];
+    assert_eq!((&one["rule"], &one["at"]), (&f["rule"], &f["at"]));
+    r.write(steps, r#"[{ "tap": { "id": "go" } }]"#);
+    assert_eq!(r.check(&["--replay", steps]).0, 0, "go is hidden until more is tapped");
+    assert_eq!(r.check(&["--replay", "shots/explore/nope/0.steps.json"]).0, 2);
+}
+
+#[test]
+fn explore_sees_an_answerer_that_answers_nothing_or_answers_two_walks_apart() {
+    let r = explored(
+        "unanswered",
+        r#"{ "screens": ["screens"], "answer": ["sh", "-c", "read -r first"] }"#,
+    );
+    r.write("screens/bad.json", OK);
+    let (code, o) = r.check(&["--explore"]);
+    assert_eq!(code, 1, "{o}");
+    assert_eq!(
+        new_rules(&o),
+        [
+            "explore/unanswered screens/a.json",
+            "explore/unanswered screens/bad.json"
+        ]
+    );
+    let r = explored(
+        "unstable",
+        r#"{ "screens": ["screens"], "answer": ["sh", "-c", "REPLY_WITH=\"{\\\"open\\\": \\\"$$\\\"}\" sh answer.sh"] }"#,
+    );
+    r.write("screens/bad.json", OK);
+    let (code, o) = r.check(&["--explore"]);
+    assert_eq!(code, 1, "{o}");
+    assert_eq!(
+        new_rules(&o),
+        ["explore/unstable screens/a.json", "explore/unstable screens/bad.json"]
+    );
+    let r = explored("no-answerer", CONFIG);
+    r.write("screens/bad.json", OK);
+    let (code, o) = r.check(&["--explore"]);
+    assert_eq!(code, 0, "{o}");
+    assert_eq!(o["skipped"], serde_json::json!(["explore/unanswered: no answerer"]));
+}
+
+#[test]
+fn explore_with_render_replays_each_walk_in_the_harness_and_compares_what_it_sent() {
+    let r = explored(
+        "explore-render",
+        r#"{ "screens": ["screens"], "harness": [["sh", "harness.sh"]] }"#,
+    );
+    r.write("screens/bad.json", OK);
+    r.write("seen.json", "[]");
+    r.write(
+        "harness.sh",
+        r#"out="$(dirname "$2")"; cp "$2" "$out.plan"; echo '[]' > "$out/seen.json"
+for w in a/0 bad/0; do mkdir -p "$out/$w"; echo '{ "sent": [] }' > "$out/$w/report.json"; done"#,
+    );
+    let (code, o) = r.check(&["--explore", "--render"]);
+    assert_eq!(code, 1, "{o}");
+    assert_eq!(
+        new_rules(&o),
+        [
+            "explore/sent-differs screens/a.json",
+            "explore/sent-differs screens/bad.json"
+        ]
+    );
+    let plan = read_json(&r, "shots/explore.plan");
+    let run = &plan["runs"][0];
+    assert_eq!((&run["name"], &run["probes"]), (&"a/0".into(), &true.into()));
+    let steps = run["steps"].as_array().unwrap();
+    assert_eq!(
+        steps.last().unwrap()["shot"]["name"],
+        format!("step-{}", steps.iter().filter(|s| s.get("tap").is_some()).count())
+    );
+    assert_eq!(read_json(&r, o["new"][0]["steps"].as_str().unwrap()), run["steps"]);
+}

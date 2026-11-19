@@ -25,7 +25,12 @@ generated = [
     "web/dist/blocks.js",
     "web/dist/blocks.css",
     "web/dist/core.js",
+    "web/src/gen/scoped.css",
+    "web/dist/blocks.scoped.css",
     "web/dist/types/**",
+    "web/react/src/gen/views.ts",
+    "web/dist/react.js",
+    "fixtures/trees/react/*.json",
     "fixtures/blocks/*.json",
     "fixtures/trees/*.json",
     "fixtures/trees/swift/*.json",
@@ -342,6 +347,26 @@ paths = ["web/src/**", "web/shot/shot.ts"]
 reason = "React lives in web/react and its harness boot only"
 
 [[ban]]
+pattern = "/render/"
+paths = ["web/react/src/**"]
+reason = "the adapter draws with React: it never hosts or imports the HTML renderer"
+
+[[ban]]
+pattern = "react-dom"
+paths = ["web/react/src/**"]
+reason = "the adapter imports react only; react-dom is the harness's and the app's"
+
+[[ban]]
+pattern = "@tanstack"
+paths = ["web/src/**", "web/react/**", "web/shot/**"]
+reason = "blocks imports no router and no query library: the app passes its own in"
+
+[[ban]]
+pattern = "dangerouslySetInnerHTML"
+paths = ["web/react/**"]
+reason = "no raw HTML in React either: markdown is drawn as elements"
+
+[[ban]]
 pattern = "setPointerCapture"
 paths = ["web/src/**"]
 except = ["web/src/gesture.ts"]
@@ -379,8 +404,8 @@ paths = ["crates/*/tests/**/*.rs"]
 max_file_lines = 1000
 
 [[size]]
-paths = ["web/src/**/*.ts", "web/shot/**/*.ts"]
-exclude = ["web/src/gen/**"]
+paths = ["web/src/**/*.ts", "web/shot/**/*.ts", "web/react/src/**/*.ts"]
+exclude = ["web/src/gen/**", "web/react/src/gen/**"]
 max_file_lines = 500
 max_fn_lines = 80
 

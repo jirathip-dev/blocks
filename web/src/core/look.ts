@@ -1,10 +1,22 @@
 import { defaultPair, defaultStyle, type Mode, type Scheme } from "../gen/schemes.ts";
+import { gate } from "./gate.ts";
 
 export type Pair = Record<Mode, Scheme>;
+const passed: unique symbol = Symbol("look");
+/// A light and a dark scheme that passed the gate; the only look a view wears.
+export type Look = Readonly<Pair> & { readonly [passed]: true };
+
+/// Runs the gate on both schemes; throws one error listing every miss.
+export function gated(pair: Pair): Look {
+  const misses = (["light", "dark"] as const).flatMap((m) => gate(pair[m], "tint").map((x) => `${m}: ${x.what} is ${x.got.toFixed(2)}, under ${x.min}`));
+  if (misses.length) throw new Error(`the look fails the gate:\n${misses.join("\n")}`);
+  return { light: pair.light, dark: pair.dark, [passed]: true };
+}
 type Label = { prefix?: string; suffix?: string; case?: "as-is" | "lower" | "upper" };
 export type Scale = {
   space?: number;
   motion?: number;
+  easing?: "standard" | "calm" | "bouncy";
   radius?: number;
   type?: "default" | "mono" | "serif";
   surface?: "glass" | "dashed" | "solid";
@@ -23,6 +35,7 @@ const DRAWN = {
   chip: ".chips button>span",
   picked: ".dgn.picked .dgl",
 };
+const EASE = { standard: "cubic-bezier(0.2, 0, 0, 1)", calm: "cubic-bezier(0.4, 0, 0.2, 1)", bouncy: "cubic-bezier(0.34, 1.3, 0.64, 1)" };
 const CASE = { "as-is": "none", lower: "lowercase", upper: "uppercase" };
 const quote = (t: string) => `"${t.replace(/[\\"]/g, "\\$&")}"`;
 
@@ -51,7 +64,7 @@ export function css(look: Scheme | Pair, style: Scale = {}): string {
   if ("tokens" in look) return `:root{${vars(look.tokens).join(";")};color-scheme:${look["color-scheme"]}}`;
   const all = (t: Record<string, string>) => vars(t).map((d) => `${d};`).join("");
   const head = `color-scheme:light dark;--space:${style.space ?? 1};--motion:${style.motion ?? 1};`;
-  const tiles = { ...defaultStyle, "--radius": `${(style.radius ?? 0) * 12}px` };
+  const tiles = { ...defaultStyle, "--radius": `${(style.radius ?? 0) * 12}px`, "--ease": EASE[style.easing ?? "standard"] };
   return `:root{${head}${all(tiles)}${all(look.light.tokens)}}@media (prefers-color-scheme: dark){:root{${all(look.dark.tokens)}}}${axes(style)}`;
 }
 

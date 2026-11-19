@@ -46,7 +46,7 @@ fn every_rule_has_a_what_a_fix_an_engine_and_a_unique_id() {
         );
         assert_eq!(guard::rule(r.id), Some(*r));
     }
-    assert_eq!(RULES.len(), 39);
+    assert_eq!(RULES.len(), 40);
     assert_eq!(guard::rule("lint/nope"), None);
 }
 
@@ -145,4 +145,91 @@ fn codegen_refuses_an_example_with_a_finding() {
         "{e}"
     );
     assert!(!tmp.join("skill/blocks/examples").exists());
+}
+
+fn answer(a: &blocks::Action) -> blocks::Answer {
+    let ops = match a.action.as_str() {
+        "go" => serde_json::json!([{ "op": "merge", "id": "gone", "fields": { "title": "x" } }]),
+        _ => serde_json::json!([]),
+    };
+    serde_json::from_value(serde_json::json!({ "ops": ops })).unwrap()
+}
+
+fn steps(json: serde_json::Value) -> Vec<blocks::tree::Step> {
+    serde_json::from_value(json).unwrap()
+}
+
+#[test]
+fn a_seeded_walk_finds_the_bad_answer_and_shrinks_it_to_its_shortest_steps() {
+    use guard::explore::{replay, shrink, walk};
+    let screen = read(&root().join("fixtures/guard/bad/explore/error-screen.json"));
+    assert_eq!(guard::lint(&screen, &[]), []);
+    let w = walk(&screen, &[], 7, 30, &mut |a| Some(Ok(answer(a))));
+    assert_eq!(
+        w,
+        walk(&screen, &[], 7, 30, &mut |a| Some(Ok(answer(a)))),
+        "the same seed walks the same"
+    );
+    assert_ne!(w.steps, walk(&screen, &[], 8, 30, &mut |a| Some(Ok(answer(a)))).steps);
+    let at = "screen#s/section#box/button#go";
+    assert_eq!(
+        (w.seen.len(), w.seen[0].rule.as_str(), w.seen[0].at.as_str()),
+        (1, "explore/error-screen", at)
+    );
+    assert!(w.steps.len() > 4, "{:?}", w.steps);
+    assert_eq!(w.sent.last().unwrap().action, "go");
+    let mut tries = 0;
+    let short = shrink(
+        &w.steps,
+        &mut |s| {
+            tries += 1;
+            replay(&screen, &[], s)
+                .seen
+                .iter()
+                .any(|x| x.rule == "explore/error-screen" && x.at == at)
+        },
+        40,
+    );
+    assert!(tries <= 40);
+    let want = steps(serde_json::json!([
+        { "tap": { "id": "more" } },
+        { "tap": { "id": "go" } },
+        { "answer": { "ops": [{ "op": "merge", "id": "gone", "fields": { "title": "x" } }] } }
+    ]));
+    assert_eq!(short, want);
+    assert_eq!(replay(&screen, &[], &short).seen, w.seen);
+    assert_eq!(
+        replay(&screen, &[], &want[1..]).seen,
+        [],
+        "go is hidden until more is tapped"
+    );
+}
+
+#[test]
+fn an_action_with_no_answer_or_an_error_answer_is_seen_and_the_harness_must_send_what_was_declared() {
+    use guard::explore::{replay, sent_differs, walk};
+    let screen = read(&root().join("fixtures/guard/bad/explore/error-screen.json"));
+    let w = walk(&screen, &[], 3, 30, &mut |_| None);
+    assert_eq!(w.seen[0].rule, "explore/unanswered");
+    let refused = replay(
+        &screen,
+        &[],
+        &steps(serde_json::json!([{ "tap": { "id": "a" } }, { "refuse": { "toast": "down" } }])),
+    );
+    assert_eq!(refused.seen[0].rule, "explore/error-screen");
+    assert_eq!(refused.seen[0].detail, "down");
+    assert_eq!(sent_differs(&refused.sent, &["a".into()]), None);
+    let differs = sent_differs(&refused.sent, &[]).unwrap();
+    assert_eq!(
+        (differs.rule.as_str(), differs.detail.as_str()),
+        ("explore/sent-differs", r#"sent [], declared ["a"]"#)
+    );
+    let typed = walk(
+        &read(&root().join("fixtures/guard/ok/ok-sheet.json")),
+        &[],
+        1,
+        30,
+        &mut |a| Some(Ok(answer(a))),
+    );
+    assert_eq!(typed.seen, []);
 }

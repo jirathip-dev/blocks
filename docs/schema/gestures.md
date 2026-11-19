@@ -27,6 +27,9 @@ tap and key zoom; the image viewer uses it.
 |---|---|---|---|---|---|
 | `list` | `reorder` | a row id whose `handle` is true | places | every child id in the new order | Move up, Move down, Move to top, Move to bottom |
 | `media` | `move`, `stretch`, `remove`, `draw` | `{"body": id}`, `{"start": id}`, `{"end": id}`, `{"remove": id}`, `{"draw": {tool, at, text, group}}` | `{from, to}`, each `[x, y]` 0 to 1 of the picture | a `MarkChange`: `{id, at, to}`; `{id}` for a remove; the new mark, with no id, for a draw | Move up, down, left, right; Longer, Shorter; Delete; Add arrow, Add pin and so on |
+| `timeline` | `move` | `{bar, part: "body"}` of a bar not `fixed` | `{days}` | `DaySpan` `{id, start, end}`, the same length, inside `from`..`to`, onto no fixed bar | One day earlier, later; One week earlier, later |
+| `timeline` | `stretch` | `{bar, part: "start" or "end"}` | `{days}` | `DaySpan` `{id, start, end}`, at least one day | Start one day earlier, later; End one day earlier, later |
+| `timeline` | `draw` | `{row}` | `{days, from}`, `from` the day pressed, else the row's first free day | `DaySpan` `{row, start, end}` over no bar | Add a bar |
 
 A `media`'s `marks` are data the app keeps, each `{id, kind, at, to, text, tone, group, path, fixed}` with places from 0
 to 1 of the picture, rounded to 4 decimals and clamped; `tools` lists what can be drawn. A draw under 2 % of the picture
@@ -35,6 +38,11 @@ draw at the middle and nudge 1 %, Shift 10 %. A `fixed` mark takes no gesture an
 focus stop named by its group, kind, number and the ninth of the picture it is in ("Arrow 1, lower left"); a picked
 two-ended mark has a grip on each end. The tool, the pick, the "into" group and a pin tracer's zoom are view state. The
 static page and a `media` with no gesture field draw the marks read-only: the picture's name lists them.
+
+A `timeline`'s days are ISO, `end` the last one drawn, and its rows are `tracks` (`TimeRow`: `id`, `title`,
+`subtitle`, `bars`), since `rows` is the field every walker reads as child blocks. Its day width is view state: fit
+(24 to 48 px) by default, then 48, 32, 24, 16, 8 or 4 px from its zoom buttons; on the web the pointer drags from 24 px up, the
+keys and named actions at every width. The static page draws it read-only.
 
 The harness steps: `gesture` (`id`, `grab`, `via` and `reach`: `[dx, dy]` px for `pointer`, `{dir, big}` nudges for
 `keys`, step names for `action`) holds the action it sends until the next `answer` (confirms) or `refuse` (fails it).

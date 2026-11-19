@@ -20,7 +20,7 @@ const GROUPS: [(&str, &[&str]); 4] = [
     ),
     (
         "Lists and figures",
-        &["list", "row", "stat", "chart", "table", "steps", "chips"],
+        &["list", "row", "stat", "chart", "table", "steps", "chips", "timeline"],
     ),
     (
         "Input",
@@ -95,6 +95,7 @@ fn about(kind: &str) -> &'static str {
         "island" => "An app's own component, its props in and events out.",
         "table" => "Typed columns: sort, filter, totals, row select and export; rows on a phone.",
         "toast" => "A short line after an action, in a tone, with an optional undo.",
+        "timeline" => "Rows of bars on a day axis: move a bar or pull an edge, by pointer, keys or VoiceOver.",
         _ => "",
     }
 }
@@ -524,6 +525,7 @@ pub fn samples() -> Vec<(String, Vec<Block>)> {
         others(),
         picked("table"),
         picked("toast"),
+        picked("timeline"),
     ]
     .concat();
     Block::KINDS

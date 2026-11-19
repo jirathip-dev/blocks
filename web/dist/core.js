@@ -31,7 +31,8 @@ var hooks = {
   table: { variant: null, parts: ["title"] },
   steps: { variant: null, parts: ["title"] },
   chart: { variant: null, parts: ["title"] },
-  toast: { variant: null, parts: ["title"] }
+  toast: { variant: null, parts: ["title"] },
+  timeline: { variant: null, parts: ["title"] }
 };
 var roles = { section: "region", form: "form", config: "form", nav: "navigation", chart: "figure", toast: "status" };
 var names = ["label", "title", "header", "question", "alt", "file", "command", "placeholder", "name"];
@@ -414,6 +415,13 @@ function gate(s, fills) {
 }
 
 // src/core/look.ts
+var passed = /* @__PURE__ */ Symbol("look");
+function gated(pair) {
+  const misses = ["light", "dark"].flatMap((m) => gate(pair[m], "tint").map((x) => `${m}: ${x.what} is ${x.got.toFixed(2)}, under ${x.min}`));
+  if (misses.length) throw new Error(`the look fails the gate:
+${misses.join("\n")}`);
+  return { light: pair.light, dark: pair.dark, [passed]: true };
+}
 var TILES = ":is(.card,.st,.list>.row,.list>.rw,.form:not(.say),.choice,.secret,.run,.tbl)";
 var DRAWN = {
   header: ".sec>.sh",
@@ -423,6 +431,7 @@ var DRAWN = {
   chip: ".chips button>span",
   picked: ".dgn.picked .dgl"
 };
+var EASE = { standard: "cubic-bezier(0.2, 0, 0, 1)", calm: "cubic-bezier(0.4, 0, 0.2, 1)", bouncy: "cubic-bezier(0.34, 1.3, 0.64, 1)" };
 var CASE = { "as-is": "none", lower: "lowercase", upper: "uppercase" };
 var quote = (t) => `"${t.replace(/[\\"]/g, "\\$&")}"`;
 function axes(s) {
@@ -447,7 +456,7 @@ function css(look, style = {}) {
   if ("tokens" in look) return `:root{${vars(look.tokens).join(";")};color-scheme:${look["color-scheme"]}}`;
   const all = (t) => vars(t).map((d) => `${d};`).join("");
   const head = `color-scheme:light dark;--space:${style.space ?? 1};--motion:${style.motion ?? 1};`;
-  const tiles2 = { ...defaultStyle, "--radius": `${(style.radius ?? 0) * 12}px` };
+  const tiles2 = { ...defaultStyle, "--radius": `${(style.radius ?? 0) * 12}px`, "--ease": EASE[style.easing ?? "standard"] };
   return `:root{${head}${all(tiles2)}${all(look.light.tokens)}}@media (prefers-color-scheme: dark){:root{${all(look.dark.tokens)}}}${axes(style)}`;
 }
 var tiles = `:where(:root){${vars(defaultStyle).join(";")}}`;
@@ -486,6 +495,7 @@ var table = (fields) => ({ type: "table", ...fields });
 var steps = (fields) => ({ type: "steps", ...fields });
 var chart = (fields) => ({ type: "chart", ...fields });
 var toast = (fields) => ({ type: "toast", ...fields });
+var timeline = (fields) => ({ type: "timeline", ...fields });
 var expr = {
   get: (v) => ({ get: v }),
   not: (v) => ({ not: v }),
@@ -607,6 +617,7 @@ var kinds = {
   "steps": "Steps",
   "table": "Table",
   "text": "Text",
+  "timeline": "Timeline",
   "toast": "Toast",
   "web": "Web"
 };
@@ -771,7 +782,8 @@ var defs = {
             "table",
             "steps",
             "chart",
-            "toast"
+            "toast",
+            "timeline"
           ]
         },
         "type": "string"
@@ -1225,6 +1237,19 @@ var defs = {
         "properties": {
           "type": {
             "const": "toast",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      {
+        "$ref": "#/$defs/Timeline",
+        "properties": {
+          "type": {
+            "const": "timeline",
             "type": "string"
           }
         },
@@ -5456,6 +5481,193 @@ var defs = {
     },
     "type": "object"
   },
+  "TimeBar": {
+    "properties": {
+      "end": {
+        "type": "string"
+      },
+      "fixed": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "id": {
+        "type": "string"
+      },
+      "label": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "progress": {
+        "maximum": 255,
+        "minimum": 0,
+        "type": [
+          "integer",
+          "null"
+        ]
+      },
+      "start": {
+        "type": "string"
+      },
+      "tap": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Tap"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "tone": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Tone"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      }
+    },
+    "required": [
+      "id",
+      "start",
+      "end"
+    ],
+    "type": "object"
+  },
+  "TimeRow": {
+    "properties": {
+      "bars": {
+        "items": {
+          "$ref": "#/$defs/TimeBar"
+        },
+        "type": "array"
+      },
+      "id": {
+        "type": "string"
+      },
+      "subtitle": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "tap": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Tap"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "title": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "id",
+      "title",
+      "bars"
+    ],
+    "type": "object"
+  },
+  "Timeline": {
+    "additionalProperties": true,
+    "properties": {
+      "draw": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Gesture"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "empty": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "from": {
+        "type": "string"
+      },
+      "id": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "move": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Gesture"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "off": {
+        "items": {
+          "type": "string"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "show": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "stretch": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Gesture"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "title": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "to": {
+        "type": "string"
+      },
+      "tracks": {
+        "items": {
+          "$ref": "#/$defs/TimeRow"
+        },
+        "type": "array"
+      }
+    },
+    "required": [
+      "from",
+      "to",
+      "tracks"
+    ],
+    "type": "object"
+  },
   "Toast": {
     "additionalProperties": true,
     "properties": {
@@ -5830,6 +6042,7 @@ export {
   expr,
   form,
   gate,
+  gated,
   hero,
   hooks,
   images,
@@ -5838,9 +6051,11 @@ export {
   linkable,
   list2 as list,
   media,
+  named2 as named,
   names,
   nav,
   prose,
+  role,
   roles,
   row,
   run,
@@ -5856,6 +6071,7 @@ export {
   table,
   text2 as text,
   tiles,
+  timeline,
   toast,
   tree,
   view,

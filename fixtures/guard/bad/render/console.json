@@ -1,0 +1,12 @@
+{
+  "type": "screen",
+  "id": "s",
+  "title": "Console",
+  "blocks": [
+    {
+      "type": "text",
+      "id": "note",
+      "markdown": "The app's script throws as the page loads."
+    }
+  ]
+}

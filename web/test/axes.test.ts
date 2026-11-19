@@ -6,7 +6,7 @@ import { defaultPair } from "../src/gen/schemes.ts";
 import { css } from "../src/core/index.ts";
 
 const read = (p) => readFileSync(new URL(p, import.meta.url), "utf8");
-const body = ["card", "section", "steps", "button"].map((k) => read(`../../fixtures/html/${k}.html`)).join("");
+const body = ["card", "section", "steps", "button"].map((k) => read(`../../fixtures/html/${k}.html`)).join("") + '<i class="b-late"></i>';
 const sheet = read("../dist/blocks.css");
 
 const rows = [
@@ -17,6 +17,8 @@ const rows = [
   ["fills", { fills: "outline" }, ".spi.done .spm", "", "backgroundColor", (v) => v === "rgba(0, 0, 0, 0)"],
   ["marks", { marks: "text" }, ".spi.done .spm", "::after", "content", (v) => v === '"done"'],
   ["sections", { sections: "quiet" }, ".sec>.sh", "", "fontSize", (v) => v === "11px"],
+  ["easing calm", { easing: "calm" }, ".b-late", "", "animationTimingFunction", (v) => v === "cubic-bezier(0.4, 0, 0.2, 1)"],
+  ["easing bouncy", { easing: "bouncy" }, ".b-late", "", "animationTimingFunction", (v) => v === "cubic-bezier(0.34, 1.3, 0.64, 1)"],
   ["label case", { labels: { header: { case: "upper" } } }, ".sec>.sh", "", "textTransform", (v) => v === "uppercase"],
   ["label prefix", { labels: { header: { prefix: "[" } } }, ".sec>.sh", "::before", "content", (v) => v === '"["'],
   ["label suffix", { labels: { button: { suffix: ' "' } } }, ".b-button>span", "::after", "content", (v) => v === '" \\""'],
@@ -51,7 +53,7 @@ test("each style axis changes what the tiles draw, from the default look", async
 });
 
 test("an axis adds no animation or transition: motion stays the --motion scaled transforms and fades", () => {
-  const all = { type: "default", radius: 2, surface: "dashed", fills: "outline", marks: "text", sections: "quiet", labels: { header: { prefix: "[" } } };
+  const all = { easing: "bouncy", type: "default", radius: 2, surface: "dashed", fills: "outline", marks: "text", sections: "quiet", labels: { header: { prefix: "[" } } };
   const text = css(defaultPair, all);
   strictEqual(/animation|transition|(?<!-)transform/.test(text), false, text);
 });

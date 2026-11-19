@@ -1,0 +1,9 @@
+{
+  "kind": "lines",
+  "id": "journal",
+  "variant": null,
+  "drawn": "fallback",
+  "role": "group",
+  "name": "journal lines",
+  "children": []
+}
