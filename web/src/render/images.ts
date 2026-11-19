@@ -1,9 +1,10 @@
-import { type Blk, blks, btn, el, href } from "./index.ts";
+import type { Images } from "../gen/types.ts";
+import { btn, el, href } from "./index.ts";
 
-export function images(b: Blk): HTMLElement {
+export function images(b: Images): HTMLElement {
   const s = el("div", "imgs");
-  for (const i of blks(b.items)) {
-    const a = href(el("a"), new URL(String(i.src).replace(/^[/]/, ""), document.baseURI).href);
+  for (const i of b.items) {
+    const a = href(el("a"), new URL(i.src.replace(/^[/]/, ""), document.baseURI).href);
     a.onclick = (e) => {
       e.preventDefault();
       const all = Array.from(document.querySelectorAll<HTMLAnchorElement>("main .imgs a"));
