@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>the new kinds in Default dark</title><link rel="stylesheet" href="look.css"></head>
+<body><main class="canvas">
+<h1>The same blocks in Default dark</h1>
+<p class="lede">The built-in pair's dark half. The new kinds use no colours of their own: ink turns light grey, so a primary button is light grey with dark text, links stay ink and underlined, and only states (sent, not sent, stop) are coloured. Left: a content page with a media still loading. Right: the composer while a turn runs.</p>
+
+<div class="grid g2">
+
+<section>
+<p class="tag"><b>content</b> · nav, prose, media loading</p>
+<div class="frame dark"><div class="tiles">
+  <nav class="tile nav" style="--i:0"><span class="brand">Blocks</span><div class="links"><a>Docs</a><a class="cur">Kinds</a><a>Changelog</a></div></nav>
+  <article class="tile prose" style="--i:1">
+    <h2>prose</h2>
+    <p>A tree of parts with <b>bold</b>, <i>italic</i>, <code>code</code> and <a>link</a> spans.</p>
+    <blockquote>Built by type.</blockquote>
+    <pre><span class="lang">rust</span>Row::new("a")</pre>
+  </article>
+  <figure class="tile media" style="--i:2"><div class="box" style="aspect-ratio:640/240"><span class="alt">a bar chart</span></div><figcaption>media still loading: its alt, in its reserved box</figcaption></figure>
+</div></div>
+</section>
+
+<section>
+<p class="tag"><b>composer</b> · working, one queued, sent and not sent</p>
+<div class="frame dark"><div class="tiles">
+  <div class="tile msg" style="--i:0"><div class="who"><span>ORCHESTRATOR</span><span>now</span></div>Filing it: drover brief sendmeter 19…</div>
+  <div class="tile msg" style="--i:1"><div class="who"><span>YOU</span><span>✓ 1m</span></div>Retry-After only.</div>
+  <div class="tile cmp" style="--i:2">
+    <div class="pill"><span class="dot"></span><span class="t">working 12s</span><span class="btn bad sm">stop</span></div>
+    <div class="q"><span class="n">1</span><span class="t">and the tests for the 429 path</span><span class="btn primary sm">send now</span><span class="btn sm">edit</span><span class="btn bad sm">remove</span></div>
+    <div class="row"><span class="round">+</span><div class="field ph">message the team</div><span class="btn primary">queue</span></div>
+    <div class="chips"><span class="chip"><span class="k">effort</span> low ▾</span></div>
+    <div class="st g">✓ sent</div>
+    <div class="st r">not sent: no pane <span class="btn bad sm">retry</span></div>
+  </div>
+</div></div>
+</section>
+
+</div>
+<p class="note">Light and dark are the only looks drawn here; the named schemes and app looks are out of this design.</p>
+</main><script>document.documentElement.dataset.h=Math.ceil(document.documentElement.scrollHeight)</script></body></html>

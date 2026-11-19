@@ -266,6 +266,7 @@ public struct Composer: Codable, Equatable, Sendable {
     public var queued: [Queued]?
     public var show: Expr?
     public var values: [String: JSONValue]?
+    public var working: Working?
 }
 
 public struct ComposerChip: Codable, Equatable, Sendable {
@@ -1182,4 +1183,8 @@ public struct Why: RawRepresentable, Hashable, Codable, Equatable, Sendable {
     public static let unpaired = Self(rawValue: "unpaired")
     public static let handover = Self(rawValue: "handover")
     public static let all: [Self] = [.evicted, .unpaired, .handover]
+}
+
+public struct Working: Codable, Equatable, Sendable {
+    public var since: String
 }

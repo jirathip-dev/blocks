@@ -537,7 +537,12 @@ pub(super) fn composer(w: &mut W<'_>, b: &Value) {
         &[("name", "text"), ("rows", "1"), ("placeholder", &hint), ("form", &f)],
     );
     w.close("textarea");
-    w.btn(&shown(b.get("label")), "primary", &Go::Post(f.clone()), &[], None);
+    let label = if b.get("working").is_some_and(|x| !x.is_null()) {
+        "queue".into()
+    } else {
+        shown(b.get("label"))
+    };
+    w.btn(&label, "primary", &Go::Post(f.clone()), &[], None);
     w.close("div");
     let chips: Vec<&Value> = list(b, "chips").iter().filter(|c| c.is_object()).collect();
     if !chips.is_empty() {

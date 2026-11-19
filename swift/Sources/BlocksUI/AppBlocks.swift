@@ -67,17 +67,6 @@ internal struct AppBlockView: View {
     }
 }
 
-internal struct Gap: View {
-    @Environment(\.look) private var look
-    internal let title: String?
-
-    internal var body: some View {
-        Text(title ?? "").ui(15, .regular, look).foregroundStyle(look.palette.mute)
-            .padding(.horizontal, 14).frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
-            .surface(look, radius: 22)
-    }
-}
-
 extension JSONValue {
-    fileprivate func with(_ key: String, _ value: Self) -> Self { .object(fields.merging([key: value]) { $1 }) }
+    internal func with(_ key: String, _ value: Self) -> Self { .object(fields.merging([key: value]) { $1 }) }
 }
