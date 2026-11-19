@@ -149,6 +149,16 @@ paths = ["web/src/patch.ts"]
 reason = "the patcher draws what it is handed; the stream does the network"
 
 [[ban]]
+pattern = "fetch("
+paths = ["web/src/render/**"]
+reason = "a renderer draws one block from what it is handed; the shell and the stream do the network"
+
+[[ban]]
+pattern = "localStorage"
+paths = ["web/src/render/**"]
+reason = "a renderer keeps drafts through the Ctx's store; the shell owns the storage"
+
+[[ban]]
 pattern = "new EventSource"
 paths = ["web/src/**"]
 except = ["web/src/stream.ts"]
