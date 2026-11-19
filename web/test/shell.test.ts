@@ -166,3 +166,62 @@ test("the menu lists the menu's screens but hidden ones, and the look sheet wear
   ok(document.head.children.findLast((e) => e.id === "b-look").textContent.startsWith(`${tiles}:root{--bg:${scheme.tokens["--bg"]};`));
   shell.close();
 });
+
+const fire = (e, type, ev = {}) => e.listeners.filter(([t]) => t === type).forEach(([, f]) => f({ preventDefault() {}, ...ev }));
+const editable = () => {
+  const saved = [];
+  const replies = [];
+  const edit = { slots: { nav: ["side", "main", "menu"] }, save: async (e) => (saved.push(e), replies.shift() ?? true) };
+  const root = fresh();
+  kept.set("b:core/screens/queue", JSON.stringify(queue));
+  const shell = mount({ root, layout, url, edit });
+  find(root, (x) => x.textContent === "edit layout" && x.classList.contains("b-tab")).onclick();
+  const sheet = find(root, (x) => x.classList.contains("b-sheet") && !x.hidden);
+  const order = () => all(sheet).filter((x) => x.classList.contains("row") && x.dataset.id).map((x) => x.dataset.id);
+  const handle = (label) => find(sheet, (x) => x.getAttribute("aria-label") === `Move ${label}`);
+  return { saved, replies, root, shell, sheet, order, handle };
+};
+const later = { edit: "move", id: "queue", into: "root", slot: "main", before: null };
+
+test("edit mode sends one edit for a node moved by pointer, by keys and by a named action", async () => {
+  const { saved, shell, sheet, order, handle } = editable();
+  deepStrictEqual(order(), ["root", "queue", "done", "about", "gone"]);
+  strictEqual(handle("root"), undefined);
+  const hd = handle("Queue");
+  hd.setPointerCapture = () => {};
+  hd.parentNode.offsetHeight = 40;
+  fire(hd, "pointerdown", { button: 0, pointerId: 1, clientX: 0, clientY: 0 });
+  fire(hd, "pointermove", { clientX: 0, clientY: 40 });
+  fire(hd, "pointerup");
+  await tick();
+  for (const key of [" ", "ArrowDown", "Enter"]) fire(handle("Queue"), "keydown", { key });
+  await tick();
+  find(sheet, (x) => x.tagName === "BUTTON" && x.textContent === "Move later" && x.parentNode === handle("Queue").parentNode).onclick();
+  await tick();
+  deepStrictEqual(saved, [later, later, later]);
+  shell.close();
+});
+
+test("a refused edit leaves the layout as it was and shows why; a saved one is drawn once the host hands it in", async () => {
+  const { saved, replies, root, shell, sheet, order, handle } = editable();
+  replies.push("not yours");
+  find(sheet, (x) => x.tagName === "BUTTON" && x.textContent === "Swap with the next" && x.parentNode === handle("Queue").parentNode).onclick();
+  await tick();
+  deepStrictEqual(saved, [{ edit: "swap", a: "queue", b: "done" }]);
+  deepStrictEqual(order(), ["root", "queue", "done", "about", "gone"]);
+  strictEqual(find(sheet, (x) => x.getAttribute("role") === "alert")?.textContent, "not yours");
+  const pick = find(sheet, (x) => x.getAttribute("aria-label") === "About shows on compact as");
+  replies.push(false);
+  pick.value = "hidden";
+  pick.onchange();
+  await tick();
+  deepStrictEqual(saved[1], { edit: "show", id: "about", size: "compact", place: "hidden" });
+  strictEqual(pick.value, "menu");
+  const [queueNode, doneNode] = layout.root.slots.main;
+  shell.layout({ ...layout, root: { ...layout.root, slots: { ...layout.root.slots, main: [doneNode, queueNode] } } });
+  const again = find(root, (x) => x.classList.contains("b-sheet") && !x.hidden);
+  deepStrictEqual(all(again).filter((x) => x.classList.contains("row") && x.dataset.id).map((x) => x.dataset.id), ["root", "done", "queue", "about", "gone"]);
+  fire(find(again, (x) => x.classList.contains("b-arrange")), "keydown", { key: "Escape" });
+  ok(again.hidden);
+  shell.close();
+});

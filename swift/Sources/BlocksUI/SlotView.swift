@@ -3,7 +3,7 @@ import SwiftUI
 
 /// A resolved layout drawn: `nav` sets its `column` nodes beside its first `main` node, every other node is the app's.
 public struct SlotView<Content: View>: View {
-    private let node: LayoutNode<LayoutPlace>
+    internal let node: LayoutNode<LayoutPlace>
     private let content: (LayoutNode<LayoutPlace>) -> Content
 
     public init(_ node: LayoutNode<LayoutPlace>, @ViewBuilder content: @escaping (LayoutNode<LayoutPlace>) -> Content) {

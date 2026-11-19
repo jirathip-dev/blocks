@@ -288,6 +288,6 @@ fn style_swift() -> Out {
 }
 
 fn layout_swift() -> Out {
-    let place = swift_defs(&schemars::schema_for!(layout::Place).to_value())?;
+    let place = swift_defs(&schemars::schema_for!(layout::Edit).to_value())?;
     Ok(place + &swift_defs(&schemars::schema_for!(layout::Transition).to_value())?)
 }

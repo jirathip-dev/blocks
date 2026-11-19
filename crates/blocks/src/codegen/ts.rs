@@ -79,6 +79,6 @@ pub(super) fn ts_defs(s: &Value) -> Out {
 }
 
 fn layout_ts() -> Out {
-    let place = ts_defs(&schemars::schema_for!(layout::Place).to_value())?;
+    let place = ts_defs(&schemars::schema_for!(layout::Edit).to_value())?;
     Ok(place + &ts_defs(&schemars::schema_for!(layout::Transition).to_value())?)
 }

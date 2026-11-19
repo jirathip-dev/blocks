@@ -1,7 +1,11 @@
 use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 
-use blocks::layout::{check, merge, Component, Content, Contract, Place, PlaceEntry, PlaceKind, SizeClass, Transition};
+use blocks::layout::{
+    check, drops, edit, merge, slots, Component, Content, Contract, Edit, Layout, Node, Place, PlaceEntry, PlaceKind,
+    SizeClass, Transition,
+};
+use serde_json::Value;
 
 static COOEE: Contract = Contract {
     components: &[
@@ -174,4 +178,120 @@ fn merge_places_a_plugin_the_file_does_not_and_says_why_it_skips_the_rest() {
     let bare = check(r#"{"format": 1, "root": {"type": "nav"}}"#, &COOEE).unwrap();
     let (_, skipped) = merge(bare, &places[..1], &COOEE);
     assert_eq!(skipped, ["drover: /screens/queue: no node holds a strip slot"]);
+}
+
+static EDITS: Contract = Contract {
+    components: &[
+        Component {
+            kind: "box",
+            slots: &["in"],
+            config: &[],
+        },
+        Component {
+            kind: "sidebar",
+            slots: &["top", "list"],
+            config: &[],
+        },
+    ],
+    locked: &["/screens/pairing"],
+};
+
+fn outline(n: &Node) -> String {
+    if n.slots.is_empty() {
+        return n.id.clone();
+    }
+    let slots: Vec<String> = n
+        .slots
+        .iter()
+        .map(|(k, v)| {
+            format!(
+                "{k}:{}",
+                v.iter().map(|c| format!(" {}", outline(c))).collect::<String>()
+            )
+        })
+        .collect();
+    format!("{}({})", n.id, slots.join("; "))
+}
+
+fn ids(n: &Node, out: &mut Vec<String>) {
+    out.push(n.id.clone());
+    n.slots.values().flatten().for_each(|k| ids(k, out));
+}
+
+fn edits() -> (Value, Layout) {
+    let f: Value = serde_json::from_str(&read("edits.json")).unwrap();
+    let l = check(&f["layout"].to_string(), &EDITS).unwrap();
+    (f, l)
+}
+
+#[test]
+fn slots_and_drops_give_fixtures_layouts_edits_on_both_size_classes() {
+    let (f, l) = edits();
+    assert_eq!(serde_json::to_value(slots(&EDITS)).unwrap(), f["slots"]);
+    assert_eq!(outline(&l.root), f["tree"]);
+    for (grabbed, want) in f["drops"].as_object().unwrap() {
+        let want: Vec<Edit> = serde_json::from_value(want.clone()).unwrap();
+        for size in [SizeClass::Compact, SizeClass::Wide] {
+            assert_eq!(
+                drops(&l.resolved(size), &slots(&EDITS), grabbed),
+                want,
+                "{grabbed} {size:?}"
+            );
+        }
+    }
+}
+
+#[test]
+fn an_edit_gives_its_checked_layout_or_its_refusal_and_leaves_the_layout_as_it_was() {
+    let (f, l) = edits();
+    let before = l.clone();
+    for c in f["edits"].as_array().unwrap() {
+        let e: Edit = serde_json::from_value(c["edit"].clone()).unwrap();
+        let name = &c["name"];
+        match (edit(&l, &e, &EDITS), c.get("refused")) {
+            (Ok(next), None) => {
+                assert_eq!(outline(&next.root), c["tree"], "{name}");
+                if let Some(p) = c.get("place") {
+                    let id = p["id"].as_str().unwrap();
+                    let mut all = vec![&next.root];
+                    let mut i = 0;
+                    while let Some(n) = all.get(i).copied() {
+                        all.extend(n.slots.values().flatten());
+                        i += 1;
+                    }
+                    let n = all.into_iter().find(|n| n.id == id).unwrap();
+                    let want = serde_json::json!({ "id": id, "compact": n.place.compact, "wide": n.place.wide });
+                    assert_eq!(&want, p, "{name}");
+                }
+            }
+            (Err(b), Some(why)) => assert_eq!(why, &b.why, "{name}"),
+            (got, _) => panic!("{name}: {got:?}"),
+        }
+        assert_eq!(l, before, "{name}");
+    }
+}
+
+#[test]
+fn every_drop_of_every_node_passes_check_on_both_size_classes() {
+    for (l, c) in [
+        (edits().1, &EDITS),
+        (check(&read("cooee.json"), &COOEE).unwrap(), &COOEE),
+    ] {
+        let mut all = Vec::new();
+        ids(&l.root, &mut all);
+        let mut n = 0;
+        for size in [SizeClass::Compact, SizeClass::Wide] {
+            for id in &all {
+                for d in drops(&l.resolved(size), &slots(c), id) {
+                    let next = edit(&l, &d, c).unwrap_or_else(|b| panic!("{d:?}: {}", b.why));
+                    let mut after = Vec::new();
+                    ids(&next.root, &mut after);
+                    assert_eq!(after.len(), all.len(), "{d:?}");
+                    assert_ne!(next, l, "{d:?}");
+                    n += 1;
+                }
+            }
+        }
+        assert!(n > 40, "{n} drops");
+    }
 }
