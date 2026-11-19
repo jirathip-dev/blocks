@@ -1,0 +1,89 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>table: states</title>
+<link rel="stylesheet" href="../neutral-default/tokens.css"><link rel="stylesheet" href="../../../web/src/blocks.css"><link rel="stylesheet" href="table.css"><link rel="stylesheet" href="page.css">
+<script src="table.js"></script><script src="data.js"></script></head>
+<body><main class="scr" id="page"></main>
+<script>
+const page = document.getElementById("page");
+function add(title, note, ...kids) {
+  const c = h("section", "case", h("h3", "sh", ...title), note ? h("p", "note", note) : null, ...kids);
+  page.append(c);
+  return c;
+}
+const B = (s) => h("b", "", s);
+const sub = (o) => ({ ...invoices, ...o });
+
+const kinds = {
+  type: "table", id: "kinds", title: "Support queue",
+  columns: [
+    { id: "topic", label: "Topic", kind: "text" },
+    { id: "owner", label: "Owner", kind: "text", sort: false },
+    { id: "opened", label: "Opened", kind: "date" },
+    { id: "state", label: "State", kind: "tone" },
+    { id: "tickets", label: "Tickets", kind: "number", total: "count" },
+    { id: "wait", label: "Wait", unit: "h", kind: "number", digits: 1, total: "avg" },
+  ],
+  rows: [
+    { id: "a", cells: { topic: "Login loops on iPad", owner: "Mali", opened: "2026-11-02", state: { text: "working", tone: "working" }, tickets: 14, wait: 3.25 } },
+    { id: "b", cells: { topic: "Export drops the last row", owner: null, opened: "2026-11-09", state: { text: "needs triage", tone: "needs" }, tickets: 3, wait: 26 } },
+    { id: "c", cells: { topic: "Receipts in the wrong currency", owner: "Ton", opened: "2026-11-11", state: { text: "failing", tone: "fail" }, tickets: 1207, wait: null } },
+    { id: "d", cells: { topic: "Dark mode on old Android", owner: "Ploy", opened: "2026-10-28", state: { text: "done", tone: "done" }, tickets: null, wait: 0.5 } },
+  ],
+};
+add([B("1 columns"), " · text, number, date, tone; blanks; totals"],
+  "text and date start, numbers end (tabular, grouped, at most 2 decimals or the column's digits), tone is a square tag in its colour, a unit sits after the header. Owner has sort: false, so its header is not a button. A blank cell draws nothing. Totals: sum (no word), avg (1 decimal), count (non-blank cells).",
+  table(kinds));
+
+const four = sub({ id: "s", title: "Invoices", rows: [invoices.rows[11], invoices.rows[1], invoices.rows[3], invoices.rows[10], invoices.rows[5]], columns: invoices.columns.filter((c) => c.id !== "issued") });
+add([B("2 sort"), " · tap a header: ↑, then ↓, then back to the order as sent"],
+  "one column at a time, stable, and blank cells last in both directions (INV-0143 and INV-0144 have no due date). The sorted header is ink and says aria-sort; the others are grey with no arrow. On a phone the headers are gone and the sort select carries the same states.",
+  table(four, { sort: null }), table(four, { sort: { by: "due", dir: "asc" } }), table(four, { sort: { by: "due", dir: "desc" } }));
+
+add([B("3 filter"), " · one box: every word must be in some cell"],
+  "case-insensitive, over the text as drawn (so “nov” finds November dates). The count says how many of all, and the totals follow what is shown.",
+  table(invoices, { q: "orchard" }));
+
+add([B("4 no match"), " and ", B("5 empty")],
+  "a filter that hides every row says so and offers clear (it empties the box). A table with no rows draws the block's empty line, with no filter box, no sort select and no totals.",
+  table(invoices, { q: "zzz" }), table(sub({ rows: [] })));
+
+const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const people = [["Mali", 3], ["Ton", 7], ["Ploy", 11], ["Arun", 5]];
+const wide = {
+  type: "table", id: "hours", title: "Hours by month · 2026",
+  columns: [{ id: "who", label: "Person", kind: "text" }, ...months.map((m) => ({ id: m, label: m, kind: "number", total: "sum", phone: "hide" })), { id: "year", label: "Year", kind: "number", total: "sum" }],
+  rows: people.map(([who, s]) => {
+    const cells = { who };
+    let y = 0;
+    months.forEach((m, i) => { const v = 120 + ((s * (i + 3) * 37) % 60); cells[m] = v; y += v; });
+    cells.year = y;
+    return { id: who, cells };
+  }),
+};
+const w = table(wide, { sort: { by: "year", dir: "desc" } });
+add([B("6 wide"), " · more columns than fit: the grid scrolls sideways, the first column stays"],
+  "drawn scrolled to the end. On a phone, columns marked phone: hide drop out (here the twelve months), leaving the person and the year.", w);
+
+const now = sub({ id: "d", rows: [invoices.rows[4], invoices.rows[6], invoices.rows[7], inv("INV-0145", "Kestrel Studio", { text: "draft", tone: "mute" }, null, null, 3, 4500)], columns: invoices.columns.filter((c) => c.id !== "issued"), sort: null });
+add([B("7 row diff"), " · rows are keyed by id"],
+  "an update patches one row (INV-0139 sent → paid), adds INV-0145 and removes INV-0138 without redrawing the rest. Changed and new rows carry a 3px ink edge until the next update; a new row fades in (b-late), a removed one just goes. Sort and the filter text stay through updates.",
+  table(now, { prev: prevInvoices, added: ["INV-0145"] }));
+
+const p = add([B("8 phone rows"), " · under 600px wide, the same DOM as rows"],
+  "title (the first text column, or phone: title), then the tag, then the value (the last number column with a total) and › when the row taps. A grey line under it holds the other cells, each with its column label. Totals become the last row. Filter box and sort select share the bar.");
+const ph = h("div", "duo");
+for (const t of [table(invoices, { q: "orchard" }), table(sub({ rows: invoices.rows.slice(4, 7) }), { sort: { by: "amount", dir: "desc" } }), table(sub({ rows: invoices.rows.slice(0, 3) }), { js: false })]) ph.append(t);
+p.append(ph);
+
+add([B("9 static page"), " (site writer, JS off)"],
+  "the site writer prints the same table in the block's sort order with the totals worked out. No filter box, no sort select, and the headers are plain text, the sorted one still marked. The container query still turns it into phone rows.",
+  table(sub({ id: "st", rows: invoices.rows.slice(0, 5) }), { js: false }));
+
+const fbk = h("div", "list");
+fbk.append(fallback(invoices));
+add([B("10 fallback"), " · what a renderer without table draws"],
+  "one row: the title, the first summed column's total, and the row count. The SwiftUI renderer draws the table natively (Grid on a wide window, the same phone rows on an iPhone).", fbk);
+
+w.querySelector(".tbw").scrollLeft = 9999;
+settle();
+</script></body></html>
