@@ -13,12 +13,15 @@ mod list;
 mod parts;
 mod sample;
 mod table;
+mod timeline;
 
 pub use chart::*;
 pub use content::*;
 pub use parts::*;
 pub use sample::samples;
 pub use table::*;
+pub(crate) use timeline::{civil, day, words as timeline_words};
+pub use timeline::{BarGrab, BarPart, DaySpan, Days, TimeBar, TimeRow, Timeline};
 
 kind! {
     /// A whole screen.
@@ -444,4 +447,5 @@ kinds! {
     Steps(Steps) = "steps",
     Chart(Chart) = "chart",
     Toast(Toast) = "toast",
+    Timeline(Timeline) = "timeline",
 }

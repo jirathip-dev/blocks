@@ -1,0 +1,54 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="../neutral-default/tokens.css"><link rel="stylesheet" href="../../../web/dist/blocks.css"><link rel="stylesheet" href="timeline.css"><link rel="stylesheet" href="page.css">
+<script src="timeline.js"></script><script src="data.js"></script><title>timeline: every state</title></head>
+<body><main class="scr">
+<div class="top"><div class="tabh"><span class="tw">timeline · every state</span></div></div>
+<h2>1 · Bars</h2><p class="note">A bar is a card with an ink frame. Its tone is a 3 px tick on the left (ok, warn, bad, info, accent, mute; none draws no tick). Progress is a 2 px ink line along the bottom. A fixed bar has an edge frame, muted text and no grips. An end cut by the range is dashed and has no grip. A one-day bar with free days after it puts its label beside it, muted; otherwise the label ends in “…”. Grips are 2 × 12 px notches, always drawn, so touch users see them.</p>
+<div id="bars"></div>
+<h2>2 · Hit areas <small>· drawn for impl only</small></h2><p class="legend"><i></i>a grip: 44 px wide, centred on the edge, the row’s full height<i class="b"></i>the body: what is left between the grips</p><p class="note">Each grip is a --hit square, half inside and half outside the bar. On a bar shorter than 88 px the grips overlap the body entirely, so the body is grabbed by its middle third only. Grips and handles have touch-action: none; a body needs a 300 ms hold on touch.</p>
+<div id="hit"></div>
+<h2>3 · Day width <small>· a view value, kept per block id</small></h2><p class="note">fit (the default) shares the width between the range’s days, between 24 and 48 px. − and + step through 48, 32, 24, 16, 8 and 4 px; Ctrl and wheel, a pinch, or the − + 0 keys do the same. From 24 px up: day numbers and weekday letters, and the pointer can move and stretch bars. Under 24 px: week numbers on Mondays, no grips, a drag pans, and the header says “zoom in to drag”; keys and named actions still move bars. Under 12 px: months only.</p>
+<div id="zoom"></div>
+<h2>4 · Stress</h2><p class="note">Long titles end in “…” on one line (the full text is the name). Bars of one row that overlap stack into sub-lanes by first fit in start order; the row grows 32 px a lane. A block with no rows draws its <code>empty</code> text. A row with no bars is an empty lane. Many rows scroll inside the block (70 % of the viewport) with the day header and the title column sticky.</p>
+<div id="stress"></div>
+<h2>5 · Keys and VoiceOver</h2><p class="note">The block is one Tab stop (roving focus, back on the same bar after a redraw). The same rows apply in SwiftUI, with VoiceOver’s actions rotor holding the named actions.</p>
+<table class="keys"><thead><tr><th>On</th><th>Keys</th><th>Named actions (rotor)</th><th>Heard</th></tr></thead><tbody>
+<tr><td>a bar, not grabbed</td><td><kbd>←</kbd> <kbd>→</kbd> previous, next bar · <kbd>↑</kbd> <kbd>↓</kbd> the row above, below · <kbd>Tab</kbd> its start grip, then its end grip · <kbd>Enter</kbd> its tap · <kbd>Space</kbd> grabs</td><td>One day earlier · One day later · One week earlier · One week later · Start one day earlier, later · End one day earlier, later</td><td>“Pour, 7 Dec to 9 Dec, 3 days, 60 % done, bar. Actions available.”</td></tr>
+<tr><td>a bar, grabbed</td><td><kbd>←</kbd> <kbd>→</kbd> a day · <kbd>Shift</kbd> a week · <kbd>Enter</kbd> or <kbd>Space</kbd> drops · <kbd>Escape</kbd> cancels, as does focus leaving</td><td>each action is one grab, one step and one drop: it sends at once</td><td>“Pour grabbed, 7 Dec to 9 Dec. Left and Right move a day, Shift a week. Enter drops, Escape cancels.” then each candidate: “8 Dec to 10 Dec, 3 days.”</td></tr>
+<tr><td>a grip</td><td><kbd>Space</kbd> grabs · <kbd>←</kbd> <kbd>→</kbd> a day · <kbd>Shift</kbd> a week · <kbd>Enter</kbd> drops</td><td>Start one day earlier, later (or End …)</td><td>“Start of Pour, 7 Dec, button.” then “6 Dec to 9 Dec, 4 days.”</td></tr>
+<tr><td>a row’s title (with draw)</td><td><kbd>Enter</kbd> adds one day at the first free day, grabbed, then as a bar</td><td>Add a bar</td><td>“Tower B, Add a bar.” then “7 Dec, 1 day.”</td></tr>
+<tr><td>after a drop</td><td colspan="2">nothing until the answer; other bars stay usable</td><td>“Sending.” then “Pour, 9 Dec to 11 Dec, 3 days.”, or “Not changed. 10 Dec is a public holiday.”</td></tr>
+<tr><td>the block</td><td><kbd>−</kbd> <kbd>+</kbd> zoom · <kbd>0</kbd> fit · <kbd>Page Up</kbd> <kbd>Page Down</kbd> a range’s width</td><td>Zoom in · Zoom out · Fit (named buttons in the header)</td><td>“Crews, group.”</td></tr>
+</tbody></table>
+<h2>6 · Read-only and the static page</h2><p class="note">A timeline with no gesture field, the static site, an older client that knows the kind but not gestures: the same drawing with no grips and no handles. Bars are list items; a bar with a <code>tap</code> is still a button. The static page has no script, so the day width is fit and there are no zoom buttons.</p>
+<div id="ro"></div>
+</main><script>
+const A = { action: "schedule", name: "bar" }, D = n => "2026-12-" + String(n).padStart(2, "0");
+const put = (id, b) => { const s = document.createElement("div"); s.dataset.b = JSON.stringify(b); document.getElementById(id).append(s); };
+const base = (o) => Object.assign({ type: "timeline", id: "s", from: D(1), to: D(14), off: OFF, corner: "", move: A, stretch: A }, o);
+put("bars", base({ title: "Tones, progress and ends", corner: "Bar", from: D(1), to: D(21), rows: [
+  { id: "t1", title: "none · ok · warn", bars: [{ id: "1", start: D(1), end: D(4), label: "No tone" }, { id: "2", start: D(7), end: D(11), label: "ok", tone: "ok" }, { id: "3", start: D(14), end: D(18), label: "warn", tone: "warn" }] },
+  { id: "t2", title: "bad · info · accent", bars: [{ id: "4", start: D(1), end: D(4), label: "bad", tone: "bad" }, { id: "5", start: D(7), end: D(11), label: "info", tone: "info" }, { id: "6", start: D(14), end: D(18), label: "accent", tone: "accent" }] },
+  { id: "t3", title: "progress 0 · 60 · 100", bars: [{ id: "7", start: D(1), end: D(4), label: "0 %", progress: 0 }, { id: "8", start: D(7), end: D(11), label: "60 %", progress: 60 }, { id: "9", start: D(14), end: D(18), label: "100 %", progress: 100, tone: "ok" }] },
+  { id: "t4", title: "fixed · mute", subtitle: "no grips, no drag", bars: [{ id: "10", start: D(1), end: D(4), label: "Fixed", fixed: true, progress: 100 }, { id: "11", start: D(7), end: D(11), label: "mute", tone: "mute" }] },
+  { id: "t5", title: "cut by the range", subtitle: "from 24 Nov · to 4 Jan", bars: [{ id: "12", start: "2026-11-24", end: D(3), label: "Started in November" }, { id: "13", start: D(16), end: "2027-01-04", label: "Ends in January" }] },
+  { id: "t6", title: "short bars", subtitle: "one day, label beside", bars: [{ id: "14", start: D(2), end: D(2), label: "Inspect" }, { id: "15", start: D(8), end: D(8), label: "Delivery" }, { id: "16", start: D(9), end: D(9), label: "Crane" }, { id: "17", start: D(15), end: D(16), label: "Two days long" }] },
+  { id: "t7", title: "focus", subtitle: "bar · start grip · end grip", bars: [{ id: "18", start: D(1), end: D(4), label: "Bar", pv: { ph: "focus" } }, { id: "19", start: D(7), end: D(11), label: "Start grip", pv: { ph: "focus", part: "start" } }, { id: "20", start: D(14), end: D(18), label: "End grip", pv: { ph: "focus", part: "end" } }] },
+] }));
+put("hit", base({ title: "Hit areas", corner: "Bar", rows: [{ id: "h", title: "Tower A", bars: [{ id: "1", start: D(2), end: D(7), label: "Long bar", hz: true }, { id: "2", start: D(10), end: D(11), label: "Short", hz: true }] }] }));
+const few = planner.rows.slice(1, 4);
+put("zoom", base({ title: "48 px", from: D(1), to: D(31), view: { day: 48 }, rows: few, tall: 220 }));
+put("zoom", base({ title: "fit", from: D(1), to: D(31), rows: few }));
+put("zoom", base({ title: "16 px", from: D(1), to: D(31), view: { day: 16 }, rows: few }));
+put("zoom", base({ title: "6 px · a quarter", from: D(1), to: "2027-02-28", view: { day: 6 }, rows: few.concat([{ id: "q", title: "Harbour Lane depot", subtitle: "Crew 5", bars: [{ id: "q1", start: "2027-01-11", end: "2027-02-12", label: "Build" }] }]) }));
+put("stress", base({ title: "Long text and overlaps", rows: [
+  { id: "l1", title: "Riverside Tower A, block C, north stair core and lift shaft", subtitle: "Crew 1 with the subcontracted steel fixers from Marlow", bars: [{ id: "1", start: D(1), end: D(11), label: "Formwork, rebar, inspection and the first of three pours, weather permitting" }] },
+  { id: "l2", title: "Overlapping ranges", subtitle: "three sub-lanes", bars: [{ id: "2", start: D(1), end: D(7), label: "Scaffold" }, { id: "3", start: D(4), end: D(9), label: "Brickwork", tone: "warn" }, { id: "4", start: D(8), end: D(14), label: "Windows" }, { id: "5", start: D(6), end: D(8), label: "Crane", tone: "info" }] },
+  { id: "l3", title: "No bars yet", subtitle: "an empty lane", bars: [] },
+] }));
+put("stress", base({ title: "Empty", rows: [], empty: "Nothing scheduled this month" }));
+const many = Array.from({ length: 24 }, (_, i) => ({ id: "m" + i, title: "Job " + (i + 1), subtitle: "Crew " + (i % 5 + 1), bars: [{ id: "b" + i, start: D(1 + (i * 3) % 10), end: D(3 + (i * 3) % 10 + i % 3), label: "Range " + (i + 1), tone: ["", "ok", "", "warn", ""][i % 5] || undefined }] }));
+put("stress", base({ title: "24 rows", meta: "scrolls inside the block", rows: many, tall: 360 }));
+put("ro", Object.assign({}, activities, { static: true, move: undefined, title: "Estimate E-118 · activities", meta: "static page" }));
+draw();
+</script></body></html>

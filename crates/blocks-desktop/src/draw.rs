@@ -70,4 +70,5 @@ switch! {
     Steps => steps,
     Toast => toast,
     Chart => chart,
+    Timeline => timeline,
 }

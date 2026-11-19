@@ -33,6 +33,7 @@ export const kinds: Record<string, string> = {
   "steps": "Steps",
   "table": "Table",
   "text": "Text",
+  "timeline": "Timeline",
   "toast": "Toast",
   "web": "Web"
 };
@@ -198,7 +199,8 @@ export const defs: Record<string, Shape> = {
             "table",
             "steps",
             "chart",
-            "toast"
+            "toast",
+            "timeline"
           ]
         },
         "type": "string"
@@ -652,6 +654,19 @@ export const defs: Record<string, Shape> = {
         "properties": {
           "type": {
             "const": "toast",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      {
+        "$ref": "#/$defs/Timeline",
+        "properties": {
+          "type": {
+            "const": "timeline",
             "type": "string"
           }
         },
@@ -4733,6 +4748,193 @@ export const defs: Record<string, Shape> = {
         ]
       }
     },
+    "type": "object"
+  },
+  "TimeBar": {
+    "properties": {
+      "end": {
+        "type": "string"
+      },
+      "fixed": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "id": {
+        "type": "string"
+      },
+      "label": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "progress": {
+        "maximum": 255,
+        "minimum": 0,
+        "type": [
+          "integer",
+          "null"
+        ]
+      },
+      "start": {
+        "type": "string"
+      },
+      "tap": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Tap"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "tone": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Tone"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      }
+    },
+    "required": [
+      "id",
+      "start",
+      "end"
+    ],
+    "type": "object"
+  },
+  "TimeRow": {
+    "properties": {
+      "bars": {
+        "items": {
+          "$ref": "#/$defs/TimeBar"
+        },
+        "type": "array"
+      },
+      "id": {
+        "type": "string"
+      },
+      "subtitle": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "tap": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Tap"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "title": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "id",
+      "title",
+      "bars"
+    ],
+    "type": "object"
+  },
+  "Timeline": {
+    "additionalProperties": true,
+    "properties": {
+      "draw": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Gesture"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "empty": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "from": {
+        "type": "string"
+      },
+      "id": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "move": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Gesture"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "off": {
+        "items": {
+          "type": "string"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "show": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "stretch": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Gesture"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "title": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "to": {
+        "type": "string"
+      },
+      "tracks": {
+        "items": {
+          "$ref": "#/$defs/TimeRow"
+        },
+        "type": "array"
+      }
+    },
+    "required": [
+      "from",
+      "to",
+      "tracks"
+    ],
     "type": "object"
   },
   "Toast": {

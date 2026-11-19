@@ -1,0 +1,46 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="../neutral-default/tokens.css"><link rel="stylesheet" href="../../../web/dist/blocks.css"><link rel="stylesheet" href="../toast/toast.css"><link rel="stylesheet" href="timeline.css"><link rel="stylesheet" href="page.css">
+<script src="timeline.js"></script><title>timeline: move, stretch and draw, frame by frame</title></head>
+<body><main class="scr">
+<div class="top"><div class="tabh"><span class="tw">timeline · one gesture, frame by frame</span></div></div>
+<p class="note">Each frame is one phase of #136's statechart 1. The pointer, the keys and VoiceOver's named actions walk the same phases and send the same one action: <code>schedule</code> with <code>bar = {id, start, end}</code> (a draw sends <code>{row, start, end}</code>). Nothing in the data changes until the app answers. “Heard” is what a screen reader says at that frame; the tag over the bar shows the same words.</p>
+<div id="f"></div>
+</main><script>
+const OFF = ["2026-12-10", "2026-12-12", "2026-12-13"], A = { action: "schedule", name: "bar" };
+function block(pour, o) {
+  o = o || {};
+  return { type: "timeline", id: "plan", title: "Crews", meta: "7–16 Dec", from: "2026-12-07", to: "2026-12-16", off: OFF, corner: "Job", move: A, stretch: A, draw: A, toast: o.toast,
+    rows: [{ id: "a", title: "Tower A", subtitle: "Crew 1", bars: [Object.assign({ id: "p", start: "2026-12-07", end: "2026-12-09", label: "Pour" }, pour)] },
+      { id: "b", title: "Tower B", subtitle: "Crew 2", pv: o.row, bars: [{ id: "f", start: "2026-12-14", end: "2026-12-16", label: "Footings" }].concat(o.added || []) }] };
+}
+const at = (s, e) => ({ start: "2026-12-" + s, end: "2026-12-" + e });
+const F = [
+  ["Move", null],
+  ["1 · idle, focused", "Tab lands on the last focused bar; arrows walk bars and rows. A bar is a button with the role description “bar”.", "Pour, 7 Dec to 9 Dec, 3 days, bar. Actions available.", { pv: { ph: "focus" } }],
+  ["2 · pressed", "Space, or the pointer down on the body and 4 px of travel (on touch, a 300 ms hold first, so the page still scrolls). The bar lifts 3 px.", "Pour grabbed, 7 Dec to 9 Dec. Left and Right move a day, Shift a week. Enter drops, Escape cancels.", { pv: { ph: "pressed" } }],
+  ["3 · previewing", "Right twice, or a drag of two day widths: the bar snaps to whole days and keeps its length. A dashed outline stays where it came from.", "9 Dec to 11 Dec, 3 days.", { pv: { ph: "preview", at: at(9, 11) } }],
+  ["4 · dragging, no drop", "Past the range’s last day the rules give no candidate: the bar follows the pointer, faded, and release puts it back with nothing sent.", "No drop here.", { pv: { ph: "drag", at: { o: 7.6, d: 3 } } }],
+  ["5 · sent", "Released on 9–11 Dec: one action goes out. The bar stays where it was dropped, dimmed and busy; it ignores the pointer until the answer. Other bars stay usable.", "Sending.", { pv: { ph: "sent", at: at(9, 11) } }],
+  ["6 · confirmed", "The app answered with ops that put the bar on 9–11 Dec. It is drawn from the data now.", "Pour, 9 Dec to 11 Dec, 3 days.", { start: "2026-12-09", end: "2026-12-11", pv: { ph: "focus" } }],
+  ["7 · refused", "The app failed the action. The bar slides back over --settle (at once with reduced motion) and the app’s reason shows as a toast.", "Not changed. 10 Dec is a public holiday.", { pv: { ph: "back" } }, { toast: "10 Dec is a public holiday" }],
+  ["8 · confirmed elsewhere", "The app moved it past the weekend instead: the bar slides from where it was dropped to the data.", "Pour, 14 Dec to 16 Dec, 3 days.", { start: "2026-12-14", end: "2026-12-16", pv: { ph: "focus" } }],
+  ["Stretch", null],
+  ["9 · end grip focused", "Tab from a bar goes to its start grip, then its end grip. Each grip’s hit area is 44 px wide across the edge.", "End of Pour, 9 Dec, button.", { pv: { ph: "focus", part: "end" } }],
+  ["10 · stretching the end", "Space then Right twice, or a drag of the grip. The bar fades; a dashed ghost grows from the fixed start.", "7 Dec to 11 Dec, 5 days.", { pv: { ph: "preview", part: "end", at: at("07", 11) } }],
+  ["11 · start pulled past the end", "A stretch keeps at least one day: the start stops on the end’s day however far the pointer goes.", "9 Dec, 1 day.", { pv: { ph: "preview", part: "start", at: at("09", "09") } }],
+  ["12 · stretch sent", "Released: the same action as a move, with the new span. The rest is frames 5 to 8.", "Sending.", { pv: { ph: "sent", part: "end", at: at("07", 11) } }],
+  ["Draw", null],
+  ["13 · an empty day under the pointer", "On a row with no bar that day, a dashed one-day cell with + shows where a tap would add one. Keys: focus the row’s title, Enter adds one day at the first free day, grabbed.", "Tower B, Add a bar.", {}, { row: { draw: { start: "2026-12-08", end: "2026-12-08", ph: "hover" } } }],
+  ["14 · drawing", "A drag over empty days previews the new span. A draw cannot cross another bar of the row.", "7 Dec to 9 Dec, 3 days.", {}, { row: { draw: { start: "2026-12-07", end: "2026-12-09", ph: "preview" } } }],
+  ["15 · drawn and sent", "Released: the action carries the row and the span with no id. The dashed span waits, dimmed; the app’s answer adds the bar with its id and it fades in over --enter.", "Sending.", {}, { row: { draw: { start: "2026-12-07", end: "2026-12-09", ph: "sent" } } }],
+];
+const host = document.getElementById("f"); let grid;
+F.forEach(([cap, note, heard, pour, o]) => {
+  if (note === null) { const h = document.createElement("h2"); h.textContent = cap; host.before(h); grid = document.createElement("div"); grid.className = "frames"; host.before(grid); return; }
+  const c = document.createElement("div"), p = document.createElement("p"), n = document.createElement("p"), s = document.createElement("p"), q = document.createElement("q"), slot = document.createElement("div");
+  p.className = "cap"; p.append(Object.assign(document.createElement("b"), { textContent: cap }));
+  n.className = "note"; n.textContent = note; s.className = "say"; s.append("Heard: "); q.textContent = heard; s.append(q);
+  slot.dataset.b = JSON.stringify(block(pour, o)); c.append(p, n, s, slot); grid.append(c);
+});
+host.remove(); draw();
+</script></body></html>

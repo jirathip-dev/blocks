@@ -1,7 +1,7 @@
 use std::path::{Path, PathBuf};
 
 use blocks::gesture::{step, Effect, Event, Nudge, Phase, Rules};
-use blocks::{Action, Block, Built, Fault, List};
+use blocks::{Action, BarGrab, BarPart, Block, Built, DaySpan, Days, Fault, List, Timeline};
 use serde::Deserialize;
 use serde_json::{json, Value};
 
@@ -169,4 +169,63 @@ fn a_gesture_whose_enabled_does_not_hold_joins_the_view_acts() {
     assert!(
         matches!(serde_json::from_value::<Block>(json!({"type": "list", "rows": [], "reorder": reorder})), Ok(Block::List(l)) if l.reorder.as_ref().is_some_and(|g| g.enabled.is_some()))
     );
+}
+
+#[derive(Deserialize)]
+struct TimeCase {
+    grab: BarGrab,
+    reach: Option<Days>,
+    nudges: Option<Vec<Nudge>>,
+    want: Option<DaySpan>,
+    says: Option<String>,
+}
+
+#[test]
+fn timeline_rules_give_each_fixture_case_its_span_its_words_and_its_steps() {
+    let f = read("timeline.json");
+    let t: Timeline = serde_json::from_value(f["block"].clone()).unwrap();
+    let cases: Vec<TimeCase> = serde_json::from_value(f["cases"].clone()).unwrap();
+    assert!(cases.len() >= 30);
+    for c in &cases {
+        let got = match (&c.reach, &c.nudges) {
+            (Some(r), _) => t.candidate(&c.grab, r),
+            (None, Some(ns)) => t
+                .start(&c.grab)
+                .and_then(|s| ns.iter().try_fold(s, |from, n| t.nudge(&c.grab, &from, *n))),
+            (None, None) => panic!("a case with neither reach nor nudges"),
+        };
+        assert_eq!(got, c.want, "{:?} {:?} {:?}", c.grab, c.reach, c.nudges);
+        assert_eq!(got.as_ref().map(|g| t.says(&c.grab, g)), c.says, "{:?}", c.grab);
+    }
+    for s in f["steps"].as_array().unwrap() {
+        let grab: BarGrab = serde_json::from_value(s["grab"].clone()).unwrap();
+        let names: Vec<String> = t.steps(&grab).into_iter().map(|(n, _)| n).collect();
+        assert_eq!(json!(names), s["want"], "{grab:?}");
+    }
+    let fixed = BarGrab::Bar {
+        bar: "b8".into(),
+        part: BarPart::Body,
+    };
+    assert_eq!((t.word(&fixed), t.start(&fixed)), (None, None));
+    let a: Action = serde_json::from_value(
+        json!({"screen": "s", "action": "schedule", "values": {"bar": {"id": "b7", "start": "2026-12-06", "end": "2026-12-08"}}}),
+    )
+    .unwrap();
+    let sent: DaySpan = a.read("bar").unwrap();
+    assert_eq!(sent.id.as_deref(), Some("b7"));
+}
+
+#[test]
+fn a_timeline_with_a_gesture_needs_its_id_and_its_move_and_stretch_may_share_an_action() {
+    let mut block = read("timeline.json")["block"].clone();
+    assert_eq!(faults(&block), vec![]);
+    block.as_object_mut().unwrap().remove("id");
+    assert_eq!(
+        faults(&block),
+        vec![Fault::Unnamed {
+            kind: "timeline".into()
+        }]
+    );
+    let plain = json!({"type": "timeline", "from": "2026-12-01", "to": "2026-12-31", "tracks": []});
+    assert_eq!(faults(&plain), vec![]);
 }
