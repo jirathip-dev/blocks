@@ -142,38 +142,6 @@ pub struct Scheme {
     pub tokens: Tokens,
 }
 
-macro_rules! builtin {
-    ($($name:literal),* $(,)?) => {
-        [$(($name, include_str!(concat!("../../../../theme/schemes/", $name, ".json")))),*]
-    };
-}
-
-const BUILTIN: [(&str, &str); 12] = builtin!(
-    "dracula",
-    "farm",
-    "farm-light",
-    "garden-dark",
-    "garden-light",
-    "github-dark",
-    "gruvbox",
-    "kitchen",
-    "kitchen-light",
-    "nord",
-    "paper",
-    "solarized-dark",
-);
-
-/// The built-in schemes in theme/schemes/, by name.
-pub fn schemes() -> &'static [(&'static str, Scheme)] {
-    static PARSED: OnceLock<Vec<(&'static str, Scheme)>> = OnceLock::new();
-    PARSED.get_or_init(|| {
-        BUILTIN
-            .iter()
-            .filter_map(|(name, text)| Some((*name, serde_json::from_str(text).ok()?)))
-            .collect()
-    })
-}
-
 const DEFAULT_LIGHT: [&str; 19] = [
     "#f6f6f6",
     "#ffffff",

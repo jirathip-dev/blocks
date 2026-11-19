@@ -40,7 +40,7 @@ g.clearInterval = () => {};
 document.head = document.createElement("head");
 
 const { mount, resolved } = await import("../src/shell.ts");
-const { schemes } = await import("../src/gen/schemes.ts");
+const { defaultPair } = await import("../src/gen/schemes.ts");
 
 const at = (place) => ({ compact: place, wide: place });
 const screen = (id, path, place, label) => ({ type: "screen", id, source: "core", path, label, place: at(place), transition: "push" });
@@ -135,9 +135,10 @@ test("an action posts to its source; its answer's ops patch the screen and its t
   shell.close();
 });
 
-test("the menu lists the menu's screens but hidden ones, and the look sheet wears a scheme", () => {
+test("the menu lists the menu's screens but hidden ones, and the look sheet wears a scheme the app gave", () => {
   const root = fresh();
-  const shell = mount({ root, layout, url, css: ["./app.css"] });
+  const schemes = { "app-dark": { ...defaultPair.dark, label: "App dark", tokens: { ...defaultPair.dark.tokens, "--bg": "#102030" } } };
+  const shell = mount({ root, layout, url, css: ["./app.css"], schemes });
   ok(document.head.children.some((e) => e.tagName === "LINK" && e.href === "./app.css"));
   find(root, (x) => x.classList.contains("b-menu")).onclick();
   const sheet = find(root, (x) => x.classList.contains("b-sheet"));
