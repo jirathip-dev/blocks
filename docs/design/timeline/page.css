@@ -1,0 +1,23 @@
+/* The host page for these previews only: a wide screen column on #57's default look. */
+body{margin:0;color:var(--fg);font:13px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+main{max-width:1200px;margin:0 auto;padding:var(--s4)}
+.top{background:var(--card);border:1px solid var(--edge);padding:0 var(--s2)}
+.top .tabh{margin:0;min-height:var(--hit)}
+h2{font-size:var(--fs);font-weight:600;color:var(--mute);margin:calc(2 * var(--dot-gap)) 0 var(--s1)}
+h2 small{font-weight:400;font-size:var(--fs-meta)}
+.note{color:var(--mute);font-size:var(--fs-meta);margin:var(--s1) 0 var(--s2);max-width:90ch}
+.frames{display:grid;grid-template-columns:repeat(auto-fill,minmax(540px,1fr));gap:var(--s2) var(--s4)}
+.frames>div{min-width:0}
+.cap{margin:var(--s3) 0 0;font-size:var(--fs)}
+.cap b{font-variant-numeric:tabular-nums}
+.say{margin:0 0 var(--s1);color:var(--mute);font-size:var(--fs-meta)}
+.say q{color:var(--fg);quotes:"“" "”"}
+.keys{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--edge);font-size:var(--fs)}
+.keys th,.keys td{text-align:start;vertical-align:top;padding:var(--s2) var(--s3);border-bottom:1px solid var(--line)}
+.keys th{color:var(--mute);font-size:var(--fs-meta);font-weight:400}
+.keys kbd{font:inherit;border:1px solid var(--edge);padding:0 var(--s1)}
+.keys td:last-child{color:var(--fg)}
+@media (max-width:600px){main{padding:var(--s2)}.frames{grid-template-columns:minmax(0,1fr)}.keys th:nth-child(2),.keys td:nth-child(2){display:none}}
+.hz{position:absolute;top:-9px;bottom:-9px;border:1px dashed var(--c);pointer-events:none}
+.hzs{left:-22px;width:44px}.hze{right:-22px;width:44px}.hzb{left:22px;right:22px;top:-1px;bottom:-1px;border-color:var(--p)}
+.legend{font-size:var(--fs-meta);color:var(--mute)}.legend i{display:inline-block;width:18px;height:10px;margin:0 var(--s1) 0 var(--s3);border:1px dashed var(--c);vertical-align:middle}.legend i.b{border-color:var(--p)}
