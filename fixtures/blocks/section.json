@@ -1,0 +1,12 @@
+{
+  "type": "section",
+  "id": "today",
+  "header": "Today",
+  "blocks": [
+    {
+      "type": "text",
+      "id": "today-note",
+      "markdown": "Quiet"
+    }
+  ]
+}

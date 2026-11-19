@@ -2,8 +2,10 @@ use std::collections::VecDeque;
 
 use serde::{Deserialize, Serialize};
 
-use crate::ops::{apply, diff, ApplyError, Op};
-use crate::screen::Block;
+use crate::diff::diff;
+use crate::kind::Block;
+use crate::patch::{apply, ApplyError};
+use crate::wire::Op;
 
 /// One message on a device stream: its sequence number and its ops; one that starts with `screen` stands alone.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]

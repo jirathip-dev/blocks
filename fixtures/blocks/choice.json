@@ -1,0 +1,12 @@
+{
+  "type": "choice",
+  "id": "ask",
+  "action": "answer",
+  "question": "Merge it?",
+  "options": [
+    {
+      "value": "yes",
+      "label": "Yes"
+    }
+  ]
+}

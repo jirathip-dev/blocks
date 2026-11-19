@@ -1,0 +1,14 @@
+{
+  "type": "island",
+  "id": "map",
+  "name": "x-map",
+  "fallback": {
+    "title": "The map"
+  },
+  "props": {
+    "zoom": 3
+  },
+  "events": [
+    "pick"
+  ]
+}

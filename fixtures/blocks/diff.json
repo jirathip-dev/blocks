@@ -1,0 +1,14 @@
+{
+  "type": "diff",
+  "id": "change",
+  "file": "src/lib.rs",
+  "hunks": [
+    {
+      "at": "@@ -1 +1 @@",
+      "lines": [
+        "-a",
+        "+b"
+      ]
+    }
+  ]
+}

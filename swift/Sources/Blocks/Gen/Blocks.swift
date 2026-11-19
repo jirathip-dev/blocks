@@ -23,6 +23,20 @@ public struct Act: Codable, Equatable, Sendable {
     public var values: [String: JSONValue]?
 }
 
+public struct Action: Codable, Equatable, Sendable {
+    public var action: String
+    public var block: String?
+    public var screen: String
+    public var values: [String: JSONValue]?
+}
+
+public struct Answer: Codable, Equatable, Sendable {
+    public var close: Bool?
+    public var open: String?
+    public var ops: [Op]?
+    public var toast: String?
+}
+
 public struct AppBlock: Codable, Equatable, Sendable {
     public var fallback: Fallback?
     public var id: String?
@@ -52,6 +66,11 @@ public enum Block: Codable, Equatable, Sendable {
     case scene(Scene)
     case diagram(Diagram)
     case composer(Composer)
+    case prose(Prose)
+    case hero(Hero)
+    case media(Media)
+    case nav(Nav)
+    case island(Island)
     case appBlock(JSONValue)
 
     private enum Tag: String, CodingKey { case tag = "type" }
@@ -80,6 +99,11 @@ public enum Block: Codable, Equatable, Sendable {
         case "scene": self = .scene(try Scene(from: decoder))
         case "diagram": self = .diagram(try Diagram(from: decoder))
         case "composer": self = .composer(try Composer(from: decoder))
+        case "prose": self = .prose(try Prose(from: decoder))
+        case "hero": self = .hero(try Hero(from: decoder))
+        case "media": self = .media(try Media(from: decoder))
+        case "nav": self = .nav(try Nav(from: decoder))
+        case "island": self = .island(try Island(from: decoder))
         default: self = .appBlock(try JSONValue(from: decoder))
         }
     }
@@ -108,6 +132,11 @@ public enum Block: Codable, Equatable, Sendable {
         case .scene(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("scene", forKey: .tag)
         case .diagram(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("diagram", forKey: .tag)
         case .composer(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("composer", forKey: .tag)
+        case .prose(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("prose", forKey: .tag)
+        case .hero(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("hero", forKey: .tag)
+        case .media(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("media", forKey: .tag)
+        case .nav(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("nav", forKey: .tag)
+        case .island(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("island", forKey: .tag)
         case .appBlock(let v): try v.encode(to: encoder)
         }
     }
@@ -118,6 +147,7 @@ public struct Button: Codable, Equatable, Sendable {
     public var confirm: Confirm?
     public var id: String?
     public var label: String
+    public var show: Expr?
     public var style: ButtonStyle?
     public var tap: Tap?
     public var values: [String: JSONValue]?
@@ -141,6 +171,7 @@ public struct Card: Codable, Equatable, Sendable {
     public var menu: [Act]?
     public var meta: String?
     public var push: Bool?
+    public var show: Expr?
     public var subtitle: String?
     public var tap: Tap?
     public var title: String?
@@ -187,6 +218,7 @@ public struct Chips: Codable, Equatable, Sendable {
     public var name: String
     public var options: [ChipOption]
     public var selected: [String]?
+    public var show: Expr?
 }
 
 public struct Choice: Codable, Equatable, Sendable {
@@ -197,6 +229,7 @@ public struct Choice: Codable, Equatable, Sendable {
     public var other: Other?
     public var question: String?
     public var recommended: String?
+    public var show: Expr?
     public var values: [String: JSONValue]?
 }
 
@@ -221,6 +254,7 @@ public struct Composer: Codable, Equatable, Sendable {
     public var label: String?
     public var placeholder: String?
     public var queued: [Queued]?
+    public var show: Expr?
     public var values: [String: JSONValue]?
 }
 
@@ -242,6 +276,7 @@ public struct Diagram: Codable, Equatable, Sendable {
     public var id: String?
     public var nodes: [String: Node]?
     public var selected: String?
+    public var show: Expr?
     public var source: String
     public var title: String?
 }
@@ -250,6 +285,7 @@ public struct Diff: Codable, Equatable, Sendable {
     public var file: String
     public var hunks: [Hunk]
     public var id: String?
+    public var show: Expr?
     public var summary: String?
 }
 
@@ -259,7 +295,76 @@ public struct Editor: Codable, Equatable, Sendable {
     public var first: UInt32?
     public var id: String?
     public var name: String
+    public var show: Expr?
     public var text: String
+}
+
+public indirect enum Expr: Codable, Equatable, Sendable {
+    case get(String)
+    case not(Expr)
+    case all([Expr])
+    case `any`([Expr])
+    case eq([Expr])
+    case lt([Expr])
+    case len(Expr)
+    case has([Expr])
+    case `is`(Match)
+    case add([Expr])
+    case sub([Expr])
+    case cat([Expr])
+    case pick([Expr])
+    case lit(Lit)
+    case unknown(JSONValue)
+
+    private struct Key: CodingKey {
+        let stringValue: String
+        var intValue: Int? { nil }
+        init(_ s: String) { stringValue = s }
+        init?(stringValue: String) { self.init(stringValue) }
+        init?(intValue: Int) { nil }
+    }
+
+    public init(from decoder: any Decoder) throws {
+        if let c = try? decoder.container(keyedBy: Key.self), c.allKeys.count == 1, let k = c.allKeys.first {
+            switch k.stringValue {
+            case "get": self = .get(try c.decode(String.self, forKey: k)); return
+            case "not": self = .not(try c.decode(Expr.self, forKey: k)); return
+            case "all": self = .all(try c.decode([Expr].self, forKey: k)); return
+            case "any": self = .`any`(try c.decode([Expr].self, forKey: k)); return
+            case "eq": self = .eq(try c.decode([Expr].self, forKey: k)); return
+            case "lt": self = .lt(try c.decode([Expr].self, forKey: k)); return
+            case "len": self = .len(try c.decode(Expr.self, forKey: k)); return
+            case "has": self = .has(try c.decode([Expr].self, forKey: k)); return
+            case "is": self = .`is`(try c.decode(Match.self, forKey: k)); return
+            case "add": self = .add(try c.decode([Expr].self, forKey: k)); return
+            case "sub": self = .sub(try c.decode([Expr].self, forKey: k)); return
+            case "cat": self = .cat(try c.decode([Expr].self, forKey: k)); return
+            case "pick": self = .pick(try c.decode([Expr].self, forKey: k)); return
+            default: self = .unknown(try JSONValue(from: decoder)); return
+            }
+        }
+        self = .lit(try Lit(from: decoder))
+    }
+
+    public func encode(to encoder: any Encoder) throws {
+        switch self {
+        case .get(let v): var c = encoder.container(keyedBy: Key.self); try c.encode(v, forKey: Key("get"))
+        case .not(let v): var c = encoder.container(keyedBy: Key.self); try c.encode(v, forKey: Key("not"))
+        case .all(let v): var c = encoder.container(keyedBy: Key.self); try c.encode(v, forKey: Key("all"))
+        case .`any`(let v): var c = encoder.container(keyedBy: Key.self); try c.encode(v, forKey: Key("any"))
+        case .eq(let v): var c = encoder.container(keyedBy: Key.self); try c.encode(v, forKey: Key("eq"))
+        case .lt(let v): var c = encoder.container(keyedBy: Key.self); try c.encode(v, forKey: Key("lt"))
+        case .len(let v): var c = encoder.container(keyedBy: Key.self); try c.encode(v, forKey: Key("len"))
+        case .has(let v): var c = encoder.container(keyedBy: Key.self); try c.encode(v, forKey: Key("has"))
+        case .`is`(let v): var c = encoder.container(keyedBy: Key.self); try c.encode(v, forKey: Key("is"))
+        case .add(let v): var c = encoder.container(keyedBy: Key.self); try c.encode(v, forKey: Key("add"))
+        case .sub(let v): var c = encoder.container(keyedBy: Key.self); try c.encode(v, forKey: Key("sub"))
+        case .cat(let v): var c = encoder.container(keyedBy: Key.self); try c.encode(v, forKey: Key("cat"))
+        case .pick(let v): var c = encoder.container(keyedBy: Key.self); try c.encode(v, forKey: Key("pick"))
+        case .lit(let v): try v.encode(to: encoder)
+        case .unknown(let v): try v.encode(to: encoder)
+        }
+    }
 }
 
 public struct Fallback: Codable, Equatable, Sendable {
@@ -336,7 +441,17 @@ public struct Form: Codable, Equatable, Sendable {
     public var action: String?
     public var fields: [Field]
     public var id: String?
+    public var show: Expr?
     public var submit: Submit?
+}
+
+public struct Hero: Codable, Equatable, Sendable {
+    public var actions: [Act]?
+    public var id: String?
+    public var media: Media?
+    public var show: Expr?
+    public var subtitle: String?
+    public var title: String
 }
 
 public struct Hunk: Codable, Equatable, Sendable {
@@ -360,7 +475,24 @@ public struct ImageSize: RawRepresentable, Hashable, Codable, Equatable, Sendabl
 public struct Images: Codable, Equatable, Sendable {
     public var id: String?
     public var items: [Image]
+    public var show: Expr?
     public var size: ImageSize?
+}
+
+public struct Island: Codable, Equatable, Sendable {
+    public var events: [String]?
+    public var fallback: Fallback
+    public var id: String?
+    public var name: String
+    public var props: [String: JSONValue]?
+    public var show: Expr?
+    public var size: IslandSize?
+}
+
+public struct IslandSize: Codable, Equatable, Sendable {
+    public var aspect: String?
+    public var height: UInt32?
+    public var width: UInt32?
 }
 
 public struct Keyboard: RawRepresentable, Hashable, Codable, Equatable, Sendable {
@@ -411,6 +543,57 @@ public struct List: Codable, Equatable, Sendable {
     public var id: String?
     public var reorder: Reorder?
     public var rows: [Block]
+    public var show: Expr?
+}
+
+public enum Lit: Codable, Equatable, Sendable {
+    case null
+    case bool(Bool)
+    case number(Double)
+    case string(String)
+
+    public init(from decoder: any Decoder) throws {
+        if (try? decoder.singleValueContainer().decodeNil()) == true { self = .null } else if let v = try? Bool(from: decoder) { self = .bool(v) } else if let v = try? Double(from: decoder) { self = .number(v) } else if let v = try? String(from: decoder) { self = .string(v) } else { throw DecodingError.dataCorrupted(.init(codingPath: decoder.codingPath, debugDescription: "no Lit")) }
+    }
+
+    public func encode(to encoder: any Encoder) throws {
+        switch self {
+        case .null: var c = encoder.singleValueContainer(); try c.encodeNil()
+        case .bool(let v): try v.encode(to: encoder)
+        case .number(let v): try v.encode(to: encoder)
+        case .string(let v): try v.encode(to: encoder)
+        }
+    }
+}
+
+public struct Match: Codable, Equatable, Sendable {
+    public var pattern: Pattern
+    public var value: Expr
+}
+
+public struct Media: Codable, Equatable, Sendable {
+    public var alt: String
+    public var caption: String?
+    public var height: UInt32
+    public var id: String?
+    public var poster: String?
+    public var show: Expr?
+    public var src: String
+    public var video: Bool?
+    public var width: UInt32
+}
+
+public struct Nav: Codable, Equatable, Sendable {
+    public var brand: NavLink?
+    public var id: String?
+    public var links: [NavLink]
+    public var show: Expr?
+}
+
+public struct NavLink: Codable, Equatable, Sendable {
+    public var current: Bool?
+    public var href: String
+    public var label: String
 }
 
 public struct Node: Codable, Equatable, Sendable {
@@ -508,11 +691,88 @@ public struct Other: Codable, Equatable, Sendable {
     public var placeholder: String?
 }
 
+public struct PartHeading: Codable, Equatable, Sendable {
+    public var level: UInt8
+    public var spans: [Span]
+}
+
+public struct PartPara: Codable, Equatable, Sendable {
+    public var spans: [Span]
+}
+
+public struct PartList: Codable, Equatable, Sendable {
+    public var items: [[Span]]
+    public var ordered: Bool
+}
+
+public struct PartQuote: Codable, Equatable, Sendable {
+    public var spans: [Span]
+}
+
+public struct PartCode: Codable, Equatable, Sendable {
+    public var lang: String?
+    public var text: String
+}
+
+public struct PartRule: Codable, Equatable, Sendable {
+}
+
+public enum Part: Codable, Equatable, Sendable {
+    case heading(PartHeading)
+    case para(PartPara)
+    case list(PartList)
+    case quote(PartQuote)
+    case code(PartCode)
+    case rule(PartRule)
+    case unknown
+
+    private enum Tag: String, CodingKey { case tag = "part" }
+
+    public init(from decoder: any Decoder) throws {
+        switch try decoder.container(keyedBy: Tag.self).decode(String.self, forKey: .tag) {
+        case "heading": self = .heading(try PartHeading(from: decoder))
+        case "para": self = .para(try PartPara(from: decoder))
+        case "list": self = .list(try PartList(from: decoder))
+        case "quote": self = .quote(try PartQuote(from: decoder))
+        case "code": self = .code(try PartCode(from: decoder))
+        case "rule": self = .rule(try PartRule(from: decoder))
+        default: self = .unknown
+        }
+    }
+
+    public func encode(to encoder: any Encoder) throws {
+        switch self {
+        case .heading(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("heading", forKey: .tag)
+        case .para(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("para", forKey: .tag)
+        case .list(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("list", forKey: .tag)
+        case .quote(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("quote", forKey: .tag)
+        case .code(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("code", forKey: .tag)
+        case .rule(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("rule", forKey: .tag)
+        case .unknown: var c = encoder.container(keyedBy: Tag.self); try c.encode("unknown", forKey: .tag)
+        }
+    }
+}
+
+public struct Pattern: RawRepresentable, Hashable, Codable, Equatable, Sendable {
+    public let rawValue: String
+    public init(rawValue: String) { self.rawValue = rawValue }
+    public static let filled = Self(rawValue: "filled")
+    public static let email = Self(rawValue: "email")
+    public static let url = Self(rawValue: "url")
+    public static let number = Self(rawValue: "number")
+}
+
 public struct Pending: Codable, Equatable, Sendable {
     public var count: String
     public var discard: Tap
     public var review: Tap
     public var text: String
+}
+
+public struct Prose: Codable, Equatable, Sendable {
+    public var id: String?
+    public var parts: [Part]
+    public var show: Expr?
 }
 
 public struct Queued: Codable, Equatable, Sendable {
@@ -557,6 +817,7 @@ public struct Row: Codable, Equatable, Sendable {
     public var lifted: Bool?
     public var menu: [Act]?
     public var rounds: [Round]?
+    public var show: Expr?
     public var sticky: Bool?
     public var style: RowStyle?
     public var subtitle: Toned?
@@ -579,6 +840,7 @@ public struct Run: Codable, Equatable, Sendable {
     public var dir: String?
     public var id: String?
     public var sha: String
+    public var show: Expr?
     public var touches: String?
     public var until: String?
 }
@@ -587,6 +849,7 @@ public struct Scene: Codable, Equatable, Sendable {
     public var id: String?
     public var label: String?
     public var lanes: [Lane]?
+    public var show: Expr?
 }
 
 public struct Screen: Codable, Equatable, Sendable {
@@ -599,9 +862,14 @@ public struct Screen: Codable, Equatable, Sendable {
     public var id: String?
     public var large: Bool?
     public var pending: Pending?
+    public var personas: [[String: JSONValue]]?
     public var refresh: Bool?
+    public var show: Expr?
+    public var sites: UInt64?
     public var source: String?
+    public var state: [String: Lit]?
     public var stream: String?
+    public var threads: [[String: JSONValue]]?
     public var title: String?
     public var url: String?
 }
@@ -613,6 +881,7 @@ public struct Secret: Codable, Equatable, Sendable {
     public var name: String
     public var placeholder: String?
     public var set: Bool?
+    public var show: Expr?
     public var values: [String: JSONValue]?
 }
 
@@ -621,6 +890,7 @@ public struct Section: Codable, Equatable, Sendable {
     public var footer: String?
     public var header: String?
     public var id: String?
+    public var show: Expr?
 }
 
 public struct Sheet: Codable, Equatable, Sendable {
@@ -628,6 +898,7 @@ public struct Sheet: Codable, Equatable, Sendable {
     public var cancel: String?
     public var done: Submit?
     public var id: String?
+    public var show: Expr?
     public var title: String
 }
 
@@ -649,10 +920,19 @@ public enum Shown: Codable, Equatable, Sendable {
     }
 }
 
+public struct Span: Codable, Equatable, Sendable {
+    public var bold: Bool?
+    public var code: Bool?
+    public var italic: Bool?
+    public var link: String?
+    public var text: String
+}
+
 public struct Stat: Codable, Equatable, Sendable {
     public var id: String?
     public var items: [Tile]?
     public var label: String?
+    public var show: Expr?
     public var spark: [Double]?
     public var tone: Tone?
     public var unit: String?
@@ -682,6 +962,7 @@ public struct Text: Codable, Equatable, Sendable {
     public var font: String?
     public var id: String?
     public var markdown: String?
+    public var show: Expr?
     public var size: Double?
     public var style: TextStyle?
     public var text: String?
@@ -746,5 +1027,6 @@ public enum Toned: Codable, Equatable, Sendable {
 public struct Web: Codable, Equatable, Sendable {
     public var height: UInt32
     public var id: String?
+    public var show: Expr?
     public var src: String
 }

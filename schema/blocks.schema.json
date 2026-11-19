@@ -84,6 +84,59 @@
       ],
       "type": "object"
     },
+    "Action": {
+      "description": "What a client sends when a control is used: the screen, the block, the action and its values.",
+      "properties": {
+        "action": {
+          "type": "string"
+        },
+        "block": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "screen": {
+          "type": "string"
+        },
+        "values": {
+          "additionalProperties": true,
+          "type": "object"
+        }
+      },
+      "required": [
+        "screen",
+        "action"
+      ],
+      "type": "object"
+    },
+    "Answer": {
+      "description": "A server's answer to an action: ops on the screen, a toast, close the sheet or open a screen.",
+      "properties": {
+        "close": {
+          "type": "boolean"
+        },
+        "open": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "ops": {
+          "items": {
+            "$ref": "#/$defs/Op"
+          },
+          "type": "array"
+        },
+        "toast": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "type": "object"
+    },
     "AppBlock": {
       "additionalProperties": true,
       "description": "A block of a `type` that is no core kind: an app's own, kept whole.",
@@ -128,7 +181,12 @@
               "editor",
               "scene",
               "diagram",
-              "composer"
+              "composer",
+              "prose",
+              "hero",
+              "media",
+              "nav",
+              "island"
             ]
           },
           "type": "string"
@@ -428,6 +486,71 @@
           "type": "object"
         },
         {
+          "$ref": "#/$defs/Prose",
+          "properties": {
+            "type": {
+              "const": "prose",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/Hero",
+          "properties": {
+            "type": {
+              "const": "hero",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/Media",
+          "properties": {
+            "type": {
+              "const": "media",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/Nav",
+          "properties": {
+            "type": {
+              "const": "nav",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/Island",
+          "properties": {
+            "type": {
+              "const": "island",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
           "$ref": "#/$defs/AppBlock"
         }
       ],
@@ -461,6 +584,16 @@
         },
         "label": {
           "type": "string"
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
         },
         "style": {
           "anyOf": [
@@ -589,6 +722,16 @@
             "null"
           ]
         },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
         "subtitle": {
           "type": [
             "string",
@@ -710,6 +853,16 @@
             "array",
             "null"
           ]
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
         }
       },
       "required": [
@@ -767,6 +920,16 @@
           "type": [
             "string",
             "null"
+          ]
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
           ]
         },
         "values": {
@@ -890,6 +1053,16 @@
             "null"
           ]
         },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
         "values": {
           "additionalProperties": true,
           "type": [
@@ -992,6 +1165,16 @@
             "null"
           ]
         },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
         "source": {
           "type": "string"
         },
@@ -1024,6 +1207,16 @@
           "type": [
             "string",
             "null"
+          ]
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
           ]
         },
         "summary": {
@@ -1072,6 +1265,16 @@
         "name": {
           "type": "string"
         },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
         "text": {
           "type": "string"
         }
@@ -1082,6 +1285,209 @@
         "action"
       ],
       "type": "object"
+    },
+    "Expr": {
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "get": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "get"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "not": {
+              "$ref": "#/$defs/Expr"
+            }
+          },
+          "required": [
+            "not"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "all": {
+              "items": {
+                "$ref": "#/$defs/Expr"
+              },
+              "type": "array"
+            }
+          },
+          "required": [
+            "all"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "any": {
+              "items": {
+                "$ref": "#/$defs/Expr"
+              },
+              "type": "array"
+            }
+          },
+          "required": [
+            "any"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "eq": {
+              "items": {
+                "$ref": "#/$defs/Expr"
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": "array"
+            }
+          },
+          "required": [
+            "eq"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "lt": {
+              "items": {
+                "$ref": "#/$defs/Expr"
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": "array"
+            }
+          },
+          "required": [
+            "lt"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "len": {
+              "$ref": "#/$defs/Expr"
+            }
+          },
+          "required": [
+            "len"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "has": {
+              "items": {
+                "$ref": "#/$defs/Expr"
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": "array"
+            }
+          },
+          "required": [
+            "has"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "is": {
+              "$ref": "#/$defs/Match"
+            }
+          },
+          "required": [
+            "is"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "add": {
+              "items": {
+                "$ref": "#/$defs/Expr"
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": "array"
+            }
+          },
+          "required": [
+            "add"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "sub": {
+              "items": {
+                "$ref": "#/$defs/Expr"
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": "array"
+            }
+          },
+          "required": [
+            "sub"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "cat": {
+              "items": {
+                "$ref": "#/$defs/Expr"
+              },
+              "type": "array"
+            }
+          },
+          "required": [
+            "cat"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "pick": {
+              "items": {
+                "$ref": "#/$defs/Expr"
+              },
+              "maxItems": 3,
+              "minItems": 3,
+              "type": "array"
+            }
+          },
+          "required": [
+            "pick"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/Lit"
+        }
+      ],
+      "description": "The behaviour language: a tree sent like any field, `{\"get\":\"email\"}` or a bare value."
     },
     "Fallback": {
       "description": "What a client with no view for a block's `type` draws: a plain row.",
@@ -1353,6 +1759,16 @@
             "null"
           ]
         },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
         "submit": {
           "anyOf": [
             {
@@ -1366,6 +1782,60 @@
       },
       "required": [
         "fields"
+      ],
+      "type": "object"
+    },
+    "Hero": {
+      "additionalProperties": true,
+      "description": "A page's opening: a title, a line, a picture and its actions.",
+      "properties": {
+        "actions": {
+          "items": {
+            "$ref": "#/$defs/Act"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "media": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Media"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "subtitle": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "title": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "title"
       ],
       "type": "object"
     },
@@ -1442,6 +1912,16 @@
           },
           "type": "array"
         },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
         "size": {
           "anyOf": [
             {
@@ -1456,6 +1936,93 @@
       "required": [
         "items"
       ],
+      "type": "object"
+    },
+    "Island": {
+      "additionalProperties": true,
+      "description": "A client component the app hosts: its props in, its named events out.",
+      "properties": {
+        "events": {
+          "items": {
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "fallback": {
+          "$ref": "#/$defs/Fallback"
+        },
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "props": {
+          "additionalProperties": true,
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "size": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/IslandSize"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "name",
+        "fallback"
+      ],
+      "type": "object"
+    },
+    "IslandSize": {
+      "description": "The box an island holds before it loads: a width and height, or an aspect.",
+      "properties": {
+        "aspect": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "height": {
+          "format": "uint32",
+          "minimum": 0,
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "width": {
+          "format": "uint32",
+          "minimum": 0,
+          "type": [
+            "integer",
+            "null"
+          ]
+        }
+      },
       "type": "object"
     },
     "Keyboard": {
@@ -1619,10 +2186,180 @@
             "$ref": "#/$defs/Block"
           },
           "type": "array"
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
         }
       },
       "required": [
         "rows"
+      ],
+      "type": "object"
+    },
+    "Lit": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "string"
+        }
+      ],
+      "description": "A plain value, written bare: null, a switch, a number or a string."
+    },
+    "Match": {
+      "description": "A value and the pattern it is tested against.",
+      "properties": {
+        "pattern": {
+          "$ref": "#/$defs/Pattern"
+        },
+        "value": {
+          "$ref": "#/$defs/Expr"
+        }
+      },
+      "required": [
+        "value",
+        "pattern"
+      ],
+      "type": "object"
+    },
+    "Media": {
+      "additionalProperties": true,
+      "description": "A picture or a video of a known size.",
+      "properties": {
+        "alt": {
+          "type": "string"
+        },
+        "caption": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "height": {
+          "format": "uint32",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "poster": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "src": {
+          "type": "string"
+        },
+        "video": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "width": {
+          "format": "uint32",
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "src",
+        "alt",
+        "width",
+        "height"
+      ],
+      "type": "object"
+    },
+    "Nav": {
+      "additionalProperties": true,
+      "description": "A site's link bar.",
+      "properties": {
+        "brand": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/NavLink"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "links": {
+          "items": {
+            "$ref": "#/$defs/NavLink"
+          },
+          "type": "array"
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "links"
+      ],
+      "type": "object"
+    },
+    "NavLink": {
+      "description": "A link of a site's bar.",
+      "properties": {
+        "current": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "href": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "label",
+        "href"
       ],
       "type": "object"
     },
@@ -1864,6 +2601,152 @@
       },
       "type": "object"
     },
+    "Part": {
+      "description": "One part of a prose tree.",
+      "oneOf": [
+        {
+          "properties": {
+            "level": {
+              "format": "uint8",
+              "maximum": 255,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "part": {
+              "const": "heading",
+              "type": "string"
+            },
+            "spans": {
+              "items": {
+                "$ref": "#/$defs/Span"
+              },
+              "type": "array"
+            }
+          },
+          "required": [
+            "part",
+            "level",
+            "spans"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "part": {
+              "const": "para",
+              "type": "string"
+            },
+            "spans": {
+              "items": {
+                "$ref": "#/$defs/Span"
+              },
+              "type": "array"
+            }
+          },
+          "required": [
+            "part",
+            "spans"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "items": {
+              "items": {
+                "items": {
+                  "$ref": "#/$defs/Span"
+                },
+                "type": "array"
+              },
+              "type": "array"
+            },
+            "ordered": {
+              "type": "boolean"
+            },
+            "part": {
+              "const": "list",
+              "type": "string"
+            }
+          },
+          "required": [
+            "part",
+            "ordered",
+            "items"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "part": {
+              "const": "quote",
+              "type": "string"
+            },
+            "spans": {
+              "items": {
+                "$ref": "#/$defs/Span"
+              },
+              "type": "array"
+            }
+          },
+          "required": [
+            "part",
+            "spans"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "lang": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "part": {
+              "const": "code",
+              "type": "string"
+            },
+            "text": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "part",
+            "text"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
+            "part": {
+              "const": "rule",
+              "type": "string"
+            }
+          },
+          "required": [
+            "part"
+          ],
+          "type": "object"
+        }
+      ]
+    },
+    "Pattern": {
+      "anyOf": [
+        {
+          "enum": [
+            "filled",
+            "email",
+            "url",
+            "number"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "string"
+        }
+      ],
+      "description": "A named test of a value; never a regex."
+    },
     "Pending": {
       "description": "A screen's bar of unsaved changes.",
       "properties": {
@@ -1885,6 +2768,38 @@
         "text",
         "discard",
         "review"
+      ],
+      "type": "object"
+    },
+    "Prose": {
+      "additionalProperties": true,
+      "description": "Text as a tree of headings, paragraphs, lists, quotes and code.",
+      "properties": {
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "parts": {
+          "items": {
+            "$ref": "#/$defs/Part"
+          },
+          "type": "array"
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "parts"
       ],
       "type": "object"
     },
@@ -2126,6 +3041,16 @@
             "null"
           ]
         },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
         "sticky": {
           "type": [
             "boolean",
@@ -2229,6 +3154,16 @@
         "sha": {
           "type": "string"
         },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
         "touches": {
           "type": [
             "string",
@@ -2272,6 +3207,16 @@
           "type": [
             "array",
             "null"
+          ]
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
           ]
         }
       },
@@ -2351,9 +3296,37 @@
             }
           ]
         },
+        "personas": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
         "refresh": {
           "type": [
             "boolean",
+            "null"
+          ]
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "sites": {
+          "format": "uint64",
+          "minimum": 0,
+          "type": [
+            "integer",
             "null"
           ]
         },
@@ -2363,9 +3336,28 @@
             "null"
           ]
         },
+        "state": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Lit"
+          },
+          "type": [
+            "object",
+            "null"
+          ]
+        },
         "stream": {
           "type": [
             "string",
+            "null"
+          ]
+        },
+        "threads": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "type": [
+            "array",
             "null"
           ]
         },
@@ -2418,6 +3410,16 @@
             "null"
           ]
         },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
         "values": {
           "additionalProperties": true,
           "type": [
@@ -2459,6 +3461,16 @@
             "string",
             "null"
           ]
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
         }
       },
       "required": [
@@ -2498,6 +3510,16 @@
             "null"
           ]
         },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
         "title": {
           "type": "string"
         }
@@ -2522,6 +3544,42 @@
       ],
       "description": "A row's or a tile's value: a string, a number, or a time."
     },
+    "Span": {
+      "description": "A run of text and how it is set.",
+      "properties": {
+        "bold": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "code": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "italic": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "link": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "text": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "type": "object"
+    },
     "Stat": {
       "additionalProperties": true,
       "description": "Figures: a list of tiles, or one tile inline.",
@@ -2545,6 +3603,16 @@
           "type": [
             "string",
             "null"
+          ]
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
           ]
         },
         "spark": {
@@ -2695,6 +3763,16 @@
           "type": [
             "string",
             "null"
+          ]
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
           ]
         },
         "size": {
@@ -2870,6 +3948,16 @@
           "type": [
             "string",
             "null"
+          ]
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
           ]
         },
         "src": {
