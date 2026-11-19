@@ -81,21 +81,47 @@ test("with JS off a link bar link goes to its page under the sub-path", async ()
 
 const bg = (page, sel = ":root") => page.evaluate((s) => getComputedStyle(document.querySelector(s)).getPropertyValue("--bg").trim(), sel);
 
-test("JS off: the three schemes side by side; JS on: the look sheet switches the whole site and keeps it", async () => {
-  const off = await open("schemes.html", { js: false });
-  deepStrictEqual(await Promise.all(["light", "dark", "paper"].map((s) => bg(off.page, `[data-id="s-${s}"]`))), ["#f6f6f6", "#161616", "#f3eee4"]);
+test("JS off: Styles pins each look's colours side by side; JS on: the nav's switcher restyles in place, follows the device and holds across pages", async () => {
+  const off = await open("styles.html", { js: false });
+  deepStrictEqual(await Promise.all(["default", "paper", "console", "playful"].map((s) => bg(off.page, `[data-id="s-${s}"]`))), ["#f6f6f6", "#f3eee4", "#eef1ee", "#ffffff"]);
   await off.close();
-  const on = await open("schemes.html");
+  const on = await open("index.html", { width: 1440 });
+  const root = (k) => on.page.evaluate((p) => getComputedStyle(document.documentElement).getPropertyValue(p).trim(), k);
+  const pressed = () =>
+    on.page.$$eval('[data-id="looks"] button', (bs) => {
+      const probe = document.body.appendChild(document.createElement("i"));
+      probe.style.background = "var(--l)";
+      const l = getComputedStyle(probe).backgroundColor;
+      probe.remove();
+      return bs.filter((b) => getComputedStyle(b).backgroundColor === l).map((b) => b.dataset.id);
+    });
   strictEqual(await bg(on.page), "#f6f6f6");
-  await on.page.click('[data-id="look"]');
-  const rows = on.page.locator(".b-sheet .row");
-  deepStrictEqual(await rows.allTextContents(), ["✓ the app's own", "Default dark", "Default light", "Paper"]);
-  await rows.filter({ hasText: "Paper" }).click();
-  strictEqual(await bg(on.page), "#f3eee4");
-  strictEqual(await on.page.locator(".b-sheet .row.on").textContent(), "✓ Paper");
+  await on.page.evaluate(() => (window.kept = true));
+  await on.page.click('[data-id="look-console"]');
+  deepStrictEqual([await bg(on.page), await root("--motion"), await root("--radius")], ["#eef1ee", "0", "0px"]);
+  await on.page.click('[data-id="look-paper"]');
+  deepStrictEqual([await bg(on.page), await root("--motion"), await root("--radius")], ["#f3eee4", "1.75", "6px"]);
+  ok(/serif/.test(await on.page.evaluate(() => getComputedStyle(document.body).fontFamily)), "Paper sets serif type");
+  ok(await on.page.evaluate(() => window.kept === true), "no reload");
+  const rise = (page) => page.evaluate(() => getComputedStyle(document.querySelector('[data-id="hero"]')).animationDuration);
+  strictEqual(await rise(on.page), "0s", "none under reduced motion");
+  deepStrictEqual(await pressed(), ["look-paper"]);
   await on.page.goto(`${BASE}gallery.html`);
   strictEqual(await bg(on.page), "#f3eee4");
+  deepStrictEqual(await pressed(), ["look-paper"]);
   await on.close();
+  const ctx = await browser.newContext({ colorScheme: "dark", reducedMotion: "no-preference" });
+  const dark = await ctx.newPage();
+  await dark.route("**/*", (r) => {
+    const path = r.request().url().slice(BASE.length).split(/[?#]/)[0] || "index.html";
+    return r.fulfill({ body: readFileSync(join(SITE, path)), contentType: TYPES[extname(path)] ?? "application/octet-stream" });
+  });
+  await dark.goto(BASE + "index.html");
+  strictEqual(await bg(dark), "#161616");
+  await dark.click('[data-id="look-playful"]');
+  strictEqual(await bg(dark), "#0f0f12");
+  strictEqual(await rise(dark), "0.65s", "Playful's motion 1.25 scales the 520 ms rise");
+  await ctx.close();
 });
 
 const screenOf = (f) => JSON.parse(readFileSync(join(SITE, f), "utf8").match(/id="blocks-screen"[^>]*>(.*?)<\/script>/s)[1]);

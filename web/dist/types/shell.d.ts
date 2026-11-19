@@ -1,6 +1,7 @@
 import type { LayoutPlace, LayoutTransition } from "./gen/layout.ts";
 import type { Scheme } from "./gen/schemes.ts";
 import type { Kind } from "./gen/types.ts";
+import { type Pair, type Scale } from "./core/look.ts";
 import { type Renderer, type Store } from "./render/index.ts";
 import { type Theme } from "./theme.ts";
 export { behave } from "./behave.ts";
@@ -45,6 +46,9 @@ export type Mount = {
     store?: Store;
 };
 export declare function resolved(n: Layout["root"], wide: boolean): Resolved;
+export type Worn = Scheme | (Pair & {
+    style?: Scale;
+});
 export declare function mount(o: Mount): {
     close(): void;
 };

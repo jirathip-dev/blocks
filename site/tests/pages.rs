@@ -27,7 +27,7 @@ fn pages(out: &Path) -> Vec<(String, String)> {
 fn every_page_has_its_head_and_no_url_from_the_domain_root() {
     let out = build("pages");
     let all = pages(&out);
-    assert_eq!(all.len(), 7 + 34);
+    assert_eq!(all.len(), 8 + 34);
     for (f, html) in &all {
         for want in [
             "<title>",

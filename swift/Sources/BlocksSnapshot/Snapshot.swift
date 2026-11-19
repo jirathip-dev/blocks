@@ -5,12 +5,25 @@ import ImageIO
 import SwiftUI
 import UniformTypeIdentifiers
 
-/// A harness run: each shot's PNG and tree, the report and the checks that failed.
+/// A harness run: each shot's PNG and tree, the report, what the tree rules saw and the checks that failed.
 public struct SnapshotRun: Sendable {
     public let report: Report
     public let pngs: [String: Data]
     public let trees: [String: TreeNode]
+    public let seen: [Seen]
     public let faults: [String]
+
+    /// Writes each shot's PNG and tree and the report into `dir`.
+    public func save(to dir: URL) throws {
+        try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        let json = JSONEncoder()
+        json.outputFormatting = [.prettyPrinted, .sortedKeys]
+        for name in report.shots {
+            try pngs[name]?.write(to: dir.appendingPathComponent("\(name).png"))
+            try json.encode(trees[name]).write(to: dir.appendingPathComponent("\(name).tree.json"))
+        }
+        try json.encode(report).write(to: dir.appendingPathComponent("report.json"))
+    }
 }
 
 /// The block ids and action ids a screen draws, in drawn order: a `fixtures/ids` file.
@@ -70,7 +83,7 @@ public struct Snapshot {
         let key = try JSONValue(screen).id ?? ""
         var edits: BlockState = [:]
         var (shots, sent, dropped, times) = ([String](), [JSONValue](), [String](), [Double]())
-        func hear(_ seen: Seen) -> Seen {
+        func hear(_ seen: Drawn) -> Drawn {
             for (id, (name, values)) in seen.heard.sorted(by: { $0.key < $1.key }) {
                 if let values {
                     sent.append(.object(["screen": .string(key), "action": .string(name), "block": .string(id), "values": .object(values)]))
@@ -84,15 +97,20 @@ public struct Snapshot {
         let start = clock.now
         var seen = hear(draw(screen, edits))
         let paint = ms(clock.now - start)
-        var (pngs, trees, faults) = ([String: Data](), [String: TreeNode](), [String]())
+        var (pngs, trees, found, faults) = ([String: Data](), [String: TreeNode](), [Seen](), [String]())
         func take(_ shot: String) throws {
             let tree = try seen.tree.decode(TreeNode.self)
             pngs[shot] = seen.png
             trees[shot] = tree
             shots.append(shot)
             if check, let expect { Self.same(expect, tree, shot, &faults) }
-            if check { Self.fit(tree, size.width, shot, &faults) }
-            if check { Self.named(tree, shot, &faults) }
+            if check {
+                let probed = try Self.probe(tree, size.width).map {
+                    try JSONValue.object(["rule": .string($0), "at": .string($1), "detail": .string($2), "shot": .string(shot)]).decode(Seen.self)
+                }
+                found += probed
+                faults += probed.map { "\(shot): \($0.rule) \($0.at): \($0.detail)" }
+            }
             if check, measure { faults += Self.measure(seen.png, tree, look: look).map { "\(shot): \($0)" } }
             if check, let ids, ids != seen.drawnIds {
                 faults.append("\(shot): drew ids \(seen.drawnIds), expected \(ids)")
@@ -158,7 +176,7 @@ public struct Snapshot {
             "dropped": .array(dropped.map(JSONValue.string)),
             "timings": .object(["first_paint_ms": .number(paint), "steps_ms": .array(times.map(JSONValue.number))]),
         ]).decode(Report.self)
-        return SnapshotRun(report: report, pngs: pngs, trees: trees, faults: faults)
+        return SnapshotRun(report: report, pngs: pngs, trees: trees, seen: found, faults: faults)
     }
 
     private func wrapped(_ wrap: @escaping @MainActor (AnyView) -> AnyView) -> Self {
@@ -222,8 +240,8 @@ public struct Snapshot {
         return kids.lazy.compactMap { find($0, id) }.first
     }
 
-    private func draw(_ screen: Block, _ edits: BlockState) -> Seen {
-        let seen = Seen()
+    private func draw(_ screen: Block, _ edits: BlockState) -> Drawn {
+        let seen = Drawn()
         var view = AnyView(
             BlocksView(screen, source: .core, state: edits).padding(BlocksView.inset)
                 .frame(width: size.width, height: size.height, alignment: .topLeading))
@@ -268,26 +286,39 @@ public struct Snapshot {
         }
     }
 
-    private static func named(_ n: TreeNode, _ at: String, _ out: inout [String]) {
-        let here = "\(at)/\(who(n))"
-        if n.role.isEmpty { out.append("\(here): has no role") }
-        if n.name.isEmpty { out.append("\(here): has no name") }
-        for child in n.children { named(child, here, &out) }
-    }
-
-    private static func fit(_ n: TreeNode, _ width: CGFloat, _ at: String, _ out: inout [String]) {
-        let here = "\(at)/\(who(n))"
-        let r = rect(n)
-        if n.drawn != .hidden, !(r.width > 0 && r.height > 0) { out.append("\(here): has no size") }
-        if r.minX < -0.5 || r.maxX > width + 0.5 { out.append("\(here): leaves the screen's width") }
-        let kids = n.children.filter { $0.drawn != .hidden }
-        for (i, a) in kids.enumerated() {
-            for b in kids.dropFirst(i + 1) {
-                let both = rect(a).intersection(rect(b))
-                if !both.isNull, both.width > 0.5, both.height > 0.5 { out.append("\(here): \(who(a)) overlaps \(who(b))") }
+    private static func probe(_ tree: TreeNode, _ width: CGFloat) -> [(String, String, String)] {
+        func walk(_ n: TreeNode, _ at: String) -> [(TreeNode, String)] {
+            [(n, at)] + n.children.indices.flatMap { walk(n.children[$0], "\(at)/\(step(n.children, $0))") }
+        }
+        let blocks = walk(tree, step([tree], 0))
+        let px = { (v: CGFloat) in String(format: "%g", v) }
+        let unnamed = blocks.filter { $0.0.role.isEmpty || $0.0.name.isEmpty }.map {
+            ("render/no-name", $0.1, $0.0.role.isEmpty ? "the block has no role" : "the block has no name")
+        }
+        let sizeless = blocks.filter { $0.0.drawn != .hidden }.map { ($0.1, rect($0.0)) }.filter { !($1.width > 0 && $1.height > 0) }.map {
+            ("render/no-size", $0, "\(px($1.width)) by \(px($1.height)) px")
+        }
+        let outside = blocks.map { ($0.1, rect($0.0)) }.filter { $1.minX < -0.5 || $1.maxX > width + 0.5 }.map {
+            ("render/overflow", $0, "the block spans \(px($1.minX.rounded())) to \(px($1.maxX.rounded())) px in a \(px(width)) px screen")
+        }
+        let wide = blocks.map { rect($0.0).maxX }.max() ?? 0
+        let page = wide > width + 0.5 ? [("render/overflow", "", "the page is \(px(wide.rounded())) px wide in a \(px(width)) px screen")] : []
+        let covered = blocks.flatMap { n, at in
+            let kids = n.children.indices.filter { n.children[$0].drawn != .hidden }
+            return kids.enumerated().flatMap { i, a in
+                kids.dropFirst(i + 1).filter { b in
+                    let both = rect(n.children[a]).intersection(rect(n.children[b]))
+                    return !both.isNull && both.width > 0.5 && both.height > 0.5
+                }.map { ("render/overlap", "\(at)/\(step(n.children, a))", "it covers \(step(n.children, $0))") }
             }
         }
-        for child in kids { fit(child, width, here, &out) }
+        return unnamed + sizeless + outside + page + covered
+    }
+
+    private static func step(_ sibs: [TreeNode], _ i: Int) -> String {
+        let n = sibs[i]
+        if let id = n.id { return "\(n.kind)#\(id)" }
+        return "\(n.kind)~\(sibs[..<i].filter { $0.id == nil && $0.kind == n.kind }.count)"
     }
 
     private static func rect(_ n: TreeNode) -> CGRect {
@@ -297,7 +328,7 @@ public struct Snapshot {
 }
 
 @MainActor
-private final class Seen {
+private final class Drawn {
     var tree: JSONValue = .null
     var taps: [String: BlockAction] = [:]
     var heard: [String: (String, [String: JSONValue]?)] = [:]

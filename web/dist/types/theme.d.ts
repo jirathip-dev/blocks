@@ -1,3 +1,4 @@
+import { type Pair, type Scale } from "./core/look.ts";
 import type { Scheme } from "./gen/schemes.ts";
 import type { Figure } from "./gen/types.ts";
 export type ThemeJson = {
@@ -13,7 +14,7 @@ export type ThemeJson = {
 export type Theme = {
     figure(f: Figure): Node | null;
     word(key: string, plain: string): Node;
-    css(s: Scheme): string;
+    css(look: Scheme | Pair, style?: Scale): string;
 };
 export { css, tiles } from "./core/look.ts";
 export declare const plain: Theme;
