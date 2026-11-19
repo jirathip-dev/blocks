@@ -577,15 +577,22 @@ fn md(s: &str) -> String {
                     esc(body)
                 );
             }
-            let t = pairs(&pairs(&esc(part), "`", '`', "code"), "**", '*', "b");
-            links(&t).replace('\n', "<br>")
+            let t = links(pairs(pairs(esc(part), "`", '`', "code"), "**", '*', "b"));
+            if t.contains('\n') {
+                t.replace('\n', "<br>")
+            } else {
+                t
+            }
         })
         .collect()
 }
 
-fn pairs(s: &str, mark: &str, stop: char, tag: &str) -> String {
+fn pairs(s: String, mark: &str, stop: char, tag: &str) -> String {
+    if !s.contains(mark) {
+        return s;
+    }
     let mut out = String::with_capacity(s.len());
-    let mut rest = s;
+    let mut rest = s.as_str();
     while let Some(at) = rest.find(mark) {
         let (before, from) = rest.split_at(at);
         out.push_str(before);
@@ -604,9 +611,12 @@ fn pairs(s: &str, mark: &str, stop: char, tag: &str) -> String {
     out + rest
 }
 
-fn links(s: &str) -> String {
+fn links(s: String) -> String {
+    if !s.contains('[') && !s.contains("http") {
+        return s;
+    }
     let mut out = String::with_capacity(s.len());
-    let mut rest = s;
+    let mut rest = s.as_str();
     while !rest.is_empty() {
         if let Some((text, url, next)) = named_link(rest) {
             out.push_str(&format!("<a href=\"{url}\" target=_blank rel=noopener>{text}</a>"));

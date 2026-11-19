@@ -24,6 +24,7 @@ export type Action = {
     screen: string;
     values?: Record<string, unknown> | null;
 };
+export type Align = "start" | "end";
 export type Answer = {
     close?: boolean | null;
     open?: string | null;
@@ -98,12 +99,19 @@ export type Block = ({
 } & Nav) | ({
     type: "island";
 } & Island) | ({
+    type: "table";
+} & Table) | ({
     type: "steps";
 } & Steps) | (AppBlock & {
     [key: string]: unknown;
 });
 export type Bound = {
     get: string;
+};
+export type BulkAction = {
+    action: string;
+    bad?: boolean | null;
+    label: string;
 };
 export type Button = {
     action?: string | null;
@@ -137,11 +145,12 @@ export type Card = {
     tone?: Tone | null;
 };
 export type CardKind = "ask" | "run" | "secret" | "config" | "proposal";
+export type Cell = string | number | Label;
 export type Check = {
     ok: Expr;
     say: string;
 };
-export type Child = Block | Lane | Round;
+export type Child = Block | Lane | Round | TableRow;
 export type ChipOption = {
     label: string;
     value: string;
@@ -177,6 +186,24 @@ export type ChoiceOption = {
     value: string;
     values?: Record<string, unknown> | null;
 };
+export type Column = {
+    align?: Align | null;
+    currency?: string | null;
+    digits?: number | null;
+    era?: Era | null;
+    hide?: boolean | null;
+    id: string;
+    kind: ColumnKind;
+    label: string;
+    max?: number | null;
+    phone?: PhonePart | null;
+    sort?: boolean | null;
+    tone?: Tone | null;
+    total?: Total | null;
+    unit?: string | null;
+    width?: number | null;
+};
+export type ColumnKind = "text" | "number" | "money" | "date" | "tone" | "bar";
 export type Composer = {
     action: string;
     acts?: Record<string, string> | null;
@@ -225,6 +252,8 @@ export type Editor = {
     show?: Expr | null;
     text: string;
 };
+export type Era = "be";
+export type ExportFormat = "csv" | "xlsx";
 export type Expr = {
     get: string;
 } | {
@@ -514,6 +543,7 @@ export type Pending = {
     review: Tap;
     text: string;
 };
+export type PhonePart = "title" | "tag" | "value" | "meta" | "hide";
 export type Prose = {
     id?: string | null;
     parts: Part[];
@@ -645,6 +675,7 @@ export type Sheet = {
     title: string;
 };
 export type Shown = string | number | Bound | Time;
+export type SortDir = "asc" | "desc";
 export type Span = {
     bold?: boolean | null;
     code?: boolean | null;
@@ -714,6 +745,30 @@ export type Sync = {
 export type Synced = {
     keys: KeyState[];
 };
+export type Table = {
+    columns: Column[];
+    empty?: string | null;
+    export?: ExportFormat[] | null;
+    filter?: boolean | null;
+    id?: string | null;
+    rows: TableRow[];
+    select?: TableSelect | null;
+    show?: Expr | null;
+    sort?: TableSort | null;
+    title?: string | null;
+};
+export type TableRow = {
+    cells: Record<string, Cell>;
+    id: string;
+    tap?: Tap | null;
+};
+export type TableSelect = {
+    actions: BulkAction[];
+};
+export type TableSort = {
+    by: string;
+    dir: SortDir;
+};
 export type Tap = {
     action?: string | null;
     copy?: string | null;
@@ -761,6 +816,7 @@ export type Timings = {
 };
 export type Tone = "ok" | "warn" | "bad" | "info" | "mute" | "accent" | "working" | "needs" | "done" | "fail" | "idle";
 export type Toned = string | Label;
+export type Total = "sum" | "avg" | "count";
 export type TreeDrawn = "native" | "fallback" | "hidden";
 export type TreeNode = {
     children: TreeNode[];
@@ -783,4 +839,4 @@ export type Why = "evicted" | "unpaired" | "handover";
 export type Working = {
     since: string;
 };
-export type Kind = "screen" | "sheet" | "section" | "list" | "row" | "card" | "choice" | "form" | "config" | "secret" | "run" | "button" | "chips" | "stat" | "text" | "images" | "web" | "diff" | "editor" | "scene" | "diagram" | "composer" | "lines" | "prose" | "hero" | "media" | "nav" | "island" | "steps";
+export type Kind = "screen" | "sheet" | "section" | "list" | "row" | "card" | "choice" | "form" | "config" | "secret" | "run" | "button" | "chips" | "stat" | "text" | "images" | "web" | "diff" | "editor" | "scene" | "diagram" | "composer" | "lines" | "prose" | "hero" | "media" | "nav" | "island" | "table" | "steps";

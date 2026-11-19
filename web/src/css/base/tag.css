@@ -1,0 +1,4 @@
+.tag{border:1px solid currentColor;border-radius:var(--radius);padding:0 var(--s1);font-size:var(--fs-meta);white-space:nowrap;color:var(--mute)}
+.tag.working,.tag.ok{color:var(--g)}.tag.needs,.tag.warn{color:var(--a)}.tag.fail,.tag.bad{color:var(--r)}.tag.done{color:var(--l)}
+.thw{font-weight:700}
+.pw{color:var(--mute);font-size:var(--fs-meta);font-weight:400;white-space:nowrap}

@@ -1,4 +1,4 @@
-frozen = ["ci/cap.toml", "docs/schema.md"]
+frozen = ["ci/cap.toml", "docs/schema.md", "web/src/blocks.css"]
 generated = [
     "schema/blocks.schema.json",
     "schema/sample.json",
@@ -22,6 +22,7 @@ generated = [
     "fixtures/site/*.html",
     "fixtures/protocol/sim-*.json",
     "fixtures/behave/sim.json",
+    "fixtures/css/*.css",
 ]
 generate = "just gen"
 shared = [
@@ -49,6 +50,10 @@ glob = "*.md"
 [[collect]]
 dir = "docs/schema"
 glob = "*.md"
+
+[[collect]]
+dir = "web/src/css"
+glob = "**/*.css"
 
 [comments]
 policy = "strict"

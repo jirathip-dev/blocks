@@ -2,7 +2,7 @@ use std::collections::{BTreeMap, BTreeSet};
 
 use serde_json::{Map, Value};
 
-use crate::kind::{Block, Fallback, Fields, Screen, Steps, Tap};
+use crate::kind::{Block, Fallback, Fields, Screen, Steps, Table, Tap};
 
 /// What makes a screen unfit to send: a server checks its own before it serves it.
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -65,7 +65,11 @@ pub(crate) fn linkable(url: &str) -> bool {
 }
 
 fn placed(o: &Fields) -> impl Iterator<Item = (String, &Value)> {
-    let lists = LISTS.iter().filter_map(|k| Some(((*k).to_string(), o.get(*k)?)));
+    let rows = kind(o) != "table";
+    let lists = LISTS
+        .iter()
+        .filter(move |k| rows || **k != "rows")
+        .filter_map(|k| Some(((*k).to_string(), o.get(*k)?)));
     let rounds = o.get("rounds").and_then(Value::as_array).into_iter().flatten();
     let in_rounds = rounds
         .enumerate()
@@ -77,7 +81,16 @@ fn placed(o: &Fields) -> impl Iterator<Item = (String, &Value)> {
 }
 
 pub(crate) fn children(o: &Fields) -> impl Iterator<Item = &Value> {
-    placed(o).map(|(_, v)| v)
+    let rounds = o.get("rounds").and_then(Value::as_array).into_iter().flatten();
+    let in_rounds = rounds.filter_map(|r| r.get("blocks"));
+    let rows = kind(o) != "table";
+    LISTS
+        .iter()
+        .filter(move |k| rows || **k != "rows")
+        .filter_map(|k| o.get(*k))
+        .chain(in_rounds)
+        .filter_map(Value::as_array)
+        .flatten()
 }
 
 fn kind(o: &Fields) -> &str {
@@ -85,6 +98,10 @@ fn kind(o: &Fields) -> &str {
 }
 
 fn plain(o: &Fields) -> Fallback {
+    let table = (kind(o) == "table").then(|| serde_json::from_value::<Table>(Value::Object(o.clone())).ok());
+    if let Some(t) = table.flatten() {
+        return t.fallback();
+    }
     let text = |k: &str| o.get(k).and_then(Value::as_str).filter(|s| !s.is_empty());
     let named = [
         "title", "label", "header", "question", "name", "file", "command", "source", "src",

@@ -1,6 +1,6 @@
 use std::path::{Path, PathBuf};
 
-use blocks::theme::{check_pack, css, default, gate, PerMode, Scheme, Style, Surface, Theme, DEFAULT_STYLE};
+use blocks::theme::{check_pack, css, default, gate, Mode, PerMode, Scheme, Style, Surface, Theme, DEFAULT_STYLE};
 
 const TOKENS: [&str; 19] = [
     "--bg", "--card", "--edge", "--line", "--scrim", "--fg", "--mute", "--l", "--link", "--g", "--a", "--r", "--p",
@@ -107,6 +107,63 @@ fn css_sets_every_token_for_both_modes() {
     }
     for (k, v) in DEFAULT_STYLE {
         assert!(light.contains(&format!("{k}:{v};")), "{k}");
+    }
+}
+
+#[test]
+fn css_writes_each_fixtures_css_file_for_the_default_pair_and_each_scheme_in_its_mode() {
+    let mut want = vec![
+        (
+            "default".to_owned(),
+            css(default(), &style_of(r#""format": 1, "type": "mono", "radius": 0"#)),
+        ),
+        (
+            "default-still".to_owned(),
+            css(default(), &style("fixtures/styles/still.json").unwrap()),
+        ),
+    ];
+    let mut schemes: Vec<PathBuf> = std::fs::read_dir(root().join("fixtures/schemes"))
+        .unwrap()
+        .map(|e| e.unwrap().path())
+        .filter(|p| p.extension().is_some_and(|x| x == "json"))
+        .collect();
+    schemes.sort();
+    for p in schemes {
+        let Ok(s) = serde_json::from_str::<Scheme>(&std::fs::read_to_string(&p).unwrap()) else {
+            continue;
+        };
+        let mut pair = default().clone();
+        match s.mode {
+            Mode::Dark => pair.dark = s,
+            Mode::Light => pair.light = s,
+        }
+        let name = p.file_stem().unwrap().to_string_lossy().into_owned();
+        want.push((
+            name,
+            css(&pair, &style_of(r#""format": 1, "type": "mono", "radius": 0"#)),
+        ));
+    }
+    let dir = root().join("fixtures/css");
+    if std::env::var_os("BLOCKS_GEN").is_some() {
+        std::fs::create_dir_all(&dir).unwrap();
+        for (name, text) in &want {
+            std::fs::write(dir.join(format!("{name}.css")), format!("{text}\n")).unwrap();
+        }
+    }
+    let mut files: Vec<String> = std::fs::read_dir(&dir)
+        .unwrap()
+        .map(|e| e.unwrap().file_name().to_string_lossy().into_owned())
+        .collect();
+    files.sort();
+    let mut names: Vec<String> = want.iter().map(|(n, _)| format!("{n}.css")).collect();
+    names.sort();
+    assert_eq!(files, names);
+    for (name, text) in want {
+        assert_eq!(
+            std::fs::read_to_string(dir.join(format!("{name}.css"))).unwrap(),
+            format!("{text}\n"),
+            "{name}"
+        );
     }
 }
 

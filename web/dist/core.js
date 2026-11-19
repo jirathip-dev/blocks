@@ -28,6 +28,7 @@ var hooks = {
   media: { variant: null, parts: [] },
   nav: { variant: null, parts: [] },
   island: { variant: null, parts: [] },
+  table: { variant: null, parts: ["title"] },
   steps: { variant: null, parts: ["title"] }
 };
 var roles = { section: "region", form: "form", config: "form", nav: "navigation" };
@@ -287,7 +288,7 @@ var str = (b, k) => typeof b[k] === "string" && b[k] !== "" ? String(b[k]) : nul
 function under(b, drawn) {
   if (drawn === "fallback") return Array.isArray(b.blocks) ? b.blocks : [];
   if (drawn === "hidden") return [];
-  const lists = ["blocks", "rows", "buttons"].flatMap((k) => Array.isArray(b[k]) ? b[k] : []);
+  const lists = ["blocks", b.type === "table" ? "" : "rows", "buttons"].flatMap((k) => Array.isArray(b[k]) ? b[k] : []);
   return lists.concat(blks(b.rounds).flatMap((r) => Array.isArray(r.blocks) ? r.blocks : []));
 }
 function role(b, kind) {
@@ -401,7 +402,20 @@ function gate(s) {
   for (const [x, y] of pairs) checks.push({ what: `\u0394E2000 ${x} \u2194 ${y}`, got: de(c(x), c(y)), min: 20 });
   return checks.filter((m) => m.got < m.min);
 }
+
+// src/core/look.ts
+var vars = (t) => Object.entries(t).map(([k, v]) => `${k}:${v}`);
+function css(look, style = {}) {
+  if ("tokens" in look) return `:root{${vars(look.tokens).join(";")};color-scheme:${look["color-scheme"]}}`;
+  const all = (t) => vars(t).map((d) => `${d};`).join("");
+  const head = `color-scheme:light dark;--space:${style.space ?? 1};--motion:${style.motion ?? 1};`;
+  return `:root{${head}${all(defaultStyle)}${all(look.light.tokens)}}@media (prefers-color-scheme: dark){:root{${all(look.dark.tokens)}}}`;
+}
+var tiles = `:where(:root){${vars(defaultStyle).join(";")}}`;
+var choose = (setting, dark, schemes = {}) => (setting !== null && Object.prototype.hasOwnProperty.call(schemes, setting) ? schemes[setting] : void 0) ?? defaultPair[dark ? "dark" : "light"];
 export {
+  choose,
+  css,
   defaultPair,
   defaultStyle,
   evaluate,
@@ -411,6 +425,7 @@ export {
   names,
   roles,
   start,
+  tiles,
   tree,
   view
 };

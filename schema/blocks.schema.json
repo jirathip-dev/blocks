@@ -120,6 +120,20 @@
       ],
       "type": "object"
     },
+    "Align": {
+      "anyOf": [
+        {
+          "enum": [
+            "start",
+            "end"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "string"
+        }
+      ]
+    },
     "Answer": {
       "description": "A server's answer to an action: ops on the screen, a toast, close the sheet or open a screen.",
       "properties": {
@@ -198,6 +212,7 @@
               "media",
               "nav",
               "island",
+              "table",
               "steps"
             ]
           },
@@ -611,6 +626,19 @@
           "type": "object"
         },
         {
+          "$ref": "#/$defs/Table",
+          "properties": {
+            "type": {
+              "const": "table",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
           "$ref": "#/$defs/Steps",
           "properties": {
             "type": {
@@ -638,6 +666,28 @@
       },
       "required": [
         "get"
+      ],
+      "type": "object"
+    },
+    "BulkAction": {
+      "description": "An action on the ticked rows: it sends `{rows: [ids]}`.",
+      "properties": {
+        "action": {
+          "type": "string"
+        },
+        "bad": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "label": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "action",
+        "label"
       ],
       "type": "object"
     },
@@ -895,6 +945,20 @@
         }
       ]
     },
+    "Cell": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "$ref": "#/$defs/Label"
+        }
+      ],
+      "description": "A table cell: text (an ISO date's too), a number, or a toned label; a missing cell is blank."
+    },
     "Check": {
       "description": "A field's test: while `ok` does not hold, the field shows `say` and its form's submit is off.",
       "properties": {
@@ -921,9 +985,12 @@
         },
         {
           "$ref": "#/$defs/Round"
+        },
+        {
+          "$ref": "#/$defs/TableRow"
         }
       ],
-      "description": "What an `insert` adds: a block, or a scene's lane or a row's round."
+      "description": "What an `insert` adds: a block, a scene's lane, a row's round or a table's row."
     },
     "ChipOption": {
       "description": "One chip.",
@@ -1127,6 +1194,142 @@
         "label"
       ],
       "type": "object"
+    },
+    "Column": {
+      "description": "A table's column: its id, header, kind, and how it aligns, formats, totals, sizes and shows on a phone.",
+      "properties": {
+        "align": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Align"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "currency": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "digits": {
+          "format": "uint8",
+          "maximum": 255,
+          "minimum": 0,
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "era": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Era"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "hide": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "id": {
+          "type": "string"
+        },
+        "kind": {
+          "$ref": "#/$defs/ColumnKind"
+        },
+        "label": {
+          "type": "string"
+        },
+        "max": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PhonePart"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "sort": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "tone": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Tone"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "total": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Total"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "unit": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "width": {
+          "format": "uint16",
+          "maximum": 65535,
+          "minimum": 0,
+          "type": [
+            "integer",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "kind"
+      ],
+      "type": "object"
+    },
+    "ColumnKind": {
+      "anyOf": [
+        {
+          "enum": [
+            "text",
+            "number",
+            "money",
+            "date",
+            "tone",
+            "bar"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "string"
+        }
+      ]
     },
     "Composer": {
       "additionalProperties": true,
@@ -1422,6 +1625,33 @@
         "action"
       ],
       "type": "object"
+    },
+    "Era": {
+      "anyOf": [
+        {
+          "enum": [
+            "be"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "string"
+        }
+      ]
+    },
+    "ExportFormat": {
+      "anyOf": [
+        {
+          "enum": [
+            "csv",
+            "xlsx"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "string"
+        }
+      ]
     },
     "Expr": {
       "anyOf": [
@@ -3274,6 +3504,23 @@
       ],
       "type": "object"
     },
+    "PhonePart": {
+      "anyOf": [
+        {
+          "enum": [
+            "title",
+            "tag",
+            "value",
+            "meta",
+            "hide"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "string"
+        }
+      ]
+    },
     "Prose": {
       "additionalProperties": true,
       "description": "Text as a tree of headings, paragraphs, lists, quotes and code.",
@@ -4123,6 +4370,20 @@
       ],
       "description": "A shown value (a row's or tile's value, a card's meta, a label's text): a string, a number, a state key's value, or a time."
     },
+    "SortDir": {
+      "anyOf": [
+        {
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "string"
+        }
+      ]
+    },
     "Span": {
       "description": "A run of text and how it is set.",
       "properties": {
@@ -4516,6 +4777,152 @@
       ],
       "type": "object"
     },
+    "Table": {
+      "additionalProperties": true,
+      "description": "A data table: typed columns, rows by id, sort, filter, totals, row select and export.",
+      "properties": {
+        "columns": {
+          "items": {
+            "$ref": "#/$defs/Column"
+          },
+          "type": "array"
+        },
+        "empty": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "export": {
+          "items": {
+            "$ref": "#/$defs/ExportFormat"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "filter": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "rows": {
+          "items": {
+            "$ref": "#/$defs/TableRow"
+          },
+          "type": "array"
+        },
+        "select": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TableSelect"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TableSort"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "title": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "columns",
+        "rows"
+      ],
+      "type": "object"
+    },
+    "TableRow": {
+      "description": "One row of a table: its id, its cells by column id, and what a tap on it does.",
+      "properties": {
+        "cells": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Cell"
+          },
+          "type": "object"
+        },
+        "id": {
+          "type": "string"
+        },
+        "tap": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Tap"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "cells"
+      ],
+      "type": "object"
+    },
+    "TableSelect": {
+      "description": "A table's row select: a tick box per row and its bulk actions.",
+      "properties": {
+        "actions": {
+          "items": {
+            "$ref": "#/$defs/BulkAction"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "actions"
+      ],
+      "type": "object"
+    },
+    "TableSort": {
+      "description": "A table's starting order: one column, up or down.",
+      "properties": {
+        "by": {
+          "type": "string"
+        },
+        "dir": {
+          "$ref": "#/$defs/SortDir"
+        }
+      },
+      "required": [
+        "by",
+        "dir"
+      ],
+      "type": "object"
+    },
     "Tap": {
       "description": "What a tap does: open a screen or sheet, send an action, open a thread or a URL, focus, copy.",
       "properties": {
@@ -4826,6 +5233,21 @@
         }
       ],
       "description": "A subtitle: plain text, or text with a tone."
+    },
+    "Total": {
+      "anyOf": [
+        {
+          "enum": [
+            "sum",
+            "avg",
+            "count"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "string"
+        }
+      ]
     },
     "TreeDrawn": {
       "description": "How a renderer drew a block: its own view, its fallback, or not at all.",
