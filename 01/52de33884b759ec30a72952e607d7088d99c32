@@ -1,0 +1,7 @@
+Decided: the showcase test expects 36 pages, since the table kind adds kind-table.html to the site.
+Because: site/src/kinds.rs:531
+Decided: merge origin/staging (#181, docs only) before pushing.
+Because: "a fallback, the static site writer's element, and the row diff working on its rows" stays as built
+Rejected: none
+Check: the Pages build job's showcase test passes at the new head.
+Owner: The showcase site's check now counts the new table page; nothing changes in how tables look or behave.
