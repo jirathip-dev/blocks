@@ -165,7 +165,7 @@ fn views() -> Vec<Block> {
         Block::Web(Box::new(Web::new("/doc", 240_u32).id("doc"))),
         Block::Diff(Box::new(Diff::new("src/lib.rs", vec![hunk]).id("change"))),
         Block::Scene(Box::new(Scene::new().id("scene").label("lanes").lanes(vec![lane]))),
-        Block::Diagram(Box::new(Diagram::new("graph TD; a-->b").id("flow").title("Flow"))),
+        Block::Diagram(Box::new(Diagram::new("[*] --> a\na --> b").id("flow").title("Flow"))),
     ]
 }
 
