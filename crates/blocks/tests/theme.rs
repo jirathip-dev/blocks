@@ -77,6 +77,9 @@ fn css_sets_every_token_for_both_modes() {
     for (k, v) in pair.dark.tokens.all() {
         assert!(dark.contains(&format!("{k}:{};", v.as_str())), "{k}");
     }
+    for (k, v) in DEFAULT_STYLE {
+        assert!(light.contains(&format!("{k}:{v};")), "{k}");
+    }
 }
 
 fn style(path: &str) -> Result<Style, String> {

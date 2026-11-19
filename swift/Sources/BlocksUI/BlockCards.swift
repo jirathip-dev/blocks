@@ -120,7 +120,7 @@ internal struct CardBlock: View {
         .surface(look, radius: 20)
         .overlay(alignment: .leading) {
             if look.glass {
-                RoundedRectangle(cornerRadius: 2).fill(tint).frame(width: 3).padding(.vertical, 16)
+                RoundedRectangle(cornerRadius: look.radius(2)).fill(tint).frame(width: 3).padding(.vertical, 16)
             }
         }
         .modifier(BlockActs(menu: block.menu ?? []))
@@ -196,7 +196,7 @@ internal struct ChoiceBlock: View {
             if let box = block.other {
                 TextField(box.placeholder ?? "", text: $other).ui(14, .regular, look)
                     .padding(.horizontal, 12).frame(height: 38)
-                    .background(palette.background.opacity(0.5), in: .rect(cornerRadius: 10))
+                    .background(palette.background.opacity(0.5), in: .rect(cornerRadius: look.radius(10)))
             }
             if let fallback = block.default {
                 RelativeText(template: fallback.label ?? "", until: fallback.until.date)

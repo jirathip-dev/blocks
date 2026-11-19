@@ -249,12 +249,13 @@ fn vars(s: &Scheme) -> String {
         .collect()
 }
 
-/// Every token as a CSS variable: the light scheme on `:root`, the dark one under `prefers-color-scheme: dark`.
+/// Every token as a CSS variable: the tile style and the light scheme on `:root`, the dark one under `prefers-color-scheme: dark`.
 pub fn css(schemes: &PerMode<Scheme>, style: &Style) -> String {
     format!(
-        ":root{{color-scheme:light dark;--space:{};--motion:{};{}}}@media (prefers-color-scheme: dark){{:root{{{}}}}}",
+        ":root{{color-scheme:light dark;--space:{};--motion:{};{}{}}}@media (prefers-color-scheme: dark){{:root{{{}}}}}",
         f64::from(style.space),
         f64::from(style.motion),
+        DEFAULT_STYLE.iter().map(|(k, v)| format!("{k}:{v};")).collect::<String>(),
         vars(&schemes.light),
         vars(&schemes.dark)
     )

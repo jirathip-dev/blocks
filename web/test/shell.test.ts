@@ -41,6 +41,7 @@ document.head = document.createElement("head");
 
 const { mount, resolved } = await import("../src/shell.ts");
 const { defaultPair } = await import("../src/gen/schemes.ts");
+const { tiles } = await import("../src/theme.ts");
 
 const at = (place) => ({ compact: place, wide: place });
 const screen = (id, path, place, label) => ({ type: "screen", id, source: "core", path, label, place: at(place), transition: "push" });
@@ -149,6 +150,6 @@ test("the menu lists the menu's screens but hidden ones, and the look sheet wear
   const [name, scheme] = Object.entries(schemes)[0];
   find(sheet, (x) => x.classList.contains("rt") && x.textContent === scheme.label).parentNode.parentNode.onclick();
   strictEqual(kept.get("b:look"), name);
-  ok(document.head.children.findLast((e) => e.id === "b-look").textContent.startsWith(`:root{--bg:${scheme.tokens["--bg"]};`));
+  ok(document.head.children.findLast((e) => e.id === "b-look").textContent.startsWith(`${tiles}:root{--bg:${scheme.tokens["--bg"]};`));
   shell.close();
 });

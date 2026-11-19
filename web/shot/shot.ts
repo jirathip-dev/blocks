@@ -1,12 +1,12 @@
 import { readFileSync } from "node:fs";
 import { webkit } from "playwright";
 import { defaultPair } from "../src/gen/schemes.ts";
-import { css as wear } from "../src/theme.ts";
+import { tiles, css as wear } from "../src/theme.ts";
 
 const BASE = "http://blocks.test/";
 const BUDGET_MS = 16.7;
 const dist = (f) => readFileSync(new URL(`../dist/${f}`, import.meta.url));
-const LOOK = `${wear(defaultPair.light)}@media (prefers-color-scheme: dark){${wear(defaultPair.dark)}}html{background:var(--bg);color:var(--fg)}`;
+const LOOK = `${tiles}${wear(defaultPair.light)}@media (prefers-color-scheme: dark){${wear(defaultPair.dark)}}html{color:var(--fg)}`;
 const PAGE = (css) =>
   `<!doctype html><meta charset=utf-8><link rel=stylesheet href=blocks.css><link rel=stylesheet href=look.css>${css.map((_, i) => `<link rel=stylesheet href=css/${i}>`).join("")}` +
   `<body><div id=root></div><script type=module>import * as B from "./blocks.js"; window.B = B;</script>`;

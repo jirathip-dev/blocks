@@ -13,7 +13,7 @@ internal struct RunBlock: View {
         VStack(alignment: .leading, spacing: 10) {
             Text("$ \(command)").font(.system(size: 13, design: .monospaced)).foregroundStyle(palette.foreground)
                 .padding(10).frame(maxWidth: .infinity, alignment: .leading)
-                .background(palette.background.opacity(0.6), in: .rect(cornerRadius: 10))
+                .background(palette.background.opacity(0.6), in: .rect(cornerRadius: look.radius(10)))
             VStack(alignment: .leading, spacing: 3) {
                 Text("sha \(block.sha)").font(.system(size: 12, design: .monospaced))
                 if let dir = block.dir { Text("in \(dir)") }
@@ -62,7 +62,7 @@ internal struct SecretBlock: View {
                     Image(systemName: "faceid").foregroundStyle(palette.mute)
                 }
                 .padding(.horizontal, 12).frame(height: 38)
-                .background(palette.background.opacity(0.5), in: .rect(cornerRadius: 10))
+                .background(palette.background.opacity(0.5), in: .rect(cornerRadius: look.radius(10)))
             }
             .buttonStyle(.plain).accessibilityLabel(block.label ?? name)
             Label("Sent to \(poster) only, never to the agent", systemImage: "lock.fill")
@@ -96,6 +96,7 @@ internal struct SecretBlock: View {
 }
 
 internal struct FieldsBlock: View {
+    @Environment(\.look) private var look
     @Environment(\.card) private var context
     @Environment(\.form) private var shared
     @Environment(\.act) private var act
@@ -113,9 +114,17 @@ internal struct FieldsBlock: View {
         }
     }
 
-    internal var body: some View {
+    @ViewBuilder internal var body: some View {
+        if look.tiles != nil, context.tint == nil {
+            fields.padding(14).frame(maxWidth: .infinity, alignment: .leading).surface(look)
+        } else {
+            fields
+        }
+    }
+
+    private var fields: some View {
         let edits = live ?? (block.submit == nil ? shared ?? $own : $own)
-        VStack(alignment: .leading, spacing: 10) {
+        return VStack(alignment: .leading, spacing: 10) {
             ForEach(Array(block.fields.enumerated()), id: \.offset) { _, field in
                 FieldRow(field: field, edits: edits)
             }
@@ -160,9 +169,9 @@ internal struct FieldRow: View {
                 Text(shown).ui(14, .regular, look)
             }
             .padding(.horizontal, 12).frame(minHeight: 38).padding(.vertical, note == nil ? 0 : 4)
-            .background(palette.background.opacity(0.5), in: .rect(cornerRadius: 10))
+            .background(palette.background.opacity(0.5), in: .rect(cornerRadius: look.radius(10)))
             .overlay {
-                if focus == name { RoundedRectangle(cornerRadius: 10).strokeBorder(palette.lead, lineWidth: 2) }
+                if focus == name { RoundedRectangle(cornerRadius: look.radius(10)).strokeBorder(palette.lead, lineWidth: 2) }
             }
         }
         .buttonStyle(.plain).id(name)

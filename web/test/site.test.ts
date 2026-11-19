@@ -123,6 +123,7 @@ test("the fixture site is the same PNG and tree before and after blocks.js takes
   const on = await open();
   ok(shot.equals(await on.page.screenshot({ fullPage: true })), "the PNG changed when blocks.js took the page over");
   deepStrictEqual(await tree(on.page), want);
+  deepStrictEqual(await on.page.evaluate(() => document.getAnimations().map((a) => a.animationName)), []);
   strictEqual(want[0].kind, "screen");
   await on.page.fill('input[name="email"]', "a@b.test");
   const sent = on.page.waitForResponse((r) => r.request().method() === "POST");

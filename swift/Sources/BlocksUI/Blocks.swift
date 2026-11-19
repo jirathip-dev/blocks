@@ -157,11 +157,12 @@ internal struct BlockNode: View {
 }
 
 internal struct BlockStack: View {
+    @Environment(\.look) private var look
     internal let blocks: [Block]
-    internal var spacing: CGFloat = 10
+    internal var spacing: CGFloat?
 
     internal var body: some View {
-        VStack(alignment: .leading, spacing: spacing) {
+        VStack(alignment: .leading, spacing: spacing ?? look.tiles?.seam ?? 10) {
             ForEach(Array(blocks.enumerated()), id: \.offset) { _, block in BlockNode(block: block) }
         }
     }
@@ -197,8 +198,14 @@ internal struct ScreenBlock: View {
                 }
                 if let done = block.done { DoneButton(done: done) }
             }
-            BlockStack(blocks: block.blocks ?? [], spacing: 14)
+            BlockStack(blocks: block.blocks ?? [], spacing: look.tiles.map { $0.dotGap * 2 } ?? 14)
         }
+        .background {
+            if let tiles = look.tiles {
+                DotGrid(tiles: tiles, color: look.palette.token(tiles.dot)).padding(-BlocksView.inset)
+            }
+        }
+        .modifier(BuildsUp())
     }
 }
 

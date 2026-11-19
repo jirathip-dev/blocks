@@ -3,13 +3,15 @@ import type { Scheme } from "./gen/schemes.ts";
 import type { Answer, Block, Kind, Op } from "./gen/types.ts";
 import { apply, patcher } from "./patch.ts";
 import { type Blk, blks, btn, type Ctx, el, h, isBlk, obj, type Post, type Renderer, render, type Store, tick } from "./render/index.ts";
+import { settle } from "./motion.ts";
 import { stream } from "./stream.ts";
-import { plain, type Theme } from "./theme.ts";
+import { plain, type Theme, tiles } from "./theme.ts";
 
 export { dump } from "./dump.ts";
+export { settle } from "./motion.ts";
 export { apply, patcher } from "./patch.ts";
 export { el, h, kids, render } from "./render/index.ts";
-export { packs, plain } from "./theme.ts";
+export { packs, plain, tiles } from "./theme.ts";
 
 /// A layout node as the server's checked `layout.json` writes it; `P` is its place, per size class or resolved.
 export type Placed<P> = {
@@ -42,7 +44,7 @@ export type Mount = {
   store?: Store;
 };
 
-type View = { source: string; path: string; back: string[]; open: Set<string>; box: HTMLElement; body: HTMLElement; model?: Block; stop?: () => void };
+type View = { source: string; path: string; back: string[]; open: Set<string>; box: HTMLElement; body: HTMLElement; model?: Block; built: Set<string>; stop?: () => void };
 type Tab = { node: Resolved; button: HTMLElement; pane: HTMLElement; view?: View };
 
 const ALWAYS: LayoutPlace[] = ["cards", "column", "panel", "inline"];
@@ -91,7 +93,7 @@ function wearer(schemes: Record<string, Scheme>, theme: Theme) {
   document.head.append(look);
   const wear = (name: string | null) => {
     const s: Scheme | undefined = name ? schemes[name] : undefined;
-    look.textContent = s ? theme.css(s) : "";
+    look.textContent = tiles + (s ? theme.css(s) : "");
   };
   return { look, wear };
 }
@@ -193,10 +195,13 @@ function draw(o: Mount, store: Store, theme: Theme, wear: (name: string | null) 
     b.onclick = () => back(v);
     v.box.replaceChildren(...(v.back.length && v !== sheetView ? [b] : []), v.body);
     if (v === sheetView) heading(v);
+    if (!e || v.built.has(v.path)) return;
+    v.built.add(v.path);
+    requestAnimationFrame(() => settle(v.body));
   };
 
   const view = (source: string, path: string, box: HTMLElement): View => {
-    const v: View = { source, path, back: [], open: new Set(), box, body: el("div", "b-view") };
+    const v: View = { source, path, back: [], open: new Set(), box, body: el("div", "b-view"), built: new Set() };
     v.body.addEventListener("redraw", () => paint(v));
     return v;
   };

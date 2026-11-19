@@ -65,11 +65,13 @@ public struct Look: Sendable {
     public var palette: Palette
     public var style: Style
     public var still: Bool
+    public var tiles: Tiles?
 
-    public init(palette: Palette = .defaultDark, style: Style = .bundled, still: Bool = false) {
+    public init(palette: Palette = .defaultDark, style: Style = .bundled, still: Bool = false, tiles: Tiles? = .default) {
         self.palette = palette
         self.style = style
         self.still = still
+        self.tiles = tiles
     }
 }
 
