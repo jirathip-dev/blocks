@@ -52,6 +52,13 @@ jobs:
         run: just deps
       - name: "deny (licences, advisories, duplicate versions, sources; deny.toml)"
         run: just deny
+      - name: "For apps line (a PR touching ci/for-apps.paths carries one in its body)"
+        if: github.event_name == 'pull_request'
+        env:
+          BODY: ${{ github.event.pull_request.body }}
+        run: |
+          printf '%s' "$BODY" > "$RUNNER_TEMP/for-apps-body.md"
+          git diff --name-only HEAD^1 HEAD | scripts/for-apps.sh "$RUNNER_TEMP/for-apps-body.md"
       - name: "arch-check (layers, bans, sizes, frozen and generated files, comments, docs; .drover/arch.toml)"
         env:
           BODY: ${{ github.event.pull_request.body }}
