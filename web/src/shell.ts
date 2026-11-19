@@ -8,7 +8,8 @@ import { settle } from "./motion.ts";
 import { stream } from "./stream.ts";
 import { plain, type Theme, tiles } from "./theme.ts";
 
-export { behave, evaluate, start, view } from "./behave.ts";
+export { behave } from "./behave.ts";
+export { evaluate, start, view } from "./core/eval.ts";
 export { dump } from "./dump.ts";
 export { settle } from "./motion.ts";
 export { apply, patcher } from "./patch.ts";
