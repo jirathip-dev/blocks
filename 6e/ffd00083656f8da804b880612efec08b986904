@@ -1,0 +1,11 @@
+Decided: the rules.md layer chain is rewritten from the [[layer]] may_use lists, not just renamed
+Because: .drover/arch.toml:37
+Decided: bench.md Bursts describes the requestAnimationFrame scheduling; bench/run.js GAP_MS stays 150, still over a frame
+Because: web/src/patch.ts:175
+Decided: README names both the cap file and the cap.d raises, since line-cap.sh takes the highest line_cap of both
+Because: scripts/line-cap.sh:4
+Decided: README shipped line edited per the owner's amendment
+Because: q2238
+Rejected: lowering bench/run.js GAP_MS to match one frame — not asked, and the doc only needed the reason fixed
+Check: each edited line matches the file it cites; CI arch docs check is green
+Owner: Agent-read docs now match the code; no code changed.
