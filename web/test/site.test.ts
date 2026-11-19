@@ -43,7 +43,8 @@ test("site and render give the same element per kind: tag, classes, hooks and te
   const { page, close } = await open({ page: "<!doctype html><body>" });
   const kinds = readdirSync(at("../../fixtures/blocks/")).map((f) => f.replace(/\.json$/, ""));
   strictEqual(kinds.length, 27);
-  for (const k of kinds) {
+  ok(read("../../fixtures/html/diagram.html").includes("data-fallback"), "the static diagram is its fallback until site lays one out");
+  for (const k of kinds.filter((k) => k !== "diagram")) {
     const [written, drawn] = await page.evaluate(
       async ([html, b]) => {
         const B = await import("/blocks.js");

@@ -2,5 +2,5 @@
   "type": "diagram",
   "id": "flow",
   "title": "Flow",
-  "source": "graph TD; a-->b"
+  "source": "[*] --> a\na --> b"
 }
