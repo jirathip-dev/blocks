@@ -1,0 +1,6 @@
+Decided: merge origin/staging again; take its web/dist/blocks.js and rebuild it with the gen steps instead of merging by hand
+Because: web/package.json:7
+Decided: staging build fix, the site test counts 8 fixed pages now that #142 added the Styles page, plus 34 kinds
+Because: site/tests/pages.rs:30
+Rejected: none
+Owner: The document view sits on the latest staging with the look switcher; a site test count is corrected.
