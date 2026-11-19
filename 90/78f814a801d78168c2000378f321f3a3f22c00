@@ -1,0 +1,7 @@
+Decided: tree.ts imports evaluate and State from behave.ts and re-exports evaluate, so the tree tests stay untouched
+Because: "Behaviour unchanged: `web/test/tree.test.ts` and `web/test/behave.test.ts` pass with tests only moved or renamed"
+Decided: hidden is a show value of null or false, as flag() gave before, without keeping a copy of flag
+Because: web/src/tree.ts:24
+Rejected: a new shared expr module — behave.ts touches document only inside behave(), so importing it is DOM-free already
+Check: web/test/tree.test.ts and behave.test.ts pass untouched; web/dist/blocks.js unchanged at 20855 B gzipped
+Owner: The web library works out screen conditions with one piece of code instead of two, with the same results.
