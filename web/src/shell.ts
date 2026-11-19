@@ -2,6 +2,7 @@ import type { LayoutPlace, LayoutTransition } from "./gen/layout.ts";
 import type { Scheme } from "./gen/schemes.ts";
 import type { Answer, Block, Kind, Op, Toast } from "./gen/types.ts";
 import { behave } from "./behave.ts";
+import type { Held } from "./gesture.ts";
 import { choose } from "./core/look.ts";
 import { apply, patcher } from "./patch.ts";
 import { type Blk, blks, btn, type Ctx, el, h, isBlk, linkable, obj, type Post, type Renderer, render, type Store, tick } from "./render/index.ts";
@@ -49,7 +50,7 @@ export type Mount = {
   store?: Store;
 };
 
-type View = { source: string; path: string; back: string[]; open: Set<string>; box: HTMLElement; body: HTMLElement; model?: Block; built: Set<string>; stop?: () => void; sync: () => void };
+type View = { source: string; path: string; back: string[]; open: Set<string>; box: HTMLElement; body: HTMLElement; model?: Block; built: Set<string>; held: Map<string, Held>; stop?: () => void; sync: () => void };
 type Tab = { node: Resolved; button: HTMLElement; pane: HTMLElement; view?: View };
 
 const ALWAYS: LayoutPlace[] = ["cards", "column", "panel", "inline"];
@@ -186,6 +187,7 @@ function draw(o: Mount, store: Store, theme: Theme, wear: (name: string | null) 
     theme,
     store,
     apps: o.blocks,
+    held: v.held,
   });
 
   const paint = (v: View) => {
@@ -203,7 +205,7 @@ function draw(o: Mount, store: Store, theme: Theme, wear: (name: string | null) 
 
   const view = (source: string, path: string, box: HTMLElement): View => {
     const body = el("div", "b-view");
-    const v: View = { source, path, back: [], open: new Set(), box, body, built: new Set(), sync: () => {} };
+    const v: View = { source, path, back: [], open: new Set(), box, body, built: new Set(), held: new Map(), sync: () => {} };
     v.sync = behave(body, () => v.model);
     v.body.addEventListener("redraw", () => paint(v));
     return v;
@@ -442,7 +444,7 @@ export function adopt(o: { theme?: Theme; store?: Store; blocks?: AppBlocks } = 
     else if (typeof x.action === "string") void act({ action: x.action, values: x.values });
     else if (x.sheet === "look") lookSheet();
   };
-  const ctx: Ctx = { screen, act, tap, open: new Set(), theme, store, apps: o.blocks };
+  const ctx: Ctx = { screen, act, tap, open: new Set(), theme, store, apps: o.blocks, held: new Map() };
   document.addEventListener("submit", (e) => {
     const f = e.target;
     if (!(f instanceof HTMLFormElement) || !f.elements.namedItem("_action")) return;

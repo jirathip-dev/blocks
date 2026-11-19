@@ -46,6 +46,7 @@ export declare const expr: {
     add: (...v: Expr[]) => Expr;
     sub: (...v: Expr[]) => Expr;
     mul: (...v: Expr[]) => Expr;
+    div: (...v: Expr[]) => Expr;
     cat: (...v: Expr[]) => Expr;
     pick: (...v: Expr[]) => Expr;
 };

@@ -102,11 +102,14 @@ var defaultStyle = {
   "--stagger": "40ms"
 };
 
+// src/core/gesture.ts
+var WORDS = ["reorder", "move", "stretch", "edit", "draw", "remove"];
+
 // src/core/eval.ts
 var own = (o, k) => Object.prototype.hasOwnProperty.call(o, k);
 var rec = (v) => typeof v === "object" && v !== null && !Array.isArray(v);
 var UNKNOWN = { "?": null };
-var PAIRS = { eq: 2, lt: 2, has: 2, add: 2, sub: 2, mul: 2, pick: 3 };
+var PAIRS = { eq: 2, lt: 2, has: 2, add: 2, sub: 2, mul: 2, div: 2, pick: 3 };
 var PATTERNS = ["filled", "email", "url", "number"];
 function read(v) {
   if (Array.isArray(v)) return void 0;
@@ -201,6 +204,8 @@ function ev(e, s) {
       return n ? num(n.x - n.y) : null;
     case "mul":
       return n ? num(n.x * n.y) : null;
+    case "div":
+      return n ? num(n.x / n.y) : null;
     case "cat":
       return xs.map(text).join("");
     case "pick":
@@ -224,7 +229,7 @@ var actionOf = (a) => {
   return typeof k === "string" ? k : void 0;
 };
 var acts = (b) => {
-  const all = [...list(b.actions), ...list(b.swipe), ...list(b.menu), ...rec(b.button) ? [b.button] : []];
+  const all = [...list(b.actions), ...list(b.swipe), ...list(b.menu), ...[b.button, ...WORDS.map((w) => b[w])].filter(rec)];
   return [...all, ...all.flatMap((a) => list(a.menu))];
 };
 var lit = (v) => v === null || typeof v === "boolean" || typeof v === "number" || typeof v === "string" ? v : null;
@@ -460,6 +465,7 @@ var expr = {
   add: (...v) => ({ add: v }),
   sub: (...v) => ({ sub: v }),
   mul: (...v) => ({ mul: v }),
+  div: (...v) => ({ div: v }),
   cat: (...v) => ({ cat: v }),
   pick: (...v) => ({ pick: v })
 };
