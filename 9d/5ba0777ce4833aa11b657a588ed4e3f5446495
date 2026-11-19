@@ -1,0 +1,12 @@
+Decided: the read view is role=button with "edit <name>"; a tap, Enter or Space opens a textarea that stays open, as on Swift
+Because: q2185
+Decided: errors off the excerpt are listed after the lines as "line N · message"; two errors on one line, the first wins
+Because: web/src/render/editor.ts:12
+Decided: the open textarea element is kept per screen and block id, so a redraw keeps the draft and cursor and uses the new action
+Because: docs/design/editor/README.md:24
+Decided: site/editor.rs writes the read view only, the same element render draws, since B8 landed on staging mid-PR
+Because: "it writes the same element and `fixtures/html/editor.html` matches"
+Rejected: a no-JS textarea form in the site writer — it would no longer be the element render draws
+Check: web/test/render.test.ts editor tests (fake timers for the 400 ms check) and crates/blocks/tests/site.rs editor test
+Check: site.test.ts compares fixtures/html/editor.html with render's element
+Owner: The web and static pages now draw the text editor block with numbered lines and error markers, and it can be edited in place.
