@@ -64,6 +64,7 @@ web: web-install
 arch:
     {{drover}} arch-check ${BASE:+--base "$BASE"} ${PR_BODY:+--pr-body "$PR_BODY"}
     DROVER={{drover}} sh scripts/arch-size.test.sh
+    DROVER={{drover}} sh scripts/arch-ban.test.sh
 
 # The line cap in ci/cap.toml (non-test, non-generated Rust, TS and Swift; CI's cap workflow), the For apps check's test and the 30-line rules file.
 cap:
