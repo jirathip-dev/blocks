@@ -1,0 +1,9 @@
+Decided: split only the three files the issue names; the other Block*.swift files stay for their own issue
+Because: "the BlocksUI view files (`Blocks.swift`, `BlockCards.swift`, `BlockLeaves.swift`) split into"
+Rejected: moving BlockContent, BlockFields, BlockEdits and the rest too — outside this issue's named files and frozen lines
+Decided: RelativeText, Pill and String.date go to Components.swift because two or more kinds use them
+Because: swift/Sources/BlocksUI/Components.swift:73
+Decided: ToolbarItemView with Screen, MissingPoster with Card, Sparkline with Stat; Palette.tone to Theme.swift
+Because: swift/Sources/BlocksUI/Kind/Screen.swift:34
+Check: sorted non-blank non-import lines of the old three plus Theme and Components equal the new files'
+Owner: The Swift views are reorganised one kind per file; nothing changes on screen.
