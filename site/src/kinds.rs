@@ -2,10 +2,10 @@ use std::collections::BTreeMap;
 
 use blocks::site::fragment;
 use blocks::{
-    Act, Block, Built, Button, ButtonStyle, Card, CardKind, ChipOption, Chips, Choice, ChoiceOption, Composer,
+    Act, Bar, Block, Built, Button, ButtonStyle, Card, CardKind, ChipOption, Chips, Choice, ChoiceOption, Composer,
     ComposerChip, Diagram, Diff, Editor, Fallback, Field, FieldKind, FieldValue, Form, Hero, Hunk, Image, Images,
     Island, IslandSize, Label, Lane, LaneState, LineError, List, Media, Nav, NavLink, Node, Other, Part, Prose, Queued,
-    Row, Run, Scene, Screen, Secret, Sheet, Shown, Stat, Submit, Text, Tile, Tone, Web,
+    Row, Run, Scene, Screen, Secret, Sheet, Shown, Stage, Stat, Steps, Submit, Tap, Text, Tile, Tone, Web,
 };
 use serde_json::{Number, Value};
 
@@ -17,8 +17,8 @@ const GROUPS: [(&str, &[&str]); 4] = [
         "Words and pictures",
         &["text", "prose", "hero", "nav", "media", "images", "diagram"],
     ),
-    ("Lists and figures", &["list", "row", "stat", "table", "chips"]),
-    ("Input", &["button", "choice", "form", "composer", "run"]),
+    ("Lists and figures", &["list", "row", "stat", "table", "steps", "chips"]),
+    ("Input", &["button", "choice", "form", "lines", "composer", "run"]),
 ];
 
 fn about(kind: &str) -> &'static str {
@@ -37,6 +37,7 @@ fn about(kind: &str) -> &'static str {
         "list" => "A list of rows.",
         "row" => "One row: a title, a line, a value.",
         "stat" => "Figures: one tile, or a list of tiles.",
+        "steps" => "A stepper with its current step, or progress bars.",
         "chips" => "A row of chips, one or many picked.",
         "button" => "A button that posts its action.",
         "choice" => "A question with options and a free answer.",
@@ -47,6 +48,7 @@ fn about(kind: &str) -> &'static str {
         "secret" => "A secret's input; its value is never sent back.",
         "diff" => "A file's diff.",
         "editor" => "A text editor and its errors.",
+        "lines" => "Rows of fields with add and remove, totals and a balance check.",
         "web" => "A web view of a fixed height.",
         "scene" => "Workers at work, each in its state.",
         "island" => "An app's own component, its props in and events out.",
@@ -225,6 +227,27 @@ fn release() -> Diagram {
         .nodes(nodes)
 }
 
+fn stage(id: &str, label: &str, sub: Option<&str>, tap: bool) -> Stage {
+    Stage {
+        id: id.into(),
+        label: label.into(),
+        sub: sub.map(Into::into),
+        tap: tap.then(|| Tap {
+            action: Some(format!("open-{id}")),
+            ..Tap::default()
+        }),
+    }
+}
+
+fn bar(label: &str, value: u8, tone: Option<Tone>, sub: &str) -> Bar {
+    Bar {
+        label: label.into(),
+        value,
+        tone,
+        sub: Some(sub.into()),
+    }
+}
+
 fn figures() -> Vec<Block> {
     let tile = |label: &str, value: u64, unit: Option<&str>, tone: Option<Tone>| Tile {
         label: label.into(),
@@ -254,6 +277,24 @@ fn figures() -> Vec<Block> {
             tile("p50", 12, Some("ms"), None),
             tile("failing", 2, None, Some(Tone::Warn)),
         ]))),
+        b!(Steps(
+            Steps::new()
+                .id("stop")
+                .title("Stop 3 of 8 · Marlow Bakery")
+                .steps(vec![
+                    stage("stop", "Stop", Some("arrived 09:42"), true),
+                    stage("lines", "Lines", Some("4 of 6 checked"), false),
+                    stage("proof", "Proof", None, false),
+                ])
+                .current("lines")
+        )),
+        b!(Steps(Steps::new().id("planner").title("Planned maintenance").bars(
+            vec![
+                bar("Boiler service", 100, Some(Tone::Ok), "done Mon"),
+                bar("Roof gutters", 40, None, "2 of 5 blocks"),
+                bar("Fire door closers", 15, Some(Tone::Bad), "overdue since Fri"),
+            ]
+        ))),
         b!(Chips(
             Chips::new("effort", vec![chip("low"), chip("medium"), chip("high"), chip("max")])
                 .id("effort")
@@ -412,11 +453,23 @@ fn others() -> Vec<Block> {
 
 /// Every core kind's sample, one or more blocks each, in `Block::KINDS` order.
 pub fn samples() -> Vec<(String, Vec<Block>)> {
-    let table = blocks::samples()
-        .into_iter()
-        .filter(|(k, _)| *k == "table")
-        .map(|(_, b)| b);
-    let all = [holders(), words(), figures(), input(), others(), table.collect()].concat();
+    let picked = |kind: &str| {
+        blocks::samples()
+            .into_iter()
+            .filter(|(k, _)| *k == kind)
+            .map(|(_, b)| b)
+            .collect::<Vec<_>>()
+    };
+    let all = [
+        holders(),
+        words(),
+        figures(),
+        input(),
+        picked("lines"),
+        others(),
+        picked("table"),
+    ]
+    .concat();
     Block::KINDS
         .iter()
         .map(|k| {

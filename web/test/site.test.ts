@@ -48,7 +48,7 @@ const tree = (page) =>
 test("site and render give the same element per kind: tag, classes, hooks, role, name and text", async () => {
   const { page, close } = await open({ page: "<!doctype html><body>" });
   const kinds = readdirSync(at("../../fixtures/blocks/")).map((f) => f.replace(/\.json$/, ""));
-  strictEqual(kinds.length, 28);
+  strictEqual(kinds.length, 30);
   for (const k of kinds) {
     const [written, drawn] = await page.evaluate(
       async ([html, b]) => {

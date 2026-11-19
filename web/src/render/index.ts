@@ -14,6 +14,7 @@ import { editor } from "./editor.ts";
 import { form } from "./form.ts";
 import { hero } from "./hero.ts";
 import { images } from "./images.ts";
+import { lines } from "./lines.ts";
 import { list } from "./list.ts";
 import { media } from "./media.ts";
 import { nav } from "./nav.ts";
@@ -27,6 +28,7 @@ import { section } from "./section.ts";
 import { sheet } from "./sheet.ts";
 import { stat } from "./stat.ts";
 import { table } from "./table.ts";
+import { steps } from "./steps.ts";
 import { text } from "./text.ts";
 import { web } from "./web.ts";
 
@@ -194,6 +196,7 @@ export const R: { [K in Kind]: (b: Of<K>, c: Ctx) => HTMLElement | null } = {
   scene,
   diagram,
   composer,
+  lines,
   prose,
   hero,
   media,
@@ -203,6 +206,7 @@ export const R: { [K in Kind]: (b: Of<K>, c: Ctx) => HTMLElement | null } = {
       ? island(b, [...fallback(b, c).childNodes], (action, values) => void c.act({ action, block: b.id, values }), (n) => c.drop?.(`event ${b.id ?? ""} ${n}`))
       : fallback(b, c),
   table,
+  steps,
 };
 
 /// The accessible name of block `b` of kind `t`: its first set name field, else its id, else its kind.

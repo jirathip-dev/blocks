@@ -206,12 +206,14 @@
               "scene",
               "diagram",
               "composer",
+              "lines",
               "prose",
               "hero",
               "media",
               "nav",
               "island",
-              "table"
+              "table",
+              "steps"
             ]
           },
           "type": "string"
@@ -219,6 +221,41 @@
       },
       "required": [
         "type"
+      ],
+      "type": "object"
+    },
+    "Bar": {
+      "description": "One progress bar: its value from 0 to 100 and its tone.",
+      "properties": {
+        "label": {
+          "type": "string"
+        },
+        "sub": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "tone": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Tone"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "value": {
+          "format": "uint8",
+          "maximum": 255,
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "label",
+        "value"
       ],
       "type": "object"
     },
@@ -511,6 +548,19 @@
           "type": "object"
         },
         {
+          "$ref": "#/$defs/Lines",
+          "properties": {
+            "type": {
+              "const": "lines",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
           "$ref": "#/$defs/Prose",
           "properties": {
             "type": {
@@ -580,6 +630,19 @@
           "properties": {
             "type": {
               "const": "table",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/Steps",
+          "properties": {
+            "type": {
+              "const": "steps",
               "type": "string"
             }
           },
@@ -1754,6 +1817,23 @@
         {
           "additionalProperties": false,
           "properties": {
+            "mul": {
+              "items": {
+                "$ref": "#/$defs/Expr"
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": "array"
+            }
+          },
+          "required": [
+            "mul"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
             "cat": {
               "items": {
                 "$ref": "#/$defs/Expr"
@@ -2613,6 +2693,163 @@
       "required": [
         "line",
         "message"
+      ],
+      "type": "object"
+    },
+    "LineItem": {
+      "description": "One row of a `lines` block: its id and its values by column name.",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "values": {
+          "additionalProperties": true,
+          "type": "object"
+        }
+      },
+      "required": [
+        "id",
+        "values"
+      ],
+      "type": "object"
+    },
+    "Lines": {
+      "additionalProperties": true,
+      "description": "Repeating rows of fields with add and remove, running totals and a balance check.",
+      "properties": {
+        "action": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "add": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "balance": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 2,
+          "minItems": 2,
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "calc": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Expr"
+          },
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "columns": {
+          "items": {
+            "$ref": "#/$defs/Field"
+          },
+          "type": "array"
+        },
+        "empty": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "errors": {
+          "items": {
+            "$ref": "#/$defs/RowError"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "items": {
+          "items": {
+            "$ref": "#/$defs/LineItem"
+          },
+          "type": "array"
+        },
+        "label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "max": {
+          "format": "uint32",
+          "minimum": 0,
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "min": {
+          "format": "uint32",
+          "minimum": 0,
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "scale": {
+          "format": "uint8",
+          "maximum": 255,
+          "minimum": 0,
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "submit": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Submit"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "sum": {
+          "items": {
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "name",
+        "columns",
+        "items"
       ],
       "type": "object"
     },
@@ -3657,6 +3894,30 @@
       ],
       "type": "object"
     },
+    "RowError": {
+      "description": "An app's check on a `lines` block: on a row and a column, or on the whole block.",
+      "properties": {
+        "message": {
+          "type": "string"
+        },
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "row": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "message"
+      ],
+      "type": "object"
+    },
     "RowStyle": {
       "anyOf": [
         {
@@ -4155,6 +4416,38 @@
       ],
       "type": "object"
     },
+    "Stage": {
+      "description": "One step of a stepper: a done one with a tap can be pressed.",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "sub": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "tap": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Tap"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "label"
+      ],
+      "type": "object"
+    },
     "Stat": {
       "additionalProperties": true,
       "description": "Figures: a list of tiles, or one tile inline.",
@@ -4343,6 +4636,75 @@
         "id",
         "text"
       ],
+      "type": "object"
+    },
+    "Steps": {
+      "additionalProperties": true,
+      "description": "A stepper of named steps with its current one, or progress bars.",
+      "properties": {
+        "bars": {
+          "items": {
+            "$ref": "#/$defs/Bar"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "current": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "done": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "fallback": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Fallback"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "steps": {
+          "items": {
+            "$ref": "#/$defs/Stage"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "title": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
       "type": "object"
     },
     "Submit": {

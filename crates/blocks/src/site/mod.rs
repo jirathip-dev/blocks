@@ -1,8 +1,10 @@
 mod content;
 mod diagram;
 mod editor;
+mod lines;
 mod rounds;
 mod scene;
+mod steps;
 mod table;
 mod views;
 
@@ -428,9 +430,11 @@ pub(crate) fn block(w: &mut W<'_>, b: &Value) {
         "nav" => content::nav(w, b),
         "diagram" => diagram::diagram(w, b),
         "editor" => editor::editor(w, b),
+        "lines" => lines::lines(w, b),
         "scene" => scene::scene(w, b),
         "island" => island(w, b),
         "table" => table::table(w, b),
+        "steps" => steps::steps(w, b),
         _ => fallback(w, b),
     }
 }

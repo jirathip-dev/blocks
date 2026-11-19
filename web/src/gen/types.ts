@@ -14,7 +14,9 @@ export type Answer = { close?: boolean | null; open?: string | null; ops?: Op[] 
 
 export type AppBlock = { fallback?: Fallback | null; id?: string | null; type: string };
 
-export type Block = ({ type: "screen" } & Screen) | ({ type: "sheet" } & Sheet) | ({ type: "section" } & Section) | ({ type: "list" } & List) | ({ type: "row" } & Row) | ({ type: "card" } & Card) | ({ type: "choice" } & Choice) | ({ type: "form" } & Form) | ({ type: "config" } & Form) | ({ type: "secret" } & Secret) | ({ type: "run" } & Run) | ({ type: "button" } & Button) | ({ type: "chips" } & Chips) | ({ type: "stat" } & Stat) | ({ type: "text" } & Text) | ({ type: "images" } & Images) | ({ type: "web" } & Web) | ({ type: "diff" } & Diff) | ({ type: "editor" } & Editor) | ({ type: "scene" } & Scene) | ({ type: "diagram" } & Diagram) | ({ type: "composer" } & Composer) | ({ type: "prose" } & Prose) | ({ type: "hero" } & Hero) | ({ type: "media" } & Media) | ({ type: "nav" } & Nav) | ({ type: "island" } & Island) | ({ type: "table" } & Table) | (AppBlock & { [key: string]: unknown });
+export type Bar = { label: string; sub?: string | null; tone?: Tone | null; value: number };
+
+export type Block = ({ type: "screen" } & Screen) | ({ type: "sheet" } & Sheet) | ({ type: "section" } & Section) | ({ type: "list" } & List) | ({ type: "row" } & Row) | ({ type: "card" } & Card) | ({ type: "choice" } & Choice) | ({ type: "form" } & Form) | ({ type: "config" } & Form) | ({ type: "secret" } & Secret) | ({ type: "run" } & Run) | ({ type: "button" } & Button) | ({ type: "chips" } & Chips) | ({ type: "stat" } & Stat) | ({ type: "text" } & Text) | ({ type: "images" } & Images) | ({ type: "web" } & Web) | ({ type: "diff" } & Diff) | ({ type: "editor" } & Editor) | ({ type: "scene" } & Scene) | ({ type: "diagram" } & Diagram) | ({ type: "composer" } & Composer) | ({ type: "lines" } & Lines) | ({ type: "prose" } & Prose) | ({ type: "hero" } & Hero) | ({ type: "media" } & Media) | ({ type: "nav" } & Nav) | ({ type: "island" } & Island) | ({ type: "table" } & Table) | ({ type: "steps" } & Steps) | (AppBlock & { [key: string]: unknown });
 
 export type Bound = { get: string };
 
@@ -66,7 +68,7 @@ export type Era = "be";
 
 export type ExportFormat = "csv" | "xlsx";
 
-export type Expr = { get: string } | { not: Expr } | { all: Expr[] } | { any: Expr[] } | { eq: Expr[] } | { lt: Expr[] } | { len: Expr } | { has: Expr[] } | { is: Match } | { add: Expr[] } | { sub: Expr[] } | { cat: Expr[] } | { pick: Expr[] } | Lit;
+export type Expr = { get: string } | { not: Expr } | { all: Expr[] } | { any: Expr[] } | { eq: Expr[] } | { lt: Expr[] } | { len: Expr } | { has: Expr[] } | { is: Match } | { add: Expr[] } | { sub: Expr[] } | { mul: Expr[] } | { cat: Expr[] } | { pick: Expr[] } | Lit;
 
 export type Fallback = { subtitle?: string | null; tap?: Tap | null; title: string };
 
@@ -114,6 +116,10 @@ export type LaneState = "working" | "needs" | "done" | "idle" | "fail" | "merged
 
 export type LineError = { line: number; message: string };
 
+export type LineItem = { id: string; values: Record<string, unknown> };
+
+export type Lines = { action?: string | null; add?: string | null; balance?: string[] | null; calc?: Record<string, Expr> | null; columns: Field[]; empty?: string | null; errors?: RowError[] | null; id?: string | null; items: LineItem[]; label?: string | null; max?: number | null; min?: number | null; name: string; scale?: number | null; show?: Expr | null; submit?: Submit | null; sum?: string[] | null };
+
 export type Link = { label: string; tap: Tap };
 
 export type List = { id?: string | null; reorder?: Reorder | null; rows: Block[]; show?: Expr | null };
@@ -158,6 +164,8 @@ export type RoundLane = { harness?: string | null; host?: string | null; lines?:
 
 export type Row = { accessory?: Accessory | null; badge?: Label | null; button?: Act | null; changed?: boolean | null; figure?: Figure | null; handle?: boolean | null; id?: string | null; indent?: number | null; lifted?: boolean | null; menu?: Act[] | null; rounds?: Round[] | null; show?: Expr | null; sticky?: boolean | null; style?: RowStyle | null; subtitle?: Toned | null; swipe?: Act[] | null; tap?: Tap | null; title: string; value?: Shown | null };
 
+export type RowError = { message: string; name?: string | null; row?: string | null };
+
 export type RowStyle = "link" | "destructive";
 
 export type Run = { action: string; command: string; dir?: string | null; id?: string | null; sha: string; show?: Expr | null; touches?: string | null; until?: string | null };
@@ -180,6 +188,8 @@ export type SortDir = "asc" | "desc";
 
 export type Span = { bold?: boolean | null; code?: boolean | null; italic?: boolean | null; link?: string | null; text: string };
 
+export type Stage = { id: string; label: string; sub?: string | null; tap?: Tap | null };
+
 export type Stat = { id?: string | null; items?: Tile[] | null; label?: string | null; show?: Expr | null; spark?: number[] | null; tone?: Tone | null; unit?: string | null; value?: Shown | null };
 
 export type Step = { tap: StepOn } | { type: StepType } | { scroll: StepOn } | { frame: Frame } | { answer: Answer } | { shot: StepShot };
@@ -189,6 +199,8 @@ export type StepOn = { id: string };
 export type StepShot = { name: string };
 
 export type StepType = { id: string; text: string };
+
+export type Steps = { bars?: Bar[] | null; current?: string | null; done?: boolean | null; fallback?: Fallback | null; id?: string | null; show?: Expr | null; steps?: Stage[] | null; title?: string | null };
 
 export type Submit = { action: string; label: string; off?: boolean | null; values?: Record<string, unknown> | null };
 
@@ -232,4 +244,4 @@ export type Why = "evicted" | "unpaired" | "handover";
 
 export type Working = { since: string };
 
-export type Kind = "screen" | "sheet" | "section" | "list" | "row" | "card" | "choice" | "form" | "config" | "secret" | "run" | "button" | "chips" | "stat" | "text" | "images" | "web" | "diff" | "editor" | "scene" | "diagram" | "composer" | "prose" | "hero" | "media" | "nav" | "island" | "table";
+export type Kind = "screen" | "sheet" | "section" | "list" | "row" | "card" | "choice" | "form" | "config" | "secret" | "run" | "button" | "chips" | "stat" | "text" | "images" | "web" | "diff" | "editor" | "scene" | "diagram" | "composer" | "lines" | "prose" | "hero" | "media" | "nav" | "island" | "table" | "steps";
