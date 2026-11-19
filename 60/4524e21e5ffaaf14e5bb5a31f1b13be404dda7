@@ -1,0 +1,12 @@
+Decided: TS tree() ports tree::expect, with expr::eval ported for show, and is pinned to fixtures/trees and fixtures/behave
+Because: "the screen's tree as the crate computes it (no DOM)"
+Decided: added Rust tree::check so Rust's findings exist; it words them as blocks-shot --check and Swift's Snapshot do
+Because: crates/blocks/src/tree.rs:151
+Decided: shot.ts's own same() is deleted; blocks-shot calls the new expect
+Because: web/shot/shot.ts:142
+Decided: Rust's findings and misses are committed fixtures (fixtures/trees/fail, fixtures/schemes/misses) that the Rust and TS tests both assert
+Because: "a set of failing cases committed beside them"
+Rejected: generating them in codegen — a committed file pinned by both test suites gives the same proof with no codegen or arch.toml change
+Decided: a scheme missing a token is refused by tsc in TS and by parse in Rust; the TS test checks the fixture lacks the token Rust names
+Check: web/test/tree.test.ts covers tree, evaluate, expect and gate; crates/blocks/tests/tree.rs and theme.rs pin the same fixtures
+Owner: TypeScript apps can test a screen's drawn blocks and their theme's contrast in plain node tests, with the same answers as the Rust crate.
