@@ -6,6 +6,7 @@ import XCTest
 private struct Case: Decodable {
     let expr: JSONValue
     let want: Lit
+    let state: BlockState?
 }
 
 private struct File: Decodable {
@@ -36,7 +37,7 @@ final class BehaveTests: XCTestCase {
             let f = try file(name)
             for c in f.cases {
                 n += 1
-                let got = try c.expr.decode(Expr.self).eval(f.state)
+                let got = try c.expr.decode(Expr.self).eval(c.state ?? f.state)
                 if got != c.want { bad.append("\(name): \(c.expr) gave \(got), not \(c.want)") }
             }
         }

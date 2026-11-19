@@ -11,6 +11,8 @@ use serde_json::Value;
 struct Case {
     expr: Value,
     want: Lit,
+    #[serde(default)]
+    state: Option<State>,
 }
 
 #[derive(Deserialize)]
@@ -59,7 +61,7 @@ fn eval_gives_every_fixtures_behave_case_its_value() {
                 "{} does not round-trip",
                 c.expr
             );
-            let got = eval(&expr, &file.state);
+            let got = eval(&expr, c.state.as_ref().unwrap_or(&file.state));
             if got != c.want {
                 bad.push(format!("{}: {} gave {got:?}, not {:?}", p.display(), c.expr, c.want));
             }

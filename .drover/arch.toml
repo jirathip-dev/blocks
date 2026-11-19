@@ -18,6 +18,8 @@ generated = [
     "fixtures/trees/swift/*.json",
     "fixtures/html/*.html",
     "fixtures/site/*.html",
+    "fixtures/protocol/sim-*.json",
+    "fixtures/behave/sim.json",
 ]
 generate = "just gen"
 shared = ["crates/blocks/src/lib.rs", "crates/*/tests/support/**"]
