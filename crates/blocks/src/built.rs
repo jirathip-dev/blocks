@@ -52,7 +52,7 @@ pub struct Built(Value);
 
 const LISTS: [&str; 3] = ["blocks", "rows", "buttons"];
 const DRAWN: [&str; 3] = ["row", "text", "island"];
-const LINKS: [&str; 4] = ["url", "href", "link", "open"];
+const LINKS: [&str; 5] = ["url", "href", "link", "open", "src"];
 
 pub(crate) fn linkable(url: &str) -> bool {
     let head = url.split(['/', '?', '#']).next().unwrap_or_default();

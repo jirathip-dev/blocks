@@ -2,7 +2,7 @@ use serde_json::{Map, Value};
 
 use crate::behave;
 
-use super::{esc, fields, get, kids, list, on, one, rounds, sends, shown, Go, W};
+use super::{esc, fields, get, kids, link, list, on, one, rounds, sends, shown, Go, W};
 
 fn toned(v: Option<&Value>) -> (String, String) {
     match v {
@@ -642,13 +642,15 @@ fn named_link(s: &str) -> Option<(&str, &str, &str)> {
 pub(super) fn images(w: &mut W<'_>, b: &Value) {
     w.open_block("div", "imgs", b, &[]);
     for i in list(b, "items").iter().filter(|i| i.is_object()) {
-        let src = shown(i.get("src"));
-        w.open("a", "", &[("href", &src), ("target", "_blank"), ("rel", "noopener")]);
-        w.open(
-            "img",
-            "",
-            &[("src", &src), ("alt", &shown(i.get("alt"))), ("loading", "lazy")],
-        );
+        let alt = shown(i.get("alt"));
+        let Some(src) = link(i, "src") else {
+            w.open("span", "", &[]);
+            w.text(&alt);
+            w.close("span");
+            continue;
+        };
+        w.open("a", "", &[("href", src), ("target", "_blank"), ("rel", "noopener")]);
+        w.open("img", "", &[("src", src), ("alt", &alt), ("loading", "lazy")]);
         w.close("a");
     }
     w.close("div");
