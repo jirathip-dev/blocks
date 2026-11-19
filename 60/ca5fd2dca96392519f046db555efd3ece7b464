@@ -1,0 +1,9 @@
+Decided: one new line for unique ids, block ids per screen and action ids per block, as Built::check keys them
+Because: crates/blocks/src/built.rs:181
+Decided: the fixtures enforcer is named as the CI test over the fixtures, which fails on Twice or ActTwice in any golden
+Because: crates/blocks/tests/fixtures.rs:362
+Decided: the wire-versioning line names CI compat from the first release tag and none before it
+Because: scripts/compat.sh:8
+Rejected: "a screen with two actions sharing an id" — the action check is per block, not per screen
+Check: .drover/rules.md is 19 lines and only lines 13-14 differ from staging
+Owner: The rules list now names the duplicate-id check and says the versioning check starts with the first release.
