@@ -1,4 +1,4 @@
-const TILE = ".card,.st,.list>.row,.list>.rw,.form:not(.say),.choice,.secret,.run";
+const TILE = ".card,.st,.list>.row,.list>.rw,.form:not(.say),.choice,.secret,.run,.sp,.pg";
 
 const once = (e: Element, cls: string) => {
   const end = (ev: Event) => {

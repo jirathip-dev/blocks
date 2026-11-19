@@ -23,6 +23,7 @@
   "secret": { "long": ["label"], "why": "one secret field: no rows to empty or repeat" },
   "section": { "long": ["header", "markdown"], "empty": "blocks", "many": "blocks" },
   "sheet": { "long": ["title", "markdown"], "empty": "blocks", "many": "blocks" },
+  "steps": { "long": ["title", "label", "sub"], "empty": "steps", "many": "steps" },
   "stat": { "long": ["label"], "why": "one number and its label: nothing to empty or repeat" },
   "text": { "long": ["markdown"], "why": "one text: its empty is no block at all" },
   "web": { "why": "an embedded page: its text and rows are the page's, not the kind's" }

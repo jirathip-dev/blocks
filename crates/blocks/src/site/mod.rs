@@ -3,6 +3,7 @@ mod diagram;
 mod editor;
 mod rounds;
 mod scene;
+mod steps;
 mod views;
 
 use serde_json::{Map, Value};
@@ -422,6 +423,7 @@ pub(crate) fn block(w: &mut W<'_>, b: &Value) {
         "editor" => editor::editor(w, b),
         "scene" => scene::scene(w, b),
         "island" => island(w, b),
+        "steps" => steps::steps(w, b),
         _ => fallback(w, b),
     }
 }

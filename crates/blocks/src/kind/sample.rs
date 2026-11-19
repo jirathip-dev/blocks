@@ -1,8 +1,8 @@
 use super::{
     Act, Block, Button, Card, CardKind, ChipOption, Chips, Choice, ChoiceOption, Composer, Diagram, Diff, Editor,
     Fallback, Field, FieldKind, Form, Hero, Hunk, Image, Images, Island, Lane, LaneState, Link, List, Media, Nav,
-    NavLink, Part, Prose, Round, RoundLane, Row, Run, Scene, Screen, Secret, Section, Sheet, Shown, Span, Stat, Tap,
-    Text, Toned, Web,
+    NavLink, Part, Prose, Round, RoundLane, Row, Run, Scene, Screen, Secret, Section, Sheet, Shown, Span, Stage, Stat,
+    Steps, Tap, Text, Toned, Web,
 };
 use crate::expr::{Expr, Lit, State};
 
@@ -15,6 +15,18 @@ fn span(text: &str) -> Span {
 
 fn text(id: &str, markdown: &str) -> Block {
     Block::Text(Box::new(Text::new().id(id).markdown(markdown)))
+}
+
+fn step(id: &str, label: &str, sub: &str) -> Stage {
+    Stage {
+        id: id.into(),
+        label: label.into(),
+        sub: Some(sub.into()),
+        tap: Some(Tap {
+            open: Some(id.into()),
+            ..Tap::default()
+        }),
+    }
 }
 
 fn field(name: &str, label: &str) -> Field {
@@ -201,6 +213,19 @@ fn views() -> Vec<Block> {
     ]
 }
 
+fn stepper() -> Vec<Block> {
+    vec![Block::Steps(Box::new(
+        Steps::new()
+            .id("stop")
+            .title("Stop 3 of 8")
+            .steps(vec![
+                step("stop", "Stop", "arrived 09:42"),
+                step("lines", "Lines", "6 checked"),
+            ])
+            .done(true),
+    ))]
+}
+
 fn holders() -> Vec<Block> {
     let shown = Text::new().id("hint").markdown("Ready").show(Expr::Get("ready".into()));
     let state: State = [("ready".to_string(), Lit::Bool(true))].into_iter().collect();
@@ -224,7 +249,7 @@ fn holders() -> Vec<Block> {
 
 /// One typed sample per kind, keyed by its `type`; `fixtures/blocks` is written from them.
 pub fn samples() -> Vec<(&'static str, Block)> {
-    let all = [holders(), views(), controls(), content()].concat();
+    let all = [holders(), views(), controls(), content(), stepper()].concat();
     let kind = |b: &Block| {
         let v = serde_json::to_value(b).ok()?;
         let t = v.get("type")?.as_str()?.to_string();

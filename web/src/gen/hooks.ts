@@ -30,6 +30,7 @@ export const hooks: Record<Kind, Hook> = {
     media: { variant: null, parts: [] },
     nav: { variant: null, parts: [] },
     island: { variant: null, parts: [] },
+    steps: { variant: null, parts: ["title"] },
 };
 
 export const roles: Record<string, string> = { section: "region", form: "form", config: "form", nav: "navigation" };

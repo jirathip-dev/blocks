@@ -107,6 +107,7 @@ extension Block {
         case .media(let b): ("media", b.id, nil, Source())
         case .nav(let b): ("nav", b.id, nil, Source())
         case .island(let b): ("island", b.id, nil, Source())
+        case .steps(let b): ("steps", b.id, nil, Source())
         case .appBlock(let b):
             (
                 b.type, b.id, nil,
@@ -154,6 +155,7 @@ extension Block {
         case .hero(let b): [b.title]
         case .media(let b): [b.alt]
         case .island(let b): [b.name]
+        case .steps(let b): [b.title]
         case .appBlock(let b): Self.names.map { b.string($0) }
         default: []
         }
