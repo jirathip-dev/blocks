@@ -190,6 +190,35 @@ let run = try await Snapshot(screen, size: .phone).blockStyle(.card, Raised()).r
 #expect(run.sent == [Action(screen: "queue", block: "12", action: "open")])
 ```
 
+## A TS app tests a route without a browser (q2220)
+
+A route builds its screen on the generated types; the test asserts the tree the crate would compute for it, with no
+DOM and under any node test runner. `expect` gives the same findings as `blocks-shot --check` and Rust's
+`tree::check`; `gate` runs the crate's contrast gate on the app's own tokens as one `Scheme`.
+
+```ts
+import { test } from 'node:test';
+import { deepStrictEqual } from 'node:assert/strict';
+import { expect, tree } from '@jirathip-dev/blocks/web/src/tree.ts';
+import { gate } from '@jirathip-dev/blocks/web/src/gate.ts';
+import { inbox } from '../src/routes/inbox.ts';     // (threads) => Block, a typed screen
+import { tokens } from '@synergy/ui/tokens.ts';      // the app's scheme: { label, 'color-scheme', tokens }
+
+test('/inbox draws its threads as rows, the empty hint hidden', () => {
+  const got = tree(inbox([{ id: 't1', title: 'Hello' }]));
+  deepStrictEqual(expect(got, {
+    kind: 'screen', id: 'inbox', variant: null, drawn: 'native', children: [
+      { kind: 'text', id: 'empty', variant: null, drawn: 'hidden', children: [] },
+      { kind: 'list', id: 'threads', variant: null, drawn: 'native', children: [
+        { kind: 'row', id: 't1', variant: 'link', drawn: 'native', children: [] },
+      ] },
+    ],
+  }), []);                                           // else ["tree/screen#inbox: drew text#empty native, expected …"]
+});
+
+test('the app scheme passes the gate', () => deepStrictEqual(gate(tokens), []));
+```
+
 ## An app adds a block kind of its own
 
 Three registrations, one per language the app uses. No file in this repo changes.
