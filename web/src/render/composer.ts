@@ -1,4 +1,5 @@
-import { type Blk, blks, btn, type Ctx, el, esc, h, isList, obj } from "./index.ts";
+import type { Composer, Queued } from "../gen/types.ts";
+import { type Blk, btn, type Ctx, el, esc, h, obj } from "./index.ts";
 
 type Att = { name: string; type: string; data: string };
 type Draft = { files: Att[]; picks: Blk; q?: number; st?: string; steer?: boolean; stopping?: boolean };
@@ -12,22 +13,22 @@ const read = (f: File) =>
     r.readAsDataURL(f);
   });
 
-export function composer(b: Blk, c: Ctx): HTMLElement {
+export function composer(b: Composer & { working?: unknown }, c: Ctx): HTMLElement {
   const key = `draft:${c.screen}:${String(b.id)}:text`;
-  const act = (k: string) => String(obj(b.acts)[k] ?? "");
+  const act = (k: string) => b.acts?.[k] ?? "";
   const d: Draft = drafts.get(key) ?? { files: [], picks: {} };
   drafts.set(key, d);
   const f = el("div", "cmp");
-  f.dataset.id = String(b.id ?? "");
+  f.dataset.id = b.id ?? "";
   const ta = el("textarea");
-  Object.assign(ta, { name: "text", rows: 1, value: c.store.get(key) ?? "", placeholder: String(b.placeholder ?? "") });
+  Object.assign(ta, { name: "text", rows: 1, value: c.store.get(key) ?? "", placeholder: b.placeholder ?? "" });
   const grow = () => {
     ta.style.height = "auto";
     ta.style.height = `${ta.scrollHeight}px`;
   };
   const pick = el("input");
   Object.assign(pick, { type: "file", multiple: true, hidden: true });
-  const post = async (action: string, values: Blk, x?: HTMLElement) => c.act({ action, block: b.id, values: { ...obj(b.values), ...values } }, x);
+  const post = async (action: string, values: Blk, x?: HTMLElement) => c.act({ action, block: b.id, values: { ...b.values, ...values } }, x);
   const row = el("div", "cr");
   const add = btn("+");
   const go = btn("", "primary");
@@ -35,7 +36,7 @@ export function composer(b: Blk, c: Ctx): HTMLElement {
   const send = async (steer = false) => {
     if (!ta.value.trim() && !d.files.length) return;
     const queue = !steer && (b.working || d.q != null) ? act("queue") : "";
-    const action = steer ? act("steer") : queue || String(b.action);
+    const action = steer ? act("steer") : queue || b.action;
     const v: Blk = { ...d.picks, text: ta.value, name: d.files.map((x) => x.name).join("/"), data: d.files.map((x) => x.data).join(",") };
     if (queue && d.q != null) v.q = d.q;
     [d.st, d.steer] = ["sending", false];
@@ -107,8 +108,8 @@ export function composer(b: Blk, c: Ctx): HTMLElement {
     const t = setInterval(() => (p.isConnected ? tick() : clearInterval(t)), 1000);
     return p;
   }
-  function queued(m: Blk): HTMLElement {
-    const text = String(m.text ?? "");
+  function queued(m: Queued): HTMLElement {
+    const text = m.text;
     const r = h("div", "qd", h("span", "qt", text));
     r.dataset.q = String(m.q);
     const now = btn("send now", "primary");
@@ -116,7 +117,7 @@ export function composer(b: Blk, c: Ctx): HTMLElement {
     const rm = btn("remove", "bad");
     now.onclick = () => post(act("steer"), { q: m.q }, now);
     edit.onclick = () => {
-      [d.q, ta.value] = [Number(m.q), text];
+      [d.q, ta.value] = [m.q, text];
       c.store.put(key, text);
       grow();
       ta.focus();
@@ -153,23 +154,23 @@ export function composer(b: Blk, c: Ctx): HTMLElement {
     if (!b.working) d.stopping = d.steer = false;
     const top: HTMLElement[] = [];
     if (b.working) top.push(working());
-    top.push(...blks(b.queued).map(queued));
+    top.push(...(b.queued ?? []).map(queued));
     if (d.files.length) top.push(attached());
     if (d.st) top.push(status());
-    ta.placeholder = String(b.placeholder ?? "");
-    (go.firstElementChild ?? go).textContent = d.q != null ? "save" : b.working ? "queue" : String(b.label ?? "");
+    ta.placeholder = b.placeholder ?? "";
+    (go.firstElementChild ?? go).textContent = d.q != null ? "save" : b.working ? "queue" : (b.label ?? "");
     if (d.st === "sending") go.setAttribute("aria-busy", "true");
     else go.removeAttribute("aria-busy");
     if (d.steer) row.append(st);
     else st.remove();
     const picks = el("div", "pk");
-    for (const ch of blks(b.chips)) {
-      const n = String(ch.name);
+    for (const ch of b.chips ?? []) {
+      const n = ch.name;
       const s = el("select");
       const cur = String(d.picks[n] ?? ch.cur ?? "");
       s.setAttribute("aria-label", n);
       if (!cur) s.append(new Option(n, "", true, true));
-      for (const o of isList(ch.all) ? ch.all.map(String) : []) s.append(new Option(o, o, o === cur, o === cur));
+      for (const o of ch.all) s.append(new Option(o, o, o === cur, o === cur));
       s.onchange = () => (act("model") ? post(act("model"), { [n]: s.value }, s) : ((d.picks[n] = s.value), draw()));
       picks.append(s);
     }

@@ -1,26 +1,33 @@
-import { type Blk, blks, el, h, isList } from "./index.ts";
+import type { Part, Prose, Span } from "../gen/types.ts";
+import { el, h } from "./index.ts";
 
 const MARKS = [["code", "code"], ["i", "italic"], ["b", "bold"]] as const;
 const HEADS = ["h1", "h2", "h3", "h4", "h5", "h6"] as const;
 
-const spans = (ss: unknown): Node[] =>
-  blks(ss).map((s) => {
-    let n: Node = document.createTextNode(String(s.text ?? ""));
+const spans = (ss: Span[]): Node[] =>
+  ss.map((s) => {
+    let n: Node = document.createTextNode(s.text);
     for (const [tag, k] of MARKS) if (s[k]) n = h(tag, "", n);
-    return typeof s.link === "string" ? Object.assign(h("a", "", n), { href: s.link }) : n;
+    return s.link != null ? Object.assign(h("a", "", n), { href: s.link }) : n;
   });
 
-function part(p: Blk): HTMLElement | null {
-  if (p.part === "heading") return h(HEADS[Math.min(6, Math.max(1, Number(p.level ?? 2))) - 1] ?? "h2", "", ...spans(p.spans));
-  if (p.part === "para") return h("p", "", ...spans(p.spans));
-  if (p.part === "quote") return h("blockquote", "", ...spans(p.spans));
-  if (p.part === "list") return h(p.ordered ? "ol" : "ul", "", ...(isList(p.items) ? p.items : []).map((i) => h("li", "", ...spans(i))));
-  if (p.part === "code") return h("pre", "", h("code", typeof p.lang === "string" ? `lang-${p.lang}` : "", String(p.text ?? "")));
-  return p.part === "rule" ? el("hr") : null;
+function part(p: Part): HTMLElement {
+  switch (p.part) {
+    case "heading":
+      return h(HEADS[Math.min(6, Math.max(1, p.level)) - 1] ?? "h2", "", ...spans(p.spans));
+    case "para":
+      return h("p", "", ...spans(p.spans));
+    case "quote":
+      return h("blockquote", "", ...spans(p.spans));
+    case "list":
+      return h(p.ordered ? "ol" : "ul", "", ...p.items.map((i) => h("li", "", ...spans(i))));
+    case "code":
+      return h("pre", "", h("code", p.lang != null ? `lang-${p.lang}` : "", p.text));
+    case "rule":
+      return el("hr");
+  }
 }
 
-export function prose(b: Blk): HTMLElement {
-  const d = el("div", "prose");
-  d.append(...blks(b.parts).map(part).filter((e): e is HTMLElement => e !== null));
-  return d;
+export function prose(b: Prose): HTMLElement {
+  return h("div", "prose", ...b.parts.map(part));
 }

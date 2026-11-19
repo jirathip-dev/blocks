@@ -1,14 +1,15 @@
-import { type Blk, blks, el, h, isBlk } from "./index.ts";
+import type { Nav, NavLink } from "../gen/types.ts";
+import { el, h } from "./index.ts";
 
-const link = (l: Blk, cls = "") => {
-  const a = Object.assign(h("a", cls, String(l.label ?? "")), { href: String(l.href ?? "") });
+const link = (l: NavLink, cls = "") => {
+  const a = Object.assign(h("a", cls, l.label), { href: l.href });
   if (l.current) a.setAttribute("aria-current", "page");
   return a;
 };
 
-export function nav(b: Blk): HTMLElement {
+export function nav(b: Nav): HTMLElement {
   const n = el("nav", "nav");
-  if (isBlk(b.brand)) n.append(link(b.brand, "brand"));
-  n.append(...blks(b.links).map((l) => link(l)));
+  if (b.brand) n.append(link(b.brand, "brand"));
+  n.append(...b.links.map((l) => link(l)));
   return n;
 }
