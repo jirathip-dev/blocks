@@ -1,0 +1,5 @@
+Decided: no code change for the perf FAIL; merged origin/staging and re-pushed to rerun CI.
+Because: crates/blocks/tests/perf.rs:35
+Rejected: raising the diff budget or touching Rust — this PR changes only Swift and README, so the 184.7 µs overrun was runner noise.
+Check: git diff --stat origin/staging...HEAD -- crates web is empty; locally the diff case runs 76.1 µs against 150 µs.
+Owner: The red speed check was a slow CI machine, not this change; the branch is refreshed and rechecked.
