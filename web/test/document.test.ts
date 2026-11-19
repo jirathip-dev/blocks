@@ -14,7 +14,8 @@ after(() => browser.close());
 
 async function open(reduced: boolean) {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 }, reducedMotion: reduced ? "reduce" : "no-preference" });
-  await page.clock.install();
+  await page.clock.install({ time: 0 });
+  await page.clock.pauseAt(1000);
   await page.setContent(`<!doctype html><style>${read("../../fixtures/css/default.css")}</style><style>${read("../dist/blocks.css")}</style><body><main></main>`);
   await page.addScriptTag({ content: code });
   await page.evaluate((b) => {

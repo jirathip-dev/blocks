@@ -535,7 +535,7 @@ pub fn samples() -> Vec<(&'static str, Block)> {
         controls(),
         content(),
         stepper(),
-        vec![table(), toast(), pages()],
+        vec![table(), toast(), pages(), super::timeline::sample()],
     ]
     .concat();
     let kind = |b: &Block| {

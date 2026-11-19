@@ -71,4 +71,5 @@ switch! {
     Toast => toast,
     Chart => chart,
     Pages => pages,
+    Timeline => timeline,
 }

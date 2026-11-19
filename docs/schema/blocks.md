@@ -5,7 +5,7 @@ The core kinds are the superset of both apps': cooee's 21 (`screen`, `sheet`, `s
 `choice`, `form`, `config`, `secret`, `run`, `button`, `chips`, `stat`, `text`, `images`, `web`, `diff`, `editor`,
 `scene`, `diagram`), drover's `composer`, the content kinds `prose`, `hero`, `media`, `nav`, the `island`, the
 line-item editor `lines`, `steps` (a stepper or progress bars), the data `table`, the `toast` an action's answer
-carries, the `chart` and the document `pages`, 33 in all, with every field either app sends.
+carries and the `timeline`, 32 in all, with every field either app sends.
 Each kind has `new(<its required fields>)` and a setter per optional one; a server builds its blocks so, never with
 `json!`. Any other `type` is an app's own kind (`AppBlock`): it is
 kept whole, and may carry a `fallback` row. A core kind of the wrong shape is refused, by the types and by the
@@ -22,11 +22,6 @@ A `toast` is a short line after an action: a `title`, a `tone` (`ok`, `warn`, `b
 `toast` carries one, and the web shell shows it over the screen: one at a time, at most 3 waiting, gone after 4 s
 (plain, ok), 6 s (warn) or 8 s (with an undo), a `bad` one only when dismissed. Placed in a screen, every renderer
 draws it as one quiet line with no undo. An empty `title` draws the fallback, "Done" unless it has its own.
-
-A `pages` block is a document as the app's own pictures of its pages: `pages` (each a `src`, an `alt` and its
-`width` and `height` in pixels), a `title`, a `file` (the PDF a reader downloads or a screen reader opens) and a
-`note`. blocks has no PDF library: the app's server draws the pictures. Zoom (fit to 4×) and paging are view
-gestures that send nothing; the static page draws it read-only with its PDF link.
 
 `fixtures/screens/` holds both apps' screens as they sent them, copied verbatim (cooee at `8ca09a316`, drover at
 `dd475fcf0`), and `cooee/screen-tests-insert.json`, cooee's `ScreenTests` inserts written out as frames. Each
