@@ -3,5 +3,7 @@
   "id": "map",
   "variant": null,
   "drawn": "fallback",
+  "role": "group",
+  "name": "x-map",
   "children": []
 }

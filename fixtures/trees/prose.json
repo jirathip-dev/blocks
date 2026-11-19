@@ -3,5 +3,7 @@
   "id": "about",
   "variant": null,
   "drawn": "native",
+  "role": "group",
+  "name": "about",
   "children": []
 }

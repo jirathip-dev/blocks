@@ -9,6 +9,8 @@
       "drawn": "native",
       "id": "home",
       "kind": "card",
+      "name": "home",
+      "role": "group",
       "variant": null
     },
     "want": {
@@ -18,6 +20,8 @@
           "drawn": "native",
           "id": "hint",
           "kind": "text",
+          "name": "hint",
+          "role": "group",
           "variant": null
         },
         {
@@ -27,18 +31,24 @@
               "drawn": "native",
               "id": "r1",
               "kind": "row",
+              "name": "r1",
+              "role": "group",
               "variant": null
             }
           ],
           "drawn": "native",
           "id": "rows",
           "kind": "list",
+          "name": "rows",
+          "role": "group",
           "variant": null
         }
       ],
       "drawn": "native",
       "id": "home",
       "kind": "screen",
+      "name": "home",
+      "role": "group",
       "variant": null
     }
   },
@@ -54,6 +64,8 @@
           "drawn": "fallback",
           "id": "hint",
           "kind": "text",
+          "name": "hint",
+          "role": "group",
           "variant": null
         },
         {
@@ -63,18 +75,24 @@
               "drawn": "native",
               "id": "r1",
               "kind": "row",
+              "name": "r1",
+              "role": "group",
               "variant": null
             }
           ],
           "drawn": "native",
           "id": "rows",
           "kind": "list",
+          "name": "rows",
+          "role": "group",
           "variant": null
         }
       ],
       "drawn": "native",
       "id": "home",
       "kind": "screen",
+      "name": "home",
+      "role": "group",
       "variant": null
     },
     "want": {
@@ -84,6 +102,8 @@
           "drawn": "native",
           "id": "hint",
           "kind": "text",
+          "name": "hint",
+          "role": "group",
           "variant": null
         },
         {
@@ -93,18 +113,24 @@
               "drawn": "native",
               "id": "r1",
               "kind": "row",
+              "name": "r1",
+              "role": "group",
               "variant": null
             }
           ],
           "drawn": "native",
           "id": "rows",
           "kind": "list",
+          "name": "rows",
+          "role": "group",
           "variant": null
         }
       ],
       "drawn": "native",
       "id": "home",
       "kind": "screen",
+      "name": "home",
+      "role": "group",
       "variant": null
     }
   },
@@ -120,6 +146,8 @@
           "drawn": "hidden",
           "id": "hint",
           "kind": "text",
+          "name": "hint",
+          "role": "group",
           "variant": null
         },
         {
@@ -129,18 +157,24 @@
               "drawn": "native",
               "id": "r1",
               "kind": "row",
+              "name": "r1",
+              "role": "group",
               "variant": null
             }
           ],
           "drawn": "native",
           "id": "rows",
           "kind": "list",
+          "name": "rows",
+          "role": "group",
           "variant": null
         }
       ],
       "drawn": "native",
       "id": "home",
       "kind": "screen",
+      "name": "home",
+      "role": "group",
       "variant": null
     },
     "want": {
@@ -150,6 +184,8 @@
           "drawn": "native",
           "id": "hint",
           "kind": "text",
+          "name": "hint",
+          "role": "group",
           "variant": null
         },
         {
@@ -159,18 +195,24 @@
               "drawn": "native",
               "id": "r1",
               "kind": "row",
+              "name": "r1",
+              "role": "group",
               "variant": null
             }
           ],
           "drawn": "native",
           "id": "rows",
           "kind": "list",
+          "name": "rows",
+          "role": "group",
           "variant": null
         }
       ],
       "drawn": "native",
       "id": "home",
       "kind": "screen",
+      "name": "home",
+      "role": "group",
       "variant": null
     }
   },
@@ -187,12 +229,16 @@
           "drawn": "native",
           "id": "hint",
           "kind": "text",
+          "name": "hint",
+          "role": "group",
           "variant": null
         }
       ],
       "drawn": "native",
       "id": "home",
       "kind": "screen",
+      "name": "home",
+      "role": "group",
       "variant": null
     },
     "want": {
@@ -202,6 +248,8 @@
           "drawn": "native",
           "id": "hint",
           "kind": "text",
+          "name": "hint",
+          "role": "group",
           "variant": null
         },
         {
@@ -211,18 +259,24 @@
               "drawn": "native",
               "id": "r1",
               "kind": "row",
+              "name": "r1",
+              "role": "group",
               "variant": null
             }
           ],
           "drawn": "native",
           "id": "rows",
           "kind": "list",
+          "name": "rows",
+          "role": "group",
           "variant": null
         }
       ],
       "drawn": "native",
       "id": "home",
       "kind": "screen",
+      "name": "home",
+      "role": "group",
       "variant": null
     }
   },
@@ -238,6 +292,8 @@
           "drawn": "native",
           "id": "hint",
           "kind": "text",
+          "name": "hint",
+          "role": "group",
           "variant": null
         },
         {
@@ -247,6 +303,8 @@
               "drawn": "native",
               "id": "r1",
               "kind": "row",
+              "name": "r1",
+              "role": "group",
               "variant": null
             },
             {
@@ -254,18 +312,24 @@
               "drawn": "native",
               "id": "r2",
               "kind": "row",
+              "name": "r2",
+              "role": "group",
               "variant": null
             }
           ],
           "drawn": "native",
           "id": "rows",
           "kind": "list",
+          "name": "rows",
+          "role": "group",
           "variant": null
         }
       ],
       "drawn": "native",
       "id": "home",
       "kind": "screen",
+      "name": "home",
+      "role": "group",
       "variant": null
     },
     "want": {
@@ -275,6 +339,8 @@
           "drawn": "native",
           "id": "hint",
           "kind": "text",
+          "name": "hint",
+          "role": "group",
           "variant": null
         },
         {
@@ -284,18 +350,24 @@
               "drawn": "native",
               "id": "r1",
               "kind": "row",
+              "name": "r1",
+              "role": "group",
               "variant": null
             }
           ],
           "drawn": "native",
           "id": "rows",
           "kind": "list",
+          "name": "rows",
+          "role": "group",
           "variant": null
         }
       ],
       "drawn": "native",
       "id": "home",
       "kind": "screen",
+      "name": "home",
+      "role": "group",
       "variant": null
     }
   },
@@ -311,6 +383,8 @@
           "drawn": "native",
           "id": "hint",
           "kind": "text",
+          "name": "hint",
+          "role": "group",
           "variant": null
         },
         {
@@ -320,18 +394,24 @@
               "drawn": "native",
               "id": "r9",
               "kind": "row",
+              "name": "r9",
+              "role": "group",
               "variant": null
             }
           ],
           "drawn": "native",
           "id": "rows",
           "kind": "list",
+          "name": "rows",
+          "role": "group",
           "variant": null
         }
       ],
       "drawn": "native",
       "id": "home",
       "kind": "screen",
+      "name": "home",
+      "role": "group",
       "variant": null
     },
     "want": {
@@ -341,6 +421,8 @@
           "drawn": "native",
           "id": "hint",
           "kind": "text",
+          "name": "hint",
+          "role": "group",
           "variant": null
         },
         {
@@ -350,18 +432,106 @@
               "drawn": "native",
               "id": "r1",
               "kind": "row",
+              "name": "r1",
+              "role": "group",
               "variant": null
             }
           ],
           "drawn": "native",
           "id": "rows",
           "kind": "list",
+          "name": "rows",
+          "role": "group",
           "variant": null
         }
       ],
       "drawn": "native",
       "id": "home",
       "kind": "screen",
+      "name": "home",
+      "role": "group",
+      "variant": null
+    }
+  },
+  {
+    "findings": [
+      "tree/screen#home/text#hint: drew button \"Hint\", expected group \"hint\""
+    ],
+    "name": "another role and name",
+    "tree": {
+      "children": [
+        {
+          "children": [],
+          "drawn": "native",
+          "id": "hint",
+          "kind": "text",
+          "name": "Hint",
+          "role": "button",
+          "variant": null
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "drawn": "native",
+              "id": "r1",
+              "kind": "row",
+              "name": "r1",
+              "role": "group",
+              "variant": null
+            }
+          ],
+          "drawn": "native",
+          "id": "rows",
+          "kind": "list",
+          "name": "rows",
+          "role": "group",
+          "variant": null
+        }
+      ],
+      "drawn": "native",
+      "id": "home",
+      "kind": "screen",
+      "name": "home",
+      "role": "group",
+      "variant": null
+    },
+    "want": {
+      "children": [
+        {
+          "children": [],
+          "drawn": "native",
+          "id": "hint",
+          "kind": "text",
+          "name": "hint",
+          "role": "group",
+          "variant": null
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "drawn": "native",
+              "id": "r1",
+              "kind": "row",
+              "name": "r1",
+              "role": "group",
+              "variant": null
+            }
+          ],
+          "drawn": "native",
+          "id": "rows",
+          "kind": "list",
+          "name": "rows",
+          "role": "group",
+          "variant": null
+        }
+      ],
+      "drawn": "native",
+      "id": "home",
+      "kind": "screen",
+      "name": "home",
+      "role": "group",
       "variant": null
     }
   }

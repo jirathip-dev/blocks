@@ -17,17 +17,20 @@ const blocks = at("../../fixtures/blocks/");
 const trees = at("../../fixtures/trees/");
 const run = (...args) => spawnSync(process.execPath, ["--no-warnings", cli, ...args], { encoding: "utf8" });
 
-test("every fixtures/blocks file passes --check against its fixtures/trees tree in WebKit", () => {
+test("every fixtures/blocks file passes --check against its fixtures/trees tree in WebKit at 390 and 1440", () => {
   const kinds = readdirSync(blocks).map((f) => f.replace(/\.json$/, ""));
   strictEqual(kinds.length, 27);
-  for (const k of kinds) {
-    const r = run("--screen", join(blocks, `${k}.json`), "--expect", join(trees, `${k}.json`), "--check", "--out", join(out, k));
-    strictEqual(r.status, 0, `${k}: ${r.stderr}`);
-    ok(existsSync(join(out, k, `${k}.png`)), k);
-    const tree = JSON.parse(readFileSync(join(out, k, `${k}.tree.json`), "utf8"));
-    strictEqual(tree.kind, k);
-    deepStrictEqual(JSON.parse(readFileSync(join(out, k, "report.json"), "utf8")).shots, [k]);
-  }
+  for (const size of ["390x844", "1440x900"])
+    for (const k of kinds) {
+      const dir = join(out, size, k);
+      const r = run("--screen", join(blocks, `${k}.json`), "--size", size, "--expect", join(trees, `${k}.json`), "--check", "--out", dir);
+      strictEqual(r.status, 0, `${k} ${size}: ${r.stderr}`);
+      ok(existsSync(join(dir, `${k}.png`)), k);
+      const tree = JSON.parse(readFileSync(join(dir, `${k}.tree.json`), "utf8"));
+      strictEqual(tree.kind, k);
+      ok(tree.role && tree.name, `${k}: ${tree.role} "${tree.name}"`);
+      deepStrictEqual(JSON.parse(readFileSync(join(dir, "report.json"), "utf8")).shots, [k]);
+    }
 });
 
 test("every fixtures/stress variant passes --check at 390 in WebKit: inside the width, over no sibling", () => {
@@ -44,6 +47,20 @@ test("--check exits 1 when the drawn tree is not the expected one", () => {
   const r = run("--screen", join(blocks, "list.json"), "--expect", join(trees, "card.json"), "--check", "--out", join(out, "wrong"));
   strictEqual(r.status, 1);
   ok(r.stderr.includes("drew list#rows native, expected card#card native"), r.stderr);
+});
+
+test("--check fails a node whose role or name is not the expected one, a node with no name and an unnamed link", () => {
+  const want = JSON.parse(readFileSync(join(trees, "button.json"), "utf8"));
+  const renamed = join(out, "renamed.json");
+  writeFileSync(renamed, JSON.stringify({ ...want, role: "link", name: "Send" }));
+  const r = run("--screen", join(blocks, "button.json"), "--expect", renamed, "--check", "--out", join(out, "renamed"));
+  strictEqual(r.status, 1);
+  strictEqual(r.stderr, 'button/button#save: drew button "Save", expected link "Send"\n');
+  const bare = join(out, "bare.json");
+  writeFileSync(bare, JSON.stringify({ type: "screen", id: "bare", blocks: [{ type: "" }, { type: "nav", links: [{ label: "", href: "/x" }] }] }));
+  const b = run("--screen", bare, "--check", "--out", join(out, "bare"));
+  strictEqual(b.status, 1);
+  strictEqual(b.stderr, "bare/screen#bare/: has no name\nbare: nav: an unnamed a\n");
 });
 
 test("each fixtures/ids file is the block and action ids its screen draws, and --check fails on others", () => {

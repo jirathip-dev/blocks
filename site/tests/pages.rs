@@ -75,7 +75,7 @@ fn the_gallery_counts_every_kind_once_and_finds_its_fallback_group_from_the_rend
     );
     let group = gallery
         .split(&format!("Fallback only, no HTML view yet · {}", fallback.len()))
-        .nth(1)
+        .nth(2)
         .unwrap();
     let mut marked: Vec<String> = group
         .split("data-id=\"fb-")

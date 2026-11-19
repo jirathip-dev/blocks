@@ -105,6 +105,21 @@ function fit(n, width, at, out) {
   kids.forEach((c) => fit(c, width, here, out));
 }
 
+function named(n, at, out) {
+  const here = `${at}/${who(n)}`;
+  if (!n.role) out.push(`${here}: has no role`);
+  if (!n.name) out.push(`${here}: has no name`);
+  n.children.forEach((c) => named(c, here, out));
+}
+
+const UNNAMED = () => {
+  const said = (e) => e.getAttribute("aria-label") || e.labels?.length || e.getAttribute("placeholder") || e.textContent.trim() || e.querySelector("img[alt]:not([alt=''])");
+  const ok = (e) => (e.matches("img") ? e.hasAttribute("alt") : e.matches("svg") ? e.matches("[role=img][aria-label]") : said(e));
+  return Array.from(document.querySelectorAll("#root :is(button, a[href], input, textarea, select, [role=button], [role=switch], [tabindex], img, svg)"))
+    .filter((e) => !e.closest("[hidden], [aria-hidden=true]") && !ok(e))
+    .map((e) => `${e.closest("[data-block]")?.dataset.block ?? "root"}: an unnamed ${e.matches("img, svg") ? "image" : e.tagName.toLowerCase()}`);
+};
+
 /// Draws `screen` in WebKit, runs `steps`, and gives each shot's PNG and tree, the report and the failed checks.
 export async function shot({ screen, steps = [], name = "shot", size = "390x844", css = [], expect, ids, check = false, browser }) {
   const [width, height] = size.split("x").map(Number);
@@ -156,6 +171,8 @@ export async function shot({ screen, steps = [], name = "shot", size = "390x844"
         report.shots.push(n);
         if (check && expect) differ(trees[n], expect, n, faults);
         if (check && trees[n]) fit(trees[n], width, n, faults);
+        if (check && trees[n]) named(trees[n], n, faults);
+        if (check) faults.push(...(await page.evaluate(UNNAMED)).map((f) => `${n}: ${f}`));
         const drew = ids && (await page.evaluate(() => window.h.ids()));
         if (check && ids && JSON.stringify(drew) !== JSON.stringify(ids)) faults.push(`${n}: drew ids ${JSON.stringify(drew)}, expected ${JSON.stringify(ids)}`);
       }
