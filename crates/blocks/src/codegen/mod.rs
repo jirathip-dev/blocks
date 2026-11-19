@@ -9,6 +9,7 @@ mod fixtures;
 mod hooks;
 mod model;
 mod rules;
+mod shapes;
 mod skill;
 mod swift;
 mod theme;
@@ -58,6 +59,7 @@ pub fn write(root: &Path) -> std::io::Result<()> {
         model::files,
         ts::files,
         builders::files,
+        shapes::files,
         swift::files,
         hooks::files,
         theme::files,
