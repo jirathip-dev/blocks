@@ -1,0 +1,7 @@
+Decided: the private app's name becomes acme, and its repo acme-apps, in the usage example and all seven fixture screens
+Because: "Each fixture screen uses a made-up fleet or repo name in its place, the same one everywhere"
+Decided: acme because the repo already uses it as its made-up name, and none of the edited screens used it before, so no ids clash
+Because: fixtures/screens/drover/herd.json:33
+Rejected: hand-editing derived fixtures — none derive from these screens; just gen's steps changed no file
+Check: git grep -i for the name finds nothing; tests, web, swift and arch-check pass at the head
+Owner: The public repo's docs example and sample screens no longer name the private app; only the label text changes.
