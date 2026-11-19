@@ -7,12 +7,15 @@ extension Look {
     internal var outline: Bool { style.fills == .outline }
     internal var textMarks: Bool { style.marks == .text }
     internal var quiet: Bool { style.sections == .quiet }
-    internal var square: Bool { style.radius == 0 }
+    internal var square: Bool { tiles.map { $0.radius == 0 } ?? (style.radius == 0) }
+    internal var motion: Double { style.motion ?? 1 }
     internal var pill: AnyShape { square ? AnyShape(Rectangle()) : AnyShape(Capsule()) }
 
     internal func label(_ role: LabelRole, _ text: String) -> String { style.labels[role.rawValue]?.apply(text) ?? text }
 
-    internal func radius(_ value: CGFloat, least: CGFloat = 0) -> CGFloat { max(value * style.radius, least) }
+    internal func radius(_ value: CGFloat, least: CGFloat = 0) -> CGFloat {
+        max(tiles?.radius ?? value * style.radius, least)
+    }
 }
 
 extension View {
@@ -36,7 +39,7 @@ extension View {
         } else if let radius {
             background(fill, in: .rect(cornerRadius: radius))
         } else {
-            background(fill, in: .capsule)
+            background(fill, in: look.pill)
         }
     }
 
@@ -59,6 +62,16 @@ internal struct Surfaced: ViewModifier {
 
     internal func body(content: Content) -> some View {
         let palette = look.palette
+        if let tiles = look.tiles {
+            let tile = content.background(palette.card, in: .rect(cornerRadius: tiles.radius))
+                .overlay(RoundedRectangle(cornerRadius: tiles.radius).strokeBorder(palette.edge, lineWidth: 1))
+            if interactive { tile } else { tile.modifier(Settles(tiles: tiles)) }
+        } else {
+            surfaced(content, palette)
+        }
+    }
+
+    @ViewBuilder private func surfaced(_ content: Content, _ palette: Palette) -> some View {
         switch look.style.surface {
         case .dashed:
             content.background(palette.card.opacity(0.6))

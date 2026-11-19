@@ -1,4 +1,5 @@
 import type { Block, Op } from "./gen/types.ts";
+import { enter } from "./motion.ts";
 
 type Rec = { [key: string]: unknown };
 type Spot = { list: unknown[]; at: number } | "root";
@@ -135,6 +136,7 @@ function one(v: View, op: Op, model: Block): void {
       const prev = !at && op.op === "insert" && op.after ? node(host, op.after) : undefined;
       const box = at?.parentElement ?? prev?.parentElement ?? home(host);
       box.insertBefore(el, at ?? prev?.nextElementSibling ?? null);
+      if (op.op === "insert") enter(el);
       return;
     }
     default:

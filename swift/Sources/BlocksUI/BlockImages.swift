@@ -3,6 +3,7 @@ import CoreImage
 import SwiftUI
 
 internal struct ImagesBlock: View {
+    @Environment(\.look) private var look
     @State private var open: Int?
     internal let block: JSONValue
 
@@ -15,7 +16,7 @@ internal struct ImagesBlock: View {
                     Button {
                         open = index
                     } label: {
-                        Picture(item: item).frame(width: side, height: side).clipShape(.rect(cornerRadius: 12))
+                        Picture(item: item).frame(width: side, height: side).clipShape(.rect(cornerRadius: look.radius(12)))
                     }
                     .buttonStyle(.plain)
                 }

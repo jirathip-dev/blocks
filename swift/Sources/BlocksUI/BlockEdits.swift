@@ -137,7 +137,7 @@ internal struct ErrorNote: View {
     internal var body: some View {
         Text(error).ui(11.5, .semibold, look).foregroundStyle(look.palette.red)
             .padding(.vertical, 4).padding(.horizontal, 8)
-            .background(look.palette.red.opacity(0.18), in: .rect(cornerRadius: 6)).padding(.horizontal, 10)
+            .background(look.palette.red.opacity(0.18), in: .rect(cornerRadius: look.radius(6))).padding(.horizontal, 10)
     }
 }
 

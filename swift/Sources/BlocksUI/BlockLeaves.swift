@@ -51,6 +51,18 @@ internal struct ListBlock: View {
 
     internal var body: some View {
         let rows = block.list("rows")
+        if let tiles = look.tiles {
+            VStack(spacing: tiles.seam) {
+                ForEach(Array(rows.enumerated()), id: \.offset) { _, row in
+                    RowView(row: row).surface(look).modifier(Reordering(list: block, row: row)).modifier(Reported(block: row))
+                }
+            }
+        } else {
+            lines(rows)
+        }
+    }
+
+    private func lines(_ rows: [JSONValue]) -> some View {
         VStack(spacing: 0) {
             ForEach(Array(rows.enumerated()), id: \.offset) { index, row in
                 RowView(row: row).modifier(Reordering(list: block, row: row)).modifier(Reported(block: row))
@@ -69,7 +81,7 @@ internal struct StatBlock: View {
 
     internal var body: some View {
         let tiles = block["items"] == nil ? [block] : block.list("items")
-        HStack(spacing: 10) {
+        HStack(spacing: look.tiles?.seam ?? 10) {
             ForEach(Array(tiles.enumerated()), id: \.offset) { _, tile in self.tile(tile) }
         }
     }
@@ -78,9 +90,11 @@ internal struct StatBlock: View {
         let palette = look.palette
         return VStack(alignment: .leading, spacing: 4) {
             Text(tile.string("label") ?? "").ui(12, .regular, look).foregroundStyle(palette.mute)
+                .fixedSize(horizontal: false, vertical: true)
             HStack(alignment: .firstTextBaseline, spacing: 4) {
                 RelativeValue(value: tile["value"] ?? .null).ui(22, .semibold, look)
                     .foregroundStyle(palette.tone(tile.string("tone")) ?? palette.foreground)
+                    .fixedSize(horizontal: false, vertical: true)
                 if let unit = tile.string("unit") { Text(unit).ui(13, .regular, look).foregroundStyle(palette.mute) }
             }
             if !tile.list("spark").isEmpty {
@@ -141,7 +155,7 @@ internal struct ChipsBlock: View {
             selected ? look.palette.background : look.palette.foreground
         )
         .padding(.horizontal, 12).frame(height: 30)
-        .background(selected ? look.palette.lead : look.palette.edge.opacity(0.35), in: .capsule)
+        .background(selected ? look.palette.lead : look.palette.edge.opacity(0.35), in: look.pill)
     }
 
     private func pick(_ value: String, from selected: [String]) {

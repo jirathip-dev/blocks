@@ -1,0 +1,126 @@
+{
+  "kind": "screen",
+  "id": "kinds",
+  "variant": null,
+  "drawn": "native",
+  "children": [
+    {
+      "kind": "section",
+      "id": "stats",
+      "variant": null,
+      "drawn": "native",
+      "children": [
+        {
+          "kind": "stat",
+          "id": "today",
+          "variant": null,
+          "drawn": "native",
+          "children": []
+        }
+      ]
+    },
+    {
+      "kind": "section",
+      "id": "rows",
+      "variant": null,
+      "drawn": "native",
+      "children": [
+        {
+          "kind": "list",
+          "id": "tasks",
+          "variant": null,
+          "drawn": "native",
+          "children": [
+            {
+              "kind": "row",
+              "id": "oat",
+              "variant": null,
+              "drawn": "native",
+              "children": []
+            },
+            {
+              "kind": "row",
+              "id": "seal",
+              "variant": null,
+              "drawn": "native",
+              "children": []
+            },
+            {
+              "kind": "row",
+              "id": "licence",
+              "variant": null,
+              "drawn": "native",
+              "children": []
+            },
+            {
+              "kind": "row",
+              "id": "coffee",
+              "variant": null,
+              "drawn": "native",
+              "children": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "section",
+      "id": "cards",
+      "variant": null,
+      "drawn": "native",
+      "children": [
+        {
+          "kind": "card",
+          "id": "shift",
+          "variant": null,
+          "drawn": "native",
+          "children": [
+            {
+              "kind": "button",
+              "id": "retry",
+              "variant": "primary",
+              "drawn": "native",
+              "children": []
+            },
+            {
+              "kind": "button",
+              "id": "delete",
+              "variant": "destructive",
+              "drawn": "native",
+              "children": []
+            }
+          ]
+        },
+        {
+          "kind": "card",
+          "id": "failed",
+          "variant": null,
+          "drawn": "native",
+          "children": []
+        }
+      ]
+    },
+    {
+      "kind": "section",
+      "id": "controls",
+      "variant": null,
+      "drawn": "native",
+      "children": [
+        {
+          "kind": "chips",
+          "id": "filter",
+          "variant": null,
+          "drawn": "native",
+          "children": []
+        },
+        {
+          "kind": "form",
+          "id": "cafe",
+          "variant": null,
+          "drawn": "native",
+          "children": []
+        }
+      ]
+    }
+  ]
+}

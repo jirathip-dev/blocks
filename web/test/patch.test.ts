@@ -4,6 +4,9 @@ import { apply, patcher } from "../src/patch.ts";
 
 class El {
   attrs = new Map();
+  classList = new Set();
+  addEventListener() {}
+  removeEventListener() {}
   children = [];
   parentElement = null;
   text = "";
