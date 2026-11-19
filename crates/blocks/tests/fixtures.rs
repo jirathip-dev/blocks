@@ -360,7 +360,8 @@ fn every_golden_parses_with_no_fault() {
                     | Fault::Extra { .. }
                     | Fault::Unknown { .. }
                     | Fault::Twice { .. }
-                    | Fault::ActTwice { .. } => {
+                    | Fault::ActTwice { .. }
+                    | Fault::Link { .. } => {
                         bad.push(format!("{name}: {f:?}"));
                     }
                     _ => {}

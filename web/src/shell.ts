@@ -3,7 +3,7 @@ import type { Scheme } from "./gen/schemes.ts";
 import type { Answer, Block, Kind, Op } from "./gen/types.ts";
 import { behave } from "./behave.ts";
 import { apply, patcher } from "./patch.ts";
-import { type Blk, blks, btn, type Ctx, el, h, isBlk, obj, type Post, type Renderer, render, type Store, tick } from "./render/index.ts";
+import { type Blk, blks, btn, type Ctx, el, h, isBlk, linkable, obj, type Post, type Renderer, render, type Store, tick } from "./render/index.ts";
 import { settle } from "./motion.ts";
 import { stream } from "./stream.ts";
 import { plain, type Theme, tiles } from "./theme.ts";
@@ -435,7 +435,9 @@ export function adopt(o: { theme?: Theme; store?: Store; blocks?: AppBlocks } = 
   };
   const tap = (t: unknown) => {
     const x = obj(t);
-    if (typeof x.url === "string") open(x.url, "_blank", "noopener");
+    if (typeof x.url === "string") {
+      if (linkable(x.url)) open(x.url, "_blank", "noopener");
+    }
     else if (typeof x.open === "string") location.assign(x.open);
     else if (typeof x.action === "string") void act({ action: x.action, values: x.values });
     else if (x.sheet === "look") lookSheet();
