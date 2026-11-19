@@ -1,0 +1,11 @@
+Decided: the notes read each PR's For humans and For apps text with gh pr view, not from the squash commit
+Because: "or the notes read it from the PR, so it survives the merge either way"
+Decided: PRs are found by the trailing (#N) of each commit subject between the latest release and the sha
+Because: scripts/release.sh:28
+Decided: the path list lives only in ci/for-apps.paths; scripts/for-apps.sh reads it with shell case patterns
+Because: "The path list lives in one place in the repo."
+Decided: the check is a step in ci.yml's rust job on pull_request; its test runs in just cap
+Because: "no new per-PR job beyond a step in an existing one"
+Rejected: adding the edited event to ci.yml — it would re-run the whole ci workflow on every body edit
+Check: sh scripts/release.test.sh and sh scripts/for-apps.test.sh exit 0; the release test fails on the old release.sh
+Owner: Releases now list what changed and what apps must do; PRs changing the schema, wire, builders or look must say it.
