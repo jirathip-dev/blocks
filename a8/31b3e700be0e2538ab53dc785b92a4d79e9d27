@@ -1,0 +1,4 @@
+Decided: merged origin/staging (config #40), keeping the editor and config tests side by side in site.rs and render.test.ts; web/dist rebuilt
+Because: web/test/render.test.ts:17
+Rejected: none
+Owner: The editor change now sits on the latest staging next to the new settings view; nothing changes for users.
