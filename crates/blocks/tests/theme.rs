@@ -105,23 +105,23 @@ fn css_sets_every_token_for_both_modes() {
     for (k, v) in pair.dark.tokens.all() {
         assert!(dark.contains(&format!("{k}:{};", v.as_str())), "{k}");
     }
+    assert!(light.contains("--radius:6px;"), "{light}");
+    let base = css(pair, &style);
     for (k, v) in DEFAULT_STYLE {
-        assert!(light.contains(&format!("{k}:{v};")), "{k}");
+        assert!(base.contains(&format!("{k}:{v};")), "{k}");
     }
 }
 
 #[test]
 fn css_writes_each_fixtures_css_file_for_the_default_pair_and_each_scheme_in_its_mode() {
-    let mut want = vec![
-        (
-            "default".to_owned(),
-            css(default(), &style_of(r#""format": 1, "type": "mono", "radius": 0"#)),
-        ),
-        (
-            "default-still".to_owned(),
-            css(default(), &style("fixtures/styles/still.json").unwrap()),
-        ),
-    ];
+    let mut want = vec![(
+        "default".to_owned(),
+        css(default(), &style_of(r#""format": 1, "type": "mono", "radius": 0"#)),
+    )];
+    for name in ["modern", "still", "terminal"] {
+        let s = style(&format!("fixtures/styles/{name}.json")).unwrap();
+        want.push((format!("default-{name}"), css(default(), &s)));
+    }
     let mut schemes: Vec<PathBuf> = std::fs::read_dir(root().join("fixtures/schemes"))
         .unwrap()
         .map(|e| e.unwrap().path())
@@ -290,4 +290,46 @@ fn check_pack_refuses_a_broken_pack_with_each_reason() {
     assert!(check_pack(&broken, &given())
         .iter()
         .any(|m| m.starts_with("theme.json: EOF")));
+}
+
+#[test]
+fn each_style_axis_changes_css_and_the_default_style_adds_nothing() {
+    let plain = serde_json::to_value(style_of(r#""format": 1, "type": "mono", "radius": 0"#)).unwrap();
+    let base = css(default(), &serde_json::from_value(plain.clone()).unwrap());
+    let rows = [
+        (
+            "type",
+            serde_json::json!("default"),
+            r#":root{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}"#,
+        ),
+        ("radius", serde_json::json!(1), "--radius:12px;"),
+        ("surface", serde_json::json!("dashed"), "{border-style:dashed}"),
+        ("surface", serde_json::json!("solid"), "{border-width:2px}"),
+        (
+            "fills",
+            serde_json::json!("outline"),
+            "box-shadow:inset 0 0 0 1px var(--l)}",
+        ),
+        (
+            "marks",
+            serde_json::json!("text"),
+            r#".spi.done .spm::after{content:"done";"#,
+        ),
+        (
+            "sections",
+            serde_json::json!("quiet"),
+            ".sh{font-size:var(--fs-meta);font-weight:400}",
+        ),
+        (
+            "labels",
+            serde_json::json!({"header": {"prefix": "\"", "suffix": "]", "case": "upper"}, "kind": {"case": "lower"}}),
+            r#".sec>.sh{text-transform:uppercase}.sec>.sh::before{content:"\""}.sec>.sh::after{content:"]"}"#,
+        ),
+    ];
+    for (axis, value, want) in rows {
+        let mut v = plain.clone();
+        v[axis] = value;
+        let got = css(default(), &serde_json::from_value(v).unwrap());
+        assert!(!base.contains(want) && got.contains(want), "{axis}: {got}");
+    }
 }
