@@ -1,0 +1,13 @@
+Decided: choose, css and tiles live in web/src/core/look.ts and leave the core entry; theme.ts re-exports them
+Because: "from the core entry or a `theme` entry: the lane picks, with one writer only"
+Decided: css takes one scheme (the shell's text, unchanged) or a light/dark pair plus space and motion, writing the crate's theme::css text
+Because: "The TS CSS writer gives the same text as the crate's `theme::css` for the default pair"
+Rejected: a second TS function for the pair text — the spec asks for one writer
+Decided: the crate's css prints DEFAULT_STYLE sorted, the order of the generated defaultStyle; only site fixture declaration order moves
+Because: crates/blocks/src/theme/scheme.rs:258
+Decided: the shell wears nothing for "the app's own" (null) and choose's pick for a name, so every sheet pick writes the text it did
+Because: "the shell's look sheet picks as before (the existing harness and tests pass unchanged)"
+Decided: fixtures/css is written by the crate under BLOCKS_GEN, listed in generated and just gen; missing-token.json is skipped as the crate refuses it
+Because: "the default pair and each scheme in `fixtures/schemes` (a fixture test)"
+Check: web/test/consume.test.ts packs the root, installs offline and runs tsc --strict over the package paths; removing the ./shell export fails it
+Owner: An app's page can take blocks' look picker, colour writer and renderer from the package at a pinned commit.
