@@ -53,7 +53,7 @@ fn ts(s: &Value) -> Out {
     Ok(out)
 }
 
-fn ts_defs(s: &Value) -> Out {
+pub(super) fn ts_defs(s: &Value) -> Out {
     let mut out = String::new();
     for (name, d) in defs(s)? {
         let body = match &d {
