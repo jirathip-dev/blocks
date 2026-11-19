@@ -1,4 +1,4 @@
-frozen = ["ci/cap.toml"]
+frozen = ["ci/cap.toml", "docs/schema.md"]
 generated = [
     "schema/blocks.schema.json",
     "schema/sample.json",
@@ -28,12 +28,16 @@ shared = ["crates/blocks/src/lib.rs", "crates/*/tests/support/**", "crates/block
 dir = "ci/cap.d"
 glob = "*.toml"
 
+[[collect]]
+dir = "docs/schema"
+glob = "*.md"
+
 [comments]
 policy = "strict"
 except = ["ci/lint-fixtures/**", "web/lint-fixtures/**"]
 
 [docs]
-paths = ["docs/*.md", "README.md"]
+paths = ["docs/*.md", "docs/schema/*.md", "README.md"]
 skip = [".drover/**"]
 
 [[layer]]
