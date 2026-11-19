@@ -14,7 +14,7 @@ const store = { get: () => null, put: () => {} };
 const ctx = (more = {}) => ({ screen: "home", act: async () => true, tap: () => {}, open: new Set(), theme: plain, store, ...more });
 const all = (e) => [e, ...e.children.flatMap(all)];
 const part = (e, cls) => all(e).find((x) => x.classList.contains(cls));
-const gaps = ["config", "secret", "web", "diff", "editor", "scene", "prose", "hero", "media", "nav", "island"];
+const gaps = ["config", "secret", "diff", "editor", "scene", "prose", "hero", "media", "nav", "island"];
 
 test("every fixture is drawn with its hooks, natively or as its fallback", () => {
   const kinds = readdirSync(dir).map((f) => f.replace(/\.json$/, ""));
@@ -175,4 +175,50 @@ test("a diagram whose source has no state draws its fallback", () => {
   const e = render({ type: "diagram", id: "x", source: "graph TD; a-->b", fallback: { title: "Flow" } }, ctx());
   ok(e.hasAttribute("data-fallback"));
   strictEqual(part(e, "b-row__title")?.textContent, "Flow");
+});
+
+test("a web block draws its page in a sandboxed frame at its height, with its address and an open link", () => {
+  const e = render(fixture("web"), ctx());
+  const f = e.querySelector("iframe");
+  deepStrictEqual(
+    ["src", "sandbox", "allow", "referrerpolicy", "loading", "title"].map((k) => f?.getAttribute(k)),
+    ["http://blocks.test/doc", "allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox", "", "no-referrer", "lazy", "blocks.test/doc"],
+  );
+  strictEqual(f?.style.height, "240px");
+  strictEqual(part(e, "wu")?.textContent, "blocks.test/doc");
+  const a = e.querySelector("a");
+  deepStrictEqual([a?.href, a?.target, a?.rel, a?.textContent], ["http://blocks.test/doc", "_blank", "noopener", "open ↗"]);
+});
+
+test("a web block whose src is not http or https draws a muted box at its height, with no frame or link", () => {
+  for (const src of ["javascript:alert(1)", "data:text/html,x", "http://["]) {
+    const e = render({ type: "web", id: "x", src, height: 120 }, ctx());
+    strictEqual(e.querySelector("iframe"), null, src);
+    strictEqual(e.querySelector("a"), null, src);
+    strictEqual(part(e, "none")?.textContent, "This page can't be shown here.");
+    strictEqual(part(e, "none")?.style.height, "120px");
+  }
+});
+
+test("a redraw of a web block with the same src keeps its frame; a new src replaces it", async () => {
+  const { apply, patcher } = await import("../src/patch.ts");
+  let model = { type: "screen", id: "s", title: "Q", blocks: [{ ...fixture("web"), show: null }] };
+  const root = document.createElement("div");
+  const draw = (b) => render(b, ctx());
+  root.replaceChildren(draw(model));
+  globalThis.requestAnimationFrame = () => 0;
+  const p = patcher({ root, model: () => model, draw });
+  const send = (fields) => {
+    const ops = [{ op: "merge", id: "doc", fields }];
+    model = apply(model, ops);
+    p.queue(ops);
+    p.flush();
+    return root.querySelector("iframe");
+  };
+  const f = root.querySelector("iframe");
+  ok(f);
+  strictEqual(send({ show: null }), f);
+  const g = send({ src: "https://example.com/x" });
+  ok(g !== f);
+  strictEqual(g?.getAttribute("src"), "https://example.com/x");
 });

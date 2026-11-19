@@ -82,6 +82,11 @@ input[type=checkbox]{width:var(--s4);height:var(--s4);accent-color:var(--l)}
 .imgs{display:flex;gap:var(--s2);overflow-x:auto}
 .imgs a{flex:none}
 .imgs img{height:calc(var(--hit) * 3);border-radius:4px}
+.web{margin:var(--s2) 0 0}
+.web .wf{display:block;box-sizing:border-box;width:100%;max-height:80svh;border:1px solid var(--edge);border-radius:0;background:var(--bg)}
+.web .wf.none{display:flex;align-items:center;justify-content:center;padding:var(--s3);color:var(--mute);font-size:var(--fs-meta);text-align:center}
+.web .wm{display:flex;align-items:center;gap:var(--s3);min-height:var(--ctl);font-size:var(--fs-meta);color:var(--mute)}
+.web .wu{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-variant-numeric:tabular-nums}
 .fd{display:flex;align-items:center;gap:var(--s2);min-height:var(--hit);border-bottom:1px solid var(--line)}
 .fd .fk{flex:1}
 .fd input:not([type=checkbox]),.fd select{flex:2}
