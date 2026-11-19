@@ -25,3 +25,4 @@
 - don't change the look without the measured look check passing (enforced by: CI web and swift, the look check on fixtures/look)
 - don't add a guard rule without its fix text and a fixture that fails it (enforced by: CI test, the rule table test in crates/blocks/tests/guard.rs)
 - don't hand-edit skill/: rerun `just gen`; prose goes in docs/guard.md (enforced by: CI arch-check, `generated`)
+- don't write a raw colour or size in a renderer: use the scheme and style tokens (enforced by: CI web lint and the swift token lint, with a baseline that only shrinks)
