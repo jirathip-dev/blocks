@@ -108,6 +108,35 @@ input[type=checkbox]{width:var(--s4);height:var(--s4);accent-color:var(--l)}
 #iv>.bar{position:fixed;bottom:env(safe-area-inset-bottom);left:0;right:0;justify-content:center;background:var(--bg)}
 #iv .bar>a{display:inline-flex;align-items:center;height:var(--ctl);color:var(--l);text-decoration:none}
 
+.dg{container-type:inline-size;margin:var(--s2) 0 0;padding:6px 0;overflow-x:auto}
+.dgm{position:relative;margin:0 auto}
+.dgm.phone{display:none}
+@container (width < 600px){.dgm.wide{display:none}.dgm.phone{display:block}}
+.dgm>svg{position:absolute;inset:0;overflow:visible}
+.dge{fill:none;stroke:var(--mute);stroke-opacity:.7;stroke-width:1.4}
+.dge.timer{stroke:var(--link);stroke-dasharray:2 3}
+.dgh{fill:var(--mute)}
+.dgs{fill:var(--fg)}
+.dgn{position:absolute;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;padding:0 10px;border:1px solid var(--edge);border-radius:0;background:var(--bg);white-space:nowrap;overflow:hidden}
+.dgn.tap{cursor:pointer}
+.dgn.tap:focus-visible{outline:2px solid var(--l);outline-offset:2px}
+.dgn .dgl{color:var(--mute);font-size:var(--fs-meta);overflow:hidden;text-overflow:ellipsis}
+.dgn .dgc{display:flex;align-items:baseline;gap:var(--s1);font-size:18px;font-weight:700;font-variant-numeric:tabular-nums}
+.dgn .dgc small{font-size:10.5px;font-weight:600}
+.dgn .dgc .opt{color:var(--mute);font-weight:400;font-style:italic}
+.dgn.working .dgc,.dgn.ok .dgc,.dgn.merged .dgc{color:var(--fk-g)}
+.dgn.needs .dgc,.dgn.warn .dgc{color:var(--fk-a)}
+.dgn.fail .dgc,.dgn.bad .dgc{color:var(--r)}
+.dgn.done .dgc{color:var(--l)}
+.dgn.zero .dgc{color:var(--mute);font-weight:500}
+.dgn.moved{--mk:var(--mute);box-shadow:inset 3px 0 0 var(--mk)}
+.dgn.moved.working,.dgn.moved.ok,.dgn.moved.merged{--mk:var(--g)}
+.dgn.moved.needs,.dgn.moved.warn{--mk:var(--a)}
+.dgn.moved.fail,.dgn.moved.bad{--mk:var(--r)}
+.dgn.picked{border:2px solid var(--l)}
+.dgn.timer{flex-direction:row;justify-content:flex-start;align-items:center;gap:var(--s1);border:1px dashed var(--link);background:transparent;color:var(--link)}
+.dgn.timer .dgv{font-weight:600}
+.dgn.timer>span{display:flex;flex-direction:column;min-width:0}
 .b-tabs{position:sticky;bottom:0;display:flex;gap:var(--s2);padding:var(--s2) 0 env(safe-area-inset-bottom);background:var(--bg);border-top:1px solid var(--line)}
 .b-tab{flex:1}
 .b-tab.on{box-shadow:inset 0 -2px var(--g);color:var(--g)}
