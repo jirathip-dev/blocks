@@ -1,0 +1,10 @@
+Decided: scene draws the approved design's chips; show is left undrawn until behaviours land
+Because: q2180
+Decided: the phone rule is a container query at 600px, as diagram's, instead of the mockup's @media
+Because: web/src/blocks.css:114
+Decided: site/scene.rs writes the same element now that B8 landed; a lane's taps follow row_of's no-JS links
+Because: "it writes the same element and `fixtures/html/scene.html` matches"
+Because: crates/blocks/src/site/views.rs:110
+Rejected: a sideways-scrolling chip strip as Swift has — q2180 says the chips wrap
+Check: web/test/site.test.ts compares fixtures/html/scene.html with render; tests/site.rs covers each lane tap
+Owner: The web and static pages now show each lane as a chip with its state, title, stage, tool and age.
