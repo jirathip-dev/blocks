@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { webkit } from "playwright";
 import { defaultPair } from "../src/gen/schemes.ts";
 import { tiles, css as wear } from "../src/theme.ts";
+import { expect as differ } from "../src/tree.ts";
 
 const BASE = "http://blocks.test/";
 const BUDGET_MS = 16.7;
@@ -89,14 +90,6 @@ function boot(screen) {
 
 const who = (n) => `${n.kind}${n.id ? `#${n.id}` : ""}`;
 
-function same(want, got, at, out) {
-  if (!got || want.kind !== got.kind || (want.id ?? null) !== (got.id ?? null) || want.drawn !== got.drawn)
-    return out.push(`${at}: drew ${got ? `${who(got)} ${got.drawn}` : "nothing"}, expected ${who(want)} ${want.drawn}`);
-  if (want.role !== got.role || want.name !== got.name) out.push(`${at}/${who(got)}: drew ${got.role} "${got.name}", expected ${want.role} "${want.name}"`);
-  if (want.children.length !== got.children.length) out.push(`${at}/${who(got)}: ${got.children.length} children, expected ${want.children.length}`);
-  want.children.forEach((c, i) => same(c, got.children[i], `${at}/${who(got)}`, out));
-}
-
 function fit(n, width, at, out) {
   const here = `${at}/${who(n)}`;
   const [x, , w, h] = n.rect ?? [0, 0, 0, 0];
@@ -172,7 +165,7 @@ export async function shot({ screen, steps = [], name = "shot", size = "390x844"
         pngs[n] = await page.screenshot();
         trees[n] = await page.evaluate(() => window.h.dump());
         report.shots.push(n);
-        if (check && expect) same(expect, trees[n], n, faults);
+        if (check && expect) differ(trees[n], expect, n, faults);
         if (check && trees[n]) fit(trees[n], width, n, faults);
         if (check && trees[n]) named(trees[n], n, faults);
         if (check) faults.push(...(await page.evaluate(UNNAMED)).map((f) => `${n}: ${f}`));

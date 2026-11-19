@@ -9,7 +9,7 @@
 - don't import bench/ (React, topcoat, the bench servers) from the crate, web/src or the Swift package (enforced by: CI arch-check, the `bench/` ban)
 - don't import drover or a transport (tokio, HTTP, std::net) here, or start a process, read a clock or write a file outside codegen (enforced by: CI arch-check bans, deny.toml bans)
 - don't draw a block without a role and a name, an actionable element without a name, or an image with no alt and not aria-hidden (enforced by: CI web, `blocks-shot --check` at 390 and 1440 and site.test on every fixtures/blocks file; CI swift, `blocks-snap --check` on each node's role and name)
-- don't break .drover/arch.toml's layers (expr <- kind <- wire <- patch <- diff <- shelf, mirror <- codegen), size limits or frozen files (enforced by: CI arch-check)
+- don't break .drover/arch.toml's layers (expr <- kind <- built, wire <- patch <- diff <- shelf, mirror; built <- behave <- tree <- site, which also uses theme; theme, layout and web stand alone; codegen uses them all), size limits or frozen files (enforced by: CI arch-check)
 - don't hand-edit a generated file (the schema, its sample, the TS and Swift types): rerun `just gen` (enforced by: CI arch-check, `generated`)
 - don't change the wire types against docs/schema.md's versioning rule (enforced by: none)
 - don't push with a failing test, a sim seed that fails or a perf budget overrun (enforced by: CI test, CI perf in release)

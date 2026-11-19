@@ -180,6 +180,9 @@ export const R: { [K in Kind]: (b: Of<K>, c: Ctx) => HTMLElement | null } = {
   island: gap(21),
 };
 
+/// The accessible name of block `b` of kind `t`: its first set name field, else its id, else its kind.
+export const named = (b: Blk, t: string) => String(names.map((k) => b[k]).find((v) => typeof v === "string" && v) ?? (typeof b.id === "string" && b.id ? b.id : t));
+
 const core = (b: Blk): b is Of<Kind> => Object.prototype.hasOwnProperty.call(hooks, String(b.type));
 const view = <K extends Kind>(t: K, b: Of<K>, c: Ctx) => R[t](b, c);
 
@@ -197,7 +200,7 @@ export function render(b: Blk, c: Ctx): HTMLElement | null {
   if (typeof b.tone === "string") e.dataset.tone = b.tone;
   const native = e.tagName === "BUTTON" ? "button" : e.tagName === "A" && e.hasAttribute("href") ? "link" : null;
   e.setAttribute("role", e.getAttribute("role") ?? native ?? roles[t] ?? "group");
-  e.setAttribute("aria-label", String(names.map((k) => b[k]).find((v) => typeof v === "string" && v) ?? (typeof b.id === "string" && b.id ? b.id : t)));
+  e.setAttribute("aria-label", named(b, t));
   return e;
 }
 

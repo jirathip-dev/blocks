@@ -1,5 +1,5 @@
 use blocks::expr::{Lit, State};
-use blocks::tree::{expect, Drawn, Report};
+use blocks::tree::{check, expect, Drawn, Node, Report};
 use blocks::Built;
 use serde_json::json;
 
@@ -48,4 +48,17 @@ fn a_report_without_frame_timings_still_reads_and_writes_none() {
     let t: blocks::tree::Timings = serde_json::from_value(new.clone()).unwrap();
     assert_eq!((t.frames_over_budget, t.longest_patch_ms), (Some(0), Some(1.0)));
     assert_eq!(serde_json::to_value(&t).unwrap(), new);
+}
+
+#[test]
+fn check_gives_the_committed_findings_for_each_failing_case() {
+    let path = concat!(env!("CARGO_MANIFEST_DIR"), "/../../fixtures/trees/fail/cases.json");
+    let cases: Vec<serde_json::Value> = serde_json::from_str(&std::fs::read_to_string(path).unwrap()).unwrap();
+    assert!(cases.len() >= 5);
+    for c in cases {
+        let (tree, want): (Node, Node) = serde_json::from_value(json!([c["tree"], c["want"]])).unwrap();
+        let want_findings: Vec<String> = serde_json::from_value(c["findings"].clone()).unwrap();
+        assert_eq!(check(Some(&tree), &want, "tree"), want_findings, "{}", c["name"]);
+        assert_eq!(check(Some(&want), &want, "tree"), Vec::<String>::new());
+    }
 }
