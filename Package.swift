@@ -11,12 +11,20 @@ let package = Package(
     products: [
         .library(name: "Blocks", targets: ["Blocks"]),
         .library(name: "BlocksUI", targets: ["BlocksUI"]),
+        .library(name: "BlocksSnapshot", targets: ["BlocksSnapshot"]),
+        .executable(name: "blocks-snap", targets: ["blocks-snap"]),
     ],
     targets: [
         .target(name: "Blocks", path: "swift/Sources/Blocks", swiftSettings: strict),
         .target(name: "BlocksUI", dependencies: ["Blocks"], path: "swift/Sources/BlocksUI", swiftSettings: strict),
+        .target(
+            name: "BlocksSnapshot", dependencies: ["Blocks", "BlocksUI"], path: "swift/Sources/BlocksSnapshot",
+            swiftSettings: strict),
+        .executableTarget(
+            name: "blocks-snap", dependencies: ["Blocks", "BlocksUI", "BlocksSnapshot"], path: "swift/Sources/blocks-snap",
+            swiftSettings: strict),
         .testTarget(
-            name: "BlocksTests", dependencies: ["Blocks", "BlocksUI"], path: "swift/Tests/BlocksTests",
+            name: "BlocksTests", dependencies: ["Blocks", "BlocksUI", "BlocksSnapshot"], path: "swift/Tests/BlocksTests",
             swiftSettings: strict),
     ]
 )
