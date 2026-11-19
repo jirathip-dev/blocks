@@ -1,0 +1,13 @@
+Decided: one Edit per gesture (move, swap, show), applied and checked by layout::edit; the client never builds a whole layout
+Because: docs/architecture/gestures/shapes.md:182
+Decided: drops in Rust, TS and Swift, all held to fixtures/layouts/edits.json; every drop of every node passes edit
+Because: crates/blocks/src/layout.rs:668
+Decided: keys walk moves (Up/Down) and swaps (Left/Right); Shift and the slot named actions jump between slots, since a Nudge carries no target
+Because: web/src/arrange.ts:12
+Decided: the web edit mode is its own sheet owned by mount, so draw stays at its size baseline
+Because: web/src/shell.ts:392
+Rejected: the edit mode inside draw's sheet — arch-check refused draw at 249 lines over its 244 baseline
+Decided: SwiftUI save answers String? (nil saved, else the reason shown) and takes size from the host
+Because: swift/Sources/BlocksUI/Arrange.swift:7
+Check: src/ net +652 puts the repo at 29627 / 38500 after #247 (q2411); the PR body now carries its For apps line
+Owner: An app can offer a layout edit mode, by drag, keys or screen reader, on web and SwiftUI.
