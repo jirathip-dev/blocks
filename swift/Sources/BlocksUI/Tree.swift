@@ -101,6 +101,7 @@ extension Block {
         case .editor(let b): ("editor", b.id, nil, Source(action: b.action))
         case .scene(let b): ("scene", b.id, nil, Source())
         case .diagram(let b): ("diagram", b.id, nil, Source())
+        case .chart(let b): ("chart", b.id, nil, Source())
         case .composer(let b): ("composer", b.id, nil, Source(action: b.action, values: b.values))
         case .lines(let b): ("lines", b.id, nil, Source(action: b.action))
         case .prose(let b): ("prose", b.id, nil, Source())
@@ -119,7 +120,7 @@ extension Block {
         }
     }
 
-    private static let roles = ["section": "region", "form": "form", "config": "form", "nav": "navigation", "toast": "status"]
+    private static let roles = ["section": "region", "form": "form", "config": "form", "nav": "navigation", "chart": "figure", "toast": "status"]
     private static let names = ["label", "title", "header", "question", "alt", "file", "command", "placeholder", "name"]
 
     /// The accessible role and name every renderer gives this block's root, as `tree::a11y` in Rust.
@@ -154,6 +155,7 @@ extension Block {
         case .editor(let b): [b.name]
         case .scene(let b): [b.label]
         case .diagram(let b): [b.title]
+        case .chart(let b): [b.title]
         case .composer(let b): [b.label, b.placeholder]
         case .lines(let b): [b.label, b.name]
         case .hero(let b): [b.title]
