@@ -94,6 +94,12 @@ input[type=checkbox]{width:var(--s4);height:var(--s4);accent-color:var(--l)}
 .form.say .fd{flex:1;border:0;min-height:0}
 .form.say .fk:empty{display:none}
 .card .form.say{position:static;border:0;padding:0;background:none}
+.secret .fd input{border-radius:0;letter-spacing:.12em}
+.secret .fd input::placeholder{letter-spacing:0;color:var(--mute)}
+.secret .fd input:focus{outline:2px solid var(--l);outline-offset:-1px;border-color:var(--l)}
+.secret .fk .set{white-space:nowrap;color:var(--fk-g);font-size:var(--fs-meta);margin-left:var(--s2)}
+.secret .ra{justify-content:space-between;align-items:center}
+.secret .sn{font-size:var(--fs-meta);margin:0}
 
 .cmp{position:sticky;bottom:calc(var(--hit) + var(--s2) + env(safe-area-inset-bottom));padding:var(--s2) 0;background:var(--bg);border-top:1px solid var(--line)}
 .cmp .cr{display:flex;align-items:flex-end;gap:var(--s3)}
