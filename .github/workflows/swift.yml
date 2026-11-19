@@ -2,9 +2,9 @@ name: swift
 on:
   push:
     branches: [main, staging]
-    paths: ["Package.swift", "swift/**", "schema/sample.json", "fixtures/screens/**", "fixtures/blocks/**", "fixtures/trees/**", "fixtures/protocol/**", "fixtures/behave/**", "fixtures/sim/**", "fixtures/stress/**", ".github/workflows/swift.yml"]
+    paths: ["Package.swift", "swift/**", "schema/sample.json", "fixtures/screens/**", "fixtures/blocks/**", "fixtures/trees/**", "fixtures/protocol/**", "fixtures/behave/**", "fixtures/sim/**", "fixtures/stress/**", "fixtures/look/**", "fixtures/styles/**", ".github/workflows/swift.yml"]
   pull_request:
-    paths: ["Package.swift", "swift/**", "schema/sample.json", "fixtures/screens/**", "fixtures/blocks/**", "fixtures/trees/**", "fixtures/protocol/**", "fixtures/behave/**", "fixtures/sim/**", "fixtures/stress/**", ".github/workflows/swift.yml"]
+    paths: ["Package.swift", "swift/**", "schema/sample.json", "fixtures/screens/**", "fixtures/blocks/**", "fixtures/trees/**", "fixtures/protocol/**", "fixtures/behave/**", "fixtures/sim/**", "fixtures/stress/**", "fixtures/look/**", "fixtures/styles/**", ".github/workflows/swift.yml"]
 
 permissions:
   contents: read
