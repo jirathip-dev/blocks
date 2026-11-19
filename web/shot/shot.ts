@@ -3,6 +3,7 @@ import { webkit } from "playwright";
 import { defaultPair } from "../src/gen/schemes.ts";
 import { tiles, css as wear } from "../src/theme.ts";
 import { expect as differ } from "../src/core/tree.ts";
+import { declared, measure } from "./look.ts";
 
 const BASE = "http://blocks.test/";
 const BUDGET_MS = 16.7;
@@ -120,11 +121,11 @@ const UNNAMED = () => {
     .map((e) => `${e.closest("[data-block]")?.dataset.block ?? "root"}: an unnamed ${e.matches("img, svg") ? "image" : e.tagName.toLowerCase()}`);
 };
 
-/// Draws `screen` in WebKit, runs `steps`, and gives each shot's PNG and tree, the report and the failed checks.
-export async function shot({ screen, steps = [], name = "shot", size = "390x844", css = [], expect, ids, check = false, browser }) {
+/// Draws `screen` in WebKit in `scheme`, runs `steps`, and gives each shot's PNG and tree, the report and the failed checks.
+export async function shot({ screen, steps = [], name = "shot", size = "390x844", css = [], expect, ids, check = false, scheme = "light", look = false, browser }) {
   const [width, height] = size.split("x").map(Number);
   const own = browser ?? (await webkit.launch());
-  const page = await own.newPage({ viewport: { width, height } });
+  const page = await own.newPage({ viewport: { width, height }, colorScheme: scheme });
   try {
     await page.route("**/*", (r) => {
       const p = r.request().url().slice(BASE.length);
@@ -173,6 +174,7 @@ export async function shot({ screen, steps = [], name = "shot", size = "390x844"
         if (check && trees[n]) fit(trees[n], width, n, faults);
         if (check && trees[n]) named(trees[n], n, faults);
         if (check) faults.push(...(await page.evaluate(UNNAMED)).map((f) => `${n}: ${f}`));
+        if (check && look) faults.push(...measure(pngs[n], trees[n], defaultPair[scheme].tokens, await declared(page)).map((f) => `${n}: ${f}`));
         const drew = ids && (await page.evaluate(() => window.h.ids()));
         if (check && ids && JSON.stringify(drew) !== JSON.stringify(ids)) faults.push(`${n}: drew ids ${JSON.stringify(drew)}, expected ${JSON.stringify(ids)}`);
       }

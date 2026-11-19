@@ -13,11 +13,13 @@ const { values: a } = parseArgs({
     expect: { type: "string" },
     ids: { type: "string" },
     check: { type: "boolean", default: false },
+    scheme: { type: "string", default: "light" },
+    measure: { type: "boolean", default: false },
     out: { type: "string" },
   },
 });
 if (!a.screen || !a.out) {
-  process.stderr.write("usage: blocks-shot --screen <file> [--size 390x844] [--css <file>]… [--script <steps.json>] [--expect <tree.json>] [--ids <ids.json>] [--check] --out <dir>\n");
+  process.stderr.write("usage: blocks-shot --screen <file> [--size 390x844] [--css <file>]… [--script <steps.json>] [--expect <tree.json>] [--ids <ids.json>] [--check] [--scheme light|dark] [--measure] --out <dir>\n");
   process.exit(2);
 }
 const json = (f) => JSON.parse(readFileSync(f, "utf8"));
@@ -30,6 +32,8 @@ const run = await shot({
   expect: a.expect ? json(a.expect) : undefined,
   ids: a.ids ? json(a.ids) : undefined,
   check: a.check,
+  scheme: a.scheme,
+  look: a.measure,
 });
 mkdirSync(a.out, { recursive: true });
 for (const n of run.report.shots) {
