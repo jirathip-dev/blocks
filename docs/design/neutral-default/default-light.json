@@ -1,0 +1,5 @@
+{"label":"Default light","color-scheme":"light","tokens":{
+"--bg":"#f6f6f6","--card":"#ffffff","--edge":"#d0d0d0","--line":"#e4e4e4","--scrim":"#0000004d",
+"--fg":"#1c1c1c","--mute":"#5e5e5e","--l":"#3d3d3d","--link":"#3d3d3d",
+"--g":"#649163","--a":"#9d7e4c","--r":"#9e5855","--p":"#927ea6","--c":"#4690a0",
+"--fk-l":"#3d3d3d","--fk-p":"#78658c","--fk-c":"#267585","--fk-g":"#537452","--fk-a":"#816945"}}
