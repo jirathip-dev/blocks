@@ -1,12 +1,15 @@
 use std::collections::{BTreeMap, BTreeSet};
 
+use serde::Serialize;
 use serde_json::{Map, Value};
 
 use crate::gesture::Word;
 use crate::kind::{Block, Fallback, Fields, Screen, Steps, Table, Tap};
 
 /// What makes a screen unfit to send: a server checks its own before it serves it.
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
+#[serde(tag = "fault", rename_all = "kebab-case")]
 pub enum Fault {
     Twice {
         id: String,
