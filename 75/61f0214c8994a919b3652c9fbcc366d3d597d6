@@ -1,0 +1,12 @@
+Decided: css/raw-colour is a sheet probe in web/shot/probe, run on the --css files like the other css/ rules
+Because: "It reads the app CSS the harness is given (`--css`), not blocks' own stylesheet"
+Decided: only colour-bearing properties are read; custom properties (the app's scheme) and layout are free
+Because: "Layout properties stay free: nothing here restricts `display`, `gap`, `padding` or `position`"
+Decided: a raw colour is a hex, a colour function or a named or system colour word, also inside shorthands and var() fallbacks
+Rejected: a whole-value allow-list per property — shorthands like `border: 1px solid var(--edge)` and `fill: none` would need their own grammar
+Decided: render/contrast.css sets a low --fg in :root and private-selector.css uses var(--fg), so each bad fixture fires only its own rule
+Because: "a bad fixture that fires only it; no ok fixture fires"
+Decided: since 2, no guard version bump; a stylesheet finding is never baselined
+Rejected: bumping guard::VERSION — it would rewrite every baseline file for a rule baselines never hold
+Check: shot.test's bad-fixture test fires css/raw-colour once at line 3 of fixtures/guard/bad/css/raw-colour.css and nowhere else
+Owner: App stylesheets now fail the screen check when they hard-code a colour instead of using the scheme's colours.
