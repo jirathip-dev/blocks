@@ -1110,6 +1110,9 @@ public struct Time: Codable, Equatable, Sendable {
 
 public struct Timings: Codable, Equatable, Sendable {
     public var first_paint_ms: Double
+    public var frames_over_budget: UInt32?
+    public var longest_frame_ms: Double?
+    public var longest_patch_ms: Double?
     public var steps_ms: [Double]
 }
 

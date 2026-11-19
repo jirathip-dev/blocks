@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { webkit } from "playwright";
 
 const BASE = "http://blocks.test/";
+const BUDGET_MS = 16.7;
 const dist = (f) => readFileSync(new URL(`../dist/${f}`, import.meta.url));
 const PAGE = (css) =>
   `<!doctype html><meta charset=utf-8><link rel=stylesheet href=blocks.css>${css.map((_, i) => `<link rel=stylesheet href=css/${i}>`).join("")}` +
@@ -21,7 +22,55 @@ function boot(screen) {
   };
   h.paint = () => root.replaceChildren(...[B.render(h.model, ctx)].filter(Boolean));
   h.ops = (ops) => ((h.model = (ops?.length && B.apply(h.model, ops)) || h.model), h.paint());
-  h.frame = (f) => (f.screen ? ((h.model = f.screen), h.paint()) : h.ops(f.ops));
+  h.patch = [];
+  const p = B.patcher({ root, draw: (b) => B.render(b, ctx), model: () => ((h.t = performance.now()), h.model), saved: () => h.patch.push(performance.now() - h.t) });
+  h.frame = (f) => {
+    const next = f.screen ?? (f.ops?.length && B.apply(h.model, f.ops));
+    if (next) h.model = next;
+    if (f.screen) h.paint();
+    else if (next) p.queue(f.ops);
+  };
+  h.meter = () => {
+    const out = [];
+    let on = true, busy = 0;
+    const tick = () => {
+      if (!on) return;
+      const t0 = performance.now();
+      requestAnimationFrame(tick);
+      const ch = new MessageChannel();
+      ch.port1.onmessage = () => (out.push(performance.now() - t0 + busy), (busy = 0));
+      ch.port2.postMessage(0);
+    };
+    requestAnimationFrame(tick);
+    return { add: (ms) => (busy += ms), stop: () => ((on = false), out.slice()) };
+  };
+  const settle = (m, done) => requestAnimationFrame(() => requestAnimationFrame(() => done(m.stop())));
+  h.burst = (frames) =>
+    new Promise((done) => {
+      const m = h.meter(), took = [];
+      const id = setInterval(() => {
+        const t0 = performance.now();
+        h.frame(frames[took.length]);
+        took.push(performance.now() - t0);
+        m.add(took.at(-1));
+        if (took.length === frames.length) clearInterval(id), settle(m, (f) => done({ took, frames: f }));
+      }, 1000 / 60);
+    });
+  h.scroll = (id) =>
+    new Promise((done) => {
+      const el = root.querySelector(`[data-block][data-id="${CSS.escape(id)}"]`);
+      const m = h.meter();
+      el?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      let last, still = 0, n = 0;
+      const watch = () => {
+        const y = el?.getBoundingClientRect().top;
+        still = y === last ? still + 1 : 0;
+        last = y;
+        if (still < 5 && ++n < 600) requestAnimationFrame(watch);
+        else settle(m, done);
+      };
+      requestAnimationFrame(watch);
+    });
   h.dump = () => B.dump(root)[0] ?? null;
   root.addEventListener("redraw", h.paint);
   window.h = h;
@@ -67,16 +116,25 @@ export async function shot({ screen, steps = [], name = "shot", size = "390x844"
     await page.goto(BASE);
     await page.waitForFunction(() => window.B);
     const report = { shots: [], sent: [], dropped: [], timings: { first_paint_ms: await page.evaluate(boot, screen), steps_ms: [] } };
-    const pngs = {}, trees = {}, faults = [];
+    const pngs = {}, trees = {}, faults = [], frames = [];
     const script = steps.some((s) => s.shot) ? steps : [...steps, { shot: { name } }];
-    for (const s of script) {
+    for (let i = 0; i < script.length; i++) {
+      const s = script[i];
+      if (s.frame) {
+        let j = i;
+        while (script[j + 1]?.frame) j++;
+        const run = await page.evaluate((fs) => window.h.burst(fs), script.slice(i, j + 1).map((x) => x.frame));
+        report.timings.steps_ms.push(...run.took);
+        frames.push(...run.frames);
+        i = j;
+        continue;
+      }
       const t0 = performance.now();
       const on = (id) => page.locator(`[data-block][data-id="${id}"]`).first();
       const hit = (id, what) => on(id).locator(`xpath=descendant-or-self::*[${what}]`).or(on(id)).first();
       if (s.tap) await hit(s.tap.id, "self::button or self::a or @role='button'").click();
       if (s.type) await hit(s.type.id, "self::input or self::textarea").fill(s.type.text);
-      if (s.scroll) await on(s.scroll.id).scrollIntoViewIfNeeded();
-      if (s.frame) await page.evaluate((f) => window.h.frame(f), s.frame);
+      if (s.scroll) frames.push(...(await page.evaluate((id) => window.h.scroll(id), s.scroll.id)));
       if (s.answer) await page.evaluate((ops) => window.h.ops(ops), s.answer.ops ?? []);
       if (s.shot) {
         const n = s.shot.name;
@@ -89,6 +147,12 @@ export async function shot({ screen, steps = [], name = "shot", size = "390x844"
       report.timings.steps_ms.push(performance.now() - t0);
     }
     report.sent = await page.evaluate(() => window.h.sent);
+    if (frames.length) {
+      report.timings.longest_frame_ms = Math.max(...frames);
+      report.timings.frames_over_budget = frames.filter((f) => f > BUDGET_MS).length;
+    }
+    const patch = await page.evaluate(() => window.h.patch);
+    if (patch.length) report.timings.longest_patch_ms = Math.max(...patch);
     return { report, pngs, trees, faults };
   } finally {
     await page.close();
