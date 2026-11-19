@@ -1,0 +1,11 @@
+Decided: render/diff.ts reads the generated Diff and draws div.df > .dfh(.dff,.dfs) and .dfb(.dfk, .dfl.add|.del|.ctx with i.dfm), as the approved design's diff.js
+Because: docs/design/diff/README.md:17
+Decided: a diff with no file string or no hunks array draws its fallback row; one with an empty hunks list draws only its header
+Because: docs/design/diff/states.html:24
+Decided: site::diff in crates/blocks/src/site/diff.rs writes the same element, so fixtures/html/diff.html now holds the native element
+Because: "it writes the same element and `fixtures/html/diff.html` matches"
+Decided: the CSS is diff.css as approved, untinted lines, no line numbers, hunks drawn in full
+Because: q2184
+Rejected: matching the line sign with an index in Rust — the lint bans indexing, so the writer takes the first char from the iterator
+Check: web/test/site.test.ts's per-kind parity now compares a native diff from both writers; render.test.ts no longer lists diff as a gap
+Owner: Code changes now show on the web as a proper diff, with added and removed lines marked, instead of a placeholder row.
