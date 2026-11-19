@@ -59,9 +59,10 @@ public struct Snapshot {
         return AnyView(Text(String(decoding: (try? JSONEncoder().encode(props)) ?? Data(), as: UTF8.self)))
     }
 
-    /// Runs `steps` (a shot named `name` at the end when they take none); `check` compares each tree with `expect`, its ids with `ids`.
+    /// Runs `steps` (a shot named `name` at the end when they take none); `check` compares each tree with `expect`, its ids with `ids`, and `measure` its PNG with the look.
     public func run(
-        _ steps: [Step], name: String = "shot", expect: TreeNode? = nil, ids: DrawnIdList? = nil, check: Bool = false
+        _ steps: [Step], name: String = "shot", expect: TreeNode? = nil, ids: DrawnIdList? = nil, check: Bool = false,
+        measure: Bool = false
     ) throws
         -> SnapshotRun
     {
@@ -92,6 +93,7 @@ public struct Snapshot {
             if check, let expect { Self.same(expect, tree, shot, &faults) }
             if check { Self.fit(tree, size.width, shot, &faults) }
             if check { Self.named(tree, shot, &faults) }
+            if check, measure { faults += Self.measure(seen.png, tree, look: look).map { "\(shot): \($0)" } }
             if check, let ids, ids != seen.drawnIds {
                 faults.append("\(shot): drew ids \(seen.drawnIds), expected \(ids)")
             }
