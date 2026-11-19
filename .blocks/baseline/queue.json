@@ -1,0 +1,29 @@
+{
+  "guard": 2,
+  "known": [
+    {
+      "rule": "render/contrast",
+      "at": "screen#queue/card#fleet-herdsman/section#inprogress/list~0/row#q-690"
+    },
+    {
+      "rule": "render/contrast",
+      "at": "screen#queue/stat#stats"
+    },
+    {
+      "rule": "render/tap-target",
+      "at": "screen#queue"
+    },
+    {
+      "rule": "render/tap-target",
+      "at": "screen#queue/card#fleet-herdsman/button#drive"
+    },
+    {
+      "rule": "render/tap-target",
+      "at": "screen#queue/card#fleet-herdsman/button#pause"
+    },
+    {
+      "rule": "render/tap-target",
+      "at": "screen#queue/chips#repo"
+    }
+  ]
+}

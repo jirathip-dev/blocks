@@ -1,0 +1,9 @@
+{
+  "guard": 2,
+  "known": [
+    {
+      "rule": "render/contrast",
+      "at": "screen#role-rev/section~1/list~0/row#B"
+    }
+  ]
+}

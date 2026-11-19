@@ -556,6 +556,20 @@ export type Pending = {
     text: string;
 };
 export type PhonePart = "title" | "tag" | "value" | "meta" | "hide";
+export type Plan = {
+    out: string;
+    runs: PlanRun[];
+};
+export type PlanRun = {
+    css: string[];
+    kinds: string[];
+    name: string;
+    probes: boolean;
+    screen: string;
+    scripts: string[];
+    size: string;
+    steps: Step[];
+};
 export type Prose = {
     id?: string | null;
     parts: Part[];

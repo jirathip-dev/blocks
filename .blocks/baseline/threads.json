@@ -1,0 +1,25 @@
+{
+  "guard": 2,
+  "known": [
+    {
+      "rule": "render/contrast",
+      "at": "screen#threads/section#r-sendmeter/list#l-sendmeter/row#t2"
+    },
+    {
+      "rule": "render/tap-target",
+      "at": "screen#threads/section#r-all/button#new-all"
+    },
+    {
+      "rule": "render/tap-target",
+      "at": "screen#threads/section#r-sendmeter/button#new-sendmeter"
+    },
+    {
+      "rule": "render/tree",
+      "at": "screen#threads/card#archived"
+    },
+    {
+      "rule": "render/tree",
+      "at": "screen#threads/card#archived/list#l-archived"
+    }
+  ]
+}
