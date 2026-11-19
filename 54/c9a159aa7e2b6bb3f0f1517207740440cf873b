@@ -1,0 +1,10 @@
+Decided: SwiftUI's tree checks emit Seen for the four tree rules, with at built as web/shot/at.ts builds it
+Because: "the four tree rules as `Seen`, a public plan runner in `BlocksSnapshot` for an app's own bin"
+Decided: the two harnesses agree on (rule, run, at) through one file, fixtures/guard/seen.json, which both tests read
+Because: docs/architecture/guard/shapes.md:70
+Rejected: comparing detail too — the two renderers have different insets (8 vs 16 px), so the measurements differ
+Decided: the Swift test gives each CSS bad fixture an app style or look that causes the same defect
+Because: swift/Tests/BlocksTests/SnapshotTests.swift:173
+Rejected: offset styles — SwiftUI reports a block's layout frame, which an offset does not move
+Check: Snapshot.plan's make closure is enough for an app's own bin (look, styles, app kinds)
+Owner: The Swift screenshot tool now runs the same render plan as the web one and reports the same layout and naming problems.
