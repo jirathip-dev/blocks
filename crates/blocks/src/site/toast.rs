@@ -1,10 +1,18 @@
-use serde_json::Value;
+use serde_json::{Map, Value};
 
 use super::{fallback, get, W};
 
 pub(super) fn toast(w: &mut W<'_>, b: &Value) {
     let Some(title) = get(b, "title").filter(|t| !t.is_empty()) else {
-        return fallback(w, b);
+        let mut b = b.clone();
+        if let Some(o) = b
+            .as_object_mut()
+            .filter(|o| o.get("fallback").is_none_or(Value::is_null))
+        {
+            let done = Map::from_iter([("title".to_string(), Value::from("Done"))]);
+            o.insert("fallback".into(), Value::Object(done));
+        }
+        return fallback(w, &b);
     };
     let (tone, glyph) = match get(b, "tone") {
         Some("ok") => ("ok", "✓"),

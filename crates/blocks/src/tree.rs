@@ -119,7 +119,7 @@ pub enum Step {
     Type(Typing),
     Scroll(On),
     Frame(Frame),
-    Answer(Answer),
+    Answer(Box<Answer>),
     Shot(Shot),
 }
 

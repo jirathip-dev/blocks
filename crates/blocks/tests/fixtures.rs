@@ -377,14 +377,14 @@ fn every_golden_parses_with_no_fault() {
     );
 }
 
-const KINDS: [&str; 30] = [
+const KINDS: [&str; 31] = [
     "screen", "sheet", "section", "list", "row", "card", "choice", "form", "config", "secret", "run", "button",
     "chips", "stat", "text", "images", "web", "diff", "editor", "scene", "diagram", "composer", "prose", "hero",
-    "media", "nav", "island", "lines", "steps", "table",
+    "media", "nav", "island", "lines", "steps", "table", "toast",
 ];
 
 #[test]
-fn the_30_kinds_each_have_a_typed_sample_that_is_its_fixture() {
+fn the_31_kinds_each_have_a_typed_sample_that_is_its_fixture() {
     let mut kinds: Vec<&str> = Block::KINDS.iter().copied().chain(["island"]).collect();
     kinds.sort_unstable();
     kinds.dedup();
@@ -515,9 +515,15 @@ fn an_action_and_its_answer_travel_as_both_apps_send_them() {
     let a: blocks::Action = serde_json::from_value(action.clone()).unwrap();
     assert_eq!((a.screen.as_str(), a.values["n"].as_u64()), ("queue", Some(1)));
     assert_eq!(serde_json::to_value(&a).unwrap(), action);
-    let answer = parse(r#"{"ops": [{"op": "remove", "id": "a"}], "toast": "Approved", "close": true}"#);
+    let answer = parse(
+        r#"{"ops": [{"op": "remove", "id": "a"}], "toast": {"title": "Approved", "tone": "ok", "undo": {"action": "unapprove"}}, "close": true}"#,
+    );
     let got: blocks::Answer = serde_json::from_value(answer.clone()).unwrap();
     assert_eq!(got.ops, vec![Op::Remove { id: "a".into() }]);
+    assert_eq!(
+        got.toast.clone().map(|t| (t.title, t.undo.map(|u| u.action))),
+        Some(("Approved".into(), Some("unapprove".into())))
+    );
     assert_eq!(serde_json::to_value(&got).unwrap(), answer);
     let s = schema();
     for (def, v) in [("Action", &action), ("Answer", &answer)] {
