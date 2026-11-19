@@ -1,0 +1,5 @@
+Decided: a compact stepper too long for the width scrolls sideways as a third ViewThatFits choice, keeping the summary line below it.
+Because: swift/Sources/BlocksUI/BlockSteps.swift:46
+Rejected: dropping markers past a count — it hides steps the web line still lists.
+Check: blocks-snap --check on fixtures/stress/steps-many.json at 390 passes; steps with 5 to ~12 entries still draw the unscrolled compact line.
+Owner: A very long stepper on Apple now scrolls sideways instead of running off the screen.
