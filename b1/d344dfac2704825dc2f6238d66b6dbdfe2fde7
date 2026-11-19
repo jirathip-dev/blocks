@@ -1,0 +1,4 @@
+Decided: merge origin/staging, keeping its number formatting in expr.rs and this branch's crate-visible text()
+Because: crates/blocks/src/expr.rs:131
+Rejected: none
+Owner: The branch now includes the latest shared work; no change to what this feature does.
