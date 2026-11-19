@@ -1,0 +1,6 @@
+Decided: merge origin/staging keeping both sides: table sits beside lines and steps, kind counts go to 30, and the generated files are rebuilt by the gen steps.
+Because: "a fallback, the static site writer's element, and the row diff working on its rows" stays as built; justfile:9 lists the gen steps
+Decided: the table lines of docs/schema.md move into staging's docs/schema/blocks.md and docs/schema/stream.md.
+Because: docs/schema.md:9 now points the blocks text to docs/schema/blocks.md
+Rejected: none
+Owner: The table branch is brought up to date with the latest shared work; nothing changes in how tables look or behave.
