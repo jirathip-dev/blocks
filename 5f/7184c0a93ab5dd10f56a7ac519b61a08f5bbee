@@ -1,0 +1,7 @@
+Decided: merge origin/staging and route chart through blocks-desktop's kind switch with no native view, as toast does, so the desktop draws its fallback.
+Because: crates/blocks-desktop/src/draw/toast.rs:6
+Rejected: a native egui chart view — #45 owns the desktop views and the issue names HTML, static site, SwiftUI and React only.
+Decided: regenerate the usage skill with gen's steps rather than hand-write kinds/chart.md.
+Because: .drover/arch.toml:9
+Check: cargo clippy --workspace and cargo test -p blocks-desktop pass on the merge with staging.
+Owner: The chart branch builds again on top of the new desktop app, which shows charts in its plain fallback for now.
