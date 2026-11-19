@@ -3,5 +3,7 @@
   "id": "say",
   "variant": null,
   "drawn": "native",
+  "role": "group",
+  "name": "message the team",
   "children": []
 }

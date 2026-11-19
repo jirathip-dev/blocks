@@ -723,11 +723,12 @@ pub(super) fn composer(w: &mut W<'_>, b: &Value) {
     } else {
         shown(b.get("label"))
     };
+    let said = if label.is_empty() { "send" } else { &label };
     w.btn(
         &label,
         "primary",
         &Go::Post(f.clone(), shown(b.get("action"))),
-        &[],
+        &[("aria-label", said)],
         None,
     );
     w.close("div");

@@ -430,8 +430,7 @@ pub(super) fn diagram(w: &mut W<'_>, b: &Value) {
         .flatten()
         .map(|(k, v)| (k.clone(), v.as_f64().unwrap_or(f64::NAN)))
         .collect();
-    let label = get(b, "title").unwrap_or("Workflow").to_string();
-    w.open_block("div", "dg", b, &[("role", "group"), ("aria-label", &label)]);
+    w.open_block("div", "dg", b, &[]);
     map(w, &g, b, &WIDE, &counts);
     map(w, &g, b, &PHONE, &counts);
     w.close("div");

@@ -158,7 +158,9 @@ export function composer(b: Composer, c: Ctx): HTMLElement {
     if (d.files.length) top.push(attached());
     if (d.st) top.push(status());
     ta.placeholder = b.placeholder ?? "";
-    (go.firstElementChild ?? go).textContent = d.q != null ? "save" : b.working ? "queue" : (b.label ?? "");
+    const said = d.q != null ? "save" : b.working ? "queue" : (b.label ?? "");
+    (go.firstElementChild ?? go).textContent = said;
+    go.setAttribute("aria-label", said || "send");
     if (d.st === "sending") go.setAttribute("aria-busy", "true");
     else go.removeAttribute("aria-busy");
     if (d.steer) row.append(st);

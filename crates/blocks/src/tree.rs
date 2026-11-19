@@ -16,6 +16,50 @@ pub(crate) const VARIANTS: [(&str, &str); 5] = [
     ("images", "size"),
 ];
 
+pub(crate) const ROLES: [(&str, &str); 4] = [
+    ("section", "region"),
+    ("form", "form"),
+    ("config", "form"),
+    ("nav", "navigation"),
+];
+pub(crate) const NAMES: [&str; 9] = [
+    "label",
+    "title",
+    "header",
+    "question",
+    "alt",
+    "file",
+    "command",
+    "placeholder",
+    "name",
+];
+
+fn text_of<'a>(v: &'a Value, k: &str) -> Option<&'a str> {
+    v.get(k).and_then(Value::as_str).filter(|s| !s.is_empty())
+}
+
+/// The accessible role and name every renderer gives the root of block `v`.
+pub fn a11y(v: &Value) -> (&str, &str) {
+    let kind = text_of(v, "type").unwrap_or_default();
+    let tap = v.get("tap").filter(|t| t.is_object());
+    let url = tap.is_some_and(|t| t.get("url").is_some_and(|u| !u.is_null()));
+    let wrapped = ["rounds", "swipe"]
+        .iter()
+        .any(|k| v.get(k).and_then(Value::as_array).is_some_and(|a| !a.is_empty()));
+    let role = match kind {
+        "button" | "row" if url && !wrapped => "link",
+        "row" if tap.is_some() && !wrapped => "button",
+        "button" | "editor" => "button",
+        _ => ROLES.iter().find(|(k, _)| *k == kind).map_or("group", |(_, r)| r),
+    };
+    let name = NAMES
+        .iter()
+        .find_map(|k| text_of(v, k))
+        .or_else(|| text_of(v, "id"))
+        .unwrap_or(kind);
+    (role, name)
+}
+
 /// How a renderer drew a block: its own view, its fallback, or not at all.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[cfg_attr(feature = "schema", derive(schemars::JsonSchema), schemars(rename = "TreeDrawn"))]
@@ -34,6 +78,8 @@ pub struct Node {
     pub id: Option<String>,
     pub variant: Option<String>,
     pub drawn: Drawn,
+    pub role: String,
+    pub name: String,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub rect: Option<[f64; 4]>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -100,18 +146,13 @@ pub struct Report {
     pub timings: Timings,
 }
 
-/// The tree a renderer that draws `kinds` natively must draw for `screen` in `state`: no rect, no text.
+/// The tree a renderer that draws `kinds` natively must draw for `screen` in `state`, roles and names included: no rect, no text.
 pub fn expect(screen: &Built, kinds: &[&str], state: &State) -> Node {
     node(screen.value(), kinds, &view(screen, state).hidden)
 }
 
 fn node(v: &Value, kinds: &[&str], hide: &BTreeSet<String>) -> Node {
-    let text = |k: &str| {
-        v.get(k)
-            .and_then(Value::as_str)
-            .filter(|s| !s.is_empty())
-            .map(String::from)
-    };
+    let text = |k: &str| text_of(v, k).map(String::from);
     let kind = text("type").unwrap_or_default();
     let variant = VARIANTS.iter().find(|(k, _)| *k == kind).and_then(|(_, f)| text(f));
     let hidden = text("id").is_some_and(|i| hide.contains(&i));
@@ -131,7 +172,10 @@ fn node(v: &Value, kinds: &[&str], hide: &BTreeSet<String>) -> Node {
             .collect(),
         _ => vec![],
     };
+    let (role, name) = a11y(v);
     Node {
+        role: role.into(),
+        name: name.into(),
         id: text("id"),
         kind,
         variant,

@@ -1,4 +1,4 @@
-import { hooks } from "../gen/hooks.ts";
+import { hooks, names, roles } from "../gen/hooks.ts";
 import type { Block, Fallback, Kind, Label, Tap, Toned } from "../gen/types.ts";
 import type { Theme } from "../theme.ts";
 import { button } from "./button.ts";
@@ -195,6 +195,9 @@ export function render(b: Blk, c: Ctx): HTMLElement | null {
   const v = own ? hooks[b.type].variant : null;
   if (v && b[v] != null) e.dataset.variant = String(b[v]);
   if (typeof b.tone === "string") e.dataset.tone = b.tone;
+  const native = e.tagName === "BUTTON" ? "button" : e.tagName === "A" && e.hasAttribute("href") ? "link" : null;
+  e.setAttribute("role", e.getAttribute("role") ?? native ?? roles[t] ?? "group");
+  e.setAttribute("aria-label", String(names.map((k) => b[k]).find((v) => typeof v === "string" && v) ?? (typeof b.id === "string" && b.id ? b.id : t)));
   return e;
 }
 

@@ -3,5 +3,7 @@
   "id": "chart",
   "variant": null,
   "drawn": "native",
+  "role": "group",
+  "name": "a bar chart",
   "children": []
 }

@@ -4460,6 +4460,9 @@
         "kind": {
           "type": "string"
         },
+        "name": {
+          "type": "string"
+        },
         "rect": {
           "items": {
             "format": "double",
@@ -4471,6 +4474,9 @@
             "array",
             "null"
           ]
+        },
+        "role": {
+          "type": "string"
         },
         "text": {
           "type": [
@@ -4488,6 +4494,8 @@
       "required": [
         "kind",
         "drawn",
+        "role",
+        "name",
         "children"
       ],
       "type": "object"

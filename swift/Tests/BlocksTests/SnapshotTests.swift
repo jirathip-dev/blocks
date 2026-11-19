@@ -23,7 +23,7 @@ final class SnapshotTests: XCTestCase {
     }
 
     private func shape(_ n: TreeNode) -> String {
-        "\(n.kind)#\(n.id ?? "")(\(n.variant ?? ""))[\(n.children.map(shape).joined(separator: ","))]"
+        "\(n.kind)#\(n.id ?? "")(\(n.variant ?? ""))\(n.role):\(n.name)[\(n.children.map(shape).joined(separator: ","))]"
     }
 
     func testEveryFixtureBlockPassesCheckAndItsTreeHasTheHTMLTreesShape() throws {
@@ -67,6 +67,15 @@ final class SnapshotTests: XCTestCase {
         let run = try Snapshot(try load(Block.self, "blocks/list.json")).run(
             [], name: "list", expect: try load(TreeNode.self, "trees/swift/card.json"), check: true)
         XCTAssertEqual(run.faults, ["list: drew list#rows native, expected card#card native"])
+    }
+
+    func testCheckFailsANodeWhoseRoleOrNameIsNotTheExpectedOneOrThatHasNoName() throws {
+        var want = try load(TreeNode.self, "trees/swift/button.json")
+        (want.role, want.name) = ("link", "Send")
+        let run = try Snapshot(try load(Block.self, "blocks/button.json")).run([], name: "button", expect: want, check: true)
+        XCTAssertEqual(run.faults, [#"button/button#save: drew button "Save", expected link "Send""#])
+        let bare = try decode(Block.self, #"{"type": "screen", "id": "bare", "blocks": [{"type": ""}]}"#)
+        XCTAssertEqual(try Snapshot(bare).run([], name: "bare", check: true).faults, ["bare/screen#bare/: has no name"])
     }
 
     func testATapSendsTheButtonsActionAndAnAnswersOpsAreDrawn() throws {
