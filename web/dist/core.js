@@ -413,12 +413,40 @@ function gate(s, fills) {
 }
 
 // src/core/look.ts
+var TILES = ":is(.card,.st,.list>.row,.list>.rw,.form:not(.say),.choice,.secret,.run,.tbl)";
+var DRAWN = {
+  header: ".sec>.sh",
+  section: ":is(.sp,.pg,.scn)>.sh",
+  title: ":is(.ch>b,.rt)",
+  button: ".b-button>span",
+  chip: ".chips button>span",
+  picked: ".dgn.picked .dgl"
+};
+var CASE = { "as-is": "none", lower: "lowercase", upper: "uppercase" };
+var quote = (t) => `"${t.replace(/[\\"]/g, "\\$&")}"`;
+function axes(s) {
+  let out = s.type === "default" ? ':root{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}' : "";
+  if (s.surface === "dashed") out += `${TILES}{border-style:dashed}`;
+  if (s.surface === "solid") out += `${TILES}{border-width:2px}`;
+  if (s.fills === "outline") out += ".chips button.on,.spi.done .spm{background:none;color:var(--l);box-shadow:inset 0 0 0 1px var(--l)}";
+  if (s.marks === "text") out += '.spi.done .spm{width:auto;font-size:0}.spi.done .spm::after{content:"done";font-size:var(--fs-meta)}';
+  if (s.sections === "quiet") out += ".sh{font-size:var(--fs-meta);font-weight:400}";
+  for (const [role2, at2] of Object.entries(DRAWN)) {
+    const l = s.labels?.[role2];
+    if (!l) continue;
+    out += `${at2}{text-transform:${CASE[l.case ?? "as-is"]}}`;
+    if (l.prefix) out += `${at2}::before{content:${quote(l.prefix)}}`;
+    if (l.suffix) out += `${at2}::after{content:${quote(l.suffix)}}`;
+  }
+  return out;
+}
 var vars = (t) => Object.entries(t).map(([k, v]) => `${k}:${v}`);
 function css(look, style = {}) {
   if ("tokens" in look) return `:root{${vars(look.tokens).join(";")};color-scheme:${look["color-scheme"]}}`;
   const all = (t) => vars(t).map((d) => `${d};`).join("");
   const head = `color-scheme:light dark;--space:${style.space ?? 1};--motion:${style.motion ?? 1};`;
-  return `:root{${head}${all(defaultStyle)}${all(look.light.tokens)}}@media (prefers-color-scheme: dark){:root{${all(look.dark.tokens)}}}`;
+  const tiles2 = { ...defaultStyle, "--radius": `${(style.radius ?? 0) * 12}px` };
+  return `:root{${head}${all(tiles2)}${all(look.light.tokens)}}@media (prefers-color-scheme: dark){:root{${all(look.dark.tokens)}}}${axes(style)}`;
 }
 var tiles = `:where(:root){${vars(defaultStyle).join(";")}}`;
 var choose = (setting, dark, schemes = {}) => (setting !== null && Object.prototype.hasOwnProperty.call(schemes, setting) ? schemes[setting] : void 0) ?? defaultPair[dark ? "dark" : "light"];
@@ -493,7 +521,7 @@ function total(c, rows) {
 var checked = /* @__PURE__ */ Symbol("built");
 var KINDS = Object.keys(hooks);
 var LISTS = ["blocks", "rows", "buttons"];
-var DRAWN = ["row", "text", "island"];
+var DRAWN2 = ["row", "text", "island"];
 var NAMED = ["title", "label", "header", "question", "name", "file", "command", "source", "src"];
 var isObj = (v) => typeof v === "object" && v !== null && !Array.isArray(v);
 var isTable = (o) => o.type === "table" && Array.isArray(o.columns) && Array.isArray(o.rows);
@@ -518,7 +546,7 @@ var copy = (v) => isObj(v) ? fill({ ...v }) : v;
 var each = (l) => Array.isArray(l) ? l.map(copy) : l;
 function fill(o) {
   const kind = typeof o.type === "string" ? o.type : "";
-  if (KINDS.includes(kind) && !DRAWN.includes(kind) && o.fallback === void 0) o.fallback = plain(o, kind);
+  if (KINDS.includes(kind) && !DRAWN2.includes(kind) && o.fallback === void 0) o.fallback = plain(o, kind);
   for (const k of LISTS) if (k in o) o[k] = each(o[k]);
   if (Array.isArray(o.rounds)) o.rounds = o.rounds.map((r) => isObj(r) && "blocks" in r ? { ...r, blocks: each(r.blocks) } : r);
   return o;
