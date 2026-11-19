@@ -1,0 +1,23 @@
+Decided: theme::css appends one rule per non-default axis and scales --radius by 12px, so the default style's CSS is unchanged
+Because: "The default `Style` renders byte-identical to today"
+Decided: the baseline is the style fixtures/css/default.css is built from (mono, radius 0, glass, tint, symbols, title, no labels)
+Because: crates/blocks/tests/theme.rs:118
+Decided: kind, group, back and said labels emit nothing on the web: the web draws no such label, and the shell already writes the back chevron
+Because: web/src/shell.ts:197
+Rejected: setting a monospace font for mono in the base stylesheet — it would change every default page's pixels
+Rejected: a CSS-variable toggle design — still needs the same TS mirror and is longer
+Check: fixtures/css/default.css and solarized-canonical.css are unchanged; web/test/axes.test.ts measures each axis in WebKit
+Owner: A site's style file now changes fonts, corners, borders, fills, marks, section headers and labels on its pages; the default look stays the same.
+
+Decided: theme::css appends one rule per non-default axis and scales --radius by 12px, so the default style's CSS is unchanged
+Because: "The default `Style` renders byte-identical to today"
+Decided: the baseline is the style fixtures/css/default.css is built from (mono, radius 0, glass, tint, symbols, title, no labels)
+Because: crates/blocks/tests/theme.rs:119
+Decided: kind, group, back and said labels emit nothing on the web: the web draws no such label, and the shell already writes the back chevron
+Because: web/src/shell.ts:197
+Decided: round 2 fixes the red rust check by adding the PR body's `For apps:` line, plus a staging merge so CI runs on a new push
+Because: scripts/release.sh:32
+Rejected: setting a monospace font for mono in the base stylesheet — it would change every default page's pixels
+Rejected: a CSS-variable toggle design — still needs the same TS mirror and is longer
+Check: fixtures/css/default.css and solarized-canonical.css are unchanged; web/test/axes.test.ts measures each axis in WebKit
+Owner: A site's style file now changes fonts, corners, borders, fills, marks, section headers and labels on its pages; the default look stays the same.
