@@ -21,13 +21,14 @@ The Rust types in `crates/blocks/src/` (`Block` and its kinds in `kind/`, `Expr`
 A block is a JSON object whose `type` names its kind, as drover and cooee send it: `{"type": "row", "title": "Hi"}`.
 The core kinds are the superset of both apps': cooee's 21 (`screen`, `sheet`, `section`, `list`, `row`, `card`,
 `choice`, `form`, `config`, `secret`, `run`, `button`, `chips`, `stat`, `text`, `images`, `web`, `diff`, `editor`,
-`scene`, `diagram`), drover's `composer`, the content kinds `prose`, `hero`, `media`, `nav` and the `island`, 27
-in all, with every field either app sends. Each kind has `new(<its required fields>)` and a setter per optional
-one; a server builds its blocks so, never with `json!`. Any other `type` is an app's own kind (`AppBlock`): it is
+`scene`, `diagram`), drover's `composer`, the content kinds `prose`, `hero`, `media`, `nav`, the `island` and
+`steps` (a stepper or progress bars), 28 in all, with every field either app sends. Each kind has
+`new(<its required fields>)` and a setter per optional one; a server builds its blocks so, never with `json!`. Any other `type` is an app's own kind (`AppBlock`): it is
 kept whole, and may carry a `fallback` row. A core kind of the wrong shape is refused, by the types and by the
 schema. `Built::of` writes a server's own screen with the fallback of each kind a client may not draw, and
 `Built::check` lists its faults: an id twice, an unknown kind, a wrong shape, a field its kind lacks, an app kind
-named like a core one or with no fallback, a state key read but not declared.
+named like a core one or with no fallback, a state key read but not declared, a stepper with neither a
+current step nor `done`.
 
 Every kind takes `show`, an `Expr`: `{"get": "key"}`, `not`, `all`, `any`, `eq`, `lt`, `len`, `has`, `is` (a named
 pattern), `add`, `sub`, `cat`, `pick`, or a bare value. `eval` is total: a wrong type gives `null`, and `null` is
