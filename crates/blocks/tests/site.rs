@@ -34,7 +34,7 @@ fn page(live: Option<Live<'_>>) -> String {
             lang: "en",
         },
         look: &look,
-        css: &["/app.css"],
+        css: &["/blocks.css", "/app.css"],
         action: "/act",
         live,
     };
@@ -50,6 +50,7 @@ fn a_page_has_its_head_escaped_text_and_no_script_without_live() {
         "<meta name=\"description\" content=\"Plans\">",
         "<link rel=\"canonical\" href=\"https://example.org/pricing\">",
         "<meta property=\"og:image\" content=\"/og.png\">",
+        "<meta name=\"twitter:card\" content=\"summary_large_image\">",
         "<link rel=\"stylesheet\" href=\"/blocks.css\"><link rel=\"stylesheet\" href=\"/app.css\">",
         "@media (prefers-color-scheme: dark)",
         "&#60;b&#62;Tom &#38; &#34;Jerry&#34;&#60;/b&#62;",
@@ -61,15 +62,63 @@ fn a_page_has_its_head_escaped_text_and_no_script_without_live() {
 }
 
 #[test]
+fn a_page_links_only_the_stylesheets_it_is_given_and_a_sheet_tap_names_its_sheet() {
+    let look = look();
+    let tap = blocks::Tap {
+        sheet: Some("look".into()),
+        ..blocks::Tap::default()
+    };
+    let screen = Built::of(
+        &Screen::new()
+            .id("s")
+            .blocks(vec![Block::Button(Box::new(Button::new("look").id("look").tap(tap)))]),
+    );
+    let dark = &theme::default().dark;
+    let site = Site {
+        head: Head {
+            title: "t",
+            description: "d",
+            canonical: "https://example.org/blocks/",
+            image: None,
+            lang: "en",
+        },
+        look: &look,
+        css: &["blocks.css"],
+        action: "",
+        live: Some(Live {
+            js: "blocks.js",
+            stream: "",
+            looks: &[("dark", dark)],
+        }),
+    };
+    let p = site::page(&screen, &site);
+    assert!(p.contains("<link rel=\"stylesheet\" href=\"blocks.css\">"), "{p}");
+    assert!(!p.contains("href=\"/"), "{p}");
+    assert!(p.contains("<meta name=\"twitter:card\" content=\"summary\">"));
+    assert!(
+        p.contains("data-id=\"look\" type=\"button\" data-sheet=\"look\""),
+        "{p}"
+    );
+    let looks = p
+        .split("data-looks=\"")
+        .nth(1)
+        .and_then(|s| s.split('"').next())
+        .unwrap();
+    let looks: serde_json::Value = serde_json::from_str(&looks.replace("&#34;", "\"")).unwrap();
+    assert_eq!(looks["dark"], serde_json::to_value(dark).unwrap());
+}
+
+#[test]
 fn a_live_page_carries_the_screen_and_the_module_and_nothing_else() {
     let p = page(Some(Live {
         js: "/blocks.js",
         stream: "/stream",
+        looks: &[],
     }));
     assert_eq!(p.matches("<script").count(), 2);
     assert!(p.contains("<script type=\"module\" src=\"/blocks.js\"></script>"));
     let json = p
-        .split("id=\"blocks-screen\" data-stream=\"/stream\" data-action=\"/act\">")
+        .split("id=\"blocks-screen\" data-stream=\"/stream\" data-action=\"/act\" data-looks=\"{}\">")
         .nth(1)
         .and_then(|s| s.split("</script>").next())
         .unwrap();

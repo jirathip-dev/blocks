@@ -20,10 +20,11 @@ pub struct Head<'a> {
     pub lang: &'a str,
 }
 
-/// Where the live renderer and the stream are; a page with them is taken over by `blocks.js`.
+/// Where the live renderer and the stream are (empty: none), and the schemes its look sheet offers by name.
 pub struct Live<'a> {
     pub js: &'a str,
     pub stream: &'a str,
+    pub looks: &'a [(&'a str, &'a Scheme)],
 }
 
 /// The schemes for both modes and the style a page wears, as CSS variables in its head.
@@ -59,12 +60,18 @@ pub fn page(screen: &Built, site: &Site<'_>) -> String {
     if let Some(i) = h.image {
         meta("property", "og:image", i);
     }
+    let card = if h.image.is_some() {
+        "summary_large_image"
+    } else {
+        "summary"
+    };
+    meta("name", "twitter:card", card);
     out.push_str(&format!("<link rel=\"canonical\" href=\"{}\">", esc(h.canonical)));
     out.push_str(&format!(
         "<style>{}</style>",
         css(&site.look.schemes, &site.look.style).replace('<', "\\3c ")
     ));
-    for href in std::iter::once(&"/blocks.css").chain(site.css) {
+    for href in site.css {
         out.push_str(&format!("<link rel=\"stylesheet\" href=\"{}\">", esc(href)));
     }
     out.push_str(&format!("</head><body><main>{}</main>{}", w.out, w.forms));
@@ -72,10 +79,16 @@ pub fn page(screen: &Built, site: &Site<'_>) -> String {
         let json = serde_json::to_string(screen.value())
             .unwrap_or_default()
             .replace('<', "\\u003c");
+        let looks: Map<String, Value> = l
+            .looks
+            .iter()
+            .map(|(n, s)| ((*n).to_string(), serde_json::to_value(s).unwrap_or_default()))
+            .collect();
         out.push_str(&format!(
-            "<script type=\"application/vnd.blocks+json\" id=\"blocks-screen\" data-stream=\"{}\" data-action=\"{}\">{json}</script><script type=\"module\" src=\"{}\"></script>",
+            "<script type=\"application/vnd.blocks+json\" id=\"blocks-screen\" data-stream=\"{}\" data-action=\"{}\" data-looks=\"{}\">{json}</script><script type=\"module\" src=\"{}\"></script>",
             esc(l.stream),
             esc(site.action),
+            esc(&Value::Object(looks).to_string()),
             esc(l.js)
         ));
     }
@@ -138,6 +151,7 @@ pub(crate) enum Go {
     Url(String),
     Open(String),
     Post(String),
+    Sheet(String),
     Stay,
 }
 
@@ -266,6 +280,10 @@ impl<'a> W<'a> {
                 all.extend([("type", "submit"), ("form", f.as_str())]);
                 false
             }
+            Go::Sheet(s) => {
+                all.extend([("type", "button"), ("data-sheet", s.as_str())]);
+                false
+            }
             Go::Stay => {
                 all.push(("type", "button"));
                 false
@@ -315,6 +333,9 @@ impl<'a> W<'a> {
         }
         if let Some(o) = get(t, "open") {
             return Go::Open(o.into());
+        }
+        if let Some(s) = get(t, "sheet") {
+            return Go::Sheet(s.into());
         }
         match get(t, "action") {
             Some(a) => Go::Post(self.post(block, a, &fields(&[t.get("values")]))),
