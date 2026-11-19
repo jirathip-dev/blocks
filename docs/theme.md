@@ -46,12 +46,17 @@ Drawing the tiles, seams, grid and motion in the HTML and SwiftUI renderers is i
 
 ## Generated
 
-`just gen` writes the pair and the style values with the schemes: `defaultPair` and `defaultStyle` in
+`just gen` writes the pair and the style values: `defaultPair` and `defaultStyle` in
 `web/src/gen/schemes.ts`, `blocksDefaultLight`, `blocksDefaultDark` and `blocksDefaultStyle` in
 `swift/Sources/Blocks/Gen/Schemes.swift`, so a page and the Swift app can paint before a server answers. In
 SwiftUI, `Palette.defaultLight` and `Palette.defaultDark` are the pair, and a `Look` starts on `defaultDark`.
 The headless harness (`blocks-shot`) paints every run on the pair, light or dark by the page's appearance, under
 any `--css` it is given.
 
-The 12 named schemes in `theme/schemes/` are leaving for swag; until their removal issue they stay built in, but no
-test, fixture or harness default here names one.
+## Named schemes and packs
+
+blocks holds no named scheme and no pack (q2115): every one lives in swag's crate, which an app pins beside blocks.
+The app parses swag's scheme text as `Scheme` and gates it, and checks each pack with `check_pack(files, schemes)`,
+handing it the schemes the pack may name. The web shell's look sheet lists the schemes the app passes to `mount`
+as `schemes`, and none when it passes none. Here `fixtures/packs/plain` (naming `default-dark` and `default-light`)
+keeps `check_pack` and the `Theme` port tested.

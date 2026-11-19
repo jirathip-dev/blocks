@@ -1,0 +1,269 @@
+{
+  "date": "2026-11-19",
+  "runs": 10,
+  "updates_for_memory": 1000,
+  "machine": {
+    "cpu": "Apple M6",
+    "cores": 12,
+    "memory_gb": 32,
+    "os": "Darwin 27.2.0"
+  },
+  "versions": {
+    "webkit": "26.6",
+    "playwright": "1.63.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "topcoat": "0.11.0",
+    "node": "24.22.2"
+  },
+  "results": {
+    "blocks": {
+      "first_paint_cold_ms": {
+        "median": 20.5,
+        "min": 18,
+        "max": 24,
+        "runs": 10
+      },
+      "first_paint_warm_ms": {
+        "median": 11.5,
+        "min": 8,
+        "max": 18,
+        "runs": 10
+      },
+      "update_one_ms": {
+        "median": 2,
+        "min": 2,
+        "max": 6,
+        "runs": 10
+      },
+      "update_one_bytes": {
+        "median": 154.5,
+        "min": 150,
+        "max": 156,
+        "runs": 10
+      },
+      "update_insert_ms": {
+        "median": 2,
+        "min": 2,
+        "max": 3,
+        "runs": 10
+      },
+      "update_insert_bytes": {
+        "median": 170.5,
+        "min": 167,
+        "max": 171,
+        "runs": 10
+      },
+      "update_twenty_ms": {
+        "median": 3,
+        "min": 3,
+        "max": 4,
+        "runs": 10
+      },
+      "update_twenty_bytes": {
+        "median": 2392.5,
+        "min": 2344,
+        "max": 2409,
+        "runs": 10
+      },
+      "script_gzip_bytes": {
+        "median": 14022,
+        "min": 14022,
+        "max": 14022,
+        "runs": 1
+      },
+      "memory_after_updates_mb": {
+        "median": 251.03125,
+        "min": 229.203125,
+        "max": 301.953125,
+        "runs": 10
+      }
+    },
+    "react-csr": {
+      "first_paint_cold_ms": {
+        "median": 31,
+        "min": 24,
+        "max": 89,
+        "runs": 10
+      },
+      "first_paint_warm_ms": {
+        "median": 17.5,
+        "min": 16,
+        "max": 22,
+        "runs": 10
+      },
+      "update_one_ms": {
+        "median": 3,
+        "min": 2,
+        "max": 11,
+        "runs": 10
+      },
+      "update_one_bytes": {
+        "median": 13496.5,
+        "min": 12844,
+        "max": 14075,
+        "runs": 10
+      },
+      "update_insert_ms": {
+        "median": 3,
+        "min": 2,
+        "max": 4,
+        "runs": 10
+      },
+      "update_insert_bytes": {
+        "median": 13560.5,
+        "min": 12906,
+        "max": 14139,
+        "runs": 10
+      },
+      "update_twenty_ms": {
+        "median": 3,
+        "min": 2,
+        "max": 16,
+        "runs": 10
+      },
+      "update_twenty_bytes": {
+        "median": 13623.5,
+        "min": 12976,
+        "max": 14188,
+        "runs": 10
+      },
+      "script_gzip_bytes": {
+        "median": 69009,
+        "min": 69009,
+        "max": 69009,
+        "runs": 1
+      },
+      "memory_after_updates_mb": {
+        "median": 233.046875,
+        "min": 230.28125,
+        "max": 303.421875,
+        "runs": 10
+      }
+    },
+    "react-ssr": {
+      "first_paint_cold_ms": {
+        "median": 15,
+        "min": 13,
+        "max": 22,
+        "runs": 10
+      },
+      "first_paint_warm_ms": {
+        "median": 12.5,
+        "min": 10,
+        "max": 16,
+        "runs": 10
+      },
+      "update_one_ms": {
+        "median": 3,
+        "min": 2,
+        "max": 4,
+        "runs": 10
+      },
+      "update_one_bytes": {
+        "median": 13496.5,
+        "min": 12844,
+        "max": 14075,
+        "runs": 10
+      },
+      "update_insert_ms": {
+        "median": 2,
+        "min": 1,
+        "max": 4,
+        "runs": 10
+      },
+      "update_insert_bytes": {
+        "median": 13560.5,
+        "min": 12906,
+        "max": 14139,
+        "runs": 10
+      },
+      "update_twenty_ms": {
+        "median": 3,
+        "min": 2,
+        "max": 4,
+        "runs": 10
+      },
+      "update_twenty_bytes": {
+        "median": 13623.5,
+        "min": 12976,
+        "max": 14188,
+        "runs": 10
+      },
+      "script_gzip_bytes": {
+        "median": 69009,
+        "min": 69009,
+        "max": 69009,
+        "runs": 1
+      },
+      "memory_after_updates_mb": {
+        "median": 358.6953125,
+        "min": 312.296875,
+        "max": 442.328125,
+        "runs": 10
+      }
+    },
+    "topcoat": {
+      "first_paint_cold_ms": {
+        "median": 11,
+        "min": 9,
+        "max": 14,
+        "runs": 10
+      },
+      "first_paint_warm_ms": {
+        "median": 8.5,
+        "min": 7,
+        "max": 11,
+        "runs": 10
+      },
+      "update_one_ms": {
+        "median": 5.5,
+        "min": 5,
+        "max": 6,
+        "runs": 10
+      },
+      "update_one_bytes": {
+        "median": 44441,
+        "min": 43119,
+        "max": 45690,
+        "runs": 10
+      },
+      "update_insert_ms": {
+        "median": 5.5,
+        "min": 5,
+        "max": 9,
+        "runs": 10
+      },
+      "update_insert_bytes": {
+        "median": 44654,
+        "min": 43329,
+        "max": 45903,
+        "runs": 10
+      },
+      "update_twenty_ms": {
+        "median": 5,
+        "min": 4,
+        "max": 8,
+        "runs": 10
+      },
+      "update_twenty_bytes": {
+        "median": 44717,
+        "min": 43399,
+        "max": 45952,
+        "runs": 10
+      },
+      "script_gzip_bytes": {
+        "median": 15159,
+        "min": 15159,
+        "max": 15159,
+        "runs": 1
+      },
+      "memory_after_updates_mb": {
+        "median": 761.109375,
+        "min": 333.390625,
+        "max": 771.8125,
+        "runs": 10
+      }
+    }
+  }
+}

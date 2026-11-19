@@ -1,0 +1,76 @@
+{
+  "date": "2026-11-19",
+  "runs": 10,
+  "updates_for_memory": 1000,
+  "machine": {
+    "cpu": "Apple M6",
+    "cores": 12,
+    "memory_gb": 32,
+    "os": "Darwin 27.2.0"
+  },
+  "results": {
+    "first_paint_cold_ms": {
+      "median": 20.5,
+      "min": 18,
+      "max": 24,
+      "runs": 10
+    },
+    "first_paint_warm_ms": {
+      "median": 11.5,
+      "min": 8,
+      "max": 18,
+      "runs": 10
+    },
+    "update_one_ms": {
+      "median": 2,
+      "min": 2,
+      "max": 6,
+      "runs": 10
+    },
+    "update_one_bytes": {
+      "median": 154.5,
+      "min": 150,
+      "max": 156,
+      "runs": 10
+    },
+    "update_insert_ms": {
+      "median": 2,
+      "min": 2,
+      "max": 3,
+      "runs": 10
+    },
+    "update_insert_bytes": {
+      "median": 170.5,
+      "min": 167,
+      "max": 171,
+      "runs": 10
+    },
+    "update_twenty_ms": {
+      "median": 3,
+      "min": 3,
+      "max": 4,
+      "runs": 10
+    },
+    "update_twenty_bytes": {
+      "median": 2392.5,
+      "min": 2344,
+      "max": 2409,
+      "runs": 10
+    },
+    "script_gzip_bytes": {
+      "median": 14022,
+      "min": 14022,
+      "max": 14022,
+      "runs": 1
+    },
+    "memory_after_updates_mb": {
+      "median": 251.03125,
+      "min": 229.203125,
+      "max": 301.953125,
+      "runs": 10
+    }
+  },
+  "versions": {
+    "webkit": "26.6"
+  }
+}

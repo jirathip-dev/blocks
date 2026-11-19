@@ -1081,6 +1081,16 @@
             "object",
             "null"
           ]
+        },
+        "working": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Working"
+            },
+            {
+              "type": "null"
+            }
+          ]
         }
       },
       "required": [
@@ -4445,6 +4455,18 @@
         "handover"
       ],
       "type": "string"
+    },
+    "Working": {
+      "description": "A composer's turn in progress: when it started.",
+      "properties": {
+        "since": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "since"
+      ],
+      "type": "object"
     }
   },
   "$id": "https://github.com/jirathip-dev/blocks/schema/v1",

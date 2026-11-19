@@ -3,14 +3,16 @@
 ## The repos
 
 ```
-jirathip-dev/swag ── art only ──> theme/packs/ (vendored at one commit by `just swag <sha>`)
-jirathip-dev/blocks               names nothing of drover's or cooee's
-      ▲ one commit per app, in every manifest of that app
+jirathip-dev/blocks               the rules; names nothing of drover's, cooee's or swag's
+      ▲ a dev-dependency (its gate tests)
+jirathip-dev/swag                 the looks: every scheme and pack, compiled into its crate
+      ▲ apps pin both: blocks by one commit in every manifest, swag by one Cargo rev beside it
 drover:  drover-server (Cargo rev) · web/ (npm #sha)
 cooee:   cooee-core, cooee-server (Cargo rev) · apple/ (SwiftPM revision)
 ```
 
-drover and cooee never depend on each other. cooee stops pinning swag; drover stops when its page moves to `packs/`.
+drover and cooee never depend on each other. blocks holds no scheme or pack but its default pair (q2115): an app
+takes them from swag's crate, parses them with blocks' types and checks them with blocks' gate and `check_pack`.
 
 ## The crate's layers
 
@@ -37,7 +39,7 @@ layout · theme · web: each alone          codegen: uses every layer; nothing u
 | `tree` | `Node`, `Step`, `Report`, `expect` | `expr`, `kind`, `built`, `behave`, `wire` | measure or draw: no rect comes from here |
 | `site` | `page`, `fragment`, `Head`, one writer per kind | `kind`, `built`, `behave`, `theme` | write a `<script>` but the two of `live`; take a string as HTML (every text is escaped) |
 | `layout` | `Layout`, `Contract`, `check`, `merge`, `resolved` | serde, serde_json | name a component but `nav`; read a file |
-| `theme` | `Scheme`, `gate`, `Style`, `Theme`, the built-in schemes, the vendored packs | serde, serde_json | draw; read a file (the packs are compiled in) |
+| `theme` | `Scheme`, `gate`, `Style`, `Theme`, `check_pack`, `css`, the default pair | serde, serde_json | draw; read a file; hold a named scheme or a pack (swag's) |
 | `web` | `JS`, `CSS` | nothing | |
 | `codegen` | the schema, the TS and Swift writers | every layer, `std::fs`, schemars | be linked by an app (`schema` feature) |
 

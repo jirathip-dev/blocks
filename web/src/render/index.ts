@@ -9,8 +9,12 @@ import { composer } from "./composer.ts";
 import { config } from "./config.ts";
 import { diagram } from "./diagram.ts";
 import { form } from "./form.ts";
+import { hero } from "./hero.ts";
 import { images } from "./images.ts";
 import { list } from "./list.ts";
+import { media } from "./media.ts";
+import { nav } from "./nav.ts";
+import { prose } from "./prose.ts";
 import { row } from "./row.ts";
 import { run } from "./run.ts";
 import { screen } from "./screen.ts";
@@ -158,10 +162,10 @@ export const R: { [K in Kind]: (b: Of<K>, c: Ctx) => HTMLElement | null } = {
   scene: gap(38),
   diagram,
   composer,
-  prose: gap(18),
-  hero: gap(18),
-  media: gap(18),
-  nav: gap(18),
+  prose,
+  hero,
+  media,
+  nav,
   island: gap(21),
 };
 

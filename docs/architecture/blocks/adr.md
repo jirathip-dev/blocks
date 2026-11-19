@@ -98,10 +98,12 @@ Option A, in sixteen parts. `shapes.md` has the data, `renderers.md` what every 
    of a plugin's places and the per-size resolve move here. This repo knows one component, `nav`; an app declares
    the rest and its locked screens in a `Contract`, and draws them. drover's places list becomes its `layout.json`.
 
-7. **Theme: tokens, one gate, one set of built-ins, one swag pin.** `Scheme` (19 colours) and `Style` (type,
-   spacing, radius, motion, surface) are the tokens an app sets. The contrast gate is Rust only: a server serves only
-   what passed. The 12 schemes are one file each; swag's `packs/` is vendored at one commit. A renderer reads art
-   through a `Theme` port, so drover's page can keep its `legacy-board/` art until the owner moves it.
+7. **Theme: rules here, looks in swag.** `Scheme` (19 colours) and `Style` (type, spacing, radius, motion,
+   surface) are the tokens an app sets. The contrast gate is Rust only: a server serves only what passed. blocks
+   holds the rules (the token shapes, the gate, the pack format and `check_pack`, `css`) and one neutral default
+   pair of its own (q2118, q2119); every named scheme and every pack lives in swag's crate, and an app pins both
+   (q2115). `check_pack` takes the schemes a pack may name. A renderer reads art through a `Theme` port, so
+   drover's page can keep its `legacy-board/` art until the owner moves it.
 
 8. **The live renderers move as they are, then get typed.** HTML: drover's `blocks.ts` becomes `render/<kind>.ts`,
    the generic parts of `main.ts` become `shell.ts`, `ops.ts` goes (#1318's patcher replaces it). SwiftUI: cooee's
@@ -188,7 +190,8 @@ drover's slices 1 to 7 of #1318 need nothing else from this plan and stay first 
 - **Scripted input is by block id.** In WebKit a step is a real event on the element; in SwiftUI it calls the
   handler the block registered. The steps and the tree are the same shape in both.
 - **A commit, not a tag, in every manifest.** Tags mark releases; the compat job reads them, no manifest does.
-- **The gate only in Rust; the packs vendored; two layout readers (Rust and Swift).** As in the first version.
+- **The gate only in Rust; the schemes and packs in swag, not copied here (q2115); two layout readers (Rust and
+  Swift).**
 
 ## Consequences
 
@@ -274,10 +277,6 @@ generated = [
     "crates/blocks/src/site/mod.rs", "fixtures/html/*.html",                      # B8
     "swift/Sources/BlocksUI/Kinds.swift",                                         # B9
 ]
-
-[[collect]]
-dir = "theme/schemes"
-glob = "*.json"
 
 [[collect]]
 dir = "web/src/render"

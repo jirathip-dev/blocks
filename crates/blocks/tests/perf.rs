@@ -83,6 +83,14 @@ fn a_500_kb_screen_serializes_and_parses_under_budget() {
 
 #[test]
 #[ignore = "release only: `just perf`"]
+fn writing_a_500_kb_screen_as_a_site_fragment_stays_under_budget() {
+    let big = blocks::Built::new(serde_json::to_value(screen(&mut Rng::new(9), 5000, 90)).unwrap());
+    let took = time(10, || blocks::site::fragment(&big, "/act"));
+    report("write a 500 KB screen as HTML", took, Duration::from_millis(10));
+}
+
+#[test]
+#[ignore = "release only: `just perf`"]
 fn checking_a_200_node_layout_stays_under_budget() {
     let contract = blocks::layout::Contract {
         components: &[],

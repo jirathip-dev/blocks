@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::{gate, schemes, Mode, PerMode};
+use super::{gate, Mode, PerMode, Scheme};
 
 /// A pack's theme.json: its label, default schemes, art flags and words.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -10,36 +10,6 @@ pub struct Theme {
     pub sprites: bool,
     pub moments: bool,
     pub words: std::collections::BTreeMap<String, String>,
-}
-
-/// A vendored swag pack: its name and its files, compiled in.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct Pack {
-    pub name: &'static str,
-    pub files: &'static [(&'static str, &'static [u8])],
-}
-
-macro_rules! pack {
-    ($name:literal) => {
-        Pack {
-            name: $name,
-            files: &[
-                pack!(@file $name, "theme.json"),
-                pack!(@file $name, "sprites.svg"),
-                pack!(@file $name, "scene.svg"),
-                pack!(@file $name, "icon.png"),
-            ],
-        }
-    };
-    (@file $name:literal, $file:literal) => {
-        ($file, include_bytes!(concat!("../../../../theme/packs/", $name, "/", $file)))
-    };
-}
-
-/// swag's packs at the commit theme/packs/SOURCE names.
-pub fn packs() -> &'static [Pack] {
-    const PACKS: [Pack; 3] = [pack!("farm"), pack!("garden"), pack!("kitchen")];
-    &PACKS
 }
 
 const WORDS: [&str; 8] = [
@@ -55,9 +25,9 @@ const WORDS: [&str; 8] = [
 
 const MAX_SVG: usize = 256 * 1024;
 
-fn scheme_misses(slot: &str, name: &str, mode: Mode) -> Vec<String> {
-    match schemes().iter().find(|(n, _)| *n == name) {
-        None => vec![format!("scheme.{slot}: {name:?} is no built-in scheme")],
+fn scheme_misses(slot: &str, name: &str, mode: Mode, schemes: &[(&str, Scheme)]) -> Vec<String> {
+    match schemes.iter().find(|(n, _)| *n == name) {
+        None => vec![format!("scheme.{slot}: {name:?} is none of the schemes given")],
         Some((_, s)) if s.mode != mode => vec![format!("scheme.{slot}: {name:?} is not a {slot} scheme")],
         Some((_, s)) => gate(s)
             .into_iter()
@@ -78,8 +48,8 @@ fn file_misses(name: &str, bytes: &[u8]) -> Option<String> {
     (!bytes.starts_with(b"<svg")).then(|| format!("{name}: not an SVG"))
 }
 
-/// The pack gate: its files, sizes, words and schemes; the misses, empty when it passes.
-pub fn check_pack(files: &[(&str, &[u8])]) -> Vec<String> {
+/// The pack gate: its files, sizes, words, and schemes found in `schemes`; the misses, empty when it passes.
+pub fn check_pack(files: &[(&str, &[u8])], schemes: &[(&str, Scheme)]) -> Vec<String> {
     let mut misses = Vec::new();
     for name in ["theme.json", "sprites.svg", "scene.svg", "icon.png"] {
         match files.iter().find(|(n, _)| *n == name) {
@@ -108,7 +78,7 @@ pub fn check_pack(files: &[(&str, &[u8])]) -> Vec<String> {
             misses.push(format!("words.{k}: {v:?} is empty or over 24 characters"));
         }
     }
-    misses.extend(scheme_misses("dark", &theme.scheme.dark, Mode::Dark));
-    misses.extend(scheme_misses("light", &theme.scheme.light, Mode::Light));
+    misses.extend(scheme_misses("dark", &theme.scheme.dark, Mode::Dark, schemes));
+    misses.extend(scheme_misses("light", &theme.scheme.light, Mode::Light, schemes));
     misses
 }
