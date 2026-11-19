@@ -200,7 +200,7 @@ fn expr(rng: &mut Rng, depth: usize) -> Expr {
         Pattern::Number,
         Pattern::Other("zip".into()),
     ];
-    match rng.below(15) {
+    match rng.below(16) {
         0 => Expr::Get(key(rng)),
         1 => Expr::Not(Box::new(e(rng))),
         2 => Expr::Mul(Box::new([e(rng), e(rng)])),
@@ -218,6 +218,7 @@ fn expr(rng: &mut Rng, depth: usize) -> Expr {
         11 => Expr::Sub(Box::new([e(rng), e(rng)])),
         12 => Expr::Cat((0..rng.below(4)).map(|_| e(rng)).collect()),
         13 => Expr::Pick(Box::new([e(rng), e(rng), e(rng)])),
+        15 => Expr::Div(Box::new([e(rng), e(rng)])),
         14 => Expr::Unknown(serde_json::Map::from_iter([(
             "fold".into(),
             serde_json::Value::from(1),

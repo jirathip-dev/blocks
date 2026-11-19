@@ -432,6 +432,7 @@ public indirect enum Expr: Codable, Equatable, Sendable {
     case add([Expr])
     case sub([Expr])
     case mul([Expr])
+    case div([Expr])
     case cat([Expr])
     case pick([Expr])
     case lit(Lit)
@@ -460,6 +461,7 @@ public indirect enum Expr: Codable, Equatable, Sendable {
             case "add": if let v = try? c.decode([Expr].self, forKey: k) { self = .add(v); return }
             case "sub": if let v = try? c.decode([Expr].self, forKey: k) { self = .sub(v); return }
             case "mul": if let v = try? c.decode([Expr].self, forKey: k) { self = .mul(v); return }
+            case "div": if let v = try? c.decode([Expr].self, forKey: k) { self = .div(v); return }
             case "cat": if let v = try? c.decode([Expr].self, forKey: k) { self = .cat(v); return }
             case "pick": if let v = try? c.decode([Expr].self, forKey: k) { self = .pick(v); return }
             default: break
@@ -483,6 +485,7 @@ public indirect enum Expr: Codable, Equatable, Sendable {
         case .add(let v): var c = encoder.container(keyedBy: Key.self); try c.encode(v, forKey: Key("add"))
         case .sub(let v): var c = encoder.container(keyedBy: Key.self); try c.encode(v, forKey: Key("sub"))
         case .mul(let v): var c = encoder.container(keyedBy: Key.self); try c.encode(v, forKey: Key("mul"))
+        case .div(let v): var c = encoder.container(keyedBy: Key.self); try c.encode(v, forKey: Key("div"))
         case .cat(let v): var c = encoder.container(keyedBy: Key.self); try c.encode(v, forKey: Key("cat"))
         case .pick(let v): var c = encoder.container(keyedBy: Key.self); try c.encode(v, forKey: Key("pick"))
         case .lit(let v): try v.encode(to: encoder)
@@ -582,6 +585,12 @@ public struct Form: Codable, Equatable, Sendable {
     public var id: String?
     public var show: Expr?
     public var submit: Submit?
+}
+
+public struct Gesture: Codable, Equatable, Sendable {
+    public var action: String
+    public var enabled: Expr?
+    public var name: String
 }
 
 public struct Have: Codable, Equatable, Sendable {
@@ -728,7 +737,7 @@ public struct Link: Codable, Equatable, Sendable {
 
 public struct List: Codable, Equatable, Sendable {
     public var id: String?
-    public var reorder: Reorder?
+    public var reorder: Gesture?
     public var rows: [Block]
     public var show: Expr?
 }
@@ -984,11 +993,6 @@ public struct Queued: Codable, Equatable, Sendable {
     public var text: String
 }
 
-public struct Reorder: Codable, Equatable, Sendable {
-    public var action: String
-    public var name: String
-}
-
 public struct Report: Codable, Equatable, Sendable {
     public var dropped: [String]
     public var sent: [Action]
@@ -1204,6 +1208,8 @@ public indirect enum Step: Codable, Equatable, Sendable {
     case frame(Frame)
     case answer(Answer)
     case shot(StepShot)
+    case gesture(StepGesture)
+    case refuse(StepRefuse)
     case unknown(JSONValue)
 
     private struct Key: CodingKey {
@@ -1223,6 +1229,8 @@ public indirect enum Step: Codable, Equatable, Sendable {
             case "frame": if let v = try? c.decode(Frame.self, forKey: k) { self = .frame(v); return }
             case "answer": if let v = try? c.decode(Answer.self, forKey: k) { self = .answer(v); return }
             case "shot": if let v = try? c.decode(StepShot.self, forKey: k) { self = .shot(v); return }
+            case "gesture": if let v = try? c.decode(StepGesture.self, forKey: k) { self = .gesture(v); return }
+            case "refuse": if let v = try? c.decode(StepRefuse.self, forKey: k) { self = .refuse(v); return }
             default: break
             }
             self = .unknown(try JSONValue(from: decoder)); return
@@ -1238,13 +1246,26 @@ public indirect enum Step: Codable, Equatable, Sendable {
         case .frame(let v): var c = encoder.container(keyedBy: Key.self); try c.encode(v, forKey: Key("frame"))
         case .answer(let v): var c = encoder.container(keyedBy: Key.self); try c.encode(v, forKey: Key("answer"))
         case .shot(let v): var c = encoder.container(keyedBy: Key.self); try c.encode(v, forKey: Key("shot"))
+        case .gesture(let v): var c = encoder.container(keyedBy: Key.self); try c.encode(v, forKey: Key("gesture"))
+        case .refuse(let v): var c = encoder.container(keyedBy: Key.self); try c.encode(v, forKey: Key("refuse"))
         case .unknown(let v): try v.encode(to: encoder)
         }
     }
 }
 
+public struct StepGesture: Codable, Equatable, Sendable {
+    public var grab: JSONValue
+    public var id: String
+    public var reach: [JSONValue]
+    public var via: Via
+}
+
 public struct StepOn: Codable, Equatable, Sendable {
     public var id: String
+}
+
+public struct StepRefuse: Codable, Equatable, Sendable {
+    public var toast: String
 }
 
 public struct StepShot: Codable, Equatable, Sendable {
@@ -1444,6 +1465,15 @@ public struct Undo: Codable, Equatable, Sendable {
     public var confirm: Confirm?
     public var label: String?
     public var values: [String: JSONValue]?
+}
+
+public struct Via: RawRepresentable, Hashable, Codable, Equatable, Sendable {
+    public let rawValue: String
+    public init(rawValue: String) { self.rawValue = rawValue }
+    public static let pointer = Self(rawValue: "pointer")
+    public static let keys = Self(rawValue: "keys")
+    public static let action = Self(rawValue: "action")
+    public static let all: [Self] = [.pointer, .keys, .action]
 }
 
 public struct Web: Codable, Equatable, Sendable {

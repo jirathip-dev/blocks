@@ -250,6 +250,15 @@ impl From<serde_json::Error> for Broken {
 }
 
 impl Action {
+    /// The typed result of a gesture, sent under `name` in the values.
+    pub fn read<T: DeserializeOwned>(&self, name: &str) -> Result<T, Broken> {
+        let v = self
+            .values
+            .get(name)
+            .ok_or_else(|| Broken(format!("no value named {name}")))?;
+        Ok(T::deserialize(v)?)
+    }
+
     /// A static page's `<form>` post: `_screen`, `_block` and `_action`, every other field a string value.
     pub fn from_form(body: &str) -> Result<Action, Broken> {
         let mut a = Action::default();
