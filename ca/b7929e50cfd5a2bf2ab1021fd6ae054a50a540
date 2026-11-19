@@ -1,0 +1,13 @@
+Decided: the evaluator moves verbatim from behave.ts to web/src/core/eval.ts; behave.ts keeps only the DOM sync
+Because: "the pure code moves in, nothing is rewritten"
+Decided: Blk, isBlk, blks and named move into core/tree.ts; render/index.ts re-exports them so the kinds' imports stay
+Because: web/src/render/index.ts:4
+Decided: native moves to its own web/src/render/native.ts and tree() takes the kinds it is given
+Because: web/src/render/native.ts:4
+Rejected: native in render/index.ts — esbuild keeps it, so blocks.js would gain code, not only moved imports
+Decided: core.js is bundled unminified; the types come from tsc with lib ES2020 only, so the core cannot name a DOM type
+Because: web/tsconfig.types.json:10
+Decided: scripts/arch-ban.test.sh copies the arch.toml bans into a scratch tree and asserts each fires on a fixture, run by just arch
+Because: "the bans fire on a fixture"
+Check: an unminified bundle of shell.ts before and after differs only in module path comments and blank lines
+Owner: The shared core now lives in its own folder and builds to its own file and types; the web shell is unchanged.
