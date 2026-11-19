@@ -1,0 +1,5 @@
+Decided: merge origin/staging and regenerate web/dist/blocks.js with gen's steps rather than hand-merge it.
+Because: .drover/arch.toml:25
+Rejected: none
+Check: codegen, npm run build and the BLOCKS_GEN tests leave no diff; cargo, web and swift tests pass at this head.
+Owner: The chart branch now carries staging's serif type option, with no behaviour changes.
