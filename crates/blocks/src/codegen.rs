@@ -96,6 +96,7 @@ fn html(root: &Path) -> std::io::Result<()> {
     let live = site::Live {
         js: "/blocks.js",
         stream: "/stream",
+        looks: &[],
     };
     for (file, live) in [("index.html", None), ("live.html", Some(live))] {
         let head = site::Head {
@@ -108,7 +109,7 @@ fn html(root: &Path) -> std::io::Result<()> {
         let s = site::Site {
             head,
             look: &look,
-            css: &[],
+            css: &["/blocks.css"],
             action: "/act",
             live,
         };

@@ -61,11 +61,11 @@ fn round(w: &mut W<'_>, d: &Value, now: bool) {
             w.open("a", cls, &[("href", u)]);
             "a"
         }
-        Go::Post(_) | Go::Stay if tap.is_some() => {
+        Go::Post(_) | Go::Sheet(_) | Go::Stay if tap.is_some() => {
             w.open("div", cls, &[("tabindex", "0"), ("role", "button")]);
             "div"
         }
-        Go::Post(_) | Go::Stay => {
+        Go::Post(_) | Go::Sheet(_) | Go::Stay => {
             w.open("div", cls, &[]);
             "div"
         }
