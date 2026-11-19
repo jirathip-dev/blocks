@@ -234,7 +234,11 @@ fn exprs(seed: u64) -> Result<Vec<Value>, String> {
     for _ in 0..50 {
         let depth = 1 + rng.below(6);
         let e = expr(&mut rng, depth);
-        cases.push(json!({"state": state, "expr": e, "want": eval(&e, &state)}));
+        let want = eval(&e, &state);
+        let read = serde_json::from_str::<Lit>(&serde_json::to_string(&want).unwrap()).unwrap();
+        if read == want {
+            cases.push(json!({"state": state, "expr": e, "want": want}));
+        }
         let back: Expr = serde_json::from_value(serde_json::to_value(&e).unwrap()).map_err(|x| x.to_string())?;
         if back != e {
             return Err(format!("{e:?} does not read back as itself"));

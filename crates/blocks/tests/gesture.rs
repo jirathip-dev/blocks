@@ -15,7 +15,9 @@ struct Case {
 }
 
 fn at(p: &str) -> PathBuf {
-    Path::new(env!("CARGO_MANIFEST_DIR")).join("../../fixtures/gesture").join(p)
+    Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("../../fixtures/gesture")
+        .join(p)
 }
 
 fn read(p: &str) -> Value {
@@ -43,17 +45,19 @@ fn the_machine_takes_every_transition_of_the_statechart() {
 }
 
 fn event(r: &mut u64) -> Event<Value> {
-    *r = r.wrapping_mul(6_364_136_223_846_793_005).wrapping_add(1_442_695_040_888_963_407);
+    *r = r
+        .wrapping_mul(6_364_136_223_846_793_005)
+        .wrapping_add(1_442_695_040_888_963_407);
     let n = *r >> 33;
-    let c = || (n % 5 > 0).then(|| Value::from(n % 4));
+    let c = || (!n.is_multiple_of(5)).then(|| Value::from(n % 4));
     match n % 9 {
         0 | 1 => Event::Press,
         2 | 3 => Event::Move { c: c() },
         4 | 5 => Event::Release,
         6 => Event::Cancel,
         7 => Event::Answer {
-            ok: n % 2 == 0,
-            why: (n % 3 == 0).then(|| "No".into()),
+            ok: n.is_multiple_of(2),
+            why: n.is_multiple_of(3).then(|| "No".into()),
         },
         _ => Event::Settled,
     }
@@ -78,7 +82,10 @@ fn the_generated_sim_is_the_machine_on_the_fixed_seeds() {
         std::fs::write(at("sim.json"), &want).unwrap();
     }
     let got = std::fs::read_to_string(at("sim.json")).unwrap_or_default();
-    assert!(got == want, "fixtures/gesture/sim.json is not what the machine gives: run `just gen`");
+    assert!(
+        got == want,
+        "fixtures/gesture/sim.json is not what the machine gives: run `just gen`"
+    );
 }
 
 #[derive(Deserialize)]
@@ -115,13 +122,14 @@ fn list_rules_give_each_fixture_case_its_order_its_words_and_its_steps() {
 
 #[test]
 fn an_action_reads_a_gesture_result_by_its_name() {
-    let a: Action = serde_json::from_value(json!({"screen": "s", "action": "order", "values": {"accounts": ["b", "a"]}})).unwrap();
+    let a: Action =
+        serde_json::from_value(json!({"screen": "s", "action": "order", "values": {"accounts": ["b", "a"]}})).unwrap();
     assert_eq!(a.read::<Vec<String>>("accounts").unwrap(), vec!["b", "a"]);
     assert!(a.read::<Vec<String>>("rows").is_err());
     assert!(a.read::<u8>("accounts").is_err());
 }
 
-fn faults(list: Value) -> Vec<Fault> {
+fn faults(list: &Value) -> Vec<Fault> {
     Built::new(json!({"type": "screen", "id": "s", "title": "S", "blocks": [list]})).check(&[])
 }
 
@@ -129,23 +137,36 @@ fn faults(list: Value) -> Vec<Fault> {
 fn a_gesture_needs_its_block_id_and_two_gestures_may_send_one_action() {
     let reorder = json!({"action": "order", "name": "ids"});
     let rows = json!([{"type": "row", "id": "a", "title": "A", "handle": true}]);
-    let bare = faults(json!({"type": "list", "rows": rows, "reorder": reorder}));
+    let bare = faults(&json!({"type": "list", "rows": rows, "reorder": reorder}));
     assert_eq!(bare, vec![Fault::Unnamed { kind: "list".into() }]);
-    assert!(faults(json!({"type": "list", "id": "l", "rows": rows, "reorder": reorder})).is_empty());
+    assert_eq!(
+        faults(&json!({"type": "list", "id": "l", "rows": rows, "reorder": reorder})),
+        vec![]
+    );
     let shared = json!({"type": "list", "id": "l", "rows": rows, "reorder": reorder, "move": reorder, "fallback": {"title": "l"}});
-    assert_eq!(faults(shared), vec![Fault::Extra { kind: "list".into(), field: "move".into() }]);
+    assert_eq!(
+        faults(&shared),
+        vec![Fault::Extra {
+            kind: "list".into(),
+            field: "move".into()
+        }]
+    );
     let with_act = json!({"type": "list", "id": "l", "rows": [{"type": "row", "title": "A", "swipe": [{"label": "Go", "action": "order"}]}], "reorder": reorder});
-    assert!(matches!(faults(with_act).as_slice(), [Fault::ActTwice { .. }]));
+    assert!(matches!(faults(&with_act).as_slice(), [Fault::ActTwice { .. }]));
 }
 
 #[test]
 fn a_gesture_whose_enabled_does_not_hold_joins_the_view_acts() {
     let reorder = json!({"action": "order", "name": "ids", "enabled": {"get": "edit"}});
-    let s = Built::new(json!({"type": "screen", "id": "s", "title": "S", "state": {"edit": false},
-        "blocks": [{"type": "list", "id": "l", "rows": [], "reorder": reorder}]}));
+    let s = Built::new(
+        json!({"type": "screen", "id": "s", "title": "S", "state": {"edit": false},
+        "blocks": [{"type": "list", "id": "l", "rows": [], "reorder": reorder}]}),
+    );
     let off = blocks::behave::view(&s, &blocks::behave::start(&s));
     assert!(off.acts.contains("order"));
     let on = blocks::behave::view(&s, &[("edit".into(), blocks::expr::Lit::Bool(true))].into());
     assert!(!on.acts.contains("order"));
-    assert!(matches!(serde_json::from_value::<Block>(json!({"type": "list", "rows": [], "reorder": reorder})), Ok(Block::List(l)) if l.reorder.as_ref().is_some_and(|g| g.enabled.is_some())));
+    assert!(
+        matches!(serde_json::from_value::<Block>(json!({"type": "list", "rows": [], "reorder": reorder})), Ok(Block::List(l)) if l.reorder.as_ref().is_some_and(|g| g.enabled.is_some()))
+    );
 }

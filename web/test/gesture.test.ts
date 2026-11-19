@@ -69,3 +69,31 @@ test("a sent row stays where it was dropped until refused, then goes back; answe
   ok(ys(kept.trees.kept).b > ys(kept.trees.kept).c, "kept below c");
   deepStrictEqual(kept.report.sent, want);
 });
+
+test("the one zoom: Ctrl and wheel, + and 0, and a double tap, clamped and kept outside the view", async () => {
+  const { buildSync } = await import("esbuild");
+  const { webkit } = await import("playwright");
+  const code = buildSync({ entryPoints: [new URL("../src/gesture.ts", import.meta.url).pathname], bundle: true, format: "iife", globalName: "G", write: false }).outputFiles[0].text;
+  const browser = await webkit.launch();
+  try {
+    const page = await browser.newPage();
+    await page.setContent("<div id=z tabindex=0 style='width:200px;height:200px'></div>");
+    await page.addScriptTag({ content: code });
+    const got = await page.evaluate(() => {
+      const el = document.getElementById("z");
+      const keep = {};
+      const drawn = [];
+      window.G.zoomed(el, keep, { min: 1, max: 4, apply: (z) => drawn.push(Math.round(z * 100) / 100) });
+      el.dispatchEvent(new WheelEvent("wheel", { ctrlKey: true, deltaY: -100, cancelable: true }));
+      el.dispatchEvent(new WheelEvent("wheel", { ctrlKey: true, deltaY: -1000, cancelable: true }));
+      el.dispatchEvent(new WheelEvent("wheel", { deltaY: -100 }));
+      el.dispatchEvent(new MouseEvent("dblclick"));
+      el.dispatchEvent(new KeyboardEvent("keydown", { key: "+" }));
+      el.dispatchEvent(new KeyboardEvent("keydown", { key: "0" }));
+      return { drawn, keep };
+    });
+    deepStrictEqual(got, { drawn: [1, 2.72, 4, 1, 1.25, 1], keep: { zoom: 1 } });
+  } finally {
+    await browser.close();
+  }
+});

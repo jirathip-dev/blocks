@@ -170,7 +170,9 @@ fn sent_once(top: &Value) -> Option<Value> {
     }
     let mut v = top.clone();
     let o = v.as_object_mut()?;
-    twice.into_iter().for_each(|w| drop(o.remove(w)));
+    for w in twice {
+        drop(o.remove(w));
+    }
     Some(v)
 }
 
@@ -219,7 +221,7 @@ impl Walk<'_> {
                 }
             }
             None if k == "island" || Word::ALL.iter().any(|w| o.get(*w).is_some_and(Value::is_object)) => {
-                self.out.push(Fault::Unnamed { kind: k.clone() })
+                self.out.push(Fault::Unnamed { kind: k.clone() });
             }
             _ => {}
         }

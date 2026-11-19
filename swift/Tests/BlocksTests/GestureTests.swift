@@ -1,4 +1,5 @@
 import Blocks
+import BlocksSnapshot
 import Foundation
 import XCTest
 
@@ -94,6 +95,26 @@ final class GestureTests: XCTestCase {
         XCTAssertEqual(named.named(Nudge(.down)), want)
         XCTAssertEqual(named.phase, .sent(["a", "c", "b", "d"]))
         XCTAssertNil(Driven(list, "d"))
+    }
+}
+
+@MainActor
+final class GestureSnapshotTests: XCTestCase {
+    func testTheHarnessSendsOneOrderByKeysAndByANamedActionAndDropsAPointer() throws {
+        let url = URL(fileURLWithPath: #filePath).deletingLastPathComponent()
+            .appendingPathComponent("../../../fixtures/gesture/list.json")
+        let list = try XCTUnwrap(try JSONDecoder().decode(JSONValue.self, from: Data(contentsOf: url))["block"])
+        let json = { (s: String) in try JSONDecoder().decode(JSONValue.self, from: Data(s.utf8)) }
+        let screen = try JSONValue.object(["type": .string("screen"), "id": .string("s"), "title": .string("A"), "blocks": .array([list])])
+            .decode(Block.self)
+        let want = try json(#"[{"screen":"s","action":"order","block":"accounts","values":{"accounts":["a","c","b","d"]}}]"#)
+        for (via, reach) in [("keys", #"[{"dir":"down"}]"#), ("action", #"["Move down"]"#), ("pointer", "[[0, 50]]")] {
+            let step = try json(#"{"gesture":{"id":"accounts","grab":"b","via":"\#(via)","reach":\#(reach)}}"#).decode(Step.self)
+            let refuse = try json(#"{"refuse":{"toast":"No"}}"#).decode(Step.self)
+            let run = try Snapshot(screen).run([step, refuse])
+            XCTAssertEqual(try JSONValue(run.report.sent), via == "pointer" ? .array([]) : want, via)
+            XCTAssertEqual(run.report.dropped, via == "pointer" ? ["gesture pointer accounts"] : [], via)
+        }
     }
 }
 

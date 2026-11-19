@@ -62,7 +62,8 @@ pub fn step<C: Clone + PartialEq>(phase: Phase<C>, event: Event<C>, start: &C) -
             (Phase::Dragging, None)
         }
         (Phase::Pressed | Phase::Dragging | Phase::Previewing { .. }, Event::Cancel)
-        | (Phase::Dragging, Event::Release) => (Phase::Idle, None),
+        | (Phase::Dragging, Event::Release)
+        | (Phase::Confirmed | Phase::Refused { .. }, Event::Settled) => (Phase::Idle, None),
         (Phase::Previewing { c }, Event::Release) if &c == start => (Phase::Idle, None),
         (Phase::Previewing { c }, Event::Release) => (Phase::Sent { c: c.clone() }, Some(Effect::Send(c))),
         (Phase::Sent { .. }, Event::Answer { ok: true, .. }) => (Phase::Confirmed, None),
@@ -72,7 +73,6 @@ pub fn step<C: Clone + PartialEq>(phase: Phase<C>, event: Event<C>, start: &C) -
             },
             None,
         ),
-        (Phase::Confirmed | Phase::Refused { .. }, Event::Settled) => (Phase::Idle, None),
         (phase, _) => (phase, None),
     }
 }
@@ -101,16 +101,10 @@ pub trait Rules {
     type Reach;
     type Change: Clone + PartialEq + Serialize;
 
-    /// The word of the gesture a grab belongs to; none when the block does not declare it or the item is fixed.
     fn word(&self, grab: &Self::Grab) -> Option<Word>;
-    /// The grabbed item as the data has it.
     fn start(&self, grab: &Self::Grab) -> Option<Self::Change>;
-    /// The result for a reach in the kind's own units, snapped and clamped; none where no result is allowed.
     fn candidate(&self, grab: &Self::Grab, reach: &Self::Reach) -> Option<Self::Change>;
-    /// The next candidate from `from` in a direction; none at an end.
     fn nudge(&self, grab: &Self::Grab, from: &Self::Change, by: Nudge) -> Option<Self::Change>;
-    /// The named steps a screen reader offers for a grab: each is one whole gesture of one nudge.
     fn steps(&self, grab: &Self::Grab) -> Vec<(String, Nudge)>;
-    /// The words spoken for a candidate of a grab.
     fn says(&self, grab: &Self::Grab, change: &Self::Change) -> String;
 }

@@ -30,6 +30,15 @@ export function say(text: string) {
   speaker.textContent = text;
 }
 
+const beside = (el: HTMLElement, steps: [string, Nudge][], run: (n: Nudge) => void) =>
+  el.parentElement?.append(
+    ...steps.map(([name, n]) => {
+      const b = Object.assign(document.createElement("button"), { type: "button", className: "b-sr", tabIndex: -1, textContent: name });
+      b.onclick = () => run(n);
+      return b;
+    }),
+  );
+
 /// The candidate of an item whose action is out, while its data is still what it was grabbed from.
 export function held<B extends Block, G, R, C>(c: Ctx, o: Pick<Grabbed<B, G, R, C>, "block" | "rules" | "grab" | "item">): unknown {
   const h = c.held?.get(key(o.block, o.item));
@@ -106,18 +115,12 @@ export function gestured<B extends Block, G, R, C>(el: HTMLElement, c: Ctx, o: G
     else return;
     e.preventDefault();
   });
-  el.parentElement?.append(
-    ...o.rules.steps(o.block, o.grab).map(([name, n]) => {
-      const b = Object.assign(document.createElement("button"), { type: "button", className: "b-sr", tabIndex: -1, textContent: name });
-      b.onclick = () => {
-        if (p.at !== "idle") return;
-        go({ on: "press" });
-        nudge(n);
-        go({ on: phase() === "pressed" ? "cancel" : "release" });
-      };
-      return b;
-    }),
-  );
+  beside(el, o.rules.steps(o.block, o.grab), (n) => {
+    if (p.at !== "idle") return;
+    go({ on: "press" });
+    nudge(n);
+    go({ on: phase() === "pressed" ? "cancel" : "release" });
+  });
   mark();
 }
 
