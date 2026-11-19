@@ -1,0 +1,8 @@
+Decided: release.yml tags v<SCHEMA_VERSION>.<n> only when every push workflow at the sha is green, n counted from 0
+Because: "A green push to `main` produces a tagged GitHub release"
+Decided: compat.yml runs the last tag's own crate and TS tests over today's fixtures/protocol, skipped until a tag exists
+Because: "it runs the last tag's crate and TS against today's `fixtures/protocol`"
+Rejected: waiting for B12 before compat runs — q2100 starts it at the first tag
+Rejected: an expression-op fixture — the crate has no Expr yet (crates/blocks/src/screen.rs:1)
+Check: scripts/release.test.sh covers red, pending and already-tagged pushes publishing nothing
+Owner: Green pushes to main become numbered releases, and older releases are checked against new fixtures.
