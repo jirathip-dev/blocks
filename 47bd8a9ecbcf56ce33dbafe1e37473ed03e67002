@@ -1,0 +1,16 @@
+Decided: one table of refusal reasons, fixtures/layouts/refused.json, asserted by both the Rust and the Swift tests
+Because: "Rust and Swift refuse each bad fixture with the same reason"
+Decided: layout names only nav; merge finds a host by slot name through the Contract, never a component of cooee's
+Because: docs/architecture/blocks/boundaries.md:39
+Rejected: a locked flag on Node — check never builds a locked node; the app appends its own locked screens (C2)
+Rejected: PlaceEntry.subtitle — Node has no field to carry it
+Rejected: cooee's permission pruning in merge — it reads cooee's manifests; skipped reasons cover what merge refuses
+Decided: generated words carry `all`, so the Swift reader validates place and transition against the generated shapes
+Because: crates/blocks/src/codegen.rs:513
+Check: SlotView draws column nodes and the first main node, hands every other node to the closure, names no app component
+Owner: Layouts are checked the same way on server and app, and the Swift package can draw one.
+
+Decided: merge origin/staging into issue-14, keeping both the layout layer and B1b/B9b in arch.toml, codegen.rs, lib.rs and docs/schema.md
+Because: crates/blocks/src/codegen.rs:603
+Rejected: none
+Owner: The layout work now sits on top of the latest shared branch; nothing about it changed.
