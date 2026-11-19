@@ -1,0 +1,9 @@
+Decided: each render/<kind>.ts takes its generated type; index.ts keeps the untyped edge and dispatches through a mapped Kind table with one guard
+Because: "each file in `web/src/render` reads its generated type from `gen/types.ts`, not keys"
+Rejected: re-exporting the types through index.ts to save the 16 import lines — the issue names gen/types.ts as the source
+Decided: composer reads working as an untyped extra field, since the schema has no such field and a schema change is not a refactor
+Because: web/src/render/composer.ts:16
+Decided: choice sorts a copy of its options, as blks used to copy them, so the model is never mutated
+Because: web/src/render/choice.ts:6
+Check: verify.md step 2 on base and head gives byte-identical PNGs and trees; the drover thread golden at 1440 differs between two base runs too
+Owner: The web renderer now uses each block's declared shape; every screen draws exactly as before.
