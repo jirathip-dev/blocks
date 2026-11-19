@@ -1,10 +1,9 @@
-/// Why an op or a frame does not fit the screen it is applied to.
+/// Why an op does not fit the screen it is applied to.
 public enum ApplyError: Error, Equatable, Sendable {
     case noBlock(String)
     case noList(String)
     case shape(String)
     case unknown
-    case gap(want: UInt64, got: UInt64)
 }
 
 extension Block {
@@ -17,33 +16,104 @@ extension Block {
     }
 }
 
-/// The old per-screen stream's receiving side: the screen as of the last `OldFrame` applied, its badge and dot.
+/// What a frame or a key's state did to the key: patched, replaced, dropped, or open the key again (`have`).
+public enum Took: String, Sendable {
+    case patched, replaced, old, gap
+}
+
+/// A stream more than one wire version from the client's: the app or the server needs an update.
+public enum Outdated: String, Error, Sendable {
+    case app, server
+}
+
+/// The ADR's Swift `Mirror`: the epoch, per key opened the rev held and the screen, and the badge and dot.
 public struct Replica: Equatable, Sendable {
-    public private(set) var screen: Block?
-    public private(set) var seq: UInt64?
+    private struct Held: Equatable, Sendable {
+        var rev: UInt64?
+        var screen: Block?
+    }
+
+    public let v: UInt8
+    private var epoch: String?
+    private var outdated: Outdated?
+    private var keys: [String: Held] = [:]
     public private(set) var badge: UInt64?
     public private(set) var dot = false
 
-    public init() {}
+    /// A client at wire version `v` with no key open.
+    public init(v: UInt8 = UInt8(blocksSchemaVersion)) { self.v = v }
 
-    /// Applies `frame`; one that does not start with `screen` must follow the last one applied, else nothing changes.
-    public mutating func receive(_ frame: OldFrame) throws(ApplyError) {
-        let want = seq.map { min($0, .max - 1) + 1 } ?? 0
-        var next: Block
-        if case .screen(let whole)? = frame.ops.first {
-            next = whole.screen
-        } else if let screen, frame.seq == want {
-            next = screen
-        } else {
-            throw .gap(want: want, got: frame.seq)
+    /// Takes a stream's `hello`: a new epoch forgets every rev; a version over one apart stops syncing.
+    @discardableResult
+    public mutating func hello(_ h: Hello) -> Outdated? {
+        outdated = h.v > v ? .app : Int(h.v) + 1 < Int(v) ? .server : nil
+        if epoch != h.epoch {
+            for k in keys.keys { keys[k]?.rev = nil }
+            epoch = h.epoch
         }
-        try next.apply(frame.ops)
-        screen = next
-        seq = frame.seq
-        for op in frame.ops {
+        return outdated
+    }
+
+    /// Mounts key `k`; its first state comes with the next `have`.
+    public mutating func open(_ k: String) {
+        if keys[k] == nil { keys[k] = Held() }
+    }
+
+    /// Unmounts key `k` and forgets its screen.
+    public mutating func close(_ k: String) { keys[k] = nil }
+
+    /// The keys to open on the server, each with the rev held; none while outdated.
+    public var have: [Have] {
+        outdated != nil ? [] : keys.sorted { $0.key < $1.key }.map { Have(k: $0.key, rev: $0.value.rev) }
+    }
+
+    /// Key `k`'s screen as of the last frame or state applied.
+    public func screen(_ k: String) -> Block? { keys[k]?.screen }
+
+    /// Takes a stream frame: patches on `from` = rev held, drops an old one, asks again on a gap or an unknown op.
+    public mutating func frame(_ f: Frame) -> Took {
+        guard outdated == nil, let held = keys[f.k], held.rev.map({ f.rev > $0 }) ?? true else { return .old }
+        if let screen = f.screen { return take(f.k, f.rev, screen) }
+        guard let from = f.from, let rev = held.rev else { return .old }
+        return from == rev ? patch(f.k, f.rev, f.ops ?? []) : .gap
+    }
+
+    /// Takes the answer to the `have` it `sent`: a screen applies, ops only on the rev that was sent.
+    public mutating func synced(_ sent: [Have], _ s: Synced) -> [Took] {
+        var took: [Took] = []
+        for st in s.keys { took.append(state(sent, st)) }
+        return took
+    }
+
+    private mutating func state(_ sent: [Have], _ st: KeyState) -> Took {
+        guard outdated == nil, let held = keys[st.k] else { return .old }
+        if st.gone != nil {
+            keys[st.k] = nil
+            return .old
+        }
+        guard let rev = st.rev else { return .old }
+        if let screen = st.screen { return held.rev.map { rev < $0 } == true ? .old : take(st.k, rev, screen) }
+        let asked = sent.first { $0.k == st.k }?.rev
+        guard let ops = st.ops, asked != nil, held.rev == asked else { return .old }
+        return patch(st.k, rev, ops)
+    }
+
+    private mutating func take(_ k: String, _ rev: UInt64, _ screen: Block) -> Took {
+        keys[k] = Held(rev: rev, screen: screen)
+        return .replaced
+    }
+
+    private mutating func patch(_ k: String, _ rev: UInt64, _ ops: [Op]) -> Took {
+        guard var next = keys[k]?.screen, (try? next.apply(ops)) != nil else {
+            keys[k]?.rev = nil
+            return .gap
+        }
+        keys[k] = Held(rev: rev, screen: next)
+        for op in ops {
             if case .badge(let b) = op { badge = b.count }
             if case .dot(let d) = op { dot = d.on }
         }
+        return .patched
     }
 }
 

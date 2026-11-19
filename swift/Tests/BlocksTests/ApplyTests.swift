@@ -103,35 +103,67 @@ final class ApplyTests: XCTestCase {
         }
     }
 
-    func testReplicaFollowsFramesInOrderAndAsksAgainOnAGap() throws {
-        let frames = try JSONDecoder().decode(
-            [OldFrame].self,
-            from: Data(
-                """
-                [{"seq": 0, "ops": [{"op": "screen", "screen": \(base)}]},
-                 {"seq": 1, "ops": [{"op": "remove", "id": "a"}, {"op": "badge", "count": 2}, {"op": "dot", "on": true}]},
-                 {"seq": 3, "ops": [{"op": "remove", "id": "b"}]},
-                 {"seq": 2, "ops": [{"op": "remove", "id": "zz"}]}]
-                """.utf8))
-        var replica = Replica()
-        XCTAssertThrowsError(try replica.receive(frames[1])) { XCTAssertEqual($0 as? ApplyError, .gap(want: 0, got: 1)) }
-        try replica.receive(frames[0])
-        try replica.receive(frames[1])
-        XCTAssertEqual(try rows(XCTUnwrap(replica.screen)), ["b"])
-        XCTAssertEqual([replica.seq, replica.badge], [1, 2])
-        XCTAssertTrue(replica.dot)
-        XCTAssertThrowsError(try replica.receive(frames[2])) { XCTAssertEqual($0 as? ApplyError, .gap(want: 2, got: 3)) }
-        XCTAssertThrowsError(try replica.receive(frames[3])) { XCTAssertEqual($0 as? ApplyError, .noBlock("zz")) }
-        XCTAssertEqual(replica.seq, 1)
-        try replica.receive(frames[0])
-        XCTAssertEqual(try rows(XCTUnwrap(replica.screen)), ["a", "b"])
+    private func decode<T: Decodable>(_ type: T.Type, _ value: JSONValue?) throws -> T {
+        try JSONDecoder().decode(type, from: JSONEncoder().encode(value ?? .null))
     }
 
-    func testTheRustSampleFramesApplyInOrder() throws {
+    private func run(_ path: URL) throws -> [String] {
+        let fixture = try JSONDecoder().decode(JSONValue.self, from: Data(contentsOf: path))
+        guard case .object(let c) = fixture, case .array(let steps)? = c["steps"] else { return ["no steps"] }
+        var replica = Replica(v: try decode(UInt8.self, c["v"]))
+        var bad: [String] = []
+        for (i, step) in steps.enumerated() {
+            guard case .object(let s) = step else { return ["step \(i): no object"] }
+            let check = { (what: String, got: JSONValue, want: JSONValue?) in
+                if got != want ?? .null { bad.append("step \(i): \(what) \(got), want \(String(describing: want))") }
+            }
+            if let h = s["hello"] {
+                check("outdated", replica.hello(try decode(Hello.self, h)).map { .string($0.rawValue) } ?? .null, s["outdated"])
+            } else if let k = s["open"]?.string {
+                replica.open(k)
+            } else if let k = s["close"]?.string {
+                replica.close(k)
+            } else if let want = s["have"] {
+                XCTAssertEqual(replica.have, try decode([Have].self, want), "step \(i): have")
+            } else if let f = s["frame"] {
+                check("took", .string(replica.frame(try decode(Frame.self, f)).rawValue), s["took"])
+            } else if let synced = s["synced"] {
+                let took = replica.synced(try decode([Have].self, s["sent"]), try decode(Synced.self, synced))
+                check("took", .array(took.map { .string($0.rawValue) }), s["took"])
+            } else {
+                bad.append("step \(i): no such step")
+            }
+        }
+        guard case .object(let screens)? = c["screens"] else { return bad + ["no screens"] }
+        for (k, want) in screens where replica.screen(k) != (try decode(Block?.self, want)) {
+            bad.append("screen \(k): \(String(describing: replica.screen(k)))")
+        }
+        return bad
+    }
+
+    func testTheReplicaRunsEveryProtocolFixture() throws {
         let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent().appendingPathComponent("../../..")
-        let data = try Data(contentsOf: root.appendingPathComponent("schema/sample.json"))
+        let dir = root.appendingPathComponent("fixtures/protocol")
+        let names = try FileManager.default.contentsOfDirectory(atPath: dir.path).filter { $0.hasSuffix(".json") }
+        XCTAssertGreaterThanOrEqual(names.count, 8)
+        for name in names {
+            XCTAssertEqual(try run(dir.appendingPathComponent(name)), [], name)
+        }
+    }
+
+    func testTheReplicaKeepsTheBadgeAndDotOfThePatchesItApplies() throws {
+        let frame = { (json: String) in try JSONDecoder().decode(Frame.self, from: Data(json.utf8)) }
         var replica = Replica()
-        for frame in try JSONDecoder().decode([OldFrame].self, from: data) { try replica.receive(frame) }
+        replica.hello(try JSONDecoder().decode(Hello.self, from: Data(#"{"v": 1, "sid": "s", "epoch": "e", "keys": 16}"#.utf8)))
+        replica.open("k")
+        XCTAssertEqual(replica.frame(try frame(#"{"k": "k", "rev": 1, "screen": \#(base)}"#)), .replaced)
+        let marks = #"[{"op": "badge", "count": 2}, {"op": "dot", "on": true}]"#
+        XCTAssertEqual(replica.frame(try frame(#"{"k": "k", "from": 2, "rev": 3, "ops": \#(marks)}"#)), .gap)
+        XCTAssertEqual([replica.badge], [nil])
+        XCTAssertFalse(replica.dot)
+        XCTAssertEqual(replica.frame(try frame(#"{"k": "k", "from": 1, "rev": 2, "ops": \#(marks)}"#)), .patched)
+        XCTAssertEqual(replica.badge, 2)
         XCTAssertTrue(replica.dot)
+        XCTAssertEqual(replica.screen("k"), try block(base))
     }
 }

@@ -34,7 +34,7 @@ come: the HTML renderer and shell, the static site renderer, and the headless ha
 
 ## The Swift package
 
-The root `Package.swift` ships `Blocks` (the generated types, `JSONValue`, op `apply`, `Replica`) and `BlocksUI`
+The root `Package.swift` ships `Blocks` (the generated types, `JSONValue`, op `apply`, `Replica`: the ADR's Swift `Mirror`, renamed so it does not shadow Swift's own) and `BlocksUI`
 (`BlocksView`, `.appBlocks` for an app's own kinds, `.blockStyle`). An app pins one commit, never a tag:
 `.package(url: "https://github.com/jirathip-dev/blocks", revision: "<40 hex>")`.
 
