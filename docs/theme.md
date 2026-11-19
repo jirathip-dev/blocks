@@ -50,6 +50,8 @@ Drawing the tiles, seams, grid and motion in the HTML and SwiftUI renderers is i
 `web/src/gen/schemes.ts`, `blocksDefaultLight`, `blocksDefaultDark` and `blocksDefaultStyle` in
 `swift/Sources/Blocks/Gen/Schemes.swift`, so a page and the Swift app can paint before a server answers. In
 SwiftUI, `Palette.defaultLight` and `Palette.defaultDark` are the pair, and a `Look` starts on `defaultDark`.
+The headless harness (`blocks-shot`) paints every run on the pair, light or dark by the page's appearance, under
+any `--css` it is given.
 
 The 12 named schemes in `theme/schemes/` are leaving for swag; until their removal issue they stay built in, but no
 test, fixture or harness default here names one.

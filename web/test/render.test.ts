@@ -6,7 +6,7 @@ import { install } from "./dom.ts";
 install();
 const { render } = await import("../src/render/index.ts");
 const { css, packs, plain } = await import("../src/theme.ts");
-const { schemes } = await import("../src/gen/schemes.ts");
+const { defaultPair } = await import("../src/gen/schemes.ts");
 
 const dir = new URL("../../fixtures/blocks/", import.meta.url);
 const fixture = (kind) => JSON.parse(readFileSync(new URL(`${kind}.json`, dir), "utf8"));
@@ -84,6 +84,6 @@ test("a pack's words dress the plain word; css writes a scheme's tokens", () => 
   const t = packs({ theme: { ...theme, sprites: false }, base: "/packs/farm/" });
   strictEqual(t.word("needs", "needs").textContent, "at the gate · needs");
   strictEqual(t.word("nope", "plain").textContent, "plain");
-  const s = css(schemes.dracula);
-  ok(s.startsWith(":root{--bg:#282a36;") && s.endsWith(";color-scheme:dark}"), s);
+  const s = css(defaultPair.dark);
+  ok(s.startsWith(":root{--bg:#161616;") && s.endsWith(";color-scheme:dark}"), s);
 });
