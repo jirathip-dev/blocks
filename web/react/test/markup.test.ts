@@ -47,12 +47,12 @@ async function markup(p, b) {
 }
 
 test("each kind React draws natively writes the HTML renderer's markup: tags, classes, data-*, role, aria-* and own text, in order", async () => {
-  deepStrictEqual([...native].sort(), ["button", "card", "chips", "form", "images", "list", "row", "screen", "section", "sheet", "stat", "text", "timeline"]);
+  deepStrictEqual([...native].sort(), ["button", "card", "chips", "form", "images", "list", "row", "screen", "section", "sheet", "stat", "table", "text", "timeline"]);
   const p = await browser.newPage();
   await p.setContent("<base href=https://x.test/><div id=html></div><div id=react></div>");
   await p.addScriptTag({ content: reactJs() });
   await p.addScriptTag({ content: html });
-  for (const b of [...native.map(fixture), ...fields, ...more]) {
+  for (const b of [...native.map(fixture), fixture("table-grid"), ...fields, ...more]) {
     const [want, got] = await markup(p, b);
     ok(want.length > 1, `${b.type} ${b.id}: drew nothing`);
     deepStrictEqual(got, want, `${b.type} ${b.id}`);
