@@ -143,7 +143,7 @@ export function mount(o: Mount): { layout(next: Layout): void; close(): void } {
   const { look, wear } = wearer(o.schemes ?? {}, theme);
   wear(store.get("b:look"));
   const wide = matchMedia("(min-width: 1000px)");
-  const ed = o.edit && editor(o.edit, { theme, store }, o.root);
+  const ed = o.edit && editor(o.edit, o.root);
   let shell: { close(): void } = { close() {} };
   const change = () => {
     shell.close();
