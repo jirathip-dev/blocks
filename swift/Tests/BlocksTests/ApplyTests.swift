@@ -97,8 +97,13 @@ final class ApplyTests: XCTestCase {
         XCTAssertEqual(stat.label, "Up")
     }
 
-    func testBadgeAndDotLeaveTheScreenAsItIs() throws {
-        XCTAssertEqual(try applied(#"[{"op": "badge", "count": 3}, {"op": "dot", "on": true}]"#), try block(base))
+    func testBadgeSetsTheScreensBadgeAndDotLeavesTheScreenAsItIs() throws {
+        guard case .screen(var s) = try applied(#"[{"op": "badge", "count": 3}, {"op": "dot", "on": true}]"#) else {
+            return XCTFail("no screen")
+        }
+        XCTAssertEqual(s.badge, 3)
+        s.badge = nil
+        XCTAssertEqual(Block.screen(s), try block(base))
     }
 
     func testScreenReplacesTheRoot() throws {
@@ -179,7 +184,8 @@ final class ApplyTests: XCTestCase {
         XCTAssertEqual(replica.frame(try frame(#"{"k": "k", "from": 1, "rev": 2, "ops": \#(marks)}"#)), .patched)
         XCTAssertEqual(replica.badge, 2)
         XCTAssertTrue(replica.dot)
-        XCTAssertEqual(replica.screen("k"), try block(base))
+        guard case .screen(let s) = replica.screen("k") else { return XCTFail("no screen") }
+        XCTAssertEqual(s.badge, 2)
     }
 
     func testABurstOfFramesChangesTheReplicaOnceAndEndsAsEachFrameInTurnWould() throws {

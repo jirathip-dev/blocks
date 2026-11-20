@@ -191,7 +191,7 @@ fn insert(
     Ok(())
 }
 
-/// Applies `ops` in order; on an error the ops before it stay applied; `badge` and `dot` leave the screen as is.
+/// Applies `ops` in order; on an error the ops before it stay applied; `badge` sets a screen's badge, `dot` leaves the screen as is.
 pub fn apply(root: &mut Block, ops: &[Op]) -> Result<(), ApplyError> {
     let no = |id: &str| ApplyError::NoBlock(id.into());
     for op in ops {
@@ -216,7 +216,12 @@ pub fn apply(root: &mut Block, ops: &[Op]) -> Result<(), ApplyError> {
                 }
             }
             Op::Replace { id, block } => *root.find(id).ok_or_else(|| no(id))? = block.clone(),
-            Op::Badge { .. } | Op::Dot { .. } => {}
+            Op::Badge { count } => {
+                if let Block::Screen(s) = root {
+                    s.badge = Some(*count);
+                }
+            }
+            Op::Dot { .. } => {}
             Op::Screen { screen } => root.clone_from(screen),
             Op::Unknown => return Err(ApplyError::Unknown),
         }
