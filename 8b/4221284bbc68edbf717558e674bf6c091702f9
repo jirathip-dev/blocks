@@ -1,0 +1,10 @@
+Decided: pages uses root tokens --rule, --ring, --paper and --s4 on the web and a Token set in Theme.swift for SwiftUI, so the token baseline gains no line
+Because: web/src/css/base/root.css:1
+Because: swift/Sources/BlocksUI/Theme.swift:104
+Decided: drop the 390 title flex-basis, since the buttons already wrap to their own row
+Because: web/src/css/kind/pages.css:17
+Decided: merge origin/staging for marks; union the import lists and rebuild web/dist with the web build
+Because: web/package.json:7
+Rejected: keeping pages' 21 lines in ci/tokens/baseline.txt — the web check fails any baseline growth
+Check: git diff --numstat origin/staging...HEAD -- ci/tokens is empty; both token lints pass
+Owner: The document view now takes its sizes and paper colour from named style settings, so the style check passes.
