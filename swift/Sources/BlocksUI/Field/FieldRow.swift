@@ -33,6 +33,7 @@ extension Field {
         case .toggle(let f): f
         case .picker(let f): f
         case .secret(let f): f
+        case .upload(let f): PlainField(json: (try? JSONValue(f)) ?? .null)
         case .otherField(let v): PlainField(json: v)
         }
     }

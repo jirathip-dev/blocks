@@ -1,5 +1,5 @@
 import { createContext, type ReactNode, useEffect, useMemo, useRef, useState } from "react";
-import { type Action, type Built, check, type Confirm, evaluate, type Fault, type Lit, linkable, type Locale, start, type State, type Tap, view, type View } from "../../src/core/index.ts";
+import { type Action, type Built, check, type Confirm, evaluate, type Fault, type Lit, linkable, type Locale, type OnFile, start, type State, type Tap, view, type View } from "../../src/core/index.ts";
 import { h } from "./h.ts";
 
 export type Go = { open: string } | { sheet: string } | { thread: string };
@@ -25,6 +25,7 @@ export type Ctx = {
   report: (r: Report) => void;
   kinds: Record<string, (p: KindProps) => ReactNode>;
   islands: Islands;
+  file?: OnFile;
 };
 export type Props = {
   onAction: (a: Action) => Promise<boolean | void> | boolean | void;
@@ -32,6 +33,7 @@ export type Props = {
   kinds?: Record<string, (p: KindProps) => ReactNode>;
   islands?: Islands;
   onReport?: (r: Report) => void;
+  onFile?: OnFile;
 };
 
 const none: View = { hidden: new Set(), disabled: new Set(), says: {}, acts: new Set(), values: {} };
@@ -93,8 +95,8 @@ export function useCx(p: Props, screen: Built): { cx: Ctx; ask: ReactNode } {
     };
     const put = (k: string, to: Lit | undefined) =>
       setEdits((e) => ({ ...Object.fromEntries(Object.entries(e).filter(([x]) => x !== k)), ...(to === undefined ? null : { [k]: to }) }));
-    return { screen: String(screen.id ?? ""), locale: screen.locale ?? {}, v, state, edits, put, busy, act, tap, report, kinds: p.kinds ?? {}, islands: p.islands ?? {} };
-  }, [key, screen.id, p.kinds, p.islands]);
+    return { screen: String(screen.id ?? ""), locale: screen.locale ?? {}, v, state, edits, put, busy, act, tap, report, kinds: p.kinds ?? {}, islands: p.islands ?? {}, file: p.onFile };
+  }, [key, screen.id, p.kinds, p.islands, p.onFile]);
   const end = (ok: boolean) => {
     asking?.done(ok);
     setAsking(null);

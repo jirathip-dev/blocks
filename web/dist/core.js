@@ -235,11 +235,11 @@ var acts = (b) => {
   return [...all, ...all.flatMap((a) => list(a.menu))];
 };
 var plain = (v) => v === null || typeof v === "boolean" || typeof v === "number" || typeof v === "string" ? v : null;
-var lit = (_field, held) => plain(held);
+var lit = (_field, held2) => Array.isArray(held2) ? held2.length || null : plain(held2);
 function start(screen2) {
   const s = {};
   const seed = (b) => {
-    for (const f of named(b)) s[String(f.name)] = lit(f, f.value);
+    for (const f of named(b)) s[String(f.name)] = lit(f, f.value ?? f.files);
     if (b.type === "chips" && typeof b.name === "string") s[b.name] = plain(Array.isArray(b.selected) ? b.selected[0] : null);
     kids(b).forEach(seed);
   };
@@ -307,21 +307,21 @@ function role(b, kind) {
   if (kind === "row" && tap && !wrapped || kind === "button" || kind === "editor") return "button";
   return roles[kind] ?? "group";
 }
-function node(v, kinds2, state) {
+function node(v, kinds3, state) {
   const b = isBlk(v) ? v : {};
   const kind = str(b, "type") ?? "";
   const field = Object.entries(hooks).find(([k]) => k === kind)?.[1].variant;
   const variant = field ? str(b, field) : null;
   const shown = "show" in b && isExpr(b.show) ? evaluate(b.show, state) : true;
   const off = shown === null || shown === false;
-  const drawn = off ? "hidden" : kinds2.includes(kind) ? "native" : "fallback";
-  return { kind, id: str(b, "id"), variant, drawn, role: role(b, kind), name: named2(b, kind), children: under(b, drawn).map((c) => node(c, kinds2, state)) };
+  const drawn = off ? "hidden" : kinds3.includes(kind) ? "native" : "fallback";
+  return { kind, id: str(b, "id"), variant, drawn, role: role(b, kind), name: named2(b, kind), children: under(b, drawn).map((c) => node(c, kinds3, state)) };
 }
-function tree(screen2, kinds2, state) {
+function tree(screen2, kinds3, state) {
   const b = screen2;
   const own2 = {};
   for (const [k, v] of Object.entries(isBlk(b.state) ? b.state : {})) if (isLit(v)) own2[k] = v;
-  return node(b, kinds2, state ?? own2);
+  return node(b, kinds3, state ?? own2);
 }
 var who = (n) => `${n.kind}${n.id ? `#${n.id}` : ""}`;
 function expect(got, want, at2 = "tree", out = []) {
@@ -546,6 +546,23 @@ function total(c, rows) {
   return c.total === "avg" ? ["avg", grouped(sum / vs.length, 1, false)] : ["", number(c, sum)];
 }
 
+// src/core/kind/table.ts
+var MON = "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec".split(" ");
+var THAI = "\u0E21.\u0E04. \u0E01.\u0E1E. \u0E21\u0E35.\u0E04. \u0E40\u0E21.\u0E22. \u0E1E.\u0E04. \u0E21\u0E34.\u0E22. \u0E01.\u0E04. \u0E2A.\u0E04. \u0E01.\u0E22. \u0E15.\u0E04. \u0E1E.\u0E22. \u0E18.\u0E04.".split(" ");
+function worked(b, r) {
+  if (!b.calc || r.group) return r;
+  const cells = { ...r.cells };
+  for (const c of b.columns) {
+    const e = b.calc[c.id];
+    if (e == null) continue;
+    const s = Object.fromEntries(Object.entries(cells).map(([k, v2]) => [k, typeof v2 !== "object" ? v2 : typeof v2.text === "string" || typeof v2.text === "number" ? v2.text : null]));
+    const v = evaluate(e, s);
+    if (typeof v === "number" || typeof v === "string") cells[c.id] = v;
+    else delete cells[c.id];
+  }
+  return { ...r, cells };
+}
+
 // src/core/built.ts
 var checked = /* @__PURE__ */ Symbol("built");
 var KINDS = Object.keys(hooks);
@@ -556,9 +573,10 @@ var isObj = (v) => typeof v === "object" && v !== null && !Array.isArray(v);
 var isTable = (o) => o.type === "table" && Array.isArray(o.columns) && Array.isArray(o.rows);
 var text3 = (o, k) => typeof o[k] === "string" && o[k] !== "" ? o[k] : void 0;
 function tabled(t) {
-  const n = t.rows.length;
+  const rows = t.rows.filter((r) => !r.group).map((r) => worked(t, r));
+  const n = rows.length;
   const sum = t.columns.find((c) => c.total === "sum");
-  const v = sum && total(sum, t.rows);
+  const v = sum && total(sum, rows);
   const count = `${n} row${n === 1 ? "" : "s"}`;
   const sub = sum && v ? `${count} \xB7 total ${sum.label.toLowerCase()} ${unit(sum) ?? ""}${v[1]}` : count;
   return { title: t.title ?? "Table", subtitle: sub };
@@ -638,6 +656,21 @@ var kinds = {
   "web": "Web"
 };
 var defs = {
+  "Accept": {
+    "anyOf": [
+      {
+        "enum": [
+          "image",
+          "pdf",
+          "sheet"
+        ],
+        "type": "string"
+      },
+      {
+        "type": "string"
+      }
+    ]
+  },
   "Accessory": {
     "anyOf": [
       {
@@ -1930,6 +1963,12 @@ var defs = {
           "null"
         ]
       },
+      "edit": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
       "era": {
         "anyOf": [
           {
@@ -2671,6 +2710,19 @@ var defs = {
         "type": "object"
       },
       {
+        "$ref": "#/$defs/UploadField",
+        "properties": {
+          "type": {
+            "const": "upload",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      {
         "$ref": "#/$defs/OtherField"
       }
     ]
@@ -2731,6 +2783,29 @@ var defs = {
         ]
       }
     },
+    "type": "object"
+  },
+  "FileRef": {
+    "properties": {
+      "id": {
+        "type": "string"
+      },
+      "name": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "src": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "required": [
+      "id"
+    ],
     "type": "object"
   },
   "Fold": {
@@ -5370,11 +5445,30 @@ var defs = {
   "Table": {
     "additionalProperties": true,
     "properties": {
+      "calc": {
+        "additionalProperties": {
+          "$ref": "#/$defs/Expr"
+        },
+        "type": [
+          "object",
+          "null"
+        ]
+      },
       "columns": {
         "items": {
           "$ref": "#/$defs/Column"
         },
         "type": "array"
+      },
+      "edit": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Gesture"
+          },
+          {
+            "type": "null"
+          }
+        ]
       },
       "empty": {
         "type": [
@@ -5401,6 +5495,16 @@ var defs = {
         "type": [
           "string",
           "null"
+        ]
+      },
+      "reorder": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Gesture"
+          },
+          {
+            "type": "null"
+          }
         ]
       },
       "rows": {
@@ -5459,6 +5563,18 @@ var defs = {
           "$ref": "#/$defs/Cell"
         },
         "type": "object"
+      },
+      "fixed": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "group": {
+        "type": [
+          "boolean",
+          "null"
+        ]
       },
       "id": {
         "type": "string"
@@ -6244,6 +6360,114 @@ var defs = {
     ],
     "type": "object"
   },
+  "UploadField": {
+    "additionalProperties": true,
+    "properties": {
+      "accept": {
+        "items": {
+          "$ref": "#/$defs/Accept"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "capture": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "checks": {
+        "items": {
+          "$ref": "#/$defs/Check"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "doc": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "enabled": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "error": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "files": {
+        "items": {
+          "$ref": "#/$defs/FileRef"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "label": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "many": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "mb": {
+        "minimum": 0,
+        "type": [
+          "integer",
+          "null"
+        ]
+      },
+      "name": {
+        "type": "string"
+      },
+      "open": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "show": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "was": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "required": [
+      "name"
+    ],
+    "type": "object"
+  },
   "Web": {
     "additionalProperties": true,
     "properties": {
@@ -6455,7 +6679,63 @@ function actions(screen2) {
   named3(screen2, out);
   return [...out].sort();
 }
+
+// src/core/field/files.ts
+var OWN = {
+  image: (_, m) => m.startsWith("image/"),
+  pdf: (n, m) => m === "application/pdf" || /\.pdf$/i.test(n),
+  sheet: (n, m) => m === "text/csv" || m.endsWith("spreadsheetml.sheet") || /\.(csv|xlsx)$/i.test(n)
+};
+var MIME = { image: "image/*", pdf: ".pdf,application/pdf", sheet: ".csv,.xlsx,text/csv" };
+var fill2 = (text4, v) => text4.replace(/\{(\w+)\}/g, (_, k) => String(v[k] ?? ""));
+var accepts = (accept = []) => accept.map((a) => MIME[a] ?? a).join(",");
+function refused(x, name, mime, size) {
+  const kinds3 = x.accept ?? [];
+  if (kinds3.length && !kinds3.some((k) => (OWN[k] ?? ((_, m) => m === k))(name, mime))) return "type";
+  return x.mb != null && size > x.mb * 1048576 ? "size" : void 0;
+}
+var sized = (n) => n >= 1048576 ? `${(n / 1048576).toFixed(1)} MB` : `${Math.max(1, Math.round(n / 1024))} KB`;
+var kinds2 = (x, w) => (x.accept ?? []).map((a) => w(a) || a).join(w("or"));
+function hint(x, w, on) {
+  if (!on) return w("off");
+  const mb = x.mb != null ? fill2(w(x.many ? "each" : "upTo"), { mb: x.mb }) : "";
+  return [kinds2(x, w), mb].filter(Boolean).join(" \xB7 ");
+}
+function pick(x, rows, w) {
+  const image = !!x.accept?.length && x.accept.every((a) => a === "image");
+  if (!x.many && rows.some((r) => r.state !== "refused")) return w("replace");
+  return w(`${image ? "photo" : "file"}${x.many ? "N" : "1"}`);
+}
+function status(x, r, w) {
+  if (r.state === "uploading") return fill2(w("uploading"), { p: Math.round(r.part * 100) });
+  if (r.state === "failed") return `${w("failed")} \xB7 ${sized(r.size)}`;
+  if (r.state === "refused") return r.why === "size" ? fill2(w("tooBig"), { size: sized(r.size), mb: x.mb }) : fill2(w("onlyType"), { types: kinds2(x, w) });
+  return r.size ? sized(r.size) : "";
+}
+var held = (x) => (x.files ?? []).map((f) => ({ name: f.name ?? f.id, size: 0, mime: "", state: "done", part: 1, id: f.id, src: f.src ?? void 0 }));
+var ids = (rows) => rows.flatMap((r) => r.state === "done" && r.id != null ? [r.id] : []);
+var waits = (rows) => ({ up: rows.filter((r) => r.state === "uploading").length, failed: rows.filter((r) => r.state === "failed").length });
+function picked(x, rows, files, names2) {
+  const keep = x.many ? rows.filter((r) => r.state !== "refused") : [];
+  for (const r of x.many ? [] : rows) r.stop?.abort();
+  const fresh = (x.many ? files : files.slice(0, 1)).map((blob, i) => {
+    const name = names2[i] ?? "", why = refused(x, name, blob.type, blob.size);
+    return { name, size: blob.size, mime: blob.type, state: why ? "refused" : "uploading", part: 0, why, blob: why ? void 0 : blob };
+  });
+  return { rows: [...keep, ...fresh], send: fresh.filter((r) => r.state === "uploading") };
+}
+function send(r, file, about, again) {
+  if (!r.blob) return;
+  const stop = new AbortController();
+  Object.assign(r, { state: "uploading", part: 0, stop });
+  const progress = (p) => (r.part = Math.min(1, Math.max(0, p)), again());
+  file(r.blob, { ...about, name: r.name, mime: r.mime, size: r.size, progress, signal: stop.signal }).then(
+    (ref) => !stop.signal.aborted && (Object.assign(r, { state: "done", part: 1, id: ref.id, src: ref.src ?? r.src, name: ref.name ?? r.name, blob: void 0 }), again()),
+    () => !stop.signal.aborted && (r.state = "failed", again())
+  );
+}
 export {
+  accepts,
   actionOf,
   actions,
   built,
@@ -6478,11 +6758,15 @@ export {
   expect,
   expr,
   figured,
+  fill2 as fill,
   form,
   gate,
   gated,
+  held,
   hero,
+  hint,
   hooks,
+  ids,
   images,
   island,
   lines,
@@ -6493,7 +6777,10 @@ export {
   named2 as named,
   names,
   nav,
+  pick,
+  picked,
   prose,
+  refused,
   role,
   roles,
   row,
@@ -6502,10 +6789,13 @@ export {
   screen,
   secret,
   section,
+  send,
   share,
   sheet,
+  sized,
   start,
   stat,
+  status,
   steps,
   table,
   text2 as text,
@@ -6515,5 +6805,6 @@ export {
   tree,
   value,
   view,
+  waits,
   web
 };

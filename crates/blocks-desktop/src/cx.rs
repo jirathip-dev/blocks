@@ -4,6 +4,7 @@ use blocks::tree::{Drawn as Way, Node};
 use blocks::Block;
 use egui::accesskit::Role;
 use egui::{Ui, UiBuilder};
+use serde_json::Value;
 
 use crate::art::Art;
 use crate::draw;
@@ -17,6 +18,9 @@ pub(crate) struct Local {
     pub(crate) values: BTreeMap<String, String>,
     pub(crate) off: BTreeSet<String>,
     pub(crate) acts: BTreeSet<String>,
+    pub(crate) held: BTreeMap<String, Value>,
+    pub(crate) hidden: BTreeSet<String>,
+    pub(crate) says: BTreeMap<String, String>,
 }
 
 #[derive(Clone, Copy)]
@@ -34,6 +38,7 @@ pub(crate) struct Cx<'a> {
     pub(crate) rec: &'a mut Rec,
     pub(crate) me: Option<&'a str>,
     pub(crate) on: bool,
+    pub(crate) up: bool,
     local: &'a Local,
     plan: &'a [Node],
     next: usize,
@@ -75,6 +80,7 @@ impl<'a> Cx<'a> {
             rec,
             me: None,
             on: true,
+            up: true,
             local: g.local,
             plan,
             next: 0,
@@ -101,6 +107,22 @@ impl<'a> Cx<'a> {
 
     pub(crate) fn values(&self) -> &'a BTreeMap<String, String> {
         &self.local.values
+    }
+
+    pub(crate) fn held(&self, key: &str) -> Option<&'a Value> {
+        self.local.held.get(key)
+    }
+
+    pub(crate) fn hidden(&self, key: &str) -> bool {
+        self.local.hidden.contains(key)
+    }
+
+    pub(crate) fn off(&self, key: &str) -> bool {
+        self.local.off.contains(key)
+    }
+
+    pub(crate) fn say(&self, key: &str) -> Option<&'a str> {
+        self.local.says.get(key).map(String::as_str)
     }
 
     pub(crate) fn act_on(&self, action: Option<&str>) -> bool {
@@ -137,6 +159,7 @@ impl<'a> Cx<'a> {
         let mut inner = Cx::new(self.ground(), self.rec, &plan.children);
         inner.me = plan.id.as_deref();
         inner.on = on;
+        inner.up = self.on;
         let r = ui.scope_builder(builder, |ui| {
             if let Some(id) = b.id() {
                 let author = format!("block:{id}");

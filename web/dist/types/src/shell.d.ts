@@ -3,7 +3,7 @@ import type { Scheme } from "./gen/schemes.ts";
 import type { Kind } from "./gen/types.ts";
 import { type Editing } from "./arrange.ts";
 import { type Pair, type Scale } from "./core/look.ts";
-import { type Renderer, type Store } from "./render/index.ts";
+import { type OnFile, type Renderer, type Store } from "./render/index.ts";
 import { type Theme } from "./theme.ts";
 export type { Editing } from "./arrange.ts";
 export { behave } from "./behave.ts";
@@ -11,7 +11,7 @@ export { evaluate, start, view } from "./core/eval.ts";
 export { dump } from "./dump.ts";
 export { settle } from "./motion.ts";
 export { apply, patcher } from "./patch.ts";
-export { el, h, kids, render } from "./render/index.ts";
+export { el, h, kids, render, type OnFile, type Picked } from "./render/index.ts";
 export { packs, plain, tiles } from "./theme.ts";
 export type Placed<P> = {
     type: string;
@@ -47,6 +47,7 @@ export type Mount = {
     schemes?: Record<string, Scheme>;
     store?: Store;
     edit?: Editing;
+    file?: OnFile;
 };
 export declare function resolved(n: Layout["root"], wide: boolean): Resolved;
 export type Worn = Scheme | (Pair & {

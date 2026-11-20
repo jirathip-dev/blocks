@@ -1,0 +1,63 @@
+{
+  "block": {
+    "type": "table",
+    "id": "quote",
+    "title": "Quote",
+    "columns": [
+      { "id": "name", "label": "Item", "kind": "text", "edit": true },
+      { "id": "qty", "label": "Qty", "kind": "number", "edit": true },
+      { "id": "price", "label": "Unit cost", "kind": "money", "currency": "THB", "edit": true },
+      { "id": "cost", "label": "Cost", "kind": "money", "currency": "THB", "total": "sum", "edit": true },
+      { "id": "state", "label": "State", "kind": "tone", "edit": true }
+    ],
+    "calc": { "cost": { "mul": [{ "get": "qty" }, { "get": "price" }] } },
+    "rows": [
+      { "id": "ga", "group": true, "cells": { "name": "Pipes" } },
+      { "id": "p1", "cells": { "name": "Pipe", "qty": 4, "price": 10 } },
+      { "id": "p2", "cells": { "name": "Elbow", "qty": 2, "price": 5 } },
+      { "id": "gb", "group": true, "cells": { "name": "Valves" } },
+      { "id": "v1", "cells": { "name": "Gate", "qty": 1, "price": 400 } },
+      { "id": "v2", "cells": { "name": "Ball", "qty": 6, "price": 1650, "state": { "text": "ok", "tone": "ok" } } },
+      { "id": "x", "fixed": true, "cells": { "name": "Truck", "qty": 1, "price": 900 } }
+    ],
+    "edit": { "action": "set-cell", "name": "cell" },
+    "reorder": { "action": "order", "name": "rows" }
+  },
+  "cases": [
+    { "grab": { "row": "v2", "column": "qty" }, "reach": "8", "want": { "row": "v2", "column": "qty", "value": 8 }, "says": "Qty, Ball, 8" },
+    { "grab": { "row": "v2", "column": "qty" }, "reach": " 1.5 ", "want": { "row": "v2", "column": "qty", "value": 1.5 }, "says": "Qty, Ball, 1.5" },
+    { "grab": { "row": "v2", "column": "price" }, "reach": "4,450", "want": { "row": "v2", "column": "price", "value": 4450 }, "says": "Unit cost, Ball, 4,450.00" },
+    { "grab": { "row": "v2", "column": "qty" }, "reach": "8x", "want": null },
+    { "grab": { "row": "v2", "column": "qty" }, "reach": "", "want": null },
+    { "grab": { "row": "v2", "column": "name" }, "reach": "Ball valve", "want": { "row": "v2", "column": "name", "value": "Ball valve" }, "says": "Item, Ball, Ball valve" },
+    { "grab": { "row": "v2", "column": "cost" }, "reach": "9", "want": null },
+    { "grab": { "row": "v2", "column": "state" }, "reach": "ok", "want": null },
+    { "grab": { "row": "x", "column": "qty" }, "reach": "2", "want": null },
+    { "grab": { "row": "gb", "column": "name" }, "reach": "Taps", "want": null },
+    { "grab": { "row": "v2", "column": "qty" }, "reach": 1, "want": null },
+    { "grab": { "row": "v2", "column": "qty" }, "nudges": [{ "dir": "down" }], "want": null },
+    { "grab": "v1", "reach": 1, "want": ["ga", "p1", "p2", "gb", "v2", "v1", "x"], "says": "Gate, 2 of 3 in Valves" },
+    { "grab": "v1", "reach": -1, "want": ["ga", "p1", "p2", "v1", "gb", "v2", "x"], "says": "Gate, 3 of 3 in Pipes" },
+    { "grab": "p1", "reach": -1, "want": null },
+    { "grab": "p1", "reach": -9, "want": null },
+    { "grab": "gb", "reach": -3, "want": ["gb", "v1", "v2", "x", "ga", "p1", "p2"], "says": "Valves, 1 of 2" },
+    { "grab": "ga", "reach": 5, "want": ["gb", "v1", "v2", "x", "ga", "p1", "p2"], "says": "Pipes, 2 of 2" },
+    { "grab": "x", "reach": -1, "want": null },
+    { "grab": "v1", "reach": "2", "want": null },
+    { "grab": "p2", "nudges": [{ "dir": "up" }], "want": ["ga", "p2", "p1", "gb", "v1", "v2", "x"], "says": "Elbow, 1 of 2 in Pipes" },
+    { "grab": "p1", "nudges": [{ "dir": "up" }], "want": null },
+    { "grab": "v1", "nudges": [{ "dir": "up", "big": true }], "want": ["ga", "v1", "p1", "p2", "gb", "v2", "x"], "says": "Gate, 1 of 3 in Pipes" },
+    { "grab": "ga", "nudges": [{ "dir": "down" }], "want": ["gb", "v1", "v2", "x", "ga", "p1", "p2"], "says": "Pipes, 2 of 2" },
+    { "grab": "ga", "nudges": [{ "dir": "up" }], "want": null },
+    { "grab": "v2", "nudges": [{ "dir": "down" }], "want": ["ga", "p1", "p2", "gb", "v1", "x", "v2"], "says": "Ball, 3 of 3 in Valves" },
+    { "grab": "v2", "nudges": [{ "dir": "down" }, { "dir": "down" }], "want": null },
+    { "grab": "v2", "nudges": [{ "dir": "left" }], "want": null }
+  ],
+  "steps": {
+    "p1": ["Move down", "Move to bottom"],
+    "ga": ["Move down", "Move to bottom"],
+    "gb": ["Move up", "Move to top"],
+    "x": []
+  },
+  "worked": { "p1": { "cost": 40 }, "v2": { "cost": 9900 }, "ga": {} }
+}

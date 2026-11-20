@@ -66,10 +66,13 @@ fn staged(v: serde_json::Value) -> Stage {
 }
 
 #[test]
-fn the_kinds_of_the_first_and_fourth_slices_are_drawn_and_the_rest_are_gaps() {
+fn the_kinds_of_the_first_fourth_and_fifth_slices_are_drawn_and_the_rest_are_gaps() {
     assert_eq!(
         kinds(),
-        ["screen", "section", "list", "row", "card", "choice", "run", "button", "chips", "stat", "text"]
+        [
+            "screen", "sheet", "section", "list", "row", "card", "choice", "form", "config", "secret", "run", "button",
+            "chips", "stat", "text"
+        ]
     );
 }
 
@@ -101,15 +104,15 @@ fn every_fixture_draws_the_tree_the_crate_expects_with_rects_and_author_ids() {
 #[test]
 fn a_gap_kind_draws_its_fallback_row_then_its_blocks() {
     let stage = staged(
-        serde_json::json!({"type": "sheet", "id": "c", "title": "Ask", "blocks": [
+        serde_json::json!({"type": "hero", "id": "c", "title": "Ask", "blocks": [
             {"type": "text", "id": "t", "text": "inside"},
-            {"type": "form", "id": "f", "fields": []}
+            {"type": "toast", "id": "f", "title": "Saved"}
         ]}),
     );
     let tree = &stage.drawn().unwrap().tree;
     let ways: Vec<_> = tree.children.iter().map(|c| (c.kind.as_str(), c.drawn)).collect();
     assert_eq!(tree.drawn, Way::Fallback);
-    assert_eq!(ways, [("text", Way::Native), ("form", Way::Fallback)]);
+    assert_eq!(ways, [("text", Way::Native), ("toast", Way::Fallback)]);
     assert!(tree.rect.unwrap()[3] > tree.children[0].rect.unwrap()[3]);
 }
 
@@ -154,7 +157,7 @@ fn behave_view_cases_end_in_the_crates_view_through_the_stage() {
         assert_eq!(drawn.hits[act].live, !want.acts.contains(act), "{act}");
     }
     assert!(drawn.hits["more"].live && drawn.hits["more"].tap.is_some());
-    assert_eq!(drawn.actions, ["save", "help"]);
+    assert_eq!(drawn.actions, ["save", "help", "join"]);
     let shown = labels(&update);
     for value in want.values.values() {
         assert!(shown.iter().any(|l| l == value), "no {value} in {shown:?}");
@@ -209,4 +212,52 @@ fn each_control_names_its_block_and_its_actions_as_swiftui_does() {
         }
         assert_eq!(stage.drawn().unwrap().actions, actions, "{file}");
     }
+}
+
+#[test]
+fn a_typed_secret_stays_out_of_the_accessible_text_and_the_state_while_a_typed_text_lands_in_state() {
+    let ctx = egui::Context::default();
+    ctx.enable_accesskit();
+    let mut stage = Stage::default();
+    let form = serde_json::json!({"type": "form", "id": "f", "fields": [
+        {"type": "text", "name": "who", "label": "Who"},
+        {"type": "secret", "name": "key", "label": "Key"}
+    ]});
+    stage.set(Some(&serde_json::from_value(form).unwrap()));
+    let mut run = |events: Vec<egui::Event>| {
+        let input = egui::RawInput {
+            events,
+            ..Default::default()
+        };
+        let mut out = ctx.run_ui(input, |ui| {
+            stage.show(ui, &Kit::default(), 0.0);
+        });
+        out.textures_delta.clear();
+        let update = out.platform_output.accesskit_update.unwrap();
+        (stage.drawn().unwrap().hits.clone(), stage.state().clone(), update)
+    };
+    let (hits, ..) = run(vec![]);
+    let mut seen = vec![];
+    for (name, text) in [("who", "Ada"), ("key", "hunter2-secret")] {
+        let [x, y, w, h] = hits[name].field.unwrap();
+        let mid = |a: f64, b: f64| egui::emath::Numeric::from_f64(a + b / 2.0);
+        let pos = egui::pos2(mid(x, w), mid(y, h));
+        let press = |pressed| egui::Event::PointerButton {
+            pos,
+            button: egui::PointerButton::Primary,
+            pressed,
+            modifiers: egui::Modifiers::NONE,
+        };
+        run(vec![egui::Event::PointerMoved(pos), press(true)]);
+        run(vec![press(false)]);
+        run(vec![egui::Event::Text(text.into())]);
+        seen.push(run(vec![]));
+    }
+    let (_, last, update) = seen.pop().unwrap();
+    assert_eq!(last["who"], blocks::expr::Lit::Str("Ada".into()));
+    assert!(!format!("{last:?}").contains("hunter2"), "{last:?}");
+    let values = labels(&update);
+    assert!(values.iter().any(|v| v == "Ada"), "{values:?}");
+    assert!(values.iter().any(|v| v.starts_with('•')), "{values:?}");
+    assert!(!format!("{update:?}").contains("hunter2"));
 }
