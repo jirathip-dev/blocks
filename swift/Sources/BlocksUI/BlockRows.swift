@@ -82,10 +82,15 @@ internal struct RowView: View {
     }
 }
 
-internal struct RelativeValue: View {
-    internal let text: (Date) -> String
+/// A text redrawn each minute from the time now, such as an age or a countdown.
+public struct RelativeValue: View {
+    private let text: (Date) -> String
 
-    internal var body: some View {
+    public init(text: @escaping (Date) -> String) {
+        self.text = text
+    }
+
+    public var body: some View {
         TimelineView(.everyMinute) { context in Text(text(context.date)) }
     }
 }

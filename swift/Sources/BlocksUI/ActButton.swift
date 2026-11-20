@@ -1,7 +1,8 @@
 import Blocks
 import SwiftUI
 
-internal struct ActButton<Label: View>: View {
+/// A tapped act: confirms if asked, sets local state, then follows the tap's link, thread or sheet, or sends its action.
+public struct ActButton<Label: View>: View {
     @Environment(\.act) private var act
     @Environment(\.behaved) private var behaved
     @Environment(\.edit) private var edit
@@ -10,12 +11,18 @@ internal struct ActButton<Label: View>: View {
     @Environment(\.open) private var open
     @Environment(\.openBeside) private var openBeside
     @State private var pending: Source?
-    internal var action: String?
-    internal let source: Source
-    internal var values: [String: JSONValue] = [:]
-    @ViewBuilder internal let label: Label
+    private let action: String?
+    private let source: Source
+    private let values: [String: JSONValue]
+    private let label: Label
 
-    internal var body: some View {
+    public init(
+        action: String? = nil, source: Source, values: [String: JSONValue] = [:], @ViewBuilder label: () -> Label
+    ) {
+        (self.action, self.source, self.values, self.label) = (action, source, values, label())
+    }
+
+    public var body: some View {
         Button {
             if source.confirm == nil { fire() } else { pending = source }
         } label: {
