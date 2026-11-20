@@ -4,6 +4,7 @@ import { btn, el, h } from "../dom.ts";
 import { at, total, unit } from "../../core/table.ts";
 import { atEnd as end, type CellEdit, cellRole as role, cellText, chunks, grid as rules, itemsOf, named, roles, sorted, worked } from "../../core/kind/table.ts";
 import { edited, gestured, held } from "../../gesture.ts";
+import { paged } from "../more.ts";
 
 type Pos = { row: string; col: string };
 type St = { sort: TableSort | null; q: string; hidden: Set<string>; sel: Set<string>; menu: string; seen: Map<string, string>; changed: Set<string>; fresh: Set<string>; cur: Pos | null; typed: (Pos & { value: Cell }) | null; no: string; sheet: string };
@@ -77,6 +78,11 @@ function sorter(v: View, d: Shown) {
   return s;
 }
 
+function count(v: View, d: Shown, n: number): string {
+  if (!v.b.more) return v.st.q ? `${d.items.length} of ${n} rows` : `${n} row${n === 1 ? "" : "s"}`;
+  return v.st.q ? `${d.items.length} of ${n} loaded` : `${n} loaded, more below${v.st.sort ? " · sorted among these" : ""}`;
+}
+
 function bar(v: View, d: Shown): HTMLElement[] {
   const { b, st } = v, n = b.rows.filter((r) => !r.group).length;
   const out = el("div", "tbh");
@@ -84,8 +90,8 @@ function bar(v: View, d: Shown): HTMLElement[] {
   if (d.sel) {
     out.append(h("b", "tbt", `${d.sel} selected`));
     for (const a of b.select?.actions ?? []) out.append(press(btn(a.label, a.bad ? "bad" : "", undefined, a.action), () => send(v, a.action, { rows: [...st.sel] })));
-    out.append(el("span", "tbn"));
-  } else out.append(...(b.title ? [h("b", "tbt", b.title)] : []), h("span", "tbn", st.q ? `${d.items.length} of ${n} rows` : `${n} row${n === 1 ? "" : "s"}`));
+    out.append(h("span", "tbn", b.more ? `of ${n} loaded` : ""));
+  } else out.append(...(b.title ? [h("b", "tbt", b.title)] : []), h("span", "tbn", count(v, d, n)));
   if (b.reorder && !d.sel && (st.sort || st.q)) out.append(h("span", "tbn", `${st.sort ? "sorted" : "filtered"}, so rows stay put`), go(v, btn("as sent"), () => ((st.sort = null), (st.q = v.q.value = ""))));
   if (n && !d.sel) {
     if (b.filter !== false) out.append(v.q);
@@ -224,7 +230,9 @@ function body(v: View, d: Shown): HTMLElement {
 function foot(v: View, d: Shown): HTMLElement[] {
   if (!d.items.length || !d.cols.some((x) => x.total)) return [];
   const lead = [...(d.handles ? [el("td", "tbg")] : []), ...(d.pick ? [el("td", "tbc")] : [])];
-  const out = h("tr", "", ...lead, Object.assign(h("th", "p-title", "Total"), { scope: "row" }));
+  const n = v.b.rows.filter((r) => !r.group).length;
+  const of = v.b.more ? [h("span", "tbml", v.st.q ? `of ${d.items.length} shown` : `of ${n} loaded`)] : [];
+  const out = h("tr", "", ...lead, Object.assign(h("th", "p-title", "Total", ...of), { scope: "row" }));
   const wait = d.items.some((r) => waits(v, r));
   d.cols.forEach((x, i) => {
     const t = total(x, d.items);
@@ -288,7 +296,7 @@ function refresh(v: View) {
   const t = v.box.querySelector("table");
   const d = shows(v);
   const now = Array.from(h("table", "", body(v, d), ...foot(v, d)).querySelectorAll("tbody>tr, tfoot>tr"));
-  const old = Array.from(t?.querySelectorAll("tbody>tr, tfoot>tr") ?? []);
+  const old = Array.from(t?.querySelectorAll("tbody>tr:not(.tbmo), tfoot>tr") ?? []);
   if (!t || old.length !== now.length || old.some((r, i) => r.getAttribute("data-id") !== now[i]?.getAttribute("data-id"))) return v.draw();
   old.forEach((r, i) => Array.from(r.children).forEach((c, j) => !c.querySelector(".tbi") && now[i]?.children[j] && sync(c, now[i].children[j])));
   const fields = Array.from(sheet(v, d)[0]?.querySelectorAll(".shf") ?? []);
@@ -411,6 +419,11 @@ export function table(b: Table, c: Ctx): HTMLElement {
     box.classList.toggle("ed", !!b.edit || !!b.reorder);
     const tb = body(v, d);
     const t = h("table", "", h("caption", "", b.title ?? "Table"), head(v, d), tb, ...foot(v, d));
+    const span = (d.handles ? 1 : 0) + (d.pick ? 1 : 0) + d.cols.length + (d.ed ? 1 : 0);
+    const wrap = (kids: (Node | string)[], no: boolean) => h("tr", no ? "tbmo no" : "tbmo", Object.assign(h("td", "", ...kids), { colSpan: span }));
+    const lifted = () => !!box.querySelector(".tbi, .b-hd:is([data-phase=pressed],[data-phase=previewing],[data-phase=dragging])");
+    const mo = paged(c, { id: String(b.id ?? ""), page: b.more, n: b.rows.filter((r) => !r.group).length, root: t, held: lifted, wrap });
+    if (mo) tb.append(mo);
     if (d.ed) {
       t.setAttribute("role", "grid");
       keys(v, tb);

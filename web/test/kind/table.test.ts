@@ -36,8 +36,8 @@ let browser;
 before(async () => (browser = await webkit.launch()));
 after(() => browser.close());
 
-async function open({ width = 1440, lang = "en", block = table } = {}) {
-  const page = await browser.newPage({ viewport: { width, height: 900 } });
+async function open({ width = 1440, height = 900, lang = "en", block = table, flags = {} } = {}) {
+  const page = await browser.newPage({ viewport: { width, height } });
   await page.route("**/*", (r) => {
     const p = r.request().url().slice(BASE.length);
     if (p === "") return r.fulfill({ body: PAGE(lang), contentType: "text/html" });
@@ -46,6 +46,7 @@ async function open({ width = 1440, lang = "en", block = table } = {}) {
   });
   await page.goto(BASE);
   await page.waitForFunction(() => window.B);
+  await page.evaluate((f) => Object.assign(window, f), flags);
   await page.evaluate(boot, { type: "screen", id: "s", blocks: [block] });
   const ids = () => page.$$eval(".tbl tbody tr", (rs) => rs.map((r) => r.dataset.id));
   const bar = () => page.$eval(".tbh", (e) => e.innerText.replace(/\s+/g, " ").trim());
@@ -222,5 +223,117 @@ test("on a phone a grid row opens its sheet, whose field sends its own cell edit
   ok((await sheet.innerText()).includes("14,520.00"), await sheet.innerText());
   await page.keyboard.press("Tab");
   deepStrictEqual(await page.evaluate(() => window.sent), [{ action: "set-cell", block: "grid", values: { cell: { row: "v2", column: "qty", value: 8 } } }]);
+  await page.close();
+});
+
+const paging = { ...table, sort: null, more: { action: "more-invoices", cursor: "c1" } };
+const next = (id, amount) => ({ id, cells: { inv: id, client: "Late Co", status: { text: "sent", tone: "done" }, due: "2026-12-01", amount } });
+const busy = (page) => page.$eval(".tbl table", (t) => t.getAttribute("aria-busy"));
+const tbn = (page) => page.$eval(".tbh .tbn", (e) => e.textContent);
+
+test("a table with more asks for the next page once while its loading row is in view; the app's rows and new cursor load the next, no more ends it", async () => {
+  const { page, ids } = await open({ block: paging, flags: { hold: true } });
+  await page.waitForFunction(() => window.sent.length === 1);
+  deepStrictEqual(await page.evaluate(() => window.sent), [{ action: "more-invoices", block: "invoices", values: { cursor: "c1" } }]);
+  strictEqual(await said(page, ".tbl tr.tbmo"), "Loading more");
+  strictEqual(await busy(page), "true");
+  strictEqual(await tbn(page), "5 loaded, more below");
+  strictEqual(await page.$eval(".tbl tfoot .tbml", (e) => e.textContent), "of 5 loaded");
+  await page.fill(".tbq", "INV-0133");
+  strictEqual(await tbn(page), "1 of 5 loaded");
+  strictEqual(await page.$eval(".tbl tfoot .tbml", (e) => e.textContent), "of 1 shown");
+  await page.fill(".tbq", "");
+  await page.click('th[data-l="Amount"] button');
+  strictEqual(await tbn(page), "5 loaded, more below · sorted among these");
+  await page.click('th[data-l="Amount"] button');
+  await page.click('th[data-l="Amount"] button');
+  strictEqual(await page.evaluate(() => window.sent.length), 1);
+  await page.evaluate(
+    (ops) => (window.ops(ops), window.done(true)),
+    [
+      { op: "insert", into: "invoices", block: next("INV-0150", 9_000) },
+      { op: "merge", id: "invoices", fields: { more: { action: "more-invoices", cursor: "c2" } } },
+    ],
+  );
+  await page.waitForFunction(() => window.sent.length === 2);
+  deepStrictEqual(await page.evaluate(() => window.sent[1].values), { cursor: "c2" });
+  strictEqual(await page.$eval(".b-sr[aria-live=polite]", (e) => e.textContent), "1 more row loaded, 6 in all");
+  ok((await ids()).includes("INV-0150"));
+  await page.evaluate((ops) => (window.ops(ops), window.done(true)), [{ op: "merge", id: "invoices", fields: { more: null } }]);
+  strictEqual(await page.$$eval(".tbl tr.tbmo", (rs) => rs.length), 0);
+  strictEqual(await busy(page), null);
+  strictEqual(await tbn(page), "6 rows");
+  strictEqual(await page.$$eval(".tbl tfoot .tbml", (es) => es.length), 0);
+  strictEqual(await page.evaluate(() => window.sent.length), 2);
+  await page.close();
+});
+
+test("a refused page turns the loading row into a retry that a redraw keeps; only its load more sends the same cursor again", async () => {
+  const { page } = await open({ block: { ...paging, id: "refused" }, flags: { no: true } });
+  await page.waitForSelector(".tbl tr.tbmo.no");
+  strictEqual(await said(page, ".tbl tr.tbmo"), "Couldn’t load more. load more");
+  strictEqual(await busy(page), "false");
+  await page.fill(".tbq", "INV");
+  await page.fill(".tbq", "");
+  strictEqual(await said(page, ".tbl tr.tbmo"), "Couldn’t load more. load more");
+  strictEqual(await page.evaluate(() => window.sent.length), 1);
+  await page.evaluate(() => ((window.no = false), (window.hold = true)));
+  await page.click(".tbl tr.tbmo button");
+  deepStrictEqual(await page.evaluate(() => window.sent.map((a) => a.values)), [{ cursor: "c1" }, { cursor: "c1" }]);
+  strictEqual(await said(page, ".tbl tr.tbmo"), "Loading more");
+  strictEqual(await busy(page), "true");
+  await page.close();
+});
+
+test("out of view nothing loads; a tick box on the last row reached by keyboard loads, and focus stays on that row after the page lands", async () => {
+  const rows = Array.from({ length: 30 }, (_, i) => next(`OT-${100 + i}`, i));
+  const { page } = await open({ block: { ...paging, id: "ot", rows }, flags: { hold: true } });
+  await page.evaluate(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))));
+  strictEqual(await page.evaluate(() => window.sent.length), 0);
+  await page.focus('tr[data-id="OT-129"] input');
+  await page.waitForFunction(() => window.sent.length === 1);
+  await page.evaluate(
+    (ops) => (window.ops(ops), window.done(true)),
+    [
+      { op: "insert", into: "ot", block: next("OT-130", 1) },
+      { op: "merge", id: "ot", fields: { more: null } },
+    ],
+  );
+  await page.waitForFunction(() => document.activeElement?.closest("tr")?.dataset.id === "OT-129");
+  strictEqual(await page.$$eval(".tbl tbody tr", (rs) => rs.length), 31);
+  await page.close();
+});
+
+test("a list with more shows a quiet loading row under its last row, asks once, and takes the app's new rows", async () => {
+  const list = { type: "list", id: "notes", more: { action: "more-notes", cursor: "n3" }, rows: ["a", "b", "c"].map((id) => ({ type: "row", id, title: id.toUpperCase() })) };
+  const { page } = await open({ block: list, flags: { hold: true } });
+  await page.waitForFunction(() => window.sent.length === 1);
+  deepStrictEqual(await page.evaluate(() => window.sent), [{ action: "more-notes", block: "notes", values: { cursor: "n3" } }]);
+  deepStrictEqual(await page.$$eval(".list > *", (es) => es.map((e) => e.dataset.id ?? e.className)), ["a", "b", "c", "lsm"]);
+  strictEqual(await page.$eval(".list", (e) => e.getAttribute("aria-busy")), "true");
+  await page.evaluate(
+    (ops) => (window.ops(ops), window.done(true)),
+    [
+      { op: "insert", into: "notes", block: { type: "row", id: "d", title: "D" } },
+      { op: "merge", id: "notes", fields: { more: null } },
+    ],
+  );
+  deepStrictEqual(await page.$$eval(".list > *", (es) => es.map((e) => e.dataset.id ?? e.className)), ["a", "b", "c", "d"]);
+  strictEqual(await page.$eval(".b-sr[aria-live=polite]", (e) => e.textContent), "1 more row loaded, 4 in all");
+  await page.close();
+});
+
+test("while a cell editor is open, scrolling the loading row into view holds the load and says so; nothing is sent", async () => {
+  const { page } = await open({ block: { ...grid, rows: grid.rows.slice(0, -1), more: { action: "more-grid", cursor: "g1" } }, height: 300, flags: { hold: true } });
+  const frames = () => page.evaluate(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))));
+  await frames();
+  strictEqual(await page.evaluate(() => window.sent.length), 0);
+  await at(page, "p1", "qty").click();
+  await at(page, "p1", "qty").locator("input").waitFor();
+  await page.$eval(".tbw", (w) => (w.scrollTop = w.scrollHeight));
+  await page.waitForFunction(() => document.querySelector(".tbl tr.tbmo")?.textContent !== "Loading more");
+  strictEqual(await said(page, ".tbl tr.tbmo"), "more below · loads once the row is placed");
+  strictEqual(await page.$eval(".tbl table", (t) => t.getAttribute("aria-busy")), "false");
+  deepStrictEqual(await page.evaluate(() => window.sent), []);
   await page.close();
 });

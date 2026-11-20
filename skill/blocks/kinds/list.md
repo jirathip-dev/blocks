@@ -9,7 +9,7 @@ The Rust type `List`; in TS, `list(fields: List)` from `web/src/gen/builders.ts`
 | field | type | |
 |---|---|---|
 | `id` | `string` | optional |
-| `more` | `string` | optional |
+| `more` | `More` | optional |
 | `reorder` | `Gesture` | optional |
 | `rows` | `Block[]` | required |
 | `show` | `Expr` | optional |

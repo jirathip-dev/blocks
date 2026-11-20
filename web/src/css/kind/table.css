@@ -127,3 +127,13 @@
 .tbl tr.grp::before,.tbl tr.grp>.p-meta{display:none}
 .tbl tr.grp>.p-value{font-weight:600}
 }
+.tbl tr.tbmo>td{height:var(--hit);box-sizing:border-box;padding-block:0;border-bottom:0;color:var(--mute);font-size:var(--fs-meta);white-space:normal}
+.tbl tr.tbmo.no>td{box-shadow:inset var(--mark) 0 0 var(--r)}
+.tbl tr.tbmo button,.list>.lsm button{margin-inline-start:var(--s2)}
+.tbl tfoot .tbml{margin-inline-start:var(--sep);color:var(--mute);font-size:var(--fs-meta);font-weight:400}
+@container (width < 600px){
+.tbl tr.tbmo::before{content:none}
+.tbl tr.tbmo>td{display:flex;align-items:center;flex:1;height:auto;padding:0}
+.tbl tr.tbmo.no{box-shadow:inset var(--mark) 0 0 var(--r)}
+.tbl tr.tbmo.no>td{box-shadow:none}
+}
