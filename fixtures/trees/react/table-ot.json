@@ -2,7 +2,7 @@
   "kind": "table",
   "id": "ot",
   "variant": null,
-  "drawn": "fallback",
+  "drawn": "native",
   "role": "group",
   "name": "OT requests",
   "children": []
