@@ -58,7 +58,7 @@ internal struct GridHandle: View {
                 .modifier(
                     Gestured(
                         rules: block, grab: .row(row.id), gesture: reorder, label: "Move \(block.name(row))",
-                        reach: { .rows(Int(($0.height / 44).rounded())) }, value: { $0.json },
+                        reach: { .rows(Int(($0.translation.height / 44).rounded())) }, value: { $0.json },
                         show: { if case .order(let o)? = $0 { grid.held = o } else { grid.held = nil } }))
         } else {
             Color.clear.frame(width: 44, height: 1)
