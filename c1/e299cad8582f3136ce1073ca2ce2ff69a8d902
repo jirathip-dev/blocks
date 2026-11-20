@@ -1,0 +1,14 @@
+Decided: React's four field views live in web/react/src/fields/, one file per type, and just gen writes web/react/src/gen/fields.ts from that folder
+Because: docs/architecture/form-v2/adr.md:174
+Decided: typed values go into the view's one local state (put on the context), so checks run through the core's view() and a failing one disables the form
+Because: "a failing check means the form cannot send"
+Decided: the form refuses a send through the frame's act gate (the form's id in view().disabled), the same path every sender takes, and also refuses an all-empty send as the HTML form does
+Because: web/src/render/form.ts:23
+Decided: drafts are the edits in local state: a true result deletes them, so the next screen's values show; false or a rejection keeps them
+Because: docs/architecture/react/usage.md:111
+Decided: images draw the HTML grid as links that open the picture in a new tab; the HTML page's full-screen viewer is not ported
+Rejected: porting viewer() with gesture.ts's zoom — it draws outside the block on document.body, and Mode B apps get the picture through the link
+Decided: a field's failing check message shows in a .fe span once that field was edited, as the HTML shell's behave does
+Because: web/src/behave.ts:27
+Check: react/test/markup.test.ts draws every fixtures/fields form and the three kinds through both renderers, and one filled form sends the same action from each
+Owner: React apps can now show forms, filter chips and picture grids, and a form whose checks fail cannot be sent.
