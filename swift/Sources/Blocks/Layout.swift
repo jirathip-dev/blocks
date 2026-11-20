@@ -1,10 +1,5 @@
 import Foundation
 
-/// The two widths a layout places for: iPhone is `compact`, iPad and Mac are `wide`.
-public enum SizeClass: Sendable {
-    case compact, wide
-}
-
 /// A node's place on each size class; a size the file leaves out inherits the other.
 public struct Placement: Sendable, Equatable {
     public let compact: LayoutPlace
@@ -169,5 +164,127 @@ private struct Reader {
             return place
         }
         return Placement(compact: try one(compact), wide: try one(wide))
+    }
+}
+
+extension LayoutNode {
+    private var kids: [Self] { slots.keys.sorted().flatMap { slots[$0] ?? [] } }
+    private var height: Int { 1 + (kids.map(\.height).max() ?? 0) }
+
+    private func path(to id: String) -> [String]? {
+        if self.id == id { return [id] }
+        return kids.lazy.compactMap { $0.path(to: id).map { [self.id] + $0 } }.first
+    }
+
+    fileprivate func find(_ id: String) -> Self? { self.id == id ? self : kids.lazy.compactMap { $0.find(id) }.first }
+
+    /// Where a grabbed node is now, as the move that leaves it there; nil for the root.
+    public func stay(_ grabbed: String) -> LayoutEdit? {
+        for slot in slots.keys.sorted() {
+            let list = slots[slot] ?? []
+            if let i = list.firstIndex(where: { $0.id == grabbed }) {
+                let next = list.indices.contains(i + 1) ? list[i + 1].id : nil
+                return .move(LayoutEditMove(before: next, id: grabbed, into: id, slot: slot))
+            }
+        }
+        return kids.lazy.compactMap { $0.stay(grabbed) }.first
+    }
+
+    /// Every place a grabbed node can go, where it is now included, in reading order: the list the arrow keys walk.
+    public func places(_ held: [String: [String]], grabbed: String) -> [LayoutEdit] {
+        guard let at = path(to: grabbed), at.count > 1, let g = find(grabbed) else { return [] }
+        let (h, depth, above) = (g.height, at.count, Set(at.dropLast()))
+        var out: [LayoutEdit] = []
+        func walk(_ host: Self, _ d: Int) {
+            guard case .component(let kind) = host.content else { return }
+            let fits = d + h <= 6
+            for slot in (held[kind] ?? []).sorted() {
+                for k in host.slots[slot] ?? [] where k.id != grabbed {
+                    if fits { out.append(.move(LayoutEditMove(before: k.id, id: grabbed, into: host.id, slot: slot))) }
+                    if fits, !above.contains(k.id), depth + k.height <= 7 {
+                        out.append(.swap(LayoutEditSwap(a: grabbed, b: k.id)))
+                    }
+                    walk(k, d + 1)
+                }
+                if fits { out.append(.move(LayoutEditMove(before: nil, id: grabbed, into: host.id, slot: slot))) }
+            }
+        }
+        walk(self, 1)
+        return out
+    }
+
+    /// Every edit a grabbed node can end in, in reading order, as the crate's `layout::drops`.
+    public func drops(_ held: [String: [String]], grabbed: String) -> [LayoutEdit] {
+        let now = stay(grabbed)
+        return places(held, grabbed: grabbed).filter { $0 != now }
+    }
+}
+
+extension LayoutEdit {
+    /// How node `id` shows on `size`.
+    public static func showing(_ id: String, on size: SizeClass, as place: LayoutPlace) -> Self {
+        .show(LayoutEditShow(id: id, place: place, size: size))
+    }
+}
+
+extension Gesture {
+    /// A layout's edit: what the edit mode's driver sends, to the host's `save` and never to a source.
+    public static let layout = Gesture(action: "layout", enabled: nil, name: "edit")
+}
+
+/// The edit mode's rules for one resolved tree: a grab is a node's id, a reach is a count of places, a change is an edit.
+public struct LayoutRules: Rules {
+    public let tree: LayoutNode<LayoutPlace>
+    public let held: [String: [String]]
+
+    public init(tree: LayoutNode<LayoutPlace>, held: [String: [String]]) { (self.tree, self.held) = (tree, held) }
+
+    private func name(_ id: String) -> String { tree.find(id)?.label ?? id }
+
+    private func slot(_ e: LayoutEdit) -> String {
+        if case .move(let m) = e { return "\(m.into)\n\(m.slot)" }
+        return ""
+    }
+
+    private func walk(_ g: String, _ from: LayoutEdit, _ step: Int, _ ok: (LayoutEdit) -> Bool) -> LayoutEdit? {
+        let all = tree.places(held, grabbed: g)
+        guard let i = all.firstIndex(of: from) else { return nil }
+        return stride(from: i + step, to: step < 0 ? -1 : all.count, by: step).lazy.map { all[$0] }.first(where: ok)
+    }
+
+    public func word(_ grab: String) -> Word? { tree.stay(grab) == nil ? nil : .move }
+    public func start(_ grab: String) -> LayoutEdit? { tree.stay(grab) }
+
+    public func candidate(_ grab: String, _ reach: Int) -> LayoutEdit? {
+        let all = tree.places(held, grabbed: grab)
+        guard let s = tree.stay(grab), let i = all.firstIndex(of: s) else { return nil }
+        return all.indices.contains(i + reach) ? all[i + reach] : nil
+    }
+
+    public func nudge(_ grab: String, from: LayoutEdit, by: Nudge) -> LayoutEdit? {
+        let step = by.dir == .up || by.dir == .left ? -1 : 1
+        if by.dir == .left || by.dir == .right {
+            return walk(grab, from, step) { if case .swap = $0 { true } else { false } }
+        }
+        return walk(grab, from, step) { e in
+            if case .move = e { !by.big || slot(e) != slot(from) } else { false }
+        }
+    }
+
+    public func steps(_ grab: String) -> [(String, Nudge)] {
+        [
+            ("Move earlier", Nudge(.up)), ("Move later", Nudge(.down)), ("Swap with the previous", Nudge(.left)),
+            ("Swap with the next", Nudge(.right)), ("Move to the previous slot", Nudge(.up, big: true)),
+            ("Move to the next slot", Nudge(.down, big: true)),
+        ]
+    }
+
+    public func says(_ grab: String, _ change: LayoutEdit) -> String {
+        switch change {
+        case .swap(let s): "swapped with \(name(s.b))"
+        case .move(let m): "\(m.before.map { "before \(name($0))" } ?? "last") in \(m.slot) of \(name(m.into))"
+        case .show(let s): s.place.rawValue
+        case .unknown: ""
+        }
     }
 }

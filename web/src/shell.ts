@@ -1,6 +1,7 @@
 import type { LayoutPlace, LayoutTransition } from "./gen/layout.ts";
 import type { Scheme } from "./gen/schemes.ts";
 import type { Answer, Block, Kind, Op, Toast } from "./gen/types.ts";
+import { type Editing, editor } from "./arrange.ts";
 import { behave } from "./behave.ts";
 import type { Held } from "./gesture.ts";
 import { choose, type Pair, type Scale } from "./core/look.ts";
@@ -17,6 +18,7 @@ import { stream } from "./stream.ts";
 import { toasts } from "./toasts.ts";
 import { plain, type Theme, tiles } from "./theme.ts";
 
+export type { Editing } from "./arrange.ts";
 export { behave } from "./behave.ts";
 export { evaluate, start, view } from "./core/eval.ts";
 export { dump } from "./dump.ts";
@@ -37,7 +39,7 @@ export type Placed<P> = {
   place: P;
   transition: LayoutTransition;
   config?: Record<string, unknown>;
-  slots?: Record<string, Placed<P>[]> | undefined;
+  slots?: Record<string, Placed<P>[]>;
 };
 /// The checked `layout.json`: a `nav` root placed per size class.
 export type Layout = { format: number; theme?: string; root: Placed<{ compact: LayoutPlace; wide: LayoutPlace }> };
@@ -56,6 +58,7 @@ export type Mount = {
   theme?: Theme;
   schemes?: Record<string, Scheme>;
   store?: Store;
+  edit?: Editing;
   file?: OnFile;
 };
 
@@ -67,8 +70,8 @@ const SHEET: LayoutPlace[] = ["menu", "sheet", "push"];
 
 /// The tree for one size class: each node keeps the place the file gave that size.
 export function resolved(n: Layout["root"], wide: boolean): Resolved {
-  const slots = n.slots && Object.fromEntries(Object.entries(n.slots).map(([k, v]) => [k, v.map((x) => resolved(x, wide))]));
-  return { ...n, place: wide ? n.place.wide : n.place.compact, slots };
+  const { slots, ...rest } = n;
+  return { ...rest, place: wide ? n.place.wide : n.place.compact, ...(slots && { slots: Object.fromEntries(Object.entries(slots).map(([k, v]) => [k, v.map((x) => resolved(x, wide))])) }) };
 }
 
 const walk = (n: Resolved): Resolved[] => Object.values(n.slots ?? {}).flatMap((ns) => ns.flatMap((x) => [x, ...walk(x)]));
@@ -133,22 +136,30 @@ function looks(schemes: Record<string, Worn>, store: Store, wear: (name: string 
 }
 
 /// Draws `o.layout` into `o.root`: its tabs, cards and menu, each screen kept and live on its source's one stream.
-export function mount(o: Mount): { close(): void } {
+export function mount(o: Mount): { layout(next: Layout): void; close(): void } {
   const store = o.store ?? local();
   const theme = o.theme ?? plain;
   for (const href of o.css ?? []) document.head.append(Object.assign(el("link"), { rel: "stylesheet", href }));
   const { look, wear } = wearer(o.schemes ?? {}, theme);
   wear(store.get("b:look"));
   const wide = matchMedia("(min-width: 1000px)");
-  let shell = draw(o, store, theme, wear, wide.matches);
+  const ed = o.edit && editor(o.edit, { theme, store }, o.root);
+  let shell: { close(): void } = { close() {} };
   const change = () => {
     shell.close();
-    shell = draw(o, store, theme, wear, wide.matches);
+    shell = draw(o, store, theme, wear, wide.matches, ed ? [ed.tab] : []);
+    ed?.draw(resolved(o.layout.root, wide.matches), wide.matches ? "wide" : "compact");
   };
+  change();
   wide.addEventListener("change", change);
   const timer = setInterval(() => tick(o.root), 1000);
   return {
+    layout(next) {
+      o = { ...o, layout: next };
+      change();
+    },
     close() {
+      ed?.sheet.remove();
       wide.removeEventListener("change", change);
       clearInterval(timer);
       shell.close();
@@ -157,7 +168,7 @@ export function mount(o: Mount): { close(): void } {
   };
 }
 
-function draw(o: Mount, store: Store, theme: Theme, wear: (name: string | null, keep?: Store) => void, wide: boolean): { close(): void } {
+function draw(o: Mount, store: Store, theme: Theme, wear: (name: string | null, keep?: Store) => void, wide: boolean, extra: HTMLElement[]): { close(): void } {
   const nodes = walk(resolved(o.layout.root, wide)).filter((n) => n.place !== "hidden");
   const streams = new Map<string, ReturnType<typeof stream>>();
   const live = (source: string) => {
@@ -386,7 +397,7 @@ function draw(o: Mount, store: Store, theme: Theme, wear: (name: string | null, 
   };
   const more = btn("menu", "b-tab b-menu");
   more.onclick = menu;
-  strip.append(more);
+  strip.append(more, ...extra);
 
   o.root.append(...parts, strip, main, sheet, ask, notes.box);
   const first = tabs.find((t) => `#${t.node.id}` === location.hash) ?? tabs[0];
