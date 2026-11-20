@@ -4,15 +4,21 @@ use serde_json::{json, Value};
 use crate::ui::{b, open, page, section, Page, REPO};
 
 const SITE: (&str, &str) = ("site/src/kinds.rs", include_str!("kinds.rs"));
-const CRATE: [(&str, &str); 2] = [
-    (
-        "crates/blocks/src/kind/sample.rs",
-        include_str!("../../crates/blocks/src/kind/sample.rs"),
-    ),
-    (
-        "crates/blocks/src/kind/timeline.rs",
-        include_str!("../../crates/blocks/src/kind/timeline.rs"),
-    ),
+macro_rules! core {
+    ($kind:literal) => {
+        (
+            concat!("crates/blocks/src/kind/core/", $kind, ".rs"),
+            include_str!(concat!("../../crates/blocks/src/kind/core/", $kind, ".rs")),
+        )
+    };
+}
+
+const CRATE: [(&str, &str); 5] = [
+    core!("chart"),
+    core!("lines"),
+    core!("table"),
+    core!("toast"),
+    core!("timeline"),
 ];
 
 /// The lines of a source file that build a block: the whole `fn` its id is written in, numbered from 1.
@@ -44,7 +50,7 @@ fn cut_in(file: &'static str, src: &str, id: &str) -> Option<Cut> {
     })
 }
 
-/// The functions that build a sample's blocks, each once: the crate's `samples()` in sample.rs, the rest in kinds.rs.
+/// The functions that build a sample's blocks, each once: the crate's `samples()` in its kind's file, the rest in kinds.rs.
 pub fn cuts(sample: &[Block]) -> Vec<Cut> {
     let theirs: Vec<Block> = blocks::samples().into_iter().map(|(_, b)| b).collect();
     let mut out: Vec<Cut> = Vec::new();
