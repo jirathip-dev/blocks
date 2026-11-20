@@ -48,7 +48,13 @@ async function work(a: Ask, made: (n: number) => void): Promise<Omit<Reply, "id"
     return { quad: q ? scaled(q, k) : null };
   }
   if (a.op === "page") {
-    const c = new OffscreenCanvas(A4[0], A4[1]), page = warp(pixels(a.photo).img, a.quad);
+    const xs = a.quad.map(([x]) => x), ys = a.quad.map(([, y]) => y), x0 = Math.max(0, Math.floor(Math.min(...xs))), y0 = Math.max(0, Math.floor(Math.min(...ys)));
+    const sw = Math.min(a.photo.width, Math.ceil(Math.max(...xs))) - x0, sh = Math.min(a.photo.height, Math.ceil(Math.max(...ys))) - y0;
+    const k = Math.min(1, Math.max(...A4) / Math.max(sw, sh, 1)), crop = new OffscreenCanvas(Math.max(1, Math.round(sw * k)), Math.max(1, Math.round(sh * k)));
+    const cx = crop.getContext("2d", { willReadFrequently: true });
+    cx?.drawImage(a.photo, x0, y0, sw, sh, 0, 0, crop.width, crop.height);
+    const f = ([x, y]: Pt): Pt => [(x - x0) * k, (y - y0) * k], [p, q, r, t] = a.quad;
+    const c = new OffscreenCanvas(A4[0], A4[1]), page = warp(cx?.getImageData(0, 0, crop.width, crop.height) ?? new ImageData(1, 1), [f(p), f(q), f(r), f(t)]);
     c.getContext("2d")?.putImageData(new ImageData(page.data, A4[0], A4[1]), 0, 0);
     return { page: c.transferToImageBitmap() };
   }

@@ -50,10 +50,12 @@ export function corners(img: Img): Quad | undefined {
     while (top) {
       const i = stack[--top] ?? 0, x = i % w, y = (i - x) / w;
       n++;
-      [-x - y, x - y, x + y, y - x].forEach((v, c) => {
+      for (let c = 0; c < 4; c++) {
+        const v = c === 0 ? -x - y : c === 1 ? x - y : c === 2 ? x + y : y - x;
         if (v > (k[c] ?? 0)) [k[c], q[c]] = [v, [x, y]];
-      });
-      for (const j of [x ? i - 1 : -1, x < w - 1 ? i + 1 : -1, i - w, i + w]) {
+      }
+      for (let m = 0; m < 4; m++) {
+        const j = m === 0 ? (x ? i - 1 : -1) : m === 1 ? (x < w - 1 ? i + 1 : -1) : m === 2 ? i - w : i + w;
         if (j < 0 || j >= w * h || seen[j] || (g[j] ?? 0) <= cut) continue;
         seen[j] = 1;
         stack[top++] = j;
@@ -77,17 +79,19 @@ function square(q: Quad) {
 /// The page inside `q` in `img`, straightened to `size` (A4 by default) with bilinear sampling.
 export function warp(img: Img, q: Quad, [width, height]: Pt = A4): Img {
   const { a, b, c, d, e, f, g, h } = square(q), src = img.data, sw = img.width, data = new Uint8ClampedArray(width * height * 4);
-  const mx = img.width - 1.001, my = img.height - 1.001;
-  for (let j = 0; j < height; j++) {
+  const mx = img.width - 1.001, my = img.height - 1.001, du = 1 / width;
+  for (let j = 0, o = 0; j < height; j++) {
     const v = (j + 0.5) / height;
-    for (let i = 0; i < width; i++) {
-      const u = (i + 0.5) / width, z = g * u + h * v + 1;
-      const x = Math.min(mx, Math.max(0, (a * u + b * v + c) / z - 0.5)), y = Math.min(my, Math.max(0, (d * u + e * v + f) / z - 0.5));
-      const x0 = Math.floor(x), y0 = Math.floor(y), fx = x - x0, fy = y - y0, p = (y0 * sw + x0) * 4, o = (j * width + i) * 4;
-      for (let k = 0; k < 3; k++) {
-        const top = (src[p + k] ?? 0) * (1 - fx) + (src[p + 4 + k] ?? 0) * fx, low = (src[p + sw * 4 + k] ?? 0) * (1 - fx) + (src[p + sw * 4 + 4 + k] ?? 0) * fx;
-        data[o + k] = top * (1 - fy) + low * fy;
-      }
+    let X = a * du * 0.5 + b * v + c, Y = d * du * 0.5 + e * v + f, Z = g * du * 0.5 + h * v + 1;
+    for (let i = 0; i < width; i++, o += 4, X += a * du, Y += d * du, Z += g * du) {
+      let x = X / Z - 0.5, y = Y / Z - 0.5;
+      x = x < 0 ? 0 : x > mx ? mx : x;
+      y = y < 0 ? 0 : y > my ? my : y;
+      const x0 = x | 0, y0 = y | 0, fx = x - x0, fy = y - y0, p = (y0 * sw + x0) * 4, p1 = p + sw * 4;
+      const w00 = (1 - fx) * (1 - fy), w01 = fx * (1 - fy), w10 = (1 - fx) * fy, w11 = fx * fy;
+      data[o] = (src[p] ?? 0) * w00 + (src[p + 4] ?? 0) * w01 + (src[p1] ?? 0) * w10 + (src[p1 + 4] ?? 0) * w11;
+      data[o + 1] = (src[p + 1] ?? 0) * w00 + (src[p + 5] ?? 0) * w01 + (src[p1 + 1] ?? 0) * w10 + (src[p1 + 5] ?? 0) * w11;
+      data[o + 2] = (src[p + 2] ?? 0) * w00 + (src[p + 6] ?? 0) * w01 + (src[p1 + 2] ?? 0) * w10 + (src[p1 + 6] ?? 0) * w11;
       data[o + 3] = 255;
     }
   }
