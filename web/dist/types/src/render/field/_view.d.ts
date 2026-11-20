@@ -6,9 +6,9 @@ export type FieldCtx = {
     store: Store;
     key: string;
     screen: string;
-    block?: string;
-    file?: OnFile;
-    set?(value: unknown): void;
+    block?: string | undefined;
+    file?: OnFile | undefined;
+    set?: ((value: unknown) => void) | undefined;
 };
 export type FieldOut = {
     el: HTMLElement;

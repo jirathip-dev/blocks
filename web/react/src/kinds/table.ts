@@ -52,7 +52,7 @@ const sent = (v: View, row: string, col: string) => {
 };
 const waits = (v: View, r: TableRow) => v.b.columns.some((x) => sent(v, r.id, x.id) !== undefined);
 const sort = (v: View) => v.b.columns.find((x) => x.id === v.st.sort?.by);
-const cellAt = (v: View, p: Pos) => Array.from(v.box.current?.querySelectorAll<HTMLElement>("tbody td[data-c]") ?? []).find((td) => td.dataset.c === p.col && td.parentElement?.dataset.id === p.row);
+const cellAt = (v: View, p: Pos) => Array.from(v.box.current?.querySelectorAll<HTMLElement>("tbody td[data-c]") ?? []).find((td) => td.dataset["c"] === p.col && td.parentElement?.dataset["id"] === p.row);
 const fit = (ids: string[], i: string, by: number) => ids[Math.max(0, Math.min(ids.length - 1, ids.indexOf(i) + by))] ?? i;
 
 function tick(v: View, on: boolean, label: string, set: (on: boolean) => void, mixed = false, cls = "", off = false) {
@@ -136,9 +136,9 @@ function slide(v: View, order: string[] | null, g: string) {
   let y = trs[0]?.offsetTop ?? 0;
   for (const e of trs) {
     e.style.transform = "";
-    e.classList.toggle("lift", lifted.includes(e.dataset.id ?? ""));
+    e.classList.toggle("lift", lifted.includes(e.dataset["id"] ?? ""));
   }
-  for (const e of (order ?? []).flatMap((id) => trs.find((t) => t.dataset.id === id) ?? [])) {
+  for (const e of (order ?? []).flatMap((id) => trs.find((t) => t.dataset["id"] === id) ?? [])) {
     e.style.transform = `translateY(${y - e.offsetTop}px)`;
     y += e.offsetHeight;
   }
@@ -183,7 +183,7 @@ function input(v: View, r: TableRow, x: Column, field: boolean): ReactNode[] {
       const d = shows(v),
         ids = d.items.map((i) => i.id),
         cols = d.cols.map((i) => i.id);
-      const [dr, dc] = { down: [1, 0], right: [0, 1], left: [0, -1] }[how] ?? [0, 0];
+      const [dr, dc] = ({ down: [1, 0], right: [0, 1], left: [0, -1] } satisfies Record<string, [number, number]>)[how] ?? [0, 0];
       if (how !== "blur") (st.cur = { row: fit(ids, p.row, dr), col: fit(cols, p.col, dc) }), (st.focus = true);
       v.draw();
     };
@@ -305,9 +305,9 @@ function keys(v: View): Attrs {
   const moves: Record<string, [number, number]> = { ArrowUp: [-1, 0], ArrowDown: [1, 0], ArrowLeft: [0, -1], ArrowRight: [0, 1] };
   const onKeyDown = (e: KeyboardEvent) => {
     const td = e.target instanceof HTMLElement && e.target.matches("td[data-c]") ? e.target : null;
-    const row = td?.parentElement?.dataset.id;
-    if (!td || !row || !td.dataset.c) return;
-    const p = { row, col: td.dataset.c };
+    const row = td?.parentElement?.dataset["id"];
+    if (!td || !row || !td.dataset["c"]) return;
+    const p = { row, col: td.dataset["c"] };
     const m = moves[e.key];
     const d = shows(v),
       ids = d.items.map((i) => i.id),
@@ -321,9 +321,9 @@ function keys(v: View): Attrs {
   };
   const onClick = (e: MouseEvent) => {
     const td = e.target instanceof Element ? e.target.closest<HTMLElement>("td[data-c]") : null;
-    const row = td?.parentElement?.dataset.id;
-    if (!td || !row || !td.dataset.c || td.querySelector(".tbi")) return;
-    v.st.cur = { row, col: td.dataset.c };
+    const row = td?.parentElement?.dataset["id"];
+    if (!td || !row || !td.dataset["c"] || td.querySelector(".tbi")) return;
+    v.st.cur = { row, col: td.dataset["c"] };
     open(v, v.st.cur);
     v.draw();
   };

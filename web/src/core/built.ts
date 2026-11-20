@@ -16,7 +16,7 @@ const DRAWN = ["row", "text", "island"];
 const NAMED = ["title", "label", "header", "question", "name", "file", "command", "source", "src"];
 
 const isObj = (v: unknown): v is Obj => typeof v === "object" && v !== null && !Array.isArray(v);
-const isTable = (o: Obj): o is Obj & Table => o.type === "table" && Array.isArray(o.columns) && Array.isArray(o.rows);
+const isTable = (o: Obj): o is Obj & Table => o["type"] === "table" && Array.isArray(o["columns"]) && Array.isArray(o["rows"]);
 const text = (o: Obj, k: string) => (typeof o[k] === "string" && o[k] !== "" ? o[k] : undefined);
 
 function tabled(t: Table): Fallback {
@@ -34,7 +34,7 @@ function plain(o: Obj, kind: string): Fallback {
   const subtitle = text(o, "subtitle");
   const f: Fallback = { title: NAMED.map((k) => text(o, k)).find((t) => t !== undefined) ?? kind };
   if (subtitle !== undefined) f.subtitle = subtitle;
-  if (isObj(o.tap)) f.tap = o.tap;
+  if (isObj(o["tap"])) f.tap = o["tap"];
   return f;
 }
 
@@ -42,10 +42,10 @@ const copy = (v: unknown) => (isObj(v) ? fill({ ...v }) : v);
 const each = (l: unknown) => (Array.isArray(l) ? l.map(copy) : l);
 
 function fill(o: Obj): Obj {
-  const kind = typeof o.type === "string" ? o.type : "";
-  if (KINDS.includes(kind) && !DRAWN.includes(kind) && o.fallback === undefined) o.fallback = plain(o, kind);
+  const kind = typeof o["type"] === "string" ? o["type"] : "";
+  if (KINDS.includes(kind) && !DRAWN.includes(kind) && o["fallback"] === undefined) o["fallback"] = plain(o, kind);
   for (const k of LISTS) if (k in o) o[k] = each(o[k]);
-  if (Array.isArray(o.rounds)) o.rounds = o.rounds.map((r) => (isObj(r) && "blocks" in r ? { ...r, blocks: each(r.blocks) } : r));
+  if (Array.isArray(o["rounds"])) o["rounds"] = o["rounds"].map((r) => (isObj(r) && "blocks" in r ? { ...r, blocks: each(r["blocks"]) } : r));
   return o;
 }
 

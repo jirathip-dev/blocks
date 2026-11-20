@@ -8,17 +8,17 @@ import { type Ctx, sent } from "../ctx.ts";
 import { btn, el, h } from "../dom.ts";
 
 /// A drawn field: its `.fd` row, its name, the value it sends and the files it waits on.
-export type Drawn = { row: HTMLElement; name: string; sent(): unknown; busy?(): { up: number; failed: number } };
+export type Drawn = { row: HTMLElement; name: string; sent(): unknown; busy?: (() => { up: number; failed: number }) | undefined };
 
 export function form(b: Form, c: Ctx): HTMLElement {
   const f = el("div", `form${b.submit ? " say" : ""}`);
-  f.dataset.id = b.id ?? "";
+  f.dataset["id"] = b.id ?? "";
   const all = b.fields.map((x) => field(x, `draft:${c.screen}:${String(b.id)}:`, c, undefined, b.id ?? undefined));
   f.append(...all.map((d) => d.row));
   const s = b.submit;
   if (!s) return f;
   const go = btn(s.label, "", undefined, s.action);
-  go.dataset.submit = "";
+  go.dataset["submit"] = "";
   const face = go.firstElementChild ?? go;
   const fc0 = { locale: c.locale ?? {}, store: c.store, key: "", screen: c.screen };
   const wait = el("span", "say-busy");

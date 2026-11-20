@@ -4,7 +4,7 @@ import { type Ctx, obj } from "../ctx.ts";
 import { btn, el, esc, h } from "../dom.ts";
 
 type Att = { name: string; type: string; data: string };
-type Draft = { files: Att[]; picks: Blk; q?: number; st?: string; steer?: boolean; stopping?: boolean };
+type Draft = { files: Att[]; picks: Blk; q?: number; st?: string | undefined; steer?: boolean; stopping?: boolean };
 const drafts = new Map<string, Draft>();
 const SAID: Record<string, string> = { sending: "sending…", sent: "✓ sent", failed: "not sent" };
 
@@ -21,7 +21,7 @@ export function composer(b: Composer, c: Ctx): HTMLElement {
   const d: Draft = drafts.get(key) ?? { files: [], picks: {} };
   drafts.set(key, d);
   const f = el("div", "cmp");
-  f.dataset.id = b.id ?? "";
+  f.dataset["id"] = b.id ?? "";
   const ta = el("textarea");
   Object.assign(ta, { name: "text", rows: 1, value: c.store.get(key) ?? "", placeholder: b.placeholder ?? "" });
   const grow = () => {
@@ -40,7 +40,7 @@ export function composer(b: Composer, c: Ctx): HTMLElement {
     const queue = !steer && (b.working || d.q != null) ? act("queue") : "";
     const action = steer ? act("steer") : queue || b.action;
     const v: Blk = { ...d.picks, text: ta.value, name: d.files.map((x) => x.name).join("/"), data: d.files.map((x) => x.data).join(",") };
-    if (queue && d.q != null) v.q = d.q;
+    if (queue && d.q != null) v["q"] = d.q;
     [d.st, d.steer] = ["sending", false];
     draw();
     if (await post(action, v, steer ? undefined : go)) {
@@ -93,7 +93,7 @@ export function composer(b: Composer, c: Ctx): HTMLElement {
     const p = el("div", "pill");
     const tick = () => {
       if (!navigator.onLine) return p.replaceChildren(el("span", "r", "offline · tap to retry"));
-      const s = Math.max(0, Math.floor((Date.now() - Date.parse(String(obj(b.working).since))) / 1000));
+      const s = Math.max(0, Math.floor((Date.now() - Date.parse(String(obj(b.working)["since"]))) / 1000));
       const fig = c.theme.figure({ state: "working" });
       p.replaceChildren(...(fig ? [fig] : []), h("span", "pt", d.stopping ? "stopping…" : `working ${s >= 60 ? `${Math.floor(s / 60)}m ` : ""}${s % 60}s`));
       const x = btn("stop", "bad", undefined, act("stop"));
@@ -112,7 +112,7 @@ export function composer(b: Composer, c: Ctx): HTMLElement {
   }
   function queued({ q, text }: Queued): HTMLElement {
     const r = h("div", "qd", h("span", "qt", text));
-    r.dataset.q = String(q);
+    r.dataset["q"] = String(q);
     const now = btn("send now", "primary", undefined, act("steer"));
     const edit = btn("edit");
     const rm = btn("remove", "bad", undefined, act("unqueue"));

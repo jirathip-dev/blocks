@@ -4,8 +4,8 @@ import { line } from "./render/kind/toast.ts";
 
 /// Sends a toast's undo from its button; false: it was not sent (a confirm said no) or failed.
 export type Undo = (b: HTMLElement) => Promise<boolean>;
-type Item = { t: Toast; undo?: Undo };
-type Shown = { e: HTMLElement; more: HTMLElement; timer?: ReturnType<typeof setInterval> };
+type Item = { t: Toast; undo?: Undo | undefined };
+type Shown = { e: HTMLElement; more: HTMLElement; timer?: ReturnType<typeof setInterval> | undefined };
 
 const WAIT = 3;
 const GAP = 160;

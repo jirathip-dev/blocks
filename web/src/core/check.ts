@@ -48,13 +48,13 @@ function fits(s: Shape, v: unknown): boolean {
 function shallow(o: Obj): Obj {
   const top: Obj = { ...o };
   for (const k of LISTS) if (k in top) top[k] = [];
-  if (Array.isArray(top.rounds)) top.rounds = top.rounds.map((r) => (isObj(r) && "blocks" in r ? { ...r, blocks: [] } : r));
+  if (Array.isArray(top["rounds"])) top["rounds"] = top["rounds"].map((r) => (isObj(r) && "blocks" in r ? { ...r, blocks: [] } : r));
   return top;
 }
 
 function sentOnce(top: Obj): Obj {
   const seen = new Set<unknown>();
-  const action = (w: string) => (isObj(top[w]) ? str(top[w].action) : undefined);
+  const action = (w: string) => (isObj(top[w]) ? str(top[w]["action"]) : undefined);
   const twice = WORDS.filter((w) => {
     const a = action(w);
     return a !== undefined && (seen.has(a) || !seen.add(a));
@@ -65,18 +65,18 @@ function sentOnce(top: Obj): Obj {
 }
 
 function placed(o: Obj): [string, unknown][] {
-  const lists: [string, unknown][] = LISTS.filter((k) => (o.type !== "table" || k !== "rows") && k in o).map((k) => [k, o[k]]);
-  const rounds = Array.isArray(o.rounds) ? o.rounds : [];
-  rounds.forEach((r, i) => isObj(r) && "blocks" in r && lists.push([`rounds/${i}/blocks`, r.blocks]));
+  const lists: [string, unknown][] = LISTS.filter((k) => (o["type"] !== "table" || k !== "rows") && k in o).map((k) => [k, o[k]]);
+  const rounds = Array.isArray(o["rounds"]) ? o["rounds"] : [];
+  rounds.forEach((r, i) => isObj(r) && "blocks" in r && lists.push([`rounds/${i}/blocks`, r["blocks"]]));
   return lists.flatMap(([at, l]) => (Array.isArray(l) ? l.map((v, i): [string, unknown] => [`${at}/${i}`, v]) : []));
 }
 
 function unplaced(s: Obj): string | undefined {
-  const steps = Array.isArray(s.steps) ? s.steps : [];
+  const steps = Array.isArray(s["steps"]) ? s["steps"] : [];
   if (steps.length === 0) return undefined;
-  const at = s.current == null ? undefined : steps.some((x) => isObj(x) && x.id === s.current);
-  const done = s.done === true;
-  if (s.bars != null) return "a steps block with both steps and bars";
+  const at = s["current"] == null ? undefined : steps.some((x) => isObj(x) && x["id"] === s["current"]);
+  const done = s["done"] === true;
+  if (s["bars"] != null) return "a steps block with both steps and bars";
   if (at === false) return "a stepper whose current names no step";
   if (at === true && done) return "a stepper both done and at a current step";
   if (at === undefined && !done) return "a stepper with neither a current step nor done";
@@ -98,8 +98,8 @@ class Walk {
       this.out.push({ fault: "shape", kind: "", why: "a block that is no object" });
       return;
     }
-    const kind = str(v.type) ?? "";
-    const id = str(v.id);
+    const kind = str(v["type"]) ?? "";
+    const id = str(v["id"]);
     if (id === "") this.out.push({ fault: "unnamed", kind });
     else if (id !== undefined) {
       const first = this.ids.get(id);
@@ -107,7 +107,7 @@ class Walk {
       if (first !== undefined) this.out.push({ fault: "twice", id, at: [first, at] });
     } else if (kind === "island" || WORDS.some((w) => isObj(v[w]))) this.out.push({ fault: "unnamed", kind });
     const core = KINDS.includes(kind);
-    const fallback = isObj(v.fallback) ? str(v.fallback.title) : undefined;
+    const fallback = isObj(v["fallback"]) ? str(v["fallback"]["title"]) : undefined;
     if ((kind === "island" || (this.app.includes(kind) && !core)) && !fallback) this.out.push({ fault: "bare", kind, id: id ?? "" });
     if (core) {
       const inner = id || scope;
@@ -125,7 +125,7 @@ class Walk {
       const url = str(v[k]);
       if (url !== undefined && !linkable(url)) this.out.push({ fault: "link", at, url });
     }
-    const action = str(v.action);
+    const action = str(v["action"]);
     if (action !== undefined) {
       const key = JSON.stringify([scope, action]);
       const first = this.acts.get(key);
@@ -145,8 +145,8 @@ class Walk {
       const why = kind === "steps" ? unplaced(top) : undefined;
       if (why !== undefined) this.out.push({ fault: "shape", kind, why });
     }
-    const fields = kind === "form" || kind === "config" ? (Array.isArray(o.fields) ? o.fields : []) : [];
-    const names = kind === "chips" ? [o.name] : fields.map((f) => (isObj(f) ? f.name : undefined));
+    const fields = kind === "form" || kind === "config" ? (Array.isArray(o["fields"]) ? o["fields"] : []) : [];
+    const names = kind === "chips" ? [o["name"]] : fields.map((f) => (isObj(f) ? f["name"] : undefined));
     for (const n of names) if (typeof n === "string") this.keys.push(n);
   }
 }
@@ -155,7 +155,7 @@ function gets(v: unknown, out: string[]) {
   if (Array.isArray(v)) return v.forEach((x) => gets(x, out));
   if (!isObj(v)) return;
   const keys = Object.keys(v);
-  const get = str(v.get);
+  const get = str(v["get"]);
   if (keys.length === 1 && get !== undefined) return out.push(get);
   for (const k of keys) if (k !== "calc") gets(v[k], out);
 }
@@ -164,7 +164,7 @@ function gets(v: unknown, out: string[]) {
 export function check(screen: unknown, app: readonly string[] = []): Fault[] {
   const w = new Walk(app);
   for (const kind of app) if (KINDS.includes(kind)) w.out.push({ fault: "clash", kind });
-  if (isObj(screen) && isObj(screen.state)) w.keys.push(...sorted(screen.state));
+  if (isObj(screen) && isObj(screen["state"])) w.keys.push(...sorted(screen["state"]));
   w.block(screen, "", "");
   const declared = new Set<string>();
   const twice = w.keys.filter((k) => declared.has(k) || !declared.add(k));
@@ -178,7 +178,7 @@ export function check(screen: unknown, app: readonly string[] = []): Fault[] {
 function named(v: unknown, out: Set<string>) {
   if (Array.isArray(v)) return v.forEach((x) => named(x, out));
   if (!isObj(v)) return;
-  const action = str(v.action);
+  const action = str(v["action"]);
   if (action !== undefined) out.add(action);
   for (const x of Object.values(v)) named(x, out);
 }

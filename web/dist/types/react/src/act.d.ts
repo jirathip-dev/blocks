@@ -25,9 +25,9 @@ export type Report = {
 };
 export type Post = {
     action: string;
-    block?: string | null;
-    values?: Record<string, unknown> | null;
-    confirm?: Confirm | null;
+    block?: string | null | undefined;
+    values?: Record<string, unknown> | null | undefined;
+    confirm?: Confirm | null | undefined;
 };
 export type KindProps = {
     block: Record<string, unknown> & {
@@ -53,7 +53,7 @@ export type Ctx = {
     report: (r: Report) => void;
     kinds: Record<string, (p: KindProps) => ReactNode>;
     islands: Islands;
-    file?: OnFile;
+    file?: OnFile | undefined;
 };
 export type Props = {
     onAction: (a: Action) => Promise<boolean | void> | boolean | void;

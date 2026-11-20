@@ -20,7 +20,7 @@ const isEdit = (v: unknown): v is CellEdit => typeof v === "object" && v !== nul
 
 function cell(tag: "td" | "th", c: Column, role: string, kids: (Node | string)[], blank: boolean) {
   const e = h(tag, `${end(c) ? "end" : "start"} k-${c.kind} p-${role}${c.width ? " w" : ""}${blank ? " nil" : ""}`, ...kids);
-  e.dataset.l = c.label;
+  e.dataset["l"] = c.label;
   if (c.width) e.style.cssText = `--w:${c.width}ch`;
   return e;
 }
@@ -99,7 +99,8 @@ function bar(v: View, d: Shown): HTMLElement[] {
     if (b.columns.length > 2) out.append(menu(v, "columns", st.hidden.size ? `columns · ${st.hidden.size} hidden` : "columns"));
   }
   const formats = n ? (b.export ?? []) : [];
-  if (formats.length === 1) out.append(exporter(v, d, formats[0]));
+  const [only] = formats;
+  if (formats.length === 1 && only) out.append(exporter(v, d, only));
   else if (formats.length) out.append(menu(v, "export", "export"));
   if (d.sel) out.append(go(v, btn("clear"), () => st.sel.clear()));
   const menus: HTMLElement[] = [];
@@ -141,9 +142,9 @@ function slide(v: View, order: string[] | null, g: string) {
   let y = trs[0]?.offsetTop ?? 0;
   for (const e of trs) {
     e.style.transform = "";
-    e.classList.toggle("lift", lifted.includes(e.dataset.id ?? ""));
+    e.classList.toggle("lift", lifted.includes(e.dataset["id"] ?? ""));
   }
-  for (const e of (order ?? []).flatMap((id) => trs.find((t) => t.dataset.id === id) ?? [])) {
+  for (const e of (order ?? []).flatMap((id) => trs.find((t) => t.dataset["id"] === id) ?? [])) {
     e.style.transform = `translateY(${y - e.offsetTop}px)`;
     y += e.offsetHeight;
   }
@@ -155,7 +156,7 @@ function grip(v: View, r: TableRow): HTMLElement {
   if (!g || !rules.word(v.b, r.id)) return td;
   const hd = Object.assign(el("button", "b-hd"), { type: "button", textContent: "≡" });
   hd.setAttribute("aria-label", `Move ${named(v.b, r)}`);
-  hd.dataset.act = g.action;
+  hd.dataset["act"] = g.action;
   td.append(hd);
   const reach = (_: number, dy: number) => Math.round(dy / (td.offsetHeight || 1));
   gestured(hd, v.c, { block: v.b, gesture: g, rules, grab: r.id, item: r.id, reach, show: (o) => slide(v, isIds(o) ? o : null, r.id) });
@@ -166,7 +167,7 @@ function group(v: View, d: Shown, i: number): HTMLElement {
   const r = d.rows[i] ?? { id: "", cells: {} };
   const items = itemsOf(d.rows, i);
   const tr = h("tr", "grp", ...(d.handles ? [grip(v, r)] : []), ...(d.pick ? [el("td", "tbc")] : []));
-  tr.dataset.id = r.id;
+  tr.dataset["id"] = r.id;
   d.cols.forEach((x, j) => {
     const sub = j > 0 && x.total && x.total !== "count" ? total(x, items) : null;
     const td = cell("td", x, d.role[j] ?? "meta", j === 0 ? [shown(x, r.cells[x.id]), h("span", "tbgn", String(items.length))] : sub ? [sub[1]] : [], j > 0 && !sub);
@@ -180,7 +181,7 @@ function item(v: View, d: Shown, r: TableRow): HTMLElement {
   const { b, st } = v;
   const max = (x: Column) => x.max ?? Math.max(1, ...b.rows.map((r) => at(r, x.id)).filter((n) => typeof n === "number"));
   const tr = h("tr", [r.tap && !d.ed ? "tap" : "", st.changed.has(r.id) ? "chg" : "", st.fresh.has(r.id) ? "b-late" : "", st.sel.has(r.id) ? "sel" : ""].filter(Boolean).join(" "));
-  tr.dataset.id = r.id;
+  tr.dataset["id"] = r.id;
   if (r.tap && !d.ed) press(tr, () => v.c.tap(r.tap));
   if (d.handles) tr.append(grip(v, r));
   if (d.pick) tr.append(h("td", "tbc", tick(v, st.sel.has(r.id), `Select ${r.id}`, (on) => (on ? st.sel.add(r.id) : st.sel.delete(r.id)))));
@@ -194,11 +195,11 @@ function item(v: View, d: Shown, r: TableRow): HTMLElement {
     const td = cell("td", x, d.role[i] ?? "meta", typed ? [h("span", "tbf", ...kids)] : kids, c === undefined);
     if (x.width && c !== undefined) td.title = t;
     if (d.ed) {
-      td.dataset.c = x.id;
+      td.dataset["c"] = x.id;
       td.tabIndex = st.cur && pk(st.cur) === pk(p) ? 0 : -1;
       td.setAttribute("aria-label", [x.label, named(b, r), ...(t ? [t] : [])].join(", "));
     }
-    if (typed && b.edit) td.dataset.act = b.edit.action;
+    if (typed && b.edit) td.dataset["act"] = b.edit.action;
     if (k === "fx") td.setAttribute("aria-readonly", "true");
     if (k === "fx") td.setAttribute("aria-description", "worked out");
     if (sent(v, r.id, x.id) !== undefined) td.setAttribute("aria-busy", "true");
@@ -303,7 +304,7 @@ function refresh(v: View) {
   v.box.querySelectorAll(".tbsh .shf").forEach((f, i) => !f.querySelector(".tbi") && fields[i] && sync(f, fields[i]));
 }
 
-const cellAt = (v: View, p: Pos) => Array.from(v.box.querySelectorAll<HTMLElement>("tbody td[data-c]")).find((td) => td.dataset.c === p.col && td.parentElement?.dataset.id === p.row);
+const cellAt = (v: View, p: Pos) => Array.from(v.box.querySelectorAll<HTMLElement>("tbody td[data-c]")).find((td) => td.dataset["c"] === p.col && td.parentElement?.dataset["id"] === p.row);
 
 function cursor(v: View, p: Pos, focus = true) {
   v.st.cur = p;
@@ -342,7 +343,7 @@ function open(v: View, p: Pos, o: Open = {}) {
     if (o.field) return how === "blur" ? (refresh(v), open(v, p, o)) : v.draw();
     refresh(v);
     const d = shows(v), ids = d.items.map((i) => i.id), cols = d.cols.map((i) => i.id);
-    const [dr, dc] = { down: [1, 0], right: [0, 1], left: [0, -1] }[how] ?? [0, 0];
+    const [dr, dc] = ({ down: [1, 0], right: [0, 1], left: [0, -1] } satisfies Record<string, [number, number]>)[how] ?? [0, 0];
     const to = { row: ids[Math.min(ids.length - 1, ids.indexOf(p.row) + dr)] ?? p.row, col: cols[Math.max(0, Math.min(cols.length - 1, cols.indexOf(p.col) + dc))] ?? p.col };
     if (how !== "blur") cursor(v, to);
   };
@@ -361,9 +362,9 @@ function keys(v: View, tb: HTMLElement) {
   const moves: Record<string, [number, number]> = { ArrowUp: [-1, 0], ArrowDown: [1, 0], ArrowLeft: [0, -1], ArrowRight: [0, 1] };
   tb.addEventListener("keydown", (e) => {
     const td = e.target instanceof HTMLElement && e.target.matches("td[data-c]") ? e.target : null;
-    const row = td?.parentElement?.dataset.id;
-    if (!td || !row || !td.dataset.c) return;
-    const p = { row, col: td.dataset.c };
+    const row = td?.parentElement?.dataset["id"];
+    if (!td || !row || !td.dataset["c"]) return;
+    const p = { row, col: td.dataset["c"] };
     const m = moves[e.key];
     const d = shows(v), ids = d.items.map((i) => i.id), cols = d.cols.map((i) => i.id);
     if (m) cursor(v, { row: ids[Math.max(0, Math.min(ids.length - 1, ids.indexOf(row) + m[0]))] ?? row, col: cols[Math.max(0, Math.min(cols.length - 1, cols.indexOf(p.col) + m[1]))] ?? p.col });
@@ -374,10 +375,10 @@ function keys(v: View, tb: HTMLElement) {
   });
   tb.addEventListener("click", (e) => {
     const td = e.target instanceof Element ? e.target.closest<HTMLElement>("td[data-c]") : null;
-    const row = td?.parentElement?.dataset.id;
-    if (!td || !row || !td.dataset.c || td.querySelector(".tbi")) return;
-    cursor(v, { row, col: td.dataset.c }, false);
-    open(v, { row, col: td.dataset.c });
+    const row = td?.parentElement?.dataset["id"];
+    if (!td || !row || !td.dataset["c"] || td.querySelector(".tbi")) return;
+    cursor(v, { row, col: td.dataset["c"] }, false);
+    open(v, { row, col: td.dataset["c"] });
   });
 }
 

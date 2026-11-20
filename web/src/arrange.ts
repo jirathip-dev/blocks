@@ -9,7 +9,7 @@ function arrange(tree: Placed, size: SizeClass, o: Editing, refuse: (why: string
   list.setAttribute("aria-label", `layout on ${size}`);
   for (const r of rows(tree)) {
     const row = h("div", "row", h("span", "rm", h("span", "rt", r.label)));
-    row.dataset.id = r.id;
+    row.dataset["id"] = r.id;
     row.style.paddingInlineStart = `calc(var(--s3) * ${r.depth + 1})`;
     const pick = el("select");
     pick.setAttribute("aria-label", `${r.label} shows on ${size} as`);

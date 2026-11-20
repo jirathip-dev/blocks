@@ -11,7 +11,7 @@ const viewOf = (x: Field): FieldView => views[x.type] ?? text;
 const note = (x: Field, was: string): [string, string] => (x.error ? ["fn err", x.error] : x.was != null ? ["fn was", `${was} ${x.was}`] : ["fn", x.doc ?? ""]);
 
 type Wait = { up: number; failed: number };
-type Held = { sent: Record<string, unknown>; wait(name: string, w: Wait): void; block?: string };
+type Held = { sent: Record<string, unknown>; wait(name: string, w: Wait): void; block?: string | undefined };
 
 function field(x: Field, key: string, cx: Ctx, held: Held) {
   const v = viewOf(x);

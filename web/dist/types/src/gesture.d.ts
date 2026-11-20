@@ -20,7 +20,7 @@ type Block = {
 export type Driven = {
     act: (a: {
         action: string;
-        block?: string | null;
+        block?: string | null | undefined;
         values: Record<string, unknown>;
     }, el?: HTMLElement) => Promise<boolean>;
     held?: Map<string, Held>;

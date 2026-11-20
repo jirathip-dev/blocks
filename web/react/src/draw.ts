@@ -33,7 +33,7 @@ const rec = (v: unknown): v is Record<string, unknown> => typeof v === "object" 
 
 /// A value as `ticked` draws it: a `get` from local state, an age in a span the shell redraws, else its text.
 export function ticked(v: unknown, cx: Ctx): ReactNode {
-  if (rec(v) && typeof v.get === "string") return h("span", "", { "data-get": v.get }, cx.v.values[v.get] ?? "");
+  if (rec(v) && typeof v["get"] === "string") return h("span", "", { "data-get": v["get"] }, cx.v.values[v["get"]] ?? "");
   return rec(v) && ("since" in v || "until" in v) ? h("span", "", { "data-tick": JSON.stringify(v) }, value(v)) : value(v);
 }
 
@@ -63,9 +63,9 @@ function inline(s: string, stages: Stage[]): ReactNode[] {
 export function md(s: unknown, refs: boolean): ReactNode[] {
   const link = new RegExp(String.raw`\[([^\]]+)\]\((https?:[^)\s]+)\)|(https?:\/\/[^\s<]*[^\s<.,;:!?)])|\b(${refs ? "t\\d+" : "(?!)"})\b`, "g");
   const stages: Stage[] = [
-    [/`([^`]+)`/g, (m, n) => h("code", "", null, ...n(m[1]))],
-    [/\*\*([^*]+)\*\*/g, (m, n) => h("b", "", null, ...n(m[1]))],
-    [link, (m, n) => (m[4] ? h("a", "", { href: "#", "data-thread": m[4] }, m[4]) : h("a", "", out(m[2] ?? m[3]), ...n(m[1] ?? m[3])))],
+    [/`([^`]+)`/g, (m, n) => h("code", "", null, ...n(m[1] ?? ""))],
+    [/\*\*([^*]+)\*\*/g, (m, n) => h("b", "", null, ...n(m[1] ?? ""))],
+    [link, (m, n) => (m[4] ? h("a", "", { href: "#", "data-thread": m[4] }, m[4]) : h("a", "", out(m[2] ?? m[3] ?? ""), ...n(m[1] ?? m[3] ?? "")))],
     [/\n/g, () => h("br", "", null)],
   ];
   const cb = (part: string) => h("div", "cb", null, h("pre", "", null, part.replace(/\n$/, "")), h("button", "cpy", { type: "button" }, h("span", "", null, "copy")));

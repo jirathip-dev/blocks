@@ -31,7 +31,7 @@ const sheet = (p: Pages["pages"][number], i: number, n: number, wide: number) =>
 };
 
 const zoom = (s: HTMLElement, well: HTMLElement, col: HTMLElement, keep: Record<string, unknown>, drawn: (z: number) => void) => {
-  let w = typeof keep.zoom === "number" ? keep.zoom : 1;
+  let w = typeof keep["zoom"] === "number" ? keep["zoom"] : 1;
   let [o, shown] = [[0, 0], 1];
   const write = (z: number) => {
     const k = z / w;
@@ -67,7 +67,7 @@ export function pages(b: Pages): HTMLElement {
   const id = String(b.id ?? "");
   const keep = views.get(id) ?? {};
   views.set(id, keep);
-  const old = Array.from(document.querySelectorAll<HTMLElement>(".b-pages")).find((x) => x.dataset.id === id);
+  const old = Array.from(document.querySelectorAll<HTMLElement>(".b-pages")).find((x) => x.dataset["id"] === id);
   const had = old?.contains(document.activeElement) ? (document.activeElement?.getAttribute("aria-label") ?? null) : null;
   const s = el("section", "dcs");
   const count = el("span", "dcc", "no pages");
@@ -84,7 +84,7 @@ export function pages(b: Pages): HTMLElement {
   const col = h("div", "dck", ...figs);
   well.append(col);
   s.append(well);
-  const at = () => Math.min(n - 1, Math.max(0, typeof keep.at === "number" ? keep.at : 0));
+  const at = () => Math.min(n - 1, Math.max(0, typeof keep["at"] === "number" ? keep["at"] : 0));
   let w = 1;
   const sync = () => {
     count.textContent = `page ${at() + 1} of ${n}`;
@@ -93,7 +93,7 @@ export function pages(b: Pages): HTMLElement {
     fit.replaceChildren(h("span", "", w <= 1 ? "fit" : `${Math.round(w * 100)}%`));
   };
   const go = (i: number) => {
-    keep.at = Math.min(n - 1, Math.max(0, i));
+    keep["at"] = Math.min(n - 1, Math.max(0, i));
     figs[at()]?.scrollIntoView({ block: "start", behavior: calm(s) ? "instant" : "smooth" });
     sync();
     say(`page ${at() + 1} of ${n}`);
@@ -101,7 +101,7 @@ export function pages(b: Pages): HTMLElement {
   const seen = () => {
     if (!s.isConnected) return s.ownerDocument.removeEventListener("scroll", seen, true);
     const shown = figs.map((f) => f.getBoundingClientRect()).map((r) => Math.min(r.bottom, innerHeight) - Math.max(r.top, 0));
-    keep.at = shown.indexOf(Math.max(...shown));
+    keep["at"] = shown.indexOf(Math.max(...shown));
     sync();
   };
   s.ownerDocument?.addEventListener("scroll", seen, { capture: true, passive: true });

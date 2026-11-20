@@ -55,7 +55,7 @@ function rules(tree: Placed, slots: Record<string, string[]>, name: (id: string)
 export function wire(list: HTMLElement, tree: Placed, size: SizeClass, o: Editing, refuse: (why: string) => void, done: () => void): () => void {
   const nodes = read(tree);
   const name = (id: string) => nodes.find(([n]) => n.id === id)?.[0].label ?? id;
-  const rows = new Map(Array.from(list.children).flatMap((e) => (e instanceof HTMLElement && e.dataset.id ? [[e.dataset.id, e] as const] : [])));
+  const rows = new Map(Array.from(list.children).flatMap((e) => (e instanceof HTMLElement && e.dataset["id"] ? [[e.dataset["id"], e] as const] : [])));
   const r = rules(tree, o.slots, name);
   let out: LayoutEdit | null = null;
   const deliver = async (e: LayoutEdit) => {
@@ -79,8 +79,8 @@ export function wire(list: HTMLElement, tree: Placed, size: SizeClass, o: Editin
     const me = rows.get(g);
     const at = !e || e.edit === "show" ? undefined : e.edit === "swap" ? rows.get(e.b) : e.before ? rows.get(e.before) : end(e.into, e.slot);
     if (!me || !at || !e) return;
-    at.dataset.drop = e.edit === "swap" ? "onto" : e.edit === "move" && e.before ? "before" : "after";
-    me.style.transform = `translateY(${at.offsetTop + (at.dataset.drop === "after" ? at.offsetHeight : 0) - me.offsetTop}px)`;
+    at.dataset["drop"] = e.edit === "swap" ? "onto" : e.edit === "move" && e.before ? "before" : "after";
+    me.style.transform = `translateY(${at.offsetTop + (at.dataset["drop"] === "after" ? at.offsetHeight : 0) - me.offsetTop}px)`;
   };
   const esc = (e: KeyboardEvent) => e.key === "Escape" && !e.defaultPrevented && done();
   list.addEventListener("keydown", esc);
