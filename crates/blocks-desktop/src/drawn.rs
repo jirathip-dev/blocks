@@ -4,6 +4,7 @@ use blocks::tree::Node;
 use egui::Rect;
 
 use crate::act::Did;
+use crate::island::Live;
 
 /// What the last pass drew: the tree with rects, the block and action ids in order, and each id's place.
 #[derive(Clone, Debug, PartialEq)]
@@ -29,6 +30,7 @@ pub(crate) struct Rec {
     actions: Vec<String>,
     hits: BTreeMap<String, Hit>,
     did: Vec<Did>,
+    pub(crate) islands: Live,
 }
 
 pub(crate) fn spot(r: Rect) -> [f64; 4] {

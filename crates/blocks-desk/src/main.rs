@@ -3,7 +3,7 @@ use std::path::Path;
 
 use blocks::theme::Mode;
 use blocks::tree::{Shot, Step};
-use blocks_desk::{Desk, Want};
+use blocks_desk::{Desk, Echo, Want, ECHO};
 use blocks_desktop::{Kit, Look};
 use serde::de::DeserializeOwned;
 use serde::Serialize;
@@ -78,7 +78,9 @@ fn run(mut args: impl Iterator<Item = String>) -> Result<Vec<String>, String> {
         tree: opt("expect").map(read).transpose()?,
         ids: opt("ids").map(read).transpose()?,
     };
-    let mut desk = Desk::new(read(screen)?).size(width, height).kit(Kit::new(look));
+    let mut desk = Desk::new(read(screen)?)
+        .size(width, height)
+        .kit(Kit::new(look).island(ECHO, || Box::new(Echo)));
     if let Some(f) = opt("font") {
         desk = desk.font(std::fs::read(f).map_err(|e| format!("{f}: {e}"))?);
     }

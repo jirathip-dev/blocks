@@ -1,10 +1,12 @@
+use std::cell::Cell;
 use std::path::Path;
+use std::rc::Rc;
 
 use blocks::behave::{start, view};
 use blocks::theme::Theme;
 use blocks::tree::{check, expect, Drawn as Way, Node};
-use blocks::{Block, Built};
-use blocks_desktop::{kinds, Kit, Pack, Stage};
+use blocks::{Block, Built, Fields, Frame, Have, Hello, Mirror, Synced};
+use blocks_desktop::{kinds, Island, Kit, Out, Pack, Stage};
 use egui::accesskit::TreeUpdate;
 
 fn pass_with(stage: &mut Stage, kit: &Kit, now: f64) -> TreeUpdate {
@@ -260,4 +262,95 @@ fn a_typed_secret_stays_out_of_the_accessible_text_and_the_state_while_a_typed_t
     assert!(values.iter().any(|v| v == "Ada"), "{values:?}");
     assert!(values.iter().any(|v| v.starts_with('•')), "{values:?}");
     assert!(!format!("{update:?}").contains("hunter2"));
+}
+
+fn mirror(case: &serde_json::Value, stages: &mut [(String, Stage)]) {
+    let mut m = Mirror::new(u8::try_from(case["v"].as_u64().unwrap()).unwrap());
+    for step in case["steps"].as_array().unwrap() {
+        if step.get("hello").is_some() {
+            let h: Hello = serde_json::from_value(step["hello"].clone()).unwrap();
+            m.hello(&h).ok();
+        } else if let Some(k) = step.get("open") {
+            m.open(k.as_str().unwrap());
+        } else if let Some(k) = step.get("close") {
+            m.close(k.as_str().unwrap());
+        } else if step.get("frame").is_some() {
+            let f: Frame = serde_json::from_value(step["frame"].clone()).unwrap();
+            m.frame(f);
+        } else if step.get("synced").is_some() {
+            let (sent, s): (Vec<Have>, Synced) = (
+                serde_json::from_value(step["sent"].clone()).unwrap(),
+                serde_json::from_value(step["synced"].clone()).unwrap(),
+            );
+            m.synced(&sent, s);
+        }
+        for (k, stage) in stages.iter_mut() {
+            stage.set(m.screen(k));
+            pass(stage);
+        }
+    }
+}
+
+#[test]
+fn every_protocol_fixture_through_the_mirror_and_the_stage_ends_in_the_crates_screens() {
+    let mut n = 0;
+    for e in std::fs::read_dir(root().join("protocol")).unwrap() {
+        let p = e.unwrap().path();
+        let case = json(&format!("protocol/{}", p.file_name().unwrap().to_string_lossy()));
+        let want = case["screens"].as_object().unwrap();
+        let mut stages: Vec<_> = want.keys().map(|k| (k.clone(), Stage::default())).collect();
+        mirror(&case, &mut stages);
+        for (k, stage) in &stages {
+            let name = format!("{}: {k}", p.display());
+            match want[k].clone() {
+                serde_json::Value::Null => assert!(stage.drawn().is_none(), "{name}"),
+                screen => {
+                    let plan = expect(&Built::new(screen), &kinds(), stage.state());
+                    let faults = check(stage.drawn().map(|d| &d.tree), &plan, "");
+                    assert!(faults.is_empty(), "{name}: {faults:?}");
+                }
+            }
+        }
+        n += 1;
+    }
+    assert!(n >= 8, "only {n} protocol fixtures");
+}
+
+struct Count;
+
+impl Island for Count {
+    fn show(&mut self, ui: &mut egui::Ui, props: &Fields, _: &mut Out<'_>) {
+        ui.label(props["n"].to_string());
+    }
+}
+
+#[test]
+fn an_island_is_made_once_per_block_kept_through_passes_and_ops_and_dropped_when_its_block_goes() {
+    let made = Rc::new(Cell::new(0));
+    let count = Rc::clone(&made);
+    let kit = Kit::default().island("x-count", move || {
+        count.set(count.get() + 1);
+        Box::new(Count)
+    });
+    let with = |n: u32| -> Block {
+        serde_json::from_value(serde_json::json!({"type": "screen", "id": "s", "blocks": [
+            {"type": "island", "id": "c", "name": "x-count", "fallback": {"title": "Count"}, "props": {"n": n}}
+        ]}))
+        .unwrap()
+    };
+    let without: Block =
+        serde_json::from_value(serde_json::json!({"type": "screen", "id": "s", "blocks": []})).unwrap();
+    let mut stage = Stage::default();
+    for screen in [with(1), with(2), with(3)] {
+        stage.set(Some(&screen));
+        pass_with(&mut stage, &kit, 0.0);
+        pass_with(&mut stage, &kit, 0.0);
+    }
+    assert_eq!(made.get(), 1);
+    let shown = labels(&pass_with(&mut stage, &kit, 0.0));
+    assert!(shown.iter().any(|l| l == "3"), "{shown:?}");
+    stage.set(Some(&without));
+    stage.set(Some(&with(4)));
+    pass_with(&mut stage, &kit, 0.0);
+    assert_eq!(made.get(), 2);
 }

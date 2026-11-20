@@ -9,6 +9,7 @@ use serde_json::Value;
 use crate::art::Art;
 use crate::draw;
 use crate::drawn::{spot, Rec};
+use crate::island::{tone, Apps, Styled};
 use crate::look::Look;
 
 pub(crate) type Draw<T> = fn(&T, &mut Ui, &mut Cx<'_>);
@@ -27,6 +28,7 @@ pub(crate) struct Local {
 pub(crate) struct Ground<'a> {
     pub(crate) look: &'a Look,
     pub(crate) art: &'a dyn Art,
+    pub(crate) apps: &'a Apps,
     pub(crate) local: &'a Local,
     pub(crate) now: f64,
 }
@@ -34,6 +36,7 @@ pub(crate) struct Ground<'a> {
 pub(crate) struct Cx<'a> {
     pub(crate) look: &'a Look,
     pub(crate) art: &'a dyn Art,
+    pub(crate) apps: &'a Apps,
     pub(crate) now: f64,
     pub(crate) rec: &'a mut Rec,
     pub(crate) me: Option<&'a str>,
@@ -76,6 +79,7 @@ impl<'a> Cx<'a> {
         Self {
             look: g.look,
             art: g.art,
+            apps: g.apps,
             now: g.now,
             rec,
             me: None,
@@ -96,6 +100,7 @@ impl<'a> Cx<'a> {
         Ground {
             look: self.look,
             art: self.art,
+            apps: self.apps,
             local: self.local,
             now: self.now,
         }
@@ -166,7 +171,19 @@ impl<'a> Cx<'a> {
                 ui.ctx()
                     .accesskit_node_builder(ui.unique_id(), |n| n.set_author_id(author));
             }
-            draw::draw(b, &plan.name, ui, &mut inner)
+            let Some(wrap) = self.apps.wraps.get(b.kind()) else {
+                return draw::draw(b, &plan.name, ui, &mut inner);
+            };
+            let styled = Styled {
+                kind: b.kind(),
+                id: b.id(),
+                variant: plan.variant.as_deref(),
+                tone: tone(b),
+                fallback: plan.drawn == Way::Fallback,
+            };
+            let mut way = Way::Fallback;
+            wrap(ui, &styled, &mut |ui| way = draw::draw(b, &plan.name, ui, &mut inner));
+            way
         });
         let children = inner.done();
         let rect = spot(r.response.rect);
