@@ -1,5 +1,5 @@
 import type { Page } from "../gen/types.ts";
-import { type Ctx } from "./index.ts";
+import type { Ctx } from "./ctx.ts";
 export type Paged = {
     id: string;
     page?: Page | null;

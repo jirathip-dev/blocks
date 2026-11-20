@@ -5,7 +5,13 @@ import { behave } from "./behave.ts";
 import type { Held } from "./gesture.ts";
 import { choose, type Pair, type Scale } from "./core/look.ts";
 import { apply, patcher } from "./patch.ts";
-import { type Blk, blks, btn, type Ctx, el, h, isBlk, linkable, obj, type OnFile, type Post, type Renderer, render, type Store, tick } from "./render/index.ts";
+import { type Blk, blks, isBlk } from "./core/tree.ts";
+import { linkable } from "./render/act.ts";
+import { render } from "./render/block.ts";
+import { type Ctx, obj, type Post, type Renderer, type Store } from "./render/ctx.ts";
+import { btn, el, h } from "./render/dom.ts";
+import { tick } from "./render/text.ts";
+import type { OnFile } from "./core/field/files.ts";
 import { settle } from "./motion.ts";
 import { stream } from "./stream.ts";
 import { toasts } from "./toasts.ts";
@@ -16,7 +22,9 @@ export { evaluate, start, view } from "./core/eval.ts";
 export { dump } from "./dump.ts";
 export { settle } from "./motion.ts";
 export { apply, patcher } from "./patch.ts";
-export { el, h, kids, render, type OnFile, type Picked } from "./render/index.ts";
+export { kids, render } from "./render/block.ts";
+export { el, h } from "./render/dom.ts";
+export type { OnFile, Picked } from "./core/field/files.ts";
 export { packs, plain, tiles } from "./theme.ts";
 
 /// A layout node as the server's checked `layout.json` writes it; `P` is its place, per size class or resolved.

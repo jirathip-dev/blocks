@@ -1,6 +1,7 @@
 import type { Page } from "../gen/types.ts";
 import { say } from "../gesture.ts";
-import { btn, type Ctx, h } from "./index.ts";
+import type { Ctx } from "./ctx.ts";
+import { btn, h } from "./dom.ts";
 
 type Asked = { cursor: string; n: number; focus?: string; no: boolean; draw: () => void };
 /// A table or list that may have more: its id, its page, how many rows it has loaded, the element that is busy while it waits, whether an edit or a move holds the load, and how a row of its own is made.

@@ -1,7 +1,7 @@
 import type { OnFile } from "../../core/field/files.ts";
 import type { Field, Locale } from "../../gen/types.ts";
 import { words } from "../../gen/words.ts";
-import type { Store } from "../index.ts";
+import type { Store } from "../ctx.ts";
 
 /// What a form hands each field's view: the screen's locale, the drafts' store and key, the app's file handler, and in a live form `set` for each committed value.
 export type FieldCtx = { locale: Locale; store: Store; key: string; screen: string; block?: string; file?: OnFile; set?(value: unknown): void };

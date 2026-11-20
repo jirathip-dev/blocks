@@ -1,5 +1,6 @@
 import type { TextField } from "../../gen/types.ts";
-import { draft, el } from "../index.ts";
+import { draft } from "../ctx.ts";
+import { el } from "../dom.ts";
 import type { FieldCtx, FieldOut } from "./_view.ts";
 
 /// A one-line input; a secret and any type this renderer has no view for draw one too.
