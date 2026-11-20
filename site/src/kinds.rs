@@ -4,7 +4,7 @@ use blocks::site::fragment;
 use blocks::{
     Act, Bar, Block, Built, Button, ButtonStyle, Card, CardKind, ChipOption, Chips, Choice, ChoiceOption, Composer,
     ComposerChip, Diagram, Diff, Editor, Fallback, Field, FieldValue, Form, Hero, Hunk, Image, Images, Island,
-    IslandSize, Label, Lane, LaneState, LineError, List, Mark, MarkKind, Media, Nav, NavLink, Node, Other, Part,
+    IslandSize, Label, Lane, LaneState, LineError, List, Mark, MarkKind, Media, Nav, NavLink, Node, Other, Pages, Part,
     PickerField, Prose, Queued, Row, Run, Scene, Screen, Secret, Sheet, Shown, Span, Stage, Stat, Steps, Submit, Tap,
     Text, TextField, Tile, ToggleField, Tone, Web,
 };
@@ -17,7 +17,7 @@ const GROUPS: [(&str, &[&str]); 4] = [
     ("Layout", &["screen", "section", "sheet", "card"]),
     (
         "Words and pictures",
-        &["text", "prose", "hero", "nav", "media", "images", "diagram"],
+        &["text", "prose", "hero", "nav", "media", "images", "pages", "diagram"],
     ),
     (
         "Lists and figures",
@@ -74,6 +74,7 @@ fn about(kind: &str) -> &'static str {
         "nav" => "A site's link bar.",
         "media" => "A picture or a video of a known size.",
         "images" => "A strip of images.",
+        "pages" => "A document as the app's pictures of its pages: paged and zoomed, with its PDF.",
         "diagram" => "A diagram from its source, with counts on its nodes.",
         "list" => "A list of rows.",
         "row" => "One row: a title, a line, a value.",
@@ -491,6 +492,21 @@ fn others() -> Vec<Block> {
     ]
 }
 
+fn document() -> Block {
+    let page = |n: u32, alt: &str| blocks::PageImage {
+        src: "media/page.svg".into(),
+        alt: format!("{alt}, page {n}"),
+        width: 620,
+        height: 877,
+    };
+    b!(Pages(
+        Pages::new(vec![page(1, "Priced items"), page(2, "Terms"), page(3, "Acceptance")])
+            .id("quote")
+            .title("Quotation Q-0418")
+            .note("Drawn by the app's server; zoom and paging send nothing.")
+    ))
+}
+
 /// Every core kind's sample, one or more blocks each, in `Block::KINDS` order.
 pub fn samples() -> Vec<(String, Vec<Block>)> {
     let picked = |kind: &str| {
@@ -509,6 +525,7 @@ pub fn samples() -> Vec<(String, Vec<Block>)> {
         others(),
         picked("table"),
         picked("toast"),
+        vec![document()],
         picked("timeline"),
     ]
     .concat();

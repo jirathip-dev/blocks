@@ -39,15 +39,17 @@ export function viewer(list: [string, string][], from: number) {
   let x0 = 0;
   const keep: Record<string, unknown> = {};
   const zoom = (z: number) => {
-    keep.zoom = z;
+    keep["zoom"] = z;
     im.style.transform = `scale(${z})`;
     v.classList.toggle("z", z > 1);
   };
   const to = (i: number) => {
     at = (i + list.length) % list.length;
-    [im.src, im.alt] = list[at];
-    save.href = list[at][0];
-    save.download = list[at][1] || "image";
+    const shown = list[at];
+    if (!shown) return;
+    [im.src, im.alt] = shown;
+    save.href = shown[0];
+    save.download = shown[1] || "image";
     count.textContent = `${at + 1} / ${list.length}`;
     zoom(1);
   };
@@ -72,7 +74,7 @@ export function viewer(list: [string, string][], from: number) {
   v.addEventListener("pointerdown", (e) => (x0 = e.clientX));
   v.addEventListener("pointerup", (e) => {
     const dx = e.clientX - x0;
-    if (e.isPrimary && keep.zoom === 1 && Math.abs(dx) > 50 && list.length > 1) to(at + (dx < 0 ? 1 : -1));
+    if (e.isPrimary && keep["zoom"] === 1 && Math.abs(dx) > 50 && list.length > 1) to(at + (dx < 0 ? 1 : -1));
   });
   v.append(im, bar);
   to(at);

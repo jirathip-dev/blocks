@@ -13,7 +13,7 @@ export function input(x: TextField, c: FieldCtx, password: boolean, placeholder:
     autocomplete: "off",
   });
   if (kb !== "default") t.inputMode = kb === "number" ? "decimal" : "url";
-  t.dataset.was = t.value;
+  t.dataset["was"] = t.value;
   if (!password) draft(t, c.key + x.name, c.store);
   if (c.set) t.onchange = () => c.set?.(t.value);
   return { el: t, sent: () => (password && !t.value ? undefined : t.value) };

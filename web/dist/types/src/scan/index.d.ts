@@ -14,7 +14,7 @@ export type Opts = {
     label: string;
     max: number;
     w(key: string): string;
-    pages?: Page[];
+    pages?: Page[] | undefined;
 };
 export declare const quadOf: (photo: ImageBitmap) => Promise<Quad>;
 export declare const pageOf: (photo: ImageBitmap, quad: Quad, auto: Quad) => Promise<Page>;

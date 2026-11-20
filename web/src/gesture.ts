@@ -15,7 +15,7 @@ export type Grabbed<B, G, R, C> = {
 };
 type Block = { id?: string | null };
 /// What the driver needs from its view: a way to send the one action, and where an item whose action is out is kept.
-export type Driven = { act: (a: { action: string; block?: string | null; values: Record<string, unknown> }, el?: HTMLElement) => Promise<boolean>; held?: Map<string, Held> };
+export type Driven = { act: (a: { action: string; block?: string | null | undefined; values: Record<string, unknown> }, el?: HTMLElement) => Promise<boolean>; held?: Map<string, Held> };
 
 const ARROWS: Record<string, Nudge["dir"]> = { ArrowLeft: "left", ArrowRight: "right", ArrowUp: "up", ArrowDown: "down" };
 const key = (b: Block, item: string) => `${b.id ?? ""}\n${item}`;
@@ -51,13 +51,13 @@ export function gestured<B extends Block, G, R, C>(el: HTMLElement, c: Driven, o
   const start = o.rules.word(o.block, o.grab) ? o.rules.start(o.block, o.grab) : null;
   if (start === null) return () => {};
   const k = key(o.block, o.item);
-  el.dataset.grab = JSON.stringify(o.grab);
+  el.dataset["grab"] = JSON.stringify(o.grab);
   const out = c.held?.get(k);
   let p: Phase<C> = out ? { at: "sent", c: start } : { at: "idle" };
   let x0 = 0;
   let y0 = 0;
   const mark = () => {
-    el.dataset.phase = p.at;
+    el.dataset["phase"] = p.at;
     el.setAttribute("aria-pressed", String(p.at === "pressed" || p.at === "dragging" || p.at === "previewing"));
   };
   const back = (ok: boolean) => {
@@ -127,11 +127,11 @@ export function gestured<B extends Block, G, R, C>(el: HTMLElement, c: Driven, o
   return run;
 }
 
-/// The one pinch, Ctrl and wheel, double-tap and key zoom; `keep` holds the zoom outside the view, `apply` draws it.
-export function zoomed(el: HTMLElement, keep: Record<string, unknown>, o: { min: number; max: number; apply: (z: number) => void }): void {
+/// The one pinch, Ctrl and wheel, double-tap and key zoom; `keep` holds the zoom outside the view, `apply` draws it, `live` while fingers or the wheel still move.
+export function zoomed(el: HTMLElement, keep: Record<string, unknown>, o: { min: number; max: number; apply: (z: number, live: boolean) => void }): void {
   const at = new Map<number, [number, number]>();
-  const z = () => (typeof keep.zoom === "number" ? keep.zoom : o.min);
-  const to = (k: number) => o.apply((keep.zoom = Math.min(o.max, Math.max(o.min, k))));
+  const z = () => (typeof keep["zoom"] === "number" ? keep["zoom"] : o.min);
+  const to = (k: number, live = false) => o.apply((keep["zoom"] = Math.min(o.max, Math.max(o.min, k))), live);
   const span = () => {
     const [a, b] = [...at.values()];
     return a && b ? Math.hypot(a[0] - b[0], a[1] - b[1]) : 0;
@@ -146,15 +146,24 @@ export function zoomed(el: HTMLElement, keep: Record<string, unknown>, o: { min:
   el.addEventListener("pointermove", (e) => {
     if (!at.has(e.pointerId)) return;
     at.set(e.pointerId, [e.clientX, e.clientY]);
-    if (at.size === 2 && d0) to((z0 * span()) / d0);
+    if (at.size === 2 && d0) to((z0 * span()) / d0, true);
   });
   const up = (e: PointerEvent) => {
     at.delete(e.pointerId);
+    if (at.size < 2 && d0) to(z());
     if (at.size < 2) d0 = 0;
   };
+  let still: ReturnType<typeof setTimeout> | undefined;
   el.addEventListener("pointerup", up);
   el.addEventListener("pointercancel", up);
-  el.addEventListener("wheel", (e) => e.ctrlKey && (e.preventDefault(), to(z() * Math.exp(-e.deltaY / 100))), { passive: false });
+  const wheel = (e: WheelEvent) => {
+    if (!e.ctrlKey) return;
+    e.preventDefault();
+    to(z() * Math.exp(-e.deltaY / 100), true);
+    clearTimeout(still);
+    still = setTimeout(() => to(z()), 150);
+  };
+  el.addEventListener("wheel", wheel, { passive: false });
   el.addEventListener("dblclick", () => to(z() > o.min ? o.min : 2.5));
   el.addEventListener("keydown", (e) => {
     const k: Record<string, number> = { "+": z() * 1.25, "=": z() * 1.25, "-": z() / 1.25, "0": o.min };

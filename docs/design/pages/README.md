@@ -1,0 +1,33 @@
+## Summary
+
+Decision: `pages` is one card. Its head has the title, "page n of N" and the house buttons ‹ › − zoom + fit pdf. Below, a grey well holds the app's page pictures in one column, white paper even in dark mode. At first they fit the width. Zoom (pinch, Ctrl+wheel, + − 0, buttons; fit to 4×) and paging (› ‹, Page Down/Up) only change the view. Nothing is sent.
+Screens: a quotation preview in a screen; zoom and paging frame by frame; a sheet of every state and stress case. Each is drawn light and dark, at 1440 and 390.
+Open questions: (1) The ADR's `note` has no tone, so "out of date" and "failed" look alike (an ink edge). Is that OK, or should `note` get a tone? I recommend keeping it plain. (2) There is no thumbnail rail for the 60-page report, only the counter and the pdf link. Is that enough?
+
+## Images
+
+| Image | What it shows |
+|---|---|
+| `quotation-light-1440.png`, `quotation-dark-1440.png` | The worked case: a quotation on a screen. The app's own `[refresh]` and `[sign off]` buttons sit beside the block, not in it. The block has its head (title, "page 1 of 3", ‹ muted on page 1, − and fit muted at fit, `[pdf]` linking `file`), the `note` as one line with a 3 px ink edge, and the three pages at fit with "1 / 3" under each |
+| `quotation-*-390.png` | The same on a phone. Under 600 px (a container query, not the viewport) the head wraps: the title and counter on one line, the buttons spread across the second. Pages fit the 370 px well |
+| `view-*-1440.png`, `view-*-390.png` | View gestures, frame by frame (each cropped to the block's top). 1: fit, with keyboard focus on the pages region (2 px ink ring). 2: › / Page Down puts page 2 under the head, the counter reads "page 2 of 3", and focus is on ›. 3: + zoomed three times (195%, ×1.25 a step about the middle of the view); past fit the well scrolls sideways. 4: mid-pinch, scaled by transform about the fingers, with the readout and width not yet written. 5: 4×, the most, so + is muted |
+| `states-*-1440.png`, `states-*-390.png` | 1: mixed sizes. There is one scale for the document, so at fit the widest page (a landscape appendix) fills the well and a portrait page keeps its true size. 2: a page still loading (a card-coloured frame at its size saying "loading page 1") and one that failed (3 px brick-red edge, its alt text shown). 3: many pages: a 60-page report on page 2, all frames reserved, pictures lazy. 4: empty, with the note "Building the pages…" and "No pages yet". 5: a long title cut with "…". 6: the static page, read-only with no buttons but `[pdf]` and "3 pages", and an older client's fallback row |
+
+## Rules impl follows
+
+- **Shape, from the ADR (`shapes.md` §4) as is:** `Pages { id, title, pages: [Page { src, alt, width, height }], file, note }` plus the usual `fallback`. It has no gesture field and adds no rules (decision 12). The app's server makes the pictures. blocks has no PDF library.
+- **Layout:** each frame is reserved from `width` and `height` (aspect-ratio), so nothing moves as pictures load. Page width is `(well − padding) × zoom × width / widest`, all CSS from one `--z` on the column, with nothing measured in JS. Pictures load lazily. A page that fails to load shows its alt text in its frame, and the next draw tries again.
+- **View state** (decision 8; `boundaries.md`, "What every view meets" 5) is `zoom` and the page in view, kept in `view` by block id. A redraw (a new `note`, new pages) keeps them and puts focus back.
+- **Zoom** uses the core's one `zoomed` (`web/src/gesture.ts`; `Gestured.swift` in SwiftUI), min 1 (fit), max 4, ×1.25 a key step, and a double tap toggles fit and 2.5×. The kind writes no pointer code (the `setPointerCapture` and `MagnifyGesture(` bans hold). The readout is "fit" or the percent of fit.
+- **Paging:** ‹ › and Page Up / Page Down scroll the next page's top to just under the sticky head. The counter follows whichever page is mostly in view. It is a polite live region updated only by button or key paging, so scrolling by hand is silent. The document scrolls with the screen (no nested vertical scroller, so no scroll trap on phones). Only sideways overflow from zoom scrolls inside the well.
+- **Motion (the motion rule):** only `transform` and `opacity` move. A pinch or Ctrl+wheel scales by transform as the fingers move (following the user, not a transition), and the width is written once on release. A button or key zoom scales by transform over `--settle × --motion` about the middle of the view, then writes the width once. Paging scrolls smoothly over the same time. With reduced motion (the system setting or `--motion: 0`) both happen at once. Pages never animate in on their own beyond the block's usual settle.
+- **Keyboard:** Tab reaches ‹ › − + fit pdf, then the pages region (`role=region`, named "<title>, N pages", `tabindex=0`). On the region, + − 0 zoom, Page Up / Page Down page, and the arrows scroll. Buttons are muted at their ends.
+- **Screen readers:** each page is an image named "Page 2 of 3. <alt>". The buttons are named "previous page", "next page", "zoom out", "zoom in", "fit to width", and "download <title> as PDF". In SwiftUI the pages scroll view carries the named accessibility actions Zoom in, Zoom out, Fit, Next page and Previous page (`boundaries.md`, the view row). The PDF link is the full-text path for a screen-reader user.
+- **Look:** tokens only. The card is `--card` with an `--edge` frame. The well is `--line`. The pages are white (they are pictures of paper) with a 1 px `--edge` outline. The note's edge is `--l`. A failed page's edge is `--r`. No shadow, square corners.
+- **Static page:** read-only, with no script and no buttons but `[pdf]`, "N pages" in place of the counter, and the pages at fit. **Older client:** the fallback row.
+- **Stress fixtures:** long-text (the title), empty (no pages, with a note), and many-row (60 pages).
+- **SwiftUI:** the same parts. A `LazyVStack` of `AsyncImage`s at their aspect inside a `ScrollView` with `.zoomed`, the head as the same bracket buttons, and the paper white in dark mode.
+
+## Files
+
+`pages.css` is everything the kind adds, about 24 rules in the `blocks` layer. The previews use the class prefix `dc`, because `pg` is the progress kind's. `pages.js` is a preview-only port. Its `at`, `zoom`, `scrollX`, `focus`, `pinch`, `state`, `static` and `crop` fields fake view state for the images and are not wire fields. It also draws the sample page pictures as SVG, standing in for the server's. It is not product code. `page.css` is the host page for the previews only. Tokens come from `../neutral-default/tokens.css`. `./render.sh` makes the images (Playwright's cached headless Chromium, light and dark, reduced motion).

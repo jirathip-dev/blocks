@@ -21,6 +21,7 @@ export const kinds: Record<string, string> = {
   "list": "List",
   "media": "Media",
   "nav": "Nav",
+  "pages": "Pages",
   "prose": "Prose",
   "row": "Row",
   "run": "Run",
@@ -215,6 +216,7 @@ export const defs: Record<string, Shape> = {
             "steps",
             "chart",
             "toast",
+            "pages",
             "timeline"
           ]
         },
@@ -708,6 +710,19 @@ export const defs: Record<string, Shape> = {
         "properties": {
           "type": {
             "const": "toast",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      {
+        "$ref": "#/$defs/Pages",
+        "properties": {
+          "type": {
+            "const": "pages",
             "type": "string"
           }
         },
@@ -3499,6 +3514,90 @@ export const defs: Record<string, Shape> = {
     "required": [
       "action",
       "cursor"
+    ],
+    "type": "object"
+  },
+  "PageImage": {
+    "properties": {
+      "alt": {
+        "type": "string"
+      },
+      "height": {
+        "minimum": 0,
+        "type": "integer"
+      },
+      "src": {
+        "type": "string"
+      },
+      "width": {
+        "minimum": 0,
+        "type": "integer"
+      }
+    },
+    "required": [
+      "src",
+      "alt",
+      "width",
+      "height"
+    ],
+    "type": "object"
+  },
+  "Pages": {
+    "additionalProperties": true,
+    "properties": {
+      "fallback": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Fallback"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "file": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "id": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "note": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "pages": {
+        "items": {
+          "$ref": "#/$defs/PageImage"
+        },
+        "type": "array"
+      },
+      "show": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "title": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "required": [
+      "pages"
     ],
     "type": "object"
   },

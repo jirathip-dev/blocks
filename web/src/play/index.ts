@@ -10,7 +10,7 @@ type Sample = { name: string; json: string; rust: Cut[] };
 
 const isRec = (v: unknown): v is Rec => typeof v === "object" && v !== null && !Array.isArray(v);
 const recs = (v: unknown): Rec[] => (Array.isArray(v) ? v.filter(isRec) : []);
-const cut = (c: Rec): Cut => ({ file: String(c.file), from: Number(c.from), to: Number(c.to), code: String(c.code), url: String(c.url) });
+const cut = (c: Rec): Cut => ({ file: String(c["file"]), from: Number(c["from"]), to: Number(c["to"]), code: String(c["code"]), url: String(c["url"]) });
 const START = "steps";
 
 function editor(lang: "json" | "rust", label: string, first = 1) {
@@ -118,13 +118,13 @@ function preview(looks: Record<string, Worn>) {
 
 class Play extends HTMLElement {
   connectedCallback() {
-    if (this.dataset.on) return;
-    this.dataset.on = "1";
-    delete this.dataset.fallback;
-    const props: unknown = JSON.parse(this.dataset.props ?? "{}");
+    if (this.dataset["on"]) return;
+    this.dataset["on"] = "1";
+    delete this.dataset["fallback"];
+    const props: unknown = JSON.parse(this.dataset["props"] ?? "{}");
     const p = isRec(props) ? props : {};
-    const samples: Sample[] = recs(p.samples).map((s) => ({ name: String(s.name), json: String(s.json), rust: recs(s.rust).map(cut) }));
-    const looks: unknown = JSON.parse(document.getElementById("blocks-screen")?.dataset.looks || "{}");
+    const samples: Sample[] = recs(p["samples"]).map((s) => ({ name: String(s["name"]), json: String(s["json"]), rust: recs(s["rust"]).map(cut) }));
+    const looks: unknown = JSON.parse(document.getElementById("blocks-screen")?.dataset["looks"] || "{}");
     const worn: Record<string, Worn> = isRec(looks) ? Object.fromEntries(Object.entries(looks).filter((e): e is [string, Worn] => isRec(e[1]))) : {};
     const view = preview(worn);
     const ed = editor("json", "screen JSON");
@@ -155,7 +155,7 @@ class Play extends HTMLElement {
       }
       ed.mark(undefined);
       const m = isRec(r.value) ? r.value : {};
-      status.textContent = `${String(m.type)} · ${Array.isArray(m.blocks) ? m.blocks.length : 0} blocks · drawn`;
+      status.textContent = `${String(m["type"])} · ${Array.isArray(m["blocks"]) ? m["blocks"].length : 0} blocks · drawn`;
       status.className = "pg-status";
       note.hidden = true;
       void view.show(m);
@@ -172,7 +172,7 @@ class Play extends HTMLElement {
       ed.set(text);
       const home = s?.name === "home";
       const none = home
-        ? h("p", "pg-empty", "Home is all of home() in pages.rs, too long to show here: ", Object.assign(h("a", "", "read it on GitHub"), { href: String(p.pages) }))
+        ? h("p", "pg-empty", "Home is all of home() in pages.rs, too long to show here: ", Object.assign(h("a", "", "read it on GitHub"), { href: String(p["pages"]) }))
         : h("p", "pg-empty", "A shared screen has no Rust: pick a sample to see the Rust that builds it.");
       rust.replaceChildren(...(s?.rust.length ? s.rust.map(source) : [none]));
       document.querySelectorAll('[data-id="pick"] a').forEach((a) => (s && a.getAttribute("href")?.endsWith(`#k=${s.name}`) ? a.setAttribute("aria-current", "page") : a.removeAttribute("aria-current")));

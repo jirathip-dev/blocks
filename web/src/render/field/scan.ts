@@ -13,7 +13,7 @@ export const scan: FieldView<ScanField> = {
     const box = el("div", "fu");
     box.setAttribute("role", "group");
     box.setAttribute("aria-label", label);
-    box.dataset.field = x.name;
+    box.dataset["field"] = x.name;
     let rows: ScanRow[] = scanHeld(x), kept: Page[] | undefined;
     const changed = (commit: boolean) => {
       paint();

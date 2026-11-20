@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use crate::gesture::{Dir, Nudge, Rules, Word};
 use crate::kind::{Block, Gesture, Tap, Tone};
 
-listed! { 32: Timeline(Timeline) = "timeline" }
+listed! { 33: Timeline(Timeline) = "timeline" }
 
 kind! {
     /// Rows of bars on a day axis from `from` to `to` (ISO days); `move`, `stretch` and `draw` each send a `DaySpan`.

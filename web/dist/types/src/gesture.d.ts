@@ -20,7 +20,7 @@ type Block = {
 export type Driven = {
     act: (a: {
         action: string;
-        block?: string | null;
+        block?: string | null | undefined;
         values: Record<string, unknown>;
     }, el?: HTMLElement) => Promise<boolean>;
     held?: Map<string, Held>;
@@ -31,7 +31,7 @@ export declare function gestured<B extends Block, G, R, C>(el: HTMLElement, c: D
 export declare function zoomed(el: HTMLElement, keep: Record<string, unknown>, o: {
     min: number;
     max: number;
-    apply: (z: number) => void;
+    apply: (z: number, live: boolean) => void;
 }): void;
 export type Typed<B, G, C> = Omit<Grabbed<B, G, string, C>, "reach" | "show"> & {
     show: (p: Phase<C>["at"], c: C | null) => void;

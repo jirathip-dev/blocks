@@ -6,8 +6,8 @@ export type FieldCx = {
     value: Lit;
     put(value: Lit): void;
     screen: string;
-    block?: string;
-    file?: OnFile;
+    block?: string | undefined;
+    file?: OnFile | undefined;
     hold(sent: unknown, wait: {
         up: number;
         failed: number;

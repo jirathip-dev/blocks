@@ -1,13 +1,13 @@
 import type { Accept, FileRef, ScanField, UploadField } from "../../gen/types.ts";
 
 /// What the renderer tells the app about one file. `progress` takes 0 to 1; `signal` aborts when the file is removed.
-export type Picked = { screen: string; block?: string; field: string; name: string; mime: string; size: number; progress: (part: number) => void; signal: AbortSignal };
+export type Picked = { screen: string; block?: string | undefined; field: string; name: string; mime: string; size: number; progress: (part: number) => void; signal: AbortSignal };
 /// The app takes the bytes and answers with a small ref. A rejection is the failed state.
 export type OnFile = (file: Blob, about: Picked) => Promise<FileRef>;
 /// One file row's state: `refused` never reached the handler.
 export type FileState = "done" | "uploading" | "failed" | "refused";
 /// One file row of an upload field.
-export type FileRow = { name: string; size: number; mime: string; state: FileState; part: number; why?: "type" | "size"; id?: string; src?: string; blob?: Blob; stop?: AbortController };
+export type FileRow = { name: string; size: number; mime: string; state: FileState; part: number; why?: "type" | "size" | undefined; id?: string; src?: string | undefined; blob?: Blob | undefined; stop?: AbortController };
 type Word = (key: string) => string;
 
 const OWN: Record<string, (name: string, mime: string) => boolean> = {

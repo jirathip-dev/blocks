@@ -24,11 +24,11 @@ const ref = <E = HTMLElement>(): Ref<E> => ({ current: null });
 const pc = (v: number | undefined) => `${(v ?? 0) * 100}%`;
 const tone = (m: Mark) => (typeof m.tone === "string" && TONES.includes(m.tone) ? ` mk-${m.tone}` : "");
 const str = (v: unknown) => (typeof v === "string" ? v : undefined);
-const idle = (e: HTMLElement) => (e.dataset.phase ?? "idle") === "idle";
+const idle = (e: HTMLElement) => (e.dataset["phase"] ?? "idle") === "idle";
 const merged = (m: Mark, c: MarkChange | null): Drawn => (c?.at ? { ...m, at: c.at, ...(c.to ? { to: c.to } : {}) } : m);
 const isChange = (v: unknown): v is MarkChange => typeof v === "object" && v !== null && !Array.isArray(v);
 const places = (m: Mark): Spot[] => [m.at, ...(m.to ? [m.to] : []), ...(m.path ?? [])].map((p) => [p[0] ?? 0, p[1] ?? 0]);
-const mirror = (from: HTMLElement, g: Element) => new MutationObserver(() => from.dataset.phase && g.setAttribute("data-phase", from.dataset.phase)).observe(from, { attributeFilter: ["data-phase"] });
+const mirror = (from: HTMLElement, g: Element) => new MutationObserver(() => from.dataset["phase"] && g.setAttribute("data-phase", from.dataset["phase"])).observe(from, { attributeFilter: ["data-phase"] });
 
 function beside(el: HTMLElement, wire: () => void) {
   const n = el.parentElement?.children.length ?? 0;
@@ -94,8 +94,8 @@ export function media({ b, hooks }: V<Media>): ReactNode {
   const [, redraw] = useReducer((n: number) => n + 1, 0);
   const [now, show] = useState<Shown | null>(null);
   const [root, z] = [useRef<HTMLElement>(null), useRef<HTMLDivElement>(null)];
-  const after = useRef<{ focus?: string; press?: string }>({});
-  const k = JSON.stringify([b, v.tool, v.into, v.sel, v.typing]);
+  const after = useRef<{ focus?: string | undefined; press?: string | undefined }>({});
+  const k = JSON.stringify([b, v["tool"], v["into"], v["sel"], v["typing"]]);
   const c: Driven = { act: (a) => live.current.act(a), held: keep.current };
   const wires: Wire[] = [];
   useLayoutEffect(() => {
@@ -111,7 +111,7 @@ export function media({ b, hooks }: V<Media>): ReactNode {
   if (b.video || b.id == null || !(b.draw ?? b.move ?? b.stretch ?? b.remove)) return still(b, hooks);
   const again: Again = (press) => {
     const a = document.activeElement;
-    after.current = { focus: a instanceof HTMLElement && root.current?.contains(a) ? a.dataset.key : undefined, press };
+    after.current = { focus: a instanceof HTMLElement && root.current?.contains(a) ? a.dataset["key"] : undefined, press };
     redraw();
   };
   const reach: Reach = (dx, dy, x, y) => {
@@ -126,12 +126,12 @@ export function media({ b, hooks }: V<Media>): ReactNode {
 function marked(o: View, c: Driven, z: Ref<HTMLDivElement>): ReactNode[] {
   const { b, v, shown } = o;
   const marks = b.marks ?? [];
-  const tool = (b.tools ?? []).find((t) => t === str(v.tool)) ?? (b.tools?.length === 1 ? b.tools[0] : undefined);
+  const tool = (b.tools ?? []).find((t) => t === str(v["tool"])) ?? (b.tools?.length === 1 ? b.tools[0] : undefined);
   const groups = [...new Set(marks.filter((m) => !m.fixed && m.group != null).map((m) => m.group ?? ""))];
-  const into = groups.find((g) => g === str(v.into)) ?? groups[groups.length - 1];
-  const sel = marks.find((m) => m.id === str(v.sel) && !m.fixed);
+  const into = groups.find((g) => g === str(v["into"])) ?? groups[groups.length - 1];
+  const sel = marks.find((m) => m.id === str(v["sel"]) && !m.fixed);
   const pen = (t: MarkKind): Pen => ({ tool: t, ...(into != null ? { group: into } : {}) });
-  const [art, top, late]: ReactNode[][] = [[], [], []];
+  const [art, top, late]: [ReactNode[], ReactNode[], ReactNode[]] = [[], [], []];
   const paint = (m: Drawn, cls: string, g?: Ref<Element>) => {
     const p = painted(b, m, cls, g);
     art.push(p.art);
@@ -148,14 +148,14 @@ function marked(o: View, c: Driven, z: Ref<HTMLDivElement>): ReactNode[] {
     if (mine) late.push(painted(b, m, " ghost").art);
     if (!m.fixed) stops(o, { m, d, gr, sel: m.id === sel?.id, top });
   }
-  if (isChange(out) && out.kind) paint({ id: "", kind: out.kind, at: out.at ?? [], to: out.to, text: out.text }, " sent");
+  if (isChange(out) && out.kind) paint({ id: "", kind: out.kind, at: out.at ?? [], to: out.to ?? null, text: out.text ?? null }, " sent");
   if (shown?.item === "draw" && shown.kind && shown.c.at) paint(merged({ id: "", kind: shown.kind, at: [] }, shown.c), " new");
   art.push(...late);
   const zooms = b.draw && b.tools?.length === 1 && tool === "pin";
   const w = ref();
   const tools = b.draw && b.tools?.length ? bar(o, { tool, groups, into, sel, pen, zoom: zooms ? { w, z } : null }) : null;
   const under = b.draw && tool ? surface(o, { tool, pen: pen(tool) }) : null;
-  if (b.draw && tool === "text" && Array.isArray(v.typing)) top.push(typing(o, { at: v.typing, pen: pen("text") }));
+  if (b.draw && tool === "text" && Array.isArray(v["typing"])) top.push(typing(o, { at: v["typing"], pen: pen("text") }));
   const parts: ReactNode[] = [tools, frame(b, h("img", "", { src: b.src, alt: b.alt, width: b.width, height: b.height }), art, top, { w, z, cls: zooms ? " zoom" : "", under })];
   if (!marks.length && b.draw) parts.push(h("p", "mkhint", null, HINT));
   if (b.caption) parts.push(h("figcaption", "", null, b.caption));
@@ -180,13 +180,13 @@ function stops(o: View, s: Stop) {
   const stop = ref();
   const pick = (e: HTMLElement) => {
     if (!idle(e)) return;
-    v.sel = s.sel ? undefined : m.id;
+    v["sel"] = s.sel ? undefined : m.id;
     o.again();
   };
   const key = (e: { key: string; currentTarget: HTMLElement; preventDefault: () => void }) => {
     if (e.key === "Enter" && idle(e.currentTarget)) pick(e.currentTarget);
     else if ((e.key === "Delete" || e.key === "Backspace") && b.remove) {
-      v.sel = m.id;
+      v["sel"] = m.id;
       o.again("rm");
     } else return;
     e.preventDefault();
@@ -217,7 +217,7 @@ function stops(o: View, s: Stop) {
   }
 }
 
-type Bar = { tool?: MarkKind; groups: string[]; into?: string; sel?: Mark; pen: (t: MarkKind) => Pen; zoom: { w: Ref; z: Ref } | null };
+type Bar = { tool?: MarkKind | undefined; groups: string[]; into?: string | undefined; sel?: Mark | undefined; pen: (t: MarkKind) => Pen; zoom: { w: Ref; z: Ref } | null };
 
 function bar(o: View, t: Bar): ReactNode {
   const { b, k, v } = o;
@@ -226,7 +226,7 @@ function bar(o: View, t: Bar): ReactNode {
     const r = ref();
     const pick = (e: { currentTarget: HTMLElement }) => {
       if (!idle(e.currentTarget)) return;
-      [v.tool, v.typing] = [t.tool === kind ? "" : kind, undefined];
+      [v["tool"], v["typing"]] = [t.tool === kind ? "" : kind, undefined];
       o.again();
     };
     if (draw) {
@@ -241,7 +241,7 @@ function bar(o: View, t: Bar): ReactNode {
     return h("button", t.tool === kind ? "on" : "", own, h("span", "", null, kind));
   });
   const into = (e: { currentTarget: HTMLSelectElement }) => {
-    v.into = e.currentTarget.value;
+    v["into"] = e.currentTarget.value;
     o.again();
   };
   const options = t.groups.map((g) => h("option", "", { value: g }, g));
@@ -280,7 +280,7 @@ function surface(o: View, s: { tool: MarkKind; pen: Pen }): ReactNode {
         if (!idle(el)) return;
         const { to } = o.reach(0, 0, e.clientX, e.clientY);
         if (s.tool === "text") {
-          v.typing = to;
+          v["typing"] = to;
           o.again();
         } else if (s.tool === "pin") {
           s.pen.at = to;
@@ -295,23 +295,23 @@ function typing(o: View, t: { at: unknown[]; pen: Pen }): ReactNode {
   const { b, v } = o;
   const draw = b.draw;
   const at: Spot = [Number(t.at[0]) || 0, Number(t.at[1]) || 0];
-  const pen = { ...t.pen, at, text: str(v.words) ?? "" };
+  const pen = { ...t.pen, at, text: str(v["words"]) ?? "" };
   const [i, add] = [ref<HTMLInputElement>(), ref()];
   if (draw)
     o.wires.push((c) => {
       const [input, el] = [i.current, add.current];
       if (!input || !el) return;
-      input.addEventListener("input", () => (pen.text = v.words = input.value));
+      input.addEventListener("input", () => (pen.text = v["words"] = input.value));
       const run = gestured(el, c, { block: b, gesture: draw, rules, grab: { draw: pen }, item: "draw", reach: () => ({ from: [-1, -1], to: [-1, -1] }), show: () => {} });
       const done = () => {
         run({ dir: "right" });
-        [v.typing, v.words] = [undefined, undefined];
+        [v["typing"], v["words"]] = [undefined, undefined];
       };
       el.addEventListener("click", done);
       input.addEventListener("keydown", (e) => {
         if (e.key === "Enter") done();
         if (e.key !== "Escape") return;
-        v.typing = undefined;
+        v["typing"] = undefined;
         o.again();
       });
       queueMicrotask(() => input.isConnected && input.focus());
@@ -337,8 +337,8 @@ function zoom(o: View, at: { w: Ref; z: Ref }): ReactNode[] {
       p.textContent = `${Math.round(n * 100)}%`;
     };
     zoomed(w, v, { min: 1, max: 3, apply });
-    const now = () => (typeof v.zoom === "number" ? v.zoom : 1);
-    ways.forEach(([, , go], n) => refs[n]?.current?.addEventListener("click", () => apply((v.zoom = Math.min(3, Math.max(1, go(now())))))));
+    const now = () => (typeof v["zoom"] === "number" ? v["zoom"] : 1);
+    ways.forEach(([, , go], n) => refs[n]?.current?.addEventListener("click", () => apply((v["zoom"] = Math.min(3, Math.max(1, go(now())))))));
   });
   return ways.map(([t, name], n) => h("button", "", { ref: refs[n], type: "button", "aria-label": name }, t ? h("span", "", null, t) : h("span", "mkzm", { ref: pct })));
 }

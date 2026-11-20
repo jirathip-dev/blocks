@@ -7,7 +7,7 @@ export type Page = { photo: ImageBitmap; quad: Quad; auto: Quad; jpeg: Uint8Arra
 /// What the scanner gives back: the PDF, and the pages to edit again.
 export type Scanned = { pdf: Blob; pages: Page[] };
 /// What the scanner is opened with: the field's label, its page limit, its words, and the pages of an earlier scan.
-export type Opts = { label: string; max: number; w(key: string): string; pages?: Page[] };
+export type Opts = { label: string; max: number; w(key: string): string; pages?: Page[] | undefined };
 
 type Ask = { op: "find"; frame: ImageBitmap } | { op: "page"; photo: ImageBitmap; quad: Quad } | { op: "pdf"; pages: Uint8Array[] };
 type Reply = { id: number; quad?: Quad | null; page?: ImageBitmap; pdf?: Blob; made?: number };
@@ -20,7 +20,7 @@ type S = {
   made: number;
   cam: "wait" | "on" | "none" | "denied";
   live?: Quad | null;
-  edit?: Edit;
+  edit?: Edit | undefined;
   at: number;
   open: boolean;
   queue: ImageBitmap[];
@@ -64,7 +64,7 @@ if (typeof document === "undefined")
   });
 
 let worker: Worker | undefined, seq = 0;
-const waiting = new Map<number, { done(r: Reply): void; made?(n: number): void }>();
+const waiting = new Map<number, { done(r: Reply): void; made?: ((n: number) => void) | undefined }>();
 function ask(a: Ask, made?: (n: number) => void): Promise<Reply> {
   if (!worker) {
     worker = new Worker(import.meta.url, { type: "module" });
@@ -261,7 +261,7 @@ function bar(s: S): HTMLElement[] {
   if (s.step === "corners") return [btn(s.o.w("retake"), () => go(s, { edit: undefined, step: "capture" })), el("span"), btn(s.o.w("usePage"), () => use(s))];
   if (s.step === "review") return [btn(s.o.w("addPage"), () => go(s, { step: "capture", at: n }), "", "", full(s)), el("span"), btn(doneN, () => finish(s), "", "", !n)];
   const line = say(s, "making", { n: s.made, of: n }), meter = el("span", "pgt", el("b"));
-  for (const [k, v] of [["role", "progressbar"], ["aria-valuemin", "0"], ["aria-valuemax", String(n)], ["aria-valuenow", String(s.made)], ["aria-label", line]]) meter.setAttribute(k, v);
+  for (const [k, v] of [["role", "progressbar"], ["aria-valuemin", "0"], ["aria-valuemax", String(n)], ["aria-valuenow", String(s.made)], ["aria-label", line]] as const) meter.setAttribute(k, v);
   meter.style.setProperty("--v", String(Math.round((s.made / n) * 100)));
   const d = btn(doneN, () => undefined, "", "", true);
   d.setAttribute("aria-busy", "true");

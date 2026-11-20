@@ -30,9 +30,9 @@ export function read(v: unknown): unknown {
   if (k === "not" || k === "len") return one(read(a));
   if (k === "all" || k === "any" || k === "cat") return list();
   if (own(PAIRS, k)) return list(PAIRS[k]);
-  if (k === "is" && rec(a) && typeof a.pattern === "string" && "value" in a) {
-    const x = read(a.value);
-    return x === undefined ? UNKNOWN : { is: { value: x, pattern: a.pattern } };
+  if (k === "is" && rec(a) && typeof a["pattern"] === "string" && "value" in a) {
+    const x = read(a["value"]);
+    return x === undefined ? UNKNOWN : { is: { value: x, pattern: a["pattern"] } };
   }
   return UNKNOWN;
 }
@@ -41,7 +41,7 @@ export function sound(e: unknown): boolean {
   if (!rec(e)) return true;
   const [k = "", a] = Object.entries(e)[0] ?? [];
   if (k === "?") return false;
-  if (k === "is") return rec(a) && PATTERNS.includes(String(a.pattern)) && sound(a.value);
+  if (k === "is") return rec(a) && PATTERNS.includes(String(a["pattern"])) && sound(a["value"]);
   return Array.isArray(a) ? a.every(sound) : k === "get" || sound(a);
 }
 
@@ -106,7 +106,7 @@ export function ev(e: unknown, s: State): Lit {
     case "has":
       return typeof x === "string" && typeof y === "string" ? x.includes(y) : null;
     case "is":
-      return rec(a) ? is(ev(a.value, s), a.pattern) : null;
+      return rec(a) ? is(ev(a["value"], s), a["pattern"]) : null;
     case "add":
       return n ? num(n.x + n.y) : null;
     case "sub":
@@ -135,16 +135,16 @@ function holds(e: unknown, s: State): boolean | undefined {
 }
 
 export const list = (v: unknown): Rec[] => (Array.isArray(v) ? v.filter(rec) : []);
-const kids = (b: Rec): Rec[] => [...list(b.blocks), ...list(b.rows), ...list(b.buttons), ...list(b.rounds).flatMap((r) => list(r.blocks))];
-const named = (b: Rec) => list(b.fields).filter((f) => typeof f.name === "string");
+const kids = (b: Rec): Rec[] => [...list(b["blocks"]), ...list(b["rows"]), ...list(b["buttons"]), ...list(b["rounds"]).flatMap((r) => list(r["blocks"]))];
+const named = (b: Rec) => list(b["fields"]).filter((f) => typeof f["name"] === "string");
 /// The action an act sends, which its `enabled` turns off: its own, else its tap's.
 export const actionOf = (a: Rec): string | undefined => {
-  const k = a.action ?? (rec(a.tap) ? a.tap.action : undefined);
+  const k = a["action"] ?? (rec(a["tap"]) ? a["tap"]["action"] : undefined);
   return typeof k === "string" ? k : undefined;
 };
 const acts = (b: Rec): Rec[] => {
-  const all = [...list(b.actions), ...list(b.swipe), ...list(b.menu), ...[b.button, ...WORDS.map((w) => b[w])].filter(rec)];
-  return [...all, ...all.flatMap((a) => list(a.menu))];
+  const all = [...list(b["actions"]), ...list(b["swipe"]), ...list(b["menu"]), ...[b["button"], ...WORDS.map((w) => b[w])].filter(rec)];
+  return [...all, ...all.flatMap((a) => list(a["menu"]))];
 };
 const plain = (v: unknown): Lit => (v === null || typeof v === "boolean" || typeof v === "number" || typeof v === "string" ? v : null);
 /// What `field` holding `held` puts in local state: null, a switch, a number or a string; a list puts its length, an empty one null.
@@ -154,12 +154,12 @@ export const lit = (_field: unknown, held: unknown): Lit => (Array.isArray(held)
 export function start(screen: unknown): State {
   const s: State = {};
   const seed = (b: Rec) => {
-    for (const f of named(b)) s[String(f.name)] = lit(f, f.value ?? f.files ?? (rec(f.file) ? [f.file] : null));
-    if (b.type === "chips" && typeof b.name === "string") s[b.name] = plain(Array.isArray(b.selected) ? b.selected[0] : null);
+    for (const f of named(b)) s[String(f["name"])] = lit(f, f["value"] ?? f["files"] ?? (rec(f["file"]) ? [f["file"]] : null));
+    if (b["type"] === "chips" && typeof b["name"] === "string") s[b["name"]] = plain(Array.isArray(b["selected"]) ? b["selected"][0] : null);
     kids(b).forEach(seed);
   };
   if (rec(screen)) {
-    for (const [k, v] of Object.entries(rec(screen.state) ? screen.state : {})) s[k] = plain(v);
+    for (const [k, v] of Object.entries(rec(screen["state"]) ? screen["state"] : {})) s[k] = plain(v);
     seed(screen);
   }
   return s;
@@ -169,33 +169,33 @@ export function start(screen: unknown): State {
 export function view(screen: unknown, s: State): View {
   const v: View = { hidden: new Set(), disabled: new Set(), says: {}, acts: new Set(), values: {} };
   const walk = (b: Rec) => {
-    const id = typeof b.id === "string" ? b.id : undefined;
-    if (holds(b.show, s) === false) {
+    const id = typeof b["id"] === "string" ? b["id"] : undefined;
+    if (holds(b["show"], s) === false) {
       if (id !== undefined) v.hidden.add(id);
       return;
     }
-    if (holds(b.enabled, s) === false && id !== undefined) v.disabled.add(id);
+    if (holds(b["enabled"], s) === false && id !== undefined) v.disabled.add(id);
     let failing = false;
     for (const f of named(b)) {
-      const name = String(f.name);
-      if (holds(f.show, s) === false) {
+      const name = String(f["name"]);
+      if (holds(f["show"], s) === false) {
         v.hidden.add(name);
         continue;
       }
-      if (holds(f.enabled, s) === false) v.disabled.add(name);
-      const bad = list(f.checks).find((c) => typeof c.say === "string" && holds(c.ok, s) === false);
+      if (holds(f["enabled"], s) === false) v.disabled.add(name);
+      const bad = list(f["checks"]).find((c) => typeof c["say"] === "string" && holds(c["ok"], s) === false);
       if (bad) {
         failing = true;
-        v.says[name] = String(bad.say);
+        v.says[name] = String(bad["say"]);
       }
     }
     if (failing && id !== undefined) v.disabled.add(id);
     for (const a of acts(b)) {
       const k = actionOf(a);
-      if (k !== undefined && holds(a.enabled, s) === false) v.acts.add(k);
+      if (k !== undefined && holds(a["enabled"], s) === false) v.acts.add(k);
     }
-    for (const i of [b, ...list(b.items)]) {
-      const k = rec(i.value) ? i.value.get : undefined;
+    for (const i of [b, ...list(b["items"])]) {
+      const k = rec(i["value"]) ? i["value"]["get"] : undefined;
       if (typeof k === "string") v.values[k] = text(own(s, k) ? (s[k] ?? null) : null);
     }
     kids(b).forEach(walk);
@@ -204,4 +204,4 @@ export function view(screen: unknown, s: State): View {
   return v;
 }
 
-export const find = (b: Rec, id: string): Rec | undefined => (b.id === id ? b : kids(b).reduce<Rec | undefined>((got, c) => got ?? find(c, id), undefined));
+export const find = (b: Rec, id: string): Rec | undefined => (b["id"] === id ? b : kids(b).reduce<Rec | undefined>((got, c) => got ?? find(c, id), undefined));
