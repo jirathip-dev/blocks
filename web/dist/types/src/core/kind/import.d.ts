@@ -1,0 +1,40 @@
+import type { Import, ImportColumn, ImportRow, ImportSheet } from "../../gen/types.ts";
+export type Phase = "idle" | "up" | "upfail" | "reading" | "readfail" | "review" | "checking" | "ask" | "sending" | "done";
+export type ImportState = {
+    phase: Phase;
+    id: string;
+    name: string;
+    size: number;
+    part: number;
+    why: string;
+    map: Record<string, string> | null;
+    sheet: string | null;
+    show: "all" | "errors";
+    open: boolean;
+    seq: number;
+    stop?: AbortController | undefined;
+};
+export type ImportView = {
+    phase: Phase | "off";
+    sheet: ImportSheet | null;
+    map: Record<string, string>;
+    bad: ImportRow[];
+    good: number;
+    shown: ImportRow[];
+    hidden: number;
+    missing: ImportColumn | undefined;
+    extra: string[];
+    got: number;
+};
+export declare const fresh: (b: Import) => ImportState;
+export declare const say: (lang: string | null | undefined, key: string, v?: Record<string, string | number>) => string;
+export declare const kinds: (b: Import) => string[];
+export declare const over: (b: Import, size: number) => boolean;
+export declare function view(b: Import, st: ImportState, on: boolean): ImportView;
+export declare const sample: (c: ImportColumn, v: ImportView) => string;
+export declare const values: (b: Import, st: ImportState) => {
+    file: string;
+    sheet: string | null;
+    map: Record<string, string>;
+};
+export declare function answered(st: ImportState, b: Import, ok: boolean): void;

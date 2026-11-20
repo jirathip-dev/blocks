@@ -13,7 +13,7 @@ function rebuild(v: unknown): unknown {
   const { type, ...rest } = v as Record<string, unknown>;
   const fields = Object.fromEntries(Object.entries(rest).map(([k, x]) => [k, rebuild(x)]));
   if (typeof type !== "string" || !(type in core.hooks)) return type === undefined ? fields : { type, ...fields };
-  const make = builders[type];
+  const make = builders[type] ?? builders[`${type}_`];
   ok(make, `a builder for ${type}`);
   const b = make(fields);
   strictEqual(b.type, type);
@@ -22,7 +22,7 @@ function rebuild(v: unknown): unknown {
 
 test("the builders give every fixtures/blocks file back, type and all", () => {
   const files = readdirSync(at("blocks")).filter((f) => f.endsWith(".json"));
-  strictEqual(files.length, 36);
+  strictEqual(files.length, 37);
   for (const f of files) deepStrictEqual(rebuild(json(`blocks/${f}`)), json(`blocks/${f}`), f);
 });
 

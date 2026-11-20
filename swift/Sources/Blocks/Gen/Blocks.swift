@@ -115,6 +115,7 @@ public enum Block: Codable, Equatable, Sendable {
     case toast(Toast)
     case pages(Pages)
     case timeline(Timeline)
+    case `import`(Import)
     case appBlock(JSONValue)
 
     private enum Tag: String, CodingKey { case tag = "type" }
@@ -155,6 +156,7 @@ public enum Block: Codable, Equatable, Sendable {
         case "toast": self = .toast(try Toast(from: decoder))
         case "pages": self = .pages(try Pages(from: decoder))
         case "timeline": self = .timeline(try Timeline(from: decoder))
+        case "import": self = .`import`(try Import(from: decoder))
         default: self = .appBlock(try JSONValue(from: decoder))
         }
     }
@@ -195,6 +197,7 @@ public enum Block: Codable, Equatable, Sendable {
         case .toast(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("toast", forKey: .tag)
         case .pages(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("pages", forKey: .tag)
         case .timeline(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("timeline", forKey: .tag)
+        case .`import`(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("import", forKey: .tag)
         case .appBlock(let v): try v.encode(to: encoder)
         }
     }
@@ -652,6 +655,11 @@ public struct Figure: Codable, Equatable, Sendable {
     public var tool: String?
 }
 
+public struct FileLink: Codable, Equatable, Sendable {
+    public var name: String
+    public var src: String
+}
+
 public struct FileRef: Codable, Equatable, Sendable {
     public var id: String
     public var name: String?
@@ -751,6 +759,71 @@ public struct Images: Codable, Equatable, Sendable {
     public var items: [Image]
     public var show: Expr?
     public var size: ImageSize?
+}
+
+public struct Import: Codable, Equatable, Sendable {
+    public var accept: [String]?
+    public var action: String?
+    public var columns: [ImportColumn]
+    public var done: ImportDone?
+    public var error: String?
+    public var id: String?
+    public var into: String?
+    public var mb: UInt32?
+    public var read: String?
+    public var refused: [ImportRow]?
+    public var sheet: ImportSheet?
+    public var show: Expr?
+    public var template: FileLink?
+    public var title: String
+}
+
+public struct ImportColumn: Codable, Equatable, Sendable {
+    public var key: String
+    public var label: String
+    public var required: Bool?
+    public var type: ImportType?
+    public var values: [String]?
+}
+
+public struct ImportDone: Codable, Equatable, Sendable {
+    public var count: UInt32
+    public var file: FileLink?
+    public var left: UInt32?
+}
+
+public struct ImportFile: Codable, Equatable, Sendable {
+    public var id: String
+    public var name: String
+    public var rows: UInt32
+    public var sheet: String?
+    public var sheets: [String]?
+    public var size: UInt32?
+}
+
+public struct ImportRow: Codable, Equatable, Sendable {
+    public var bad: [String: String]?
+    public var cells: [String: String]
+    public var n: UInt32
+}
+
+public struct ImportSheet: Codable, Equatable, Sendable {
+    public var bad: [ImportRow]?
+    public var file: ImportFile
+    public var headers: [String]
+    public var map: [String: String]
+    public var rows: [ImportRow]
+}
+
+public struct ImportType: RawRepresentable, Hashable, Codable, Equatable, Sendable {
+    public let rawValue: String
+    public init(rawValue: String) { self.rawValue = rawValue }
+    public static let text = Self(rawValue: "text")
+    public static let number = Self(rawValue: "number")
+    public static let money = Self(rawValue: "money")
+    public static let date = Self(rawValue: "date")
+    public static let choice = Self(rawValue: "choice")
+    public static let all: [Self] = [.text, .number, .money, .date, .choice]
 }
 
 public struct Island: Codable, Equatable, Sendable {

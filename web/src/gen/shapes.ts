@@ -16,6 +16,7 @@ export const kinds: Record<string, string> = {
   "form": "Form",
   "hero": "Hero",
   "images": "Images",
+  "import": "Import",
   "island": "Island",
   "lines": "Lines",
   "list": "List",
@@ -217,7 +218,8 @@ export const defs: Record<string, Shape> = {
             "chart",
             "toast",
             "pages",
-            "timeline"
+            "timeline",
+            "import"
           ]
         },
         "type": "string"
@@ -736,6 +738,19 @@ export const defs: Record<string, Shape> = {
         "properties": {
           "type": {
             "const": "timeline",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      {
+        "$ref": "#/$defs/Import",
+        "properties": {
+          "type": {
+            "const": "import",
             "type": "string"
           }
         },
@@ -2246,6 +2261,21 @@ export const defs: Record<string, Shape> = {
     },
     "type": "object"
   },
+  "FileLink": {
+    "properties": {
+      "name": {
+        "type": "string"
+      },
+      "src": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "name",
+      "src"
+    ],
+    "type": "object"
+  },
   "FileRef": {
     "properties": {
       "id": {
@@ -2550,6 +2580,317 @@ export const defs: Record<string, Shape> = {
       "items"
     ],
     "type": "object"
+  },
+  "Import": {
+    "additionalProperties": true,
+    "properties": {
+      "accept": {
+        "items": {
+          "type": "string"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "action": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "columns": {
+        "items": {
+          "$ref": "#/$defs/ImportColumn"
+        },
+        "type": "array"
+      },
+      "done": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/ImportDone"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "error": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "id": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "into": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "mb": {
+        "minimum": 0,
+        "type": [
+          "integer",
+          "null"
+        ]
+      },
+      "read": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "refused": {
+        "items": {
+          "$ref": "#/$defs/ImportRow"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "sheet": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/ImportSheet"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "show": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "template": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/FileLink"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "title": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "title",
+      "columns"
+    ],
+    "type": "object"
+  },
+  "ImportColumn": {
+    "properties": {
+      "key": {
+        "type": "string"
+      },
+      "label": {
+        "type": "string"
+      },
+      "required": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "type": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/ImportType"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "values": {
+        "items": {
+          "type": "string"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      }
+    },
+    "required": [
+      "key",
+      "label"
+    ],
+    "type": "object"
+  },
+  "ImportDone": {
+    "properties": {
+      "count": {
+        "minimum": 0,
+        "type": "integer"
+      },
+      "file": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/FileLink"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "left": {
+        "minimum": 0,
+        "type": [
+          "integer",
+          "null"
+        ]
+      }
+    },
+    "required": [
+      "count"
+    ],
+    "type": "object"
+  },
+  "ImportFile": {
+    "properties": {
+      "id": {
+        "type": "string"
+      },
+      "name": {
+        "type": "string"
+      },
+      "rows": {
+        "minimum": 0,
+        "type": "integer"
+      },
+      "sheet": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "sheets": {
+        "items": {
+          "type": "string"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "size": {
+        "minimum": 0,
+        "type": [
+          "integer",
+          "null"
+        ]
+      }
+    },
+    "required": [
+      "id",
+      "name",
+      "rows"
+    ],
+    "type": "object"
+  },
+  "ImportRow": {
+    "properties": {
+      "bad": {
+        "additionalProperties": {
+          "type": "string"
+        },
+        "type": [
+          "object",
+          "null"
+        ]
+      },
+      "cells": {
+        "additionalProperties": {
+          "type": "string"
+        },
+        "type": "object"
+      },
+      "n": {
+        "minimum": 0,
+        "type": "integer"
+      }
+    },
+    "required": [
+      "n",
+      "cells"
+    ],
+    "type": "object"
+  },
+  "ImportSheet": {
+    "properties": {
+      "bad": {
+        "items": {
+          "$ref": "#/$defs/ImportRow"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "file": {
+        "$ref": "#/$defs/ImportFile"
+      },
+      "headers": {
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "map": {
+        "additionalProperties": {
+          "type": "string"
+        },
+        "type": "object"
+      },
+      "rows": {
+        "items": {
+          "$ref": "#/$defs/ImportRow"
+        },
+        "type": "array"
+      }
+    },
+    "required": [
+      "file",
+      "headers",
+      "map",
+      "rows"
+    ],
+    "type": "object"
+  },
+  "ImportType": {
+    "anyOf": [
+      {
+        "enum": [
+          "text",
+          "number",
+          "money",
+          "date",
+          "choice"
+        ],
+        "type": "string"
+      },
+      {
+        "type": "string"
+      }
+    ]
   },
   "Island": {
     "additionalProperties": true,

@@ -43,6 +43,7 @@ A screen is data: a `screen` or `sheet` block of typed blocks, checked, then dra
 - [`toast`](kinds/toast.md): A short line after an action, in a tone, with an optional undo: an answer's toast, or drawn where it sits.
 - [`pages`](kinds/pages.md): A document as the app's server drew it, one picture a page: paged and zoomed in the view, with its PDF.
 - [`timeline`](kinds/timeline.md): Rows of bars on a day axis from `from` to `to` (ISO days); `move`, `stretch` and `draw` each send a `DaySpan`.
+- [`import`](kinds/import.md): A spreadsheet import the app's server reads: upload a file, check the column match and the row errors, confirm one action.
 
 ## More
 

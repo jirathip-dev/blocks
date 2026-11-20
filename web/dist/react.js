@@ -382,7 +382,7 @@ function Arrange(p) {
 }
 
 // react/src/view.ts
-import { createElement as createElement11, useMemo as useMemo2, useRef as useRef12, useSyncExternalStore } from "react";
+import { createElement as createElement11, useMemo as useMemo2, useRef as useRef13, useSyncExternalStore } from "react";
 import { hooks as hooks3, share } from "./core.js";
 
 // react/src/act.ts
@@ -457,7 +457,7 @@ function useCx(p, screen2) {
 }
 
 // react/src/block.ts
-import { Component, createElement as createElement10, memo, useContext as useContext14 } from "react";
+import { Component, createElement as createElement10, memo, useContext as useContext15 } from "react";
 import { hooks as hooks2, named as named3, role } from "./core.js";
 
 // react/src/draw.ts
@@ -846,8 +846,20 @@ function images({ b, hooks: hooks4 }) {
   return h("div", "imgs", hooks4, ...b.items.map(item3));
 }
 
-// react/src/kinds/list.ts
+// react/src/kinds/import.ts
 import { useContext as useContext5, useLayoutEffect as useLayoutEffect2, useRef as useRef6 } from "react";
+function import_({ b, hooks: hooks4 }) {
+  const cx = useContext5(Cx);
+  const root = useRef6(null);
+  useLayoutEffect2(() => {
+    const box = root.current;
+    if (box) void import("./import.js").then((m) => m.draw(box, b, cx));
+  }, [b, cx]);
+  return h("section", "im", { ...hooks4, ref: root });
+}
+
+// react/src/kinds/list.ts
+import { useContext as useContext6, useLayoutEffect as useLayoutEffect3, useRef as useRef7 } from "react";
 
 // src/core/kind/list.ts
 var STEPS2 = [
@@ -889,11 +901,11 @@ var list = {
 // react/src/kinds/list.ts
 var rec2 = (v) => typeof v === "object" && v !== null;
 function list2({ b, hooks: hooks4 }) {
-  const cx = useContext5(Cx);
-  const ref3 = useRef6(null);
-  const act2 = useRef6(cx.act);
+  const cx = useContext6(Cx);
+  const ref3 = useRef7(null);
+  const act2 = useRef7(cx.act);
   act2.current = cx.act;
-  useLayoutEffect2(() => {
+  useLayoutEffect3(() => {
     const l = ref3.current;
     const g = b.reorder;
     if (!l || !g) return;
@@ -930,7 +942,7 @@ function list2({ b, hooks: hooks4 }) {
 }
 
 // react/src/kinds/media.ts
-import { createElement as createElement7, Fragment, useContext as useContext6, useLayoutEffect as useLayoutEffect3, useReducer, useRef as useRef7, useState as useState7 } from "react";
+import { createElement as createElement7, Fragment, useContext as useContext7, useLayoutEffect as useLayoutEffect4, useReducer, useRef as useRef8, useState as useState7 } from "react";
 
 // src/core/kind/media.ts
 var SMALL = 0.02;
@@ -1122,22 +1134,22 @@ function still(b, hooks4) {
   return h("figure", "media", hooks4, body2, b.caption ? h("figcaption", "", null, b.caption) : null);
 }
 function media2({ b, hooks: hooks4 }) {
-  const cx = useContext6(Cx);
-  const live3 = useRef7(cx);
+  const cx = useContext7(Cx);
+  const live3 = useRef8(cx);
   live3.current = cx;
-  const keep = useRef7(/* @__PURE__ */ new Map());
-  const v = useRef7({}).current;
+  const keep = useRef8(/* @__PURE__ */ new Map());
+  const v = useRef8({}).current;
   const [, redraw] = useReducer((n) => n + 1, 0);
   const [now, show] = useState7(null);
-  const [root, z] = [useRef7(null), useRef7(null)];
-  const after = useRef7({});
+  const [root, z] = [useRef8(null), useRef8(null)];
+  const after = useRef8({});
   const k = JSON.stringify([b, v["tool"], v["into"], v["sel"], v["typing"]]);
   const c = { act: (a) => live3.current.act(a), held: keep.current };
   const wires = [];
-  useLayoutEffect3(() => {
+  useLayoutEffect4(() => {
     for (const w of wires) w(c);
   }, [k]);
-  useLayoutEffect3(() => {
+  useLayoutEffect4(() => {
     const { focus, press: press2 } = after.current;
     after.current = {};
     const at2 = (key3) => key3 ? root.current?.querySelector(`[data-key="${CSS.escape(key3)}"]`) : null;
@@ -1371,7 +1383,7 @@ function zoom(o, at2) {
 }
 
 // react/src/kinds/pages.ts
-import { createElement as createElement8, Fragment as Fragment2, useLayoutEffect as useLayoutEffect4, useRef as useRef8 } from "react";
+import { createElement as createElement8, Fragment as Fragment2, useLayoutEffect as useLayoutEffect5, useRef as useRef9 } from "react";
 import { linkable as linkable5 } from "./core.js";
 
 // src/gen/shapes.ts
@@ -1389,6 +1401,7 @@ var kinds = {
   "form": "Form",
   "hero": "Hero",
   "images": "Images",
+  "import": "Import",
   "island": "Island",
   "lines": "Lines",
   "list": "List",
@@ -1623,10 +1636,10 @@ function paging(s, b, had) {
 // react/src/kinds/pages.ts
 var key2 = (label2, name) => h("button", "", { type: "button", "aria-label": name }, h("span", "", null, label2));
 function pages({ b, hooks: hooks4 }) {
-  const root = useRef8(null);
+  const root = useRef9(null);
   const a = typeof document === "undefined" ? null : document.activeElement;
   const had = a && root.current?.contains(a) ? a.getAttribute("aria-label") : null;
-  useLayoutEffect4(() => void (root.current && paging(root.current, b, had)), [b]);
+  useLayoutEffect5(() => void (root.current && paging(root.current, b, had)), [b]);
   const [title, n] = [b.title || "Document", b.pages.length];
   const wide = Math.max(1, ...b.pages.map((p) => p.width));
   const bar5 = n ? [key2("\u2039", "previous page"), key2("\u203A", "next page"), h("i", "", null), key2("\u2212", "zoom out"), key2("fit", "fit to width"), key2("+", "zoom in")] : [];
@@ -1638,7 +1651,7 @@ function pages({ b, hooks: hooks4 }) {
 }
 
 // react/src/kinds/row.ts
-import { useContext as useContext7, useRef as useRef9, useState as useState8 } from "react";
+import { useContext as useContext8, useRef as useRef10, useState as useState8 } from "react";
 function round2(d, now, cx) {
   const tap = now ? null : d.tap ?? null;
   const url2 = urlOf(tap);
@@ -1654,9 +1667,9 @@ function round2(d, now, cx) {
   return h("li", `rd ${d.state}${now ? " now" : ""}`, null, h("i", "rdm", { "aria-label": d.state }), h("div", "rdx", null, l, body2));
 }
 function row2({ b, hooks: hooks4 }) {
-  const cx = useContext7(Cx);
+  const cx = useContext8(Cx);
   const [flip, setFlip] = useState8(false);
-  const x0 = useRef9(0);
+  const x0 = useRef10(0);
   const toggle2 = () => setFlip((f) => !f);
   const cls = `row${b.style === "link" ? " link" : ""}${b.sticky ? " sticky" : ""}${b.indent ? " in" + Math.min(b.indent, 3) : ""}`;
   const rounds = b.rounds ?? [];
@@ -1684,10 +1697,10 @@ function row2({ b, hooks: hooks4 }) {
 }
 
 // react/src/kinds/screen.ts
-import { useContext as useContext8 } from "react";
+import { useContext as useContext9 } from "react";
 var stays = (x) => x.type === "row" && x.sticky === true || x.type === "composer";
 function screen({ b, hooks: hooks4 }) {
-  const cx = useContext8(Cx);
+  const cx = useContext9(Cx);
   const go2 = (m) => () => m.tap ? cx.tap(m.tap) : void cx.act({ action: m.action ?? "", values: m.values, confirm: m.confirm });
   const acts2 = (b.actions ?? []).flatMap((a) => a.menu ?? [a]).map((m) => act(m, "b-screen__actions", cx, urlOf(m.tap), urlOf(m.tap) ? void 0 : go2(m)));
   const head3 = h("p", "tabh", null, h("span", "tw b-screen__title", null, (b.title ?? "").toLowerCase()), ...acts2);
@@ -1713,9 +1726,9 @@ function section({ b, hooks: hooks4 }) {
 var sheet = ({ b, hooks: hooks4 }) => h("div", "shb", hooks4, ...kids2(b.blocks));
 
 // react/src/kinds/stat.ts
-import { useContext as useContext9 } from "react";
+import { useContext as useContext10 } from "react";
 function stat({ b, hooks: hooks4 }) {
-  const cx = useContext9(Cx);
+  const cx = useContext10(Cx);
   const tile = (i) => {
     const sp = i.spark ?? [];
     const hi = Math.max(1, ...sp);
@@ -1728,7 +1741,7 @@ function stat({ b, hooks: hooks4 }) {
 }
 
 // react/src/kinds/table.ts
-import { useContext as useContext10, useLayoutEffect as useLayoutEffect5, useReducer as useReducer2, useRef as useRef10 } from "react";
+import { useContext as useContext11, useLayoutEffect as useLayoutEffect6, useReducer as useReducer2, useRef as useRef11 } from "react";
 
 // src/core/table.ts
 var SIGN = { THB: "\u0E3F", USD: "$", EUR: "\u20AC" };
@@ -2277,17 +2290,17 @@ var init = (b) => ({
   fields: /* @__PURE__ */ new Map()
 });
 function table({ b, hooks: hooks4 }) {
-  const cx = useContext10(Cx);
-  const live3 = useRef10(cx);
+  const cx = useContext11(Cx);
+  const live3 = useRef11(cx);
   live3.current = cx;
-  const keep = useRef10(/* @__PURE__ */ new Map());
-  const wired = useRef10(/* @__PURE__ */ new WeakSet());
-  const box = useRef10(null);
-  const kept = useRef10(null);
+  const keep = useRef11(/* @__PURE__ */ new Map());
+  const wired = useRef11(/* @__PURE__ */ new WeakSet());
+  const box = useRef11(null);
+  const kept = useRef11(null);
   const [, draw2] = useReducer2((n) => n + 1, 0);
   const st = state(b, kept.current ??= init(b));
   const v = { b, c: { act: (a) => live3.current.act(a), held: keep.current }, tap: (t2) => live3.current.tap(t2), st, box, wired: wired.current, draw: draw2 };
-  useLayoutEffect5(() => {
+  useLayoutEffect6(() => {
     if (!st.focus || !st.cur) return;
     st.focus = false;
     cellAt(v, st.cur)?.focus();
@@ -2299,14 +2312,14 @@ function table({ b, hooks: hooks4 }) {
 }
 
 // react/src/kinds/text.ts
-import { useContext as useContext11 } from "react";
+import { useContext as useContext12 } from "react";
 function text3({ b, hooks: hooks4 }) {
-  const cx = useContext11(Cx);
+  const cx = useContext12(Cx);
   return h("div", "txt", { ...hooks4, "data-md": b.markdown ?? "" }, ...md(b.markdown, cx.screen.startsWith("thread-")));
 }
 
 // react/src/kinds/timeline.ts
-import { useContext as useContext12, useLayoutEffect as useLayoutEffect6, useRef as useRef11, useState as useState9 } from "react";
+import { useContext as useContext13, useLayoutEffect as useLayoutEffect7, useRef as useRef12, useState as useState9 } from "react";
 
 // src/core/kind/timeline.ts
 var MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -2587,12 +2600,12 @@ function rove(root) {
   };
 }
 function timeline2({ b, hooks: hooks4 }) {
-  const cx = useContext12(Cx);
-  const live3 = useRef11(cx);
+  const cx = useContext13(Cx);
+  const live3 = useRef12(cx);
   live3.current = cx;
-  const keep = useRef11(/* @__PURE__ */ new Map());
-  const done = useRef11(/* @__PURE__ */ new WeakSet());
-  const [root, wrap, grid2] = [useRef11(null), useRef11(null), useRef11(null)];
+  const keep = useRef12(/* @__PURE__ */ new Map());
+  const done = useRef12(/* @__PURE__ */ new WeakSet());
+  const [root, wrap, grid2] = [useRef12(null), useRef12(null), useRef12(null)];
   const [px, setPx] = useState9(null);
   const [f, t] = [day(b.from), day(b.to)];
   const on = b.move != null || b.stretch != null || b.draw != null;
@@ -2600,8 +2613,8 @@ function timeline2({ b, hooks: hooks4 }) {
   const ax = f === null || t === null || t < f || b.tracks.length === 0 ? null : { f, t, n: t - f + 1, z, px, live: on, lane: () => grid2.current?.querySelector(".tmn")?.offsetWidth ?? 1 };
   const k = JSON.stringify([b, px]);
   const wires = [];
-  useLayoutEffect6(() => root.current ? rove(root.current) : void 0, []);
-  useLayoutEffect6(() => {
+  useLayoutEffect7(() => root.current ? rove(root.current) : void 0, []);
+  useLayoutEffect7(() => {
     if (done.current.has(wires)) return;
     done.current.add(wires);
     const c = { act: (a) => live3.current.act(a), tap: (x) => live3.current.tap(x), held: keep.current };
@@ -2630,19 +2643,19 @@ function zooms(ax, px, set, wrap, grid2) {
 }
 
 // react/src/gen/views.ts
-var views3 = { button, card, chips, form, images, list: list2, media: media2, pages, row: row2, screen, section, sheet, stat, table, text: text3, timeline: timeline2 };
+var views3 = { button, card, chips, form, images, import: import_, list: list2, media: media2, pages, row: row2, screen, section, sheet, stat, table, text: text3, timeline: timeline2 };
 
 // react/src/island.ts
-import { createElement as createElement9, Suspense, useContext as useContext13, useLayoutEffect as useLayoutEffect7, useState as useState10 } from "react";
+import { createElement as createElement9, Suspense, useContext as useContext14, useLayoutEffect as useLayoutEffect8, useState as useState10 } from "react";
 function Mark({ on }) {
-  useLayoutEffect7(() => {
+  useLayoutEffect8(() => {
     on(true);
     return () => on(false);
   }, [on]);
   return null;
 }
 function Isle({ b, attrs }) {
-  const cx = useContext13(Cx);
+  const cx = useContext14(Cx);
   const [live3, setLive] = useState10(false);
   const C = Object.prototype.hasOwnProperty.call(cx.islands, b.name) ? cx.islands[b.name] : void 0;
   const fallback = row4(b.fallback, cx);
@@ -2683,7 +2696,7 @@ function row4(f, cx) {
 }
 var kids2 = (bs) => (Array.isArray(bs) ? bs.filter(isBlk2) : []).map((b, i) => createElement10(Block, { key: typeof b["id"] === "string" ? b["id"] : `~${i}`, b }));
 function Fallen({ b }) {
-  const cx = useContext14(Cx);
+  const cx = useContext15(Cx);
   const f = b["fallback"] ?? { title: String(b["type"]) };
   return h("div", "", hooksOf(b, cx, true), isFallback(f) ? row4(f, cx) : null, ...kids2(b["blocks"]));
 }
@@ -2710,7 +2723,7 @@ var own2 = (t, b, attrs) => {
   return V ? createElement10(V, { b, hooks: attrs }) : void 0;
 };
 function Draw({ b }) {
-  const cx = useContext14(Cx);
+  const cx = useContext15(Cx);
   if (isIsland(b)) return createElement10(Isle, { b, attrs: hooksOf(b, cx, false) });
   if (core(b)) return own2(b.type, b, hooksOf(b, cx, false)) ?? createElement10(Fallen, { b });
   const K = cx.kinds[String(b["type"])];
@@ -2718,7 +2731,7 @@ function Draw({ b }) {
   return K ? h("div", "", hooksOf(b, cx, false), createElement10(K, { block: { ...b, type: String(b["type"]) }, act: act2 })) : createElement10(Fallen, { b });
 }
 var Block = memo(function Block2({ b }) {
-  const cx = useContext14(Cx);
+  const cx = useContext15(Cx);
   return createElement10(Boundary, { b, report: cx.report, fallback: createElement10(Fallen, { b }) }, createElement10(Draw, { b }));
 });
 
@@ -2731,7 +2744,7 @@ var watch = (on) => {
   return () => m.removeEventListener("change", on);
 };
 function BlocksView(p) {
-  const last = useRef12(void 0);
+  const last = useRef13(void 0);
   const screen2 = useMemo2(() => last.current = share(last.current, p.screen), [p.screen]);
   const { cx, ask } = useCx(p, screen2);
   const dark = useSyncExternalStore(watch, () => matchMedia(DARK).matches, () => false);

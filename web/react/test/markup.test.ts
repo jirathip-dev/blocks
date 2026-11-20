@@ -33,7 +33,7 @@ before(async () => (browser = await webkit.launch()));
 after(() => browser.close());
 
 async function markup(p, b) {
-  return p.evaluate((b) => {
+  return p.evaluate(async (b) => {
     window.posts = [];
     window.sent = [];
     const ctx = { screen: String(b.id ?? ""), act: async (a) => (window.posts.push(a), true), tap: () => {}, open: new Set(), theme: window.H.plain, store: { get: () => null, put: () => {} }, held: new Map() };
@@ -41,6 +41,7 @@ async function markup(p, b) {
     a.replaceChildren(window.H.render(b, ctx));
     if (window.view) window.view.set(b);
     else window.view = window.R.boot(r, b, { sent: (a) => (window.sent.push(a), true), dropped: () => {} });
+    await new Promise((t) => setTimeout(t));
     const kept = (n) => n === "role" || n.startsWith("data-") || n.startsWith("aria-");
     const seen = (e) => [e.tagName, [...e.classList].sort().join(" "), e.getAttributeNames().filter(kept).sort().map((n) => `${n}=${e.getAttribute(n)}`), [...e.childNodes].filter((t) => t.nodeType === 3).map((t) => t.textContent).join("")];
     const all = (root) => (root ? [root, ...root.querySelectorAll("*")].map(seen) : []);
@@ -49,7 +50,7 @@ async function markup(p, b) {
 }
 
 test("each kind React draws natively writes the HTML renderer's markup: tags, classes, data-*, role, aria-* and own text, in order", async () => {
-  deepStrictEqual([...native].sort(), ["button", "card", "chips", "form", "images", "list", "media", "pages", "row", "screen", "section", "sheet", "stat", "table", "text", "timeline"]);
+  deepStrictEqual([...native].sort(), ["button", "card", "chips", "form", "images", "import", "list", "media", "pages", "row", "screen", "section", "sheet", "stat", "table", "text", "timeline"]);
   const p = await browser.newPage();
   await p.setContent("<base href=https://x.test/><div id=html></div><div id=react></div>");
   await p.addScriptTag({ content: reactJs() });

@@ -37,6 +37,7 @@ export const hooks: Record<Kind, Hook> = {
     toast: { variant: null, parts: ["title"] },
     pages: { variant: null, parts: ["title"] },
     timeline: { variant: null, parts: ["title"] },
+    import: { variant: null, parts: ["title"] },
 };
 
 export const roles: Record<string, string> = { section: "region", form: "form", config: "form", nav: "navigation", chart: "figure", toast: "status" };

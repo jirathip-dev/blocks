@@ -236,7 +236,8 @@
               "chart",
               "toast",
               "pages",
-              "timeline"
+              "timeline",
+              "import"
             ]
           },
           "type": "string"
@@ -758,6 +759,19 @@
           "properties": {
             "type": {
               "const": "timeline",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/Import",
+          "properties": {
+            "type": {
+              "const": "import",
               "type": "string"
             }
           },
@@ -2390,6 +2404,22 @@
       },
       "type": "object"
     },
+    "FileLink": {
+      "description": "A file the app sends: its name and where to fetch it.",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "src": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "src"
+      ],
+      "type": "object"
+    },
     "FileRef": {
       "description": "A file the app holds, as its file handler answered it; `src` is a picture of it the app serves.",
       "properties": {
@@ -2852,6 +2882,329 @@
         "items"
       ],
       "type": "object"
+    },
+    "Import": {
+      "additionalProperties": true,
+      "description": "A spreadsheet import the app's server reads: upload a file, check the column match and the row errors, confirm one action.",
+      "properties": {
+        "accept": {
+          "items": {
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "action": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "columns": {
+          "items": {
+            "$ref": "#/$defs/ImportColumn"
+          },
+          "type": "array"
+        },
+        "done": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ImportDone"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "into": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "mb": {
+          "format": "uint32",
+          "minimum": 0,
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "read": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "refused": {
+          "items": {
+            "$ref": "#/$defs/ImportRow"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "sheet": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ImportSheet"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "template": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FileLink"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "title": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "title",
+        "columns"
+      ],
+      "type": "object"
+    },
+    "ImportColumn": {
+      "description": "A column the screen takes: its key in the match, its header, type, whether it is required and its allowed values.",
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "required": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "type": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ImportType"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "values": {
+          "items": {
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "key",
+        "label"
+      ],
+      "type": "object"
+    },
+    "ImportDone": {
+      "description": "What the app took at import: how many rows, how many were left out, and a file of those.",
+      "properties": {
+        "count": {
+          "format": "uint32",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "file": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FileLink"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "left": {
+          "format": "uint32",
+          "minimum": 0,
+          "type": [
+            "integer",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "count"
+      ],
+      "type": "object"
+    },
+    "ImportFile": {
+      "description": "The picked file as the app's server read it: its file handler id, name, size in bytes, row count and sheets.",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "rows": {
+          "format": "uint32",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "sheet": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "sheets": {
+          "items": {
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "size": {
+          "format": "uint32",
+          "minimum": 0,
+          "type": [
+            "integer",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "rows"
+      ],
+      "type": "object"
+    },
+    "ImportRow": {
+      "description": "A row of the file: its spreadsheet row number, its cells and the server's reasons, both by column key.",
+      "properties": {
+        "bad": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "cells": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "n": {
+          "format": "uint32",
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "n",
+        "cells"
+      ],
+      "type": "object"
+    },
+    "ImportSheet": {
+      "description": "The server's answer to `read`: the file, its headers, the match (column key to header), the first rows and every bad row.",
+      "properties": {
+        "bad": {
+          "items": {
+            "$ref": "#/$defs/ImportRow"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "file": {
+          "$ref": "#/$defs/ImportFile"
+        },
+        "headers": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "map": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "rows": {
+          "items": {
+            "$ref": "#/$defs/ImportRow"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "file",
+        "headers",
+        "map",
+        "rows"
+      ],
+      "type": "object"
+    },
+    "ImportType": {
+      "anyOf": [
+        {
+          "enum": [
+            "text",
+            "number",
+            "money",
+            "date",
+            "choice"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "string"
+        }
+      ]
     },
     "Island": {
       "additionalProperties": true,

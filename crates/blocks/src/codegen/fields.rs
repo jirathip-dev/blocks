@@ -3,7 +3,8 @@ use std::path::Path;
 use serde_json::Value;
 
 use super::Files;
-use crate::{site, tree, Block, Built, Field, Form, Lang, Locale, Screen, Submit};
+use crate::kind::Word;
+use crate::{site, tree, Block, Built, Field, Form, Import, Lang, Locale, Screen, Submit};
 
 const STATES: [(&str, &str); 4] = [
     ("error", "Check this one"),
@@ -111,11 +112,17 @@ fn views(file: &str, dir: &str, types: &[&str]) -> (String, String) {
 }
 
 fn words() -> Files {
-    let all: Vec<_> = Field::WORDS.iter().flat_map(|ws| ws.iter()).collect();
-    let ts: String = all
+    let all: Vec<_> = Field::WORDS
         .iter()
-        .map(|(k, en, th)| format!("  {k}: [\"{en}\", \"{th}\"],\n"))
+        .flat_map(|ws| ws.iter())
+        .chain(Import::WORDS)
         .collect();
+    let ts = |ws: &[&Word]| -> String {
+        ws.iter()
+            .map(|(k, en, th)| format!("  {k}: [\"{en}\", \"{th}\"],\n"))
+            .collect()
+    };
+    let (fields, import) = all.split_at(all.len() - Import::WORDS.len());
     let swift: String = all
         .iter()
         .map(|(k, en, th)| format!("    \"{k}\": (en: \"{en}\", th: \"{th}\"),\n"))
@@ -123,7 +130,11 @@ fn words() -> Files {
     vec![
         (
             "web/src/gen/words.ts".into(),
-            format!("export const words: Record<string, [en: string, th: string]> = {{\n{ts}}};\n"),
+            format!("export const words: Record<string, [en: string, th: string]> = {{\n{}}};\n", ts(fields)),
+        ),
+        (
+            "web/src/gen/words-import.ts".into(),
+            format!("export const importWords: Record<string, [en: string, th: string]> = {{\n{}}};\n", ts(import)),
         ),
         (
             "swift/Sources/Blocks/Gen/Words.swift".into(),

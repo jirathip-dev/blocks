@@ -25,7 +25,9 @@ const GROUPS: [(&str, &[&str]); 4] = [
     ),
     (
         "Input",
-        &["button", "choice", "form", "lines", "composer", "run", "toast"],
+        &[
+            "button", "choice", "form", "lines", "composer", "run", "toast", "import",
+        ],
     ),
 ];
 
@@ -98,6 +100,9 @@ fn about(kind: &str) -> &'static str {
         "table" => "Typed columns: sort, filter, totals, row select and export; rows on a phone.",
         "toast" => "A short line after an action, in a tone, with an optional undo.",
         "timeline" => "Rows of bars on a day axis: move a bar or pull an edge, by pointer, keys or VoiceOver.",
+        "import" => {
+            "A spreadsheet import the app's server reads: upload, the column match and row errors, then one confirm."
+        }
         _ => "",
     }
 }
@@ -527,6 +532,7 @@ pub fn samples() -> Vec<(String, Vec<Block>)> {
         picked("toast"),
         vec![document()],
         picked("timeline"),
+        picked("import"),
     ]
     .concat();
     Block::KINDS

@@ -14,3 +14,13 @@ fn the_bundle_exports_mount_and_carries_the_shell_style() {
         "web/dist/blocks.css lost its layer"
     );
 }
+
+#[test]
+fn the_import_view_is_its_own_chunk_that_blocks_js_fetches_on_first_draw() {
+    assert!(blocks::web::JS.contains("import(\"./import.js\")"));
+    assert!(
+        !blocks::web::JS.contains("imChecking"),
+        "the import view leaked into blocks.js"
+    );
+    assert!(blocks::web::IMPORT.contains("imChecking"));
+}

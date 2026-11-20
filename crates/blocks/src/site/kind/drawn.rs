@@ -12,6 +12,7 @@ kinds! {
     "form" => form,
     "hero" => hero,
     "images" => images,
+    "import" => import,
     "island" => island,
     "lines" => lines,
     "list" => list,
