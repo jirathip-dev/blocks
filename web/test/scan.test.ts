@@ -159,6 +159,7 @@ test("the scan field in WebKit, HTML and React: no camera, pick a skewed photo, 
 test("one page, shutter to corrected image (corners on 640 px, then the warp and JPEG of a 3024 × 4032 camera JPEG), stays within 400 ms at p95 in WebKit's worker", { timeout: 60000 }, async () => {
   const { browser, page, errors } = await scanner("html");
   try {
+    page.on("console", (c) => process.stdout.write(`PROF ${c.text()}\n`));
     const runs = await page.evaluate(async (png) => {
       const blob = new Blob([Uint8Array.from(atob(png), (c) => c.charCodeAt(0))], { type: "image/png" });
       const m = await import("./scan.js"), took = [];
@@ -169,6 +170,7 @@ test("one page, shutter to corrected image (corners on 640 px, then the warp and
         const t0 = performance.now(), shot = await m.quadOf(taken), page = await m.pageOf(shot, shot.quad, shot.quad);
         took.push({ ms: performance.now() - t0, found: shot.quad[0][0] > 3024 * 0.15, jpeg: [page.jpeg[0], page.jpeg[1]] });
       }
+      console.log(JSON.stringify(m.PROF));
       return took.slice(1);
     }, readFileSync(at("../../fixtures/scan/note.png")).toString("base64"));
     for (const r of runs) deepStrictEqual([r.found, r.jpeg], [true, [0xff, 0xd8]], "the corners are the page's, not the inset, and the page is a JPEG");
