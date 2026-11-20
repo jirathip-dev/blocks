@@ -164,7 +164,7 @@ test("one page, shutter to corrected image (corners on 640 px, then the warp and
       const m = await import("./scan.js"), took = [];
       for (let i = 0; i < 6; i++) {
         const photo = await createImageBitmap(blob, { resizeWidth: 3024, resizeHeight: 4032 });
-        const t0 = performance.now(), { photo: back, quad } = await m.quadOf(photo), page = await m.pageOf(back, quad, quad);
+        const t0 = performance.now(), quad = await m.quadOf(photo), page = await m.pageOf(photo, quad, quad);
         took.push({ ms: performance.now() - t0, found: quad[0][0] > 3024 * 0.15, jpeg: [page.jpeg[0], page.jpeg[1]] });
       }
       return took.slice(1);

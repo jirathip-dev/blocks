@@ -16,9 +16,6 @@ export type Opts = {
     w(key: string): string;
     pages?: Page[] | undefined;
 };
-export declare const quadOf: (photo: ImageBitmap) => Promise<{
-    photo: ImageBitmap;
-    quad: Quad;
-}>;
+export declare const quadOf: (photo: ImageBitmap) => Promise<Quad>;
 export declare const pageOf: (photo: ImageBitmap, quad: Quad, auto: Quad) => Promise<Page>;
 export declare function scan(o: Opts): Promise<Scanned | undefined>;

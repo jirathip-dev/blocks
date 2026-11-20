@@ -9,8 +9,10 @@ export type Scanned = { pdf: Blob; pages: Page[] };
 /// What the scanner is opened with: the field's label, its page limit, its words, and the pages of an earlier scan.
 export type Opts = { label: string; max: number; w(key: string): string; pages?: Page[] | undefined };
 
-type Ask = { op: "find"; photo: ImageBitmap } | { op: "page"; photo: ImageBitmap; quad: Quad } | { op: "pdf"; pages: Uint8Array[] };
-type Reply = { id: number; quad?: Quad | null; jpeg?: Blob; pdf?: Blob; made?: number; photo?: ImageBitmap };
+type Pic = { op: "find" } | { op: "page"; quad: Quad };
+type Ask = (Pic & { photo: ImageBitmap }) | { op: "pdf"; pages: Uint8Array[] };
+type Sent = { id: number } & (Ask | (Pic & { photo?: undefined }));
+type Reply = { id: number; quad?: Quad | null; jpeg?: Blob; pdf?: Blob; made?: number };
 type Edit = { photo: ImageBitmap; quad: Quad; auto: Quad; at: number };
 type S = {
   o: Opts;
@@ -64,12 +66,14 @@ async function work(a: Ask, made: (n: number) => void): Promise<Omit<Reply, "id"
 }
 
 if (typeof document === "undefined")
-  addEventListener("message", (e: MessageEvent<Ask & { id: number }>) => {
-    const a = e.data, id = a.id, photo = a.op === "pdf" ? undefined : a.photo;
-    work(a, (made) => postMessage({ id, made })).then((out) => postMessage({ id, ...out, photo }, { transfer: photo ? [photo] : [] }));
+  addEventListener("message", (e: MessageEvent<Sent>) => {
+    const s = e.data, id = s.id;
+    if (s.op !== "pdf") kept = s.photo ?? kept;
+    const a: Ask | undefined = s.op === "pdf" ? s : kept && { ...s, photo: kept };
+    if (a) work(a, (made) => postMessage({ id, made })).then((out) => postMessage({ id, ...out }));
   });
 
-let worker: Worker | undefined, seq = 0;
+let worker: Worker | undefined, seq = 0, kept: ImageBitmap | undefined;
 const waiting = new Map<number, { done(r: Reply): void; made?: ((n: number) => void) | undefined }>();
 function ask(a: Ask, made?: (n: number) => void): Promise<Reply> {
   if (!worker) {
@@ -81,19 +85,18 @@ function ask(a: Ask, made?: (n: number) => void): Promise<Reply> {
       w?.done(e.data);
     };
   }
-  const id = ++seq;
-  worker.postMessage({ ...a, id }, { transfer: a.op === "pdf" ? [] : [a.photo] });
+  const id = ++seq, same = a.op !== "pdf" && a.photo === kept;
+  if (a.op !== "pdf") kept = a.photo;
+  const sent: Sent = same ? { ...a, photo: undefined, id } : { ...a, id };
+  worker.postMessage(sent);
   return new Promise((done) => waiting.set(id, { done, made }));
 }
-/// The corners found in `photo`, or the frame's inset when none are, with the photo handed back from the worker.
-export const quadOf = async (photo: ImageBitmap): Promise<{ photo: ImageBitmap; quad: Quad }> => {
-  const [w, h] = [photo.width, photo.height], r = await ask({ op: "find", photo });
-  return { photo: r.photo ?? photo, quad: r.quad ?? inset(w, h) };
-};
+/// The corners found in `photo`, or the frame's inset when none are.
+export const quadOf = async (photo: ImageBitmap): Promise<Quad> => (await ask({ op: "find", photo })).quad ?? inset(photo.width, photo.height);
 /// The page inside `quad` in `photo`, corrected to A4 and drawn to a JPEG in the worker.
 export const pageOf = async (photo: ImageBitmap, quad: Quad, auto: Quad): Promise<Page> => {
-  const r = await ask({ op: "page", photo, quad }), jpeg = new Uint8Array((await r.jpeg?.arrayBuffer()) ?? new ArrayBuffer(0));
-  return { photo: r.photo ?? photo, quad, auto, jpeg, url: URL.createObjectURL(new Blob([jpeg], { type: "image/jpeg" })) };
+  const jpeg = new Uint8Array((await (await ask({ op: "page", photo, quad })).jpeg?.arrayBuffer()) ?? new ArrayBuffer(0));
+  return { photo, quad, auto, jpeg, url: URL.createObjectURL(new Blob([jpeg], { type: "image/jpeg" })) };
 };
 
 const el = <K extends keyof HTMLElementTagNameMap>(tag: K, cls = "", ...kids: (Node | string)[]) => {
@@ -305,9 +308,9 @@ function paint(s: S): void {
 }
 
 async function next(s: S, back = false) {
-  const shot = s.queue.shift();
-  if (!shot) return go(s, { step: back || (s.pages.length && s.cam !== "on") ? "review" : "capture" });
-  const { photo, quad } = await quadOf(shot);
+  const photo = s.queue.shift();
+  if (!photo) return go(s, { step: back || (s.pages.length && s.cam !== "on") ? "review" : "capture" });
+  const quad = await quadOf(photo);
   go(s, { edit: { photo, quad, auto: quad, at: s.at }, step: "corners" });
 }
 async function shoot(s: S) {
@@ -332,8 +335,7 @@ async function look(s: S) {
     const t = performance.now(), [vw, vh] = [s.video.videoWidth, s.video.videoHeight];
     if (s.step === "capture" && vw) {
       const k = 640 / Math.max(vw, vh), frame = await createImageBitmap(s.video, { resizeWidth: Math.round(vw * k), resizeHeight: Math.round(vh * k) });
-      const r = await ask({ op: "find", photo: frame }), q = r.quad, was = !!s.live;
-      r.photo?.close();
+      const q = (await ask({ op: "find", photo: frame })).quad, was = !!s.live;
       s.live = q ? scaled(q, k) : null;
       const shape = s.box.querySelector(".snv.found .snq, .snv.seek .snq");
       if (was !== !!s.live) paint(s);
