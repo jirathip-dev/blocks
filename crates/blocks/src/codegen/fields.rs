@@ -16,10 +16,13 @@ const STATES: [(&str, &str); 4] = [
 ];
 
 pub(super) fn files(root: &Path) -> std::io::Result<Files> {
-    let names = drawn(root)?;
+    let names = drawn(root, "web/src/render/field")?;
     let types: Vec<&str> = names.iter().map(String::as_str).collect();
     let mut out = words();
-    out.push(views(&types));
+    out.push(views("web/src/gen/fields.ts", "../render/field", &types));
+    let react = drawn(root, "web/react/src/fields")?;
+    let react: Vec<&str> = react.iter().map(String::as_str).collect();
+    out.push(views("web/react/src/gen/fields.ts", "../fields", &react));
     for f in Field::samples() {
         let filled = serde_json::to_value(&f)?;
         let kind = filled
@@ -67,9 +70,9 @@ fn screen(kind: &str, filled: &Value) -> std::io::Result<Screen> {
         .blocks(vec![Block::Form(Box::new(form))]))
 }
 
-fn drawn(root: &Path) -> std::io::Result<Vec<String>> {
+fn drawn(root: &Path, dir: &str) -> std::io::Result<Vec<String>> {
     let mut types = vec![];
-    for f in std::fs::read_dir(root.join("web/src/render/field"))? {
+    for f in std::fs::read_dir(root.join(dir))? {
         let name = f?.file_name().to_string_lossy().into_owned();
         types.extend(
             name.strip_suffix(".ts")
@@ -81,16 +84,16 @@ fn drawn(root: &Path) -> std::io::Result<Vec<String>> {
     Ok(types)
 }
 
-fn views(types: &[&str]) -> (String, String) {
-    let mut ts = String::from("import type { FieldView } from \"../render/field/_view.ts\";\n");
+fn views(file: &str, dir: &str, types: &[&str]) -> (String, String) {
+    let mut ts = format!("import type {{ FieldView }} from \"{dir}/_view.ts\";\n");
     for t in types {
-        ts += &format!("import {{ {t} }} from \"../render/field/{t}.ts\";\n");
+        ts += &format!("import {{ {t} }} from \"{dir}/{t}.ts\";\n");
     }
     ts += &format!(
         "\nexport const views: Record<string, FieldView | undefined> = {{ {} }};\n",
         types.join(", ")
     );
-    ("web/src/gen/fields.ts".into(), ts)
+    (file.into(), ts)
 }
 
 fn words() -> Files {
