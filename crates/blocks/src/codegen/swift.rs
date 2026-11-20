@@ -194,9 +194,12 @@ fn swift_tagged(name: &str, tag: &str, cases: &[(&str, Case<'_>)], rest: Option<
     for (c, p) in cases {
         let (case, ty) = (word(&camel(c, false)), payload(c, p));
         decl.push_str(&format!("    case {case}({ty})\n"));
-        dec.push_str(&format!(
-            "        case \"{c}\": self = .{case}(try {ty}(from: decoder))\n"
-        ));
+        dec.push_str(&match rest {
+            Some(_) => format!(
+                "        case \"{c}\": self = try (try? {ty}(from: decoder)).map(Self.{case}) ?? .{other}(JSONValue(from: decoder))\n"
+            ),
+            None => format!("        case \"{c}\": self = .{case}(try {ty}(from: decoder))\n"),
+        });
         enc.push_str(&format!(
             "        case .{case}(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); \
              try c.encode(\"{c}\", forKey: .tag)\n"
@@ -204,7 +207,14 @@ fn swift_tagged(name: &str, tag: &str, cases: &[(&str, Case<'_>)], rest: Option<
     }
     let (rest_decl, rest_dec, rest_enc) = if rest.is_some() {
         (
-            format!("    case {other}(JSONValue)\n"),
+            format!(
+                "    case {other}(JSONValue)\n\n    public static let tags: Set<String> = [{}]\n",
+                cases
+                    .iter()
+                    .map(|(c, _)| format!("\"{c}\""))
+                    .collect::<Vec<_>>()
+                    .join(", ")
+            ),
             format!("self = .{other}(try JSONValue(from: decoder))"),
             format!("        case .{other}(let v): try v.encode(to: encoder)\n"),
         )

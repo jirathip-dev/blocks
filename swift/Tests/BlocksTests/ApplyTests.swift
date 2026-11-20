@@ -150,6 +150,9 @@ final class ApplyTests: XCTestCase {
             } else if let synced = s["synced"] {
                 let took = replica.synced(try decode([Have].self, s["sent"]), try decode(Synced.self, synced))
                 check("took", .array(took.map { .string($0.rawValue) }), s["took"])
+            } else if case .object(var a)? = s["action"] {
+                a["screen"] = nil
+                check("action", try JSONValue(try decode(BlockAction.self, .object(a))), .object(a))
             } else {
                 bad.append("step \(i): no such step")
             }

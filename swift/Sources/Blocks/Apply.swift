@@ -124,7 +124,14 @@ extension JSONValue {
     fileprivate mutating func apply(_ op: Op) throws(ApplyError) {
         switch op {
         case .merge(let m):
-            guard edit(m.id, { .object($0.fields.merging(m.fields) { $1 }) }) else { throw .noBlock(m.id) }
+            var bent = false
+            let merged = edit(m.id) { old in
+                let new = Self.object(old.fields.merging(m.fields) { $1 })
+                bent = old.fits && !new.fits
+                return new
+            }
+            guard merged else { throw .noBlock(m.id) }
+            if bent { throw .shape("block `\(m.id)` no longer fits its kind") }
         case .insert(let i):
             try insert(try Self.json(i.block), into: i.into, before: i.before, after: i.after)
         case .move(let m):
@@ -147,6 +154,11 @@ extension JSONValue {
         case .unknown:
             throw .unknown
         }
+    }
+
+    private var fits: Bool {
+        guard Block.tags.contains(type), case .appBlock? = try? decode(Block.self) else { return true }
+        return false
     }
 
     private static func json(_ value: some Encodable) throws(ApplyError) -> Self {

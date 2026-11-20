@@ -22,6 +22,8 @@ export type Ctx = {
   file?: OnFile | undefined;
 };
 
+/// The body a post sends from `screen`: the wire's action.
+export const posted = (screen: string, a: Post): string => JSON.stringify({ screen, action: a.action, block: a.block ?? undefined, values: a.values ?? undefined });
 export const obj = (v: unknown): Blk => (isBlk(v) ? v : {});
 export const draft = (i: HTMLInputElement, key: string, store: Store) => {
   i.dataset["draft"] = key;

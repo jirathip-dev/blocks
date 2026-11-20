@@ -110,6 +110,7 @@ extension EnvironmentValues {
     @Entry public var card = CardContext()
     @Entry internal var form: Binding<[String: JSONValue]>?
     @Entry internal var behaved = Behaved()
+    @Entry internal var actionBlock: String?
 
     internal var edit: @MainActor (BlockState) -> Void {
         get { self[EditKey.self] }
@@ -117,7 +118,10 @@ extension EnvironmentValues {
     }
 
     internal var act: @MainActor (BlockAction) -> Void {
-        get { self[ActKey.self] }
+        get {
+            let (act, block) = (self[ActKey.self], actionBlock)
+            return { act($0.from(block)) }
+        }
         set { self[ActKey.self] = newValue }
     }
 

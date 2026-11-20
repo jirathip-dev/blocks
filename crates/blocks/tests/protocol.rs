@@ -1,6 +1,6 @@
 use std::path::Path;
 
-use blocks::{Answer, Block, Frame, Have, Hello, MediaType, Mirror, Outdated, Synced, Toast, Tone, Undo};
+use blocks::{Action, Answer, Block, Frame, Have, Hello, MediaType, Mirror, Outdated, Synced, Toast, Tone, Undo};
 use serde_json::Value;
 
 fn took<T: std::fmt::Debug>(t: T) -> Value {
@@ -36,6 +36,9 @@ fn run(case: &Value) -> Result<(), String> {
             let s: Synced = serde_json::from_value(s.clone()).unwrap();
             let got = m.synced(&sent, s).into_iter().map(took).collect();
             at("took", Value::Array(got), &step["took"])?;
+        } else if let Some(a) = step.get("action") {
+            let sent: Action = serde_json::from_value(a.clone()).unwrap();
+            at("action", serde_json::to_value(sent).unwrap(), a)?;
         } else {
             return Err(format!("step {i}: no such step {step}"));
         }

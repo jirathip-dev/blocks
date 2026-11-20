@@ -9,7 +9,7 @@ import { apply, patcher } from "./patch.ts";
 import { type Blk, blks, isBlk } from "./core/tree.ts";
 import { linkable } from "./render/act.ts";
 import { render } from "./render/block.ts";
-import { type Ctx, obj, type Post, type Renderer, type Store } from "./render/ctx.ts";
+import { type Ctx, obj, type Post, posted, type Renderer, type Store } from "./render/ctx.ts";
 import { btn, el, h } from "./render/dom.ts";
 import { tick } from "./render/text.ts";
 import type { OnFile } from "./core/field/files.ts";
@@ -319,7 +319,7 @@ function draw(o: Mount, store: Store, theme: Theme, wear: (name: string | null, 
     if (isBlk(a.confirm) && !(await confirmed(a.confirm))) return false;
     b?.setAttribute("aria-busy", "true");
     try {
-      const body = JSON.stringify({ action: a.action, block: a.block ?? undefined, values: a.values ?? undefined, screen: ctx(v).screen });
+      const body = posted(ctx(v).screen, a);
       const r = await fetch(o.url(v.source, "/action"), { method: "POST", headers: { "content-type": "application/json" }, body });
       const j: Answer = await r.json().catch(() => ({}));
       if (!r.ok) {
@@ -458,7 +458,7 @@ export function adopt(o: { theme?: Theme; store?: Store; blocks?: AppBlocks } = 
   };
   const act = async (a: Post): Promise<boolean> => {
     if (isBlk(a.confirm) && !confirm(String(a.confirm["title"] ?? ""))) return false;
-    const body = JSON.stringify({ screen, action: a.action, block: a.block ?? undefined, values: a.values ?? undefined });
+    const body = posted(screen, a);
     const r = await fetch(data.dataset["action"] ?? "", { method: "POST", headers: { "content-type": "application/json" }, body }).catch(() => undefined);
     const j: Answer = (await r?.json().catch(() => undefined)) ?? {};
     if (j.ops?.length) take(j.ops);
