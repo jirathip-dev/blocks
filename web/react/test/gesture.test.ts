@@ -126,8 +126,10 @@ test("a React row dropped stays moved until refused, then goes back; a refused c
   const run = (steps, adapter = "react") => shot({ screen: quotes, css, size, adapter, browser, steps });
   const drop = { gesture: { id: "quote", grab: "v1", via: "pointer", reach: [[0, 20], [0, 50]] } };
   const rows = await run([{ shot: { name: "before" } }, drop, { shot: { name: "dropped" } }, { refuse: {} }, { shot: { name: "back" } }]);
-  ok(!rows.pngs.before.equals(rows.pngs.dropped), "dropped somewhere else");
-  ok(rows.pngs.before.equals(rows.pngs.back), "back where it was");
+  const order = (name) => rows.trees[name].children[0].text;
+  ok(order("before").indexOf("Gate") < order("before").indexOf("Ball"), "Gate above Ball");
+  ok(order("dropped").indexOf("Gate") > order("dropped").indexOf("Ball"), "dropped below Ball");
+  strictEqual(order("back"), order("before"), "back where it was");
   const edit = { gesture: { id: "quote", grab: { row: "v2", column: "qty" }, via: "keys", reach: ["8"] } };
   const cells = await run([{ shot: { name: "before" } }, edit, { shot: { name: "typed" } }, { refuse: {} }, { shot: { name: "back" } }]);
   deepStrictEqual(cells.report.sent, cellSent({ row: "v2", column: "qty", value: 8 }));
