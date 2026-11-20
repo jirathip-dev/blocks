@@ -1,5 +1,5 @@
 import type { Card } from "../gen/types.ts";
-import { btn, type Ctx, el, h, kids, ticked, toggle } from "./index.ts";
+import { btn, type Ctx, el, h, kids, ticked, toggle, tone } from "./index.ts";
 
 export function card(b: Card, c: Ctx): HTMLElement {
   const k = el("div", `card ${b.tone ?? ""} k-${b.kind ?? ""}`);
@@ -28,7 +28,10 @@ export function card(b: Card, c: Ctx): HTMLElement {
   if (b.badge) head.append(" ", h("span", `tag b-card__badge ${b.badge.tone ?? ""}`, ticked(b.badge.text)));
   if (b.meta) head.append(" ", h("span", "m", ticked(b.meta)));
   if (b.title || b.badge) k.append(head);
-  if (b.subtitle) k.append(h("p", "m b-card__subtitle", b.subtitle));
+  if (b.subtitle) {
+    const s = tone(b.subtitle);
+    k.append(h("p", `m b-card__subtitle ${s.tone ?? ""}`.trimEnd(), ticked(s.text)));
+  }
   k.append(...kids(b.blocks, c));
   const buttons = b.buttons ?? [];
   if (buttons.length) {
