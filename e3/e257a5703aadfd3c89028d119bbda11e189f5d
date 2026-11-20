@@ -1,0 +1,7 @@
+Decided: merge origin/staging; keep staging's import lists and add Page and Pages in sample.rs and site/src/kinds.rs
+Because: crates/blocks/src/kind/sample.rs:5
+Decided: take staging's generated files and rebuild them with the just gen steps instead of merging by hand
+Because: web/package.json:7
+Rejected: none
+Check: drover arch-check --base origin/staging reports 0 violations, so the generated files match the gen steps
+Owner: The document view sits on the latest staging with the new form fields and the restyled looks; nothing changes in how it works.
