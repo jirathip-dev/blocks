@@ -39,6 +39,7 @@ fn same_frame(old: &Block, new: &Block) -> bool {
         sites,
         personas,
         threads,
+        locale,
         show,
         more,
     } = &**a;
@@ -46,19 +47,21 @@ fn same_frame(old: &Block, new: &Block) -> bool {
         == (
             &b.id, &b.title, &b.large, &b.state, &b.stream, &b.actions, &b.back, &b.done, &b.refresh,
         )
-        && (pending, focus, badge, source, url, sites, personas, threads, show, more)
-            == (
-                &b.pending,
-                &b.focus,
-                &b.badge,
-                &b.source,
-                &b.url,
-                &b.sites,
-                &b.personas,
-                &b.threads,
-                &b.show,
-                &b.more,
-            )
+        && (
+            pending, focus, badge, source, url, sites, personas, threads, locale, show, more,
+        ) == (
+            &b.pending,
+            &b.focus,
+            &b.badge,
+            &b.source,
+            &b.url,
+            &b.sites,
+            &b.personas,
+            &b.threads,
+            &b.locale,
+            &b.show,
+            &b.more,
+        )
 }
 
 fn ids(list: &[Block]) -> Option<HashMap<&str, (usize, &Block)>> {

@@ -1877,6 +1877,7 @@
       "anyOf": [
         {
           "enum": [
+            "ce",
             "be"
           ],
           "type": "string"
@@ -2166,136 +2167,101 @@
       "type": "object"
     },
     "Field": {
-      "description": "One input of a form.",
-      "properties": {
-        "checks": {
-          "items": {
-            "$ref": "#/$defs/Check"
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TextField",
+          "properties": {
+            "type": {
+              "const": "text",
+              "type": "string"
+            }
           },
-          "type": [
-            "array",
-            "null"
-          ]
+          "required": [
+            "type"
+          ],
+          "type": "object"
         },
-        "doc": {
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "enabled": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/Expr"
-            },
-            {
-              "type": "null"
+        {
+          "$ref": "#/$defs/ToggleField",
+          "properties": {
+            "type": {
+              "const": "toggle",
+              "type": "string"
             }
-          ]
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
         },
-        "error": {
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "keyboard": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/Keyboard"
-            },
-            {
-              "type": "null"
+        {
+          "$ref": "#/$defs/PickerField",
+          "properties": {
+            "type": {
+              "const": "picker",
+              "type": "string"
             }
-          ]
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/SecretField",
+          "properties": {
+            "type": {
+              "const": "secret",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/OtherField"
+        }
+      ],
+      "description": "A form's field: an object whose `type` names its type; any other `type` is kept whole and drawn as text."
+    },
+    "FieldDrawn": {
+      "description": "How a renderer drew a field: its type's own view, a plain text input, or not at all.",
+      "enum": [
+        "native",
+        "plain",
+        "hidden"
+      ],
+      "type": "string"
+    },
+    "FieldNode": {
+      "description": "One field of a form in the drawn tree.",
+      "properties": {
+        "drawn": {
+          "$ref": "#/$defs/FieldDrawn"
         },
         "label": {
-          "type": [
-            "string",
-            "null"
-          ]
+          "type": "string"
         },
         "name": {
           "type": "string"
         },
-        "open": {
-          "type": [
-            "boolean",
-            "null"
-          ]
-        },
-        "options": {
-          "items": {
-            "type": "string"
-          },
-          "type": [
-            "array",
-            "null"
-          ]
-        },
-        "placeholder": {
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "set": {
-          "type": [
-            "boolean",
-            "null"
-          ]
-        },
-        "show": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/Expr"
-            },
-            {
-              "type": "null"
-            }
-          ]
+        "role": {
+          "type": "string"
         },
         "type": {
-          "$ref": "#/$defs/FieldKind"
-        },
-        "value": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/FieldValue"
-            },
-            {
-              "type": "null"
-            }
-          ]
-        },
-        "was": {
-          "type": [
-            "string",
-            "null"
-          ]
+          "type": "string"
         }
       },
       "required": [
+        "name",
         "type",
-        "name"
+        "drawn",
+        "role",
+        "label"
       ],
       "type": "object"
-    },
-    "FieldKind": {
-      "anyOf": [
-        {
-          "enum": [
-            "text",
-            "toggle",
-            "picker",
-            "secret"
-          ],
-          "type": "string"
-        },
-        {
-          "type": "string"
-        }
-      ]
     },
     "FieldValue": {
       "anyOf": [
@@ -3031,6 +2997,20 @@
         }
       ]
     },
+    "Lang": {
+      "anyOf": [
+        {
+          "enum": [
+            "en",
+            "th"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "string"
+        }
+      ]
+    },
     "LineError": {
       "description": "An editor's error on a line.",
       "properties": {
@@ -3300,6 +3280,38 @@
           "type": "string"
         }
       ]
+    },
+    "Locale": {
+      "description": "A screen's language, era and today: the words a field draws, the years it shows, the day it marks.",
+      "properties": {
+        "era": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Era"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "lang": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Lang"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "today": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "type": "object"
     },
     "Mark": {
       "description": "A mark the app keeps on a picture: places are `[x, y]` from 0 to 1 of it, `to` a two-ended mark's other end.",
@@ -3875,6 +3887,82 @@
       },
       "type": "object"
     },
+    "OtherField": {
+      "additionalProperties": true,
+      "description": "A field of a type this version does not know: kept whole, drawn as a one-line text input.",
+      "properties": {
+        "checks": {
+          "items": {
+            "$ref": "#/$defs/Check"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "doc": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "enabled": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "open": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "type": {
+          "type": "string"
+        },
+        "was": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "name",
+        "type"
+      ],
+      "type": "object"
+    },
     "Part": {
       "description": "One part of a prose tree.",
       "oneOf": [
@@ -4061,6 +4149,97 @@
           "type": "string"
         }
       ]
+    },
+    "PickerField": {
+      "additionalProperties": true,
+      "description": "One of a list of options.",
+      "properties": {
+        "checks": {
+          "items": {
+            "$ref": "#/$defs/Check"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "doc": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "enabled": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "open": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "options": {
+          "items": {
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "value": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FieldValue"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "was": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object"
     },
     "Plan": {
       "description": "What a harness draws: each run in one process, its shots under `<out>/<run>/` and every `Seen` in `<out>/seen.json`.",
@@ -4833,6 +5012,16 @@
             "null"
           ]
         },
+        "locale": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Locale"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
         "pending": {
           "anyOf": [
             {
@@ -4978,6 +5167,90 @@
       "required": [
         "name",
         "action"
+      ],
+      "type": "object"
+    },
+    "SecretField": {
+      "additionalProperties": true,
+      "description": "A password input: its value is never drawn back, and an empty one is not sent.",
+      "properties": {
+        "checks": {
+          "items": {
+            "$ref": "#/$defs/Check"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "doc": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "enabled": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "open": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "placeholder": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "set": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "was": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "name"
       ],
       "type": "object"
     },
@@ -5184,6 +5457,16 @@
           "type": [
             "string",
             "null"
+          ]
+        },
+        "locale": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Locale"
+            },
+            {
+              "type": "null"
+            }
           ]
         },
         "show": {
@@ -6012,6 +6295,104 @@
       },
       "type": "object"
     },
+    "TextField": {
+      "additionalProperties": true,
+      "description": "A one-line text input.",
+      "properties": {
+        "checks": {
+          "items": {
+            "$ref": "#/$defs/Check"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "doc": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "enabled": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "keyboard": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Keyboard"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "open": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "placeholder": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "value": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FieldValue"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "was": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object"
+    },
     "TextStyle": {
       "anyOf": [
         {
@@ -6384,6 +6765,88 @@
       ],
       "type": "object"
     },
+    "ToggleField": {
+      "additionalProperties": true,
+      "description": "An on or off switch.",
+      "properties": {
+        "checks": {
+          "items": {
+            "$ref": "#/$defs/Check"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "doc": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "enabled": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "open": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "value": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FieldValue"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "was": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object"
+    },
     "Tone": {
       "anyOf": [
         {
@@ -6453,6 +6916,15 @@
         },
         "drawn": {
           "$ref": "#/$defs/TreeDrawn"
+        },
+        "fields": {
+          "items": {
+            "$ref": "#/$defs/FieldNode"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
         },
         "id": {
           "type": [

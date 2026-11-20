@@ -29,6 +29,7 @@ pub(super) fn files(root: &Path, _: &Value) -> std::io::Result<Files> {
     out.push(("fixtures/built/every.json".into(), every));
     out.extend(trees(root)?);
     out.extend(html(root)?);
+    out.extend(super::fields::files(root)?);
     Ok(out)
 }
 

@@ -33,12 +33,6 @@ words!(LaneState {
     Fail,
     Merged
 });
-words!(FieldKind {
-    Text,
-    Toggle,
-    Picker,
-    Secret
-});
 words!(Keyboard { Default, Url, Number });
 words!(Accessory { Chevron, None });
 words!(RowStyle { Link, Destructive });
@@ -214,28 +208,6 @@ pub enum FieldValue {
     Text(String),
     Number(Number),
     Flag(bool),
-}
-
-wire! {
-    /// One input of a form.
-    pub struct Field {
-        #[serde(rename = "type")]
-        kind: FieldKind,
-        name: String,
-        label: Option<String>,
-        placeholder: Option<String>,
-        keyboard: Option<Keyboard>,
-        value: Option<FieldValue>,
-        options: Option<Vec<String>>,
-        set: Option<bool>,
-        doc: Option<String>,
-        was: Option<String>,
-        error: Option<String>,
-        open: Option<bool>,
-        show: Option<Expr>,
-        enabled: Option<Expr>,
-        checks: Option<Vec<Check>>,
-    }
 }
 
 wire! {

@@ -9,7 +9,9 @@ use crate::expr::{Expr, State};
 mod macros;
 mod chart;
 mod content;
+mod field;
 mod list;
+mod locale;
 mod media;
 mod parts;
 mod sample;
@@ -18,6 +20,8 @@ mod timeline;
 
 pub use chart::*;
 pub use content::*;
+pub use field::*;
+pub use locale::{Era, Lang, Locale};
 pub use media::*;
 pub use parts::*;
 pub use sample::samples;
@@ -46,6 +50,7 @@ kind! {
         sites: Option<u64>,
         personas: Option<Vec<Fields>>,
         threads: Option<Vec<Fields>>,
+        locale: Option<Locale>,
     }
 }
 
@@ -57,6 +62,7 @@ kind! {
         cancel: Option<String>,
         done: Option<Submit>,
         blocks: Vec<Block>,
+        locale: Option<Locale>,
     }
 }
 

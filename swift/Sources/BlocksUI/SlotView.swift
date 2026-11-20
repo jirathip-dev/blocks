@@ -30,7 +30,8 @@ public struct SlotView<Content: View>: View {
 }
 
 extension LayoutTransition {
-    fileprivate var entering: AnyTransition {
+    /// How a node placed with this transition comes in.
+    public var entering: AnyTransition {
         switch self {
         case .sheet: .move(edge: .bottom)
         case .fade: .opacity

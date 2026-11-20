@@ -1,5 +1,5 @@
 import { hooks, roles } from "../gen/hooks.ts";
-import type { Act, Block, Fallback, Kind, Label, Tap, Toned } from "../gen/types.ts";
+import type { Act, Block, Fallback, Kind, Label, Locale, Tap, Toned } from "../gen/types.ts";
 import { linkable } from "../core/check.ts";
 import { actionOf } from "../core/eval.ts";
 import { value } from "../core/text.ts";
@@ -46,6 +46,7 @@ export type Store = { get(key: string): string | null; put(key: string, value: s
 export type Renderer = (b: Blk, c: Ctx) => HTMLElement | null;
 export type Ctx = {
   screen: string;
+  locale?: Locale;
   act: (a: Post, el?: HTMLElement) => Promise<boolean>;
   tap: (t: unknown) => void;
   open: Set<string>;

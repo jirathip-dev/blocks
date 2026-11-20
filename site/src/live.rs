@@ -1,23 +1,13 @@
 use blocks::expr::{Expr, Lit, Match, Pattern, State};
 use blocks::{
-    Block, Bound, Button, Check, Fallback, Field, FieldKind, FieldValue, Fields, Form, Island, IslandSize, List, Prose,
-    Set, Shown, Stat, Tap, Tile,
+    Block, Bound, Button, Check, Fallback, Field, FieldValue, Fields, Form, Island, IslandSize, List, PickerField,
+    Prose, Set, Shown, Stat, Tap, TextField, Tile, ToggleField,
 };
 
 use crate::ui::{b, heading, listing, page, row, section, text, Page};
 
 fn get(key: &str) -> Expr {
     Expr::Get(key.into())
-}
-
-fn field(kind: FieldKind, name: &str, label: &str, value: FieldValue) -> Field {
-    Field {
-        kind,
-        name: name.into(),
-        label: Some(label.into()),
-        value: Some(value),
-        ..Field::default()
-    }
 }
 
 fn bound(key: &str) -> Tile {
@@ -45,30 +35,25 @@ pub fn behaviours() -> Page {
         value: get("email"),
         pattern: Pattern::Email,
     }));
-    let email = Field {
-        placeholder: Some("you@example.org".into()),
-        checks: Some(vec![Check {
+    let email: Field = TextField::new("email")
+        .label("Email")
+        .value(FieldValue::Text("ada@example.org".into()))
+        .placeholder("you@example.org")
+        .checks(vec![Check {
             ok: valid.clone(),
             say: "needs a domain after the @".into(),
-        }]),
-        ..field(
-            FieldKind::Text,
-            "email",
-            "Email",
-            FieldValue::Text("ada@example.org".into()),
-        )
-    };
-    let often = Field {
-        options: Some(vec!["monthly".into(), "weekly".into()]),
-        show: Some(get("updates")),
-        ..field(
-            FieldKind::Picker,
-            "often",
-            "How often",
-            FieldValue::Text("monthly".into()),
-        )
-    };
-    let updates = field(FieldKind::Toggle, "updates", "Updates", FieldValue::Flag(false));
+        }])
+        .into();
+    let often: Field = PickerField::new("often")
+        .label("How often")
+        .value(FieldValue::Text("monthly".into()))
+        .options(vec!["monthly".to_string(), "weekly".into()])
+        .show(get("updates"))
+        .into();
+    let updates: Field = ToggleField::new("updates")
+        .label("Updates")
+        .value(FieldValue::Flag(false))
+        .into();
     let signed = Set {
         key: "signed".into(),
         to: get("email"),
