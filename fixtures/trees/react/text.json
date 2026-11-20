@@ -2,7 +2,7 @@
   "kind": "text",
   "id": "note",
   "variant": null,
-  "drawn": "fallback",
+  "drawn": "native",
   "role": "group",
   "name": "note",
   "children": []

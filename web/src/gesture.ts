@@ -11,7 +11,7 @@ export type Grabbed<B, G, R, C> = {
   rules: Rules<B, G, R, C>;
   grab: G;
   item: string;
-  reach: (dx: number, dy: number) => R;
+  reach: (dx: number, dy: number, x: number, y: number) => R;
   show: (c: C | null) => void;
 };
 type Block = { id?: string | null };
@@ -45,10 +45,10 @@ export function held<B extends Block, G, R, C>(c: Ctx, o: Pick<Grabbed<B, G, R, 
   return h && same(h.start, o.rules.start(o.block, o.grab)) ? h.c : undefined;
 }
 
-/// Runs one item's gesture on `el` (attached, its named actions go beside it): pointer, keys and named actions feed one machine.
-export function gestured<B extends Block, G, R, C>(el: HTMLElement, c: Ctx, o: Grabbed<B, G, R, C>): void {
+/// Runs one item's gesture on `el` (attached, its named actions go beside it): pointer, keys and named actions feed one machine; returns its named-step runner.
+export function gestured<B extends Block, G, R, C>(el: HTMLElement, c: Ctx, o: Grabbed<B, G, R, C>): (n: Nudge) => void {
   const start = o.rules.word(o.block, o.grab) ? o.rules.start(o.block, o.grab) : null;
-  if (start === null) return;
+  if (start === null) return () => {};
   const k = key(o.block, o.item);
   el.dataset.grab = JSON.stringify(o.grab);
   const out = c.held?.get(k);
@@ -100,7 +100,7 @@ export function gestured<B extends Block, G, R, C>(el: HTMLElement, c: Ctx, o: G
   });
   el.addEventListener("pointermove", (e) => {
     const [dx, dy] = [e.clientX - x0, e.clientY - y0];
-    if (live() && (p.at !== "pressed" || Math.hypot(dx, dy) >= 4)) go({ on: "move", c: o.rules.candidate(o.block, o.grab, o.reach(dx, dy)) });
+    if (live() && (p.at !== "pressed" || Math.hypot(dx, dy) >= 4)) go({ on: "move", c: o.rules.candidate(o.block, o.grab, o.reach(dx, dy, x0, y0)) });
   });
   el.addEventListener("pointerup", () => live() && go({ on: "release" }));
   el.addEventListener("pointercancel", () => go({ on: "cancel" }));
@@ -115,13 +115,15 @@ export function gestured<B extends Block, G, R, C>(el: HTMLElement, c: Ctx, o: G
     else return;
     e.preventDefault();
   });
-  beside(el, o.rules.steps(o.block, o.grab), (n) => {
+  const run = (n: Nudge) => {
     if (p.at !== "idle") return;
     go({ on: "press" });
     nudge(n);
     go({ on: phase() === "pressed" ? "cancel" : "release" });
-  });
+  };
+  beside(el, o.rules.steps(o.block, o.grab), run);
   mark();
+  return run;
 }
 
 /// The one pinch, Ctrl and wheel, double-tap and key zoom; `keep` holds the zoom outside the view, `apply` draws it.

@@ -2,7 +2,7 @@
   "kind": "section",
   "id": "today",
   "variant": null,
-  "drawn": "fallback",
+  "drawn": "native",
   "role": "region",
   "name": "Today",
   "children": [
@@ -10,7 +10,7 @@
       "kind": "text",
       "id": "today-note",
       "variant": null,
-      "drawn": "fallback",
+      "drawn": "native",
       "role": "group",
       "name": "today-note",
       "children": []

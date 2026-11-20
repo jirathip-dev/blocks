@@ -2,6 +2,7 @@ import { hooks, roles } from "../gen/hooks.ts";
 import type { Act, Block, Fallback, Kind, Label, Tap, Toned } from "../gen/types.ts";
 import { linkable } from "../core/check.ts";
 import { actionOf } from "../core/eval.ts";
+import { value } from "../core/text.ts";
 import { type Blk, blks, isBlk, named } from "../core/tree.ts";
 import { island, isTag } from "../island.ts";
 import type { Held } from "../gesture.ts";
@@ -53,6 +54,7 @@ export type Ctx = {
   apps?: Record<string, Renderer>;
   drop?: (what: string) => void;
   held?: Map<string, Held>;
+  view?: Map<string, Record<string, unknown>>;
 };
 
 export const obj = (v: unknown): Blk => (isBlk(v) ? v : {});
@@ -107,16 +109,6 @@ export function md(s: unknown, refs = false): string {
     .join("");
 }
 
-/// `{since}` as an age, `{since, label}` its label with `{}` the age, `{until, label}` with `{rel}` the minutes left, else the value.
-export function value(v: unknown): string {
-  if (isBlk(v) && "until" in v) return String(v.label ?? "").replace("{rel}", `${Math.max(0, Math.round((Date.parse(String(v.until)) - Date.now()) / 60000))}m`);
-  if (isBlk(v) && "since" in v) {
-    const s = Math.max(0, (Date.now() - Date.parse(String(v.since))) / 1000);
-    if (v.label != null) return String(v.label).replace("{}", s < 120 ? `${Math.floor(s)}s` : s < 7200 ? `${Math.floor(s / 60)}m` : s < 172800 ? `${Math.floor(s / 3600)}h` : `${Math.floor(s / 86400)}d`);
-    return s < 60 ? "now" : s < 3600 ? `${Math.floor(s / 60)}m` : s < 86400 ? `${Math.floor(s / 3600)}h ${Math.floor(s / 60) % 60}m` : `${Math.floor(s / 86400)}d`;
-  }
-  return String(v ?? "");
-}
 export const ticked = (v: unknown): Node | string => {
   if (isBlk(v) && typeof v.get === "string") {
     const s = el("span", "");

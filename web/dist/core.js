@@ -335,6 +335,21 @@ function expect(got, want, at2 = "tree", out = []) {
   return out;
 }
 
+// src/core/text.ts
+var GLYPH = { working: "\u25CF", needs: "!", fail: "\u2717", done: "\u2713", merged: "\u2713", idle: "\u25CB" };
+var WORD = { working: "working", needs: "needs you", fail: "failed", done: "done", merged: "merged", idle: "idle" };
+var TONE = { working: "g", needs: "r", fail: "r", done: "mute", idle: "mute", merged: "g" };
+var figured = (s) => ({ glyph: GLYPH[s] ?? "\xB7", word: WORD[s] ?? s, tone: TONE[s] ?? "mute" });
+function value(v) {
+  if (isBlk(v) && "until" in v) return String(v.label ?? "").replace("{rel}", `${Math.max(0, Math.round((Date.parse(String(v.until)) - Date.now()) / 6e4))}m`);
+  if (isBlk(v) && "since" in v) {
+    const s = Math.max(0, (Date.now() - Date.parse(String(v.since))) / 1e3);
+    if (v.label != null) return String(v.label).replace("{}", s < 120 ? `${Math.floor(s)}s` : s < 7200 ? `${Math.floor(s / 60)}m` : s < 172800 ? `${Math.floor(s / 3600)}h` : `${Math.floor(s / 86400)}d`);
+    return s < 60 ? "now" : s < 3600 ? `${Math.floor(s / 60)}m` : s < 86400 ? `${Math.floor(s / 3600)}h ${Math.floor(s / 60) % 60}m` : `${Math.floor(s / 86400)}d`;
+  }
+  return String(v ?? "");
+}
+
 // src/core/gate.ts
 var RAD = Math.PI / 180;
 var mid = (a, b) => (a + b) / 2;
@@ -3487,6 +3502,96 @@ var defs = {
       }
     ]
   },
+  "Mark": {
+    "properties": {
+      "at": {
+        "items": {
+          "type": "number"
+        },
+        "type": "array"
+      },
+      "fixed": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "group": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "id": {
+        "type": "string"
+      },
+      "kind": {
+        "$ref": "#/$defs/MarkKind"
+      },
+      "path": {
+        "items": {
+          "items": {
+            "type": "number"
+          },
+          "type": "array"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "text": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "to": {
+        "items": {
+          "type": "number"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "tone": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Tone"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      }
+    },
+    "required": [
+      "id",
+      "kind",
+      "at"
+    ],
+    "type": "object"
+  },
+  "MarkKind": {
+    "anyOf": [
+      {
+        "enum": [
+          "arrow",
+          "box",
+          "ellipse",
+          "text",
+          "pin",
+          "highlight",
+          "line"
+        ],
+        "type": "string"
+      },
+      {
+        "type": "string"
+      }
+    ]
+  },
   "Match": {
     "properties": {
       "pattern": {
@@ -3514,6 +3619,16 @@ var defs = {
           "null"
         ]
       },
+      "draw": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Gesture"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
       "height": {
         "minimum": 0,
         "type": "integer"
@@ -3524,10 +3639,39 @@ var defs = {
           "null"
         ]
       },
+      "marks": {
+        "items": {
+          "$ref": "#/$defs/Mark"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "move": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Gesture"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
       "poster": {
         "type": [
           "string",
           "null"
+        ]
+      },
+      "remove": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Gesture"
+          },
+          {
+            "type": "null"
+          }
         ]
       },
       "show": {
@@ -3542,6 +3686,25 @@ var defs = {
       },
       "src": {
         "type": "string"
+      },
+      "stretch": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Gesture"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "tools": {
+        "items": {
+          "$ref": "#/$defs/MarkKind"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
       },
       "video": {
         "type": [
@@ -5872,6 +6035,7 @@ function actions(screen2) {
   return [...out].sort();
 }
 export {
+  actionOf,
   actions,
   built,
   button,
@@ -5892,6 +6056,7 @@ export {
   evaluate,
   expect,
   expr,
+  figured,
   form,
   gate,
   gated,
@@ -5926,6 +6091,7 @@ export {
   timeline,
   toast,
   tree,
+  value,
   view,
   web
 };

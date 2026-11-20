@@ -2,7 +2,7 @@
   "kind": "row",
   "id": "build",
   "variant": null,
-  "drawn": "fallback",
+  "drawn": "native",
   "role": "group",
   "name": "Build",
   "children": []
