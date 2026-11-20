@@ -111,7 +111,7 @@ async function scanner(adapter) {
   const browser = await webkit.launch(), page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   const errors = [];
   page.on("pageerror", (e) => errors.push(e.message));
-  await page.route("**/*", (r) => {
+  await page.route((u) => u.href.startsWith(BASE), (r) => {
     const p = r.request().url().slice(BASE.length).replace(/\?.*/, "");
     if (p === "") return r.fulfill({ body: PAGE, contentType: "text/html" });
     if (p === "react.js") return r.fulfill({ body: reactJs(), contentType: "text/javascript" });
@@ -156,16 +156,18 @@ test("the scan field in WebKit, HTML and React: no camera, pick a skewed photo, 
   }
 });
 
-test("one page, shutter to corrected image (corners on 640 px, then the warp and JPEG of a 3024 × 4032 photo), stays within 400 ms at p95 in WebKit's worker", { timeout: 60000 }, async () => {
+test("one page, shutter to corrected image (corners on 640 px, then the warp and JPEG of a 3024 × 4032 camera JPEG), stays within 400 ms at p95 in WebKit's worker", { timeout: 60000 }, async () => {
   const { browser, page, errors } = await scanner("html");
   try {
     const runs = await page.evaluate(async (png) => {
       const blob = new Blob([Uint8Array.from(atob(png), (c) => c.charCodeAt(0))], { type: "image/png" });
       const m = await import("./scan.js"), took = [];
       for (let i = 0; i < 6; i++) {
-        const photo = await createImageBitmap(blob, { resizeWidth: 3024, resizeHeight: 4032 });
-        const t0 = performance.now(), quad = await m.quadOf(photo), page = await m.pageOf(photo, quad, quad);
-        took.push({ ms: performance.now() - t0, found: quad[0][0] > 3024 * 0.15, jpeg: [page.jpeg[0], page.jpeg[1]] });
+        const c = new OffscreenCanvas(3024, 4032);
+        c.getContext("2d").drawImage(await createImageBitmap(blob), 0, 0, 3024, 4032);
+        const taken = await c.convertToBlob({ type: "image/jpeg", quality: 0.92 });
+        const t0 = performance.now(), shot = await m.quadOf(taken), page = await m.pageOf(shot, shot.quad, shot.quad);
+        took.push({ ms: performance.now() - t0, found: shot.quad[0][0] > 3024 * 0.15, jpeg: [page.jpeg[0], page.jpeg[1]] });
       }
       return took.slice(1);
     }, readFileSync(at("../../fixtures/scan/note.png")).toString("base64"));

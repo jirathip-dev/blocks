@@ -1,6 +1,9 @@
 import { type Quad } from "./page.ts";
-export type Page = {
+export type Shot = {
+    src: Blob;
     photo: ImageBitmap;
+};
+export type Page = Shot & {
     quad: Quad;
     auto: Quad;
     jpeg: Uint8Array<ArrayBuffer>;
@@ -16,6 +19,8 @@ export type Opts = {
     w(key: string): string;
     pages?: Page[] | undefined;
 };
-export declare const quadOf: (photo: ImageBitmap) => Promise<Quad>;
-export declare const pageOf: (photo: ImageBitmap, quad: Quad, auto: Quad) => Promise<Page>;
+export declare const quadOf: (src: Blob) => Promise<Shot & {
+    quad: Quad;
+}>;
+export declare const pageOf: ({ src, photo }: Shot, quad: Quad, auto: Quad) => Promise<Page>;
 export declare function scan(o: Opts): Promise<Scanned | undefined>;
