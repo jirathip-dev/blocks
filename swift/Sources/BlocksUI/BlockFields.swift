@@ -173,7 +173,11 @@ internal struct FieldRow: View {
     }
 
     @ViewBuilder internal var body: some View {
-        if case .files(let f) = field.edit { UploadRow(field: f) } else { row }
+        switch field.edit {
+        case .files(let f): UploadRow(field: f)
+        case .scan(let f): ScanRow(field: f)
+        default: row
+        }
     }
 
     private var row: some View {

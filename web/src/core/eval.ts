@@ -154,7 +154,7 @@ export const lit = (_field: unknown, held: unknown): Lit => (Array.isArray(held)
 export function start(screen: unknown): State {
   const s: State = {};
   const seed = (b: Rec) => {
-    for (const f of named(b)) s[String(f["name"])] = lit(f, f["value"] ?? f["files"]);
+    for (const f of named(b)) s[String(f["name"])] = lit(f, f["value"] ?? f["files"] ?? (rec(f["file"]) ? [f["file"]] : null));
     if (b["type"] === "chips" && typeof b["name"] === "string") s[b["name"]] = plain(Array.isArray(b["selected"]) ? b["selected"][0] : null);
     kids(b).forEach(seed);
   };

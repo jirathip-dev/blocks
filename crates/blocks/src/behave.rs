@@ -114,7 +114,11 @@ pub(crate) fn at_start(v: &Value) -> View {
 fn seed(b: &Value, s: &mut State) {
     let Some(o) = b.as_object() else { return };
     for (name, f) in fields(o) {
-        let held = f.get("value").or_else(|| f.get("files"));
+        let one = f
+            .get("file")
+            .filter(|x| x.is_object())
+            .map(|x| Value::Array(vec![x.clone()]));
+        let held = f.get("value").or_else(|| f.get("files")).or(one.as_ref());
         s.insert(name.into(), lit(f, held.unwrap_or(&Value::Null)));
     }
     if let (Some("chips"), Some(Value::String(name))) = (o.get("type").and_then(Value::as_str), o.get("name")) {

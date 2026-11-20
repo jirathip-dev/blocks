@@ -1,0 +1,83 @@
+{
+  "blocks": [
+    {
+      "fallback": {
+        "title": "form"
+      },
+      "fields": [
+        {
+          "label": "Delivery note",
+          "name": "note-empty",
+          "type": "scan"
+        },
+        {
+          "file": {
+            "id": "f-2",
+            "name": "delivery-note.pdf"
+          },
+          "label": "Delivery note",
+          "max": 20,
+          "name": "note",
+          "type": "scan"
+        },
+        {
+          "error": "Check this one",
+          "file": {
+            "id": "f-2",
+            "name": "delivery-note.pdf"
+          },
+          "label": "Delivery note",
+          "max": 20,
+          "name": "note-error",
+          "type": "scan"
+        },
+        {
+          "file": {
+            "id": "f-2",
+            "name": "delivery-note.pdf"
+          },
+          "label": "Delivery note",
+          "max": 20,
+          "name": "note-was",
+          "type": "scan",
+          "was": "the old value"
+        },
+        {
+          "doc": "A line that says what it is for",
+          "file": {
+            "id": "f-2",
+            "name": "delivery-note.pdf"
+          },
+          "label": "Delivery note",
+          "max": 20,
+          "name": "note-doc",
+          "type": "scan"
+        },
+        {
+          "file": {
+            "id": "f-2",
+            "name": "delivery-note.pdf"
+          },
+          "label": "A label long enough to wrap onto a second line on a phone held upright",
+          "max": 20,
+          "name": "note-label",
+          "type": "scan"
+        }
+      ],
+      "id": "scan",
+      "submit": {
+        "action": "send",
+        "label": "send"
+      },
+      "type": "form"
+    }
+  ],
+  "fallback": {
+    "title": "screen"
+  },
+  "id": "fields-scan",
+  "locale": {
+    "lang": "en"
+  },
+  "type": "screen"
+}

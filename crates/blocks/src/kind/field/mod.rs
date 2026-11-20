@@ -4,12 +4,14 @@ use super::Check;
 use crate::expr::Expr;
 
 mod picker;
+mod scan;
 mod secret;
 mod text;
 mod toggle;
 mod upload;
 
 pub use picker::PickerField;
+pub use scan::ScanField;
 pub use secret::SecretField;
 pub use text::TextField;
 pub use toggle::ToggleField;
@@ -26,6 +28,7 @@ fields! {
     Picker(PickerField) = "picker",
     Secret(SecretField) = "secret",
     Upload(UploadField) = "upload",
+    Scan(ScanField) = "scan",
 }
 
 field! {

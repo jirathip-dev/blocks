@@ -4,3 +4,5 @@ pub const JS: &str = include_str!("../../../web/dist/blocks.js");
 pub const CSS: &str = include_str!("../../../web/dist/blocks.css");
 /// `web/dist/import.js`: the import kind's view, which `blocks.js` fetches as `./import.js` on its first draw; serve it beside `blocks.js`.
 pub const IMPORT: &str = include_str!("../../../web/dist/import.js");
+/// `web/dist/scan.js`: the scanner a scan field loads on first use; serve it beside `JS` as `scan.js`.
+pub const SCAN: &str = include_str!("../../../web/dist/scan.js");
