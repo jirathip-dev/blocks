@@ -1,4 +1,4 @@
-import { type Nudge, type Rules } from "./core/gesture.ts";
+import { type Nudge, type Phase, type Rules } from "./core/gesture.ts";
 import type { Gesture } from "./gen/types.ts";
 export type Held = {
     start: unknown;
@@ -33,4 +33,9 @@ export declare function zoomed(el: HTMLElement, keep: Record<string, unknown>, o
     max: number;
     apply: (z: number) => void;
 }): void;
+export type Typed<B, G, C> = Omit<Grabbed<B, G, string, C>, "reach" | "show"> & {
+    show: (p: Phase<C>["at"], c: C | null) => void;
+    left: (key: string) => void;
+};
+export declare function edited<B extends Block, G, C>(input: HTMLInputElement, c: Driven, o: Typed<B, G, C>): void;
 export {};

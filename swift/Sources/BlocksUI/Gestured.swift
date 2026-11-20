@@ -140,3 +140,82 @@ internal struct Zoomed: ViewModifier {
             .accessibilityAction(named: "Zoom out") { (scale, base) = (max(1, scale / 1.25), max(1, scale / 1.25)) }
     }
 }
+
+/// What a typed cell tells its table: the typed candidate, a sent edit, and its answer.
+internal struct TypedOut {
+    internal let preview: (CellEdit?) -> Void
+    internal let sent: (CellEdit, Bool?) -> Void
+    internal let next: () -> Void
+}
+
+/// One typed cell, as `Gestured` is one drag: focus presses, typing previews, Return or leaving sends once, Escape puts it back.
+internal struct Typed: View {
+    @Environment(\.act) private var act
+    @Environment(\.acted) private var acted
+    internal let table: Blocks.Table
+    internal let row: String
+    internal let column: Column
+    internal let label: String
+    internal let out: TypedOut
+    internal let cursor: FocusState<String?>.Binding
+    internal let key: String
+    @State private var text = ""
+    @State private var driven: Driven<Blocks.Table>?
+
+    private var grab: GridGrab { .cell(row: row, column: column.id) }
+    private var was: String {
+        switch table.rows.first(where: { $0.id == row })?.cells[column.id] {
+        case .number(let n)?: Expr.cat([.lit(.number(n))]).eval([:]).json.string ?? ""
+        case .string(let s)?: s
+        default: ""
+        }
+    }
+
+    internal var body: some View {
+        TextField(label, text: $text)
+            .focused(cursor, equals: key)
+            .multilineTextAlignment(column.end ? .trailing : .leading)
+            .onAppear { text = was }
+            .onChange(of: was) { text = was }
+            .onChange(of: cursor.wrappedValue == key) { _, focused in
+                guard focused else { return release() }
+                driven = Driven(table, grab)
+                driven?.on(.press)
+            }
+            .onChange(of: text) {
+                guard var d = driven else { return }
+                d.reach(.text(text))
+                driven = d
+                if case .cell(let e)? = d.candidate { out.preview(e) }
+            }
+            .onSubmit {
+                release()
+                out.next()
+            }
+            .onKeyPress(.escape) {
+                driven?.on(.cancel)
+                driven = nil
+                text = was
+                out.preview(nil)
+                return .handled
+            }
+            .accessibilityLabel(label)
+    }
+
+    private func release() {
+        guard var d = driven, let edit = table.edit else { return }
+        driven = nil
+        out.preview(nil)
+        guard case .send(let c)? = d.on(.release), case .cell(let e) = c else { return text = was }
+        out.sent(e, nil)
+        announce("Sending")
+        let a = BlockAction(action: edit.action, values: [edit.name: c.json])
+        Task { @MainActor in
+            var ok = true
+            if let acted { ok = await acted(a) } else { act(a) }
+            out.sent(e, ok)
+            if !ok { text = was }
+            announce(ok ? table.says(grab, c) : "Not changed")
+        }
+    }
+}

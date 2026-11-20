@@ -1,5 +1,5 @@
 import { type ReactNode } from "react";
-import { type Action, type Built, type Confirm, type Fault, type Lit, type Locale, type State, type Tap, type View } from "../../src/core/index.ts";
+import { type Action, type Built, type Confirm, type Fault, type Lit, type Locale, type OnFile, type State, type Tap, type View } from "../../src/core/index.ts";
 export type Go = {
     open: string;
 } | {
@@ -53,6 +53,7 @@ export type Ctx = {
     report: (r: Report) => void;
     kinds: Record<string, (p: KindProps) => ReactNode>;
     islands: Islands;
+    file?: OnFile;
 };
 export type Props = {
     onAction: (a: Action) => Promise<boolean | void> | boolean | void;
@@ -60,6 +61,7 @@ export type Props = {
     kinds?: Record<string, (p: KindProps) => ReactNode>;
     islands?: Islands;
     onReport?: (r: Report) => void;
+    onFile?: OnFile;
 };
 export declare const Cx: import("react").Context<Ctx>;
 export declare function useCx(p: Props, screen: Built): {

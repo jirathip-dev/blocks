@@ -26,6 +26,8 @@ tap and key zoom; the image viewer uses it.
 | Kind | Word | Grab | Reach | Result | Named steps |
 |---|---|---|---|---|---|
 | `list` | `reorder` | a row id whose `handle` is true | places | every child id in the new order | Move up, Move down, Move to top, Move to bottom |
+| `table` | `reorder` | a row id not `fixed`; a `group` row takes its items | rows | every row id in the new order; an item stays below the first group row, a group moves between groups | Move up, Move down, Move to top, Move to bottom |
+| `table` | `edit` | `{row, column}`: a column with `edit`, not in `calc`, of text, number, money or date; not a group or `fixed` row | the typed text | a `CellEdit` `{row, column, value}`; a text the column can't take gives none | none: each cell is a text field |
 | `media` | `move`, `stretch`, `remove`, `draw` | `{"body": id}`, `{"start": id}`, `{"end": id}`, `{"remove": id}`, `{"draw": {tool, at, text, group}}` | `{from, to}`, each `[x, y]` 0 to 1 of the picture | a `MarkChange`: `{id, at, to}`; `{id}` for a remove; the new mark, with no id, for a draw | Move up, down, left, right; Longer, Shorter; Delete; Add arrow, Add pin and so on |
 | `timeline` | `move` | `{bar, part: "body"}` of a bar not `fixed` | `{days}` | `DaySpan` `{id, start, end}`, the same length, inside `from`..`to`, onto no fixed bar | One day earlier, later; One week earlier, later |
 | `timeline` | `stretch` | `{bar, part: "start" or "end"}` | `{days}` | `DaySpan` `{id, start, end}`, at least one day | Start one day earlier, later; End one day earlier, later |
@@ -44,7 +46,12 @@ A `timeline`'s days are ISO, `end` the last one drawn, and its rows are `tracks`
 (24 to 48 px) by default, then 48, 32, 24, 16, 8 or 4 px from its zoom buttons; on the web the pointer drags from 24 px up, the
 keys and named actions at every width. The static page draws it read-only.
 
-The harness steps: `gesture` (`id`, `grab`, `via` and `reach`: `[dx, dy]` px for `pointer`, `{dir, big}` nudges for
+A `table`'s `calc` maps a column to an `Expr` over its row's cells, worked out in column order (so one may read an
+earlier one) as the user types, before anything is sent; group rows (`group: true`) head the items under them, carry
+their subtotals, and sort and filter with them; totals and the row count count items only. `fixtures/gesture/table.json`
+holds the rules equal in Rust, TS and Swift. On a phone a row opens a sheet whose fields each send their own edit.
+
+The harness steps: `gesture` (`id`, `grab`, `via` and `reach`: the typed `[text]` for a cell, `[dx, dy]` px for `pointer`, `{dir, big}` nudges for
 `keys`, step names for `action`) holds the action it sends until the next `answer` (confirms) or `refuse` (fails it).
 The Swift harness runs `keys` and `action` through the rules and drops a `pointer`.
 

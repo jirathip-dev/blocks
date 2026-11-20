@@ -1,0 +1,44 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="../neutral-default/tokens.css"><link rel="stylesheet" href="../../../web/dist/blocks.css"><link rel="stylesheet" href="upload.css"><link rel="stylesheet" href="page.css">
+<script src="upload.js"></script><title>upload: every state</title></head>
+<body><main class="scr">
+<div class="top"><div class="tabh"><span class="tw">upload · every state</span></div></div>
+<h2>1 · Empty</h2><p class="note">One file: [choose file]. Many: [add files]. Images only: the word says photo. The hint is drawn from accept and mb, so an app writes neither. With capture, a touch screen adds [take photo] first.</p>
+<div class="cases">
+<div data-f='{"fields":[{"type":"upload","name":"invoice","label":"Invoice","accept":["pdf"],"mb":5}]}'></div>
+<div data-f='{"fields":[{"type":"upload","name":"docs","label":"Supporting files","accept":["image","pdf"],"many":true,"mb":20}]}'></div>
+<div data-f='{"fields":[{"type":"upload","name":"avatar","label":"Profile photo","accept":["image"],"capture":true,"mb":2}]}'></div>
+<div data-f='{"fields":[{"type":"upload","name":"any","label":"Attachment"}]}'></div>
+</div>
+<h2>2 · One file, held</h2><p class="note">A photo shows its thumbnail; any other file a square with its extension. Without many the button becomes [replace]: a new pick replaces the one file.</p>
+<div class="cases">
+<div data-f='{"fields":[{"type":"upload","name":"avatar","label":"Profile photo","accept":["image"],"capture":true,"mb":2,"files":[{"name":"me.jpg","size":812000,"src":"door.svg"}]}]}'></div>
+<div data-f='{"fields":[{"type":"upload","name":"invoice","label":"Invoice","accept":["pdf"],"mb":5,"files":[{"name":"INV-2026-0419 Marlow Bakery November.pdf","size":348160}]}]}'></div>
+</div>
+<h2>3 · Uploading, done, failed</h2><p class="note">Uploading: the thumbnail dims and a 4 px ink bar fills under the name; [remove] aborts it. Done: the size. Failed: a 3 px red edge, "upload failed", [retry] and a red [remove]. Remove takes the id out of what is sent.</p>
+<div class="cases">
+<div data-f='{"fields":[{"type":"upload","name":"p","label":"Photos","accept":["image"],"many":true,"mb":10,"files":[
+ {"name":"IMG_2043.jpg","size":4404019,"src":"milk.svg","state":"uploading","part":0.08},
+ {"name":"IMG_2044.jpg","size":3911000,"src":"crate.svg","state":"uploading","part":0.62},
+ {"name":"IMG_2045.jpg","size":2711000,"src":"door.svg","state":"done"}]}]}'></div>
+<div data-f='{"fields":[{"type":"upload","name":"p","label":"Photos","accept":["image"],"many":true,"mb":10,"files":[
+ {"name":"IMG_2041.jpg","size":2516582,"src":"crate.svg","state":"failed"},
+ {"name":"scan.pdf","size":1210000,"state":"failed"}]}]}'></div>
+</div>
+<h2>4 · Refused before the app sees it</h2><p class="note">A wrong type or a file over mb never reaches the file handler. It stays in the list with a "!" square, a red edge and the reason, until [dismiss] or the next pick.</p>
+<div class="cases">
+<div data-f='{"fields":[{"type":"upload","name":"p","label":"Photos","accept":["image"],"many":true,"mb":10,"files":[
+ {"name":"IMG_2041.jpg","size":2516582,"src":"crate.svg"},
+ {"name":"delivery-note.pdf","size":420000,"state":"refused","why":"type"},
+ {"name":"VID_0007.jpg","size":14889779,"state":"refused","why":"size"}]}]}'></div>
+<div data-f='{"lang":"th","fields":[{"type":"upload","name":"p","label":"รูปหลักฐาน","accept":["image"],"capture":true,"many":true,"mb":10,"files":[
+ {"name":"IMG_2041.jpg","size":2516582,"src":"crate.svg","state":"uploading","part":0.4},
+ {"name":"VID_0007.jpg","size":14889779,"state":"refused","why":"size"}]}]}'></div>
+</div>
+<h2>5 · The app's own answer, and off</h2><p class="note">The app checks the bytes again; its error is the field's note in red, as on any field. With no file handler passed in, the field is drawn off and says so.</p>
+<div class="cases">
+<div data-f='{"fields":[{"type":"upload","name":"p","label":"Photos","accept":["image"],"many":true,"mb":10,"error":"Photo 2 is blurred: take it again","files":[
+ {"name":"IMG_2041.jpg","size":2516582,"src":"crate.svg"},{"name":"IMG_2042.jpg","size":3040870,"src":"door.svg"}]}]}'></div>
+<div data-f='{"fields":[{"type":"upload","name":"p","label":"Photos","accept":["image"],"capture":true,"many":true,"mb":10,"off":true}]}'></div>
+</div>
+</main><script>draw()</script></body></html>

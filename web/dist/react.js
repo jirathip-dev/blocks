@@ -1,5 +1,5 @@
 // react/src/view.ts
-import { createElement as createElement7, useMemo as useMemo2, useRef as useRef4, useSyncExternalStore } from "react";
+import { createElement as createElement8, useMemo as useMemo2, useRef as useRef6, useSyncExternalStore } from "react";
 import { hooks as hooks2, share } from "./core.js";
 
 // react/src/act.ts
@@ -68,8 +68,8 @@ function useCx(p, screen2) {
       if (!go && t.action) void act2({ action: t.action, values: t.values });
     };
     const put = (k, to) => setEdits((e) => ({ ...Object.fromEntries(Object.entries(e).filter(([x]) => x !== k)), ...to === void 0 ? null : { [k]: to } }));
-    return { screen: String(screen2.id ?? ""), locale: screen2.locale ?? {}, v, state, edits, put, busy, act: act2, tap, report, kinds: p.kinds ?? {}, islands: p.islands ?? {} };
-  }, [key2, screen2.id, p.kinds, p.islands]);
+    return { screen: String(screen2.id ?? ""), locale: screen2.locale ?? {}, v, state, edits, put, busy, act: act2, tap, report, kinds: p.kinds ?? {}, islands: p.islands ?? {}, file: p.onFile };
+  }, [key2, screen2.id, p.kinds, p.islands, p.onFile]);
   const end = (ok) => {
     asking?.done(ok);
     setAsking(null);
@@ -80,7 +80,7 @@ function useCx(p, screen2) {
 }
 
 // react/src/block.ts
-import { Component, createElement as createElement6, memo, useContext as useContext11 } from "react";
+import { Component, createElement as createElement7, memo, useContext as useContext11 } from "react";
 import { hooks, named, role } from "./core.js";
 
 // react/src/draw.ts
@@ -154,9 +154,9 @@ function card({ b, hooks: hooks3 }) {
   const fold = b.fold ?? null;
   const main = fold?.main ?? null;
   const shut = fold !== null && !open;
-  const send = main && (() => void cx.act({ action: main.action, block: main.block, values: { ...main.values, choice: main.value } }));
+  const send2 = main && (() => void cx.act({ action: main.action, block: main.block, values: { ...main.values, choice: main.value } }));
   const flip = (e) => e.target instanceof Element && e.target.closest("button") || setOpen((o) => !o);
-  const mainBtn = main && shut ? btn(main.label, "main", void 0, main.action, { onClick: send }) : null;
+  const mainBtn = main && shut ? btn(main.label, "main", void 0, main.action, { onClick: send2 }) : null;
   const line = fold ? h("div", "fold", { tabIndex: 0, role: "button", "aria-expanded": String(!shut), onClick: flip }, h("span", "fl", null, fold.line), mainBtn) : null;
   if (shut) return h("div", cls, attrs, line);
   const badge = b.badge ? [" ", h("span", `tag b-card__badge ${b.badge.tone ?? ""}`, null, ticked(b.badge.text, cx))] : [];
@@ -172,22 +172,47 @@ import { useContext as useContext3 } from "react";
 function chips({ b, hooks: hooks3 }) {
   const cx = useContext3(Cx);
   const sel = b.selected ?? [];
-  const pick = (v) => {
+  const pick2 = (v) => {
     const next = !b.multi || v === "all" ? [v] : sel.includes(v) ? sel.filter((x) => x !== v) : [...sel.filter((x) => x !== "all"), v];
     void cx.act({ action: b.action ?? "", block: b.id, values: { [b.name]: next.length ? next : ["all"] } });
   };
-  const chip = (o) => btn(o.label, sel.includes(o.value) ? "on" : "", void 0, b.action, { key: o.value, "aria-pressed": String(sel.includes(o.value)), onClick: () => pick(o.value) });
+  const chip = (o) => btn(o.label, sel.includes(o.value) ? "on" : "", void 0, b.action, { key: o.value, "aria-pressed": String(sel.includes(o.value)), onClick: () => pick2(o.value) });
   return h("div", "chips", hooks3, ...b.options.map(chip));
 }
 
 // react/src/kinds/form.ts
-import { useContext as useContext4 } from "react";
+import { useContext as useContext4, useRef as useRef3, useState as useState4 } from "react";
+import { fill as fill2, lit } from "./core.js";
 
 // src/gen/words.ts
 var words = {
   was: ["was", "\u0E40\u0E14\u0E34\u0E21"],
   set: ["set \u2713 \xB7 type to replace", "\u0E15\u0E31\u0E49\u0E07\u0E44\u0E27\u0E49\u0E41\u0E25\u0E49\u0E27 \u2713 \xB7 \u0E1E\u0E34\u0E21\u0E1E\u0E4C\u0E40\u0E1E\u0E37\u0E48\u0E2D\u0E41\u0E17\u0E19\u0E17\u0E35\u0E48"],
-  unset: ["not set", "\u0E22\u0E31\u0E07\u0E44\u0E21\u0E48\u0E44\u0E14\u0E49\u0E15\u0E31\u0E49\u0E07"]
+  unset: ["not set", "\u0E22\u0E31\u0E07\u0E44\u0E21\u0E48\u0E44\u0E14\u0E49\u0E15\u0E31\u0E49\u0E07"],
+  file1: ["choose file", "\u0E40\u0E25\u0E37\u0E2D\u0E01\u0E44\u0E1F\u0E25\u0E4C"],
+  fileN: ["add files", "\u0E40\u0E1E\u0E34\u0E48\u0E21\u0E44\u0E1F\u0E25\u0E4C"],
+  photo1: ["choose photo", "\u0E40\u0E25\u0E37\u0E2D\u0E01\u0E23\u0E39\u0E1B"],
+  photoN: ["add photos", "\u0E40\u0E1E\u0E34\u0E48\u0E21\u0E23\u0E39\u0E1B"],
+  camera: ["take photo", "\u0E16\u0E48\u0E32\u0E22\u0E23\u0E39\u0E1B"],
+  replace: ["replace", "\u0E40\u0E1B\u0E25\u0E35\u0E48\u0E22\u0E19"],
+  remove: ["remove", "\u0E25\u0E1A"],
+  retry: ["retry", "\u0E25\u0E2D\u0E07\u0E2D\u0E35\u0E01\u0E04\u0E23\u0E31\u0E49\u0E07"],
+  dismiss: ["dismiss", "\u0E1B\u0E34\u0E14"],
+  image: ["images", "\u0E23\u0E39\u0E1B\u0E20\u0E32\u0E1E"],
+  pdf: ["PDF", "PDF"],
+  sheet: ["sheets", "\u0E44\u0E1F\u0E25\u0E4C\u0E15\u0E32\u0E23\u0E32\u0E07"],
+  or: [" or ", " \u0E2B\u0E23\u0E37\u0E2D "],
+  upTo: ["up to {mb} MB", "\u0E44\u0E21\u0E48\u0E40\u0E01\u0E34\u0E19 {mb} MB"],
+  each: ["up to {mb} MB each", "\u0E44\u0E21\u0E48\u0E40\u0E01\u0E34\u0E19 {mb} MB \u0E15\u0E48\u0E2D\u0E44\u0E1F\u0E25\u0E4C"],
+  uploading: ["uploading {p} %", "\u0E01\u0E33\u0E25\u0E31\u0E07\u0E2D\u0E31\u0E1B\u0E42\u0E2B\u0E25\u0E14 {p} %"],
+  failed: ["upload failed", "\u0E2D\u0E31\u0E1B\u0E42\u0E2B\u0E25\u0E14\u0E44\u0E21\u0E48\u0E2A\u0E33\u0E40\u0E23\u0E47\u0E08"],
+  onlyType: ["refused: only {types}", "\u0E44\u0E21\u0E48\u0E23\u0E31\u0E1A: \u0E23\u0E31\u0E1A\u0E40\u0E09\u0E1E\u0E32\u0E30{types}"],
+  tooBig: ["refused: {size} is over {mb} MB", "\u0E44\u0E21\u0E48\u0E23\u0E31\u0E1A: {size} \u0E40\u0E01\u0E34\u0E19 {mb} MB"],
+  off: ["uploads are off here", "\u0E2D\u0E31\u0E1B\u0E42\u0E2B\u0E25\u0E14\u0E44\u0E21\u0E48\u0E44\u0E14\u0E49\u0E17\u0E35\u0E48\u0E19\u0E35\u0E48"],
+  wait1: ["waiting for {n} upload", "\u0E23\u0E2D\u0E2D\u0E31\u0E1B\u0E42\u0E2B\u0E25\u0E14 {n} \u0E44\u0E1F\u0E25\u0E4C"],
+  waitN: ["waiting for {n} uploads", "\u0E23\u0E2D\u0E2D\u0E31\u0E1B\u0E42\u0E2B\u0E25\u0E14 {n} \u0E44\u0E1F\u0E25\u0E4C"],
+  stuck: ["an upload failed: retry or remove it", "\u0E2D\u0E31\u0E1B\u0E42\u0E2B\u0E25\u0E14\u0E44\u0E21\u0E48\u0E2A\u0E33\u0E40\u0E23\u0E47\u0E08: \u0E25\u0E2D\u0E07\u0E2D\u0E35\u0E01\u0E04\u0E23\u0E31\u0E49\u0E07\u0E2B\u0E23\u0E37\u0E2D\u0E25\u0E1A"],
+  files: ["{label}, {n} files", "{label}, {n} \u0E44\u0E1F\u0E25\u0E4C"]
 };
 
 // react/src/fields/_view.ts
@@ -229,36 +254,110 @@ var toggle = {
   sent: (_x, v) => !!v
 };
 
+// react/src/fields/upload.ts
+import { createElement as createElement5, useRef as useRef2, useState as useState3 } from "react";
+import { accepts, fill, held, hint, ids, pick, picked, send, status, waits } from "./core.js";
+function item(x, r, w, drop, again) {
+  const line = status(x, r, w);
+  const hide = { "aria-hidden": "true" };
+  const head = r.src && r.state !== "refused" ? h("img", "fut", { ...hide, src: r.src, alt: "" }) : h("span", "fux", hide, r.state === "refused" ? "!" : (r.name.split(".").pop() ?? "").slice(0, 4));
+  const p = Math.round(r.part * 100);
+  const bar3 = { role: "progressbar", "aria-valuemin": "0", "aria-valuemax": "100", "aria-valuenow": String(p), "aria-label": r.name, style: { "--v": p } };
+  const b = (k, f, cls = "") => btn(w(k), cls, void 0, void 0, { "aria-label": `${w(k)} ${r.name}`, onClick: f });
+  const acts = r.state === "failed" ? [b("retry", () => again(r)), b("remove", () => drop(r), "bad")] : [b(r.state === "refused" ? "dismiss" : "remove", () => drop(r))];
+  const m = h("span", "fum", null, h("span", "fun", null, r.name), r.state === "uploading" ? h("span", "pgt", bar3, h("b", "", null)) : null, h("span", "fus", null, line));
+  return h("li", `fui ${r.state}`, { key: r.id ?? `${r.name}~${r.size}`, "aria-label": `${r.name}, ${line}` }, head, m, h("span", "fua", null, ...acts));
+}
+function Upload({ x, c, attrs }) {
+  const w = (k) => word(c, k);
+  const [rows, setRows] = useState3(() => held(x));
+  const live = useRef2(rows);
+  const input2 = useRef2(null);
+  const changed = (next) => {
+    live.current = next;
+    setRows(next);
+    c.hold(ids(next), waits(next));
+  };
+  const go = (r) => c.file && send(r, c.file, { screen: c.screen, block: c.block, field: x.name }, () => changed([...live.current]));
+  const drop = (r) => {
+    r.stop?.abort();
+    changed(live.current.filter((o) => o !== r));
+  };
+  const open = (camera) => {
+    const i = input2.current;
+    if (camera) i?.setAttribute("capture", "environment");
+    else i?.removeAttribute("capture");
+    i?.click();
+  };
+  const take = (e) => {
+    const files = Array.from(e.target.files ?? []);
+    const next = picked(x, live.current, files, files.map((f) => f.name));
+    e.target.value = "";
+    changed(next.rows);
+    next.send.forEach(go);
+  };
+  const label = x.label ?? x.name;
+  const choice = pick(x, rows, w);
+  const tip = hint(x, w, !!c.file);
+  const off = !c.file;
+  const fub = h(
+    "div",
+    "fub",
+    null,
+    x.capture ? btn(w("camera"), "fuc", void 0, void 0, { onClick: () => open(true) }, off) : null,
+    btn(choice, "", void 0, void 0, { "aria-label": `${choice}: ${label}`, onClick: () => open(false) }, off),
+    tip ? h("span", "fuh", null, tip) : null,
+    h("input", "", { ref: input2, type: "file", tabIndex: -1, multiple: !!x.many, accept: accepts(x.accept ?? []), "aria-hidden": "true", onChange: take })
+  );
+  const named2 = { role: "group", "data-field": x.name, "aria-label": fill(w("files"), { label, n: rows.filter((r) => r.state !== "refused").length }), "aria-invalid": attrs["aria-invalid"] };
+  return h("div", "fu", named2, x.error ? h("span", "fe", null, x.error) : null, rows.length ? h("ul", "fuf", null, ...rows.map((r) => item(x, r, w, drop, go))) : null, fub);
+}
+var upload = {
+  row: " up",
+  group: true,
+  draw: (x, c, attrs) => createElement5(Upload, { x, c, attrs }),
+  sent: (x) => ids(held(x))
+};
+
 // react/src/gen/fields.ts
-var views = { picker, secret, text, toggle };
+var views = { picker, secret, text, toggle, upload };
 
 // react/src/kinds/form.ts
 var viewOf = (x) => views[x.type] ?? text;
 var note = (x, was) => x.error ? ["fn err", x.error] : x.was != null ? ["fn was", `${was} ${x.was}`] : ["fn", x.doc ?? ""];
-function field(x, key2, cx) {
+function field(x, key2, cx, held3) {
   const v = viewOf(x);
-  const [cls, say2] = note(x, word(cx, "was"));
+  const [cls, say2] = note(v.group ? { ...x, error: null } : x, word(cx, "was"));
   const said = Object.prototype.hasOwnProperty.call(cx.edits, x.name) ? cx.v.says[x.name] : void 0;
   const attrs = { name: x.name, disabled: cx.v.disabled.has(x.name) || void 0, "aria-invalid": x.error ? "true" : void 0 };
-  const control = v.draw(x, { locale: cx.locale, key: key2, value: cx.state[x.name] ?? null, put: (to) => cx.put(x.name, to) }, attrs);
+  const hold = (sent, w) => {
+    held3.sent[x.name] = sent;
+    held3.wait(x.name, w);
+    cx.put(x.name, lit(x, sent));
+  };
+  const c = { locale: cx.locale, key: key2, value: cx.state[x.name] ?? null, put: (to) => cx.put(x.name, to), screen: cx.screen, block: held3.block, file: cx.file, hold };
+  const control = v.draw(x, c, attrs);
   const l = `fd${v.row ?? ""}${x.error ? " err" : ""}${x.open ? " open" : ""}`;
-  return h("label", l, { key: x.name, hidden: cx.v.hidden.has(x.name) || void 0 }, h("span", "fl", null, h("span", "fk", null, x.label ?? x.name), h("span", cls, null, say2)), control, said ? h("span", "fe", null, said) : null);
+  return h(v.group ? "div" : "label", l, { key: x.name, hidden: cx.v.hidden.has(x.name) || void 0 }, h("span", "fl", null, h("span", "fk", null, x.label ?? x.name), h("span", cls, null, say2)), control, said ? h("span", "fe", null, said) : null);
 }
 function form({ b, hooks: hooks3 }) {
   const cx = useContext4(Cx);
   const s = b.submit;
-  const rows = b.fields.map((x) => field(x, `draft:${cx.screen}:${String(b.id)}:`, cx));
+  const sent = useRef3({});
+  const [waits2, setWaits] = useState4({});
+  const held3 = { sent: sent.current, wait: (n, w) => setWaits((o) => ({ ...o, [n]: w })), block: b.id ?? void 0 };
+  const rows = b.fields.map((x) => field(x, `draft:${cx.screen}:${String(b.id)}:`, cx, held3));
   if (!s) return h("div", "form", { ...hooks3, "data-id": b.id ?? "" }, ...rows);
   const values = () => {
     const v = {};
     for (const x of b.fields) {
       const own2 = viewOf(x).sent;
-      const got = own2 ? own2(x, cx.state[x.name] ?? null) : cx.state[x.name];
-      if (typeof got === "string" || typeof got === "boolean" || typeof got === "number") v[x.name] = got;
+      const got = Object.prototype.hasOwnProperty.call(sent.current, x.name) ? sent.current[x.name] : own2 ? own2(x, cx.state[x.name] ?? null) : cx.state[x.name];
+      if (typeof got === "string" || typeof got === "boolean" || typeof got === "number" || Array.isArray(got)) v[x.name] = got;
     }
     return v;
   };
-  const send = () => {
+  const send2 = () => {
     const v = values();
     if (Object.values(v).every((x) => !String(x || "").trim())) return;
     void cx.act({ action: s.action, block: b.id, values: { ...s.values, ...v } }).then((ok) => ok && b.fields.forEach((x) => cx.put(x.name, void 0)));
@@ -266,30 +365,33 @@ function form({ b, hooks: hooks3 }) {
   const enter = (e) => {
     if (e.key !== "Enter" || !(e.target instanceof HTMLInputElement) || e.target.type === "checkbox") return;
     e.preventDefault();
-    send();
+    send2();
   };
   const busy = cx.busy.has(b.id ?? s.action);
-  const off = b.id != null && cx.v.disabled.has(b.id);
-  const go = btn(busy ? "sending\u2026" : s.label, "", void 0, s.action, { "data-submit": "", onClick: send }, off);
-  return h("div", "form say", { ...hooks3, "data-id": b.id ?? "", onKeyDown: enter }, ...rows, go);
+  const all = Object.values(waits2), up = all.reduce((n, w) => n + w.up, 0), bad = all.some((w) => w.failed > 0);
+  const off = b.id != null && cx.v.disabled.has(b.id) || up > 0 || bad;
+  const go = btn(busy ? "sending\u2026" : s.label, "", void 0, s.action, { "data-submit": "", onClick: send2 }, off);
+  const line = bad ? word(cx, "stuck") : up ? fill2(word(cx, up > 1 ? "waitN" : "wait1"), { n: up }) : "";
+  const wait = b.fields.some((x) => viewOf(x).group) ? h("span", `say-busy${bad ? " bad" : ""}`, null, line) : null;
+  return h("div", "form say", { ...hooks3, "data-id": b.id ?? "", onKeyDown: enter }, ...rows, wait, go);
 }
 
 // react/src/kinds/images.ts
 import { linkable as linkable3 } from "./core.js";
 function images({ b, hooks: hooks3 }) {
-  const item = (i, n) => {
+  const item2 = (i, n) => {
     if (!linkable3(i.src)) return h("span", "", { key: n }, i.alt ?? "");
     const src = i.src.replace(/^[/]/, "");
     return h("a", "", { key: n, ...out(src) }, h("img", "", { src, alt: i.alt ?? "", loading: "lazy" }));
   };
-  return h("div", "imgs", hooks3, ...b.items.map(item));
+  return h("div", "imgs", hooks3, ...b.items.map(item2));
 }
 
 // react/src/kinds/list.ts
 var list = ({ b, hooks: hooks3 }) => h("div", "list", hooks3, ...kids(b.rows));
 
 // react/src/kinds/row.ts
-import { useContext as useContext5, useRef as useRef2, useState as useState3 } from "react";
+import { useContext as useContext5, useRef as useRef4, useState as useState5 } from "react";
 function round(d, now, cx) {
   const tap = now ? null : d.tap ?? null;
   const url = urlOf(tap);
@@ -306,8 +408,8 @@ function round(d, now, cx) {
 }
 function row({ b, hooks: hooks3 }) {
   const cx = useContext5(Cx);
-  const [flip, setFlip] = useState3(false);
-  const x0 = useRef2(0);
+  const [flip, setFlip] = useState5(false);
+  const x0 = useRef4(0);
   const toggle2 = () => setFlip((f) => !f);
   const cls = `row${b.style === "link" ? " link" : ""}${b.sticky ? " sticky" : ""}${b.indent ? " in" + Math.min(b.indent, 3) : ""}`;
   const rounds = b.rounds ?? [];
@@ -386,7 +488,7 @@ function text2({ b, hooks: hooks3 }) {
 }
 
 // react/src/kinds/timeline.ts
-import { useContext as useContext9, useLayoutEffect, useRef as useRef3, useState as useState4 } from "react";
+import { useContext as useContext9, useLayoutEffect, useRef as useRef5, useState as useState6 } from "react";
 
 // src/core/kind/timeline.ts
 var MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -534,8 +636,8 @@ function step(p, e, start2) {
 
 // src/gesture.ts
 var ARROWS = { ArrowLeft: "left", ArrowRight: "right", ArrowUp: "up", ArrowDown: "down" };
-var key = (b, item) => `${b.id ?? ""}
-${item}`;
+var key = (b, item2) => `${b.id ?? ""}
+${item2}`;
 var speaker;
 function say(text3) {
   if (!speaker?.isConnected) {
@@ -552,7 +654,7 @@ var beside = (el, steps, run) => el.parentElement?.append(
     return b;
   })
 );
-function held(c, o) {
+function held2(c, o) {
   const h2 = c.held?.get(key(o.block, o.item));
   return h2 && same2(h2.start, o.rules.start(o.block, o.grab)) ? h2.c : void 0;
 }
@@ -575,7 +677,7 @@ function gestured(el, c, o) {
     go({ on: "settled" });
   };
   if (out2) out2.back = back;
-  const send = async (cand) => {
+  const send2 = async (cand) => {
     const h2 = { start: start2, c: cand, back };
     c.held?.set(k, h2);
     say("sending");
@@ -594,7 +696,7 @@ function gestured(el, c, o) {
     if (p.at === "pressed") say(`${el.getAttribute("aria-label") ?? ""}, grabbed, ${o.rules.says(o.block, o.grab, start2)}. Arrows move, Enter drops, Escape cancels`);
     if (p.at === "dragging") say("no drop here");
     if (p.at === "previewing") say(o.rules.says(o.block, o.grab, p.c));
-    if (fx && fx !== "tap") void send(fx.send);
+    if (fx && fx !== "tap") void send2(fx.send);
   };
   const phase = () => p.at;
   const live = () => p.at === "pressed" || p.at === "dragging" || p.at === "previewing";
@@ -700,7 +802,7 @@ function bar2(b, x, y, gap, ax, wires) {
       const g = r?.current;
       if (!g || !gesture) continue;
       const grab = { bar: x.id, part };
-      const item = `${x.id}${part === "body" ? "" : part === "start" ? "<" : ">"}`;
+      const item2 = `${x.id}${part === "body" ? "" : part === "start" ? "<" : ">"}`;
       const show = (span2) => {
         const [a, z] = span2 ? [day(span2.start) ?? s, day(span2.end) ?? e] : [s, e];
         const px = ax.lane() / ax.n;
@@ -711,8 +813,8 @@ function bar2(b, x, y, gap, ax, wires) {
         gh.classList.toggle("on", span2 !== null);
         tg.style.transform = span2 ? `translateX(${(a - s) * px}px)` : "";
       };
-      gestured(g, c, { block: b, gesture, rules: timeline, grab, item, reach: (dx) => ({ days: Math.round(dx / (ax.lane() / ax.n)) }), show });
-      const out2 = held(c, { block: b, rules: timeline, grab, item });
+      gestured(g, c, { block: b, gesture, rules: timeline, grab, item: item2, reach: (dx) => ({ days: Math.round(dx / (ax.lane() / ax.n)) }), show });
+      const out2 = held2(c, { block: b, rules: timeline, grab, item: item2 });
       if (isSpan(out2)) show(out2);
       if (ax.z > 1) g.addEventListener("pointerdown", (p) => p.stopImmediatePropagation(), { capture: true });
     }
@@ -739,7 +841,7 @@ function draw(b, r, ax, gesture, wires) {
     const n = lane.children.length;
     gestured(ht, c, { block: b, gesture, rules: timeline, grab, item: `row:${r.id}`, reach: (dx) => ({ days: Math.round(dx / (ax.lane() / ax.n)), from }), show });
     tg.after(...Array.from(lane.children).slice(n));
-    const out2 = held(c, { block: b, rules: timeline, grab, item: `row:${r.id}` });
+    const out2 = held2(c, { block: b, rules: timeline, grab, item: `row:${r.id}` });
     if (isSpan(out2)) show(out2);
     if (ax.z > 1) ht.addEventListener("pointerdown", (p) => p.stopImmediatePropagation(), { capture: true });
   });
@@ -787,12 +889,12 @@ function rove(root) {
 }
 function timeline2({ b, hooks: hooks3 }) {
   const cx = useContext9(Cx);
-  const live = useRef3(cx);
+  const live = useRef5(cx);
   live.current = cx;
-  const keep = useRef3(/* @__PURE__ */ new Map());
-  const done = useRef3(/* @__PURE__ */ new WeakSet());
-  const [root, wrap, grid] = [useRef3(null), useRef3(null), useRef3(null)];
-  const [px, setPx] = useState4(null);
+  const keep = useRef5(/* @__PURE__ */ new Map());
+  const done = useRef5(/* @__PURE__ */ new WeakSet());
+  const [root, wrap, grid] = [useRef5(null), useRef5(null), useRef5(null)];
+  const [px, setPx] = useState6(null);
   const [f, t] = [day(b.from), day(b.to)];
   const on = b.move != null || b.stretch != null || b.draw != null;
   const z = px === null || px >= 24 ? 1 : px >= 12 ? 2 : 3;
@@ -832,7 +934,7 @@ function zooms(ax, px, set, wrap, grid) {
 var views2 = { button, card, chips, form, images, list, row, screen, section, sheet, stat, text: text2, timeline: timeline2 };
 
 // react/src/island.ts
-import { createElement as createElement5, Suspense, useContext as useContext10, useLayoutEffect as useLayoutEffect2, useState as useState5 } from "react";
+import { createElement as createElement6, Suspense, useContext as useContext10, useLayoutEffect as useLayoutEffect2, useState as useState7 } from "react";
 function Mark({ on }) {
   useLayoutEffect2(() => {
     on(true);
@@ -842,13 +944,13 @@ function Mark({ on }) {
 }
 function Isle({ b, attrs }) {
   const cx = useContext10(Cx);
-  const [live, setLive] = useState5(false);
+  const [live, setLive] = useState7(false);
   const C = Object.prototype.hasOwnProperty.call(cx.islands, b.name) ? cx.islands[b.name] : void 0;
   const fallback = row2(b.fallback, cx);
   const id = b.id ?? "";
   const emit = (name, values) => b.events?.includes(name) ? void cx.act({ action: name, block: id, values: values ?? {} }) : cx.report({ what: "dropped", block: id, event: name });
   const style = { overflow: "hidden", aspectRatio: b.size?.aspect ?? void 0, width: b.size?.width ?? void 0, height: b.size?.height ?? void 0 };
-  const inner = C && createElement5(Boundary, { b, report: cx.report, fallback }, createElement5(Suspense, { fallback }, createElement5(Mark, { on: setLive }), createElement5(C, { props: b.props ?? {}, emit })));
+  const inner = C && createElement6(Boundary, { b, report: cx.report, fallback }, createElement6(Suspense, { fallback }, createElement6(Mark, { on: setLive }), createElement6(C, { props: b.props ?? {}, emit })));
   return h("div", "", { ...attrs, "data-fallback": C && live ? void 0 : "", style }, inner || fallback);
 }
 
@@ -880,7 +982,7 @@ function row2(f, cx) {
   const sub = f.subtitle != null ? h("span", "rs b-row__subtitle", null, f.subtitle) : null;
   return h("div", tap ? "row tap" : "row", pressed, h("span", "rm", null, h("span", "rt b-row__title", null, f.title), sub));
 }
-var kids = (bs) => (Array.isArray(bs) ? bs.filter(isBlk) : []).map((b, i) => createElement6(Block, { key: typeof b.id === "string" ? b.id : `~${i}`, b }));
+var kids = (bs) => (Array.isArray(bs) ? bs.filter(isBlk) : []).map((b, i) => createElement7(Block, { key: typeof b.id === "string" ? b.id : `~${i}`, b }));
 function Fallen({ b }) {
   const cx = useContext11(Cx);
   const f = b.fallback ?? { title: String(b.type) };
@@ -906,19 +1008,19 @@ var Boundary = class extends Component {
 };
 var own = (t, b, attrs) => {
   const V = views2[t];
-  return V ? createElement6(V, { b, hooks: attrs }) : void 0;
+  return V ? createElement7(V, { b, hooks: attrs }) : void 0;
 };
 function Draw({ b }) {
   const cx = useContext11(Cx);
-  if (isIsland(b)) return createElement6(Isle, { b, attrs: hooksOf(b, cx, false) });
-  if (core(b)) return own(b.type, b, hooksOf(b, cx, false)) ?? createElement6(Fallen, { b });
+  if (isIsland(b)) return createElement7(Isle, { b, attrs: hooksOf(b, cx, false) });
+  if (core(b)) return own(b.type, b, hooksOf(b, cx, false)) ?? createElement7(Fallen, { b });
   const K = cx.kinds[String(b.type)];
   const act2 = (a) => cx.act({ ...a, block: typeof b.id === "string" ? b.id : null });
-  return K ? h("div", "", hooksOf(b, cx, false), createElement6(K, { block: { ...b, type: String(b.type) }, act: act2 })) : createElement6(Fallen, { b });
+  return K ? h("div", "", hooksOf(b, cx, false), createElement7(K, { block: { ...b, type: String(b.type) }, act: act2 })) : createElement7(Fallen, { b });
 }
 var Block = memo(function Block2({ b }) {
   const cx = useContext11(Cx);
-  return createElement6(Boundary, { b, report: cx.report, fallback: createElement6(Fallen, { b }) }, createElement6(Draw, { b }));
+  return createElement7(Boundary, { b, report: cx.report, fallback: createElement7(Fallen, { b }) }, createElement7(Draw, { b }));
 });
 
 // react/src/view.ts
@@ -930,13 +1032,13 @@ var watch = (on) => {
   return () => m.removeEventListener("change", on);
 };
 function BlocksView(p) {
-  const last = useRef4(void 0);
+  const last = useRef6(void 0);
   const screen2 = useMemo2(() => last.current = share(last.current, p.screen), [p.screen]);
   const { cx, ask } = useCx(p, screen2);
   const dark = useSyncExternalStore(watch, () => matchMedia(DARK).matches, () => false);
   const s = p.look?.[p.mode === "dark" || p.mode !== "light" && dark ? "dark" : "light"];
   const style = s ? { ...s.tokens, colorScheme: s["color-scheme"] } : void 0;
-  return h("div", "b-view", { style }, createElement7(Cx.Provider, { value: cx }, createElement7(Block, { b: screen2 })), ask);
+  return h("div", "b-view", { style }, createElement8(Cx.Provider, { value: cx }, createElement8(Block, { b: screen2 })), ask);
 }
 export {
   BlocksView,

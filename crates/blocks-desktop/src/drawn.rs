@@ -49,22 +49,28 @@ impl Rec {
     }
 
     pub(crate) fn tap(&mut self, key: &str, r: Rect, live: bool) {
-        let rect = spot(r);
-        let hit = Hit {
-            rect,
-            tap: Some(rect),
+        self.spot(key, r, live).tap.get_or_insert(spot(r));
+    }
+
+    pub(crate) fn field(&mut self, key: &str, r: Rect, live: bool) {
+        self.spot(key, r, live).field.get_or_insert(spot(r));
+    }
+
+    fn spot(&mut self, key: &str, r: Rect, live: bool) -> &mut Hit {
+        self.hits.entry(key.into()).or_insert(Hit {
+            rect: spot(r),
+            tap: None,
             field: None,
             live,
-        };
-        self.hits.entry(key.into()).or_insert(hit);
+        })
     }
 
     pub(crate) fn hit(&mut self, id: &str, rect: [f64; 4], live: bool) {
-        let tap = self.hits.get(id).and_then(|h| h.tap);
+        let old = self.hits.get(id);
         let hit = Hit {
             rect,
-            tap,
-            field: None,
+            tap: old.and_then(|h| h.tap),
+            field: old.and_then(|h| h.field),
             live,
         };
         self.hits.insert(id.into(), hit);
