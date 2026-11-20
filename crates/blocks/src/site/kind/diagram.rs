@@ -2,7 +2,8 @@ use std::collections::{BTreeSet, HashMap};
 
 use serde_json::Value;
 
-use super::{fallback, get, shown, W};
+use super::fallback;
+use crate::site::write::{get, shown, W};
 
 struct Edge {
     from: String,
@@ -418,7 +419,7 @@ fn node(w: &mut W<'_>, g: &Chart, b: &Value, id: &String, p: Box, counts: &HashM
     w.close("div");
 }
 
-pub(super) fn diagram(w: &mut W<'_>, b: &Value) {
+pub(super) fn draw(w: &mut W<'_>, b: &Value) {
     let g = chart(&shown(b.get("source")));
     if g.order.is_empty() {
         return fallback(w, b);

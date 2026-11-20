@@ -1,6 +1,6 @@
 use serde_json::Value;
 
-use super::super::{on, W};
+use crate::site::write::{on, W};
 
 pub(super) fn view(w: &mut W<'_>, x: &Value, attrs: &[(&str, &str)]) {
     let mut attrs = attrs.to_vec();

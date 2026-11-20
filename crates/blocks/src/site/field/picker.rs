@@ -1,6 +1,6 @@
 use serde_json::Value;
 
-use super::super::{list, shown, W};
+use crate::site::write::{list, shown, W};
 
 pub(super) fn view(w: &mut W<'_>, x: &Value, attrs: &[(&str, &str)]) {
     let value = shown(x.get("value"));

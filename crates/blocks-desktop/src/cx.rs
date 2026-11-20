@@ -1,17 +1,40 @@
+use std::collections::{BTreeMap, BTreeSet};
+
 use blocks::tree::{Drawn as Way, Node};
 use blocks::Block;
 use egui::accesskit::Role;
 use egui::{Ui, UiBuilder};
 
+use crate::art::Art;
 use crate::draw;
-use crate::drawn::Rec;
+use crate::drawn::{spot, Rec};
 use crate::look::Look;
 
 pub(crate) type Draw<T> = fn(&T, &mut Ui, &mut Cx<'_>);
 
+#[derive(Default)]
+pub(crate) struct Local {
+    pub(crate) values: BTreeMap<String, String>,
+    pub(crate) off: BTreeSet<String>,
+    pub(crate) acts: BTreeSet<String>,
+}
+
+#[derive(Clone, Copy)]
+pub(crate) struct Ground<'a> {
+    pub(crate) look: &'a Look,
+    pub(crate) art: &'a dyn Art,
+    pub(crate) local: &'a Local,
+    pub(crate) now: f64,
+}
+
 pub(crate) struct Cx<'a> {
     pub(crate) look: &'a Look,
-    rec: &'a mut Rec,
+    pub(crate) art: &'a dyn Art,
+    pub(crate) now: f64,
+    pub(crate) rec: &'a mut Rec,
+    pub(crate) me: Option<&'a str>,
+    pub(crate) on: bool,
+    local: &'a Local,
     plan: &'a [Node],
     next: usize,
     out: Vec<Node>,
@@ -44,10 +67,15 @@ fn stray(b: &Block) -> Node {
 }
 
 impl<'a> Cx<'a> {
-    pub(crate) fn new(look: &'a Look, rec: &'a mut Rec, plan: &'a [Node]) -> Self {
+    pub(crate) fn new(g: Ground<'a>, rec: &'a mut Rec, plan: &'a [Node]) -> Self {
         Self {
-            look,
+            look: g.look,
+            art: g.art,
+            now: g.now,
             rec,
+            me: None,
+            on: true,
+            local: g.local,
             plan,
             next: 0,
             out: vec![],
@@ -56,6 +84,27 @@ impl<'a> Cx<'a> {
 
     pub(crate) fn done(self) -> Vec<Node> {
         self.out
+    }
+
+    fn ground(&self) -> Ground<'a> {
+        Ground {
+            look: self.look,
+            art: self.art,
+            local: self.local,
+            now: self.now,
+        }
+    }
+
+    pub(crate) fn value(&self, key: &str) -> Option<&'a str> {
+        self.local.values.get(key).map(String::as_str)
+    }
+
+    pub(crate) fn values(&self) -> &'a BTreeMap<String, String> {
+        &self.local.values
+    }
+
+    pub(crate) fn act_on(&self, action: Option<&str>) -> bool {
+        self.on && !action.is_some_and(|a| self.local.acts.contains(a))
     }
 
     pub(crate) fn blocks(&mut self, ui: &mut Ui, blocks: &[Block]) {
@@ -84,7 +133,10 @@ impl<'a> Cx<'a> {
             .id_salt(salt)
             .accessibility_role(role(&plan.role))
             .accessibility_label(plan.name.clone());
-        let mut inner = Cx::new(self.look, self.rec, &plan.children);
+        let on = self.on && !b.id().is_some_and(|id| self.local.off.contains(id));
+        let mut inner = Cx::new(self.ground(), self.rec, &plan.children);
+        inner.me = plan.id.as_deref();
+        inner.on = on;
         let r = ui.scope_builder(builder, |ui| {
             if let Some(id) = b.id() {
                 let author = format!("block:{id}");
@@ -94,10 +146,9 @@ impl<'a> Cx<'a> {
             draw::draw(b, &plan.name, ui, &mut inner)
         });
         let children = inner.done();
-        let r2 = r.response.rect;
-        let rect = [r2.min.x, r2.min.y, r2.width(), r2.height()].map(f64::from);
+        let rect = spot(r.response.rect);
         if let Some(id) = b.id() {
-            self.rec.hit(id, rect);
+            self.rec.hit(id, rect, on);
         }
         self.out.push(Node {
             kind: b.kind().into(),

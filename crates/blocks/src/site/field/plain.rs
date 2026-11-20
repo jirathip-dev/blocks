@@ -1,7 +1,7 @@
 use serde_json::Value;
 
-use super::super::{get, shown, W};
 use crate::behave;
+use crate::site::write::{get, shown, W};
 
 pub(super) fn view(w: &mut W<'_>, x: &Value, attrs: &[(&str, &str)]) {
     input(w, x, attrs, false, get(x, "placeholder").unwrap_or_default());

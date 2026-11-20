@@ -1,6 +1,6 @@
 use serde_json::{Map, Value};
 
-use super::{get, list, sends, Go, W};
+use crate::site::write::{get, list, sends, Go, W};
 
 fn lane(w: &mut W<'_>, l: &Value) {
     let state = get(l, "state").unwrap_or_default();
@@ -61,7 +61,7 @@ fn lane(w: &mut W<'_>, l: &Value) {
     w.close("li");
 }
 
-pub(super) fn scene(w: &mut W<'_>, b: &Value) {
+pub(super) fn draw(w: &mut W<'_>, b: &Value) {
     w.open_block("div", "scn", b, &[]);
     if let Some(l) = get(b, "label").filter(|l| !l.is_empty()) {
         w.el("div", "sh", l);

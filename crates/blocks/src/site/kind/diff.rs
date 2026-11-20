@@ -1,8 +1,9 @@
 use serde_json::Value;
 
-use super::{fallback, get, list, W};
+use super::fallback;
+use crate::site::write::{get, list, W};
 
-pub(super) fn diff(w: &mut W<'_>, b: &Value) {
+pub(super) fn draw(w: &mut W<'_>, b: &Value) {
     let (Some(file), Some(hunks)) = (get(b, "file"), b.get("hunks").and_then(Value::as_array)) else {
         return fallback(w, b);
     };

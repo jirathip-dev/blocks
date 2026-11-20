@@ -2,9 +2,9 @@ use std::collections::BTreeMap;
 
 use serde_json::Value;
 
-use super::{get, list, shown, W};
+use crate::site::write::{get, list, shown, W};
 
-pub(super) fn editor(w: &mut W<'_>, b: &Value) {
+pub(super) fn draw(w: &mut W<'_>, b: &Value) {
     let first = b.get("first").and_then(Value::as_i64).unwrap_or(1);
     let mut errs = BTreeMap::new();
     for e in list(b, "errors") {

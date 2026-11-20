@@ -1,7 +1,8 @@
 use serde::Serialize;
 use serde_json::Value;
 
-use super::{fallback, W};
+use super::fallback;
+use crate::site::write::W;
 use crate::kind::{Cell, Column, ColumnKind, PhonePart, SortDir, Table, TableRow};
 
 fn word<T: Serialize>(t: &T) -> String {
@@ -76,7 +77,7 @@ fn foot(w: &mut W<'_>, cols: &[&Column], roles: &[PhonePart], rows: &[&TableRow]
     w.raw("</tr></tfoot>");
 }
 
-pub(super) fn table(w: &mut W<'_>, b: &Value) {
+pub(super) fn draw(w: &mut W<'_>, b: &Value) {
     let Ok(t) = serde_json::from_value::<Table>(b.clone()) else {
         return fallback(w, b);
     };

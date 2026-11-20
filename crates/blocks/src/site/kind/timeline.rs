@@ -2,7 +2,8 @@ use std::collections::{BTreeMap, BTreeSet};
 
 use serde_json::Value;
 
-use super::{fallback, W};
+use super::fallback;
+use crate::site::write::W;
 use crate::kind::{civil, day, TimeBar, TimeRow, Timeline};
 
 const MONTHS: [&str; 12] = [
@@ -157,7 +158,7 @@ fn track(w: &mut W<'_>, r: &TimeRow, f: i64, t: i64, off: &BTreeSet<i64>) {
     w.close("div");
 }
 
-pub(super) fn timeline(w: &mut W<'_>, b: &Value) {
+pub(super) fn draw(w: &mut W<'_>, b: &Value) {
     let Ok(tl) = serde_json::from_value::<Timeline>(b.clone()) else {
         return fallback(w, b);
     };
