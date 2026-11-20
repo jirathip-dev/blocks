@@ -1,6 +1,25 @@
 import Blocks
 import SwiftUI
 
+private enum Mk {
+    static let line: CGFloat = 3
+    static let halo: CGFloat = 7
+    static let lineFixed: CGFloat = 2
+    static let haloFixed: CGFloat = 5
+    static let band: CGFloat = 4
+    static let ring: CGFloat = 2.5
+    static let focus: CGFloat = 2
+    static let grip: CGFloat = 12
+    static let s1: CGFloat = 4
+    static let s2: CGFloat = 8
+    static let noteX: CGFloat = 6
+    static let noteY: CGFloat = 2
+    static let note: CGFloat = 190
+    static let input: CGFloat = 160
+    static let meta: CGFloat = 11
+    static let body: CGFloat = 13
+}
+
 private func point(_ p: [Double]?, _ size: CGSize) -> CGPoint? {
     guard let p, p.count == 2 else { return nil }
     return CGPoint(x: p[0] * size.width, y: p[1] * size.height)
@@ -85,10 +104,10 @@ internal struct MarkLayer: View {
                             continue
                         }
                         let fixed = m.fixed == true
-                        c.stroke(p, with: .color(look.palette.card), style: StrokeStyle(lineWidth: fixed ? 5 : 7, lineCap: .round, lineJoin: .round))
-                        c.stroke(p, with: .color(ink), style: StrokeStyle(lineWidth: fixed ? 2 : 3, lineCap: .round, lineJoin: .round, dash: fixed ? [6, 4] : []))
+                        c.stroke(p, with: .color(look.palette.card), style: StrokeStyle(lineWidth: fixed ? Mk.haloFixed : Mk.halo, lineCap: .round, lineJoin: .round))
+                        c.stroke(p, with: .color(ink), style: StrokeStyle(lineWidth: fixed ? Mk.lineFixed : Mk.line, lineCap: .round, lineJoin: .round, dash: fixed ? [6, 4] : []))
                         if let h = head(m, size) {
-                            c.stroke(h, with: .color(look.palette.card), style: StrokeStyle(lineWidth: 4, lineJoin: .round))
+                            c.stroke(h, with: .color(look.palette.card), style: StrokeStyle(lineWidth: Mk.band, lineJoin: .round))
                             c.fill(h, with: .color(ink))
                         }
                     }
@@ -107,16 +126,16 @@ internal struct MarkLayer: View {
     @ViewBuilder private func label(_ m: Blocks.Mark, _ size: CGSize) -> some View {
         let ink = look.palette.mark(m.tone)
         if let p = point(m.at, size), m.kind == .pin {
-            Circle().fill(ink).overlay(Circle().stroke(look.palette.card, lineWidth: 2.5)).frame(width: 12, height: 12)
+            Circle().fill(ink).overlay(Circle().stroke(look.palette.card, lineWidth: Mk.ring)).frame(width: Mk.grip, height: Mk.grip)
                 .position(p)
             if let t = m.text, !t.isEmpty {
-                Text(t).ui(11, .bold, look).foregroundStyle(look.palette.card).padding(.horizontal, 4).background(ink)
+                Text(t).ui(Mk.meta, .bold, look).foregroundStyle(look.palette.card).padding(.horizontal, Mk.s1).background(ink)
                     .fixedSize().position(x: p.x + 14, y: p.y - 15)
             }
         } else if let p = point(m.at, size), m.kind == .text {
-            Text(m.text ?? "").ui(13, .regular, look).lineLimit(3).foregroundStyle(look.palette.foreground)
-                .padding(.horizontal, 6).padding(.vertical, 2).frame(maxWidth: 190, alignment: .leading).fixedSize(horizontal: false, vertical: true)
-                .background(look.palette.card).overlay(alignment: .leading) { Rectangle().fill(ink).frame(width: 3) }
+            Text(m.text ?? "").ui(Mk.body, .regular, look).lineLimit(3).foregroundStyle(look.palette.foreground)
+                .padding(.horizontal, Mk.noteX).padding(.vertical, Mk.noteY).frame(maxWidth: Mk.note, alignment: .leading).fixedSize(horizontal: false, vertical: true)
+                .background(look.palette.card).overlay(alignment: .leading) { Rectangle().fill(ink).frame(width: Mk.line) }
                 .alignmentGuide(.leading) { _ in -p.x }.alignmentGuide(.top) { _ in -p.y }
         }
     }
@@ -147,15 +166,15 @@ internal struct Marked: View {
                 .overlay { GeometryReader { g in stops(g.size, g.frame(in: .global)) } }
                 .clipped()
             if marks.isEmpty && block.draw != nil {
-                Text("pick a tool, then drag on the photo").ui(11, .regular, look).foregroundStyle(look.palette.mute).padding(.top, 4)
+                Text("pick a tool, then drag on the photo").ui(Mk.meta, .regular, look).foregroundStyle(look.palette.mute).padding(.top, Mk.s1)
             }
         }
     }
 
     private func bar(_ tools: [MarkKind]) -> some View {
-        HStack(spacing: 8) {
+        HStack(spacing: Mk.s2) {
             ForEach(tools, id: \.rawValue) { toolButton($0) }
-            if picked == .text { TextField("Words", text: $words).frame(maxWidth: 160).accessibilityLabel("Text of the new mark") }
+            if picked == .text { TextField("Words", text: $words).frame(maxWidth: Mk.input).accessibilityLabel("Text of the new mark") }
             if !groups.isEmpty {
                 Picker("into", selection: Binding(get: { group ?? "" }, set: { into = $0 })) {
                     ForEach(groups, id: \.self) { Text($0).tag($0) }
@@ -163,18 +182,18 @@ internal struct Marked: View {
             }
             Spacer()
             if let id = sel, block.remove != nil {
-                Text("delete").ui(13, .regular, look).foregroundStyle(look.palette.red).frame(minHeight: 44)
+                Text("delete").ui(Mk.body, .regular, look).foregroundStyle(look.palette.red).frame(minHeight: 44)
                     .accessibilityAddTraits(.isButton)
                     .modifier(gestured(.remove(id), block.remove, "Delete", id, .zero, tap: Nudge(.right)))
             }
         }
-        .padding(.horizontal, 8).background(look.palette.card)
+        .padding(.horizontal, Mk.s2).background(look.palette.card)
     }
 
     private func toolButton(_ k: MarkKind) -> some View {
         let on = picked == k
         let traits: AccessibilityTraits = on ? [.isButton, .isSelected] : .isButton
-        return Text(k.rawValue).ui(13, on ? .bold : .regular, look).frame(minHeight: 44)
+        return Text(k.rawValue).ui(Mk.body, on ? .bold : .regular, look).frame(minHeight: 44)
             .contentShape(Rectangle()).onTapGesture { tool = tool == k ? nil : k }
             .accessibilityAddTraits(traits)
             .modifier(gestured(.draw(pen(k, at: [0.5, 0.5])), block.draw, "\(said(k)) tool", "draw", .zero))
@@ -232,7 +251,7 @@ internal struct Marked: View {
     private func grip(_ m: Blocks.Mark, _ grab: MarkGrab, _ end: String, _ at: [Double]?, _ size: CGSize, _ frame: CGRect) -> some View {
         let c = held[m.id].flatMap { end == "Start" ? $0.at : $0.to } ?? at
         let p = point(c, size) ?? .zero
-        return Rectangle().fill(look.palette.card).overlay(Rectangle().stroke(look.palette.lead, lineWidth: 2)).frame(width: 12, height: 12)
+        return Rectangle().fill(look.palette.card).overlay(Rectangle().stroke(look.palette.lead, lineWidth: Mk.focus)).frame(width: Mk.grip, height: Mk.grip)
             .frame(width: 44, height: 44).contentShape(Rectangle()).position(p)
             .accessibilityAddTraits(.isButton)
             .modifier(gestured(grab, block.stretch, "\(end) of \(block.named(m.id) ?? m.id)", m.id, frame))

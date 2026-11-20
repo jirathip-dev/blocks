@@ -338,27 +338,6 @@ swift/Sources/BlocksUI/Kind/Choice.swift spacing: 8
 swift/Sources/BlocksUI/Kind/List.swift .padding(.leading, 12
 swift/Sources/BlocksUI/Kind/List.swift height: 0.5
 swift/Sources/BlocksUI/Kind/List.swift radius: 16
-swift/Sources/BlocksUI/Kind/Marks.swift .padding(.horizontal, 4
-swift/Sources/BlocksUI/Kind/Marks.swift .padding(.horizontal, 6
-swift/Sources/BlocksUI/Kind/Marks.swift .padding(.horizontal, 8
-swift/Sources/BlocksUI/Kind/Marks.swift .padding(.top, 4
-swift/Sources/BlocksUI/Kind/Marks.swift .padding(.vertical, 2
-swift/Sources/BlocksUI/Kind/Marks.swift .ui(11
-swift/Sources/BlocksUI/Kind/Marks.swift .ui(11
-swift/Sources/BlocksUI/Kind/Marks.swift .ui(13
-swift/Sources/BlocksUI/Kind/Marks.swift .ui(13
-swift/Sources/BlocksUI/Kind/Marks.swift .ui(13
-swift/Sources/BlocksUI/Kind/Marks.swift height: 12
-swift/Sources/BlocksUI/Kind/Marks.swift height: 12
-swift/Sources/BlocksUI/Kind/Marks.swift lineWidth: 2
-swift/Sources/BlocksUI/Kind/Marks.swift lineWidth: 2.5
-swift/Sources/BlocksUI/Kind/Marks.swift lineWidth: 4
-swift/Sources/BlocksUI/Kind/Marks.swift maxWidth: 160
-swift/Sources/BlocksUI/Kind/Marks.swift maxWidth: 190
-swift/Sources/BlocksUI/Kind/Marks.swift spacing: 8
-swift/Sources/BlocksUI/Kind/Marks.swift width: 12
-swift/Sources/BlocksUI/Kind/Marks.swift width: 12
-swift/Sources/BlocksUI/Kind/Marks.swift width: 3
 swift/Sources/BlocksUI/Kind/Screen.swift minLength: 4
 swift/Sources/BlocksUI/Kind/Screen.swift size: 36
 swift/Sources/BlocksUI/Kind/Screen.swift size: 36
@@ -538,45 +517,6 @@ web/src/css/kind/list.css box-shadow 12px
 web/src/css/kind/list.css box-shadow 4px
 web/src/css/kind/list.css box-shadow rgb(0 0 0 / .18)
 web/src/css/kind/list.css clip-path 50%
-web/src/css/kind/media.css border 2.5px
-web/src/css/kind/media.css border 2px
-web/src/css/kind/media.css border-left 3px
-web/src/css/kind/media.css border-radius 50%
-web/src/css/kind/media.css filter 3px
-web/src/css/kind/media.css filter 6px
-web/src/css/kind/media.css filter rgb(0 0 0 / .45)
-web/src/css/kind/media.css height 12px
-web/src/css/kind/media.css height 12px
-web/src/css/kind/media.css left 50%
-web/src/css/kind/media.css left 7px
-web/src/css/kind/media.css line-height 16px
-web/src/css/kind/media.css margin -6px
-web/src/css/kind/media.css margin -6px
-web/src/css/kind/media.css margin -6px
-web/src/css/kind/media.css margin -6px
-web/src/css/kind/media.css max-width 24ch
-web/src/css/kind/media.css min-width 12px
-web/src/css/kind/media.css min-width 6ch
-web/src/css/kind/media.css outline 2px
-web/src/css/kind/media.css outline 2px
-web/src/css/kind/media.css outline-offset 2px
-web/src/css/kind/media.css outline-offset 2px
-web/src/css/kind/media.css padding 2px
-web/src/css/kind/media.css padding 4px
-web/src/css/kind/media.css padding 6px
-web/src/css/kind/media.css stroke-width 2px
-web/src/css/kind/media.css stroke-width 3px
-web/src/css/kind/media.css stroke-width 5px
-web/src/css/kind/media.css stroke-width 7px
-web/src/css/kind/media.css top -23px
-web/src/css/kind/media.css top 50%
-web/src/css/kind/media.css transform -50%
-web/src/css/kind/media.css transform -50%
-web/src/css/kind/media.css transform -50%
-web/src/css/kind/media.css transform -50%
-web/src/css/kind/media.css width 12px
-web/src/css/kind/media.css width 12px
-web/src/css/kind/media.css width 16ch
 web/src/css/kind/prose.css border-left 2px
 web/src/css/kind/row.css box-shadow 3px
 web/src/css/kind/row.css height 12px
