@@ -1,0 +1,41 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>load more: every state</title>
+<link rel="stylesheet" href="../neutral-default/tokens.css"><link rel="stylesheet" href="../../../web/dist/blocks.css"><link rel="stylesheet" href="more.css"><link rel="stylesheet" href="page.css">
+<script src="../table/table.js"></script><script src="data.js"></script><script src="more.js"></script></head>
+<body><main class="scr" id="page"></main>
+<script>
+const page = document.getElementById("page");
+const B = (s) => h("b", "", s);
+function add(title, note, ...kids) { page.append(h("section", "case", h("h3", "sh", ...title), note ? h("p", "note", note) : null, ...kids)); }
+const slim = (rows, o = {}) => otTable(rows, { columns: otTable([]).columns.filter((c) => c.id !== "dept"), ...o });
+const ids = (a, b) => otRows(a, b).map((r) => r.id);
+
+page.append(h("div", "tile", h("div", "tabh", h("span", "tw", "load more · every state"))));
+add([B("1 waiting"), " · the last row came into view"], "Sent once: {action: \"ot-more\", block: \"ot\", values: {cursor: \"c:2395\"}}. Nothing more is sent until the app answers. A quiet row sits under the last row, above the totals: \"Loading more ↻\" in the meta size and mute ink (the ↻ is the house busy mark and stands still with reduced motion). The table is aria-busy. The bar and the totals say only the loaded rows count. The sheet uses a page of 5; the app picks the page size.",
+  moreTable(slim(otRows(0, 5)), { wait: "loading" }));
+add([B("2 answered"), " · a merge appended 5 rows and a new cursor"], "Focus stays on the row it was on (OT-2396, the old last row). The new rows carry the 3px ink edge until the next update, like any row diff. One polite announcement per page. The loading row is still in view, so the next page is asked for at once, still one at a time.",
+  moreTable(slim(otRows(0, 10)), { wait: "loading", fresh: ids(5, 10), focus: "OT-2396", said: "5 more rows loaded, 10 in all" }), heard("5 more rows loaded, 10 in all"));
+add([B("3 refused or failed"), " · a retry, and #135's toast"], "The loading row turns into \"Couldn’t load more. [load more]\" with the red mark at its edge. The toast is the app's own toast from its refusal, or the shell's bad toast for a network error. Neither scrolling nor reaching the row by keyboard sends it again; only [load more] does, with the same cursor, and the row goes back to Loading more.",
+  moreTable(slim(otRows(0, 10)), { wait: "failed" }), failToast("Couldn’t load more OT requests: the server is busy"));
+add([B("4 complete"), " · the app's answer has no more"], "No loading row. The bar is back to \"13 rows\" and the totals row to \"Total\": every row is here, so sort, filter, select and totals cover the lot.",
+  moreTable(slim(otRows(0, 13), { more: undefined })));
+add([B("5 filter"), " · \"19 nov\" over 10 loaded rows"], "The bar reads \"4 of 10 loaded\" and the totals \"of 4 shown\". The loading row stays under the shown rows and loads in view as before, so a filter that hides most rows pulls the pages in one after another (open question 1).",
+  moreTable(slim(otRows(0, 10)), { wait: "loading", q: "19 nov" }));
+add([B("6 sort"), " · Hours ↓ among the loaded rows"], "The bar says \"sorted among these\". A new page merges into the sort, so new rows can land above the last one: they carry the ink edge, and focus and the scroll position stay with the row you were on. The app's own order comes back with the third tap.",
+  moreTable(slim(otRows(0, 10)), { wait: "loading", sort: { by: "hours", dir: "desc" }, fresh: ids(5, 10) }));
+add([B("7 select"), " · the header box ticks the loaded rows"], "Select all ticks the 10 loaded rows, never rows not yet loaded; the bulk bar adds \"of 10 loaded\". A bulk action sends those ids. A page that lands while rows are ticked comes in unticked, and the header box shows a dash.",
+  moreTable(slim(otRows(0, 10)), { wait: "loading", sel: ids(0, 10) }));
+add([B("8 with #138's editable table"), " · a row is being moved"], "An edit or a reorder never triggers a load: while a row is lifted (or a cell editor is open) the loading row waits and reads \"more below · loads once the row is placed\". Dragging to the bottom auto-scrolls the loaded rows only: the loading row is no drop slot. Once the row is placed, a loading row still in view sends as usual.",
+  moreTable(slim(otRows(0, 6), { select: undefined, export: undefined, reorder: { action: "move" } }), { wait: "paused", grip: "OT-2398" }));
+add([B("9 phone rows"), " · waiting with focus kept, and the retry"], "Under 600px the loading row is one more stacked row, its text at the start; the retry keeps the red mark at the row's edge.",
+  h("div", "duo", h("div", "phone", moreTable(slim(otRows(0, 5), { select: undefined }), { wait: "loading", focus: "OT-2396" })), h("div", "phone", moreTable(slim(otRows(0, 5), { select: undefined }), { wait: "failed" }))));
+add([B("10 older client, static page"), " · rows only"], "A client from before more ignores it and draws the 5 rows it has: \"5 rows\", \"Total\", no loading row. The static site writer does the same, since no app is there to answer.",
+  moreTable(slim(otRows(0, 5)), { js: false }));
+add([B("11 list"), " · waiting, answered, refused, complete"], "The same rules on a list: the loading row is a quiet line under the last row, with no tile around it; the retry gets the tile and the red mark. A list has no bar or totals, so it adds no wording. New rows get the ink edge; focus stays.",
+  h("div", "duo",
+    h("div", "", h("p", "note", "waiting"), moreList([0, 1, 2].map(note), { wait: "loading" })),
+    h("div", "", h("p", "note", "answered: 3 more, focus kept on the old last row"), moreList([0, 1, 2, 3, 4, 5].map(note), { wait: "loading", fresh: ["n3", "n4", "n5"], focus: "n2" }), heard("3 more rows loaded, 6 in all")),
+    h("div", "", h("p", "note", "refused or failed"), moreList([0, 1, 2].map(note), { wait: "failed" })),
+    h("div", "", h("p", "note", "complete"), moreList([0, 1, 2, 3].map(note), { more: false }))));
+settle();
+</script></body></html>
