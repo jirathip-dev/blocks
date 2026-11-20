@@ -1374,6 +1374,50 @@
         }
       ],
       "type": "timeline"
+    },
+    {
+      "action": "import",
+      "columns": [
+        {
+          "key": "sku",
+          "label": "SKU",
+          "required": true,
+          "type": "text"
+        },
+        {
+          "key": "name",
+          "label": "Name",
+          "type": "text"
+        },
+        {
+          "key": "cat",
+          "label": "Category",
+          "type": "choice",
+          "values": [
+            "Bakery",
+            "Dairy"
+          ]
+        },
+        {
+          "key": "price",
+          "label": "Price ฿",
+          "required": true,
+          "type": "money"
+        }
+      ],
+      "fallback": {
+        "title": "Import products"
+      },
+      "id": "products",
+      "into": "Products",
+      "mb": 10,
+      "read": "read",
+      "template": {
+        "name": "products.xlsx",
+        "src": "https://example.com/files/template-products.xlsx"
+      },
+      "title": "Import products",
+      "type": "import"
     }
   ],
   "fallback": {

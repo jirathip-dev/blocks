@@ -13,8 +13,9 @@ macro_rules! core {
     };
 }
 
-const CRATE: [(&str, &str); 5] = [
+const CRATE: [(&str, &str); 6] = [
     core!("chart"),
+    core!("import"),
     core!("lines"),
     core!("table"),
     core!("toast"),

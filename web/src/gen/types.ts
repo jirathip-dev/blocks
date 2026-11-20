@@ -20,7 +20,7 @@ export type Band = { blocks?: Block[] | null; header?: string | null; id: string
 
 export type Bar = { label: string; sub?: string | null; tone?: Tone | null; value: number };
 
-export type Block = ({ type: "screen" } & Screen) | ({ type: "sheet" } & Sheet) | ({ type: "section" } & Section) | ({ type: "list" } & List) | ({ type: "row" } & Row) | ({ type: "card" } & Card) | ({ type: "choice" } & Choice) | ({ type: "form" } & Form) | ({ type: "config" } & Form) | ({ type: "secret" } & Secret) | ({ type: "run" } & Run) | ({ type: "button" } & Button) | ({ type: "chips" } & Chips) | ({ type: "stat" } & Stat) | ({ type: "text" } & Text) | ({ type: "images" } & Images) | ({ type: "web" } & Web) | ({ type: "diff" } & Diff) | ({ type: "editor" } & Editor) | ({ type: "scene" } & Scene) | ({ type: "diagram" } & Diagram) | ({ type: "composer" } & Composer) | ({ type: "lines" } & Lines) | ({ type: "prose" } & Prose) | ({ type: "hero" } & Hero) | ({ type: "media" } & Media) | ({ type: "nav" } & Nav) | ({ type: "island" } & Island) | ({ type: "table" } & Table) | ({ type: "steps" } & Steps) | ({ type: "chart" } & Chart) | ({ type: "toast" } & Toast) | ({ type: "pages" } & Pages) | ({ type: "timeline" } & Timeline) | (AppBlock & { [key: string]: unknown });
+export type Block = ({ type: "screen" } & Screen) | ({ type: "sheet" } & Sheet) | ({ type: "section" } & Section) | ({ type: "list" } & List) | ({ type: "row" } & Row) | ({ type: "card" } & Card) | ({ type: "choice" } & Choice) | ({ type: "form" } & Form) | ({ type: "config" } & Form) | ({ type: "secret" } & Secret) | ({ type: "run" } & Run) | ({ type: "button" } & Button) | ({ type: "chips" } & Chips) | ({ type: "stat" } & Stat) | ({ type: "text" } & Text) | ({ type: "images" } & Images) | ({ type: "web" } & Web) | ({ type: "diff" } & Diff) | ({ type: "editor" } & Editor) | ({ type: "scene" } & Scene) | ({ type: "diagram" } & Diagram) | ({ type: "composer" } & Composer) | ({ type: "lines" } & Lines) | ({ type: "prose" } & Prose) | ({ type: "hero" } & Hero) | ({ type: "media" } & Media) | ({ type: "nav" } & Nav) | ({ type: "island" } & Island) | ({ type: "table" } & Table) | ({ type: "steps" } & Steps) | ({ type: "chart" } & Chart) | ({ type: "toast" } & Toast) | ({ type: "pages" } & Pages) | ({ type: "timeline" } & Timeline) | ({ type: "import" } & Import) | (AppBlock & { [key: string]: unknown });
 
 export type Bound = { get: string };
 
@@ -94,6 +94,8 @@ export type FieldValue = string | number | boolean;
 
 export type Figure = { act?: string | null; avatar?: string | null; coat?: string | null; grow?: string | null; icon?: string | null; state?: Tone | null; tool?: string | null };
 
+export type FileLink = { name: string; src: string };
+
 export type FileRef = { id: string; name?: string | null; src?: string | null };
 
 export type Finding = { at: string; file: string; fix: string; line?: number | null; message: string; rule: string; severity: Severity; steps?: string | null };
@@ -121,6 +123,20 @@ export type Image = { alt?: string | null; caption?: string | null; src: string 
 export type ImageSize = "small" | "large";
 
 export type Images = { id?: string | null; items: Image[]; show?: Expr | null; size?: ImageSize | null };
+
+export type Import = { accept?: string[] | null; action?: string | null; columns: ImportColumn[]; done?: ImportDone | null; error?: string | null; id?: string | null; into?: string | null; mb?: number | null; read?: string | null; refused?: ImportRow[] | null; sheet?: ImportSheet | null; show?: Expr | null; template?: FileLink | null; title: string };
+
+export type ImportColumn = { key: string; label: string; required?: boolean | null; type?: ImportType | null; values?: string[] | null };
+
+export type ImportDone = { count: number; file?: FileLink | null; left?: number | null };
+
+export type ImportFile = { id: string; name: string; rows: number; sheet?: string | null; sheets?: string[] | null; size?: number | null };
+
+export type ImportRow = { bad?: Record<string, string> | null; cells: Record<string, string>; n: number };
+
+export type ImportSheet = { bad?: ImportRow[] | null; file: ImportFile; headers: string[]; map: Record<string, string>; rows: ImportRow[] };
+
+export type ImportType = "text" | "number" | "money" | "date" | "choice";
 
 export type Island = { events?: string[] | null; fallback: Fallback; id?: string | null; name: string; props?: Record<string, unknown> | null; show?: Expr | null; size?: IslandSize | null };
 
@@ -334,4 +350,4 @@ export type Why = "evicted" | "unpaired" | "handover";
 
 export type Working = { since: string };
 
-export type Kind = "screen" | "sheet" | "section" | "list" | "row" | "card" | "choice" | "form" | "config" | "secret" | "run" | "button" | "chips" | "stat" | "text" | "images" | "web" | "diff" | "editor" | "scene" | "diagram" | "composer" | "lines" | "prose" | "hero" | "media" | "nav" | "island" | "table" | "steps" | "chart" | "toast" | "pages" | "timeline";
+export type Kind = "screen" | "sheet" | "section" | "list" | "row" | "card" | "choice" | "form" | "config" | "secret" | "run" | "button" | "chips" | "stat" | "text" | "images" | "web" | "diff" | "editor" | "scene" | "diagram" | "composer" | "lines" | "prose" | "hero" | "media" | "nav" | "island" | "table" | "steps" | "chart" | "toast" | "pages" | "timeline" | "import";

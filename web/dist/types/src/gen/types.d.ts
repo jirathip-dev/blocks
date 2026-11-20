@@ -118,7 +118,9 @@ export type Block = ({
     type: "pages";
 } & Pages) | ({
     type: "timeline";
-} & Timeline) | (AppBlock & {
+} & Timeline) | ({
+    type: "import";
+} & Import) | (AppBlock & {
     [key: string]: unknown;
 });
 export type Bound = {
@@ -360,6 +362,10 @@ export type Figure = {
     state?: Tone | null;
     tool?: string | null;
 };
+export type FileLink = {
+    name: string;
+    src: string;
+};
 export type FileRef = {
     id: string;
     name?: string | null;
@@ -434,6 +440,55 @@ export type Images = {
     show?: Expr | null;
     size?: ImageSize | null;
 };
+export type Import = {
+    accept?: string[] | null;
+    action?: string | null;
+    columns: ImportColumn[];
+    done?: ImportDone | null;
+    error?: string | null;
+    id?: string | null;
+    into?: string | null;
+    mb?: number | null;
+    read?: string | null;
+    refused?: ImportRow[] | null;
+    sheet?: ImportSheet | null;
+    show?: Expr | null;
+    template?: FileLink | null;
+    title: string;
+};
+export type ImportColumn = {
+    key: string;
+    label: string;
+    required?: boolean | null;
+    type?: ImportType | null;
+    values?: string[] | null;
+};
+export type ImportDone = {
+    count: number;
+    file?: FileLink | null;
+    left?: number | null;
+};
+export type ImportFile = {
+    id: string;
+    name: string;
+    rows: number;
+    sheet?: string | null;
+    sheets?: string[] | null;
+    size?: number | null;
+};
+export type ImportRow = {
+    bad?: Record<string, string> | null;
+    cells: Record<string, string>;
+    n: number;
+};
+export type ImportSheet = {
+    bad?: ImportRow[] | null;
+    file: ImportFile;
+    headers: string[];
+    map: Record<string, string>;
+    rows: ImportRow[];
+};
+export type ImportType = "text" | "number" | "money" | "date" | "choice";
 export type Island = {
     events?: string[] | null;
     fallback: Fallback;
@@ -1169,4 +1224,4 @@ export type Why = "evicted" | "unpaired" | "handover";
 export type Working = {
     since: string;
 };
-export type Kind = "screen" | "sheet" | "section" | "list" | "row" | "card" | "choice" | "form" | "config" | "secret" | "run" | "button" | "chips" | "stat" | "text" | "images" | "web" | "diff" | "editor" | "scene" | "diagram" | "composer" | "lines" | "prose" | "hero" | "media" | "nav" | "island" | "table" | "steps" | "chart" | "toast" | "pages" | "timeline";
+export type Kind = "screen" | "sheet" | "section" | "list" | "row" | "card" | "choice" | "form" | "config" | "secret" | "run" | "button" | "chips" | "stat" | "text" | "images" | "web" | "diff" | "editor" | "scene" | "diagram" | "composer" | "lines" | "prose" | "hero" | "media" | "nav" | "island" | "table" | "steps" | "chart" | "toast" | "pages" | "timeline" | "import";

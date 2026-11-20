@@ -176,6 +176,15 @@ pub(super) fn defs(s: &Value) -> Result<Vec<(&str, Def<'_>)>, String> {
         .collect()
 }
 
+pub(super) fn js(kind: &str) -> String {
+    let f = camel(kind, false);
+    if ["import", "export", "default", "new", "delete", "class", "function"].contains(&f.as_str()) {
+        f + "_"
+    } else {
+        f
+    }
+}
+
 pub(super) fn camel(s: &str, upper: bool) -> String {
     let mut out = String::new();
     for (i, part) in s.split(['-', '_']).enumerate() {

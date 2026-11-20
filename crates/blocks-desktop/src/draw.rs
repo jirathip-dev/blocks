@@ -72,5 +72,6 @@ switch! {
     Toast => toast,
     Chart => chart,
     Pages => pages,
+    Import => import,
     Timeline => timeline,
 }

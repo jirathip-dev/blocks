@@ -125,7 +125,7 @@ export async function shot({ screen, steps = [], name = "shot", size = "390x844"
       if (p === "react.js") return r.fulfill({ body: reactJs(), contentType: "text/javascript" });
       if (p === "look.css") return r.fulfill({ body: LOOK, contentType: "text/css" });
       if (p.startsWith("css/")) return r.fulfill({ body: readFileSync(css[Number(p.slice(4))]), contentType: "text/css" });
-      if (p === "blocks.js" || p === "blocks.css") return r.fulfill({ body: dist(p), contentType: p.endsWith(".css") ? "text/css" : "text/javascript" });
+      if (p === "blocks.js" || p === "import.js" || p === "blocks.css") return r.fulfill({ body: dist(p), contentType: p.endsWith(".css") ? "text/css" : "text/javascript" });
       return r.fulfill({ status: 404 });
     });
     const logged = [];

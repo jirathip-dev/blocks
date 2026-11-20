@@ -15,7 +15,7 @@ final class RenderTests: XCTestCase {
         "screen", "sheet", "section", "list", "row", "card", "choice", "form", "config", "secret", "run", "button",
         "chips", "stat", "text", "images", "web", "diff", "editor", "scene", "diagram", "composer", "lines",
     ]
-    private static let content = ["prose", "hero", "media", "nav", "steps", "toast", "pages", "timeline"]
+    private static let content = ["prose", "hero", "media", "nav", "steps", "toast", "pages", "timeline", "import"]
     private let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent().appendingPathComponent("../../..")
 
     private func pixels(

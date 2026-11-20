@@ -2,7 +2,7 @@ use std::path::Path;
 
 use serde_json::Value;
 
-use super::model::{camel, defs, Case, Def, Ty};
+use super::model::{defs, js, Case, Def, Ty};
 use super::Files;
 
 pub(super) fn files(_: &Path, s: &Value) -> std::io::Result<Files> {
@@ -26,7 +26,7 @@ fn builders(s: &Value) -> Result<String, String> {
             return Err(format!("the `{kind}` kind has no named type"));
         };
         names.push(n);
-        let f = camel(kind, false);
+        let f = js(kind);
         out.push_str(&format!(
             "export const {f} = (fields: {n}): Of<\"{kind}\"> => ({{ type: \"{kind}\", ...fields }});\n"
         ));

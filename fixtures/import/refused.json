@@ -1,0 +1,42 @@
+{
+  "type": "import",
+  "id": "products",
+  "title": "Import products",
+  "into": "Products",
+  "columns": [
+    {
+      "key": "sku",
+      "label": "SKU",
+      "type": "text",
+      "required": true
+    },
+    {
+      "key": "name",
+      "label": "Name",
+      "type": "text"
+    },
+    {
+      "key": "cat",
+      "label": "Category",
+      "type": "choice",
+      "values": [
+        "Bakery",
+        "Dairy"
+      ]
+    },
+    {
+      "key": "price",
+      "label": "Price ฿",
+      "type": "money",
+      "required": true
+    }
+  ],
+  "mb": 10,
+  "template": {
+    "name": "products.xlsx",
+    "src": "https://example.com/files/template-products.xlsx"
+  },
+  "read": "read",
+  "action": "import",
+  "error": "An old .xls file: save it as .xlsx or .csv"
+}

@@ -149,6 +149,7 @@ extension Block {
         case .toast(let b): [b.title]
         case .pages(let b): [b.title]
         case .timeline(let b): [b.title]
+        case .import(let b): [b.title]
         case .appBlock(let b): Self.names.map { b.string($0) }
         default: []
         }

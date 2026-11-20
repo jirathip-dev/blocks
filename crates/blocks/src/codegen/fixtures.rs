@@ -152,12 +152,19 @@ fn react(root: &Path) -> std::io::Result<Files> {
     kinds.sort();
     let mut views = String::from("import type { Views } from \"../block.ts\";\n");
     for k in &kinds {
-        views += &format!("import {{ {k} }} from \"../kinds/{k}.ts\";\n");
+        views += &format!("import {{ {} }} from \"../kinds/{k}.ts\";\n", super::model::js(k));
     }
     let list = if kinds.is_empty() {
         String::new()
     } else {
-        format!(" {} ", kinds.join(", "))
+        let named: Vec<String> = kinds
+            .iter()
+            .map(|k| match super::model::js(k) {
+                f if f == *k => f,
+                f => format!("{k}: {f}"),
+            })
+            .collect();
+        format!(" {} ", named.join(", "))
     };
     views += &format!("\nexport const views: Views = {{{list}}};\n");
     let drawn: Vec<&str> = kinds.iter().map(String::as_str).collect();
