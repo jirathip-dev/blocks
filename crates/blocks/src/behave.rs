@@ -82,6 +82,11 @@ pub(crate) fn calc(e: &Value, values: &Value) -> Value {
     serde_json::to_value(eval(&e, &state)).unwrap_or_default()
 }
 
+/// What `field` holding `held` puts in local state: null, a switch, a number or a string.
+pub fn lit(_field: &Value, held: &Value) -> Lit {
+    Lit::deserialize(held).unwrap_or_default()
+}
+
 /// The screen's start state: its `state`, each field's `value` and each chips' first `selected`.
 pub fn start(screen: &Built) -> State {
     start_of(screen.value())
@@ -105,8 +110,7 @@ pub(crate) fn at_start(v: &Value) -> View {
 fn seed(b: &Value, s: &mut State) {
     let Some(o) = b.as_object() else { return };
     for (name, f) in fields(o) {
-        let v = f.get("value").and_then(|v| serde_json::from_value(v.clone()).ok());
-        s.insert(name.into(), v.unwrap_or_default());
+        s.insert(name.into(), lit(f, f.get("value").unwrap_or(&Value::Null)));
     }
     if let (Some("chips"), Some(Value::String(name))) = (o.get("type").and_then(Value::as_str), o.get("name")) {
         let first = o.get("selected").and_then(Value::as_array).and_then(|a| a.first());

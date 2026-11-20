@@ -40,14 +40,17 @@ internal struct LinesBlock: View {
     private var rows: [LineItem] { draft ?? block.items }
     private var scale: Int { Int(block.scale ?? 2) }
     private var errors: [RowError] { block.errors ?? [] }
-    private var sums: [Field] { block.columns.filter { (block.sum ?? []).contains($0.name) } }
+    private var sums: [Field] { block.columns.filter { (block.sum ?? []).contains($0.kind.name) } }
 
-    private func label(_ name: String) -> String { block.columns.first { $0.name == name }?.label ?? name }
-    private func number(_ c: Field) -> Bool { c.keyboard == .number || (block.sum ?? []).contains(c.name) }
-    private func fixed(_ c: Field) -> Bool { c.enabled == .lit(.bool(false)) || block.calc?[c.name] != nil }
+    private func label(_ name: String) -> String { block.columns.first { $0.kind.name == name }?.kind.label ?? name }
+    private func number(_ c: Field) -> Bool {
+        if case .type(_, _, true) = c.kind.edit { return true }
+        return (block.sum ?? []).contains(c.kind.name)
+    }
+    private func fixed(_ c: Field) -> Bool { c.kind.enabled == .lit(.bool(false)) || block.calc?[c.kind.name] != nil }
 
     private func value(_ row: LineItem, _ c: Field) -> JSONValue? {
-        guard let calc = block.calc?[c.name] else { return row.values[c.name] }
+        guard let calc = block.calc?[c.kind.name] else { return row.values[c.kind.name] }
         let state = row.values.mapValues { v in
             let t = v.string?.filter { $0 != "," && !$0.isWhitespace }
             let plain = t.flatMap { $0.wholeMatch(of: /[+-]?([0-9]+\.?[0-9]*|\.[0-9]+)/) == nil ? nil : Double($0) }
@@ -61,7 +64,7 @@ internal struct LinesBlock: View {
     }
 
     private func total(_ name: String) -> Int {
-        guard let c = block.columns.first(where: { $0.name == name }) else { return 0 }
+        guard let c = block.columns.first(where: { $0.kind.name == name }) else { return 0 }
         return rows.compactMap { text(value($0, c)).flatMap { Minor.parse($0, scale: scale) } }.reduce(0, +)
     }
 
@@ -112,11 +115,11 @@ internal struct LinesBlock: View {
                         .disabled(block.min.map { rows.count <= Int($0) } == true)
                 }
             }
-            ForEach(cells, id: \.name) { c in cell(row, c, n, bad: mine.contains { $0.name == c.name }) }
+            ForEach(cells, id: \.kind.name) { c in cell(row, c, n, bad: mine.contains { $0.name == c.kind.name }) }
             ForEach(Array(stride(from: 0, to: numbers.count, by: 2)), id: \.self) { i in
                 HStack(spacing: 10) {
-                    ForEach(numbers[i..<min(i + 2, numbers.count)], id: \.name) { c in
-                        cell(row, c, n, bad: mine.contains { $0.name == c.name })
+                    ForEach(numbers[i..<min(i + 2, numbers.count)], id: \.kind.name) { c in
+                        cell(row, c, n, bad: mine.contains { $0.name == c.kind.name })
                     }
                 }
             }
@@ -131,24 +134,24 @@ internal struct LinesBlock: View {
 
     private func cell(_ row: LineItem, _ c: Field, _ n: Int, bad: Bool) -> some View {
         let palette = look.palette
-        let name = "\(c.label ?? c.name), line \(n)"
-        let key = "\(row.id)/\(c.name)"
+        let name = "\(c.kind.label ?? c.kind.name), line \(n)"
+        let key = "\(row.id)/\(c.kind.name)"
         let shown = text(value(row, c)) ?? ""
-        let edit = Binding { shown } set: { new in set(row.id, c.name, new) }
+        let edit = Binding { shown } set: { new in set(row.id, c.kind.name, new) }
         return VStack(alignment: number(c) ? .trailing : .leading, spacing: 2) {
-            Text(c.label ?? c.name).ui(11, .regular, look).foregroundStyle(palette.mute).accessibilityHidden(true)
+            Text(c.kind.label ?? c.kind.name).ui(11, .regular, look).foregroundStyle(palette.mute).accessibilityHidden(true)
             Group {
                 if fixed(c) {
                     let m = sums.contains(c) ? Minor.parse(shown, scale: scale) : nil
                     Text(m.map { Minor.money($0, scale: scale) } ?? (shown.isEmpty ? "—" : shown))
-                } else if c.type == .picker {
+                } else if case .pick(let options) = c.kind.edit {
                     Picker(name, selection: edit) {
                         Text("").tag("")
-                        ForEach(c.options ?? [], id: \.self) { Text($0).tag($0) }
+                        ForEach(options, id: \.self) { Text($0).tag($0) }
                     }
                     .labelsHidden().focused($focus, equals: key)
                 } else {
-                    TextField(name, text: edit).textFieldStyle(.plain).focused($focus, equals: key)
+                    SwiftUI.TextField(name, text: edit).textFieldStyle(.plain).focused($focus, equals: key)
                         .multilineTextAlignment(number(c) ? .trailing : .leading)
                         .padding(.horizontal, 8).frame(minWidth: 0, maxWidth: .infinity, minHeight: 32)
                         .background(palette.background)
@@ -163,11 +166,11 @@ internal struct LinesBlock: View {
     private var totals: some View {
         VStack(spacing: 4) {
             Rectangle().fill(look.palette.edge).frame(height: 1)
-            ForEach(sums, id: \.name) { c in
+            ForEach(sums, id: \.kind.name) { c in
                 HStack {
-                    Text(c.label ?? c.name)
+                    Text(c.kind.label ?? c.kind.name)
                     Spacer()
-                    Text(Minor.money(total(c.name), scale: scale)).monospacedDigit()
+                    Text(Minor.money(total(c.kind.name), scale: scale)).monospacedDigit()
                 }
                 .ui(14, .bold, look).accessibilityElement(children: .combine)
             }
@@ -217,7 +220,7 @@ internal struct LinesBlock: View {
         let id = "new-\(made)"
         let new = try? JSONValue.object(["id": .string(id), "values": .object([:])]).decode(LineItem.self)
         draft = rows + (new.map { [$0] } ?? [])
-        focus = block.columns.first { !fixed($0) }.map { "\(id)/\($0.name)" }
+        focus = block.columns.first { !fixed($0) }.map { "\(id)/\($0.kind.name)" }
     }
 
     private func check() async {

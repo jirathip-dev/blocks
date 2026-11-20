@@ -64,7 +64,7 @@ extension Column {
     /// A number grouped as en-US with up to `digits` decimals, all of them when `fixed`.
     public static func grouped(_ v: Double, _ digits: Int, fixed: Bool) -> String {
         let f = NumberFormatter()
-        f.locale = Locale(identifier: "en_US")
+        f.locale = Foundation.Locale(identifier: "en_US")
         f.numberStyle = .decimal
         f.minimumFractionDigits = fixed ? digits : 0
         f.maximumFractionDigits = digits

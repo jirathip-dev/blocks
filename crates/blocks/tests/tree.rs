@@ -1,6 +1,7 @@
+use blocks::behave::start;
 use blocks::expr::{Lit, State};
-use blocks::tree::{check, expect, Drawn, Node, Report};
-use blocks::Built;
+use blocks::tree::{check, expect, expect_fields, Drawn, FieldDrawn, Node, Report};
+use blocks::{Block, Built};
 use serde_json::json;
 
 fn screen() -> Built {
@@ -61,4 +62,35 @@ fn check_gives_the_committed_findings_for_each_failing_case() {
         assert_eq!(check(Some(&tree), &want, "tree"), want_findings, "{}", c["name"]);
         assert_eq!(check(Some(&want), &want, "tree"), Vec::<String>::new());
     }
+}
+
+#[test]
+fn expect_fields_lists_each_forms_fields_native_plain_or_hidden_and_check_compares_them() {
+    let s = Built::new(json!({
+        "type": "screen", "id": "s", "state": {"off": false},
+        "blocks": [{"type": "form", "id": "f", "fields": [
+            {"type": "toggle", "name": "a", "label": "Agree"},
+            {"type": "rating", "name": "r"},
+            {"type": "text", "name": "h", "show": {"get": "off"}}
+        ]}]
+    }));
+    let want = expect_fields(&s, Block::KINDS, &["toggle", "text"], &start(&s));
+    let fields = want.children[0].fields.clone().unwrap();
+    let got: Vec<_> = fields
+        .iter()
+        .map(|f| (f.name.as_str(), f.drawn, f.role.as_str(), f.label.as_str()))
+        .collect();
+    assert_eq!(
+        got,
+        [
+            ("a", FieldDrawn::Native, "switch", "Agree"),
+            ("r", FieldDrawn::Plain, "textbox", "r"),
+            ("h", FieldDrawn::Hidden, "textbox", "h"),
+        ]
+    );
+    assert!(expect(&s, Block::KINDS, &start(&s)).children[0].fields.is_none());
+    let mut drew = want.clone();
+    drew.children[0].fields.as_mut().unwrap()[0].drawn = FieldDrawn::Plain;
+    assert_eq!(check(Some(&drew), &want, "").len(), 1);
+    assert_eq!(check(Some(&want), &want, ""), Vec::<String>::new());
 }

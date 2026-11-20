@@ -177,7 +177,7 @@ internal struct TableBar: View {
     }
 
     @ViewBuilder private var controls: some View {
-        if block.filter != false { TextField("filter", text: $q).textFieldStyle(.roundedBorder).frame(maxWidth: 240) }
+        if block.filter != false { SwiftUI.TextField("filter", text: $q).textFieldStyle(.roundedBorder).frame(maxWidth: 240) }
         Menu("sort") {
             Button("as sent") { sort = nil }
             ForEach(cols.filter { $0.sort != false }, id: \.id) { c in
