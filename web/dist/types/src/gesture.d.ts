@@ -1,4 +1,4 @@
-import { type Phase, type Rules } from "./core/gesture.ts";
+import { type Nudge, type Phase, type Rules } from "./core/gesture.ts";
 import type { Gesture } from "./gen/types.ts";
 import type { Ctx } from "./render/index.ts";
 export type Held = {
@@ -12,7 +12,7 @@ export type Grabbed<B, G, R, C> = {
     rules: Rules<B, G, R, C>;
     grab: G;
     item: string;
-    reach: (dx: number, dy: number) => R;
+    reach: (dx: number, dy: number, x: number, y: number) => R;
     show: (c: C | null) => void;
 };
 type Block = {
@@ -20,7 +20,7 @@ type Block = {
 };
 export declare function say(text: string): void;
 export declare function held<B extends Block, G, R, C>(c: Ctx, o: Pick<Grabbed<B, G, R, C>, "block" | "rules" | "grab" | "item">): unknown;
-export declare function gestured<B extends Block, G, R, C>(el: HTMLElement, c: Ctx, o: Grabbed<B, G, R, C>): void;
+export declare function gestured<B extends Block, G, R, C>(el: HTMLElement, c: Ctx, o: Grabbed<B, G, R, C>): (n: Nudge) => void;
 export declare function zoomed(el: HTMLElement, keep: Record<string, unknown>, o: {
     min: number;
     max: number;

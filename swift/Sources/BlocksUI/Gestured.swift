@@ -30,9 +30,10 @@ internal struct Gestured<R: Rules>: ViewModifier where R.Change: Sendable {
     internal let grab: R.Grab
     internal let gesture: Blocks.Gesture
     internal let label: String
-    internal let reach: (CGSize) -> R.Reach
+    internal let reach: (DragGesture.Value) -> R.Reach
     internal let value: (R.Change) -> JSONValue
     internal let show: (R.Change?) -> Void
+    internal var tapped: Nudge?
     @State private var driven: Driven<R>?
 
     internal func body(content: Content) -> some View {
@@ -43,23 +44,28 @@ internal struct Gestured<R: Rules>: ViewModifier where R.Change: Sendable {
                 .scaleEffect(phase == .pressed ? 1.02 : 1).animation(still ? nil : .snappy, value: phase)
                 .gesture(
                     LongPressGesture(minimumDuration: 0.3).sequenced(before: DragGesture(coordinateSpace: .global))
-                        .onChanged { if case .second(true, let d?) = $0 { moved(base) { $0.reach(reach(d.translation)) } } }
+                        .onChanged { if case .second(true, let d?) = $0 { moved(base) { $0.reach(reach(d)) } } }
                         .onEnded { _ in released() }
                 )
+                .simultaneousGesture(
+                    TapGesture().onEnded { if let tapped { named(base, tapped) } }, including: tapped == nil ? .subviews : .all)
                 .focusable()
                 .onKeyPress(keys: [.space, .return, .escape, .upArrow, .downArrow, .leftArrow, .rightArrow]) { key($0, base) }
                 .accessibilityLabel(label)
                 .accessibilityActions {
                     ForEach(rules.steps(grab), id: \.0) { step in
-                        Button(step.0) {
-                            var d = base
-                            if case .send(let c)? = d.named(step.1) { sent(c, d) }
-                        }
+                        Button(step.0) { named(base, step.1) }
                     }
                 }
         } else {
             content
         }
+    }
+
+    private func named(_ base: Driven<R>, _ n: Nudge) {
+        guard driven == nil else { return }
+        var d = base
+        if case .send(let c)? = d.named(n) { sent(c, d) }
     }
 
     private func moved(_ base: Driven<R>, _ change: (inout Driven<R>) -> Void) {

@@ -2,11 +2,44 @@ use super::{
     Act, Block, BulkAction, Button, Card, CardKind, Cell, Chart, ChartFormat, ChartKind, ChipOption, Chips, Choice,
     ChoiceOption, Column, ColumnKind, Composer, Diagram, Diff, Editor, Era, ExportFormat, Fallback, Field, FieldKind,
     Form, Gesture, Hero, Hunk, Image, Images, Island, Keyboard, Label, Lane, LaneState, LineItem, Lines, Link, List,
-    Media, Nav, NavLink, Part, PhonePart, Prose, Round, RoundLane, Row, RowError, Run, Scene, Screen, Secret, Section,
-    Series, SeriesMark, Sheet, Shown, SortDir, Span, Stage, Stat, Steps, Submit, Table, TableRow, TableSelect,
-    TableSort, Tap, Text, Time, Toast, Tone, Toned, Total, Undo, Web,
+    Mark, MarkKind, Media, Nav, NavLink, Part, PhonePart, Prose, Round, RoundLane, Row, RowError, Run, Scene, Screen,
+    Secret, Section, Series, SeriesMark, Sheet, Shown, SortDir, Span, Stage, Stat, Steps, Submit, Table, TableRow,
+    TableSelect, TableSort, Tap, Text, Time, Toast, Tone, Toned, Total, Undo, Web,
 };
 use crate::expr::{Expr, Lit, State};
+
+fn at(x: f64, y: f64) -> Vec<serde_json::Number> {
+    [x, y].into_iter().filter_map(serde_json::Number::from_f64).collect()
+}
+
+fn marks() -> Vec<Mark> {
+    let mark = |id: &str, kind: MarkKind, a: Vec<serde_json::Number>| Mark {
+        id: id.into(),
+        kind,
+        at: a,
+        ..Mark::default()
+    };
+    vec![
+        Mark {
+            to: Some(at(0.62, 0.9)),
+            tone: Some(Tone::Warn),
+            ..mark("peak", MarkKind::Highlight, at(0.5, 0.2))
+        },
+        Mark {
+            to: Some(at(0.48, 0.3)),
+            ..mark("arrow", MarkKind::Arrow, at(0.3, 0.15))
+        },
+        Mark {
+            text: Some("Release week".into()),
+            ..mark("note", MarkKind::Text, at(0.05, 0.08))
+        },
+        Mark {
+            text: Some("1".into()),
+            tone: Some(Tone::Info),
+            ..mark("dip", MarkKind::Pin, at(0.78, 0.7))
+        },
+    ]
+}
 
 fn span(text: &str) -> Span {
     Span {
@@ -159,7 +192,7 @@ fn content() -> Vec<Block> {
     vec![
         Block::Prose(Box::new(prose.id("about"))),
         Block::Hero(Box::new(hero)),
-        Block::Media(Box::new(media.id("chart"))),
+        Block::Media(Box::new(media.id("chart").marks(marks()))),
         Block::Nav(Box::new(
             Nav::new(vec![link("Docs", "/docs")])
                 .id("nav")

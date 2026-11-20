@@ -10,6 +10,7 @@ mod macros;
 mod chart;
 mod content;
 mod list;
+mod media;
 mod parts;
 mod sample;
 mod table;
@@ -17,6 +18,7 @@ mod timeline;
 
 pub use chart::*;
 pub use content::*;
+pub use media::*;
 pub use parts::*;
 pub use sample::{fixtures, samples};
 pub use table::*;

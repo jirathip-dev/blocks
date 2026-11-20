@@ -812,6 +812,31 @@ public enum Lit: Codable, Equatable, Sendable {
     }
 }
 
+public struct Mark: Codable, Equatable, Sendable {
+    public var at: [Double]
+    public var fixed: Bool?
+    public var group: String?
+    public var id: String
+    public var kind: MarkKind
+    public var path: [[Double]]?
+    public var text: String?
+    public var to: [Double]?
+    public var tone: Tone?
+}
+
+public struct MarkKind: RawRepresentable, Hashable, Codable, Equatable, Sendable {
+    public let rawValue: String
+    public init(rawValue: String) { self.rawValue = rawValue }
+    public static let arrow = Self(rawValue: "arrow")
+    public static let box = Self(rawValue: "box")
+    public static let ellipse = Self(rawValue: "ellipse")
+    public static let text = Self(rawValue: "text")
+    public static let pin = Self(rawValue: "pin")
+    public static let highlight = Self(rawValue: "highlight")
+    public static let line = Self(rawValue: "line")
+    public static let all: [Self] = [.arrow, .box, .ellipse, .text, .pin, .highlight, .line]
+}
+
 public struct Match: Codable, Equatable, Sendable {
     public var pattern: Pattern
     public var value: Expr
@@ -820,11 +845,17 @@ public struct Match: Codable, Equatable, Sendable {
 public struct Media: Codable, Equatable, Sendable {
     public var alt: String
     public var caption: String?
+    public var draw: Gesture?
     public var height: UInt32
     public var id: String?
+    public var marks: [Mark]?
+    public var move: Gesture?
     public var poster: String?
+    public var remove: Gesture?
     public var show: Expr?
     public var src: String
+    public var stretch: Gesture?
+    public var tools: [MarkKind]?
     public var video: Bool?
     public var width: UInt32
 }

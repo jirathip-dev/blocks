@@ -28,9 +28,18 @@ tap and key zoom; the image viewer uses it.
 | `list` | `reorder` | a row id whose `handle` is true | places | every child id in the new order | Move up, Move down, Move to top, Move to bottom |
 | `table` | `reorder` | a row id not `fixed`; a `group` row takes its items | rows | every row id in the new order; an item stays below the first group row, a group moves between groups | Move up, Move down, Move to top, Move to bottom |
 | `table` | `edit` | `{row, column}`: a column with `edit`, not in `calc`, of text, number, money or date; not a group or `fixed` row | the typed text | a `CellEdit` `{row, column, value}`; a text the column can't take gives none | none: each cell is a text field |
+| `media` | `move`, `stretch`, `remove`, `draw` | `{"body": id}`, `{"start": id}`, `{"end": id}`, `{"remove": id}`, `{"draw": {tool, at, text, group}}` | `{from, to}`, each `[x, y]` 0 to 1 of the picture | a `MarkChange`: `{id, at, to}`; `{id}` for a remove; the new mark, with no id, for a draw | Move up, down, left, right; Longer, Shorter; Delete; Add arrow, Add pin and so on |
 | `timeline` | `move` | `{bar, part: "body"}` of a bar not `fixed` | `{days}` | `DaySpan` `{id, start, end}`, the same length, inside `from`..`to`, onto no fixed bar | One day earlier, later; One week earlier, later |
 | `timeline` | `stretch` | `{bar, part: "start" or "end"}` | `{days}` | `DaySpan` `{id, start, end}`, at least one day | Start one day earlier, later; End one day earlier, later |
 | `timeline` | `draw` | `{row}` | `{days, from}`, `from` the day pressed, else the row's first free day | `DaySpan` `{row, start, end}` over no bar | Add a bar |
+
+A `media`'s `marks` are data the app keeps, each `{id, kind, at, to, text, tone, group, path, fixed}` with places from 0
+to 1 of the picture, rounded to 4 decimals and clamped; `tools` lists what can be drawn. A draw under 2 % of the picture
+gives no result; a pin or a text mark is placed by a tap, and a text mark only with its words. Keys and named actions
+draw at the middle and nudge 1 %, Shift 10 %. A `fixed` mark takes no gesture and is drawn dashed. Every other mark is a
+focus stop named by its group, kind, number and the ninth of the picture it is in ("Arrow 1, lower left"); a picked
+two-ended mark has a grip on each end. The tool, the pick, the "into" group and a pin tracer's zoom are view state. The
+static page and a `media` with no gesture field draw the marks read-only: the picture's name lists them.
 
 A `timeline`'s days are ISO, `end` the last one drawn, and its rows are `tracks` (`TimeRow`: `id`, `title`,
 `subtitle`, `bars`), since `rows` is the field every walker reads as child blocks. Its day width is view state: fit

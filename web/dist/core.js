@@ -3526,6 +3526,96 @@ var defs = {
       }
     ]
   },
+  "Mark": {
+    "properties": {
+      "at": {
+        "items": {
+          "type": "number"
+        },
+        "type": "array"
+      },
+      "fixed": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "group": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "id": {
+        "type": "string"
+      },
+      "kind": {
+        "$ref": "#/$defs/MarkKind"
+      },
+      "path": {
+        "items": {
+          "items": {
+            "type": "number"
+          },
+          "type": "array"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "text": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "to": {
+        "items": {
+          "type": "number"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "tone": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Tone"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      }
+    },
+    "required": [
+      "id",
+      "kind",
+      "at"
+    ],
+    "type": "object"
+  },
+  "MarkKind": {
+    "anyOf": [
+      {
+        "enum": [
+          "arrow",
+          "box",
+          "ellipse",
+          "text",
+          "pin",
+          "highlight",
+          "line"
+        ],
+        "type": "string"
+      },
+      {
+        "type": "string"
+      }
+    ]
+  },
   "Match": {
     "properties": {
       "pattern": {
@@ -3553,6 +3643,16 @@ var defs = {
           "null"
         ]
       },
+      "draw": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Gesture"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
       "height": {
         "minimum": 0,
         "type": "integer"
@@ -3563,10 +3663,39 @@ var defs = {
           "null"
         ]
       },
+      "marks": {
+        "items": {
+          "$ref": "#/$defs/Mark"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "move": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Gesture"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
       "poster": {
         "type": [
           "string",
           "null"
+        ]
+      },
+      "remove": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Gesture"
+          },
+          {
+            "type": "null"
+          }
         ]
       },
       "show": {
@@ -3581,6 +3710,25 @@ var defs = {
       },
       "src": {
         "type": "string"
+      },
+      "stretch": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Gesture"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "tools": {
+        "items": {
+          "$ref": "#/$defs/MarkKind"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
       },
       "video": {
         "type": [
