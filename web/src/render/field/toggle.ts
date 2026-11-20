@@ -1,5 +1,5 @@
 import type { ToggleField } from "../../gen/types.ts";
-import { el } from "../index.ts";
+import { el } from "../dom.ts";
 import type { FieldView } from "./_view.ts";
 
 export const toggle: FieldView<ToggleField> = {

@@ -1,6 +1,6 @@
 import type { OnFile } from "../../core/field/files.ts";
 import type { Field, Locale } from "../../gen/types.ts";
-import type { Store } from "../index.ts";
+import type { Store } from "../ctx.ts";
 export type FieldCtx = {
     locale: Locale;
     store: Store;

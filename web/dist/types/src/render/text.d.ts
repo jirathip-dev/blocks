@@ -1,3 +1,5 @@
-import type { Text } from "../gen/types.ts";
-import { type Ctx } from "./index.ts";
-export declare function text(b: Text, c: Ctx): HTMLElement;
+import type { Label, Toned } from "../gen/types.ts";
+export declare const tone: (v: Toned) => Label;
+export declare function md(s: unknown, refs?: boolean): string;
+export declare const ticked: (v: unknown) => Node | string;
+export declare const tick: (root: ParentNode) => void;
