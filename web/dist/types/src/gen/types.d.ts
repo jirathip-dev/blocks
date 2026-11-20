@@ -493,6 +493,18 @@ export type Locale = {
     lang?: Lang | null;
     today?: string | null;
 };
+export type Mark = {
+    at: number[];
+    fixed?: boolean | null;
+    group?: string | null;
+    id: string;
+    kind: MarkKind;
+    path?: number[][] | null;
+    text?: string | null;
+    to?: number[] | null;
+    tone?: Tone | null;
+};
+export type MarkKind = "arrow" | "box" | "ellipse" | "text" | "pin" | "highlight" | "line";
 export type Match = {
     pattern: Pattern;
     value: Expr;
@@ -500,11 +512,17 @@ export type Match = {
 export type Media = {
     alt: string;
     caption?: string | null;
+    draw?: Gesture | null;
     height: number;
     id?: string | null;
+    marks?: Mark[] | null;
+    move?: Gesture | null;
     poster?: string | null;
+    remove?: Gesture | null;
     show?: Expr | null;
     src: string;
+    stretch?: Gesture | null;
+    tools?: MarkKind[] | null;
     video?: boolean | null;
     width: number;
 };

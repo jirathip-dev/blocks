@@ -4,9 +4,9 @@ use blocks::site::fragment;
 use blocks::{
     Act, Bar, Block, Built, Button, ButtonStyle, Card, CardKind, ChipOption, Chips, Choice, ChoiceOption, Composer,
     ComposerChip, Diagram, Diff, Editor, Fallback, Field, FieldValue, Form, Hero, Hunk, Image, Images, Island,
-    IslandSize, Label, Lane, LaneState, LineError, List, Media, Nav, NavLink, Node, Other, Part, PickerField, Prose,
-    Queued, Row, Run, Scene, Screen, Secret, Sheet, Shown, Stage, Stat, Steps, Submit, Tap, Text, TextField, Tile,
-    ToggleField, Tone, Web,
+    IslandSize, Label, Lane, LaneState, LineError, List, Mark, MarkKind, Media, Nav, NavLink, Node, Other, Part,
+    PickerField, Prose, Queued, Row, Run, Scene, Screen, Secret, Sheet, Shown, Stage, Stat, Steps, Submit, Tap, Text,
+    TextField, Tile, ToggleField, Tone, Web,
 };
 use serde_json::{Number, Value};
 
@@ -27,6 +27,39 @@ const GROUPS: [(&str, &[&str]); 4] = [
         &["button", "choice", "form", "lines", "composer", "run", "toast"],
     ),
 ];
+
+fn place(x: f64, y: f64) -> Vec<Number> {
+    [x, y].into_iter().filter_map(Number::from_f64).collect()
+}
+
+fn markup() -> Vec<Mark> {
+    let mark = |id: &str, kind: MarkKind, at: Vec<Number>| Mark {
+        id: id.into(),
+        kind,
+        at,
+        ..Mark::default()
+    };
+    vec![
+        Mark {
+            to: Some(place(0.86, 0.95)),
+            tone: Some(Tone::Warn),
+            ..mark("best", MarkKind::Highlight, place(0.72, 0.1))
+        },
+        Mark {
+            to: Some(place(0.7, 0.3)),
+            ..mark("why", MarkKind::Arrow, place(0.45, 0.2))
+        },
+        Mark {
+            text: Some("Launch week".into()),
+            ..mark("note", MarkKind::Text, place(0.2, 0.12))
+        },
+        Mark {
+            text: Some("1".into()),
+            tone: Some(Tone::Info),
+            ..mark("dip", MarkKind::Pin, place(0.36, 0.72))
+        },
+    ]
+}
 
 fn about(kind: &str) -> &'static str {
     match kind {
@@ -198,7 +231,12 @@ fn words() -> Vec<Block> {
         b!(Prose(prose)),
         b!(Hero(hero)),
         b!(Nav(nav)),
-        b!(Media(chart.id("downloads").caption("Downloads by week, 8 weeks"))),
+        b!(Media(
+            chart
+                .id("downloads")
+                .caption("Downloads by week, 8 weeks, marked up")
+                .marks(markup())
+        )),
         b!(Images(Images::new(shots).id("shots"))),
         b!(Diagram(release())),
     ]

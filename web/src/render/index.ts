@@ -55,6 +55,7 @@ export type Ctx = {
   apps?: Record<string, Renderer>;
   drop?: (what: string) => void;
   held?: Map<string, Held>;
+  view?: Map<string, Record<string, unknown>>;
 };
 
 export const obj = (v: unknown): Blk => (isBlk(v) ? v : {});
