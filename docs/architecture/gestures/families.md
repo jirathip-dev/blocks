@@ -1,8 +1,8 @@
-# The families, with synergy's screens as worked cases
+# The families, with the client app's screens as worked cases
 
-For each: what the screen does today (read from synergy-apps at `a2ae461dc3`, paths under
+For each: what the screen does today (read from the client app's repo at `a2ae461dc3`, paths under
 `apps/project-management/src/` or `apps/inspection/src/`), how the model covers it, and what is left to the app or
-to the kind issue's design. The cases are test cases only: no synergy name goes into blocks code.
+to the kind issue's design. The cases are test cases only: no client app name goes into blocks code.
 
 ## 1. Time axis: `timeline` (#137)
 
@@ -86,7 +86,7 @@ redrawn while dragging (it is redrawn when the answer lands). #140's design deci
 zoom-then-place.
 
 **A chart point.** `move` on #132's `chart`: x is the chart's label and stays, y moves by the series' `step`,
-and the result is a `PointMove`. No synergy screen needs it: its other charts are read-only. Open question 2 in
+and the result is a `PointMove`. No client app screen needs it: its other charts are read-only. Open question 2 in
 `adr.md`.
 
 ## 4. Marks on an image: `media` with marks (#140)

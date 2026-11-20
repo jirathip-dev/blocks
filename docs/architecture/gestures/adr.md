@@ -7,13 +7,13 @@ decides. Drag, keys and screen-reader actions share one state machine and must s
 Slices: the core with list reorder moved onto it (this issue), then timeline, grid, marks, pages, chart points and
 layout, one issue each: about 4,900 counted lines.
 Open questions: (1) one cap raise for these slices? (2) park #139 and trace the tower curve with marks (#140)?
-(3) file the React views synergy needs per family, when it migrates each screen?
+(3) file the React views the client app needs per family, when it migrates each screen?
 
 Status: proposed (architect lane, 2026-11-19). Read `README.md` first.
 
 ## Question
 
-synergy keeps 7 screens and 6 embedded parts as islands because each needs a gesture no kind has: drag a bar,
+The client app keeps 7 screens and 6 embedded parts as islands because each needs a gesture no kind has: drag a bar,
 edit a cell, drag a point, draw on a photo, page through a document. #130 wants one more, dragging a layout's
 nodes. What is the one way a kind says which gestures it allows, a renderer runs them, their result reaches the
 app, and a person who cannot drag does the same thing, so that six kind issues can each build on it without
@@ -43,7 +43,7 @@ writing a gesture rule of their own?
 - `layout::check` reads a file's text and refuses one that places a locked screen (`layout.rs:235`, `:311`). The
   shell is handed a checked layout (`shell.ts:41`). Nothing edits one.
 - The harness steps are tap, type, scroll, frame, answer and shot (`tree.rs:116`).
-- synergy (`families.md`): only the planner has bar drags; the activity Gantt is edited by number inputs. Product
+- The client app (`families.md`): only the planner has bar drags; the activity Gantt is edited by number inputs. Product
   mark-up is the one real grid; the costing grid is read-only and the service workspace is forms. The tower curve
   is traced over a scanned picture, not dragged on a chart. The document previews take no input. None of them sends a gesture
   as it happens: the planner asks in a sheet first, the grid and the forms save the whole document 1.5 s after
@@ -54,7 +54,7 @@ writing a gesture rule of their own?
 
 | Question | Options | Chosen |
 |---|---|---|
-| Where a gesture's rules live | **A** each kind writes its own, as `reorder` is today; **B** one machine and one small vocabulary, with each kind's rules as pure functions; **C** a canvas kind whose gestures are scripted in `expr`; **D** leave them islands | **B**. A is five more copies of what SwiftUI's `reorder` got wrong. C puts hit-testing and geometry into a language that has neither. D keeps 13 parts of synergy outside the check, the look and the tree tests |
+| Where a gesture's rules live | **A** each kind writes its own, as `reorder` is today; **B** one machine and one small vocabulary, with each kind's rules as pure functions; **C** a canvas kind whose gestures are scripted in `expr`; **D** leave them islands | **B**. A is five more copies of what SwiftUI's `reorder` got wrong. C puts hit-testing and geometry into a language that has neither. D keeps 13 parts of the client app outside the check, the look and the tree tests |
 | What is drawn between the drop and the answer | apply it to the model and roll back on a refusal; put it back and wait; hold the candidate outside the model | hold it. The model stays what the app said, so `diff`, the stream and a reconnect need no undo, and "nothing saved before the app confirms" is true by construction |
 | The shape of the result | an op the client proposes (a `merge` of the item); the block's whole new value; a typed result per gesture, under the declared `name` | typed. A handler wants `{id, start, end}`, not a map of fields; a client-built app has no ops; and `{action, name}` with the ids under `name` is what `reorder` sends today |
 | How a refusal is said | a new field on `Answer`; a new stream message; the action failing, as now | as now. One way to fail an action, and no wire change |
@@ -130,7 +130,7 @@ writing a gesture rule of their own?
 - **What the model does not do**: move several items in one gesture (the planner's Shift-drag), undo (the app's
   inverse action behind #135's toast), a draft of several gestures saved together, a loupe.
 - **React.** The machine and the rules are in the TS core, and the driver takes an element and no framework, so
-  the React adapter calls it from a ref. Each kind still needs its React view before synergy can use it: open
+  the React adapter calls it from a ref. Each kind still needs its React view before the client app can use it: open
   question 3.
 - **The static page** draws these kinds read-only.
 - **Cost**: about 4,900 counted lines over seven slices (`README.md`), against 3,245 of headroom that the queued
@@ -147,10 +147,10 @@ exactly without a loupe, the tracer stays an `island` and nothing in this model 
 1. **The cap.** The seven slices are about 4,900 counted lines. One raise sized for them, when the core starts?
    Recommended: yes.
 2. **#139, a chart's draggable points.** The tower curve, its one worked case, is traced over a scanned picture
-   and belongs to #140. No other synergy chart is edited. Park #139, and add the tower curve to #140's worked
+   and belongs to #140. No other client app chart is edited. Park #139, and add the tower curve to #140's worked
    cases? Recommended: yes. The model keeps the row for a chart point either way.
-3. **React views.** The kind issues ask for the web renderer and SwiftUI; synergy draws through the React
-   adapter (#81). File one adapter issue per family when synergy's migration of that screen is queued, as R8
+3. **React views.** The kind issues ask for the web renderer and SwiftUI; the client app draws through the React
+   adapter (#81). File one adapter issue per family when the client app's migration of that screen is queued, as R8
    does? Recommended: yes.
 
 ## Hot files

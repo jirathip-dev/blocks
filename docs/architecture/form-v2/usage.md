@@ -1,12 +1,12 @@
 # Usage: how the callers read
 
-One synergy route per field, then the file handler, a Rust server and the route's test. Every name is specified in
-`shapes.md`. The routes are the ones in synergy's inventory (synergy-apps#3693, the Missing kinds table).
+One client app route per field, then the file handler, a Rust server and the route's test. Every name is specified in
+`shapes.md`. The routes are the ones in the client app's inventory (its inventory issue, the Missing kinds table).
 
 Every screen gets its language, era and today once, from one helper of the app:
 
 ```ts
-// packages/ui/src/blocksLocale.ts (synergy's): the user's preferences, and today in Bangkok
+// packages/ui/src/blocksLocale.ts (the client app's): the user's preferences, and today in Bangkok
 export const locale = (): Locale => ({ lang: prefs.language, era: prefs.buddhistEra ? "be" : "ce", today: bangkokToday() });
 ```
 
