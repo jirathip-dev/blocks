@@ -1,0 +1,15 @@
+Decided: marks are fields on media with one Rules impl per language, held equal by fixtures/gesture/media.json
+Because: "Built on the approved gesture-to-action ADR from #136, with no new gesture rules outside it."
+Decided: a grab is a mark's body, start, end, remove, or a draw pen; a reach is {from, to} in picture fractions
+Because: crates/blocks/src/kind/media.rs:62
+Decided: the web driver passes the press point to reach and returns its named-step runner; delete and tap-to-place use it
+Because: web/src/gesture.ts:126
+Rejected: a view sending its own remove or pin action — it would bypass the one gesture machine the ADR's boundaries require
+Decided: Swift stretched binds each end apart and types pulled as Spot; CI's compiler crashed on the mixed-label tuple ternary
+Because: swift/Sources/Blocks/Kind/Media+Rules.swift:117
+Decided: the marks' sizes are named tokens (media.css :root --mk-*, Marks.swift Mk), the token baseline gains no line
+Because: web/src/css/kind/media.css:1
+Decided: staging's one-file-per-kind site writer merged; marks drawn from site/kind/media.rs via site/kind/marks.rs
+Because: crates/blocks/src/site/kind/media.rs:30
+Check: CI's swift job builds and runs the package at the head
+Owner: photos and scans can now carry marks the app keeps as data, drawn and edited on web and Apple
