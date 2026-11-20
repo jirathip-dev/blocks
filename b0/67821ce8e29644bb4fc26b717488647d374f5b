@@ -1,0 +1,15 @@
+Decided: drover staging c0b79c4's goldens go in fixtures/screens/drover-staging beside a served.json of the shapes only served screens send; the old drover copies stay as they are.
+Because: "No existing fixture changes its JSON."
+Decided: Diagram.nodes is a Nodes union, a list of {id, ...} or the old map, each written back in its own shape; renderers look a node up by id in either.
+Because: "Pick one wire shape and keep the old one parsing, or migrate it per `docs/schema/versioning.md`."
+Rejected: writing every diagram as a list — the generated diagram fixture's map would change its JSON.
+Decided: a scene repo's bands take drover's {type, id, header, rows} and the older {type, id, header, blocks}; a band row keeps host, needs and blocked_by as sent, null included.
+Because: fixtures/screens/drover-staging/scene.json:36
+Decided: widened types (Card.subtitle, Diagram.nodes) keep SCHEMA_VERSION: every old value still parses and writes back the same.
+Because: docs/schema/versioning.md:14
+Decided: list and form `more` is the Rust field `next`, since every kind already has `more` for the fields it lacks.
+Because: crates/blocks/src/kind/macros.rs:57
+Decided: a toned card subtitle draws in its tone on web, React, site, Swift and desktop; load, weather, repos, keep and more are kept, not drawn.
+Because: "Where a renderer doesn't draw it yet, the field must still not be dropped."
+Check: drover's scene golden repeats the id `age` (section and row); one named exemption in every_golden_parses_with_no_fault, a drover bug to fix there.
+Owner: drover's screens now read into blocks' types with nothing lost, so drover can build them typed.
