@@ -1,0 +1,37 @@
+Decided: Field is a union tagged by type, written by field! (reusing kind!) and fields!, with an Other case kept whole and drawn as a plain text input.
+Because: "the `Field` union and `field!`; the four existing field types moved to one file per renderer"
+Decided: existing fixtures stay byte-identical; the tree's fields list is filled only by expect_fields for fixtures/fields, and the data-field/data-type row hooks wait for F2.
+Because: q2391
+Decided: the field! shared part is ordered name, label, own fields, doc, was, error, open so serialized fixtures keep their key order.
+Because: "every existing fixture's tree, HTML and PNG is unchanged"
+Decided: the table's per-column era stays; moving it onto the screen's locale would change the standalone table fixture's picture.
+Because: "every existing fixture's tree, HTML and PNG is unchanged"
+Decided: Swift field files are named <Type>Field.swift, since Kind/Text.swift already exists and SwiftPM refuses two files of one name.
+Because: "the four existing field types moved to one file per renderer"
+Decided: the patcher restores the typed text as well as the focus and caret, because the harness store keeps no drafts.
+Because: "A patch to a form keeps the focused field and its caret"
+Rejected: day() in F1 — the F6 slice builds it with the month names in three languages.
+Check: the focus harness test (web/test/shot.test.ts) fails on staging's patcher and passes here; no file under fixtures/trees, fixtures/html or fixtures/site changes.
+Owner: Forms now keep one file per field type in every renderer; nothing on screen changes, and the line cap was raised by #247 (q2395).
+
+Decided: Field is a union tagged by type, written by field! (reusing kind!) and fields!, with an Other case kept whole and drawn as a plain text input.
+Because: "the `Field` union and `field!`; the four existing field types moved to one file per renderer"
+Decided: existing fixtures stay byte-identical; the tree's fields list is filled only by expect_fields for fixtures/fields, and the data-field/data-type row hooks wait for F2.
+Because: q2391
+Decided: the field! shared part is ordered name, label, own fields, doc, was, error, open so serialized fixtures keep their key order.
+Because: "every existing fixture's tree, HTML and PNG is unchanged"
+Decided: after staging split the site views into site/kind/, the form view calls the site field folder and the screen's locale lives on the writer in site/write.rs.
+Because: crates/blocks/src/site/kind/form.rs:22
+Decided: the patcher restores the typed text as well as the focus and caret, because the harness store keeps no drafts.
+Because: "A patch to a form keeps the focused field and its caret"
+Rejected: slimming the patcher for the 6 ms CI patch reading — the burst test ran at 1–2 ms in 5 local runs and its focus check returns early with nothing focused.
+Check: the focus harness test (web/test/shot.test.ts) fails on staging's patcher and passes here; no file under fixtures/trees, fixtures/html or fixtures/site changes.
+Owner: Forms now keep one file per field type in every renderer; nothing on screen changes, and the line cap was raised by #247 (q2395).
+
+Decided: merged origin/staging (#233 media marks); kind/mod.rs keeps field, locale and media; the import lists keep the field types and add Mark and MarkKind.
+Because: crates/blocks/src/kind/mod.rs:12
+Decided: generated files were taken from staging, then rewritten by the just gen commands.
+Because: "Generated files come from `just gen`"
+Rejected: none
+Check: no conflict markers; gen, fmt, clippy, test, web, perf and swift all exit 0 at 9ce84b5.
+Owner: Brought the forms work up to date with the new picture marks; nothing else changes.
