@@ -2,11 +2,11 @@ use std::collections::BTreeMap;
 
 use blocks::site::fragment;
 use blocks::{
-    Act, Bar, Block, Built, Button, ButtonStyle, Card, CardKind, ChipOption, Chips, Choice, ChoiceOption, Composer,
-    ComposerChip, Diagram, Diff, Editor, Fallback, Field, FieldValue, Form, Hero, Hunk, Image, Images, Island,
-    IslandSize, Label, Lane, LaneState, LineError, List, Mark, MarkKind, Media, Nav, NavLink, Node, Other, Pages, Part,
-    PickerField, Prose, Queued, Row, Run, Scene, Screen, Secret, Sheet, Shown, Span, Stage, Stat, Steps, Submit, Tap,
-    Text, TextField, Tile, ToggleField, Tone, Web,
+    Accept, Act, Bar, Block, Built, Button, ButtonStyle, Card, CardKind, ChipOption, Chips, Choice, ChoiceOption,
+    Composer, ComposerChip, Diagram, Diff, Editor, Fallback, Field, FieldValue, Form, Hero, Hunk, Image, Images,
+    Island, IslandSize, Label, Lane, LaneState, LineError, List, Mark, MarkKind, Media, Nav, NavLink, Node, Other,
+    Pages, Part, PickerField, Prose, Queued, Row, Run, ScanField, Scene, Screen, Secret, SecretField, Sheet, Shown,
+    Span, Stage, Stat, Steps, Submit, Tap, Text, TextField, Tile, ToggleField, Tone, UploadField, Web,
 };
 use serde_json::{Number, Value};
 
@@ -533,6 +533,7 @@ pub fn samples() -> Vec<(String, Vec<Block>)> {
         vec![document()],
         picked("timeline"),
         picked("import"),
+        vec![paperwork()],
     ]
     .concat();
     Block::KINDS
@@ -751,4 +752,64 @@ pub fn kind_page(all: &[(String, Vec<Block>)], at: usize) -> Option<Page> {
         js: "play.js",
         ..p
     })
+}
+
+fn paperwork() -> Block {
+    let photos = UploadField::new("photos")
+        .label("Photos of the damage")
+        .accept(vec![Accept::Image])
+        .capture(true)
+        .many(true)
+        .mb(10u32);
+    let note = ScanField::new("note").label("Delivery note").max(20u32);
+    let pin = SecretField::new("pin").label("Order PIN").placeholder("4 digits");
+    b!(Form(
+        Form::new(vec![photos.into(), note.into(), pin.into()])
+            .id("claim")
+            .submit(Submit {
+                label: "send claim".into(),
+                action: "send-claim".into(),
+                ..Submit::default()
+            })
+    ))
+}
+
+#[cfg(test)]
+mod tests {
+    use blocks::{Block, Field};
+    use serde_json::Value;
+
+    use super::{about, samples};
+
+    #[test]
+    fn every_core_kind_has_a_blurb_and_a_sample() {
+        let all = samples();
+        assert_eq!(all.len(), Block::KINDS.len());
+        for (kind, sample) in &all {
+            assert!(!about(kind).is_empty(), "{kind}: no blurb");
+            assert!(!sample.is_empty(), "{kind}: no sample");
+        }
+    }
+
+    fn field_types(v: &Value, out: &mut Vec<String>) {
+        match v {
+            Value::Object(o) => {
+                for f in o.get("fields").and_then(Value::as_array).into_iter().flatten() {
+                    out.extend(f.get("type").and_then(Value::as_str).map(String::from));
+                }
+                o.values().for_each(|x| field_types(x, out));
+            }
+            Value::Array(a) => a.iter().for_each(|x| field_types(x, out)),
+            _ => {}
+        }
+    }
+
+    #[test]
+    fn every_field_type_is_in_a_sample() {
+        let mut used = Vec::new();
+        field_types(&serde_json::to_value(samples()).unwrap(), &mut used);
+        for t in Field::TYPES {
+            assert!(used.iter().any(|u| u == t), "field type {t}: in no sample");
+        }
+    }
 }
