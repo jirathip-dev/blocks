@@ -38,12 +38,12 @@ draws each field with its type's view, or the plain text input when the renderer
 ## Files
 
 An upload never puts bytes in an action. The host passes a file handler: `file` in the HTML shell's `mount`,
-`onFile` on React's `BlocksView`. Each picked file of the right kind and under `mb` goes to it with what it is for, a
+`onFile` on React's `BlocksView`, `.onFile { url, about in … }` on a SwiftUI view (cancelling its task is the abort). Each picked file of the right kind and under `mb` goes to it with what it is for, a
 progress callback and an abort signal (`Picked`), and the handler answers `{ id, name, src }`. A file of another kind
 or over `mb` is refused in the field and never reaches the handler. The action then carries the ids, a list. While a
 file is uploading or failed the form's submit is off and says why. With no handler the field is drawn off. The
-static page writes the browser's own file input, and the page's form posts it as `multipart/form-data`. SwiftUI and
-the desktop draw an upload as a text input until their own view lands.
+static page writes the browser's own file input, and the page's form posts it as `multipart/form-data`. The desktop
+draws an upload as a text input until its own view lands.
 
 ## Locale and words
 
