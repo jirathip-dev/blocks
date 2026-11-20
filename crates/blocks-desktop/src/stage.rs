@@ -1,10 +1,11 @@
 use std::rc::Rc;
 
-use blocks::behave::{start, view};
+use blocks::behave::{lit, start, view};
 use blocks::expr::{eval, Lit, State};
 use blocks::tree::{expect, Node};
 use blocks::{Block, Built};
 use egui::Ui;
+use serde_json::Value;
 
 use crate::act::{Did, Event};
 use crate::art::{Art, Plain};
@@ -70,10 +71,17 @@ fn local(built: &Built, state: &State) -> Local {
         })
         .collect();
     values.extend(v.values);
+    let held = state
+        .iter()
+        .map(|(k, l)| (k.clone(), serde_json::to_value(l).unwrap_or_default()))
+        .collect();
     Local {
         values,
         off: v.disabled,
         acts: v.acts,
+        held,
+        hidden: v.hidden,
+        says: v.says,
     }
 }
 
@@ -132,7 +140,7 @@ impl Stage {
                     changed = true;
                 }
                 Did::Pick(name, value) => {
-                    self.state.insert(name, Lit::Str(value));
+                    self.state.insert(name, lit(&Value::Null, &value));
                     changed = true;
                 }
             }

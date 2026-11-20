@@ -142,3 +142,8 @@ internal struct Settles: ViewModifier {
             }
     }
 }
+
+extension View {
+    /// Draws the BlocksUI views below in `look`; an app with its own `look` entry sets BlocksUI's with this.
+    public func blocksLook(_ look: Look) -> some View { environment(\.look, look) }
+}

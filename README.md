@@ -48,8 +48,16 @@ example screen in `skill/blocks/examples/`, and check it headlessly with `blocks
 ## The Swift package
 
 The root `Package.swift` ships `Blocks` (the generated types, `JSONValue`, op `apply`, `Replica`: the ADR's Swift `Mirror`, renamed so it does not shadow Swift's own) and `BlocksUI`
-(`BlocksView`, `.appBlocks` for an app's own kinds, `.blockStyle`). An app pins one commit, never a tag:
-`.package(url: "https://github.com/jirathip-dev/blocks", revision: "<40 hex>")`.
+(`BlocksView`, `.appBlocks` for an app's own kinds, `.blockStyle`). An app pins a release tag, the
+`v<SCHEMA_VERSION>.<n>` the release workflow cuts on a green `main`:
+`.package(url: "https://github.com/jirathip-dev/blocks", exact: "<tag>")`.
+
+An app block is built from public pieces: `BlockNode` and `BlockStack` (blocks inside it), `ActButton` with a `Source`
+(a tap or action), `MenuItems` (acts as menu buttons), `RelativeValue` (a text redrawn each minute), the `card`
+environment entry's `CardContext`, `Refreshing` (pull to refresh) and `LayoutTransition.entering`. An app with its own
+`Look`, `Palette` or `look` entry keeps them: its own names shadow BlocksUI's, and `.blocksLook(Look(palette:
+Palette(...), tiles: nil))` hands BlocksUI the app's colours with no dot grid and no build-up. A menu screen stays the
+app's own: its rows (an account, settings groups) are no core kind.
 
 ## Licence
 
