@@ -20,7 +20,7 @@ type Block = {
 };
 export declare function say(text: string): void;
 export declare function held<B extends Block, G, R, C>(c: Ctx, o: Pick<Grabbed<B, G, R, C>, "block" | "rules" | "grab" | "item">): unknown;
-export declare function gestured<B extends Block, G, R, C>(el: HTMLElement, c: Ctx, o: Grabbed<B, G, R, C>): (n: Nudge) => void;
+export declare function gestured<B extends Block, G, R, C>(el: HTMLElement, c: Pick<Ctx, "act" | "held">, o: Grabbed<B, G, R, C>): (n: Nudge) => void;
 export declare function zoomed(el: HTMLElement, keep: Record<string, unknown>, o: {
     min: number;
     max: number;

@@ -46,7 +46,7 @@ export function held<B extends Block, G, R, C>(c: Ctx, o: Pick<Grabbed<B, G, R, 
 }
 
 /// Runs one item's gesture on `el` (attached, its named actions go beside it): pointer, keys and named actions feed one machine; returns its named-step runner.
-export function gestured<B extends Block, G, R, C>(el: HTMLElement, c: Ctx, o: Grabbed<B, G, R, C>): (n: Nudge) => void {
+export function gestured<B extends Block, G, R, C>(el: HTMLElement, c: Pick<Ctx, "act" | "held">, o: Grabbed<B, G, R, C>): (n: Nudge) => void {
   const start = o.rules.word(o.block, o.grab) ? o.rules.start(o.block, o.grab) : null;
   if (start === null) return () => {};
   const k = key(o.block, o.item);

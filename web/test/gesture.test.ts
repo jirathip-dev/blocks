@@ -74,25 +74,28 @@ const ways = [
 const css = [new URL("../../fixtures/gesture/still.css", import.meta.url).pathname];
 const ys = (tree) => Object.fromEntries(tree.children[0].children.map((n) => [n.id, n.rect[1]]));
 
-test("a list's reorder sends the same one action by pointer, keys and named action, in WebKit", async () => {
+test("a list's reorder sends the same one action by pointer, keys and named action, in WebKit, in the web and React views", async () => {
   const { shot } = await import("../shot/shot.ts");
-  for (const w of ways) {
-    const { report, faults } = await shot({ screen, css, check: true, steps: [{ gesture: { id: "accounts", grab: "b", ...w } }, { shot: { name: w.via } }] });
-    deepStrictEqual(report.sent, want, w.via);
-    deepStrictEqual(faults, [], w.via);
-  }
+  for (const adapter of ["html", "react"])
+    for (const w of ways) {
+      const { report, faults } = await shot({ screen, css, adapter, check: true, steps: [{ gesture: { id: "accounts", grab: "b", ...w } }, { shot: { name: w.via } }] });
+      deepStrictEqual(report.sent, want, `${adapter} ${w.via}`);
+      deepStrictEqual(faults, [], `${adapter} ${w.via}`);
+    }
 });
 
-test("a sent row stays where it was dropped until refused, then goes back; answered, the data's order stays", async () => {
+test("a sent row stays where it was dropped until refused, then goes back; answered, the data's order stays, in the web and React views", async () => {
   const { shot } = await import("../shot/shot.ts");
   const drop = { gesture: { id: "accounts", grab: "b", via: "keys", reach: [{ dir: "down" }] } };
-  const refused = await shot({ screen, css, steps: [drop, { shot: { name: "dropped" } }, { refuse: { toast: "No" } }, { shot: { name: "back" } }] });
-  ok(ys(refused.trees.dropped).b > ys(refused.trees.dropped).c, "dropped below c");
-  ok(ys(refused.trees.back).b < ys(refused.trees.back).c, "back above c");
   const answer = { answer: { ops: [{ op: "move", id: "b", into: "accounts", before: "d" }] } };
-  const kept = await shot({ screen, css, steps: [drop, answer, { shot: { name: "kept" } }] });
-  ok(ys(kept.trees.kept).b > ys(kept.trees.kept).c, "kept below c");
-  deepStrictEqual(kept.report.sent, want);
+  for (const adapter of ["html", "react"]) {
+    const refused = await shot({ screen, css, adapter, steps: [drop, { shot: { name: "dropped" } }, { refuse: { toast: "No" } }, { shot: { name: "back" } }] });
+    ok(ys(refused.trees.dropped).b > ys(refused.trees.dropped).c, `${adapter} dropped below c`);
+    ok(ys(refused.trees.back).b < ys(refused.trees.back).c, `${adapter} back above c`);
+    const kept = await shot({ screen, css, adapter, steps: [drop, answer, { shot: { name: "kept" } }] });
+    ok(ys(kept.trees.kept).b > ys(kept.trees.kept).c, `${adapter} kept below c`);
+    deepStrictEqual(kept.report.sent, want, adapter);
+  }
 });
 
 test("the one zoom: Ctrl and wheel, + and 0, and a double tap, clamped and kept outside the view", async () => {
