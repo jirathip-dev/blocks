@@ -296,3 +296,83 @@ fn the_behave_screen_through_the_stage_hides_disables_and_sets_as_the_crate_says
     let sent: Vec<_> = run.report.sent.iter().map(|a| a.action.as_str()).collect();
     assert_eq!(sent, ["save"]);
 }
+
+#[test]
+fn a_scripted_type_then_submit_sends_the_typed_values_and_no_secret_reaches_the_tree() {
+    let mut form = fixture("blocks/form.json");
+    let key = json!({"type": "secret", "name": "key", "label": "Key"});
+    form["fields"].as_array_mut().unwrap().push(key);
+    form["submit"] = json!({"label": "Sign up", "action": "sign-up", "values": {"plan": "free"}});
+    let script = json!([
+        {"type": {"id": "signup", "text": "ada@example.com"}},
+        {"type": {"id": "key", "text": "hunter2-secret"}},
+        {"shot": {"name": "typed"}},
+        {"tap": {"id": "signup"}},
+        {"shot": {"name": "sent"}}
+    ]);
+    let mut run = Desk::new(serde_json::from_value(form).unwrap()).run(&steps(script));
+    run.check(&Want::default());
+    assert!(run.faults.is_empty(), "{:?}", run.faults);
+    let want = json!({"screen": "signup", "block": "signup", "action": "sign-up",
+        "values": {"plan": "free", "email": "ada@example.com", "key": "hunter2-secret"}});
+    let sent: Vec<_> = run
+        .report
+        .sent
+        .iter()
+        .map(|a| serde_json::to_value(a).unwrap())
+        .collect();
+    assert_eq!((sent, run.report.dropped.clone()), (vec![want], vec![]));
+    for s in &run.shots {
+        let tree = serde_json::to_string(&s.tree).unwrap();
+        assert!(!tree.contains("hunter2"), "{tree}");
+    }
+    assert_eq!(run.shots[0].ids.actions, ["sign-up"]);
+}
+
+#[test]
+fn a_secret_block_sends_what_was_typed_once() {
+    let script = json!([
+        {"tap": {"id": "token"}},
+        {"type": {"id": "token", "text": "s3cret"}},
+        {"tap": {"id": "token"}},
+        {"tap": {"id": "token"}},
+        {"shot": {"name": "s"}}
+    ]);
+    let want = json!({"screen": "token", "block": "token", "action": "save-token", "values": {"token": "s3cret"}});
+    assert_eq!(sent(fixture("blocks/secret.json"), script), (vec![want], vec![]));
+}
+
+#[test]
+fn a_failing_check_holds_the_submit_until_a_typed_value_passes_it() {
+    let screen = fixture("behave/view.json")["screen"].clone();
+    let script = json!([
+        {"tap": {"id": "join"}},
+        {"type": {"id": "email", "text": "not an address"}},
+        {"tap": {"id": "join"}},
+        {"type": {"id": "email", "text": "ada@example.com"}},
+        {"tap": {"id": "join"}},
+        {"type": {"id": "seats", "text": "4"}},
+        {"shot": {"name": "s"}}
+    ]);
+    let want = json!({"screen": "signup", "block": "join", "action": "join",
+        "values": {"email": "ada@example.com", "name": "", "news": false}});
+    let dropped = ["tap join", "tap join", "type seats"].map(String::from).to_vec();
+    assert_eq!(sent(screen, script), (vec![want], dropped));
+}
+
+#[test]
+fn a_config_sends_each_committed_field_on_its_own() {
+    let mut config = fixture("blocks/config.json");
+    config["fields"]
+        .as_array_mut()
+        .unwrap()
+        .push(json!({"type": "text", "name": "branch"}));
+    let script = json!([
+        {"type": {"id": "repo", "text": "blocks"}},
+        {"type": {"id": "branch", "text": "main"}},
+        {"tap": {"id": "settings"}},
+        {"shot": {"name": "s"}}
+    ]);
+    let want = json!({"screen": "settings", "block": "settings", "action": "save", "values": {"repo": "blocks"}});
+    assert_eq!(sent(config, script), (vec![want], vec!["tap settings".to_owned()]));
+}
