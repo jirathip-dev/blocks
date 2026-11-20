@@ -156,6 +156,15 @@ function isBlock(r: Rec): r is Rec & Block {
   return typeof r.type === "string";
 }
 
+type Kept = { form: string; name: string; value: string; from: number | null; to: number | null };
+const kept = (root: HTMLElement, a = globalThis.document?.activeElement): Kept | undefined => {
+  const i = a && a instanceof HTMLInputElement && root.contains(a) ? a : undefined;
+  const form = i?.closest<HTMLElement>(".form[data-id]")?.dataset.id;
+  return i && form ? { form, name: i.name, value: i.value, from: i.selectionStart, to: i.selectionEnd } : undefined;
+};
+const refocus = (root: HTMLElement, k: Kept, i = root.querySelector(`.form[data-id="${CSS.escape(k.form)}"] [name="${CSS.escape(k.name)}"]`)) =>
+  i instanceof HTMLInputElement && i !== document.activeElement && ((i.value = k.value), i.focus(), k.from === null || i.setSelectionRange(k.from, k.to));
+
 /// Patches the view in `root` with every op queued within one animation frame, in one pass; over 500 it redraws.
 export function patcher(o: { root: HTMLElement; model: () => Block; draw: Draw; saved?: () => void }) {
   let ops: Op[] = [];
@@ -164,11 +173,11 @@ export function patcher(o: { root: HTMLElement; model: () => Block; draw: Draw; 
   const run = (): void => {
     due = false;
     if (!ops.length && !over) return;
-    const model = o.model();
-    const todo = ops;
+    const [model, todo, k] = [o.model(), ops, kept(o.root)];
     ops = [];
     if (over) whole(o, model);
     else for (const op of todo) one(o, op, model);
+    if (k) refocus(o.root, k);
     over = false;
     o.saved?.();
   };

@@ -207,6 +207,15 @@ test("an island gets its props, its named event is sent as an action, an unnamed
   }
 });
 
+test("a patch that redraws a form keeps its focused field, its typed text and its caret", async () => {
+  const fields = (label) => [{ type: "text", name: "q", label }, { type: "toggle", name: "all", label: "All" }];
+  const screen = { type: "screen", id: "people", blocks: [{ type: "form", id: "find", fields: fields("Search") }] };
+  const steps = [{ type: { id: "find", text: "ada" } }, { frame: { ops: [{ op: "merge", id: "find", fields: { fields: fields("Search people") } }] } }, { shot: { name: "shot" } }];
+  const { report, trees } = await shot({ screen, steps });
+  ok(trees.shot.children[0].text.includes("Search people"), trees.shot.children[0].text);
+  deepStrictEqual(report.focus, { shot: "q@3" });
+});
+
 const rows = Array.from({ length: 200 }, (_, i) => ({ type: "row", id: `r${i}`, title: `Row ${i}`, subtitle: "green", value: "2m" }));
 const screen = { type: "screen", id: "rows", title: "Rows", blocks: [{ type: "list", id: "all", rows }] };
 
