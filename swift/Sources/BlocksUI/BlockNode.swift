@@ -1,11 +1,16 @@
 import Blocks
 import SwiftUI
 
-internal struct BlockNode: View {
+/// One block drawn as its kind, with its hidden, disabled and style state; an app block embeds its children with it.
+public struct BlockNode: View {
     @Environment(\.behaved) private var behaved
-    internal let block: Block
+    private let block: Block
 
-    internal var body: some View {
+    public init(block: Block) {
+        self.block = block
+    }
+
+    public var body: some View {
         if bare || block.id.map(behaved.view.hidden.contains) == true {
             Color.clear.frame(width: 0, height: 0).modifier(Reported(block: block, hidden: true))
         } else {
@@ -65,12 +70,17 @@ internal struct BlockNode: View {
     }
 }
 
-internal struct BlockStack: View {
+/// Blocks drawn top to bottom, `spacing` apart (the tile seam by default).
+public struct BlockStack: View {
     @Environment(\.look) private var look
-    internal let blocks: [Block]
-    internal var spacing: CGFloat?
+    private let blocks: [Block]
+    private let spacing: CGFloat?
 
-    internal var body: some View {
+    public init(blocks: [Block], spacing: CGFloat? = nil) {
+        (self.blocks, self.spacing) = (blocks, spacing)
+    }
+
+    public var body: some View {
         VStack(alignment: .leading, spacing: spacing ?? look.tiles?.seam ?? 10) {
             ForEach(Array(blocks.enumerated()), id: \.offset) { _, block in BlockNode(block: block) }
         }

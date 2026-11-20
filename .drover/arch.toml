@@ -48,6 +48,7 @@ generated = [
     "skill/blocks/**",
     "crates/blocks-cli/src/gen/skill.rs",
     "web/src/gen/fields.ts",
+    "web/react/src/gen/fields.ts",
     "web/src/gen/words.ts",
     "swift/Sources/Blocks/Gen/Words.swift",
     "fixtures/fields/*.json",
@@ -120,6 +121,10 @@ glob = "*.rs"
 
 [[collect]]
 dir = "web/src/render/field"
+glob = "*.ts"
+
+[[collect]]
+dir = "web/react/src/fields"
 glob = "*.ts"
 
 [[collect]]

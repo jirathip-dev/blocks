@@ -66,9 +66,14 @@ public struct BlocksView: View {
     }
 }
 
-internal struct CardContext {
-    internal var poster: LayoutSource?
-    internal var tint: Color?
+/// Who posted the cards below and the tint they take; the `card` environment entry.
+public struct CardContext {
+    public var poster: LayoutSource?
+    public var tint: Color?
+
+    public init(poster: LayoutSource? = nil, tint: Color? = nil) {
+        (self.poster, self.tint) = (poster, tint)
+    }
 }
 
 private struct ActKey: EnvironmentKey {
@@ -101,7 +106,8 @@ private struct OpenBesideKey: EnvironmentKey {
 extension EnvironmentValues {
     @Entry internal var focus: String?
     @Entry internal var picked: String?
-    @Entry internal var card = CardContext()
+    /// The card context the blocks below are drawn in.
+    @Entry public var card = CardContext()
     @Entry internal var form: Binding<[String: JSONValue]>?
     @Entry internal var behaved = Behaved()
 
