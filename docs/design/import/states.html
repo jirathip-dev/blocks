@@ -1,0 +1,33 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="../neutral-default/tokens.css"><link rel="stylesheet" href="../../../web/dist/blocks.css"><link rel="stylesheet" href="import.css"><link rel="stylesheet" href="page.css">
+<script src="import.js"></script><script src="data.js"></script><title>import: every other state</title></head>
+<body><main class="scr">
+<div class="top"><div class="tabh"><span class="tw">import · every other state</span></div></div>
+<h2>8 · Wrong columns</h2><p class="note">The file has no column for a required one (Price). That column's row turns red with "required: pick a column", its cells in the preview show "—", and the button is off with the reason. Optional columns with no match (Category, Best before) are simply empty.</p>
+<div data-base="WRONG" data-i='{"map":{"sku":"Code","name":"Product","stock":"Counted"}}'></div>
+<h2>9 · A file that can't be used</h2><p class="note">Checked before any preview, on the device: a file that isn't .xlsx or .csv (the old Excel .xls included: save it as .xlsx), a file with no rows, more rows than the screen's limit. The message sits above the drop area. Nothing is sent.</p>
+<div class="cases">
+<div data-i='{"phase":"empty","error":"Can’t read budget-2019.xls: it is an old Excel file. Save it as .xlsx or .csv and pick it again."}'></div>
+<div data-i='{"phase":"empty","error":"orders-2026.xlsx has 7,240 rows; this import takes up to 5,000. Split the file and import each part."}'></div>
+</div>
+<h2>10 · A workbook with several sheets</h2><p class="note">The first sheet that has a header row is picked; a select under the file name changes it. A CSV shows the text encoding it was read in instead.</p>
+<div data-base="SHEETS" data-i="{}"></div>
+<h2>11 · Thai, a CSV saved by Excel in Thai Windows encoding</h2><p class="note">A CSV is read as UTF-8; if that fails, as Windows-874, the encoding Excel uses for Thai, and the file line says which. Words follow the screen's language.</p>
+<div data-base="TH" data-i="{}"></div>
+<h2>12 · Off, and with JavaScript off</h2><p class="note">With no import action, the kind is drawn off and says so. The static page (JS off) lists the columns a file needs, required ones in bold, and says the import needs JavaScript: the file is never parsed on the server.</p>
+<div class="cases">
+<div data-i='{"phase":"empty","off":true}'></div>
+<div data-i='{"phase":"static"}'></div>
+</div>
+<h2>13 · The template, and a table's export</h2><p class="note">[download template] writes "Import products template.xlsx" on the device: one sheet with the column labels as the header row (required ones in bold) and a second sheet with each column's allowed values. A table with export: ["xlsx"] and all its rows on the screen writes its file the same way, from the columns, sort and filter on screen (the ticked rows only, if any), and sends no action. A table with more rows on the server keeps sending the export action to the app.</p>
+<div class="cases">
+<div><div class="xlw"><table class="xl"><tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th><th>F</th></tr>
+<tr><th>1</th><td class="h">SKU</td><td class="h">Name</td><td>Category</td><td class="h">Price ฿</td><td>Stock</td><td>Best before</td></tr>
+<tr><th>2</th><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><th>3</th><td></td><td></td><td></td><td></td><td></td><td></td></tr></table></div>
+<div class="xlt"><span class="on">Products</span><span>Allowed values</span></div></div>
+<div class="tbl"><div class="tbh"><span class="tbn">Products · 48 rows</span><button type="button"><span>export excel</span></button></div>
+<div class="tbw"><table><caption>Products</caption><thead><tr><th>SKU</th><th>Name</th><th class="end">Price ฿</th></tr></thead><tbody>
+<tr><td class="p-meta" data-l="SKU">BK-0101</td><td class="p-title">Sourdough loaf</td><td class="end p-value">85.00</td></tr>
+<tr><td class="p-meta" data-l="SKU">BK-0102</td><td class="p-title">Butter croissant</td><td class="end p-value">45.00</td></tr></tbody></table></div></div>
+</div>
+</main><script>draw()</script></body></html>
