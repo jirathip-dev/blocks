@@ -1,0 +1,11 @@
+Decided: added a For apps line to the PR body, since web/src/gen/kinds.ts matches ci/for-apps.paths
+Because: scripts/for-apps.sh:12
+Decided: staging's value helper stays in core/text.ts; the split render/text.ts and kind/table.ts import it
+Because: web/src/render/text.ts:2
+Decided: staging's marks renderer moves verbatim to render/kind/media.ts, with its imports pointed at ctx.ts and dom.ts
+Because: "each kind is `web/src/render/kind/<kind>.ts`, `just gen` writes the table"
+Decided: markup.test.ts bundles render/block.ts, since the slice deletes render/index.ts; only the path changed
+Because: "Tests only move or are renamed; no test body changes."
+Rejected: a render/index.ts re-export shim — the ADR freezes and removes that file
+Check: test names equal origin/staging's (147); fixtures/ and the dist CSS are byte-identical; scripts/for-apps.sh passes on the body
+Owner: Added the missing For apps note and merged the latest staging, including the new picture-markup renderer.
