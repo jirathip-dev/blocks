@@ -46,7 +46,7 @@ function boot(screen) {
     apps: window.blocksApps,
     held: new Map(),
   };
-  const R = window.R, out = { sent: (a) => (h.sent.push(a), true), dropped: (w) => h.dropped.push(w), file };
+  const R = window.R, out = { sent: (a) => (h.sent.push(a), h.hold ? new Promise((done) => (h.wait = done)) : true), dropped: (w) => h.dropped.push(w), file };
   const sync = R ? () => {} : B.behave(root, () => h.model);
   h.paint = R ? () => (h.react ? h.react.set(h.model) : (h.react = R.boot(root, h.model, out))) : () => (root.replaceChildren(...[B.render(h.model, ctx)].filter(Boolean)), sync());
   h.ops = (ops) => ((h.model = (ops?.length && B.apply(h.model, ops)) || h.model), h.paint());
