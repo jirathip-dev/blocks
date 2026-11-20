@@ -34,5 +34,6 @@ kinds! {
     steps { Steps(Steps) = "steps" }
     chart { Chart(Chart) = "chart" }
     toast { Toast(Toast) = "toast" }
+    pages { Pages(Pages) = "pages" }
     timeline { Timeline(Timeline) = "timeline" }
 }

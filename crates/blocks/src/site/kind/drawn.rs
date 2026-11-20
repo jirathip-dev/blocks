@@ -17,6 +17,7 @@ kinds! {
     "list" => list,
     "media" => media,
     "nav" => nav,
+    "pages" => pages,
     "prose" => prose,
     "row" => row,
     "run" => run,

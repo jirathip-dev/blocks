@@ -1,4 +1,4 @@
-:root{--fs:13px;--fs-meta:11px;--fs-input:16px;--ctl:28px;--hit:44px;--s1:4px;--s2:8px;--s3:12px;--s4:16px;--ring:2px;--mark:3px;--sep:1ch}
+:root{--fs:13px;--fs-meta:11px;--fs-input:16px;--ctl:28px;--hit:44px;--s1:4px;--s2:8px;--s3:12px;--s4:16px;--ring:2px;--mark:3px;--sep:1ch;--paper:#fff}
 [hidden]{display:none!important}
 html{background:conic-gradient(from 90deg at calc(100% - var(--dot-size)) calc(100% - var(--dot-size)),var(--dot) 25%,transparent 0) 0 0/var(--dot-gap) var(--dot-gap),var(--bg)}
 a{color:var(--link)}

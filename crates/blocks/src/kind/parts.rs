@@ -565,3 +565,13 @@ wire! {
         confirm: Option<Confirm>,
     }
 }
+
+wire! {
+    /// One page of a `pages` block: its picture, what it shows, and its size in pixels.
+    pub struct PageImage {
+        src: String,
+        alt: String,
+        width: u32,
+        height: u32,
+    }
+}

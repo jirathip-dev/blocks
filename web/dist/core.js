@@ -32,6 +32,7 @@ var hooks = {
   steps: { variant: null, parts: ["title"] },
   chart: { variant: null, parts: ["title"] },
   toast: { variant: null, parts: ["title"] },
+  pages: { variant: null, parts: ["title"] },
   timeline: { variant: null, parts: ["title"] }
 };
 var roles = { section: "region", form: "form", config: "form", nav: "navigation", chart: "figure", toast: "status" };
@@ -505,6 +506,7 @@ var table = (fields) => ({ type: "table", ...fields });
 var steps = (fields) => ({ type: "steps", ...fields });
 var chart = (fields) => ({ type: "chart", ...fields });
 var toast = (fields) => ({ type: "toast", ...fields });
+var pages = (fields) => ({ type: "pages", ...fields });
 var timeline = (fields) => ({ type: "timeline", ...fields });
 var expr = {
   get: (v) => ({ get: v }),
@@ -633,6 +635,7 @@ var kinds = {
   "list": "List",
   "media": "Media",
   "nav": "Nav",
+  "pages": "Pages",
   "prose": "Prose",
   "row": "Row",
   "run": "Run",
@@ -826,6 +829,7 @@ var defs = {
             "steps",
             "chart",
             "toast",
+            "pages",
             "timeline"
           ]
         },
@@ -1319,6 +1323,19 @@ var defs = {
         "properties": {
           "type": {
             "const": "toast",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      {
+        "$ref": "#/$defs/Pages",
+        "properties": {
+          "type": {
+            "const": "pages",
             "type": "string"
           }
         },
@@ -4097,6 +4114,90 @@ var defs = {
     "required": [
       "action",
       "cursor"
+    ],
+    "type": "object"
+  },
+  "PageImage": {
+    "properties": {
+      "alt": {
+        "type": "string"
+      },
+      "height": {
+        "minimum": 0,
+        "type": "integer"
+      },
+      "src": {
+        "type": "string"
+      },
+      "width": {
+        "minimum": 0,
+        "type": "integer"
+      }
+    },
+    "required": [
+      "src",
+      "alt",
+      "width",
+      "height"
+    ],
+    "type": "object"
+  },
+  "Pages": {
+    "additionalProperties": true,
+    "properties": {
+      "fallback": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Fallback"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "file": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "id": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "note": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "pages": {
+        "items": {
+          "$ref": "#/$defs/PageImage"
+        },
+        "type": "array"
+      },
+      "show": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "title": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "required": [
+      "pages"
     ],
     "type": "object"
   },
@@ -7108,6 +7209,7 @@ export {
   named2 as named,
   names,
   nav,
+  pages,
   pick,
   picked,
   prose,

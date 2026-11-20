@@ -98,29 +98,44 @@ test("a sent row stays where it was dropped until refused, then goes back; answe
   }
 });
 
-test("the one zoom: Ctrl and wheel, + and 0, and a double tap, clamped and kept outside the view", async () => {
+test("the one zoom: Ctrl and wheel live then settled, + and 0, and a double tap, clamped and kept outside the view", async () => {
   const { buildSync } = await import("esbuild");
   const { webkit } = await import("playwright");
   const code = buildSync({ entryPoints: [new URL("../src/gesture.ts", import.meta.url).pathname], bundle: true, format: "iife", globalName: "G", write: false }).outputFiles[0].text;
   const browser = await webkit.launch();
   try {
     const page = await browser.newPage();
+    await page.clock.install();
     await page.setContent("<div id=z tabindex=0 style='width:200px;height:200px'></div>");
     await page.addScriptTag({ content: code });
-    const got = await page.evaluate(() => {
+    const wheel = await page.evaluate(() => {
       const el = document.getElementById("z");
-      const keep = {};
-      const drawn = [];
-      window.G.zoomed(el, keep, { min: 1, max: 4, apply: (z) => drawn.push(Math.round(z * 100) / 100) });
+      window.keep = {};
+      window.drawn = [];
+      window.G.zoomed(el, window.keep, { min: 1, max: 4, apply: (z, live) => window.drawn.push([Math.round(z * 100) / 100, live]) });
       el.dispatchEvent(new WheelEvent("wheel", { ctrlKey: true, deltaY: -100, cancelable: true }));
       el.dispatchEvent(new WheelEvent("wheel", { ctrlKey: true, deltaY: -1000, cancelable: true }));
       el.dispatchEvent(new WheelEvent("wheel", { deltaY: -100 }));
-      el.dispatchEvent(new MouseEvent("dblclick"));
-      el.dispatchEvent(new KeyboardEvent("keydown", { key: "+" }));
-      el.dispatchEvent(new KeyboardEvent("keydown", { key: "0" }));
-      return { drawn, keep };
+      return window.drawn.splice(0);
     });
-    deepStrictEqual(got, { drawn: [1, 2.72, 4, 1, 1.25, 1], keep: { zoom: 1 } });
+    deepStrictEqual(wheel, [[1, false], [2.72, true], [4, true]]);
+    await page.clock.runFor(100);
+    deepStrictEqual(await page.evaluate(() => window.drawn.splice(0)), [], "the wheel is still live");
+    await page.clock.runFor(100);
+    deepStrictEqual(await page.evaluate(() => window.drawn.splice(0)), [[4, false]], "settled once the wheel stops");
+    const got = await page.evaluate(() => {
+      const el = document.getElementById("z");
+      const at = (id, x) => new PointerEvent(id === "up" ? "pointerup" : id === "down" ? "pointerdown" : "pointermove", { pointerId: x[0], clientX: x[1], clientY: 0 });
+      el.dispatchEvent(new MouseEvent("dblclick"));
+      el.dispatchEvent(at("down", [1, 0]));
+      el.dispatchEvent(at("down", [2, 100]));
+      el.dispatchEvent(at("move", [2, 200]));
+      el.dispatchEvent(at("up", [2, 200]));
+      el.dispatchEvent(new KeyboardEvent("keydown", { key: "-" }));
+      el.dispatchEvent(new KeyboardEvent("keydown", { key: "0" }));
+      return { drawn: window.drawn, keep: window.keep };
+    });
+    deepStrictEqual(got, { drawn: [[1, false], [2, true], [2, false], [1.6, false], [1, false]], keep: { zoom: 1 } });
   } finally {
     await browser.close();
   }

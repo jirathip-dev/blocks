@@ -177,7 +177,7 @@ function gestured(el, c, o) {
 function zoomed(el, keep, o) {
   const at2 = /* @__PURE__ */ new Map();
   const z = () => typeof keep["zoom"] === "number" ? keep["zoom"] : o.min;
-  const to = (k) => o.apply(keep["zoom"] = Math.min(o.max, Math.max(o.min, k)));
+  const to = (k, live3 = false) => o.apply(keep["zoom"] = Math.min(o.max, Math.max(o.min, k)), live3);
   const span2 = () => {
     const [a, b] = [...at2.values()];
     return a && b ? Math.hypot(a[0] - b[0], a[1] - b[1]) : 0;
@@ -192,15 +192,24 @@ function zoomed(el, keep, o) {
   el.addEventListener("pointermove", (e) => {
     if (!at2.has(e.pointerId)) return;
     at2.set(e.pointerId, [e.clientX, e.clientY]);
-    if (at2.size === 2 && d0) to(z0 * span2() / d0);
+    if (at2.size === 2 && d0) to(z0 * span2() / d0, true);
   });
   const up = (e) => {
     at2.delete(e.pointerId);
+    if (at2.size < 2 && d0) to(z());
     if (at2.size < 2) d0 = 0;
   };
+  let still2;
   el.addEventListener("pointerup", up);
   el.addEventListener("pointercancel", up);
-  el.addEventListener("wheel", (e) => e.ctrlKey && (e.preventDefault(), to(z() * Math.exp(-e.deltaY / 100))), { passive: false });
+  const wheel = (e) => {
+    if (!e.ctrlKey) return;
+    e.preventDefault();
+    to(z() * Math.exp(-e.deltaY / 100), true);
+    clearTimeout(still2);
+    still2 = setTimeout(() => to(z()), 150);
+  };
+  el.addEventListener("wheel", wheel, { passive: false });
   el.addEventListener("dblclick", () => to(z() > o.min ? o.min : 2.5));
   el.addEventListener("keydown", (e) => {
     const k = { "+": z() * 1.25, "=": z() * 1.25, "-": z() / 1.25, "0": o.min };
