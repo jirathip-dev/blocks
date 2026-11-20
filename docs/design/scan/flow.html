@@ -1,0 +1,20 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="../neutral-default/tokens.css"><link rel="stylesheet" href="../../../web/dist/blocks.css"><link rel="stylesheet" href="../upload/upload.css"><link rel="stylesheet" href="scan.css"><link rel="stylesheet" href="page.css">
+<style>main{max-width:1200px}</style>
+<script src="scan.js"></script><title>scan: a delivery note, three pages</title></head>
+<body><main class="scr">
+<div class="top"><div class="tabh"><span class="tw">Stop 3 of 8 · Marlow Bakery · paperwork</span><button type="button"><span>call</span></button></div></div>
+<h2>1 · Capture <small>· page 1 is in; the camera found page 2's edges and draws them in green</small></h2>
+<div class="frames one"><section><div data-s='{"step":"capture","label":"Delivery note","cam":"form","pages":["note"],"sel":0}'></div></section></div>
+<h2>2 · Corners <small>· after the shutter: the still photo, the page outlined, the rest dimmed; a corner being dragged shows a loupe</small></h2>
+<div class="frames one"><section><div data-s='{"step":"adjust","label":"Delivery note","cam":"form","pages":["note"],"drag":1,"quad":[[48,70],[244,62],[262,330],[58,356]]}'></div></section></div>
+<h2>3 · Review <small>· the corrected A4 pages in order; page 3 is being dragged before page 2</small></h2>
+<div class="frames one"><section><div data-s='{"step":"review","label":"Delivery note","pages":["note","form","slip"],"sel":0,"lift":2,"gap":1}'></div></section></div>
+<h2>4 · Done <small>· back in the form: one PDF row, uploading through the file handler; the submit waits for it</small></h2>
+<div data-f='{"submit":"record delivery","fields":[
+ {"type":"scan","label":"Delivery note","doc":"every page, signed","file":{"name":"delivery-note.pdf","first":"note","n":3,"kb":612,"state":"uploading","p":40}},
+ {"type":"text","label":"Recipient name","value":"J. Okafor"}]}'></div>
+<div data-f='{"submit":"record delivery","fields":[
+ {"type":"scan","label":"Delivery note","doc":"every page, signed","file":{"name":"delivery-note.pdf","first":"note","n":3,"kb":612,"state":"done"}},
+ {"type":"text","label":"Recipient name","value":"J. Okafor"}]}'></div>
+</main><script>draw()</script></body></html>
