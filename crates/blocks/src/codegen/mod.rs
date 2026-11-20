@@ -9,7 +9,7 @@ mod fields;
 mod fixtures;
 mod hooks;
 mod model;
-mod rust;
+pub mod rust;
 mod shapes;
 mod skill;
 mod swift;
@@ -68,23 +68,13 @@ pub fn write(root: &Path) -> std::io::Result<()> {
         fixtures::files,
         rust::files,
     ] {
-        put(root, area(root, &schema)?)?;
-    }
-    Ok(())
-}
-
-/// Writes only the Rust kind list, so the next build's codegen knows a kind just added.
-pub fn kinds(root: &Path) -> std::io::Result<()> {
-    put(root, rust::kinds(root)?)
-}
-
-fn put(root: &Path, files: Files) -> std::io::Result<()> {
-    for (path, text) in files {
-        let path = root.join(path);
-        if let Some(dir) = path.parent() {
-            std::fs::create_dir_all(dir)?;
+        for (path, text) in area(root, &schema)? {
+            let path = root.join(path);
+            if let Some(dir) = path.parent() {
+                std::fs::create_dir_all(dir)?;
+            }
+            std::fs::write(path, text)?;
         }
-        std::fs::write(path, text)?;
     }
     Ok(())
 }

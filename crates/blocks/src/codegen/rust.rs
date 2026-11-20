@@ -15,6 +15,10 @@ pub(super) fn files(root: &Path, s: &Value) -> std::io::Result<Files> {
     Ok(out)
 }
 
-pub(super) fn kinds(root: &Path) -> std::io::Result<Files> {
-    kinds::files(root, &Value::Null)
+/// Writes only the Rust kind list, so the next build's codegen knows a kind just added.
+pub fn kinds(root: &Path) -> std::io::Result<()> {
+    for (path, text) in kinds::files(root, &Value::Null)? {
+        std::fs::write(root.join(path), text)?;
+    }
+    Ok(())
 }
