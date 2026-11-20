@@ -53,7 +53,7 @@ internal struct GridHandle: View {
 
     internal var body: some View {
         if let reorder = block.reorder, block.word(.row(row.id)) != nil {
-            Text("≡").ui(16, .regular, look).foregroundStyle(look.palette.mute).frame(minWidth: 44, minHeight: 44)
+            Text("≡").ui(Scale.glyph, .regular, look).foregroundStyle(look.palette.mute).frame(minWidth: 44, minHeight: 44)
                 .accessibilityAddTraits(.isButton)
                 .modifier(
                     Gestured(
@@ -79,12 +79,12 @@ internal struct GroupCell: View {
     internal var body: some View {
         let items = GridState.items(rows, at)
         if first, rows.indices.contains(at) {
-            HStack(spacing: 6) {
-                Text(block.name(rows[at])).ui(14, .semibold, look)
-                Text("\(items.count)").ui(11, .regular, look).foregroundStyle(look.palette.mute)
+            HStack(spacing: Scale.gap) {
+                Text(block.name(rows[at])).ui(Scale.cell, .semibold, look)
+                Text("\(items.count)").ui(Scale.count, .regular, look).foregroundStyle(look.palette.mute)
             }
         } else if col.total != nil, col.total != .count, let t = col.total(items) {
-            Text(t.value).ui(14, .semibold, look).opacity(grid.waits(block, col, items) ? 0.5 : 1)
+            Text(t.value).ui(Scale.cell, .semibold, look).opacity(grid.waits(block, col, items) ? 0.5 : 1)
         } else {
             Text("")
         }
@@ -109,10 +109,10 @@ internal struct GridCell: View {
                 out: GridState.typed($grid, k) { cursor.wrappedValue = next.map { GridState.key($0, col.id) } },
                 cursor: cursor, key: k
             )
-            .ui(14, .regular, look).textFieldStyle(.plain)
+            .ui(Scale.cell, .regular, look).textFieldStyle(.plain)
             .frame(maxWidth: col.width.map { CGFloat($0) * 8 })
             .overlay(alignment: .bottom) { Rectangle().fill(look.palette.edge).frame(height: 1) }
-            .overlay(alignment: .leading) { if grid.refused == k { Rectangle().fill(look.palette.red).frame(width: 3) } }
+            .overlay(alignment: .leading) { if grid.refused == k { Rectangle().fill(look.palette.red).frame(width: Scale.mark) } }
             .opacity(grid.out[k] != nil ? 0.5 : 1)
         } else if block.calc?[col.id] != nil {
             TableCell(block: block, col: col, cell: row.cells[col.id], thai: thai).accessibilityValue("worked out")
@@ -139,7 +139,7 @@ internal struct TableSheet: View {
                     }
                 }
             } header: {
-                Text(block.name(row)).ui(15, .semibold, look)
+                Text(block.name(row)).ui(Scale.title, .semibold, look)
             }
             if row.tap != nil { ActButton(source: Source(tap: row.tap)) { Text("open") } }
             Button("done") { grid.sheet = nil }

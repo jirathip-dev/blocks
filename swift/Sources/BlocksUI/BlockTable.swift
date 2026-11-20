@@ -157,7 +157,7 @@ internal struct TableBar: View {
                 Text(block.title ?? "").ui(15, .bold, look)
                 Text(q.isEmpty ? "\(n) row\(n == 1 ? "" : "s")" : "\(shown) of \(n) rows").ui(12, .regular, look).foregroundStyle(look.palette.mute)
                 if block.reorder != nil, sort != nil || !q.isEmpty {
-                    Text("\(sort != nil ? "sorted" : "filtered"), so rows stay put").ui(12, .regular, look).foregroundStyle(look.palette.mute)
+                    Text("\(sort != nil ? "sorted" : "filtered"), so rows stay put").ui(Scale.meta, .regular, look).foregroundStyle(look.palette.mute)
                     Button("as sent") { (sort, q) = (nil, "") }
                 }
                 Spacer(minLength: 4)
@@ -358,7 +358,7 @@ internal struct TablePhone: View {
                     }
                     if r.group == true {
                         Text(block.name(r)).ui(15, .semibold, look)
-                        Spacer(minLength: 4)
+                        Spacer(minLength: Scale.pad)
                         if let c = part(.value).first { GroupCell(block: block, col: c, first: false, rows: rows, at: i, thai: thai, grid: grid) }
                     } else if block.edit != nil {
                         Button { grid.sheet = r.id } label: { line(r, part, more: true) }.buttonStyle(.plain)
@@ -375,7 +375,7 @@ internal struct TablePhone: View {
                 HStack {
                     Text("Total").ui(15, .semibold, look)
                     Spacer()
-                    Text(t.value).ui(15, .semibold, look).opacity(grid.waits(block, c, items) ? 0.5 : 1)
+                    Text(t.value).ui(Scale.title, .semibold, look).opacity(grid.waits(block, c, items) ? 0.5 : 1)
                 }
                 .padding(12)
             }

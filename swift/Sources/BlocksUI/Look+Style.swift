@@ -19,6 +19,17 @@ extension Look {
     }
 }
 
+internal enum Scale {
+    static let title: CGFloat = 15
+    static let cell: CGFloat = 14
+    static let meta: CGFloat = 12
+    static let count: CGFloat = 11
+    static let glyph: CGFloat = 16
+    static let gap: CGFloat = 6
+    static let pad: CGFloat = 4
+    static let mark: CGFloat = 3
+}
+
 extension View {
     internal func ui(_ size: CGFloat, _ weight: Font.Weight = .regular, _ look: Look) -> some View {
         font(.system(size: size, weight: weight, design: look.type == .mono ? .monospaced : look.type == .serif ? .serif : .default))
