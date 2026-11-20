@@ -3,7 +3,7 @@ use std::path::Path;
 use serde_json::Value;
 
 use super::Files;
-use crate::{site, tree, Block, Built, Field, Form, Lang, Locale, Screen, Submit};
+use crate::{site, tree, Block, Built, Field, Form, Import, Lang, Locale, Screen, Submit};
 
 const STATES: [(&str, &str); 4] = [
     ("error", "Check this one"),
@@ -111,7 +111,7 @@ fn views(file: &str, dir: &str, types: &[&str]) -> (String, String) {
 }
 
 fn words() -> Files {
-    let all: Vec<_> = Field::WORDS.iter().flat_map(|ws| ws.iter()).collect();
+    let all: Vec<_> = Field::WORDS.iter().flat_map(|ws| ws.iter()).chain(Import::WORDS).collect();
     let ts: String = all
         .iter()
         .map(|(k, en, th)| format!("  {k}: [\"{en}\", \"{th}\"],\n"))

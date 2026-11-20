@@ -140,7 +140,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     for p in pages(bench.as_ref(), &looks)? {
         write(&out, &p, look, &live)?;
     }
-    for f in ["blocks.js", "blocks.css", "play.js"] {
+    for f in ["blocks.js", "blocks.css", "play.js", "sheet.js"] {
         fs::copy(root.join("web/dist").join(f), out.join(f))?;
     }
     for f in fs::read_dir(root.join("site/media"))? {

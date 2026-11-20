@@ -114,6 +114,7 @@ public enum Block: Codable, Equatable, Sendable {
     case chart(Chart)
     case toast(Toast)
     case timeline(Timeline)
+    case `import`(Import)
     case appBlock(JSONValue)
 
     private enum Tag: String, CodingKey { case tag = "type" }
@@ -153,6 +154,7 @@ public enum Block: Codable, Equatable, Sendable {
         case "chart": self = .chart(try Chart(from: decoder))
         case "toast": self = .toast(try Toast(from: decoder))
         case "timeline": self = .timeline(try Timeline(from: decoder))
+        case "import": self = .`import`(try Import(from: decoder))
         default: self = .appBlock(try JSONValue(from: decoder))
         }
     }
@@ -192,6 +194,7 @@ public enum Block: Codable, Equatable, Sendable {
         case .chart(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("chart", forKey: .tag)
         case .toast(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("toast", forKey: .tag)
         case .timeline(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("timeline", forKey: .tag)
+        case .`import`(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("import", forKey: .tag)
         case .appBlock(let v): try v.encode(to: encoder)
         }
     }
@@ -747,6 +750,41 @@ public struct Images: Codable, Equatable, Sendable {
     public var size: ImageSize?
 }
 
+public struct Import: Codable, Equatable, Sendable {
+    public var action: String?
+    public var columns: [ImportColumn]
+    public var done: UInt32?
+    public var error: String?
+    public var id: String?
+    public var into: String?
+    public var max: UInt32?
+    public var refused: [Refused]?
+    public var show: Expr?
+    public var template: Bool?
+    public var title: String
+}
+
+public struct ImportColumn: Codable, Equatable, Sendable {
+    public var also: [String]?
+    public var key: String
+    public var label: String
+    public var required: Bool?
+    public var type: ImportType?
+    public var unique: Bool?
+    public var values: [String]?
+}
+
+public struct ImportType: RawRepresentable, Hashable, Codable, Equatable, Sendable {
+    public let rawValue: String
+    public init(rawValue: String) { self.rawValue = rawValue }
+    public static let text = Self(rawValue: "text")
+    public static let number = Self(rawValue: "number")
+    public static let money = Self(rawValue: "money")
+    public static let date = Self(rawValue: "date")
+    public static let choice = Self(rawValue: "choice")
+    public static let all: [Self] = [.text, .number, .money, .date, .choice]
+}
+
 public struct Island: Codable, Equatable, Sendable {
     public var events: [String]?
     public var fallback: Fallback
@@ -1233,6 +1271,12 @@ public struct Prose: Codable, Equatable, Sendable {
 
 public struct Queued: Codable, Equatable, Sendable {
     public var q: UInt64
+    public var text: String
+}
+
+public struct Refused: Codable, Equatable, Sendable {
+    public var key: String
+    public var row: UInt32
     public var text: String
 }
 

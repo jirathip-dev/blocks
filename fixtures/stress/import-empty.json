@@ -1,0 +1,8 @@
+{
+  "action": "import",
+  "columns": [],
+  "id": "products",
+  "into": "Products",
+  "title": "Import products",
+  "type": "import"
+}

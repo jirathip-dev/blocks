@@ -4,6 +4,7 @@ import { card } from "../kinds/card.ts";
 import { chips } from "../kinds/chips.ts";
 import { form } from "../kinds/form.ts";
 import { images } from "../kinds/images.ts";
+import { import_ } from "../kinds/import.ts";
 import { list } from "../kinds/list.ts";
 import { media } from "../kinds/media.ts";
 import { row } from "../kinds/row.ts";
@@ -15,4 +16,4 @@ import { table } from "../kinds/table.ts";
 import { text } from "../kinds/text.ts";
 import { timeline } from "../kinds/timeline.ts";
 
-export const views: Views = { button, card, chips, form, images, list, media, row, screen, section, sheet, stat, table, text, timeline };
+export const views: Views = { button, card, chips, form, images, import: import_, list, media, row, screen, section, sheet, stat, table, text, timeline };

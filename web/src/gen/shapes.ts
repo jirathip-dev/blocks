@@ -16,6 +16,7 @@ export const kinds: Record<string, string> = {
   "form": "Form",
   "hero": "Hero",
   "images": "Images",
+  "import": "Import",
   "island": "Island",
   "lines": "Lines",
   "list": "List",
@@ -215,7 +216,8 @@ export const defs: Record<string, Shape> = {
             "steps",
             "chart",
             "toast",
-            "timeline"
+            "timeline",
+            "import"
           ]
         },
         "type": "string"
@@ -721,6 +723,19 @@ export const defs: Record<string, Shape> = {
         "properties": {
           "type": {
             "const": "timeline",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      {
+        "$ref": "#/$defs/Import",
+        "properties": {
+          "type": {
+            "const": "import",
             "type": "string"
           }
         },
@@ -2523,6 +2538,160 @@ export const defs: Record<string, Shape> = {
     ],
     "type": "object"
   },
+  "Import": {
+    "additionalProperties": true,
+    "properties": {
+      "action": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "columns": {
+        "items": {
+          "$ref": "#/$defs/ImportColumn"
+        },
+        "type": "array"
+      },
+      "done": {
+        "minimum": 0,
+        "type": [
+          "integer",
+          "null"
+        ]
+      },
+      "error": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "id": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "into": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "max": {
+        "minimum": 0,
+        "type": [
+          "integer",
+          "null"
+        ]
+      },
+      "refused": {
+        "items": {
+          "$ref": "#/$defs/Refused"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "show": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "template": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "title": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "title",
+      "columns"
+    ],
+    "type": "object"
+  },
+  "ImportColumn": {
+    "properties": {
+      "also": {
+        "items": {
+          "type": "string"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "key": {
+        "type": "string"
+      },
+      "label": {
+        "type": "string"
+      },
+      "required": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "type": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/ImportType"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "unique": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "values": {
+        "items": {
+          "type": "string"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      }
+    },
+    "required": [
+      "key",
+      "label"
+    ],
+    "type": "object"
+  },
+  "ImportType": {
+    "anyOf": [
+      {
+        "enum": [
+          "text",
+          "number",
+          "money",
+          "date",
+          "choice"
+        ],
+        "type": "string"
+      },
+      {
+        "type": "string"
+      }
+    ]
+  },
   "Island": {
     "additionalProperties": true,
     "properties": {
@@ -3805,6 +3974,26 @@ export const defs: Record<string, Shape> = {
     },
     "required": [
       "q",
+      "text"
+    ],
+    "type": "object"
+  },
+  "Refused": {
+    "properties": {
+      "key": {
+        "type": "string"
+      },
+      "row": {
+        "minimum": 0,
+        "type": "integer"
+      },
+      "text": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "row",
+      "key",
       "text"
     ],
     "type": "object"

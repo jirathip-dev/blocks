@@ -13,6 +13,7 @@ import { editor } from "../render/kind/editor.ts";
 import { form } from "../render/kind/form.ts";
 import { hero } from "../render/kind/hero.ts";
 import { images } from "../render/kind/images.ts";
+import { import_ } from "../render/kind/import.ts";
 import { island } from "../render/kind/island.ts";
 import { lines } from "../render/kind/lines.ts";
 import { list } from "../render/kind/list.ts";
@@ -70,6 +71,7 @@ export const R: { [K in Kind]: (b: Of<K>, c: Ctx) => HTMLElement | null } = {
   chart,
   toast,
   timeline,
+  import: import_,
 };
 
-export const native: readonly Kind[] = ["screen", "sheet", "section", "list", "row", "card", "choice", "form", "config", "secret", "run", "button", "chips", "stat", "text", "images", "web", "diff", "editor", "scene", "diagram", "composer", "lines", "prose", "hero", "media", "nav", "table", "steps", "chart", "toast", "timeline"];
+export const native: readonly Kind[] = ["screen", "sheet", "section", "list", "row", "card", "choice", "form", "config", "secret", "run", "button", "chips", "stat", "text", "images", "web", "diff", "editor", "scene", "diagram", "composer", "lines", "prose", "hero", "media", "nav", "table", "steps", "chart", "toast", "timeline", "import"];

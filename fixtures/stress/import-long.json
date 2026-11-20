@@ -1,0 +1,39 @@
+{
+  "action": "import",
+  "columns": [
+    {
+      "also": [
+        "item code"
+      ],
+      "key": "sku",
+      "label": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+      "required": true,
+      "type": "text",
+      "unique": true
+    },
+    {
+      "key": "name",
+      "label": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+      "type": "text"
+    },
+    {
+      "key": "cat",
+      "label": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+      "type": "choice",
+      "values": [
+        "Bakery",
+        "Dairy"
+      ]
+    },
+    {
+      "key": "price",
+      "label": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+      "required": true,
+      "type": "money"
+    }
+  ],
+  "id": "products",
+  "into": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+  "title": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+  "type": "import"
+}

@@ -14,3 +14,10 @@ fn the_bundle_exports_mount_and_carries_the_shell_style() {
         "web/dist/blocks.css lost its layer"
     );
 }
+
+#[test]
+fn the_import_reader_is_its_own_chunk_loaded_on_first_use() {
+    assert!(blocks::web::SHEET.contains("deflate-raw") && blocks::web::SHEET.contains("windows-874"));
+    assert!(!blocks::web::JS.contains("deflate-raw") && !blocks::web::JS.contains("windows-874"));
+    assert!(blocks::web::JS.contains("import(\"./sheet.js\")"));
+}

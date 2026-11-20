@@ -1344,6 +1344,48 @@
         }
       ],
       "type": "timeline"
+    },
+    {
+      "action": "import",
+      "columns": [
+        {
+          "also": [
+            "item code"
+          ],
+          "key": "sku",
+          "label": "SKU",
+          "required": true,
+          "type": "text",
+          "unique": true
+        },
+        {
+          "key": "name",
+          "label": "Name",
+          "type": "text"
+        },
+        {
+          "key": "cat",
+          "label": "Category",
+          "type": "choice",
+          "values": [
+            "Bakery",
+            "Dairy"
+          ]
+        },
+        {
+          "key": "price",
+          "label": "Price",
+          "required": true,
+          "type": "money"
+        }
+      ],
+      "fallback": {
+        "title": "Import products"
+      },
+      "id": "products",
+      "into": "Products",
+      "title": "Import products",
+      "type": "import"
     }
   ],
   "fallback": {

@@ -37,6 +37,7 @@ extension Block {
         case .chart(let b): ("chart", b.id)
         case .toast(let b): ("toast", b.id)
         case .timeline(let b): ("timeline", b.id)
+        case .import(let b): ("import", b.id)
         case .appBlock(let b): (b.type, b.id)
         }
     }
@@ -51,6 +52,7 @@ internal struct KindView: View {
         case .card(let block): CardBlock(block: block)
         case .chips(let block): ChipsBlock(block: block)
         case .choice(let block): ChoiceBlock(block: block)
+        case .import(let block): ImportBlock(block: block)
         case .list(let block): ListBlock(block: block)
         case .screen(let block): ScreenBlock(block: block)
         case .section(let block): SectionBlock(block: block)

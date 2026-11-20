@@ -1,4 +1,4 @@
-import type { Block, Button, Card, Chart, Chips, Choice, Composer, Diagram, Diff, Editor, Expr, Form, Hero, Images, Island, Kind, Lines, List, Match, Media, Nav, Prose, Row, Run, Scene, Screen, Secret, Section, Sheet, Stat, Steps, Table, Text, Timeline, Toast, Web } from "./types.ts";
+import type { Block, Button, Card, Chart, Chips, Choice, Composer, Diagram, Diff, Editor, Expr, Form, Hero, Images, Import, Island, Kind, Lines, List, Match, Media, Nav, Prose, Row, Run, Scene, Screen, Secret, Section, Sheet, Stat, Steps, Table, Text, Timeline, Toast, Web } from "./types.ts";
 export type Of<K extends Kind> = Extract<Block, {
     type: K;
 }>;
@@ -35,6 +35,7 @@ export declare const steps: (fields: Steps) => Of<"steps">;
 export declare const chart: (fields: Chart) => Of<"chart">;
 export declare const toast: (fields: Toast) => Of<"toast">;
 export declare const timeline: (fields: Timeline) => Of<"timeline">;
+export declare const import_: (fields: Import) => Of<"import">;
 export declare const expr: {
     get: (v: string) => Expr;
     not: (v: Expr) => Expr;

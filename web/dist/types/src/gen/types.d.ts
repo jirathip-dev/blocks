@@ -116,7 +116,9 @@ export type Block = ({
     type: "toast";
 } & Toast) | ({
     type: "timeline";
-} & Timeline) | (AppBlock & {
+} & Timeline) | ({
+    type: "import";
+} & Import) | (AppBlock & {
     [key: string]: unknown;
 });
 export type Bound = {
@@ -432,6 +434,29 @@ export type Images = {
     show?: Expr | null;
     size?: ImageSize | null;
 };
+export type Import = {
+    action?: string | null;
+    columns: ImportColumn[];
+    done?: number | null;
+    error?: string | null;
+    id?: string | null;
+    into?: string | null;
+    max?: number | null;
+    refused?: Refused[] | null;
+    show?: Expr | null;
+    template?: boolean | null;
+    title: string;
+};
+export type ImportColumn = {
+    also?: string[] | null;
+    key: string;
+    label: string;
+    required?: boolean | null;
+    type?: ImportType | null;
+    unique?: boolean | null;
+    values?: string[] | null;
+};
+export type ImportType = "text" | "number" | "money" | "date" | "choice";
 export type Island = {
     events?: string[] | null;
     fallback: Fallback;
@@ -688,6 +713,11 @@ export type Prose = {
 };
 export type Queued = {
     q: number;
+    text: string;
+};
+export type Refused = {
+    key: string;
+    row: number;
     text: string;
 };
 export type Report = {
@@ -1152,4 +1182,4 @@ export type Why = "evicted" | "unpaired" | "handover";
 export type Working = {
     since: string;
 };
-export type Kind = "screen" | "sheet" | "section" | "list" | "row" | "card" | "choice" | "form" | "config" | "secret" | "run" | "button" | "chips" | "stat" | "text" | "images" | "web" | "diff" | "editor" | "scene" | "diagram" | "composer" | "lines" | "prose" | "hero" | "media" | "nav" | "island" | "table" | "steps" | "chart" | "toast" | "timeline";
+export type Kind = "screen" | "sheet" | "section" | "list" | "row" | "card" | "choice" | "form" | "config" | "secret" | "run" | "button" | "chips" | "stat" | "text" | "images" | "web" | "diff" | "editor" | "scene" | "diagram" | "composer" | "lines" | "prose" | "hero" | "media" | "nav" | "island" | "table" | "steps" | "chart" | "toast" | "timeline" | "import";

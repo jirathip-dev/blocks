@@ -19,7 +19,7 @@
     },
     "./blocks.css": "./web/dist/blocks.scoped.css"
   },
-  "files": ["web/dist/core.js", "web/dist/react.js", "web/dist/blocks.js", "web/dist/blocks.css", "web/dist/blocks.scoped.css", "web/dist/types"],
+  "files": ["web/dist/core.js", "web/dist/react.js", "web/dist/blocks.js", "web/dist/sheet.js", "web/dist/blocks.css", "web/dist/blocks.scoped.css", "web/dist/types"],
   "peerDependencies": {
     "react": ">=19"
   },
