@@ -15,7 +15,7 @@ refs=$(gh api "repos/$REPO/git/matching-refs/tags/v$v." --jq '.[] | "\(.ref) \(.
 if echo "$refs" | grep -q " $SHA$"; then echo "release: $SHA is tagged already"; exit 0; fi
 n=$(echo "$refs" | grep -c . || true)
 tag="v$v.$n"
-prev=$(gh api "repos/$REPO/releases/latest" --jq .tag_name 2>/dev/null || true)
+prev=$(gh api "repos/$REPO/releases/latest" --jq .tag_name 2>/dev/null) || prev=
 if [ -n "$prev" ]; then
   subjects=$(gh api --paginate "repos/$REPO/compare/$prev...$SHA?per_page=100" --jq '.commits[].commit.message | split("\n")[0]')
 else
