@@ -2,7 +2,7 @@
   "kind": "button",
   "id": "save",
   "variant": null,
-  "drawn": "fallback",
+  "drawn": "native",
   "role": "button",
   "name": "Save",
   "children": []

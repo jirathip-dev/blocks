@@ -2,7 +2,7 @@
   "kind": "images",
   "id": "shots",
   "variant": null,
-  "drawn": "fallback",
+  "drawn": "native",
   "role": "group",
   "name": "shots",
   "children": []

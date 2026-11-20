@@ -1,4 +1,4 @@
-import type { Act, Block, Kind, Label, Tap, Toned } from "../gen/types.ts";
+import type { Act, Block, Kind, Label, Locale, Tap, Toned } from "../gen/types.ts";
 import { linkable } from "../core/check.ts";
 import { type Blk, blks, isBlk, named } from "../core/tree.ts";
 import type { Held } from "../gesture.ts";
@@ -17,6 +17,7 @@ export type Store = {
 export type Renderer = (b: Blk, c: Ctx) => HTMLElement | null;
 export type Ctx = {
     screen: string;
+    locale?: Locale;
     act: (a: Post, el?: HTMLElement) => Promise<boolean>;
     tap: (t: unknown) => void;
     open: Set<string>;
@@ -25,6 +26,7 @@ export type Ctx = {
     apps?: Record<string, Renderer>;
     drop?: (what: string) => void;
     held?: Map<string, Held>;
+    view?: Map<string, Record<string, unknown>>;
 };
 export declare const obj: (v: unknown) => Blk;
 export declare const esc: (s: unknown) => string;
@@ -50,7 +52,6 @@ export declare const btn: (label: unknown, cls?: string, url?: string, action?: 
 });
 export declare const tone: (v: Toned) => Label;
 export declare function md(s: unknown, refs?: boolean): string;
-export declare function value(v: unknown): string;
 export declare const ticked: (v: unknown) => Node | string;
 export declare const tick: (root: ParentNode) => void;
 export declare const draft: (i: HTMLInputElement, key: string, store: Store) => void;

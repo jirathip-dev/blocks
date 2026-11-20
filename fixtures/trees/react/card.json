@@ -2,7 +2,7 @@
   "kind": "card",
   "id": "card",
   "variant": "ask",
-  "drawn": "fallback",
+  "drawn": "native",
   "role": "group",
   "name": "q1",
   "children": [
@@ -10,7 +10,7 @@
       "kind": "row",
       "id": "card-row",
       "variant": null,
-      "drawn": "fallback",
+      "drawn": "native",
       "role": "group",
       "name": "Review",
       "children": []
@@ -19,7 +19,7 @@
       "kind": "stat",
       "id": "card-up",
       "variant": null,
-      "drawn": "fallback",
+      "drawn": "native",
       "role": "group",
       "name": "up",
       "children": []

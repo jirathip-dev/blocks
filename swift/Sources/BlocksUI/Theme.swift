@@ -29,6 +29,17 @@ public struct Palette: Sendable, Equatable {
     public var purple: Color
     public var cyan: Color
     public var dark: Bool
+
+    /// An app's own colours, handed to BlocksUI.
+    public init(
+        background: Color, card: Color, edge: Color, line: Color, foreground: Color, mute: Color, lead: Color,
+        link: Color, green: Color, amber: Color, red: Color, purple: Color, cyan: Color, dark: Bool
+    ) {
+        (self.background, self.card, self.edge, self.line, self.foreground, self.mute, self.lead) =
+            (background, card, edge, line, foreground, mute, lead)
+        (self.link, self.green, self.amber, self.red, self.purple, self.cyan, self.dark) =
+            (link, green, amber, red, purple, cyan, dark)
+    }
 }
 
 extension Palette {

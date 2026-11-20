@@ -146,18 +146,20 @@ const acts = (b: Rec): Rec[] => {
   const all = [...list(b.actions), ...list(b.swipe), ...list(b.menu), ...[b.button, ...WORDS.map((w) => b[w])].filter(rec)];
   return [...all, ...all.flatMap((a) => list(a.menu))];
 };
-const lit = (v: unknown): Lit => (v === null || typeof v === "boolean" || typeof v === "number" || typeof v === "string" ? v : null);
+const plain = (v: unknown): Lit => (v === null || typeof v === "boolean" || typeof v === "number" || typeof v === "string" ? v : null);
+/// What `field` holding `held` puts in local state: null, a switch, a number or a string.
+export const lit = (_field: unknown, held: unknown): Lit => plain(held);
 
 /// The screen's start state: its `state`, each field's `value` and each chips' first `selected`.
 export function start(screen: unknown): State {
   const s: State = {};
   const seed = (b: Rec) => {
-    for (const f of named(b)) s[String(f.name)] = lit(f.value);
-    if (b.type === "chips" && typeof b.name === "string") s[b.name] = lit(Array.isArray(b.selected) ? b.selected[0] : null);
+    for (const f of named(b)) s[String(f.name)] = lit(f, f.value);
+    if (b.type === "chips" && typeof b.name === "string") s[b.name] = plain(Array.isArray(b.selected) ? b.selected[0] : null);
     kids(b).forEach(seed);
   };
   if (rec(screen)) {
-    for (const [k, v] of Object.entries(rec(screen.state) ? screen.state : {})) s[k] = lit(v);
+    for (const [k, v] of Object.entries(rec(screen.state) ? screen.state : {})) s[k] = plain(v);
     seed(screen);
   }
   return s;

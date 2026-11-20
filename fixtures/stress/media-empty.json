@@ -1,0 +1,10 @@
+{
+  "alt": "a bar chart",
+  "caption": "This week",
+  "height": 360,
+  "id": "chart",
+  "marks": [],
+  "src": "/media/chart.png",
+  "type": "media",
+  "width": 640
+}

@@ -17,7 +17,7 @@ internal struct ComposerBlock: View {
             if let working { strip(working) }
             ForEach(Array((block.queued ?? []).enumerated()), id: \.offset) { _, item in queued(item) }
             HStack(alignment: .bottom, spacing: 8) {
-                TextField(block.placeholder ?? "", text: $draft, axis: .vertical).lineLimit(1...6)
+                SwiftUI.TextField(block.placeholder ?? "", text: $draft, axis: .vertical).lineLimit(1...6)
                     .ui(15, .regular, look).textFieldStyle(.plain).padding(.horizontal, 12).padding(.vertical, 9)
                     .background(look.palette.background).accessibilityLabel("message")
                 Button { send() } label: { CardButton(title: sendLabel, primary: true).fixedSize() }
@@ -195,16 +195,30 @@ internal struct MediaBlock: View {
     @State private var playing = false
     internal let block: Media
 
+    private var takes: Bool {
+        block.id != nil && block.video != true && (block.draw ?? block.move ?? block.stretch ?? block.remove) != nil
+    }
+
+    private var named: String {
+        let marks = block.marks ?? []
+        guard !marks.isEmpty, block.video != true else { return block.alt }
+        return "\(block.alt). \(marks.count) marks: \(marks.compactMap { block.named($0.id) }.joined(separator: "; "))"
+    }
+
     internal var body: some View {
         let ratio = Double(block.width) / max(Double(block.height), 1)
         VStack(alignment: .leading, spacing: 6) {
-            Button {
-                if block.video == true { playing = true } else { zoomed = true }
-            } label: {
-                Color.clear.aspectRatio(ratio, contentMode: .fit)
-                    .overlay { picture }.clipped()
+            if takes {
+                Marked(block: block)
+            } else {
+                Button {
+                    if block.video == true { playing = true } else { zoomed = true }
+                } label: {
+                    Color.clear.aspectRatio(ratio, contentMode: .fit)
+                        .overlay { picture }.overlay { MarkLayer(marks: block.video == true ? [] : block.marks ?? []) }.clipped()
+                }
+                .buttonStyle(.plain).accessibilityLabel(named)
             }
-            .buttonStyle(.plain).accessibilityLabel(block.alt)
             if let caption = block.caption {
                 Text(caption).ui(13, .regular, look).foregroundStyle(look.palette.mute)
             }

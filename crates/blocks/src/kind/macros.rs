@@ -80,3 +80,66 @@ macro_rules! kind {
         }
     };
 }
+
+macro_rules! field {
+    ($(#[$m:meta])* pub struct $name:ident { $($body:tt)* }) => {
+        kind! {
+            $(#[$m])*
+            pub struct $name {
+                name: String,
+                label: Option<String>,
+                $($body)*
+                doc: Option<String>,
+                was: Option<String>,
+                error: Option<String>,
+                open: Option<bool>,
+                enabled: Option<Expr>,
+                checks: Option<Vec<Check>>,
+            }
+        }
+    };
+}
+
+macro_rules! fields {
+    ($($v:ident($t:ty) = $name:literal,)*) => {
+        /// A form's field: an object whose `type` names its type; any other `type` is kept whole and drawn as text.
+        #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+        #[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
+        #[serde(tag = "type")]
+        pub enum Field {
+            $(#[serde(rename = $name)] $v($t),)*
+            #[serde(untagged)]
+            Other(OtherField),
+        }
+
+        impl Field {
+            /// The known types' names.
+            pub const TYPES: &[&str] = &[$($name),*];
+
+            /// Every word a field draws itself: the row's, then each type's.
+            pub const WORDS: &[&[Word]] = &[ROW_WORDS, $(<$t>::WORDS),*];
+
+            /// Each known type's role in the drawn tree, in `TYPES`' order.
+            pub const ROLES: &[&str] = &[$(<$t>::ROLE),*];
+
+            #[cfg(feature = "schema")]
+            pub(crate) fn samples() -> Vec<Self> {
+                vec![$(Self::$v(<$t>::sample())),*]
+            }
+
+            /// The field's name: its key in local state and in the values sent.
+            pub fn name(&self) -> &str {
+                match self {
+                    $(Self::$v(f) => &f.name,)*
+                    Self::Other(f) => &f.name,
+                }
+            }
+        }
+
+        $(impl From<$t> for Field {
+            fn from(f: $t) -> Self {
+                Self::$v(f)
+            }
+        })*
+    };
+}

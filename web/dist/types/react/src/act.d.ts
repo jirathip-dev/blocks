@@ -1,5 +1,5 @@
 import { type ReactNode } from "react";
-import { type Action, type Built, type Confirm, type Fault, type Tap, type View } from "../../src/core/index.ts";
+import { type Action, type Built, type Confirm, type Fault, type Lit, type Locale, type State, type Tap, type View } from "../../src/core/index.ts";
 export type Go = {
     open: string;
 } | {
@@ -41,7 +41,12 @@ export type IslandProps = {
 };
 export type Islands = Record<string, (p: IslandProps) => ReactNode>;
 export type Ctx = {
+    screen: string;
+    locale: Locale;
     v: View;
+    state: State;
+    edits: State;
+    put: (key: string, to: Lit | undefined) => void;
     busy: ReadonlySet<string>;
     act: (a: Post) => Promise<boolean>;
     tap: (t: Tap) => void;

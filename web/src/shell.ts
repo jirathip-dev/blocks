@@ -53,7 +53,7 @@ export type Mount = {
   edit?: Editing;
 };
 
-type View = { source: string; path: string; back: string[]; open: Set<string>; box: HTMLElement; body: HTMLElement; model?: Block; built: Set<string>; held: Map<string, Held>; stop?: () => void; sync: () => void };
+type View = { source: string; path: string; back: string[]; open: Set<string>; box: HTMLElement; body: HTMLElement; model?: Block; built: Set<string>; held: Map<string, Held>; view: Map<string, Record<string, unknown>>; stop?: () => void; sync: () => void };
 type Tab = { node: Resolved; button: HTMLElement; pane: HTMLElement; view?: View };
 
 const ALWAYS: LayoutPlace[] = ["cards", "column", "panel", "inline"];
@@ -204,6 +204,7 @@ function draw(o: Mount, store: Store, theme: Theme, wear: (name: string | null, 
 
   const ctx = (v: View): Ctx => ({
     screen: String(v.model?.id ?? v.path),
+    locale: v.model && (v.model.type === "screen" || v.model.type === "sheet") ? (v.model.locale ?? undefined) : undefined,
     act: (a, b) => act(v, a, b),
     tap: (t) => tap(v, t),
     open: v.open,
@@ -211,6 +212,7 @@ function draw(o: Mount, store: Store, theme: Theme, wear: (name: string | null, 
     store,
     apps: o.blocks,
     held: v.held,
+    view: v.view,
   });
 
   const paint = (v: View) => {
@@ -228,7 +230,7 @@ function draw(o: Mount, store: Store, theme: Theme, wear: (name: string | null, 
 
   const view = (source: string, path: string, box: HTMLElement): View => {
     const body = el("div", "b-view");
-    const v: View = { source, path, back: [], open: new Set(), box, body, built: new Set(), held: new Map(), sync: () => {} };
+    const v: View = { source, path, back: [], open: new Set(), box, body, built: new Set(), held: new Map(), view: new Map(), sync: () => {} };
     v.sync = behave(body, () => v.model);
     v.body.addEventListener("redraw", () => paint(v));
     return v;
@@ -468,7 +470,7 @@ export function adopt(o: { theme?: Theme; store?: Store; blocks?: AppBlocks } = 
     else if (x.sheet === "look") lookSheet();
     else if (typeof x.sheet === "string" && x.sheet.startsWith("look:")) wear(x.sheet.slice(5), store);
   };
-  const ctx: Ctx = { screen, act, tap, open: new Set(), theme, store, apps: o.blocks, held: new Map() };
+  const ctx: Ctx = { screen, act, tap, open: new Set(), theme, store, apps: o.blocks, held: new Map(), view: new Map() };
   document.addEventListener("submit", (e) => {
     const f = e.target;
     if (!(f instanceof HTMLFormElement) || !f.elements.namedItem("_action")) return;

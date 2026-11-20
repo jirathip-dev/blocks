@@ -456,8 +456,9 @@ public struct Editor: Codable, Equatable, Sendable {
 public struct Era: RawRepresentable, Hashable, Codable, Equatable, Sendable {
     public let rawValue: String
     public init(rawValue: String) { self.rawValue = rawValue }
+    public static let ce = Self(rawValue: "ce")
     public static let be = Self(rawValue: "be")
-    public static let all: [Self] = [.be]
+    public static let all: [Self] = [.ce, .be]
 }
 
 public struct ExportFormat: RawRepresentable, Hashable, Codable, Equatable, Sendable {
@@ -549,32 +550,51 @@ public struct Fallback: Codable, Equatable, Sendable {
     public var title: String
 }
 
-public struct Field: Codable, Equatable, Sendable {
-    public var checks: [Check]?
-    public var doc: String?
-    public var enabled: Expr?
-    public var error: String?
-    public var keyboard: Keyboard?
-    public var label: String?
-    public var name: String
-    public var open: Bool?
-    public var options: [String]?
-    public var placeholder: String?
-    public var set: Bool?
-    public var show: Expr?
-    public var type: FieldKind
-    public var value: FieldValue?
-    public var was: String?
+public enum Field: Codable, Equatable, Sendable {
+    case text(TextField)
+    case toggle(ToggleField)
+    case picker(PickerField)
+    case secret(SecretField)
+    case otherField(JSONValue)
+
+    private enum Tag: String, CodingKey { case tag = "type" }
+
+    public init(from decoder: any Decoder) throws {
+        switch try decoder.container(keyedBy: Tag.self).decode(String.self, forKey: .tag) {
+        case "text": self = .text(try TextField(from: decoder))
+        case "toggle": self = .toggle(try ToggleField(from: decoder))
+        case "picker": self = .picker(try PickerField(from: decoder))
+        case "secret": self = .secret(try SecretField(from: decoder))
+        default: self = .otherField(try JSONValue(from: decoder))
+        }
+    }
+
+    public func encode(to encoder: any Encoder) throws {
+        switch self {
+        case .text(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("text", forKey: .tag)
+        case .toggle(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("toggle", forKey: .tag)
+        case .picker(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("picker", forKey: .tag)
+        case .secret(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("secret", forKey: .tag)
+        case .otherField(let v): try v.encode(to: encoder)
+        }
+    }
 }
 
-public struct FieldKind: RawRepresentable, Hashable, Codable, Equatable, Sendable {
+public struct FieldDrawn: RawRepresentable, Hashable, Codable, Equatable, Sendable {
     public let rawValue: String
     public init(rawValue: String) { self.rawValue = rawValue }
-    public static let text = Self(rawValue: "text")
-    public static let toggle = Self(rawValue: "toggle")
-    public static let picker = Self(rawValue: "picker")
-    public static let secret = Self(rawValue: "secret")
-    public static let all: [Self] = [.text, .toggle, .picker, .secret]
+    public static let native = Self(rawValue: "native")
+    public static let plain = Self(rawValue: "plain")
+    public static let hidden = Self(rawValue: "hidden")
+    public static let all: [Self] = [.native, .plain, .hidden]
+}
+
+public struct FieldNode: Codable, Equatable, Sendable {
+    public var drawn: FieldDrawn
+    public var label: String
+    public var name: String
+    public var role: String
+    public var type: String
 }
 
 public enum FieldValue: Codable, Equatable, Sendable {
@@ -749,6 +769,14 @@ public struct LaneState: RawRepresentable, Hashable, Codable, Equatable, Sendabl
     public static let all: [Self] = [.working, .needs, .done, .idle, .fail, .merged]
 }
 
+public struct Lang: RawRepresentable, Hashable, Codable, Equatable, Sendable {
+    public let rawValue: String
+    public init(rawValue: String) { self.rawValue = rawValue }
+    public static let en = Self(rawValue: "en")
+    public static let th = Self(rawValue: "th")
+    public static let all: [Self] = [.en, .th]
+}
+
 public struct LineError: Codable, Equatable, Sendable {
     public var line: Int64
     public var message: String
@@ -811,6 +839,37 @@ public enum Lit: Codable, Equatable, Sendable {
     }
 }
 
+public struct Locale: Codable, Equatable, Sendable {
+    public var era: Era?
+    public var lang: Lang?
+    public var today: String?
+}
+
+public struct Mark: Codable, Equatable, Sendable {
+    public var at: [Double]
+    public var fixed: Bool?
+    public var group: String?
+    public var id: String
+    public var kind: MarkKind
+    public var path: [[Double]]?
+    public var text: String?
+    public var to: [Double]?
+    public var tone: Tone?
+}
+
+public struct MarkKind: RawRepresentable, Hashable, Codable, Equatable, Sendable {
+    public let rawValue: String
+    public init(rawValue: String) { self.rawValue = rawValue }
+    public static let arrow = Self(rawValue: "arrow")
+    public static let box = Self(rawValue: "box")
+    public static let ellipse = Self(rawValue: "ellipse")
+    public static let text = Self(rawValue: "text")
+    public static let pin = Self(rawValue: "pin")
+    public static let highlight = Self(rawValue: "highlight")
+    public static let line = Self(rawValue: "line")
+    public static let all: [Self] = [.arrow, .box, .ellipse, .text, .pin, .highlight, .line]
+}
+
 public struct Match: Codable, Equatable, Sendable {
     public var pattern: Pattern
     public var value: Expr
@@ -819,11 +878,17 @@ public struct Match: Codable, Equatable, Sendable {
 public struct Media: Codable, Equatable, Sendable {
     public var alt: String
     public var caption: String?
+    public var draw: Gesture?
     public var height: UInt32
     public var id: String?
+    public var marks: [Mark]?
+    public var move: Gesture?
     public var poster: String?
+    public var remove: Gesture?
     public var show: Expr?
     public var src: String
+    public var stretch: Gesture?
+    public var tools: [MarkKind]?
     public var video: Bool?
     public var width: UInt32
 }
@@ -941,6 +1006,19 @@ public struct Other: Codable, Equatable, Sendable {
     public var placeholder: String?
 }
 
+public struct OtherField: Codable, Equatable, Sendable {
+    public var checks: [Check]?
+    public var doc: String?
+    public var enabled: Expr?
+    public var error: String?
+    public var label: String?
+    public var name: String
+    public var open: Bool?
+    public var show: Expr?
+    public var type: String
+    public var was: String?
+}
+
 public struct PartHeading: Codable, Equatable, Sendable {
     public var level: UInt8
     public var spans: [Span]
@@ -1029,6 +1107,20 @@ public struct PhonePart: RawRepresentable, Hashable, Codable, Equatable, Sendabl
     public static let meta = Self(rawValue: "meta")
     public static let hide = Self(rawValue: "hide")
     public static let all: [Self] = [.title, .tag, .value, .meta, .hide]
+}
+
+public struct PickerField: Codable, Equatable, Sendable {
+    public var checks: [Check]?
+    public var doc: String?
+    public var enabled: Expr?
+    public var error: String?
+    public var label: String?
+    public var name: String
+    public var open: Bool?
+    public var options: [String]?
+    public var show: Expr?
+    public var value: FieldValue?
+    public var was: String?
 }
 
 public struct Plan: Codable, Equatable, Sendable {
@@ -1148,6 +1240,7 @@ public struct Screen: Codable, Equatable, Sendable {
     public var focus: Bool?
     public var id: String?
     public var large: Bool?
+    public var locale: Locale?
     public var pending: Pending?
     public var personas: [[String: JSONValue]]?
     public var refresh: Bool?
@@ -1170,6 +1263,20 @@ public struct Secret: Codable, Equatable, Sendable {
     public var set: Bool?
     public var show: Expr?
     public var values: [String: JSONValue]?
+}
+
+public struct SecretField: Codable, Equatable, Sendable {
+    public var checks: [Check]?
+    public var doc: String?
+    public var enabled: Expr?
+    public var error: String?
+    public var label: String?
+    public var name: String
+    public var open: Bool?
+    public var placeholder: String?
+    public var set: Bool?
+    public var show: Expr?
+    public var was: String?
 }
 
 public struct Section: Codable, Equatable, Sendable {
@@ -1224,6 +1331,7 @@ public struct Sheet: Codable, Equatable, Sendable {
     public var cancel: String?
     public var done: Submit?
     public var id: String?
+    public var locale: Locale?
     public var show: Expr?
     public var title: String
 }
@@ -1440,6 +1548,21 @@ public struct Text: Codable, Equatable, Sendable {
     public var weight: String?
 }
 
+public struct TextField: Codable, Equatable, Sendable {
+    public var checks: [Check]?
+    public var doc: String?
+    public var enabled: Expr?
+    public var error: String?
+    public var keyboard: Keyboard?
+    public var label: String?
+    public var name: String
+    public var open: Bool?
+    public var placeholder: String?
+    public var show: Expr?
+    public var value: FieldValue?
+    public var was: String?
+}
+
 public struct TextStyle: RawRepresentable, Hashable, Codable, Equatable, Sendable {
     public let rawValue: String
     public init(rawValue: String) { self.rawValue = rawValue }
@@ -1512,6 +1635,19 @@ public struct Toast: Codable, Equatable, Sendable {
     public var undo: Undo?
 }
 
+public struct ToggleField: Codable, Equatable, Sendable {
+    public var checks: [Check]?
+    public var doc: String?
+    public var enabled: Expr?
+    public var error: String?
+    public var label: String?
+    public var name: String
+    public var open: Bool?
+    public var show: Expr?
+    public var value: FieldValue?
+    public var was: String?
+}
+
 public struct Tone: RawRepresentable, Hashable, Codable, Equatable, Sendable {
     public let rawValue: String
     public init(rawValue: String) { self.rawValue = rawValue }
@@ -1566,6 +1702,7 @@ public struct TreeDrawn: RawRepresentable, Hashable, Codable, Equatable, Sendabl
 public struct TreeNode: Codable, Equatable, Sendable {
     public var children: [TreeNode]
     public var drawn: TreeDrawn
+    public var fields: [FieldNode]?
     public var id: String?
     public var kind: String
     public var name: String

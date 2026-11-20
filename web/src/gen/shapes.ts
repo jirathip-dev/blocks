@@ -1730,6 +1730,7 @@ export const defs: Record<string, Shape> = {
     "anyOf": [
       {
         "enum": [
+          "ce",
           "be"
         ],
         "type": "string"
@@ -2017,133 +2018,61 @@ export const defs: Record<string, Shape> = {
     "type": "object"
   },
   "Field": {
-    "properties": {
-      "checks": {
-        "items": {
-          "$ref": "#/$defs/Check"
-        },
-        "type": [
-          "array",
-          "null"
-        ]
-      },
-      "doc": {
-        "type": [
-          "string",
-          "null"
-        ]
-      },
-      "enabled": {
-        "anyOf": [
-          {
-            "$ref": "#/$defs/Expr"
-          },
-          {
-            "type": "null"
-          }
-        ]
-      },
-      "error": {
-        "type": [
-          "string",
-          "null"
-        ]
-      },
-      "keyboard": {
-        "anyOf": [
-          {
-            "$ref": "#/$defs/Keyboard"
-          },
-          {
-            "type": "null"
-          }
-        ]
-      },
-      "label": {
-        "type": [
-          "string",
-          "null"
-        ]
-      },
-      "name": {
-        "type": "string"
-      },
-      "open": {
-        "type": [
-          "boolean",
-          "null"
-        ]
-      },
-      "options": {
-        "items": {
-          "type": "string"
-        },
-        "type": [
-          "array",
-          "null"
-        ]
-      },
-      "placeholder": {
-        "type": [
-          "string",
-          "null"
-        ]
-      },
-      "set": {
-        "type": [
-          "boolean",
-          "null"
-        ]
-      },
-      "show": {
-        "anyOf": [
-          {
-            "$ref": "#/$defs/Expr"
-          },
-          {
-            "type": "null"
-          }
-        ]
-      },
-      "type": {
-        "$ref": "#/$defs/FieldKind"
-      },
-      "value": {
-        "anyOf": [
-          {
-            "$ref": "#/$defs/FieldValue"
-          },
-          {
-            "type": "null"
-          }
-        ]
-      },
-      "was": {
-        "type": [
-          "string",
-          "null"
-        ]
-      }
-    },
-    "required": [
-      "type",
-      "name"
-    ],
-    "type": "object"
-  },
-  "FieldKind": {
     "anyOf": [
       {
-        "enum": [
-          "text",
-          "toggle",
-          "picker",
-          "secret"
+        "$ref": "#/$defs/TextField",
+        "properties": {
+          "type": {
+            "const": "text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
         ],
-        "type": "string"
+        "type": "object"
       },
       {
-        "type": "string"
+        "$ref": "#/$defs/ToggleField",
+        "properties": {
+          "type": {
+            "const": "toggle",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      {
+        "$ref": "#/$defs/PickerField",
+        "properties": {
+          "type": {
+            "const": "picker",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      {
+        "$ref": "#/$defs/SecretField",
+        "properties": {
+          "type": {
+            "const": "secret",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      {
+        "$ref": "#/$defs/OtherField"
       }
     ]
   },
@@ -2665,6 +2594,20 @@ export const defs: Record<string, Shape> = {
       }
     ]
   },
+  "Lang": {
+    "anyOf": [
+      {
+        "enum": [
+          "en",
+          "th"
+        ],
+        "type": "string"
+      },
+      {
+        "type": "string"
+      }
+    ]
+  },
   "LineError": {
     "properties": {
       "line": {
@@ -2904,6 +2847,127 @@ export const defs: Record<string, Shape> = {
       }
     ]
   },
+  "Locale": {
+    "properties": {
+      "era": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Era"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "lang": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Lang"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "today": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "type": "object"
+  },
+  "Mark": {
+    "properties": {
+      "at": {
+        "items": {
+          "type": "number"
+        },
+        "type": "array"
+      },
+      "fixed": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "group": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "id": {
+        "type": "string"
+      },
+      "kind": {
+        "$ref": "#/$defs/MarkKind"
+      },
+      "path": {
+        "items": {
+          "items": {
+            "type": "number"
+          },
+          "type": "array"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "text": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "to": {
+        "items": {
+          "type": "number"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "tone": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Tone"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      }
+    },
+    "required": [
+      "id",
+      "kind",
+      "at"
+    ],
+    "type": "object"
+  },
+  "MarkKind": {
+    "anyOf": [
+      {
+        "enum": [
+          "arrow",
+          "box",
+          "ellipse",
+          "text",
+          "pin",
+          "highlight",
+          "line"
+        ],
+        "type": "string"
+      },
+      {
+        "type": "string"
+      }
+    ]
+  },
   "Match": {
     "properties": {
       "pattern": {
@@ -2931,6 +2995,16 @@ export const defs: Record<string, Shape> = {
           "null"
         ]
       },
+      "draw": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Gesture"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
       "height": {
         "minimum": 0,
         "type": "integer"
@@ -2941,10 +3015,39 @@ export const defs: Record<string, Shape> = {
           "null"
         ]
       },
+      "marks": {
+        "items": {
+          "$ref": "#/$defs/Mark"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "move": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Gesture"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
       "poster": {
         "type": [
           "string",
           "null"
+        ]
+      },
+      "remove": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Gesture"
+          },
+          {
+            "type": "null"
+          }
         ]
       },
       "show": {
@@ -2959,6 +3062,25 @@ export const defs: Record<string, Shape> = {
       },
       "src": {
         "type": "string"
+      },
+      "stretch": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Gesture"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "tools": {
+        "items": {
+          "$ref": "#/$defs/MarkKind"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
       },
       "video": {
         "type": [
@@ -3105,6 +3227,81 @@ export const defs: Record<string, Shape> = {
         ]
       }
     },
+    "type": "object"
+  },
+  "OtherField": {
+    "additionalProperties": true,
+    "properties": {
+      "checks": {
+        "items": {
+          "$ref": "#/$defs/Check"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "doc": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "enabled": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "error": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "label": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "name": {
+        "type": "string"
+      },
+      "open": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "show": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "type": {
+        "type": "string"
+      },
+      "was": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "required": [
+      "name",
+      "type"
+    ],
     "type": "object"
   },
   "Part": {
@@ -3289,6 +3486,96 @@ export const defs: Record<string, Shape> = {
         "type": "string"
       }
     ]
+  },
+  "PickerField": {
+    "additionalProperties": true,
+    "properties": {
+      "checks": {
+        "items": {
+          "$ref": "#/$defs/Check"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "doc": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "enabled": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "error": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "label": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "name": {
+        "type": "string"
+      },
+      "open": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "options": {
+        "items": {
+          "type": "string"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "show": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "value": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/FieldValue"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "was": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "required": [
+      "name"
+    ],
+    "type": "object"
   },
   "Prose": {
     "additionalProperties": true,
@@ -3801,6 +4088,16 @@ export const defs: Record<string, Shape> = {
           "null"
         ]
       },
+      "locale": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Locale"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
       "pending": {
         "anyOf": [
           {
@@ -3944,6 +4241,89 @@ export const defs: Record<string, Shape> = {
     "required": [
       "name",
       "action"
+    ],
+    "type": "object"
+  },
+  "SecretField": {
+    "additionalProperties": true,
+    "properties": {
+      "checks": {
+        "items": {
+          "$ref": "#/$defs/Check"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "doc": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "enabled": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "error": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "label": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "name": {
+        "type": "string"
+      },
+      "open": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "placeholder": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "set": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "show": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "was": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "required": [
+      "name"
     ],
     "type": "object"
   },
@@ -4092,6 +4472,16 @@ export const defs: Record<string, Shape> = {
         "type": [
           "string",
           "null"
+        ]
+      },
+      "locale": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Locale"
+          },
+          {
+            "type": "null"
+          }
         ]
       },
       "show": {
@@ -4673,6 +5063,103 @@ export const defs: Record<string, Shape> = {
     },
     "type": "object"
   },
+  "TextField": {
+    "additionalProperties": true,
+    "properties": {
+      "checks": {
+        "items": {
+          "$ref": "#/$defs/Check"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "doc": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "enabled": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "error": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "keyboard": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Keyboard"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "label": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "name": {
+        "type": "string"
+      },
+      "open": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "placeholder": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "show": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "value": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/FieldValue"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "was": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "required": [
+      "name"
+    ],
+    "type": "object"
+  },
   "TextStyle": {
     "anyOf": [
       {
@@ -4992,6 +5479,87 @@ export const defs: Record<string, Shape> = {
     },
     "required": [
       "title"
+    ],
+    "type": "object"
+  },
+  "ToggleField": {
+    "additionalProperties": true,
+    "properties": {
+      "checks": {
+        "items": {
+          "$ref": "#/$defs/Check"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "doc": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "enabled": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "error": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "label": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "name": {
+        "type": "string"
+      },
+      "open": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "show": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "value": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/FieldValue"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "was": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "required": [
+      "name"
     ],
     "type": "object"
   },

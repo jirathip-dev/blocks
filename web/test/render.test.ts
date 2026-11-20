@@ -403,6 +403,22 @@ const rows = (e) => e.children.filter((x) => x.classList.contains("fd"));
 const ctl = (r) => r.querySelector("input, select");
 const later = () => new Promise((r) => setImmediate(r));
 
+test("each fixtures/fields form draws every field with its type's view, its words in the screen's language", () => {
+  const at = new URL("../../fixtures/fields/", import.meta.url);
+  const want = { text: ["text", null], toggle: ["checkbox", "switch"], picker: [undefined, null], secret: ["password", null] };
+  for (const f of readdirSync(at).filter((n) => n.endsWith(".json"))) {
+    const screen = JSON.parse(readFileSync(new URL(f, at), "utf8"));
+    const form = screen.blocks[0];
+    const r = rows(render(form, ctx({ locale: screen.locale })));
+    deepStrictEqual(r.length, form.fields.length, f);
+    for (const [i, x] of form.fields.entries()) deepStrictEqual([ctl(r[i]).name, ctl(r[i]).type, ctl(r[i]).getAttribute("role")], [x.name, ...want[x.type]], `${f} ${x.name}`);
+  }
+  const secret = { type: "form", id: "keys", fields: [{ type: "secret", name: "key" }, { type: "text", name: "who", was: "Ada" }] };
+  const th = rows(render(secret, ctx({ locale: { lang: "th" } })));
+  deepStrictEqual([ctl(th[0]).placeholder, part(th[1], "fn").textContent], ["ยังไม่ได้ตั้ง", "เดิม Ada"]);
+  deepStrictEqual(ctl(rows(render(secret, ctx()))[0]).placeholder, "not set");
+});
+
 test("a config draws every field as a settings row: name, one note, its control", () => {
   const e = render(settings(), ctx());
   deepStrictEqual([e.className, e.dataset.block, e.dataset.id], ["form cfg b b-config", "config", "edgar"]);
@@ -789,7 +805,7 @@ test("a link that is not http, https, mailto or relative is dropped and its text
 });
 
 test("a labelled time gives fixtures/times/labels.json's text at its clock, and a card draws one in its badge, meta, row and tile", async () => {
-  const { value } = await import("../src/render/index.ts");
+  const { value } = await import("../src/core/text.ts");
   const f = JSON.parse(readFileSync(new URL("../../fixtures/times/labels.json", import.meta.url), "utf8"));
   mock.timers.enable({ apis: ["Date"], now: Date.parse(f.now) });
   try {

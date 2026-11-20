@@ -26,7 +26,7 @@ internal struct ChoiceBlock: View {
                 }
             }
             if let box = block.other {
-                TextField(box.placeholder ?? "", text: $other).ui(14, .regular, look)
+                SwiftUI.TextField(box.placeholder ?? "", text: $other).ui(14, .regular, look)
                     .padding(.horizontal, 12).frame(height: 38)
                     .background(palette.background.opacity(0.5), in: .rect(cornerRadius: look.radius(10)))
             }

@@ -5,6 +5,7 @@ use serde_json::{Map, Value};
 use crate::{guard, tree, Action, Answer, Block, Bye, Frame, Hello, OldFrame, Sync, Synced, SCHEMA_VERSION};
 
 mod builders;
+mod fields;
 mod fixtures;
 mod hooks;
 mod model;

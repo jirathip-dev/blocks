@@ -72,7 +72,7 @@ export type Diff = { file: string; hunks: Hunk[]; id?: string | null; show?: Exp
 
 export type Editor = { action: string; errors?: LineError[] | null; first?: number | null; id?: string | null; name: string; show?: Expr | null; text: string };
 
-export type Era = "be";
+export type Era = "ce" | "be";
 
 export type ExportFormat = "csv" | "xlsx";
 
@@ -80,9 +80,11 @@ export type Expr = { get: string } | { not: Expr } | { all: Expr[] } | { any: Ex
 
 export type Fallback = { subtitle?: string | null; tap?: Tap | null; title: string };
 
-export type Field = { checks?: Check[] | null; doc?: string | null; enabled?: Expr | null; error?: string | null; keyboard?: Keyboard | null; label?: string | null; name: string; open?: boolean | null; options?: string[] | null; placeholder?: string | null; set?: boolean | null; show?: Expr | null; type: FieldKind; value?: FieldValue | null; was?: string | null };
+export type Field = ({ type: "text" } & TextField) | ({ type: "toggle" } & ToggleField) | ({ type: "picker" } & PickerField) | ({ type: "secret" } & SecretField) | (OtherField & { [key: string]: unknown });
 
-export type FieldKind = "text" | "toggle" | "picker" | "secret";
+export type FieldDrawn = "native" | "plain" | "hidden";
+
+export type FieldNode = { drawn: FieldDrawn; label: string; name: string; role: string; type: string };
 
 export type FieldValue = string | number | boolean;
 
@@ -126,6 +128,8 @@ export type Lane = { id: string; since?: string | null; stage?: string | null; s
 
 export type LaneState = "working" | "needs" | "done" | "idle" | "fail" | "merged";
 
+export type Lang = "en" | "th";
+
 export type LineError = { line: number; message: string };
 
 export type LineItem = { id: string; values: Record<string, unknown> };
@@ -138,9 +142,15 @@ export type List = { id?: string | null; reorder?: Gesture | null; rows: Block[]
 
 export type Lit = null | boolean | number | string;
 
+export type Locale = { era?: Era | null; lang?: Lang | null; today?: string | null };
+
+export type Mark = { at: number[]; fixed?: boolean | null; group?: string | null; id: string; kind: MarkKind; path?: number[][] | null; text?: string | null; to?: number[] | null; tone?: Tone | null };
+
+export type MarkKind = "arrow" | "box" | "ellipse" | "text" | "pin" | "highlight" | "line";
+
 export type Match = { pattern: Pattern; value: Expr };
 
-export type Media = { alt: string; caption?: string | null; height: number; id?: string | null; poster?: string | null; show?: Expr | null; src: string; video?: boolean | null; width: number };
+export type Media = { alt: string; caption?: string | null; draw?: Gesture | null; height: number; id?: string | null; marks?: Mark[] | null; move?: Gesture | null; poster?: string | null; remove?: Gesture | null; show?: Expr | null; src: string; stretch?: Gesture | null; tools?: MarkKind[] | null; video?: boolean | null; width: number };
 
 export type Nav = { brand?: NavLink | null; id?: string | null; links: NavLink[]; show?: Expr | null };
 
@@ -154,6 +164,8 @@ export type Op = { op: "merge"; fields: Record<string, unknown>; id: string } | 
 
 export type Other = { for?: string | null; placeholder?: string | null };
 
+export type OtherField = { checks?: Check[] | null; doc?: string | null; enabled?: Expr | null; error?: string | null; label?: string | null; name: string; open?: boolean | null; show?: Expr | null; type: string; was?: string | null };
+
 export type Part = { part: "heading"; level: number; spans: Span[] } | { part: "para"; spans: Span[] } | { part: "list"; items: Span[][]; ordered: boolean } | { part: "quote"; spans: Span[] } | { part: "code"; lang?: string | null; text: string } | { part: "rule" };
 
 export type Pattern = "filled" | "email" | "url" | "number";
@@ -161,6 +173,8 @@ export type Pattern = "filled" | "email" | "url" | "number";
 export type Pending = { count: string; discard: Tap; review: Tap; text: string };
 
 export type PhonePart = "title" | "tag" | "value" | "meta" | "hide";
+
+export type PickerField = { checks?: Check[] | null; doc?: string | null; enabled?: Expr | null; error?: string | null; label?: string | null; name: string; open?: boolean | null; options?: string[] | null; show?: Expr | null; value?: FieldValue | null; was?: string | null };
 
 export type Plan = { out: string; runs: PlanRun[] };
 
@@ -186,9 +200,11 @@ export type Run = { action: string; command: string; dir?: string | null; id?: s
 
 export type Scene = { id?: string | null; label?: string | null; lanes?: Lane[] | null; show?: Expr | null };
 
-export type Screen = { actions?: Act[] | null; back?: string | null; badge?: number | null; blocks?: Block[] | null; done?: Submit | null; focus?: boolean | null; id?: string | null; large?: boolean | null; pending?: Pending | null; personas?: Record<string, unknown>[] | null; refresh?: boolean | null; show?: Expr | null; sites?: number | null; source?: string | null; state?: Record<string, Lit> | null; stream?: string | null; threads?: Record<string, unknown>[] | null; title?: string | null; url?: string | null };
+export type Screen = { actions?: Act[] | null; back?: string | null; badge?: number | null; blocks?: Block[] | null; done?: Submit | null; focus?: boolean | null; id?: string | null; large?: boolean | null; locale?: Locale | null; pending?: Pending | null; personas?: Record<string, unknown>[] | null; refresh?: boolean | null; show?: Expr | null; sites?: number | null; source?: string | null; state?: Record<string, Lit> | null; stream?: string | null; threads?: Record<string, unknown>[] | null; title?: string | null; url?: string | null };
 
 export type Secret = { action: string; id?: string | null; label?: string | null; name: string; placeholder?: string | null; set?: boolean | null; show?: Expr | null; values?: Record<string, unknown> | null };
+
+export type SecretField = { checks?: Check[] | null; doc?: string | null; enabled?: Expr | null; error?: string | null; label?: string | null; name: string; open?: boolean | null; placeholder?: string | null; set?: boolean | null; show?: Expr | null; was?: string | null };
 
 export type Section = { blocks: Block[]; footer?: string | null; header?: string | null; id?: string | null; show?: Expr | null };
 
@@ -202,7 +218,7 @@ export type SetState = { key: string; to: Expr };
 
 export type Severity = "error" | "warn";
 
-export type Sheet = { blocks: Block[]; cancel?: string | null; done?: Submit | null; id?: string | null; show?: Expr | null; title: string };
+export type Sheet = { blocks: Block[]; cancel?: string | null; done?: Submit | null; id?: string | null; locale?: Locale | null; show?: Expr | null; title: string };
 
 export type Shown = string | number | Bound | Time;
 
@@ -246,6 +262,8 @@ export type Tap = { action?: string | null; copy?: string | null; focus?: string
 
 export type Text = { center?: boolean | null; font?: string | null; id?: string | null; markdown?: string | null; show?: Expr | null; size?: number | null; style?: TextStyle | null; text?: string | null; tone?: Tone | null; top?: number | null; until?: string | null; weight?: string | null };
 
+export type TextField = { checks?: Check[] | null; doc?: string | null; enabled?: Expr | null; error?: string | null; keyboard?: Keyboard | null; label?: string | null; name: string; open?: boolean | null; placeholder?: string | null; show?: Expr | null; value?: FieldValue | null; was?: string | null };
+
 export type TextStyle = "body" | "footnote";
 
 export type Tile = { label: string; spark?: number[] | null; tone?: Tone | null; unit?: string | null; value: Shown };
@@ -262,6 +280,8 @@ export type Timings = { first_paint_ms: number; frames_over_budget?: number | nu
 
 export type Toast = { fallback?: Fallback | null; id?: string | null; show?: Expr | null; title: string; tone?: Tone | null; undo?: Undo | null };
 
+export type ToggleField = { checks?: Check[] | null; doc?: string | null; enabled?: Expr | null; error?: string | null; label?: string | null; name: string; open?: boolean | null; show?: Expr | null; value?: FieldValue | null; was?: string | null };
+
 export type Tone = "ok" | "warn" | "bad" | "info" | "mute" | "accent" | "working" | "needs" | "done" | "fail" | "idle";
 
 export type Toned = string | Label;
@@ -270,7 +290,7 @@ export type Total = "sum" | "avg" | "count";
 
 export type TreeDrawn = "native" | "fallback" | "hidden";
 
-export type TreeNode = { children: TreeNode[]; drawn: TreeDrawn; id?: string | null; kind: string; name: string; rect?: number[] | null; role: string; text?: string | null; variant?: string | null };
+export type TreeNode = { children: TreeNode[]; drawn: TreeDrawn; fields?: FieldNode[] | null; id?: string | null; kind: string; name: string; rect?: number[] | null; role: string; text?: string | null; variant?: string | null };
 
 export type Undo = { action: string; confirm?: Confirm | null; label?: string | null; values?: Record<string, unknown> | null };
 

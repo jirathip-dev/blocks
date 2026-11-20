@@ -1,0 +1,64 @@
+{
+  "blocks": [
+    {
+      "fallback": {
+        "title": "form"
+      },
+      "fields": [
+        {
+          "label": "Name",
+          "name": "name-empty",
+          "type": "text"
+        },
+        {
+          "label": "Name",
+          "name": "name",
+          "placeholder": "Your name",
+          "type": "text",
+          "value": "Ada Lovelace"
+        },
+        {
+          "error": "Check this one",
+          "label": "Name",
+          "name": "name-error",
+          "placeholder": "Your name",
+          "type": "text",
+          "value": "Ada Lovelace"
+        },
+        {
+          "label": "Name",
+          "name": "name-was",
+          "placeholder": "Your name",
+          "type": "text",
+          "value": "Ada Lovelace",
+          "was": "the old value"
+        },
+        {
+          "doc": "A line that says what it is for",
+          "label": "Name",
+          "name": "name-doc",
+          "placeholder": "Your name",
+          "type": "text",
+          "value": "Ada Lovelace"
+        },
+        {
+          "label": "A label long enough to wrap onto a second line on a phone held upright",
+          "name": "name-label",
+          "placeholder": "Your name",
+          "type": "text",
+          "value": "Ada Lovelace"
+        }
+      ],
+      "id": "text",
+      "type": "form"
+    }
+  ],
+  "fallback": {
+    "title": "screen"
+  },
+  "id": "fields-text",
+  "locale": {
+    "lang": "en"
+  },
+  "type": "screen"
+}

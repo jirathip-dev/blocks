@@ -14,6 +14,13 @@ private struct File: Decodable {
     let cases: [Case]
     let screen: JSONValue?
     let view: Shown?
+    let lit: [Held]?
+}
+
+private struct Held: Decodable {
+    let field: JSONValue
+    let held: JSONValue
+    let want: Lit
 }
 
 private struct Shown: Decodable {
@@ -45,6 +52,12 @@ final class BehaveTests: XCTestCase {
         }
         XCTAssertGreaterThanOrEqual(n, 50)
         XCTAssertEqual(bad, [])
+    }
+
+    func testLitGivesEveryFieldsCaseTheCratesLocalState() throws {
+        let cases = try XCTUnwrap(file("fields.json").lit)
+        XCTAssertGreaterThanOrEqual(cases.count, 8)
+        for c in cases { XCTAssertEqual(Behaviour.lit(c.field, c.held), c.want, "\(c.field) holding \(c.held)") }
     }
 
     func testViewGivesTheViewFixtureTheCratesViewAndStateItsStart() throws {

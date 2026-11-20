@@ -82,7 +82,7 @@ test("every fixtures/blocks file passes --check against its fixtures/trees tree 
 test("every fixtures/stress variant draws at 390 in one --plan launch with each block sized, inside the width and over no sibling", () => {
   const stress = at("../../fixtures/stress/");
   const names = readdirSync(stress).filter((f) => f !== "table.json").map((f) => f.replace(/\.json$/, ""));
-  strictEqual(names.length, 67);
+  strictEqual(names.length, 69);
   const seen = plan("stress", names.map((n) => ({ ...RUN, name: n, screen: join(stress, `${n}.json`) })));
   deepStrictEqual(seen.filter((s) => ["render/no-size", "render/overlap"].includes(s.rule) || (s.rule === "render/overflow" && s.at)), []);
 });
@@ -205,6 +205,15 @@ test("an island gets its props, its named event is sent as an action, an unnamed
   } finally {
     await browser.close();
   }
+});
+
+test("a patch that redraws a form keeps its focused field, its typed text and its caret", async () => {
+  const fields = (label) => [{ type: "text", name: "q", label }, { type: "toggle", name: "all", label: "All" }];
+  const screen = { type: "screen", id: "people", blocks: [{ type: "form", id: "find", fields: fields("Search") }] };
+  const steps = [{ type: { id: "find", text: "ada" } }, { frame: { ops: [{ op: "merge", id: "find", fields: { fields: fields("Search people") } }] } }, { shot: { name: "shot" } }];
+  const { report, trees } = await shot({ screen, steps });
+  ok(trees.shot.children[0].text.includes("Search people"), trees.shot.children[0].text);
+  deepStrictEqual(report.focus, { shot: "q@3" });
 });
 
 const rows = Array.from({ length: 200 }, (_, i) => ({ type: "row", id: `r${i}`, title: `Row ${i}`, subtitle: "green", value: "2m" }));

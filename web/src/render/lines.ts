@@ -23,9 +23,12 @@ export function money(m: number, scale: number): string {
   return `${m < 0 ? "-" : ""}${int}${scale ? "." + d.slice(d.length - scale) : ""}`;
 }
 
+const hint = (x: Field) => ("placeholder" in x && typeof x.placeholder === "string" ? x.placeholder : undefined);
+
 const picker = (x: Field) => {
   const s = el("select");
-  for (const o of ["", ...(x.options ?? [])]) s.append(Object.assign(el("option"), { value: o, textContent: o || (x.placeholder ?? "choose…") }));
+  const options = "options" in x && Array.isArray(x.options) ? x.options.map(String) : [];
+  for (const o of ["", ...options]) s.append(Object.assign(el("option"), { value: o, textContent: o || (hint(x) ?? "choose…") }));
   return s;
 };
 
@@ -42,7 +45,7 @@ const lit = (v: unknown): Lit => {
 type K = { b: Lines; c: Ctx; d: Draft; key: string; scale: number; sums: Set<string>; root: HTMLElement; foot: HTMLElement };
 
 const label = (x: Field) => x.label ?? x.name;
-const num = (k: K, x: Field) => k.sums.has(x.name) || x.keyboard === "number";
+const num = (k: K, x: Field) => k.sums.has(x.name) || ("keyboard" in x && x.keyboard === "number");
 const ro = (k: K, x: Field) => x.enabled === false || k.b.calc?.[x.name] != null;
 const fixed = (k: K) => k.b.add == null;
 const errors = (k: K) => (k.b.errors ?? []).filter((e) => e.row == null || k.d.rows.some((r) => r.id === e.row));
@@ -118,7 +121,7 @@ function paint(k: K) {
 }
 
 function input(k: K, r: LineItem, i: number, x: Field, bad: boolean): HTMLElement {
-  const f = x.type === "picker" ? picker(x) : Object.assign(el("input"), { type: "text", autocomplete: "off", placeholder: x.placeholder ?? "", inputMode: num(k, x) ? "decimal" : "text" });
+  const f = x.type === "picker" ? picker(x) : Object.assign(el("input"), { type: "text", autocomplete: "off", placeholder: hint(x) ?? "", inputMode: num(k, x) ? "decimal" : "text" });
   const v = r.values[x.name];
   const m = k.sums.has(x.name) ? minor(v, k.scale) : null;
   f.name = `${k.b.name}.${i}.${x.name}`;

@@ -84,7 +84,7 @@ private struct Arranged<Slotted: View>: View {
                     .modifier(
                         Gestured(
                             rules: rules, grab: n.id, gesture: .layout, label: "Move \(label)",
-                            reach: { Int(($0.height / 22).rounded()) }, value: { (try? JSONValue($0)) ?? .null },
+                            reach: { Int(($0.translation.height / 22).rounded()) }, value: { (try? JSONValue($0)) ?? .null },
                             show: { preview = $0 }))
             }
         }

@@ -1,0 +1,71 @@
+{
+  "block": {
+    "type": "media",
+    "id": "photo",
+    "src": "/media/photo.png",
+    "alt": "Riser pipe with valve V-12",
+    "width": 1600,
+    "height": 1200,
+    "tools": ["arrow", "box", "text", "pin"],
+    "draw": { "action": "marks", "name": "draw" },
+    "move": { "action": "marks", "name": "move" },
+    "stretch": { "action": "marks", "name": "move" },
+    "remove": { "action": "marks", "name": "remove" },
+    "marks": [
+      { "id": "m1", "kind": "arrow", "at": [0.2, 0.7], "to": [0.3, 0.5] },
+      { "id": "m2", "kind": "text", "at": [0.05, 0.75], "text": "flange corrosion" },
+      { "id": "m3", "kind": "pin", "at": [0.32, 0.47], "text": "1", "group": "range" },
+      { "id": "m4", "kind": "box", "at": [0.75, 0.55], "to": [0.9, 0.7], "tone": "ok" },
+      { "id": "m5", "kind": "highlight", "at": [0.8, 0.0], "to": [0.95, 0.25], "tone": "warn" },
+      { "id": "f1", "kind": "line", "at": [0.1, 0.9], "to": [0.9, 0.1], "path": [[0.1, 0.9], [0.5, 0.4], [0.9, 0.1]], "group": "range", "fixed": true },
+      { "id": "m6", "kind": "pin", "at": [0.6, 0.6] }
+    ]
+  },
+  "cases": [
+    { "grab": { "body": "m1" }, "reach": { "from": [0.25, 0.6], "to": [0.35, 0.55] }, "want": { "id": "m1", "at": [0.3, 0.65], "to": [0.4, 0.45] }, "says": "Arrow, middle left to centre" },
+    { "grab": { "body": "m1" }, "reach": { "from": [0.2, 0.7], "to": [0.0, 1.2] }, "want": { "id": "m1", "at": [0.0, 1.0], "to": [0.1, 0.8] }, "says": "Arrow, lower left to lower left" },
+    { "grab": { "end": "m1" }, "reach": { "from": [0.3, 0.5], "to": [0.5, 0.2] }, "want": { "id": "m1", "at": [0.2, 0.7], "to": [0.5, 0.2] }, "says": "Arrow, lower left to upper centre" },
+    { "grab": { "start": "m4" }, "reach": { "from": [0.75, 0.55], "to": [0.89, 0.69] }, "want": null },
+    { "grab": { "body": "f1" }, "reach": { "from": [0.5, 0.5], "to": [0.6, 0.5] }, "want": null },
+    { "grab": { "end": "m3" }, "reach": { "from": [0.5, 0.5], "to": [0.6, 0.5] }, "want": null },
+    { "grab": { "body": "nope" }, "reach": { "from": [0.5, 0.5], "to": [0.6, 0.5] }, "want": null },
+    { "grab": { "draw": { "tool": "arrow" } }, "reach": { "from": [0.1, 0.1], "to": [0.4, 0.3] }, "want": { "kind": "arrow", "at": [0.1, 0.1], "to": [0.4, 0.3] }, "says": "Arrow, upper left to upper centre" },
+    { "grab": { "draw": { "tool": "arrow" } }, "reach": { "from": [0.1, 0.1], "to": [0.11, 0.115] }, "want": null },
+    { "grab": { "draw": { "tool": "pin", "group": "range" } }, "reach": { "from": [0.5, 0.5], "to": [0.52, 0.48] }, "want": { "kind": "pin", "at": [0.52, 0.48], "group": "range" }, "says": "Pin, centre" },
+    { "grab": { "draw": { "tool": "text" } }, "reach": { "from": [0.2, 0.2], "to": [0.2, 0.2] }, "want": null },
+    { "grab": { "draw": { "tool": "text", "text": "crack" } }, "reach": { "from": [0.2, 0.2], "to": [0.2, 0.2] }, "want": { "kind": "text", "at": [0.2, 0.2], "text": "crack" }, "says": "Text “crack”, upper left" },
+    { "grab": { "draw": { "tool": "ellipse" } }, "reach": { "from": [0.1, 0.1], "to": [0.4, 0.3] }, "want": null },
+    { "grab": { "draw": { "tool": "pin" } }, "reach": { "from": [0.5, -0.2], "to": [0.5, 0.3] }, "want": null },
+    { "grab": { "remove": "m4" }, "reach": { "from": [0.5, 0.5], "to": [0.5, 0.5] }, "want": { "id": "m4" }, "says": "Delete Box 1, middle right" },
+    { "grab": { "remove": "f1" }, "reach": { "from": [0.5, 0.5], "to": [0.5, 0.5] }, "want": null },
+    { "grab": { "body": "m3" }, "nudges": [{ "dir": "right" }, { "dir": "down", "big": true }], "want": { "id": "m3", "at": [0.33, 0.57] }, "says": "Pin, middle left" },
+    { "grab": { "body": "m5" }, "nudges": [{ "dir": "up" }], "want": null },
+    { "grab": { "body": "m5" }, "nudges": [{ "dir": "down", "big": true }], "want": { "id": "m5", "at": [0.8, 0.1], "to": [0.95, 0.35] }, "says": "Highlight, upper right to middle right" },
+    { "grab": { "end": "m1" }, "nudges": [{ "dir": "right" }], "want": { "id": "m1", "at": [0.2, 0.7], "to": [0.31, 0.5] }, "says": "Arrow, lower left to middle left" },
+    { "grab": { "draw": { "tool": "box" } }, "nudges": [{ "dir": "right" }], "want": { "kind": "box", "at": [0.45, 0.45], "to": [0.55, 0.55] }, "says": "Box, centre to centre" },
+    { "grab": { "draw": { "tool": "box" } }, "nudges": [{ "dir": "right" }, { "dir": "left", "big": true }], "want": { "kind": "box", "at": [0.35, 0.45], "to": [0.45, 0.55] }, "says": "Box, centre to centre" },
+    { "grab": { "draw": { "tool": "text" } }, "nudges": [{ "dir": "right" }], "want": null },
+    { "grab": { "draw": { "tool": "text", "at": [0.1, 0.2], "text": "crack" } }, "nudges": [{ "dir": "right" }], "want": { "kind": "text", "at": [0.1, 0.2], "text": "crack" }, "says": "Text “crack”, upper left" },
+    { "grab": { "remove": "m2" }, "nudges": [{ "dir": "right" }], "want": { "id": "m2" }, "says": "Delete Text “flange corrosion”, lower left" }
+  ],
+  "steps": [
+    { "grab": { "body": "m1" }, "want": ["Move up", "Move down", "Move left", "Move right"] },
+    { "grab": { "body": "m5" }, "want": ["Move down", "Move left", "Move right"] },
+    { "grab": { "end": "m1" }, "want": ["Longer", "Shorter"] },
+    { "grab": { "start": "m1" }, "want": ["Longer", "Shorter"] },
+    { "grab": { "end": "m3" }, "want": [] },
+    { "grab": { "remove": "m4" }, "want": ["Delete"] },
+    { "grab": { "draw": { "tool": "box" } }, "want": ["Add box"] },
+    { "grab": { "draw": { "tool": "text" } }, "want": [] },
+    { "grab": { "body": "f1" }, "want": [] }
+  ],
+  "names": {
+    "m1": "Arrow 1, lower left",
+    "m2": "Text “flange corrosion”, lower left",
+    "m3": "range, Pin 1, middle left",
+    "m4": "Box 1, middle right",
+    "m5": "Highlight 1, upper right",
+    "f1": "range, Line 1, lower left",
+    "m6": "Pin 2, centre"
+  }
+}
