@@ -1,6 +1,5 @@
 import { type Nudge, type Rules } from "./core/gesture.ts";
 import type { Gesture } from "./gen/types.ts";
-import type { Ctx } from "./render/index.ts";
 export type Held = {
     start: unknown;
     c: unknown;
@@ -18,9 +17,17 @@ export type Grabbed<B, G, R, C> = {
 type Block = {
     id?: string | null;
 };
+export type Driven = {
+    act: (a: {
+        action: string;
+        block?: string | null;
+        values: Record<string, unknown>;
+    }, el?: HTMLElement) => Promise<boolean>;
+    held?: Map<string, Held>;
+};
 export declare function say(text: string): void;
-export declare function held<B extends Block, G, R, C>(c: Ctx, o: Pick<Grabbed<B, G, R, C>, "block" | "rules" | "grab" | "item">): unknown;
-export declare function gestured<B extends Block, G, R, C>(el: HTMLElement, c: Ctx, o: Grabbed<B, G, R, C>): (n: Nudge) => void;
+export declare function held<B extends Block, G, R, C>(c: Driven, o: Pick<Grabbed<B, G, R, C>, "block" | "rules" | "grab" | "item">): unknown;
+export declare function gestured<B extends Block, G, R, C>(el: HTMLElement, c: Driven, o: Grabbed<B, G, R, C>): (n: Nudge) => void;
 export declare function zoomed(el: HTMLElement, keep: Record<string, unknown>, o: {
     min: number;
     max: number;
