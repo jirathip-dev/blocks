@@ -1,5 +1,5 @@
 // react/src/view.ts
-import { createElement as createElement9, useMemo as useMemo2, useRef as useRef7, useSyncExternalStore } from "react";
+import { createElement as createElement9, useMemo as useMemo2, useRef as useRef8, useSyncExternalStore } from "react";
 import { hooks as hooks2, share } from "./core.js";
 
 // react/src/act.ts
@@ -80,7 +80,7 @@ function useCx(p, screen2) {
 }
 
 // react/src/block.ts
-import { Component, createElement as createElement8, memo, useContext as useContext12 } from "react";
+import { Component, createElement as createElement8, memo, useContext as useContext13 } from "react";
 import { hooks, named as named2, role } from "./core.js";
 
 // react/src/draw.ts
@@ -390,150 +390,43 @@ function images({ b, hooks: hooks3 }) {
 }
 
 // react/src/kinds/list.ts
-var list = ({ b, hooks: hooks3 }) => h("div", "list", hooks3, ...kids(b.rows));
+import { useContext as useContext5, useLayoutEffect, useRef as useRef4 } from "react";
 
-// react/src/kinds/media.ts
-import { createElement as createElement6, Fragment, useContext as useContext5, useLayoutEffect, useReducer, useRef as useRef4, useState as useState5 } from "react";
-
-// src/core/kind/media.ts
-var SMALL = 0.02;
-var SIDE = 0.05;
-var MIDDLE = [0.5, 0.5];
-var WORDS = { arrow: "Arrow", box: "Box", ellipse: "Ellipse", text: "Text", pin: "Pin", highlight: "Highlight", line: "Line" };
-var TWO = /* @__PURE__ */ new Set(["arrow", "box", "ellipse", "highlight", "line"]);
-var round = (x) => Math.round(Math.min(1, Math.max(0, x)) * 1e4) / 1e4 + 0;
-var snap = ([x, y]) => [round(x), round(y)];
-var spot = (p) => p?.length === 2 && p[0] !== void 0 && p[1] !== void 0 ? [p[0], p[1]] : null;
-var ends = (c) => {
-  const at = spot(c.at);
-  const to = c.to === void 0 ? null : spot(c.to);
-  return at && (c.to === void 0 || to) ? [at, to] : null;
+// src/core/kind/list.ts
+var STEPS = [
+  ["Move up", { dir: "up" }],
+  ["Move down", { dir: "down" }],
+  ["Move to top", { dir: "up", big: true }],
+  ["Move to bottom", { dir: "down", big: true }]
+];
+var order = (b) => b.rows.flatMap((r) => typeof r.id === "string" ? [r.id] : []);
+var row = (b, id) => b.rows.find((r) => r.type === "row" && r.id === id);
+var moved = (ids2, id, to) => {
+  const from = ids2.indexOf(id);
+  if (from < 0) return null;
+  const out2 = ids2.filter((i) => i !== id);
+  out2.splice(Math.min(Math.max(to, 0), out2.length), 0, id);
+  return out2;
 };
-var big = ([ax, ay], [tx, ty]) => Math.max(Math.abs(tx - ax), Math.abs(ty - ay)) >= SMALL;
-var placed = (c, at, to) => {
-  const { to: _, ...rest } = c;
-  return to ? { ...rest, at: snap(at), to: snap(to) } : { ...rest, at: snap(at) };
-};
-var moved = (c, [dx, dy]) => {
-  const e = ends(c);
-  if (!e) return null;
-  const [[ax, ay], to] = e;
-  const [tx, ty] = to ?? [ax, ay];
-  const x = Math.min(Math.max(dx, -Math.min(ax, tx)), 1 - Math.max(ax, tx));
-  const y = Math.min(Math.max(dy, -Math.min(ay, ty)), 1 - Math.max(ay, ty));
-  return placed(c, [ax + x, ay + y], to && [tx + x, ty + y]);
-};
-var stretched = (c, end, [dx, dy]) => {
-  const e = ends(c);
-  if (!e?.[1]) return null;
-  const [at, to] = [e[0], e[1]];
-  const [[x, y], fixed] = end ? [to, at] : [at, to];
-  const pulled = snap([x + dx, y + dy]);
-  const [a, t] = end ? [fixed, pulled] : [pulled, fixed];
-  return big(a, t) ? placed(c, a, t) : null;
-};
-var made = (p, at, to) => {
-  const text3 = p.tool === "text" ? p.text?.trim() && p.text : void 0;
-  if (p.tool === "text" && !text3) return null;
-  const c = { kind: p.tool };
-  if (text3) c.text = text3;
-  if (p.group != null) c.group = p.group;
-  return placed(c, at, to);
-};
-var drawn = (p, from, to) => {
-  const [f, t] = [snap(from), snap(to)];
-  if (p.tool === "pin" || p.tool === "text") return made(p, t, null);
-  return TWO.has(p.tool) && big(f, t) ? made(p, f, t) : null;
-};
-var keyed = (p) => {
-  const [x, y] = p.at ?? MIDDLE;
-  return TWO.has(p.tool) ? made(p, [x - SIDE, y - SIDE], [x + SIDE, y + SIDE]) : made(p, [x, y], null);
-};
-var toward = ([dx, dy]) => Math.abs(dx) >= Math.abs(dy) ? dx >= 0 ? "right" : "left" : dy >= 0 ? "down" : "up";
-var BACK = { left: "right", right: "left", up: "down", down: "up" };
-var idOf = (g) => "body" in g ? g.body : "start" in g ? g.start : "end" in g ? g.end : "remove" in g ? g.remove : null;
-var of = (b, id) => b.marks?.find((m) => m.id === id);
-var live = (b, id, g) => g ? of(b, id) : void 0;
-var said = (k) => WORDS[k] ?? k;
-var ninth = ([x, y]) => {
-  const row3 = y < 1 / 3 ? "upper" : y < 2 / 3 ? "middle" : "lower";
-  const col = x < 1 / 3 ? "left" : x < 2 / 3 ? "centre" : "right";
-  return row3 === "middle" && col === "centre" ? "centre" : `${row3} ${col}`;
-};
-var named = (b, id) => {
-  const m = of(b, id);
-  if (!m) return null;
-  const n = (b.marks ?? []).filter((o) => o.kind === m.kind).findIndex((o) => o.id === id) + 1;
-  const group = m.group != null ? `${m.group}, ` : "";
-  const place = ninth(spot(m.at) ?? MIDDLE);
-  const text3 = m.text ?? "";
-  if (m.kind === "text") return `${group}Text \u201C${text3}\u201D, ${place}`;
-  if (m.kind === "pin" && text3) return `${group}Pin ${text3}, ${place}`;
-  return `${group}${said(m.kind)} ${n}, ${place}`;
-};
-var media = {
-  word: (b, g) => {
-    const id = idOf(g);
-    const m = id === null ? null : live(b, id, "body" in g ? b.move : "remove" in g ? b.remove : b.stretch);
-    if ("draw" in g) return b.draw != null && b.tools?.includes(g.draw.tool) && g.draw.tool in WORDS ? "draw" : null;
-    if (!m || m.fixed === true) return null;
-    if ("body" in g) return "move";
-    if ("remove" in g) return "remove";
-    return m.to != null ? "stretch" : null;
-  },
-  start: (b, g) => {
-    if (!media.word(b, g)) return null;
-    const m = of(b, idOf(g) ?? "");
-    if (!m) return {};
-    const c = m.to != null ? { id: m.id, at: m.at, to: m.to } : { id: m.id, at: m.at };
-    const e = ends(c);
-    return e && placed(c, e[0], e[1]);
-  },
+var list = {
+  word: (b, g) => b.reorder != null && row(b, g)?.handle === true ? "reorder" : null,
+  start: (b, g) => list.word(b, g) ? order(b) : null,
   candidate: (b, g, r) => {
-    const s = media.start(b, g);
-    if (!s) return null;
-    const d = [r.to[0] - r.from[0], r.to[1] - r.from[1]];
-    if ("body" in g) return moved(s, d);
-    if ("start" in g) return stretched(s, false, d);
-    if ("end" in g) return stretched(s, true, d);
-    if ("remove" in g) return { id: g.remove };
-    return r.from.every((v) => v >= 0 && v <= 1) ? drawn(g.draw, r.from, r.to) : null;
+    const ids2 = list.start(b, g);
+    return ids2 && moved(ids2, g, ids2.indexOf(g) + r);
   },
   nudge: (b, g, from, by) => {
-    const s = media.start(b, g);
-    if (!s) return null;
-    const k = by.big ? 0.1 : 0.01;
-    const d = by.dir === "left" ? [-k, 0] : by.dir === "right" ? [k, 0] : by.dir === "up" ? [0, -k] : [0, k];
-    const next = "draw" in g && JSON.stringify(from) === JSON.stringify(s) ? keyed(g.draw) : "body" in g || "draw" in g ? moved(from, d) : "start" in g ? stretched(from, false, d) : "end" in g ? stretched(from, true, d) : { id: g.remove };
-    return next && JSON.stringify(next) !== JSON.stringify(from) ? next : null;
+    const at = from.indexOf(g);
+    const last = from.length - 1;
+    if (!list.word(b, g) || at < 0 || by.dir === "left" || by.dir === "right") return null;
+    if (by.dir === "up") return at === 0 ? null : moved(from, g, by.big ? 0 : at - 1);
+    return at === last ? null : moved(from, g, by.big ? last : at + 1);
   },
   steps: (b, g) => {
-    const s = media.start(b, g);
-    if (!s) return [];
-    let ways;
-    if ("body" in g) ways = [["Move up", "up"], ["Move down", "down"], ["Move left", "left"], ["Move right", "right"]];
-    else if ("remove" in g) ways = [["Delete", "right"]];
-    else if ("draw" in g) ways = [[`Add ${said(g.draw.tool).toLowerCase()}`, "right"]];
-    else {
-      const e = ends(s);
-      if (!e?.[1]) return [];
-      const [[ax, ay], [tx, ty]] = [e[0], e[1]];
-      const d = toward("end" in g ? [tx - ax, ty - ay] : [ax - tx, ay - ty]);
-      ways = [["Longer", d], ["Shorter", BACK[d]]];
-    }
-    return ways.map(([n, dir]) => [n, { dir }]).filter(([, n]) => media.nudge(b, g, s, n) !== null);
+    const s = list.start(b, g);
+    return s ? STEPS.filter(([, n]) => list.nudge(b, g, s, n) !== null) : [];
   },
-  says: (b, g, c) => {
-    const id = idOf(g);
-    const m = id === null ? void 0 : of(b, id);
-    if ("remove" in g && c.at === void 0) return `Delete ${named(b, g.remove) ?? ""}`;
-    const kind = c.kind ?? m?.kind ?? "arrow";
-    const text3 = c.text ?? m?.text;
-    const what = kind === "text" && text3 != null ? `Text \u201C${text3}\u201D` : said(kind);
-    const e = ends(c);
-    if (!e) return what;
-    return e[1] ? `${what}, ${ninth(e[0])} to ${ninth(e[1])}` : `${what}, ${ninth(e[0])}`;
-  }
+  says: (b, g, c) => `${row(b, g)?.title ?? g}, ${c.indexOf(g) + 1} of ${c.length}`
 };
 
 // src/core/gesture.ts
@@ -691,6 +584,193 @@ function zoomed(el, keep, o) {
   to(z());
 }
 
+// react/src/kinds/list.ts
+var rec2 = (v) => typeof v === "object" && v !== null;
+function list2({ b, hooks: hooks3 }) {
+  const cx = useContext5(Cx);
+  const ref3 = useRef4(null);
+  const act2 = useRef4(cx.act);
+  act2.current = cx.act;
+  useLayoutEffect(() => {
+    const l = ref3.current;
+    const g = b.reorder;
+    if (!l || !g) return;
+    const drawn2 = () => Array.from(l.children).filter((e) => e instanceof HTMLElement);
+    const at = (id) => drawn2().find((e) => e.dataset.id === id);
+    const show = (order2) => {
+      const d = drawn2();
+      const gap = d.length > 1 && d[0] && d[1] ? d[1].offsetTop - d[0].offsetTop - d[0].offsetHeight : 0;
+      let y = d[0]?.offsetTop ?? 0;
+      for (const e of (order2 ?? []).flatMap((id) => at(id) ?? [])) {
+        e.style.transform = `translateY(${y - e.offsetTop}px)`;
+        y += e.offsetHeight + gap;
+      }
+      if (!order2) d.forEach((e) => e.style.transform = "");
+    };
+    const c = { act: (a) => act2.current({ action: g.action, block: b.id, values: rec2(a.values) ? a.values : null }) };
+    const added = [];
+    for (const r of b.rows) {
+      const e = r.id ? at(r.id) : void 0;
+      if (!e || !r.id || r.type !== "row" || !list.word(b, r.id)) continue;
+      const hd = Object.assign(document.createElement("button"), { className: "b-hd", type: "button", textContent: "\u2261" });
+      hd.setAttribute("aria-label", `Move ${r.title}`);
+      hd.dataset.act = g.action;
+      e.append(hd);
+      gestured(hd, c, { block: b, gesture: g, rules: list, grab: r.id, item: r.id, reach: (_, dy) => Math.round(dy / (e.offsetHeight || 1)), show });
+      for (let n = hd; n; n = n.nextElementSibling) added.push(n);
+    }
+    return () => {
+      added.forEach((n) => n.remove());
+      show(null);
+    };
+  }, [b]);
+  return h("div", "list", { ...hooks3, ref: ref3 }, ...kids(b.rows));
+}
+
+// react/src/kinds/media.ts
+import { createElement as createElement6, Fragment, useContext as useContext6, useLayoutEffect as useLayoutEffect2, useReducer, useRef as useRef5, useState as useState5 } from "react";
+
+// src/core/kind/media.ts
+var SMALL = 0.02;
+var SIDE = 0.05;
+var MIDDLE = [0.5, 0.5];
+var WORDS = { arrow: "Arrow", box: "Box", ellipse: "Ellipse", text: "Text", pin: "Pin", highlight: "Highlight", line: "Line" };
+var TWO = /* @__PURE__ */ new Set(["arrow", "box", "ellipse", "highlight", "line"]);
+var round = (x) => Math.round(Math.min(1, Math.max(0, x)) * 1e4) / 1e4 + 0;
+var snap = ([x, y]) => [round(x), round(y)];
+var spot = (p) => p?.length === 2 && p[0] !== void 0 && p[1] !== void 0 ? [p[0], p[1]] : null;
+var ends = (c) => {
+  const at = spot(c.at);
+  const to = c.to === void 0 ? null : spot(c.to);
+  return at && (c.to === void 0 || to) ? [at, to] : null;
+};
+var big = ([ax, ay], [tx, ty]) => Math.max(Math.abs(tx - ax), Math.abs(ty - ay)) >= SMALL;
+var placed = (c, at, to) => {
+  const { to: _, ...rest } = c;
+  return to ? { ...rest, at: snap(at), to: snap(to) } : { ...rest, at: snap(at) };
+};
+var moved2 = (c, [dx, dy]) => {
+  const e = ends(c);
+  if (!e) return null;
+  const [[ax, ay], to] = e;
+  const [tx, ty] = to ?? [ax, ay];
+  const x = Math.min(Math.max(dx, -Math.min(ax, tx)), 1 - Math.max(ax, tx));
+  const y = Math.min(Math.max(dy, -Math.min(ay, ty)), 1 - Math.max(ay, ty));
+  return placed(c, [ax + x, ay + y], to && [tx + x, ty + y]);
+};
+var stretched = (c, end, [dx, dy]) => {
+  const e = ends(c);
+  if (!e?.[1]) return null;
+  const [at, to] = [e[0], e[1]];
+  const [[x, y], fixed] = end ? [to, at] : [at, to];
+  const pulled = snap([x + dx, y + dy]);
+  const [a, t] = end ? [fixed, pulled] : [pulled, fixed];
+  return big(a, t) ? placed(c, a, t) : null;
+};
+var made = (p, at, to) => {
+  const text3 = p.tool === "text" ? p.text?.trim() && p.text : void 0;
+  if (p.tool === "text" && !text3) return null;
+  const c = { kind: p.tool };
+  if (text3) c.text = text3;
+  if (p.group != null) c.group = p.group;
+  return placed(c, at, to);
+};
+var drawn = (p, from, to) => {
+  const [f, t] = [snap(from), snap(to)];
+  if (p.tool === "pin" || p.tool === "text") return made(p, t, null);
+  return TWO.has(p.tool) && big(f, t) ? made(p, f, t) : null;
+};
+var keyed = (p) => {
+  const [x, y] = p.at ?? MIDDLE;
+  return TWO.has(p.tool) ? made(p, [x - SIDE, y - SIDE], [x + SIDE, y + SIDE]) : made(p, [x, y], null);
+};
+var toward = ([dx, dy]) => Math.abs(dx) >= Math.abs(dy) ? dx >= 0 ? "right" : "left" : dy >= 0 ? "down" : "up";
+var BACK = { left: "right", right: "left", up: "down", down: "up" };
+var idOf = (g) => "body" in g ? g.body : "start" in g ? g.start : "end" in g ? g.end : "remove" in g ? g.remove : null;
+var of = (b, id) => b.marks?.find((m) => m.id === id);
+var live = (b, id, g) => g ? of(b, id) : void 0;
+var said = (k) => WORDS[k] ?? k;
+var ninth = ([x, y]) => {
+  const row4 = y < 1 / 3 ? "upper" : y < 2 / 3 ? "middle" : "lower";
+  const col = x < 1 / 3 ? "left" : x < 2 / 3 ? "centre" : "right";
+  return row4 === "middle" && col === "centre" ? "centre" : `${row4} ${col}`;
+};
+var named = (b, id) => {
+  const m = of(b, id);
+  if (!m) return null;
+  const n = (b.marks ?? []).filter((o) => o.kind === m.kind).findIndex((o) => o.id === id) + 1;
+  const group = m.group != null ? `${m.group}, ` : "";
+  const place = ninth(spot(m.at) ?? MIDDLE);
+  const text3 = m.text ?? "";
+  if (m.kind === "text") return `${group}Text \u201C${text3}\u201D, ${place}`;
+  if (m.kind === "pin" && text3) return `${group}Pin ${text3}, ${place}`;
+  return `${group}${said(m.kind)} ${n}, ${place}`;
+};
+var media = {
+  word: (b, g) => {
+    const id = idOf(g);
+    const m = id === null ? null : live(b, id, "body" in g ? b.move : "remove" in g ? b.remove : b.stretch);
+    if ("draw" in g) return b.draw != null && b.tools?.includes(g.draw.tool) && g.draw.tool in WORDS ? "draw" : null;
+    if (!m || m.fixed === true) return null;
+    if ("body" in g) return "move";
+    if ("remove" in g) return "remove";
+    return m.to != null ? "stretch" : null;
+  },
+  start: (b, g) => {
+    if (!media.word(b, g)) return null;
+    const m = of(b, idOf(g) ?? "");
+    if (!m) return {};
+    const c = m.to != null ? { id: m.id, at: m.at, to: m.to } : { id: m.id, at: m.at };
+    const e = ends(c);
+    return e && placed(c, e[0], e[1]);
+  },
+  candidate: (b, g, r) => {
+    const s = media.start(b, g);
+    if (!s) return null;
+    const d = [r.to[0] - r.from[0], r.to[1] - r.from[1]];
+    if ("body" in g) return moved2(s, d);
+    if ("start" in g) return stretched(s, false, d);
+    if ("end" in g) return stretched(s, true, d);
+    if ("remove" in g) return { id: g.remove };
+    return r.from.every((v) => v >= 0 && v <= 1) ? drawn(g.draw, r.from, r.to) : null;
+  },
+  nudge: (b, g, from, by) => {
+    const s = media.start(b, g);
+    if (!s) return null;
+    const k = by.big ? 0.1 : 0.01;
+    const d = by.dir === "left" ? [-k, 0] : by.dir === "right" ? [k, 0] : by.dir === "up" ? [0, -k] : [0, k];
+    const next = "draw" in g && JSON.stringify(from) === JSON.stringify(s) ? keyed(g.draw) : "body" in g || "draw" in g ? moved2(from, d) : "start" in g ? stretched(from, false, d) : "end" in g ? stretched(from, true, d) : { id: g.remove };
+    return next && JSON.stringify(next) !== JSON.stringify(from) ? next : null;
+  },
+  steps: (b, g) => {
+    const s = media.start(b, g);
+    if (!s) return [];
+    let ways;
+    if ("body" in g) ways = [["Move up", "up"], ["Move down", "down"], ["Move left", "left"], ["Move right", "right"]];
+    else if ("remove" in g) ways = [["Delete", "right"]];
+    else if ("draw" in g) ways = [[`Add ${said(g.draw.tool).toLowerCase()}`, "right"]];
+    else {
+      const e = ends(s);
+      if (!e?.[1]) return [];
+      const [[ax, ay], [tx, ty]] = [e[0], e[1]];
+      const d = toward("end" in g ? [tx - ax, ty - ay] : [ax - tx, ay - ty]);
+      ways = [["Longer", d], ["Shorter", BACK[d]]];
+    }
+    return ways.map(([n, dir]) => [n, { dir }]).filter(([, n]) => media.nudge(b, g, s, n) !== null);
+  },
+  says: (b, g, c) => {
+    const id = idOf(g);
+    const m = id === null ? void 0 : of(b, id);
+    if ("remove" in g && c.at === void 0) return `Delete ${named(b, g.remove) ?? ""}`;
+    const kind = c.kind ?? m?.kind ?? "arrow";
+    const text3 = c.text ?? m?.text;
+    const what = kind === "text" && text3 != null ? `Text \u201C${text3}\u201D` : said(kind);
+    const e = ends(c);
+    if (!e) return what;
+    return e[1] ? `${what}, ${ninth(e[0])} to ${ninth(e[1])}` : `${what}, ${ninth(e[0])}`;
+  }
+};
+
 // react/src/kinds/media.ts
 var TONES = ["ok", "warn", "bad", "info", "accent", "ink"];
 var HINT = "pick a tool, then drag on the photo";
@@ -740,22 +820,22 @@ function still(b, hooks3) {
   return h("figure", "media", hooks3, body, b.caption ? h("figcaption", "", null, b.caption) : null);
 }
 function media2({ b, hooks: hooks3 }) {
-  const cx = useContext5(Cx);
-  const live2 = useRef4(cx);
+  const cx = useContext6(Cx);
+  const live2 = useRef5(cx);
   live2.current = cx;
-  const keep = useRef4(/* @__PURE__ */ new Map());
-  const v = useRef4({}).current;
+  const keep = useRef5(/* @__PURE__ */ new Map());
+  const v = useRef5({}).current;
   const [, redraw] = useReducer((n) => n + 1, 0);
   const [now, show] = useState5(null);
-  const [root, z] = [useRef4(null), useRef4(null)];
-  const after = useRef4({});
+  const [root, z] = [useRef5(null), useRef5(null)];
+  const after = useRef5({});
   const k = JSON.stringify([b, v.tool, v.into, v.sel, v.typing]);
   const c = { act: (a) => live2.current.act(a), held: keep.current };
   const wires = [];
-  useLayoutEffect(() => {
+  useLayoutEffect2(() => {
     for (const w of wires) w(c);
   }, [k]);
-  useLayoutEffect(() => {
+  useLayoutEffect2(() => {
     const { focus, press: press2 } = after.current;
     after.current = {};
     const at = (key2) => key2 ? root.current?.querySelector(`[data-key="${CSS.escape(key2)}"]`) : null;
@@ -989,7 +1069,7 @@ function zoom(o, at) {
 }
 
 // react/src/kinds/row.ts
-import { useContext as useContext6, useRef as useRef5, useState as useState6 } from "react";
+import { useContext as useContext7, useRef as useRef6, useState as useState6 } from "react";
 function round2(d, now, cx) {
   const tap = now ? null : d.tap ?? null;
   const url = urlOf(tap);
@@ -1004,10 +1084,10 @@ function round2(d, now, cx) {
   const body = now && (d.lane || d.blocks?.length || links.length) ? h("div", "rdb", null, ...lane, ...kids(d.blocks), links.length ? h("div", "rdk", null, ...link) : null) : null;
   return h("li", `rd ${d.state}${now ? " now" : ""}`, null, h("i", "rdm", { "aria-label": d.state }), h("div", "rdx", null, l, body));
 }
-function row({ b, hooks: hooks3 }) {
-  const cx = useContext6(Cx);
+function row2({ b, hooks: hooks3 }) {
+  const cx = useContext7(Cx);
   const [flip, setFlip] = useState6(false);
-  const x0 = useRef5(0);
+  const x0 = useRef6(0);
   const toggle2 = () => setFlip((f) => !f);
   const cls = `row${b.style === "link" ? " link" : ""}${b.sticky ? " sticky" : ""}${b.indent ? " in" + Math.min(b.indent, 3) : ""}`;
   const rounds = b.rounds ?? [];
@@ -1035,10 +1115,10 @@ function row({ b, hooks: hooks3 }) {
 }
 
 // react/src/kinds/screen.ts
-import { useContext as useContext7 } from "react";
+import { useContext as useContext8 } from "react";
 var stays = (x) => x.type === "row" && x.sticky === true || x.type === "composer";
 function screen({ b, hooks: hooks3 }) {
-  const cx = useContext7(Cx);
+  const cx = useContext8(Cx);
   const go = (m) => () => m.tap ? cx.tap(m.tap) : void cx.act({ action: m.action ?? "", values: m.values, confirm: m.confirm });
   const acts = (b.actions ?? []).flatMap((a) => a.menu ?? [a]).map((m) => act(m, "b-screen__actions", cx, urlOf(m.tap), urlOf(m.tap) ? void 0 : go(m)));
   const head = h("p", "tabh", null, h("span", "tw b-screen__title", null, (b.title ?? "").toLowerCase()), ...acts);
@@ -1064,9 +1144,9 @@ function section({ b, hooks: hooks3 }) {
 var sheet = ({ b, hooks: hooks3 }) => h("div", "shb", hooks3, ...kids(b.blocks));
 
 // react/src/kinds/stat.ts
-import { useContext as useContext8 } from "react";
+import { useContext as useContext9 } from "react";
 function stat({ b, hooks: hooks3 }) {
-  const cx = useContext8(Cx);
+  const cx = useContext9(Cx);
   const tile = (i) => {
     const sp = i.spark ?? [];
     const hi = Math.max(1, ...sp);
@@ -1079,19 +1159,19 @@ function stat({ b, hooks: hooks3 }) {
 }
 
 // react/src/kinds/text.ts
-import { useContext as useContext9 } from "react";
+import { useContext as useContext10 } from "react";
 function text2({ b, hooks: hooks3 }) {
-  const cx = useContext9(Cx);
+  const cx = useContext10(Cx);
   return h("div", "txt", { ...hooks3, "data-md": b.markdown ?? "" }, ...md(b.markdown, cx.screen.startsWith("thread-")));
 }
 
 // react/src/kinds/timeline.ts
-import { useContext as useContext10, useLayoutEffect as useLayoutEffect2, useRef as useRef6, useState as useState7 } from "react";
+import { useContext as useContext11, useLayoutEffect as useLayoutEffect3, useRef as useRef7, useState as useState7 } from "react";
 
 // src/core/kind/timeline.ts
 var MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 var MS = 864e5;
-var STEPS = [
+var STEPS2 = [
   ["body", "One day earlier", { dir: "left" }],
   ["body", "One day later", { dir: "right" }],
   ["body", "One week earlier", { dir: "left", big: true }],
@@ -1200,7 +1280,7 @@ var timeline = {
     const s = timeline.start(t, g);
     if (!s) return [];
     if ("row" in g) return [["Add a bar", { dir: "right" }]];
-    return STEPS.filter(([p, , n]) => p === g.part && timeline.nudge(t, g, s, n) !== null).map(([, name, n]) => [name, n]);
+    return STEPS2.filter(([p, , n]) => p === g.part && timeline.nudge(t, g, s, n) !== null).map(([, name, n]) => [name, n]);
   },
   says: (_, __, c) => words2(c.start, c.end)
 };
@@ -1220,7 +1300,7 @@ var barName = (x) => `${x.label ?? "Bar"}, ${words2(x.start, x.end)}${x.progress
 
 // react/src/kinds/timeline.ts
 var MONTH = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-var STEPS2 = [48, 32, 24, 16, 8, 4];
+var STEPS3 = [48, 32, 24, 16, 8, 4];
 var WD = "SMTWTFS";
 var ref2 = () => ({ current: null });
 var vars = (v) => ({ style: Object.fromEntries(Object.entries(v).map(([k, n]) => [`--${k}`, n])) });
@@ -1367,12 +1447,12 @@ function rove(root) {
   };
 }
 function timeline2({ b, hooks: hooks3 }) {
-  const cx = useContext10(Cx);
-  const live2 = useRef6(cx);
+  const cx = useContext11(Cx);
+  const live2 = useRef7(cx);
   live2.current = cx;
-  const keep = useRef6(/* @__PURE__ */ new Map());
-  const done = useRef6(/* @__PURE__ */ new WeakSet());
-  const [root, wrap, grid] = [useRef6(null), useRef6(null), useRef6(null)];
+  const keep = useRef7(/* @__PURE__ */ new Map());
+  const done = useRef7(/* @__PURE__ */ new WeakSet());
+  const [root, wrap, grid] = [useRef7(null), useRef7(null), useRef7(null)];
   const [px, setPx] = useState7(null);
   const [f, t] = [day(b.from), day(b.to)];
   const on = b.move != null || b.stretch != null || b.draw != null;
@@ -1380,8 +1460,8 @@ function timeline2({ b, hooks: hooks3 }) {
   const ax = f === null || t === null || t < f || b.tracks.length === 0 ? null : { f, t, n: t - f + 1, z, px, live: on, lane: () => grid.current?.querySelector(".tmn")?.offsetWidth ?? 1 };
   const k = JSON.stringify([b, px]);
   const wires = [];
-  useLayoutEffect2(() => root.current ? rove(root.current) : void 0, []);
-  useLayoutEffect2(() => {
+  useLayoutEffect3(() => root.current ? rove(root.current) : void 0, []);
+  useLayoutEffect3(() => {
     if (done.current.has(wires)) return;
     done.current.add(wires);
     const c = { act: (a) => live2.current.act(a), tap: (x) => live2.current.tap(x), held: keep.current };
@@ -1403,29 +1483,29 @@ function zooms(ax, px, set, wrap, grid) {
     "div",
     "tmz",
     null,
-    zoom2("zoom out", "\u2212", () => STEPS2.find((s) => s < now()) ?? 4, px === 4),
+    zoom2("zoom out", "\u2212", () => STEPS3.find((s) => s < now()) ?? 4, px === 4),
     zoom2("fit to width", "fit", () => null, px === null),
-    zoom2("zoom in", "+", () => [...STEPS2].reverse().find((s) => s > now()) ?? 48, px === 48)
+    zoom2("zoom in", "+", () => [...STEPS3].reverse().find((s) => s > now()) ?? 48, px === 48)
   );
 }
 
 // react/src/gen/views.ts
-var views2 = { button, card, chips, form, images, list, media: media2, row, screen, section, sheet, stat, text: text2, timeline: timeline2 };
+var views2 = { button, card, chips, form, images, list: list2, media: media2, row: row2, screen, section, sheet, stat, text: text2, timeline: timeline2 };
 
 // react/src/island.ts
-import { createElement as createElement7, Suspense, useContext as useContext11, useLayoutEffect as useLayoutEffect3, useState as useState8 } from "react";
+import { createElement as createElement7, Suspense, useContext as useContext12, useLayoutEffect as useLayoutEffect4, useState as useState8 } from "react";
 function Mark({ on }) {
-  useLayoutEffect3(() => {
+  useLayoutEffect4(() => {
     on(true);
     return () => on(false);
   }, [on]);
   return null;
 }
 function Isle({ b, attrs }) {
-  const cx = useContext11(Cx);
+  const cx = useContext12(Cx);
   const [live2, setLive] = useState8(false);
   const C = Object.prototype.hasOwnProperty.call(cx.islands, b.name) ? cx.islands[b.name] : void 0;
-  const fallback = row2(b.fallback, cx);
+  const fallback = row3(b.fallback, cx);
   const id = b.id ?? "";
   const emit = (name, values) => b.events?.includes(name) ? void cx.act({ action: name, block: id, values: values ?? {} }) : cx.report({ what: "dropped", block: id, event: name });
   const style = { overflow: "hidden", aspectRatio: b.size?.aspect ?? void 0, width: b.size?.width ?? void 0, height: b.size?.height ?? void 0 };
@@ -1455,7 +1535,7 @@ function hooksOf(b, cx, fallback) {
     "aria-label": named2(b, t)
   };
 }
-function row2(f, cx) {
+function row3(f, cx) {
   const tap = f.tap;
   const pressed = tap ? press(() => cx.tap(tap)) : null;
   const sub = f.subtitle != null ? h("span", "rs b-row__subtitle", null, f.subtitle) : null;
@@ -1463,9 +1543,9 @@ function row2(f, cx) {
 }
 var kids = (bs) => (Array.isArray(bs) ? bs.filter(isBlk) : []).map((b, i) => createElement8(Block, { key: typeof b.id === "string" ? b.id : `~${i}`, b }));
 function Fallen({ b }) {
-  const cx = useContext12(Cx);
+  const cx = useContext13(Cx);
   const f = b.fallback ?? { title: String(b.type) };
-  return h("div", "", hooksOf(b, cx, true), isFallback(f) ? row2(f, cx) : null, ...kids(b.blocks));
+  return h("div", "", hooksOf(b, cx, true), isFallback(f) ? row3(f, cx) : null, ...kids(b.blocks));
 }
 var Boundary = class extends Component {
   constructor() {
@@ -1490,7 +1570,7 @@ var own = (t, b, attrs) => {
   return V ? createElement8(V, { b, hooks: attrs }) : void 0;
 };
 function Draw({ b }) {
-  const cx = useContext12(Cx);
+  const cx = useContext13(Cx);
   if (isIsland(b)) return createElement8(Isle, { b, attrs: hooksOf(b, cx, false) });
   if (core(b)) return own(b.type, b, hooksOf(b, cx, false)) ?? createElement8(Fallen, { b });
   const K = cx.kinds[String(b.type)];
@@ -1498,7 +1578,7 @@ function Draw({ b }) {
   return K ? h("div", "", hooksOf(b, cx, false), createElement8(K, { block: { ...b, type: String(b.type) }, act: act2 })) : createElement8(Fallen, { b });
 }
 var Block = memo(function Block2({ b }) {
-  const cx = useContext12(Cx);
+  const cx = useContext13(Cx);
   return createElement8(Boundary, { b, report: cx.report, fallback: createElement8(Fallen, { b }) }, createElement8(Draw, { b }));
 });
 
@@ -1511,7 +1591,7 @@ var watch = (on) => {
   return () => m.removeEventListener("change", on);
 };
 function BlocksView(p) {
-  const last = useRef7(void 0);
+  const last = useRef8(void 0);
   const screen2 = useMemo2(() => last.current = share(last.current, p.screen), [p.screen]);
   const { cx, ask } = useCx(p, screen2);
   const dark = useSyncExternalStore(watch, () => matchMedia(DARK).matches, () => false);

@@ -9,7 +9,7 @@ mod fields;
 mod fixtures;
 mod hooks;
 mod model;
-mod rust;
+pub mod rust;
 mod shapes;
 mod skill;
 mod swift;

@@ -84,13 +84,8 @@ impl Block {
 
     pub(crate) fn bare(&self) -> Self {
         let mut b = self.clone();
-        match &mut b {
-            Self::Screen(s) => s.blocks = None,
-            Self::Card(c) => c.blocks = None,
-            Self::Sheet(s) => s.blocks.clear(),
-            Self::Section(s) => s.blocks.clear(),
-            Self::List(l) => l.rows.clear(),
-            _ => {}
+        if let Some(Kids::Blocks(kids)) = b.list() {
+            kids.clear();
         }
         b
     }
