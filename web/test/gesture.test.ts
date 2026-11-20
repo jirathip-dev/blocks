@@ -1,9 +1,10 @@
-import { deepStrictEqual, ok } from "node:assert/strict";
+import { deepStrictEqual, ok, strictEqual } from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
 import { view } from "../src/core/eval.ts";
 import { step } from "../src/core/gesture.ts";
 import { list } from "../src/core/kind/list.ts";
+import { media, named } from "../src/core/kind/media.ts";
 import { timeline } from "../src/core/kind/timeline.ts";
 
 const read = (f) => JSON.parse(readFileSync(new URL(`../../fixtures/gesture/${f}`, import.meta.url), "utf8"));
@@ -32,6 +33,18 @@ test("list rules give fixtures/gesture/list.json the crate's orders, words and s
     deepStrictEqual(got && list.says(block, c.grab, got), c.says ?? null, c.grab);
   }
   for (const [g, want] of Object.entries(steps)) deepStrictEqual(list.steps(block, g).map(([n]) => n), want, g);
+});
+
+test("media rules give fixtures/gesture/media.json the crate's changes, words, steps and names", () => {
+  const { block, cases, steps, names } = read("media.json");
+  ok(cases.length >= 20);
+  for (const c of cases) {
+    const got = c.reach !== undefined ? media.candidate(block, c.grab, c.reach) : c.nudges.reduce((from, n) => from && media.nudge(block, c.grab, from, n), media.start(block, c.grab));
+    deepStrictEqual(got, c.want, `${JSON.stringify(c.grab)} ${JSON.stringify(c.reach ?? c.nudges)}`);
+    deepStrictEqual(got && media.says(block, c.grab, got), c.says ?? null, JSON.stringify(c.grab));
+  }
+  for (const s of steps) deepStrictEqual(media.steps(block, s.grab).map(([n]) => n), s.want, JSON.stringify(s.grab));
+  for (const [id, want] of Object.entries(names)) deepStrictEqual(named(block, id), want, id);
 });
 
 test("timeline rules give fixtures/gesture/timeline.json the crate's spans, words and steps", () => {
@@ -120,6 +133,89 @@ test("the one zoom: Ctrl and wheel live then settled, + and 0, and a double tap,
       return { drawn: window.drawn, keep: window.keep };
     });
     deepStrictEqual(got, { drawn: [[1, false], [2, true], [2, false], [1.6, false], [1, false]], keep: { zoom: 1 } });
+  } finally {
+    await browser.close();
+  }
+});
+
+const photo = { ...read("media.json").block, width: 300, height: 200 };
+const traced = { ...photo, tools: ["pin"] };
+const sent = (block, values) => [{ screen: "s", action: "marks", block: "photo", values }];
+
+test("a mark's move sends the same one action by pointer, keys and named action, in WebKit", async () => {
+  const { shot } = await import("../shot/shot.ts");
+  const screen = { type: "screen", id: "s", title: "Photo", blocks: [photo] };
+  const tenth = sent(photo, { move: { id: "m1", at: [0.3, 0.7], to: [0.4, 0.5] } });
+  const one = sent(photo, { move: { id: "m1", at: [0.21, 0.7], to: [0.31, 0.5] } });
+  const ways = [
+    [{ via: "pointer", reach: [[30, 0]] }, tenth],
+    [{ via: "keys", reach: [{ dir: "right", big: true }] }, tenth],
+    [{ via: "keys", reach: [{ dir: "right" }] }, one],
+    [{ via: "action", reach: ["Move right"] }, one],
+  ];
+  for (const [w, want] of ways) {
+    const { report, faults } = await shot({ screen, css, check: true, steps: [{ gesture: { id: "photo", grab: { body: "m1" }, ...w } }, { shot: { name: w.via } }] });
+    deepStrictEqual(report.sent, want, JSON.stringify(w));
+    deepStrictEqual(faults, [], w.via);
+  }
+});
+
+test("a pin is drawn by a drag, a tap, the keys and a named action, in WebKit", async () => {
+  const { shot } = await import("../shot/shot.ts");
+  const screen = { type: "screen", id: "s", title: "Trace", blocks: [traced] };
+  const pin = (at) => sent(traced, { draw: { kind: "pin", at, group: "range" } });
+  const surface = { draw: { tool: "pin", group: "range" } };
+  const tool = { draw: { tool: "pin", group: "range", at: [0.5, 0.5] } };
+  const ways = [
+    [{ grab: surface, via: "pointer", reach: [[30, 20]] }, pin([0.6, 0.6])],
+    [{ grab: surface, via: "pointer", reach: [] }, pin([0.5, 0.5])],
+    [{ grab: tool, via: "keys", reach: [{ dir: "right" }] }, pin([0.5, 0.5])],
+    [{ grab: tool, via: "action", reach: ["Add pin"] }, pin([0.5, 0.5])],
+  ];
+  for (const [w, want] of ways) {
+    const { report, faults } = await shot({ screen, css, check: true, steps: [{ gesture: { id: "photo", ...w } }, { shot: { name: w.via } }] });
+    deepStrictEqual(report.sent, want, JSON.stringify(w));
+    deepStrictEqual(faults, [], w.via);
+  }
+});
+
+test("a picked mark is deleted by [delete], the Delete key and a named action; the text tool sends its words where tapped", async () => {
+  const { webkit } = await import("playwright");
+  const browser = await webkit.launch();
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  const dist = (f) => readFileSync(new URL(`../dist/${f}`, import.meta.url), "utf8");
+  await page.route("**/*", (r) =>
+    r.request().url().endsWith(".js") ? r.fulfill({ body: dist("blocks.js"), contentType: "text/javascript" }) : r.fulfill({ body: `<!doctype html><style>${dist("blocks.css")}</style><body><main></main>`, contentType: "text/html" }),
+  );
+  await page.goto("http://blocks.test/");
+  const boot = (b) =>
+    page.evaluate(async (b) => {
+      const B = await import("/blocks.js");
+      window.sent = [];
+      const ctx = { screen: "s", act: async (a) => (window.sent.push(a.values), true), tap: () => {}, open: new Set(), theme: B.plain, store: { get: () => null, put: () => {} }, held: new Map(), view: new Map() };
+      document.querySelector("main").replaceChildren(B.render(b, ctx));
+    }, b);
+  const sentNow = () => page.evaluate(() => window.sent);
+  try {
+    await boot(photo);
+    await page.click('[data-key="m4"]');
+    await page.click('[data-key="rm"]');
+    await page.focus('[data-key="m2"]');
+    await page.keyboard.press("Delete");
+    await page.click('[data-key="m1"]');
+    await page.locator('[data-key="rm"]').locator("xpath=..").locator("button.b-sr", { hasText: "Delete" }).dispatchEvent("click");
+    deepStrictEqual(await sentNow(), [{ remove: { id: "m4" } }, { remove: { id: "m2" } }, { remove: { id: "m1" } }]);
+    ok(await page.isDisabled('[data-key="rm"]').then(() => true));
+    await boot(photo);
+    await page.click('[data-key="tool:text"]');
+    const box = await page.locator(".mks").boundingBox();
+    await page.mouse.click(box.x + box.width * 0.2, box.y + box.height * 0.3);
+    await page.fill(".mkin input", "crack");
+    await page.keyboard.press("Enter");
+    deepStrictEqual(await sentNow(), [{ draw: { kind: "text", at: [0.2, 0.3], text: "crack", group: "range" } }]);
+    await boot({ ...photo, draw: null, move: null, stretch: null, remove: null });
+    strictEqual(await page.locator(".mk, .mkbar").count(), 0);
+    ok((await page.getAttribute("img", "alt")).includes("7 marks: Arrow 1, lower left; Text “flange corrosion”, lower left"));
   } finally {
     await browser.close();
   }
