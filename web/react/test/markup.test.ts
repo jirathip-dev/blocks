@@ -26,6 +26,8 @@ const more = [
   { type: "section", id: "s", header: "waiting on you", footer: "that is all", blocks: [{ type: "stat", id: "t", items: [{ label: "cpu", value: 4, unit: "%", tone: "g", spark: [1, 3, 2] }, { label: "mem", value: { get: "m" } }] }] },
 ];
 
+more.push({ ...JSON.parse(readFileSync(new URL("../../../fixtures/gesture/media.json", import.meta.url), "utf8")).block });
+
 let browser;
 before(async () => (browser = await webkit.launch()));
 after(() => browser.close());
@@ -47,7 +49,7 @@ async function markup(p, b) {
 }
 
 test("each kind React draws natively writes the HTML renderer's markup: tags, classes, data-*, role, aria-* and own text, in order", async () => {
-  deepStrictEqual([...native].sort(), ["button", "card", "chips", "form", "images", "list", "row", "screen", "section", "sheet", "stat", "text", "timeline"]);
+  deepStrictEqual([...native].sort(), ["button", "card", "chips", "form", "images", "list", "media", "row", "screen", "section", "sheet", "stat", "text", "timeline"]);
   const p = await browser.newPage();
   await p.setContent("<base href=https://x.test/><div id=html></div><div id=react></div>");
   await p.addScriptTag({ content: reactJs() });
