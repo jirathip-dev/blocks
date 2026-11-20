@@ -6,14 +6,14 @@ Decision: all rules and verdicts live in the Rust crate. One new command lints a
 files, has the existing harnesses draw them at 390 and only measure, and fails only on new findings in changed files,
 against a per-screen baseline that can only shrink. Every finding carries its fix.
 Slices: nine in blocks (codegen folder, lint, command and ratchet, render at 390, skill, SwiftUI, explore, kind
-folders, new-kind scaffold), then drover's hook and one adopting issue each in drover, cooee and synergy.
+folders, new-kind scaffold), then drover's hook and one adopting issue each in drover, cooee and the client app.
 Open questions: the line cap (about +2,400 lines); cooee's render per UI PR or nightly; kind folders now or later.
 
 ## The question
 
 Agents keep hand-drawing UI and screens overflow on the phone. blocks checks only its own fixtures:
 `blocks-shot --check` (inside the width, over no sibling) and `Built::check` (unknown kinds, fields, shapes). How
-does blocks give drover, cooee and synergy one guard for their own screens that is cheap in CI, runs before a lane
+does blocks give drover, cooee and the client app one guard for their own screens that is cheap in CI, runs before a lane
 ends its turn, and does not fail an app for the debt it already has?
 
 ## What exists, and what it lacks
@@ -26,7 +26,7 @@ ends its turn, and does not fail an app for the debt it already has?
 | `fixtures/screens/`: 42 goldens of two apps, kept here | the same in each app, per screen and seed |
 | one harness launch per fixture in `web/test/shot.test.ts` (27 WebKit launches) | one launch for many screens |
 
-Three apps of three shapes: drover (Rust and TS), cooee (Rust and Swift, no Node), synergy (TS, with a Rust
+Three apps of three shapes: drover (Rust and TS), cooee (Rust and Swift, no Node), the client app (TS, with a Rust
 toolchain). Rust is the one runtime all three have.
 
 ## The options

@@ -7,13 +7,13 @@ date, days, hours, combo, tags; multi-line and rich are options of text. The ren
 app (calendar, filter, hours, labels); the app answers a search or a long list with a new screen. Files and signature
 PNGs go to a file handler the app passes in and travel as ids. Language, era and today are set once on the screen.
 Slices: ten, about 3,200 counted lines: the fields folder, then search, slider, upload, signature, date, hours, combo, multi-line, rich.
-Decided (q2301): (1) one cap raise; (2) hours takes a break off, as synergy does; (3) table (#80) reads the screen's era.
+Decided (q2301): (1) one cap raise; (2) hours takes a break off, as the client app does; (3) table (#80) reads the screen's era.
 
 ## Read in this order
 
 | File | What |
 |---|---|
-| `usage.md` | how the callers read: one synergy route per field, the file handler, a Rust server, the route's test |
+| `usage.md` | how the callers read: one client app route per field, the file handler, a Rust server, the route's test |
 | `adr.md` | the question, what exists, the options, the decision in ten parts, consequences, the three open questions, hot files, the `.drover/arch.toml` lines |
 | `shapes.md` | the folders, the field union, the three views of a value, locale, the file handler, the field view, the drawn tree |
 | `boundaries.md` | which module may call which, the contract every renderer's field meets, how a value leaves, three statecharts |
@@ -65,7 +65,7 @@ Between an "a" and a "b" slice SwiftUI draws the field as a text input, and `fix
 | how files and PNGs leave without the wire | `adr.md` part 6; `shapes.md`, The file handler; `boundaries.md` statecharts 2 and 3 |
 | the language and era inputs | `adr.md` part 7; `shapes.md`, Locale |
 | every renderer draws them | `boundaries.md`, The field contract; `adr.md` part 8 |
-| a synergy route per field | `usage.md` parts 1 to 8 |
+| a client app route per field | `usage.md` parts 1 to 8 |
 | the slices, their budgets and design stages | above |
 
 ## What was read
@@ -73,7 +73,7 @@ Between an "a" and a "b" slice SwiftUI draws the field as a text input, and `fix
 - blocks `staging` at `a07d312`: `kind/`, `behave.rs`, `built.rs`, `wire.rs`, `site/views.rs`, `web/src/render/`,
   `behave.ts`, `patch.ts`, `BlockFields.swift`, `docs/schema.md`, and the ADRs of #81 and #113 (proposed).
 - #80's design and its amendments (q2273 to q2275) on branch `issue-80`; #124's diff.
-- synergy-apps `staging` at `a2ae461dc3`: `docs/blocks-migration/inventory.md`, and the screens it names for
+- The client app's repo `staging` at `a2ae461dc3`: `docs/blocks-migration/inventory.md`, and the screens it names for
   search, slider, upload, signature, date, time range and combo.
 
 Nothing here was built or run: the line counts are estimates from the size of today's field code in each renderer.
