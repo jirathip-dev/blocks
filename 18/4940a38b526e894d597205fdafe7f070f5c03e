@@ -1,0 +1,22 @@
+Decided: site/ split as shapes.md's table: page.rs, write.rs, md.rs, kind/<kind>.rs with draw, kind/row/rounds.rs
+Because: docs/architecture/hotspots-2026-11-16/shapes.md:171
+Decided: kind/mod.rs holds only the kinds! call, kids, holder and fallback; sheet and list are holder one-liners
+Because: docs/architecture/hotspots-2026-11-16/shapes.md:25
+Decided: lines, steps and table, newer than the ADR, get kind files and site_lines.rs / site_steps.rs tests like the rest
+Because: "each kind's view is `site/kind/<kind>.rs`"
+Decided: the link-safety test stays in tests/site.rs: it draws a whole screen, not one kind
+Because: crates/blocks/tests/site.rs:161
+Decided: W's out, forms and new became pub(super) so page.rs, now a sibling, can read them; form_of and media's figure pub(super) for config and hero
+Because: crates/blocks/src/site/write.rs:157
+Rejected: trimming arch.toml back under its 300-line size rule — the slice's lines are the ADR's text, and arch-check does not measure that file
+Check: every source and test line before and after matches once sorted, apart from the match arms, the draw renames and the use lines
+Owner: The static site writer is now one small file per kind, so kind changes stop colliding in one big file.
+
+Decided: staging's chart, diff, timeline and toast site views move to site/kind/<kind>.rs as draw, their tests to site_<kind>.rs
+Because: "each kind's view is `site/kind/<kind>.rs`"
+Decided: fallback_as moves to kind/fallback.rs, since four more kinds put kind/mod.rs at 84 of its 80 lines
+Because: crates/blocks/src/site/kind/mod.rs:5
+Decided: staging's Look/Live change goes to page.rs and its badge change to write.rs; views.rs stays deleted and frozen
+Because: crates/blocks/src/site/page.rs:27
+Rejected: none
+Owner: The merge brings in staging's four new block kinds, each in its own file like the rest.
