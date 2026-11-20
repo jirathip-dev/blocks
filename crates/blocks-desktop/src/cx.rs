@@ -61,6 +61,7 @@ fn stray(b: &Block) -> Node {
         name: b.kind().into(),
         rect: None,
         text: None,
+        fields: None,
         children: vec![],
     }
 }
@@ -158,6 +159,7 @@ impl<'a> Cx<'a> {
             name: plan.name.clone(),
             rect: Some(rect),
             text: None,
+            fields: None,
             children,
         });
     }

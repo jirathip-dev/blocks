@@ -4,7 +4,7 @@ use std::collections::BTreeMap;
 use serde::{Deserialize, Serialize};
 use serde_json::Number;
 
-use super::{Fallback, Fields, Label, Shown, Tap, Tone};
+use super::{Era, Fallback, Fields, Label, Shown, Tap, Tone};
 use crate::expr::Expr;
 
 words!(ColumnKind {
@@ -24,7 +24,6 @@ words!(PhonePart {
     Meta,
     Hide
 });
-words!(Era { Be });
 words!(SortDir { Asc, Desc });
 words!(ExportFormat { Csv, Xlsx });
 

@@ -16,6 +16,7 @@ The Rust type `Screen`; in TS, `screen(fields: Screen)` from `web/src/gen/builde
 | `focus` | `boolean` | optional |
 | `id` | `string` | optional |
 | `large` | `boolean` | optional |
+| `locale` | `Locale` | optional |
 | `pending` | `Pending` | optional |
 | `personas` | `Record<string, unknown>[]` | optional |
 | `refresh` | `boolean` | optional |

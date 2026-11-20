@@ -1,8 +1,9 @@
+use serde::Deserialize;
 use serde_json::{Map, Value};
 
 use crate::behave::{at_start, View};
 use crate::tree::{a11y, VARIANTS};
-use crate::Block;
+use crate::{Block, Locale};
 
 pub(crate) fn esc(s: &str) -> String {
     let mut out = String::with_capacity(s.len());
@@ -72,6 +73,7 @@ pub(crate) enum Go {
 pub(crate) struct W<'a> {
     pub(crate) view: View,
     pub(crate) thai: bool,
+    pub(crate) locale: Locale,
     pub(super) out: String,
     pub(super) forms: String,
     n: u32,
@@ -85,6 +87,10 @@ impl<'a> W<'a> {
         Self {
             view: at_start(root),
             thai: false,
+            locale: root
+                .get("locale")
+                .and_then(|l| Locale::deserialize(l).ok())
+                .unwrap_or_default(),
             out: String::new(),
             forms: String::new(),
             n: 0,
