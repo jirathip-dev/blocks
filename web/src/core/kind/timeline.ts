@@ -133,3 +133,20 @@ export const timeline: Rules<Timeline, BarGrab, Days, DaySpan> = {
   },
   says: (_, __, c) => words(c.start, c.end),
 };
+
+/// The sub-lane of each bar of a row, by first fit in start order, and how many there are.
+export function lanes(bars: TimeBar[]): { of: Map<string, number>; n: number } {
+  const ends: number[] = [];
+  const of = new Map<string, number>();
+  for (const x of [...bars].sort((p, q) => (day(p.start) ?? 0) - (day(q.start) ?? 0))) {
+    const s = day(x.start) ?? 0;
+    let i = ends.findIndex((e) => e < s);
+    if (i < 0) i = ends.push(0) - 1;
+    ends[i] = day(x.end) ?? s;
+    of.set(x.id, i);
+  }
+  return { of, n: Math.max(1, ends.length) };
+}
+
+/// A bar's accessible name: its label, its span in words, how far along and whether it is fixed.
+export const barName = (x: TimeBar) => `${x.label ?? "Bar"}, ${words(x.start, x.end)}${x.progress != null ? `, ${x.progress} % done` : ""}${x.fixed ? ", fixed" : ""}`;

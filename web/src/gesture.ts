@@ -1,6 +1,5 @@
 import { type Event, type Nudge, type Phase, type Rules, same, step } from "./core/gesture.ts";
 import type { Gesture } from "./gen/types.ts";
-import type { Ctx } from "./render/index.ts";
 
 /// An item whose action is out: the data it was grabbed from, its candidate, and how its view draws it back.
 export type Held = { start: unknown; c: unknown; back: (ok: boolean) => void };
@@ -15,6 +14,8 @@ export type Grabbed<B, G, R, C> = {
   show: (c: C | null) => void;
 };
 type Block = { id?: string | null };
+/// What the driver needs from its view: a way to send the one action, and where an item whose action is out is kept.
+export type Driven = { act: (a: { action: string; block?: string | null; values: Record<string, unknown> }, el?: HTMLElement) => Promise<boolean>; held?: Map<string, Held> };
 
 const ARROWS: Record<string, Nudge["dir"]> = { ArrowLeft: "left", ArrowRight: "right", ArrowUp: "up", ArrowDown: "down" };
 const key = (b: Block, item: string) => `${b.id ?? ""}\n${item}`;
@@ -40,13 +41,13 @@ const beside = (el: HTMLElement, steps: [string, Nudge][], run: (n: Nudge) => vo
   );
 
 /// The candidate of an item whose action is out, while its data is still what it was grabbed from.
-export function held<B extends Block, G, R, C>(c: Ctx, o: Pick<Grabbed<B, G, R, C>, "block" | "rules" | "grab" | "item">): unknown {
+export function held<B extends Block, G, R, C>(c: Driven, o: Pick<Grabbed<B, G, R, C>, "block" | "rules" | "grab" | "item">): unknown {
   const h = c.held?.get(key(o.block, o.item));
   return h && same(h.start, o.rules.start(o.block, o.grab)) ? h.c : undefined;
 }
 
 /// Runs one item's gesture on `el` (attached, its named actions go beside it): pointer, keys and named actions feed one machine; returns its named-step runner.
-export function gestured<B extends Block, G, R, C>(el: HTMLElement, c: Ctx, o: Grabbed<B, G, R, C>): (n: Nudge) => void {
+export function gestured<B extends Block, G, R, C>(el: HTMLElement, c: Driven, o: Grabbed<B, G, R, C>): (n: Nudge) => void {
   const start = o.rules.word(o.block, o.grab) ? o.rules.start(o.block, o.grab) : null;
   if (start === null) return () => {};
   const k = key(o.block, o.item);
@@ -168,7 +169,7 @@ export function zoomed(el: HTMLElement, keep: Record<string, unknown>, o: { min:
 export type Typed<B, G, C> = Omit<Grabbed<B, G, string, C>, "reach" | "show"> & { show: (p: Phase<C>["at"], c: C | null) => void; left: (key: string) => void };
 
 /// Runs one cell's edit on its input, as `gestured` does a drag: typing previews, Enter, Tab or leaving sends once, Escape puts it back.
-export function edited<B extends Block, G, C>(input: HTMLInputElement, c: Ctx, o: Typed<B, G, C>): void {
+export function edited<B extends Block, G, C>(input: HTMLInputElement, c: Driven, o: Typed<B, G, C>): void {
   const start = o.rules.word(o.block, o.grab) ? o.rules.start(o.block, o.grab) : null;
   if (start === null) return;
   const k = key(o.block, o.item);
