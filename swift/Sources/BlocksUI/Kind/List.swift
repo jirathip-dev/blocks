@@ -39,7 +39,7 @@ internal struct ListBlock: View {
             view.modifier(
                 Gestured(
                     rules: block, grab: id, gesture: reorder, label: "Move \(line.title)",
-                    reach: { Int(($0.height / 44).rounded()) }, value: { .array($0.map(JSONValue.string)) },
+                    reach: { Int(($0.translation.height / 44).rounded()) }, value: { .array($0.map(JSONValue.string)) },
                     show: { held = $0 }))
         } else {
             view

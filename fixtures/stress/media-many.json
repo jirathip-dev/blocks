@@ -1,0 +1,2211 @@
+{
+  "alt": "a bar chart",
+  "caption": "This week",
+  "height": 360,
+  "id": "chart",
+  "marks": [
+    {
+      "at": [
+        0.5,
+        0.2
+      ],
+      "id": "peak-0",
+      "kind": "highlight",
+      "to": [
+        0.62,
+        0.9
+      ],
+      "tone": "warn"
+    },
+    {
+      "at": [
+        0.3,
+        0.15
+      ],
+      "id": "arrow-1",
+      "kind": "arrow",
+      "to": [
+        0.48,
+        0.3
+      ]
+    },
+    {
+      "at": [
+        0.05,
+        0.08
+      ],
+      "id": "note-2",
+      "kind": "text",
+      "text": "Release week"
+    },
+    {
+      "at": [
+        0.78,
+        0.7
+      ],
+      "id": "dip-3",
+      "kind": "pin",
+      "text": "1",
+      "tone": "info"
+    },
+    {
+      "at": [
+        0.5,
+        0.2
+      ],
+      "id": "peak-4",
+      "kind": "highlight",
+      "to": [
+        0.62,
+        0.9
+      ],
+      "tone": "warn"
+    },
+    {
+      "at": [
+        0.3,
+        0.15
+      ],
+      "id": "arrow-5",
+      "kind": "arrow",
+      "to": [
+        0.48,
+        0.3
+      ]
+    },
+    {
+      "at": [
+        0.05,
+        0.08
+      ],
+      "id": "note-6",
+      "kind": "text",
+      "text": "Release week"
+    },
+    {
+      "at": [
+        0.78,
+        0.7
+      ],
+      "id": "dip-7",
+      "kind": "pin",
+      "text": "1",
+      "tone": "info"
+    },
+    {
+      "at": [
+        0.5,
+        0.2
+      ],
+      "id": "peak-8",
+      "kind": "highlight",
+      "to": [
+        0.62,
+        0.9
+      ],
+      "tone": "warn"
+    },
+    {
+      "at": [
+        0.3,
+        0.15
+      ],
+      "id": "arrow-9",
+      "kind": "arrow",
+      "to": [
+        0.48,
+        0.3
+      ]
+    },
+    {
+      "at": [
+        0.05,
+        0.08
+      ],
+      "id": "note-10",
+      "kind": "text",
+      "text": "Release week"
+    },
+    {
+      "at": [
+        0.78,
+        0.7
+      ],
+      "id": "dip-11",
+      "kind": "pin",
+      "text": "1",
+      "tone": "info"
+    },
+    {
+      "at": [
+        0.5,
+        0.2
+      ],
+      "id": "peak-12",
+      "kind": "highlight",
+      "to": [
+        0.62,
+        0.9
+      ],
+      "tone": "warn"
+    },
+    {
+      "at": [
+        0.3,
+        0.15
+      ],
+      "id": "arrow-13",
+      "kind": "arrow",
+      "to": [
+        0.48,
+        0.3
+      ]
+    },
+    {
+      "at": [
+        0.05,
+        0.08
+      ],
+      "id": "note-14",
+      "kind": "text",
+      "text": "Release week"
+    },
+    {
+      "at": [
+        0.78,
+        0.7
+      ],
+      "id": "dip-15",
+      "kind": "pin",
+      "text": "1",
+      "tone": "info"
+    },
+    {
+      "at": [
+        0.5,
+        0.2
+      ],
+      "id": "peak-16",
+      "kind": "highlight",
+      "to": [
+        0.62,
+        0.9
+      ],
+      "tone": "warn"
+    },
+    {
+      "at": [
+        0.3,
+        0.15
+      ],
+      "id": "arrow-17",
+      "kind": "arrow",
+      "to": [
+        0.48,
+        0.3
+      ]
+    },
+    {
+      "at": [
+        0.05,
+        0.08
+      ],
+      "id": "note-18",
+      "kind": "text",
+      "text": "Release week"
+    },
+    {
+      "at": [
+        0.78,
+        0.7
+      ],
+      "id": "dip-19",
+      "kind": "pin",
+      "text": "1",
+      "tone": "info"
+    },
+    {
+      "at": [
+        0.5,
+        0.2
+      ],
+      "id": "peak-20",
+      "kind": "highlight",
+      "to": [
+        0.62,
+        0.9
+      ],
+      "tone": "warn"
+    },
+    {
+      "at": [
+        0.3,
+        0.15
+      ],
+      "id": "arrow-21",
+      "kind": "arrow",
+      "to": [
+        0.48,
+        0.3
+      ]
+    },
+    {
+      "at": [
+        0.05,
+        0.08
+      ],
+      "id": "note-22",
+      "kind": "text",
+      "text": "Release week"
+    },
+    {
+      "at": [
+        0.78,
+        0.7
+      ],
+      "id": "dip-23",
+      "kind": "pin",
+      "text": "1",
+      "tone": "info"
+    },
+    {
+      "at": [
+        0.5,
+        0.2
+      ],
+      "id": "peak-24",
+      "kind": "highlight",
+      "to": [
+        0.62,
+        0.9
+      ],
+      "tone": "warn"
+    },
+    {
+      "at": [
+        0.3,
+        0.15
+      ],
+      "id": "arrow-25",
+      "kind": "arrow",
+      "to": [
+        0.48,
+        0.3
+      ]
+    },
+    {
+      "at": [
+        0.05,
+        0.08
+      ],
+      "id": "note-26",
+      "kind": "text",
+      "text": "Release week"
+    },
+    {
+      "at": [
+        0.78,
+        0.7
+      ],
+      "id": "dip-27",
+      "kind": "pin",
+      "text": "1",
+      "tone": "info"
+    },
+    {
+      "at": [
+        0.5,
+        0.2
+      ],
+      "id": "peak-28",
+      "kind": "highlight",
+      "to": [
+        0.62,
+        0.9
+      ],
+      "tone": "warn"
+    },
+    {
+      "at": [
+        0.3,
+        0.15
+      ],
+      "id": "arrow-29",
+      "kind": "arrow",
+      "to": [
+        0.48,
+        0.3
+      ]
+    },
+    {
+      "at": [
+        0.05,
+        0.08
+      ],
+      "id": "note-30",
+      "kind": "text",
+      "text": "Release week"
+    },
+    {
+      "at": [
+        0.78,
+        0.7
+      ],
+      "id": "dip-31",
+      "kind": "pin",
+      "text": "1",
+      "tone": "info"
+    },
+    {
+      "at": [
+        0.5,
+        0.2
+      ],
+      "id": "peak-32",
+      "kind": "highlight",
+      "to": [
+        0.62,
+        0.9
+      ],
+      "tone": "warn"
+    },
+    {
+      "at": [
+        0.3,
+        0.15
+      ],
+      "id": "arrow-33",
+      "kind": "arrow",
+      "to": [
+        0.48,
+        0.3
+      ]
+    },
+    {
+      "at": [
+        0.05,
+        0.08
+      ],
+      "id": "note-34",
+      "kind": "text",
+      "text": "Release week"
+    },
+    {
+      "at": [
+        0.78,
+        0.7
+      ],
+      "id": "dip-35",
+      "kind": "pin",
+      "text": "1",
+      "tone": "info"
+    },
+    {
+      "at": [
+        0.5,
+        0.2
+      ],
+      "id": "peak-36",
+      "kind": "highlight",
+      "to": [
+        0.62,
+        0.9
+      ],
+      "tone": "warn"
+    },
+    {
+      "at": [
+        0.3,
+        0.15
+      ],
+      "id": "arrow-37",
+      "kind": "arrow",
+      "to": [
+        0.48,
+        0.3
+      ]
+    },
+    {
+      "at": [
+        0.05,
+        0.08
+      ],
+      "id": "note-38",
+      "kind": "text",
+      "text": "Release week"
+    },
+    {
+      "at": [
+        0.78,
+        0.7
+      ],
+      "id": "dip-39",
+      "kind": "pin",
+      "text": "1",
+      "tone": "info"
+    },
+    {
+      "at": [
+        0.5,
+        0.2
+      ],
+      "id": "peak-40",
+      "kind": "highlight",
+      "to": [
+        0.62,
+        0.9
+      ],
+      "tone": "warn"
+    },
+    {
+      "at": [
+        0.3,
+        0.15
+      ],
+      "id": "arrow-41",
+      "kind": "arrow",
+      "to": [
+        0.48,
+        0.3
+      ]
+    },
+    {
+      "at": [
+        0.05,
+        0.08
+      ],
+      "id": "note-42",
+      "kind": "text",
+      "text": "Release week"
+    },
+    {
+      "at": [
+        0.78,
+        0.7
+      ],
+      "id": "dip-43",
+      "kind": "pin",
+      "text": "1",
+      "tone": "info"
+    },
+    {
+      "at": [
+        0.5,
+        0.2
+      ],
+      "id": "peak-44",
+      "kind": "highlight",
+      "to": [
+        0.62,
+        0.9
+      ],
+      "tone": "warn"
+    },
+    {
+      "at": [
+        0.3,
+        0.15
+      ],
+      "id": "arrow-45",
+      "kind": "arrow",
+      "to": [
+        0.48,
+        0.3
+      ]
+    },
+    {
+      "at": [
+        0.05,
+        0.08
+      ],
+      "id": "note-46",
+      "kind": "text",
+      "text": "Release week"
+    },
+    {
+      "at": [
+        0.78,
+        0.7
+      ],
+      "id": "dip-47",
+      "kind": "pin",
+      "text": "1",
+      "tone": "info"
+    },
+    {
+      "at": [
+        0.5,
+        0.2
+      ],
+      "id": "peak-48",
+      "kind": "highlight",
+      "to": [
+        0.62,
+        0.9
+      ],
+      "tone": "warn"
+    },
+    {
+      "at": [
+        0.3,
+        0.15
+      ],
+      "id": "arrow-49",
+      "kind": "arrow",
+      "to": [
+        0.48,
+        0.3
+      ]
+    },
+    {
+      "at": [
+        0.05,
+        0.08
+      ],
+      "id": "note-50",
+      "kind": "text",
+      "text": "Release week"
+    },
+    {
+      "at": [
+        0.78,
+        0.7
+      ],
+      "id": "dip-51",
+      "kind": "pin",
+      "text": "1",
+      "tone": "info"
+    },
+    {
+      "at": [
+        0.5,
+        0.2
+      ],
+      "id": "peak-52",
+      "kind": "highlight",
+      "to": [
+        0.62,
+        0.9
+      ],
+      "tone": "warn"
+    },
+    {
+      "at": [
+        0.3,
+        0.15
+      ],
+      "id": "arrow-53",
+      "kind": "arrow",
+      "to": [
+        0.48,
+        0.3
+      ]
+    },
+    {
+      "at": [
+        0.05,
+        0.08
+      ],
+      "id": "note-54",
+      "kind": "text",
+      "text": "Release week"
+    },
+    {
+      "at": [
+        0.78,
+        0.7
+      ],
+      "id": "dip-55",
+      "kind": "pin",
+      "text": "1",
+      "tone": "info"
+    },
+    {
+      "at": [
+        0.5,
+        0.2
+      ],
+      "id": "peak-56",
+      "kind": "highlight",
+      "to": [
+        0.62,
+        0.9
+      ],
+      "tone": "warn"
+    },
+    {
+      "at": [
+        0.3,
+        0.15
+      ],
+      "id": "arrow-57",
+      "kind": "arrow",
+      "to": [
+        0.48,
+        0.3
+      ]
+    },
+    {
+      "at": [
+        0.05,
+        0.08
+      ],
+      "id": "note-58",
+      "kind": "text",
+      "text": "Release week"
+    },
+    {
+      "at": [
+        0.78,
+        0.7
+      ],
+      "id": "dip-59",
+      "kind": "pin",
+      "text": "1",
+      "tone": "info"
+    },
+    {
+      "at": [
+        0.5,
+        0.2
+      ],
+      "id": "peak-60",
+      "kind": "highlight",
+      "to": [
+        0.62,
+        0.9
+      ],
+      "tone": "warn"
+    },
+    {
+      "at": [
+        0.3,
+        0.15
+      ],
+      "id": "arrow-61",
+      "kind": "arrow",
+      "to": [
+        0.48,
+        0.3
+      ]
+    },
+    {
+      "at": [
+        0.05,
+        0.08
+      ],
+      "id": "note-62",
+      "kind": "text",
+      "text": "Release week"
+    },
+    {
+      "at": [
+        0.78,
+        0.7
+      ],
+      "id": "dip-63",
+      "kind": "pin",
+      "text": "1",
+      "tone": "info"
+    },
+    {
+      "at": [
+        0.5,
+        0.2
+      ],
+      "id": "peak-64",
+      "kind": "highlight",
+      "to": [
+        0.62,
+        0.9
+      ],
+      "tone": "warn"
+    },
+    {
+      "at": [
+        0.3,
+        0.15
+      ],
+      "id": "arrow-65",
+      "kind": "arrow",
+      "to": [
+        0.48,
+        0.3
+      ]
+    },
+    {
+      "at": [
+        0.05,
+        0.08
+      ],
+      "id": "note-66",
+      "kind": "text",
+      "text": "Release week"
+    },
+    {
+      "at": [
+        0.78,
+        0.7
+      ],
+      "id": "dip-67",
+      "kind": "pin",
+      "text": "1",
+      "tone": "info"
+    },
+    {
+      "at": [
+        0.5,
+        0.2
+      ],
+      "id": "peak-68",
+      "kind": "highlight",
+      "to": [
+        0.62,
+        0.9
+      ],
+      "tone": "warn"
+    },
+    {
+      "at": [
+        0.3,
+        0.15
+      ],
+      "id": "arrow-69",
+      "kind": "arrow",
+      "to": [
+        0.48,
+        0.3
+      ]
+    },
+    {
+      "at": [
+        0.05,
+        0.08
+      ],
+      "id": "note-70",
+      "kind": "text",
+      "text": "Release week"
+    },
+    {
+      "at": [
+        0.78,
+        0.7
+      ],
+      "id": "dip-71",
+      "kind": "pin",
+      "text": "1",
+      "tone": "info"
+    },
+    {
+      "at": [
+        0.5,
+        0.2
+      ],
+      "id": "peak-72",
+      "kind": "highlight",
+      "to": [
+        0.62,
+        0.9
+      ],
+      "tone": "warn"
+    },
+    {
+      "at": [
+        0.3,
+        0.15
+      ],
+      "id": "arrow-73",
+      "kind": "arrow",
+      "to": [
+        0.48,
+        0.3
+      ]
+    },
+    {
+      "at": [
+        0.05,
+        0.08
+      ],
+      "id": "note-74",
+      "kind": "text",
+      "text": "Release week"
+    },
+    {
+      "at": [
+        0.78,
+        0.7
+      ],
+      "id": "dip-75",
+      "kind": "pin",
+      "text": "1",
+      "tone": "info"
+    },
+    {
+      "at": [
+        0.5,
+        0.2
+      ],
+      "id": "peak-76",
+      "kind": "highlight",
+      "to": [
+        0.62,
+        0.9
+      ],
+      "tone": "warn"
+    },
+    {
+      "at": [
+        0.3,
+        0.15
+      ],
+      "id": "arrow-77",
+      "kind": "arrow",
+      "to": [
+        0.48,
+        0.3
+      ]
+    },
+    {
+      "at": [
+        0.05,
+        0.08
+      ],
+      "id": "note-78",
+      "kind": "text",
+      "text": "Release week"
+    },
+    {
+      "at": [
+        0.78,
+        0.7
+      ],
+      "id": "dip-79",
+      "kind": "pin",
+      "text": "1",
+      "tone": "info"
+    },
+    {
+      "at": [
+        0.5,
+        0.2
+      ],
+      "id": "peak-80",
+      "kind": "highlight",
+      "to": [
+        0.62,
+        0.9
+      ],
+      "tone": "warn"
+    },
+    {
+      "at": [
+        0.3,
+        0.15
+      ],
+      "id": "arrow-81",
+      "kind": "arrow",
+      "to": [
+        0.48,
+        0.3
+      ]
+    },
+    {
+      "at": [
+        0.05,
+        0.08
+      ],
+      "id": "note-82",
+      "kind": "text",
+      "text": "Release week"
+    },
+    {
+      "at": [
+        0.78,
+        0.7
+      ],
+      "id": "dip-83",
+      "kind": "pin",
+      "text": "1",
+      "tone": "info"
+    },
+    {
+      "at": [
+        0.5,
+        0.2
+      ],
+      "id": "peak-84",
+      "kind": "highlight",
+      "to": [
+        0.62,
+        0.9
+      ],
+      "tone": "warn"
+    },
+    {
+      "at": [
+        0.3,
+        0.15
+      ],
+      "id": "arrow-85",
+      "kind": "arrow",
+      "to": [
+        0.48,
+        0.3
+      ]
+    },
+    {
+      "at": [
+        0.05,
+        0.08
+      ],
+      "id": "note-86",
+      "kind": "text",
+      "text": "Release week"
+    },
+    {
+      "at": [
+        0.78,
+        0.7
+      ],
+      "id": "dip-87",
+      "kind": "pin",
+      "text": "1",
+      "tone": "info"
+    },
+    {
+      "at": [
+        0.5,
+        0.2
+      ],
+      "id": "peak-88",
+      "kind": "highlight",
+      "to": [
+        0.62,
+        0.9
+      ],
+      "tone": "warn"
+    },
+    {
+      "at": [
+        0.3,
+        0.15
+      ],
+      "id": "arrow-89",
+      "kind": "arrow",
+      "to": [
+        0.48,
+        0.3
+      ]
+    },
+    {
+      "at": [
+        0.05,
+        0.08
+      ],
+      "id": "note-90",
+      "kind": "text",
+      "text": "Release week"
+    },
+    {
+      "at": [
+        0.78,
+        0.7
+      ],
+      "id": "dip-91",
+      "kind": "pin",
+      "text": "1",
+      "tone": "info"
+    },
+    {
+      "at": [
+        0.5,
+        0.2
+      ],
+      "id": "peak-92",
+      "kind": "highlight",
+      "to": [
+        0.62,
+        0.9
+      ],
+      "tone": "warn"
+    },
+    {
+      "at": [
+        0.3,
+        0.15
+      ],
+      "id": "arrow-93",
+      "kind": "arrow",
+      "to": [
+        0.48,
+        0.3
+      ]
+    },
+    {
+      "at": [
+        0.05,
+        0.08
+      ],
+      "id": "note-94",
+      "kind": "text",
+      "text": "Release week"
+    },
+    {
+      "at": [
+        0.78,
+        0.7
+      ],
+      "id": "dip-95",
+      "kind": "pin",
+      "text": "1",
+      "tone": "info"
+    },
+    {
+      "at": [
+        0.5,
+        0.2
+      ],
+      "id": "peak-96",
+      "kind": "highlight",
+      "to": [
+        0.62,
+        0.9
+      ],
+      "tone": "warn"
+    },
+    {
+      "at": [
+        0.3,
+        0.15
+      ],
+      "id": "arrow-97",
+      "kind": "arrow",
+      "to": [
+        0.48,
+        0.3
+      ]
+    },
+    {
+      "at": [
+        0.05,
+        0.08
+      ],
+      "id": "note-98",
+      "kind": "text",
+      "text": "Release week"
+    },
+    {
+      "at": [
+        0.78,
+        0.7
+      ],
+      "id": "dip-99",
+      "kind": "pin",
+      "text": "1",
+      "tone": "info"
+    },
+    {
+      "at": [
+        0.5,
+        0.2
+      ],
+      "id": "peak-100",
+      "kind": "highlight",
+      "to": [
+        0.62,
+        0.9
+      ],
+      "tone": "warn"
+    },
+    {
+      "at": [
+        0.3,
+        0.15
+      ],
+      "id": "arrow-101",
+      "kind": "arrow",
+      "to": [
+        0.48,
+        0.3
+      ]
+    },
+    {
+      "at": [
+        0.05,
+        0.08
+      ],
+      "id": "note-102",
+      "kind": "text",
+      "text": "Release week"
+    },
+    {
+      "at": [
+        0.78,
+        0.7
+      ],
+      "id": "dip-103",
+      "kind": "pin",
+      "text": "1",
+      "tone": "info"
+    },
+    {
+      "at": [
+        0.5,
+        0.2
+      ],
+      "id": "peak-104",
+      "kind": "highlight",
+      "to": [
+        0.62,
+        0.9
+      ],
+      "tone": "warn"
+    },
+    {
+      "at": [
+        0.3,
+        0.15
+      ],
+      "id": "arrow-105",
+      "kind": "arrow",
+      "to": [
+        0.48,
+        0.3
+      ]
+    },
+    {
+      "at": [
+        0.05,
+        0.08
+      ],
+      "id": "note-106",
+      "kind": "text",
+      "text": "Release week"
+    },
+    {
+      "at": [
+        0.78,
+        0.7
+      ],
+      "id": "dip-107",
+      "kind": "pin",
+      "text": "1",
+      "tone": "info"
+    },
+    {
+      "at": [
+        0.5,
+        0.2
+      ],
+      "id": "peak-108",
+      "kind": "highlight",
+      "to": [
+        0.62,
+        0.9
+      ],
+      "tone": "warn"
+    },
+    {
+      "at": [
+        0.3,
+        0.15
+      ],
+      "id": "arrow-109",
+      "kind": "arrow",
+      "to": [
+        0.48,
+        0.3
+      ]
+    },
+    {
+      "at": [
+        0.05,
+        0.08
+      ],
+      "id": "note-110",
+      "kind": "text",
+      "text": "Release week"
+    },
+    {
+      "at": [
+        0.78,
+        0.7
+      ],
+      "id": "dip-111",
+      "kind": "pin",
+      "text": "1",
+      "tone": "info"
+    },
+    {
+      "at": [
+        0.5,
+        0.2
+      ],
+      "id": "peak-112",
+      "kind": "highlight",
+      "to": [
+        0.62,
+        0.9
+      ],
+      "tone": "warn"
+    },
+    {
+      "at": [
+        0.3,
+        0.15
+      ],
+      "id": "arrow-113",
+      "kind": "arrow",
+      "to": [
+        0.48,
+        0.3
+      ]
+    },
+    {
+      "at": [
+        0.05,
+        0.08
+      ],
+      "id": "note-114",
+      "kind": "text",
+      "text": "Release week"
+    },
+    {
+      "at": [
+        0.78,
+        0.7
+      ],
+      "id": "dip-115",
+      "kind": "pin",
+      "text": "1",
+      "tone": "info"
+    },
+    {
+      "at": [
+        0.5,
+        0.2
+      ],
+      "id": "peak-116",
+      "kind": "highlight",
+      "to": [
+        0.62,
+        0.9
+      ],
+      "tone": "warn"
+    },
+    {
+      "at": [
+        0.3,
+        0.15
+      ],
+      "id": "arrow-117",
+      "kind": "arrow",
+      "to": [
+        0.48,
+        0.3
+      ]
+    },
+    {
+      "at": [
+        0.05,
+        0.08
+      ],
+      "id": "note-118",
+      "kind": "text",
+      "text": "Release week"
+    },
+    {
+      "at": [
+        0.78,
+        0.7
+      ],
+      "id": "dip-119",
+      "kind": "pin",
+      "text": "1",
+      "tone": "info"
+    },
+    {
+      "at": [
+        0.5,
+        0.2
+      ],
+      "id": "peak-120",
+      "kind": "highlight",
+      "to": [
+        0.62,
+        0.9
+      ],
+      "tone": "warn"
+    },
+    {
+      "at": [
+        0.3,
+        0.15
+      ],
+      "id": "arrow-121",
+      "kind": "arrow",
+      "to": [
+        0.48,
+        0.3
+      ]
+    },
+    {
+      "at": [
+        0.05,
+        0.08
+      ],
+      "id": "note-122",
+      "kind": "text",
+      "text": "Release week"
+    },
+    {
+      "at": [
+        0.78,
+        0.7
+      ],
+      "id": "dip-123",
+      "kind": "pin",
+      "text": "1",
+      "tone": "info"
+    },
+    {
+      "at": [
+        0.5,
+        0.2
+      ],
+      "id": "peak-124",
+      "kind": "highlight",
+      "to": [
+        0.62,
+        0.9
+      ],
+      "tone": "warn"
+    },
+    {
+      "at": [
+        0.3,
+        0.15
+      ],
+      "id": "arrow-125",
+      "kind": "arrow",
+      "to": [
+        0.48,
+        0.3
+      ]
+    },
+    {
+      "at": [
+        0.05,
+        0.08
+      ],
+      "id": "note-126",
+      "kind": "text",
+      "text": "Release week"
+    },
+    {
+      "at": [
+        0.78,
+        0.7
+      ],
+      "id": "dip-127",
+      "kind": "pin",
+      "text": "1",
+      "tone": "info"
+    },
+    {
+      "at": [
+        0.5,
+        0.2
+      ],
+      "id": "peak-128",
+      "kind": "highlight",
+      "to": [
+        0.62,
+        0.9
+      ],
+      "tone": "warn"
+    },
+    {
+      "at": [
+        0.3,
+        0.15
+      ],
+      "id": "arrow-129",
+      "kind": "arrow",
+      "to": [
+        0.48,
+        0.3
+      ]
+    },
+    {
+      "at": [
+        0.05,
+        0.08
+      ],
+      "id": "note-130",
+      "kind": "text",
+      "text": "Release week"
+    },
+    {
+      "at": [
+        0.78,
+        0.7
+      ],
+      "id": "dip-131",
+      "kind": "pin",
+      "text": "1",
+      "tone": "info"
+    },
+    {
+      "at": [
+        0.5,
+        0.2
+      ],
+      "id": "peak-132",
+      "kind": "highlight",
+      "to": [
+        0.62,
+        0.9
+      ],
+      "tone": "warn"
+    },
+    {
+      "at": [
+        0.3,
+        0.15
+      ],
+      "id": "arrow-133",
+      "kind": "arrow",
+      "to": [
+        0.48,
+        0.3
+      ]
+    },
+    {
+      "at": [
+        0.05,
+        0.08
+      ],
+      "id": "note-134",
+      "kind": "text",
+      "text": "Release week"
+    },
+    {
+      "at": [
+        0.78,
+        0.7
+      ],
+      "id": "dip-135",
+      "kind": "pin",
+      "text": "1",
+      "tone": "info"
+    },
+    {
+      "at": [
+        0.5,
+        0.2
+      ],
+      "id": "peak-136",
+      "kind": "highlight",
+      "to": [
+        0.62,
+        0.9
+      ],
+      "tone": "warn"
+    },
+    {
+      "at": [
+        0.3,
+        0.15
+      ],
+      "id": "arrow-137",
+      "kind": "arrow",
+      "to": [
+        0.48,
+        0.3
+      ]
+    },
+    {
+      "at": [
+        0.05,
+        0.08
+      ],
+      "id": "note-138",
+      "kind": "text",
+      "text": "Release week"
+    },
+    {
+      "at": [
+        0.78,
+        0.7
+      ],
+      "id": "dip-139",
+      "kind": "pin",
+      "text": "1",
+      "tone": "info"
+    },
+    {
+      "at": [
+        0.5,
+        0.2
+      ],
+      "id": "peak-140",
+      "kind": "highlight",
+      "to": [
+        0.62,
+        0.9
+      ],
+      "tone": "warn"
+    },
+    {
+      "at": [
+        0.3,
+        0.15
+      ],
+      "id": "arrow-141",
+      "kind": "arrow",
+      "to": [
+        0.48,
+        0.3
+      ]
+    },
+    {
+      "at": [
+        0.05,
+        0.08
+      ],
+      "id": "note-142",
+      "kind": "text",
+      "text": "Release week"
+    },
+    {
+      "at": [
+        0.78,
+        0.7
+      ],
+      "id": "dip-143",
+      "kind": "pin",
+      "text": "1",
+      "tone": "info"
+    },
+    {
+      "at": [
+        0.5,
+        0.2
+      ],
+      "id": "peak-144",
+      "kind": "highlight",
+      "to": [
+        0.62,
+        0.9
+      ],
+      "tone": "warn"
+    },
+    {
+      "at": [
+        0.3,
+        0.15
+      ],
+      "id": "arrow-145",
+      "kind": "arrow",
+      "to": [
+        0.48,
+        0.3
+      ]
+    },
+    {
+      "at": [
+        0.05,
+        0.08
+      ],
+      "id": "note-146",
+      "kind": "text",
+      "text": "Release week"
+    },
+    {
+      "at": [
+        0.78,
+        0.7
+      ],
+      "id": "dip-147",
+      "kind": "pin",
+      "text": "1",
+      "tone": "info"
+    },
+    {
+      "at": [
+        0.5,
+        0.2
+      ],
+      "id": "peak-148",
+      "kind": "highlight",
+      "to": [
+        0.62,
+        0.9
+      ],
+      "tone": "warn"
+    },
+    {
+      "at": [
+        0.3,
+        0.15
+      ],
+      "id": "arrow-149",
+      "kind": "arrow",
+      "to": [
+        0.48,
+        0.3
+      ]
+    },
+    {
+      "at": [
+        0.05,
+        0.08
+      ],
+      "id": "note-150",
+      "kind": "text",
+      "text": "Release week"
+    },
+    {
+      "at": [
+        0.78,
+        0.7
+      ],
+      "id": "dip-151",
+      "kind": "pin",
+      "text": "1",
+      "tone": "info"
+    },
+    {
+      "at": [
+        0.5,
+        0.2
+      ],
+      "id": "peak-152",
+      "kind": "highlight",
+      "to": [
+        0.62,
+        0.9
+      ],
+      "tone": "warn"
+    },
+    {
+      "at": [
+        0.3,
+        0.15
+      ],
+      "id": "arrow-153",
+      "kind": "arrow",
+      "to": [
+        0.48,
+        0.3
+      ]
+    },
+    {
+      "at": [
+        0.05,
+        0.08
+      ],
+      "id": "note-154",
+      "kind": "text",
+      "text": "Release week"
+    },
+    {
+      "at": [
+        0.78,
+        0.7
+      ],
+      "id": "dip-155",
+      "kind": "pin",
+      "text": "1",
+      "tone": "info"
+    },
+    {
+      "at": [
+        0.5,
+        0.2
+      ],
+      "id": "peak-156",
+      "kind": "highlight",
+      "to": [
+        0.62,
+        0.9
+      ],
+      "tone": "warn"
+    },
+    {
+      "at": [
+        0.3,
+        0.15
+      ],
+      "id": "arrow-157",
+      "kind": "arrow",
+      "to": [
+        0.48,
+        0.3
+      ]
+    },
+    {
+      "at": [
+        0.05,
+        0.08
+      ],
+      "id": "note-158",
+      "kind": "text",
+      "text": "Release week"
+    },
+    {
+      "at": [
+        0.78,
+        0.7
+      ],
+      "id": "dip-159",
+      "kind": "pin",
+      "text": "1",
+      "tone": "info"
+    },
+    {
+      "at": [
+        0.5,
+        0.2
+      ],
+      "id": "peak-160",
+      "kind": "highlight",
+      "to": [
+        0.62,
+        0.9
+      ],
+      "tone": "warn"
+    },
+    {
+      "at": [
+        0.3,
+        0.15
+      ],
+      "id": "arrow-161",
+      "kind": "arrow",
+      "to": [
+        0.48,
+        0.3
+      ]
+    },
+    {
+      "at": [
+        0.05,
+        0.08
+      ],
+      "id": "note-162",
+      "kind": "text",
+      "text": "Release week"
+    },
+    {
+      "at": [
+        0.78,
+        0.7
+      ],
+      "id": "dip-163",
+      "kind": "pin",
+      "text": "1",
+      "tone": "info"
+    },
+    {
+      "at": [
+        0.5,
+        0.2
+      ],
+      "id": "peak-164",
+      "kind": "highlight",
+      "to": [
+        0.62,
+        0.9
+      ],
+      "tone": "warn"
+    },
+    {
+      "at": [
+        0.3,
+        0.15
+      ],
+      "id": "arrow-165",
+      "kind": "arrow",
+      "to": [
+        0.48,
+        0.3
+      ]
+    },
+    {
+      "at": [
+        0.05,
+        0.08
+      ],
+      "id": "note-166",
+      "kind": "text",
+      "text": "Release week"
+    },
+    {
+      "at": [
+        0.78,
+        0.7
+      ],
+      "id": "dip-167",
+      "kind": "pin",
+      "text": "1",
+      "tone": "info"
+    },
+    {
+      "at": [
+        0.5,
+        0.2
+      ],
+      "id": "peak-168",
+      "kind": "highlight",
+      "to": [
+        0.62,
+        0.9
+      ],
+      "tone": "warn"
+    },
+    {
+      "at": [
+        0.3,
+        0.15
+      ],
+      "id": "arrow-169",
+      "kind": "arrow",
+      "to": [
+        0.48,
+        0.3
+      ]
+    },
+    {
+      "at": [
+        0.05,
+        0.08
+      ],
+      "id": "note-170",
+      "kind": "text",
+      "text": "Release week"
+    },
+    {
+      "at": [
+        0.78,
+        0.7
+      ],
+      "id": "dip-171",
+      "kind": "pin",
+      "text": "1",
+      "tone": "info"
+    },
+    {
+      "at": [
+        0.5,
+        0.2
+      ],
+      "id": "peak-172",
+      "kind": "highlight",
+      "to": [
+        0.62,
+        0.9
+      ],
+      "tone": "warn"
+    },
+    {
+      "at": [
+        0.3,
+        0.15
+      ],
+      "id": "arrow-173",
+      "kind": "arrow",
+      "to": [
+        0.48,
+        0.3
+      ]
+    },
+    {
+      "at": [
+        0.05,
+        0.08
+      ],
+      "id": "note-174",
+      "kind": "text",
+      "text": "Release week"
+    },
+    {
+      "at": [
+        0.78,
+        0.7
+      ],
+      "id": "dip-175",
+      "kind": "pin",
+      "text": "1",
+      "tone": "info"
+    },
+    {
+      "at": [
+        0.5,
+        0.2
+      ],
+      "id": "peak-176",
+      "kind": "highlight",
+      "to": [
+        0.62,
+        0.9
+      ],
+      "tone": "warn"
+    },
+    {
+      "at": [
+        0.3,
+        0.15
+      ],
+      "id": "arrow-177",
+      "kind": "arrow",
+      "to": [
+        0.48,
+        0.3
+      ]
+    },
+    {
+      "at": [
+        0.05,
+        0.08
+      ],
+      "id": "note-178",
+      "kind": "text",
+      "text": "Release week"
+    },
+    {
+      "at": [
+        0.78,
+        0.7
+      ],
+      "id": "dip-179",
+      "kind": "pin",
+      "text": "1",
+      "tone": "info"
+    },
+    {
+      "at": [
+        0.5,
+        0.2
+      ],
+      "id": "peak-180",
+      "kind": "highlight",
+      "to": [
+        0.62,
+        0.9
+      ],
+      "tone": "warn"
+    },
+    {
+      "at": [
+        0.3,
+        0.15
+      ],
+      "id": "arrow-181",
+      "kind": "arrow",
+      "to": [
+        0.48,
+        0.3
+      ]
+    },
+    {
+      "at": [
+        0.05,
+        0.08
+      ],
+      "id": "note-182",
+      "kind": "text",
+      "text": "Release week"
+    },
+    {
+      "at": [
+        0.78,
+        0.7
+      ],
+      "id": "dip-183",
+      "kind": "pin",
+      "text": "1",
+      "tone": "info"
+    },
+    {
+      "at": [
+        0.5,
+        0.2
+      ],
+      "id": "peak-184",
+      "kind": "highlight",
+      "to": [
+        0.62,
+        0.9
+      ],
+      "tone": "warn"
+    },
+    {
+      "at": [
+        0.3,
+        0.15
+      ],
+      "id": "arrow-185",
+      "kind": "arrow",
+      "to": [
+        0.48,
+        0.3
+      ]
+    },
+    {
+      "at": [
+        0.05,
+        0.08
+      ],
+      "id": "note-186",
+      "kind": "text",
+      "text": "Release week"
+    },
+    {
+      "at": [
+        0.78,
+        0.7
+      ],
+      "id": "dip-187",
+      "kind": "pin",
+      "text": "1",
+      "tone": "info"
+    },
+    {
+      "at": [
+        0.5,
+        0.2
+      ],
+      "id": "peak-188",
+      "kind": "highlight",
+      "to": [
+        0.62,
+        0.9
+      ],
+      "tone": "warn"
+    },
+    {
+      "at": [
+        0.3,
+        0.15
+      ],
+      "id": "arrow-189",
+      "kind": "arrow",
+      "to": [
+        0.48,
+        0.3
+      ]
+    },
+    {
+      "at": [
+        0.05,
+        0.08
+      ],
+      "id": "note-190",
+      "kind": "text",
+      "text": "Release week"
+    },
+    {
+      "at": [
+        0.78,
+        0.7
+      ],
+      "id": "dip-191",
+      "kind": "pin",
+      "text": "1",
+      "tone": "info"
+    },
+    {
+      "at": [
+        0.5,
+        0.2
+      ],
+      "id": "peak-192",
+      "kind": "highlight",
+      "to": [
+        0.62,
+        0.9
+      ],
+      "tone": "warn"
+    },
+    {
+      "at": [
+        0.3,
+        0.15
+      ],
+      "id": "arrow-193",
+      "kind": "arrow",
+      "to": [
+        0.48,
+        0.3
+      ]
+    },
+    {
+      "at": [
+        0.05,
+        0.08
+      ],
+      "id": "note-194",
+      "kind": "text",
+      "text": "Release week"
+    },
+    {
+      "at": [
+        0.78,
+        0.7
+      ],
+      "id": "dip-195",
+      "kind": "pin",
+      "text": "1",
+      "tone": "info"
+    },
+    {
+      "at": [
+        0.5,
+        0.2
+      ],
+      "id": "peak-196",
+      "kind": "highlight",
+      "to": [
+        0.62,
+        0.9
+      ],
+      "tone": "warn"
+    },
+    {
+      "at": [
+        0.3,
+        0.15
+      ],
+      "id": "arrow-197",
+      "kind": "arrow",
+      "to": [
+        0.48,
+        0.3
+      ]
+    },
+    {
+      "at": [
+        0.05,
+        0.08
+      ],
+      "id": "note-198",
+      "kind": "text",
+      "text": "Release week"
+    },
+    {
+      "at": [
+        0.78,
+        0.7
+      ],
+      "id": "dip-199",
+      "kind": "pin",
+      "text": "1",
+      "tone": "info"
+    }
+  ],
+  "src": "/media/chart.png",
+  "type": "media",
+  "width": 640
+}
