@@ -240,7 +240,7 @@ var lit = (_field, held2) => Array.isArray(held2) ? held2.length || null : plain
 function start(screen2) {
   const s = {};
   const seed = (b) => {
-    for (const f of named(b)) s[String(f["name"])] = lit(f, f["value"] ?? f["files"]);
+    for (const f of named(b)) s[String(f["name"])] = lit(f, f["value"] ?? f["files"] ?? (rec(f["file"]) ? [f["file"]] : null));
     if (b["type"] === "chips" && typeof b["name"] === "string") s[b["name"]] = plain(Array.isArray(b["selected"]) ? b["selected"][0] : null);
     kids(b).forEach(seed);
   };
@@ -2778,6 +2778,19 @@ var defs = {
         "type": "object"
       },
       {
+        "$ref": "#/$defs/ScanField",
+        "properties": {
+          "type": {
+            "const": "scan",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      {
         "$ref": "#/$defs/OtherField"
       }
     ]
@@ -4883,6 +4896,94 @@ var defs = {
       "action",
       "command",
       "sha"
+    ],
+    "type": "object"
+  },
+  "ScanField": {
+    "additionalProperties": true,
+    "properties": {
+      "checks": {
+        "items": {
+          "$ref": "#/$defs/Check"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "doc": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "enabled": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "error": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "file": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/FileRef"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "label": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "max": {
+        "minimum": 0,
+        "type": [
+          "integer",
+          "null"
+        ]
+      },
+      "name": {
+        "type": "string"
+      },
+      "open": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "show": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "was": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "required": [
+      "name"
     ],
     "type": "object"
   },
@@ -7166,6 +7267,17 @@ function send(r, file, about, again) {
     () => !stop.signal.aborted && (r.state = "failed", again())
   );
 }
+var scanner = () => import(new URL("./scan.js", import.meta.url).href);
+var scanHeld = (x) => x.file ? held({ name: x.name, files: [x.file] }) : [];
+var scanned = (x, pdf, pages2, first) => {
+  const name = `${(x.label ?? x.name).toLowerCase().replace(/[^\p{L}\p{N}]+/gu, "-").replace(/^-|-$/g, "") || "scan"}.pdf`;
+  return { name, size: pdf.size, mime: "application/pdf", state: "uploading", part: 0, blob: pdf, pages: pages2, src: first };
+};
+function scanLine(r, w) {
+  const head = r.state === "uploading" ? fill2(w("uploading"), { p: Math.round(r.part * 100) }) : r.state === "failed" ? w("failed") : "";
+  return [head, r.pages ? fill2(w(r.pages > 1 ? "scannedN" : "scanned1"), { n: r.pages, kb: Math.max(1, Math.round(r.size / 1024)) }) : ""].filter(Boolean).join(" \xB7 ");
+}
+var scanHint = (x, w, on) => on ? fill2(w("scanHint"), { max: x.max ?? 20 }) : w("scanOff");
 export {
   accepts,
   actionOf,
@@ -7218,6 +7330,11 @@ export {
   roles,
   row,
   run,
+  scanHeld,
+  scanHint,
+  scanLine,
+  scanned,
+  scanner,
   scene,
   screen,
   secret,

@@ -12,6 +12,7 @@ A `form`'s `fields` (and a `lines` block's `columns`) are a union tagged by `typ
 | `picker` | `PickerField` | `value`, `options` | `combobox` |
 | `secret` | `SecretField` | `placeholder`, `set` | `textbox` |
 | `upload` | `UploadField` | `accept` (`image`, `pdf`, `sheet`), `capture`, `many`, `mb`, `files` | `group` |
+| `scan` | `ScanField` | `max` (pages, default 20), `file` (the PDF it holds) | `group` |
 
 Every type also has `name` (required), `label`, `doc`, `was`, `error`, `open`, `show`, `enabled` and `checks`.
 Any other `type` is kept whole and drawn as a one-line text input; the drawn tree records it as `plain`.
@@ -45,6 +46,19 @@ file is uploading or failed the form's submit is off and says why. With no handl
 static page writes the browser's own file input, and the page's form posts it as `multipart/form-data`. The desktop
 draws an upload as a text input until its own view lands.
 
+## Scan
+
+A scan field makes one A4 PDF from paper pages and sends it the same way: through the file handler, with
+`application/pdf` and a name from its label (`delivery-note.pdf`); the action carries a list of its one id. On the web
+[scan pages] loads `scan.js`, the scanner, from beside the bundle the first time (`blocks::web::SCAN` for a host with
+no Node). It opens the back camera, or the picker when there is none or it is blocked; each page's corners are found
+and can be dragged or moved with the arrow keys, then the pages are reviewed, reordered, rotated or retaken. The
+image work (corners on a copy 640 px long, the warp to 1240 × 1754, the PDF) runs in the scanner's own worker; the
+browser's `toBlob` encodes each JPEG. One page, shutter to corrected image, has a 400 ms budget (`web/test/scan.test.ts`). SwiftUI uses VisionKit's
+document camera on an iPhone or iPad that has one, else the photo picker with Vision's rectangle and Core Image's
+perspective correction; PDFKit writes the PDF. With JS off the static page writes the browser's own image input. A
+held `file` has no pages to edit, only [remove] and [scan again].
+
 ## Locale and words
 
 `screen` and `sheet` take `locale: { lang, era, today }`. A field draws its own words (the note's "was", a secret's
@@ -54,7 +68,7 @@ draws an upload as a text input until its own view lands.
 ## Local state
 
 `behave::lit(field, held)` (`lit` in TS, `Behaviour.lit` in Swift) is what a field holding a value puts in local
-state: a list (an upload's ids) puts its length, an empty one null, so `is filled` means "required" for every type.
+state: a list (an upload's ids, a scan's held `file` as a list of one) puts its length, an empty one null, so `is filled` means "required" for every type.
 `fixtures/behave/fields.json` holds its cases, run in all three languages.
 
 ## Fixtures

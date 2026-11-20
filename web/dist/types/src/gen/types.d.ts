@@ -339,7 +339,9 @@ export type Field = ({
     type: "secret";
 } & SecretField) | ({
     type: "upload";
-} & UploadField) | (OtherField & {
+} & UploadField) | ({
+    type: "scan";
+} & ScanField) | (OtherField & {
     [key: string]: unknown;
 });
 export type FieldDrawn = "native" | "plain" | "hidden";
@@ -767,6 +769,19 @@ export type Run = {
     show?: Expr | null;
     touches?: string | null;
     until?: string | null;
+};
+export type ScanField = {
+    checks?: Check[] | null;
+    doc?: string | null;
+    enabled?: Expr | null;
+    error?: string | null;
+    file?: FileRef | null;
+    label?: string | null;
+    max?: number | null;
+    name: string;
+    open?: boolean | null;
+    show?: Expr | null;
+    was?: string | null;
 };
 export type Scene = {
     id?: string | null;

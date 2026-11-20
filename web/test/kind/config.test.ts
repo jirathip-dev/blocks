@@ -31,6 +31,10 @@ test("each fixtures/fields form draws every field with its type's view, its word
     const r = rows(render(form, ctx({ locale: screen.locale })));
     deepStrictEqual(r.length, form.fields.length, f);
     for (const [i, x] of form.fields.entries()) {
+      if (x.type === "scan") {
+        deepStrictEqual([part(r[i], "fu").dataset.field, ctl(r[i])], [x.name, null], `${f} ${x.name}: the scanner holds the file input`);
+        continue;
+      }
       const name = x.type === "upload" ? part(r[i], "fu").dataset.field : ctl(r[i]).name;
       deepStrictEqual([name, ctl(r[i]).type, ctl(r[i]).getAttribute("role")], [x.name, ...want[x.type]], `${f} ${x.name}`);
     }

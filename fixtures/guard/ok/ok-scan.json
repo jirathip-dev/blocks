@@ -1,0 +1,41 @@
+{
+  "type": "screen",
+  "id": "delivery",
+  "title": "Delivery",
+  "blocks": [
+    {
+      "type": "form",
+      "id": "proof",
+      "submit": {
+        "label": "Send",
+        "action": "deliver"
+      },
+      "fields": [
+        {
+          "type": "text",
+          "name": "who",
+          "label": "Signed for by"
+        },
+        {
+          "type": "scan",
+          "name": "note",
+          "label": "Delivery note",
+          "max": 5,
+          "checks": [
+            {
+              "ok": {
+                "is": {
+                  "value": {
+                    "get": "note"
+                  },
+                  "pattern": "filled"
+                }
+              },
+              "say": "Scan the signed note"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

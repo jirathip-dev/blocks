@@ -5,8 +5,8 @@ import { type FieldView, word } from "./_view.ts";
 
 const named = (b: HTMLElement, name: string) => (b.setAttribute("aria-label", name), b);
 
-function item(x: UploadField, r: FileRow, w: (k: string) => string, drop: (r: FileRow) => void, again: (r: FileRow) => void): HTMLElement {
-  const line = status(x, r, w);
+/// One file's row: its picture, name, progress and `line`, then retry, `more` and remove.
+export function item(line: string, r: FileRow, w: (k: string) => string, drop: (r: FileRow) => void, again: (r: FileRow) => void, more: HTMLElement[] = []): HTMLElement {
   const head = r.src && r.state !== "refused" ? Object.assign(el("img", "fut"), { src: r.src, alt: "" }) : h("span", "fux", r.state === "refused" ? "!" : (r.name.split(".").pop() ?? "").slice(0, 4));
   head.setAttribute("aria-hidden", "true");
   const m = h("span", "fum", h("span", "fun", r.name));
@@ -19,7 +19,7 @@ function item(x: UploadField, r: FileRow, w: (k: string) => string, drop: (r: Fi
   }
   m.append(h("span", "fus", line));
   const b = (k: string, f: () => void, cls = "") => Object.assign(named(btn(w(k), cls), `${w(k)} ${r.name}`), { onclick: f });
-  const acts = r.state === "failed" ? [b("retry", () => again(r)), b("remove", () => drop(r), "bad")] : [b(r.state === "refused" ? "dismiss" : "remove", () => drop(r))];
+  const acts = r.state === "failed" ? [b("retry", () => again(r)), ...more, b("remove", () => drop(r), "bad")] : [...more, b(r.state === "refused" ? "dismiss" : "remove", () => drop(r))];
   const li = h("li", `fui ${r.state}`, head, m, h("span", "fua", ...acts));
   li.setAttribute("aria-label", `${r.name}, ${line}`);
   return li;
@@ -74,7 +74,7 @@ export const upload: FieldView<UploadField> = {
       const tip = hint(x, w, !!c.file);
       if (tip) bar.append(h("span", "fuh", tip));
       bar.append(input);
-      const list = rows.length ? [h("ul", "fuf", ...rows.map((r) => item(x, r, w, drop, go)))] : [];
+      const list = rows.length ? [h("ul", "fuf", ...rows.map((r) => item(status(x, r, w), r, w, drop, go)))] : [];
       box.replaceChildren(...(x.error ? [h("span", "fe", x.error)] : []), ...list, bar);
     };
     paint();

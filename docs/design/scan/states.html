@@ -1,0 +1,26 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="../neutral-default/tokens.css"><link rel="stylesheet" href="../../../web/dist/blocks.css"><link rel="stylesheet" href="../upload/upload.css"><link rel="stylesheet" href="scan.css"><link rel="stylesheet" href="page.css">
+<style>main{max-width:1200px}</style>
+<script src="scan.js"></script><title>scan: every state</title></head>
+<body><main class="scr">
+<h2>The scanner <small>· at 1440 each sits in a half-width card, so it draws its phone layout, the same as on a phone</small></h2>
+<div class="frames">
+<section><p class="cap"><b>Empty, looking</b> · first page, no edges yet (dashed)</p><div data-s='{"step":"capture","label":"Delivery note","cam":"note","found":"seek","quad":[[24,32],[276,32],[276,368],[24,368]],"pages":[]}'></div></section>
+<section><p class="cap"><b>No edge found</b> · the shutter still works; the corners start at the frame's inset</p><div data-s='{"step":"capture","label":"Delivery note","cam":"slip","found":false,"pages":["note","form"]}'></div></section>
+<section><p class="cap"><b>No camera</b> · a desktop with none, or no <code>getUserMedia</code>: pick photos instead</p><div data-s='{"step":"nocam","label":"Delivery note","pages":[]}'></div></section>
+<section><p class="cap"><b>Camera blocked</b> · the site was refused the camera</p><div data-s='{"step":"nocam","denied":true,"label":"Delivery note","pages":[]}'></div></section>
+<section><p class="cap"><b>Page limit</b> · <code>max</code> 3 here: the shutter and [pick images] are off</p><div data-s='{"step":"capture","label":"Delivery note","cam":"slip","pages":["note","form","slip"],"full":true}'></div></section>
+<section><p class="cap"><b>Making the PDF</b> · after [done]: page edits are off until it is made</p><div data-s='{"step":"pdf","label":"Delivery note","pages":["note","form","slip"],"sel":0,"pdf":2,"full":true}'></div></section>
+<section lang="th"><p class="cap"><b>Thai</b> · capture</p><div data-s='{"step":"capture","lang":"th","label":"ใบส่งของ","cam":"form","pages":["note"]}'></div></section>
+<section lang="th"><p class="cap"><b>Thai</b> · corners</p><div data-s='{"step":"adjust","lang":"th","label":"ใบส่งของ","cam":"note","pages":[],"drag":3,"quad":[[64,58],[252,84],[274,350],[44,322]]}'></div></section>
+</div>
+<h2>The field in its form <small>· before, failed, held from an earlier visit, the app's error, off, Thai</small></h2>
+<div class="cases">
+<div><p class="cap"><b>Before the first scan</b></p><div data-f='{"submit":"record delivery","fields":[{"type":"scan","label":"Delivery note","doc":"every page, signed"}]}'></div></div>
+<div><p class="cap"><b>Upload failed</b> · the PDF is kept; [retry] sends it again</p><div data-f='{"submit":"record delivery","fields":[{"type":"scan","label":"Delivery note","file":{"name":"delivery-note.pdf","first":"note","n":3,"kb":612,"state":"failed"}}]}'></div></div>
+<div><p class="cap"><b>Held from an earlier visit</b> · only the file id is known, so no [edit pages]</p><div data-f='{"submit":"record delivery","fields":[{"type":"scan","label":"Delivery note","file":{"name":"delivery-note.pdf","first":"note","n":2,"kb":431,"state":"done","held":false}}]}'></div></div>
+<div><p class="cap"><b>The app&rsquo;s error</b></p><div data-f='{"submit":"record delivery","fields":[{"type":"scan","label":"Delivery note","error":"the note must show the customer’s signature","file":{"name":"delivery-note.pdf","first":"form","n":1,"kb":204,"state":"done"}}]}'></div></div>
+<div><p class="cap"><b>Off</b> · no file handler</p><div data-f='{"submit":"record delivery","fields":[{"type":"scan","label":"Delivery note","off":true}]}'></div></div>
+<div lang="th"><p class="cap"><b>Thai</b></p><div data-f='{"lang":"th","submit":"บันทึกการส่ง","fields":[{"type":"scan","label":"ใบส่งของ","file":{"name":"ใบส่งของ.pdf","first":"note","n":3,"kb":612,"state":"uploading","p":72}}]}'></div></div>
+</div>
+</main><script>draw()</script></body></html>

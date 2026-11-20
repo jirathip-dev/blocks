@@ -1,4 +1,4 @@
-import type { Accept, FileRef, UploadField } from "../../gen/types.ts";
+import type { Accept, FileRef, ScanField, UploadField } from "../../gen/types.ts";
 
 /// What the renderer tells the app about one file. `progress` takes 0 to 1; `signal` aborts when the file is removed.
 export type Picked = { screen: string; block?: string | undefined; field: string; name: string; mime: string; size: number; progress: (part: number) => void; signal: AbortSignal };
@@ -76,3 +76,21 @@ export function send(r: FileRow, file: OnFile, about: Omit<Picked, "name" | "mim
     () => !stop.signal.aborted && ((r.state = "failed"), again()),
   );
 }
+/// The scanner, loaded the first time a scan field opens it from `scan.js` beside this bundle.
+export const scanner = (): Promise<typeof import("../../scan/index.ts")> => import(new URL("./scan.js", import.meta.url).href);
+/// A scan field's PDF row: a file row with its page count and the first page's picture.
+export type ScanRow = FileRow & { pages?: number };
+/// The rows a scan field starts with: the PDF it holds, done.
+export const scanHeld = (x: ScanField): ScanRow[] => (x.file ? held({ name: x.name, files: [x.file] }) : []);
+/// The row of a PDF the scanner just made, named for the field's label, ready to send.
+export const scanned = (x: ScanField, pdf: Blob, pages: number, first?: string): ScanRow => {
+  const name = `${(x.label ?? x.name).toLowerCase().replace(/[^\p{L}\p{N}]+/gu, "-").replace(/^-|-$/g, "") || "scan"}.pdf`;
+  return { name, size: pdf.size, mime: "application/pdf", state: "uploading", part: 0, blob: pdf, pages, src: first };
+};
+/// A scan row's status line: uploading or failed, then its pages and size once known.
+export function scanLine(r: ScanRow, w: Word): string {
+  const head = r.state === "uploading" ? fill(w("uploading"), { p: Math.round(r.part * 100) }) : r.state === "failed" ? w("failed") : "";
+  return [head, r.pages ? fill(w(r.pages > 1 ? "scannedN" : "scanned1"), { n: r.pages, kb: Math.max(1, Math.round(r.size / 1024)) }) : ""].filter(Boolean).join(" · ");
+}
+/// The hint beside the scan button: one A4 PDF of up to `max` pages, or that scanning is off.
+export const scanHint = (x: ScanField, w: Word, on: boolean): string => (on ? fill(w("scanHint"), { max: x.max ?? 20 }) : w("scanOff"));

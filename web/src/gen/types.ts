@@ -84,7 +84,7 @@ export type Expr = { get: string } | { not: Expr } | { all: Expr[] } | { any: Ex
 
 export type Fallback = { subtitle?: string | null; tap?: Tap | null; title: string };
 
-export type Field = ({ type: "text" } & TextField) | ({ type: "toggle" } & ToggleField) | ({ type: "picker" } & PickerField) | ({ type: "secret" } & SecretField) | ({ type: "upload" } & UploadField) | (OtherField & { [key: string]: unknown });
+export type Field = ({ type: "text" } & TextField) | ({ type: "toggle" } & ToggleField) | ({ type: "picker" } & PickerField) | ({ type: "secret" } & SecretField) | ({ type: "upload" } & UploadField) | ({ type: "scan" } & ScanField) | (OtherField & { [key: string]: unknown });
 
 export type FieldDrawn = "native" | "plain" | "hidden";
 
@@ -217,6 +217,8 @@ export type RowError = { message: string; name?: string | null; row?: string | n
 export type RowStyle = "link" | "destructive";
 
 export type Run = { action: string; command: string; dir?: string | null; id?: string | null; sha: string; show?: Expr | null; touches?: string | null; until?: string | null };
+
+export type ScanField = { checks?: Check[] | null; doc?: string | null; enabled?: Expr | null; error?: string | null; file?: FileRef | null; label?: string | null; max?: number | null; name: string; open?: boolean | null; show?: Expr | null; was?: string | null };
 
 export type Scene = { id?: string | null; label?: string | null; lanes?: Lane[] | null; load?: Load | null; repos?: SceneRepo[] | null; show?: Expr | null; weather?: Weather | null };
 
