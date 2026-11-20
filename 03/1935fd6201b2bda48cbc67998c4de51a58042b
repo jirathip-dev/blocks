@@ -1,0 +1,13 @@
+Decided: one `Rules` impl on `table` per language: a grab is a cell `{row, column}` or a row id, a change is a `CellEdit` or the new order, held equal by fixtures/gesture/table.json.
+Because: "Built on the approved gesture-to-action ADR from #136, with no new gesture rules outside it."
+Decided: a typed cell runs the same machine as a drag through a new `edited` driver (web) and `Typed` view (SwiftUI): focus presses, typing moves, Enter, Tab or leaving releases, Escape cancels.
+Because: docs/architecture/gestures/boundaries.md:126
+Decided: the grid sample is a second `table` sample, fixtures/blocks/table-grid.json with its own stress files, shown on the gallery beside the invoices.
+Because: q2374
+Decided: the grid's new sizes come from tokens of the same value: CSS `--ring`, `--mark` and `--sep` in the root `:root`, Swift `Scale`; the token baseline is not touched.
+Because: web/src/css/base/root.css:1
+Decided: the shot driver sends only a `{row, column}` grab to the typed-cell path, so the timeline's `{row}` draw grab keeps its own.
+Because: web/shot/gesture.ts:7
+Rejected: adding the grid's raw sizes to ci/tokens/baseline.txt — it may only shrink.
+Check: the site pages test keeps staging's count; a stale `schemes.html` in a reused build folder had made it look one short.
+Owner: tables can now be edited like a sheet: type into a cell, drag a row, see totals follow, on web and Apple.
