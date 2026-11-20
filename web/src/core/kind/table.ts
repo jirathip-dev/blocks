@@ -1,7 +1,8 @@
-import type { Cell, Column, Table, TableRow } from "../../gen/types.ts";
+import type { Cell, Column, SortDir, Table, TableRow } from "../../gen/types.ts";
 import { evaluate } from "../eval.ts";
 import type { Nudge, Rules } from "../gesture.ts";
-import { number } from "../table.ts";
+import { at, number } from "../table.ts";
+import { value } from "../text.ts";
 
 /// What a table's gesture grabs: one cell to type into, or a row id by its handle.
 export type GridGrab = { row: string; column: string } | string;
@@ -181,3 +182,51 @@ export const grid: Rules<Table, GridGrab, string | number, GridChange> = {
     return `${c?.label ?? ch.column}, ${r ? named(b, r) : ch.row}, ${c ? shown(c, ch.value) : ""}`;
   },
 };
+
+const numeric = (c: Column) => c.kind === "number" || c.kind === "money" || c.kind === "bar";
+/// Whether a column's cells sit at the end: its `align`, else a number's do.
+export const atEnd = (c: Column) => (c.align ?? (numeric(c) ? "end" : "start")) === "end";
+/// A cell as a view draws it: a tag's own text, else `shown`.
+export const cellText = (c: Column, v: Cell | undefined, thai: boolean) => (typeof v === "object" ? value(v.text) : shown(c, v, thai));
+
+const sortKey = (c: Column, v: Cell) => (c.kind === "date" && typeof v === "string" ? v : cellText(c, v, false).toLowerCase());
+const cmp = (c: Column, a: Cell, b: Cell) => (numeric(c) && typeof a === "number" && typeof b === "number" ? a - b : sortKey(c, a) < sortKey(c, b) ? -1 : sortKey(c, a) > sortKey(c, b) ? 1 : 0);
+
+/// The rows sorted by `c` within each group, blanks last both ways; as sent with no column.
+export function sorted(rows: TableRow[], c?: Column, dir?: SortDir): TableRow[] {
+  if (!c) return rows;
+  const by = (r: TableRow, s: TableRow) => {
+    const a = at(r, c.id), b = at(s, c.id);
+    if (a === undefined || b === undefined) return Number(a === undefined) - Number(b === undefined);
+    return dir === "desc" ? cmp(c, b, a) : cmp(c, a, b);
+  };
+  const out: TableRow[] = [];
+  let run: TableRow[] = [];
+  for (const r of rows) {
+    if (!r.group) run.push(r);
+    else (out.push(...run.sort(by), r), (run = []));
+  }
+  return [...out, ...run.sort(by)];
+}
+
+/// The item rows under the group row at `i`, up to the next group row.
+export const itemsOf = (rows: TableRow[], i: number) => {
+  const n = rows.slice(i + 1).findIndex((r) => r.group);
+  return rows.slice(i + 1, n < 0 ? undefined : i + 1 + n);
+};
+
+/// Each column's part of a phone row: its own `phone`, else the first text the title, the first tone the tag, the totalled number the value.
+export function roles(cols: Column[]): string[] {
+  const r: (string | undefined)[] = cols.map((c) => c.phone ?? undefined);
+  const claim = (part: string, ok: (c: Column) => boolean, pick: (free: number[]) => number | undefined) => {
+    const i = r.includes(part) ? undefined : pick(cols.flatMap((c, i) => (r[i] === undefined && ok(c) ? [i] : [])));
+    if (i !== undefined) r[i] = part;
+  };
+  claim("title", (c) => c.kind === "text", (f) => f[0]);
+  claim("tag", (c) => c.kind === "tone", (f) => f[0]);
+  claim("value", (c) => c.kind === "number" || c.kind === "money", (f) => f.filter((i) => cols[i]?.total).pop() ?? f.pop());
+  return r.map((x) => x ?? "meta");
+}
+
+/// What a column's cells are to a view: typed into, worked out, the app's numbers, or none of those.
+export const cellRole = (b: Table, x: Column) => (b.edit && editable(b, x) ? "ed" : b.calc?.[x.id] != null ? "fx" : x.kind === "number" || x.kind === "money" ? "app" : "");
