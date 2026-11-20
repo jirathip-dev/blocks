@@ -1,0 +1,47 @@
+{
+  "screen": "fields/upload.json",
+  "cases": [
+    {
+      "name": "taken",
+      "steps": [
+        { "file": { "field": "photos", "name": "big.jpg", "size": 20971520, "mime": "image/jpeg", "handler": "answers" } },
+        { "file": { "field": "photos", "name": "note.pdf", "size": 900, "mime": "application/pdf", "handler": "answers" } },
+        { "file": { "field": "photos", "name": "door.jpg", "size": 3000, "mime": "image/jpeg", "handler": "answers" } },
+        { "tap": { "id": "upload" } }
+      ],
+      "sent": [
+        {
+          "screen": "fields-upload",
+          "action": "send",
+          "block": "upload",
+          "values": {
+            "photos-empty": [],
+            "photos": ["f-1", "file-1"],
+            "photos-error": ["f-1"],
+            "photos-was": ["f-1"],
+            "photos-doc": ["f-1"],
+            "photos-label": ["f-1"]
+          }
+        }
+      ],
+      "dropped": []
+    },
+    {
+      "name": "busy",
+      "steps": [
+        { "file": { "field": "photos", "name": "a.jpg", "size": 2000, "mime": "image/jpeg", "handler": "waits" } },
+        { "tap": { "id": "upload" } },
+        { "file": { "field": "photos", "name": "b.jpg", "size": 2000, "mime": "image/jpeg", "handler": "fails" } },
+        { "tap": { "id": "upload" } }
+      ],
+      "sent": [],
+      "dropped": ["tap upload", "tap upload"]
+    },
+    {
+      "name": "gone",
+      "steps": [{ "file": { "field": "nowhere", "name": "a.jpg", "size": 10, "mime": "image/jpeg", "handler": "answers" } }],
+      "sent": [],
+      "dropped": ["file nowhere"]
+    }
+  ]
+}

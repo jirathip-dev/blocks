@@ -69,6 +69,10 @@
         }
       ],
       "id": "picker",
+      "submit": {
+        "action": "send",
+        "label": "send"
+      },
       "type": "form"
     }
   ],

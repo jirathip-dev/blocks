@@ -2,6 +2,7 @@ import { hooks, roles } from "../gen/hooks.ts";
 import type { Act, Block, Fallback, Kind, Label, Locale, Tap, Toned } from "../gen/types.ts";
 import { linkable } from "../core/check.ts";
 import { actionOf } from "../core/eval.ts";
+import type { OnFile } from "../core/field/files.ts";
 import { value } from "../core/text.ts";
 import { type Blk, blks, isBlk, named } from "../core/tree.ts";
 import { island, isTag } from "../island.ts";
@@ -41,6 +42,7 @@ import { toast } from "./toast.ts";
 import { web } from "./web.ts";
 
 export { type Blk, blks, isBlk, named };
+export type { OnFile, Picked } from "../core/field/files.ts";
 export type Post = { action: unknown; block?: unknown; values?: unknown; confirm?: unknown };
 export type Store = { get(key: string): string | null; put(key: string, value: string | null): void };
 export type Renderer = (b: Blk, c: Ctx) => HTMLElement | null;
@@ -56,6 +58,7 @@ export type Ctx = {
   drop?: (what: string) => void;
   held?: Map<string, Held>;
   view?: Map<string, Record<string, unknown>>;
+  file?: OnFile;
 };
 
 export const obj = (v: unknown): Blk => (isBlk(v) ? v : {});

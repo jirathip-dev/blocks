@@ -4,17 +4,34 @@ mod raster;
 mod stopwatch;
 
 use blocks::tree::{expect, Node, Report, Step, Timings};
-use blocks::{apply, Block, Built, Op};
-use blocks_desktop::{kinds, Event, Kit, Stage};
+use blocks::{apply, Block, Built, Fields, Op};
+use blocks_desktop::{kinds, Event, Island, Kit, Out, Stage};
 use egui::emath::Numeric;
 use egui::epaint::text::{FontData, FontInsert, FontPriority, InsertFontFamily};
-use egui::{Context, FontFamily, Key, Modifiers, PointerButton, Pos2, RawInput, Rect, Vec2, ViewportId};
+use egui::{Button, Context, FontFamily, Key, Modifiers, PointerButton, Pos2, RawInput, Rect, Vec2, ViewportId};
 use serde::Deserialize;
 
 use crate::raster::{Canvas, Textures};
 use crate::stopwatch::Stopwatch;
 
 const PASSES: usize = 8;
+
+/// The name the harness's echo island is registered under.
+pub const ECHO: &str = "x-echo";
+
+/// The harness's island: its props as text in its box; a tap sends the event its `send` prop names, with its props.
+pub struct Echo;
+
+impl Island for Echo {
+    fn show(&mut self, ui: &mut egui::Ui, props: &Fields, out: &mut Out<'_>) {
+        let text = serde_json::to_string(props).unwrap_or_default();
+        let tall = ui.available_height().max(ui.spacing().interact_size.y);
+        if ui.add_sized([ui.available_width(), tall], Button::new(text)).clicked() {
+            let name = props.get("send").and_then(serde_json::Value::as_str);
+            out.send(name.unwrap_or(ECHO), props.clone());
+        }
+    }
+}
 const FRAME_MS: f64 = 1000.0 / 60.0;
 
 /// The block and action ids a shot drew, in order: a `fixtures/ids` file.
@@ -86,13 +103,13 @@ struct Live {
 }
 
 impl Desk {
-    /// A desk for `screen` at 390x844 with the default kit.
+    /// A desk for `screen` at 390x844 with the default kit and the echo island.
     pub fn new(screen: Block) -> Self {
         Self {
             screen,
             width: 390,
             height: 844,
-            kit: Kit::default(),
+            kit: Kit::default().island(ECHO, || Box::new(Echo)),
             font: None,
         }
     }
@@ -251,6 +268,7 @@ impl Live {
             Step::Scroll(on) => format!("scroll {}", on.id),
             Step::Gesture(g) => format!("gesture {}", g.id),
             Step::Refuse(r) => format!("refuse {}", r.toast),
+            Step::File(f) => format!("file {}", f.field),
         };
         self.run.report.dropped.push(dropped);
     }

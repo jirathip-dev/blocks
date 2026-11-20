@@ -147,14 +147,14 @@ const acts = (b: Rec): Rec[] => {
   return [...all, ...all.flatMap((a) => list(a.menu))];
 };
 const plain = (v: unknown): Lit => (v === null || typeof v === "boolean" || typeof v === "number" || typeof v === "string" ? v : null);
-/// What `field` holding `held` puts in local state: null, a switch, a number or a string.
-export const lit = (_field: unknown, held: unknown): Lit => plain(held);
+/// What `field` holding `held` puts in local state: null, a switch, a number or a string; a list puts its length, an empty one null.
+export const lit = (_field: unknown, held: unknown): Lit => (Array.isArray(held) ? held.length || null : plain(held));
 
 /// The screen's start state: its `state`, each field's `value` and each chips' first `selected`.
 export function start(screen: unknown): State {
   const s: State = {};
   const seed = (b: Rec) => {
-    for (const f of named(b)) s[String(f.name)] = lit(f, f.value);
+    for (const f of named(b)) s[String(f.name)] = lit(f, f.value ?? f.files);
     if (b.type === "chips" && typeof b.name === "string") s[b.name] = plain(Array.isArray(b.selected) ? b.selected[0] : null);
     kids(b).forEach(seed);
   };

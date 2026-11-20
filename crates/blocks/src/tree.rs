@@ -162,6 +162,27 @@ pub struct Refusal {
     pub toast: String,
 }
 
+/// What the harness's file handler does with a picked file: answers with an id, rejects it, or never answers.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
+#[serde(rename_all = "lowercase")]
+pub enum Handler {
+    Answers,
+    Fails,
+    Waits,
+}
+
+/// A file picked in an upload field: its name, its size in bytes, its media type and what the handler does.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[cfg_attr(feature = "schema", derive(schemars::JsonSchema), schemars(rename = "StepFile"))]
+pub struct Picking {
+    pub field: String,
+    pub name: String,
+    pub size: u64,
+    pub mime: String,
+    pub handler: Handler,
+}
+
 /// One scripted input: by block id, a stream frame arriving, an action answered, or a shot.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
@@ -175,6 +196,7 @@ pub enum Step {
     Shot(Shot),
     Gesture(Gesturing),
     Refuse(Refusal),
+    File(Picking),
 }
 
 /// How long the first paint and each step took; the frame fields only where a harness draws real frames.

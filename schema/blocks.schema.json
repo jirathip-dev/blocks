@@ -1,5 +1,20 @@
 {
   "$defs": {
+    "Accept": {
+      "anyOf": [
+        {
+          "enum": [
+            "image",
+            "pdf",
+            "sheet"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "string"
+        }
+      ]
+    },
     "Accessory": {
       "anyOf": [
         {
@@ -228,6 +243,46 @@
       },
       "required": [
         "type"
+      ],
+      "type": "object"
+    },
+    "Band": {
+      "description": "A band of a scene's repo: a header over its rows, or over blocks.",
+      "properties": {
+        "blocks": {
+          "items": {
+            "$ref": "#/$defs/Block"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "header": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "id": {
+          "type": "string"
+        },
+        "rows": {
+          "items": {
+            "$ref": "#/$defs/SceneRow"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "type": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "id"
       ],
       "type": "object"
     },
@@ -940,9 +995,13 @@
           ]
         },
         "subtitle": {
-          "type": [
-            "string",
-            "null"
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Toned"
+            },
+            {
+              "type": "null"
+            }
           ]
         },
         "tap": {
@@ -1681,7 +1740,7 @@
     },
     "Diagram": {
       "additionalProperties": true,
-      "description": "A diagram from its source, with counts and nodes by name.",
+      "description": "A diagram from its source, with counts and its nodes.",
       "properties": {
         "counts": {
           "additionalProperties": {
@@ -1699,12 +1758,13 @@
           ]
         },
         "nodes": {
-          "additionalProperties": {
-            "$ref": "#/$defs/Node"
-          },
-          "type": [
-            "object",
-            "null"
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Nodes"
+            },
+            {
+              "type": "null"
+            }
           ]
         },
         "selected": {
@@ -2182,6 +2242,19 @@
           "type": "object"
         },
         {
+          "$ref": "#/$defs/UploadField",
+          "properties": {
+            "type": {
+              "const": "upload",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
           "$ref": "#/$defs/OtherField"
         }
       ],
@@ -2241,6 +2314,12 @@
     "Figure": {
       "description": "A row's figure: its state, tool, icon or avatar.",
       "properties": {
+        "act": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "avatar": {
           "type": [
             "string",
@@ -2282,6 +2361,30 @@
           ]
         }
       },
+      "type": "object"
+    },
+    "FileRef": {
+      "description": "A file the app holds, as its file handler answered it; `src` is a picture of it the app serves.",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "src": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "id"
+      ],
       "type": "object"
     },
     "Finding": {
@@ -2409,6 +2512,12 @@
             "null"
           ]
         },
+        "more": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "show": {
           "anyOf": [
             {
@@ -2505,6 +2614,15 @@
         "name"
       ],
       "type": "object"
+    },
+    "Handler": {
+      "description": "What the harness's file handler does with a picked file: answers with an id, rejects it, or never answers.",
+      "enum": [
+        "answers",
+        "fails",
+        "waits"
+      ],
+      "type": "string"
     },
     "Have": {
       "description": "A key a client opens, with the rev of its copy when that copy came from the same epoch.",
@@ -3160,6 +3278,12 @@
             "null"
           ]
         },
+        "more": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "reorder": {
           "anyOf": [
             {
@@ -3208,6 +3332,21 @@
         }
       ],
       "description": "A plain value, written bare: null, a switch, a number or a string."
+    },
+    "Load": {
+      "anyOf": [
+        {
+          "enum": [
+            "calm",
+            "busy",
+            "held"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "string"
+        }
+      ]
     },
     "Locale": {
       "description": "A screen's language, era and today: the words a field draws, the years it shows, the day it marks.",
@@ -3542,6 +3681,12 @@
             "null"
           ]
         },
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "label": {
           "type": [
             "string",
@@ -3582,6 +3727,23 @@
         }
       },
       "type": "object"
+    },
+    "Nodes": {
+      "anyOf": [
+        {
+          "items": {
+            "$ref": "#/$defs/Node"
+          },
+          "type": "array"
+        },
+        {
+          "additionalProperties": {
+            "$ref": "#/$defs/Node"
+          },
+          "type": "object"
+        }
+      ],
+      "description": "A diagram's nodes: a list of nodes by `id`, or a map of nodes by name."
     },
     "OldFrame": {
       "description": "A frame of the old per-screen stream, `{\"seq\", \"ops\"}`, as cooee reads it today.",
@@ -4696,6 +4858,25 @@
             "null"
           ]
         },
+        "load": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Load"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "repos": {
+          "items": {
+            "$ref": "#/$defs/SceneRepo"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
         "show": {
           "anyOf": [
             {
@@ -4705,8 +4886,133 @@
               "type": "null"
             }
           ]
+        },
+        "weather": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Weather"
+            },
+            {
+              "type": "null"
+            }
+          ]
         }
       },
+      "type": "object"
+    },
+    "SceneRepo": {
+      "description": "A scene's repo: its colour, its summary line and its bands of lanes.",
+      "properties": {
+        "blocks": {
+          "items": {
+            "$ref": "#/$defs/Band"
+          },
+          "type": "array"
+        },
+        "color": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "id": {
+          "type": "string"
+        },
+        "subtitle": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "title": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "blocks"
+      ],
+      "type": "object"
+    },
+    "SceneRow": {
+      "description": "One row of a scene's band: an issue or a lane, with its host, the issue it needs you on and its blocker.",
+      "properties": {
+        "blocked_by": {
+          "format": "uint64",
+          "minimum": 0,
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "figure": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Figure"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "host": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "id": {
+          "type": "string"
+        },
+        "needs": {
+          "format": "uint64",
+          "minimum": 0,
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "subtitle": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "tap": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Tap"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "title": {
+          "type": "string"
+        },
+        "tone": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Tone"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "value": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "title"
+      ],
       "type": "object"
     },
     "Screen": {
@@ -5267,6 +5573,22 @@
       ],
       "description": "A shown value (a row's or tile's value, a card's meta, a label's text): a string, a number, a state key's value, or a time."
     },
+    "Sky": {
+      "anyOf": [
+        {
+          "enum": [
+            "clear",
+            "windy",
+            "fog",
+            "storm"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "string"
+        }
+      ]
+    },
     "SortDir": {
       "anyOf": [
         {
@@ -5520,8 +5842,50 @@
             "refuse"
           ],
           "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "file": {
+              "$ref": "#/$defs/StepFile"
+            }
+          },
+          "required": [
+            "file"
+          ],
+          "type": "object"
         }
       ]
+    },
+    "StepFile": {
+      "description": "A file picked in an upload field: its name, its size in bytes, its media type and what the handler does.",
+      "properties": {
+        "field": {
+          "type": "string"
+        },
+        "handler": {
+          "$ref": "#/$defs/Handler"
+        },
+        "mime": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "size": {
+          "format": "uint64",
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "field",
+        "name",
+        "size",
+        "mime",
+        "handler"
+      ],
+      "type": "object"
     },
     "StepGesture": {
       "description": "A gesture on one item of a block: pointer offsets `[dx, dy]` in px, key nudges, or named actions, in turn.",
@@ -5938,6 +6302,12 @@
         "focus": {
           "type": [
             "string",
+            "null"
+          ]
+        },
+        "keep": {
+          "type": [
+            "boolean",
             "null"
           ]
         },
@@ -6790,6 +7160,116 @@
       ],
       "type": "object"
     },
+    "UploadField": {
+      "additionalProperties": true,
+      "description": "Files or photos: each picked file goes to the app's file handler, and the field sends their ids.",
+      "properties": {
+        "accept": {
+          "items": {
+            "$ref": "#/$defs/Accept"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "capture": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "checks": {
+          "items": {
+            "$ref": "#/$defs/Check"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "doc": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "enabled": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "files": {
+          "items": {
+            "$ref": "#/$defs/FileRef"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "many": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "mb": {
+          "format": "uint32",
+          "minimum": 0,
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "open": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "was": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object"
+    },
     "Via": {
       "description": "How a scripted gesture comes in: a pointer, the keys, or a named accessibility action.",
       "enum": [
@@ -6798,6 +7278,45 @@
         "action"
       ],
       "type": "string"
+    },
+    "Weather": {
+      "description": "A scene's sky: its kind, wind from 0 to 1, fog from 0 to 2, a storm, and its line.",
+      "properties": {
+        "fog": {
+          "format": "uint8",
+          "maximum": 255,
+          "minimum": 0,
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "line": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "sky": {
+          "$ref": "#/$defs/Sky"
+        },
+        "storm": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "wind": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "sky"
+      ],
+      "type": "object"
     },
     "Web": {
       "additionalProperties": true,

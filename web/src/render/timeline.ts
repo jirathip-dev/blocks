@@ -1,4 +1,4 @@
-import { type BarGrab, day, firstFree, iso, parts, timeline as rules, words } from "../core/kind/timeline.ts";
+import { type BarGrab, barName, day, firstFree, iso, lanes, parts, timeline as rules, words } from "../core/kind/timeline.ts";
 import type { DaySpan, Gesture, TimeBar, Timeline, TimeRow } from "../gen/types.ts";
 import { gestured, held } from "../gesture.ts";
 import { type Ctx, el, h } from "./index.ts";
@@ -9,20 +9,6 @@ const WD = "SMTWTFS";
 
 type Axis = { f: number; t: number; n: number; z: 1 | 2 | 3; px: number | null; live: boolean; lane: () => number };
 
-/// The sub-lane of each bar of a row, by first fit in start order, and how many there are.
-export function lanes(bars: TimeBar[]): { of: Map<string, number>; n: number } {
-  const ends: number[] = [];
-  const of = new Map<string, number>();
-  for (const x of [...bars].sort((p, q) => (day(p.start) ?? 0) - (day(q.start) ?? 0))) {
-    const s = day(x.start) ?? 0;
-    let i = ends.findIndex((e) => e < s);
-    if (i < 0) i = ends.push(0) - 1;
-    ends[i] = day(x.end) ?? s;
-    of.set(x.id, i);
-  }
-  return { of, n: Math.max(1, ends.length) };
-}
-
 const vars = (e: HTMLElement, v: Record<string, number>) => {
   e.style.cssText += Object.entries(v)
     .map(([k, n]) => `--${k}:${n};`)
@@ -31,7 +17,6 @@ const vars = (e: HTMLElement, v: Record<string, number>) => {
 };
 const clip = (a: number, b: number, x: Axis) => ({ o: Math.max(a, x.f) - x.f, d: Math.min(b, x.t) - Math.max(a, x.f) + 1 });
 const isSpan = (v: unknown): v is DaySpan => typeof v === "object" && v !== null && "start" in v && "end" in v;
-const named = (x: TimeBar) => `${x.label ?? "Bar"}, ${words(x.start, x.end)}${x.progress != null ? `, ${x.progress} % done` : ""}${x.fixed ? ", fixed" : ""}`;
 
 function axis(x: Axis, off: Set<number>): HTMLElement {
   const mo = el("div", "tmm");
@@ -70,7 +55,7 @@ function bar(b: Timeline, x: TimeBar, y: number, gap: number, ax: Axis, c: Ctx, 
   const ghost = vars(el("div", "tmgh"), { ...home, y });
   const tag = vars(el("span", "tmtag"), { o: home.o, y });
   const body = el("div", "tmbb");
-  body.setAttribute("aria-label", named(x));
+  body.setAttribute("aria-label", barName(x));
   if (x.progress != null) w.append(vars(el("i", "tmp"), { p: x.progress / 100 }));
   w.append(h("span", "tmbx", x.label ?? ""), body);
   lane.append(ghost, w, tag);

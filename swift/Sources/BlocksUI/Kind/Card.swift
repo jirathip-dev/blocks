@@ -47,7 +47,15 @@ internal struct CardBlock: View {
                 Text(title).ui(16, .semibold, look).foregroundStyle(look.palette.foreground)
             }
             if let subtitle = block.subtitle {
-                Text(subtitle).ui(13, .regular, look).foregroundStyle(look.palette.mute).lineLimit(2)
+                Group {
+                    switch subtitle {
+                    case .string(let text): Text(text).foregroundStyle(look.palette.mute)
+                    case .label(let label):
+                        RelativeValue { label.text.text(at: $0, behaved.view.values) }
+                            .foregroundStyle(look.palette.tone(label.tone?.rawValue) ?? look.palette.mute)
+                    }
+                }
+                .ui(13, .regular, look).lineLimit(2)
             }
             if let buttons = block.buttons, !buttons.isEmpty {
                 HStack(spacing: 8) {

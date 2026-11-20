@@ -10,7 +10,7 @@ window.React = { createElement };
 export function boot(root, screen, out) {
   const r = createRoot(root);
   const said = (x) => (x.what === "dropped" ? out.dropped(`event ${x.block} ${x.event}`) : x.what === "threw" ? out.dropped(`threw ${x.block}`) : undefined);
-  const set = (s) => flushSync(() => r.render(createElement(BlocksView, { screen: built(s), onAction: out.sent, kinds: window.blocksKinds, islands: window.blocksIslands, onReport: said })));
+  const set = (s) => flushSync(() => r.render(createElement(BlocksView, { screen: built(s), onAction: out.sent, kinds: window.blocksKinds, islands: window.blocksIslands, onReport: said, onFile: out.file })));
   set(screen);
   return { set };
 }

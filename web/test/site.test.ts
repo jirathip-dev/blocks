@@ -160,6 +160,18 @@ test("the fixture site with JS off: a link goes and a form posts", async () => {
   await close();
 });
 
+test("an upload with JS off is the browser's own file input: the page's form posts the picked file as multipart", async () => {
+  const doc = `<!doctype html><meta charset=utf-8><link rel=stylesheet href=blocks.css><body>${read("../../fixtures/fields/html/upload.html")}`;
+  const { page, posts, close } = await open({ js: false, page: doc });
+  await page.setInputFiles('input[name="photos"]', { name: "door.jpg", mimeType: "image/jpeg", buffer: Buffer.from("JPEG-BYTES") });
+  await page.click('button[type="submit"]');
+  await page.waitForURL(`${BASE}act`);
+  strictEqual(posts.length, 1);
+  ok(posts[0].type.startsWith("multipart/form-data; boundary="), posts[0].type);
+  ok(/name="photos"; filename="door\.jpg"\r\nContent-Type: image\/jpeg\r\n/.test(posts[0].body), posts[0].body);
+  await close();
+});
+
 test("the fixture site is the same PNG and tree before and after blocks.js takes it over; then a form posts in place", async () => {
   const off = await open({ js: false });
   const shot = await off.page.screenshot({ fullPage: true });

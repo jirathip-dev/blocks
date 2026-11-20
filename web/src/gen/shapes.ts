@@ -39,6 +39,21 @@ export const kinds: Record<string, string> = {
 };
 
 export const defs: Record<string, Shape> = {
+  "Accept": {
+    "anyOf": [
+      {
+        "enum": [
+          "image",
+          "pdf",
+          "sheet"
+        ],
+        "type": "string"
+      },
+      {
+        "type": "string"
+      }
+    ]
+  },
   "Accessory": {
     "anyOf": [
       {
@@ -208,6 +223,45 @@ export const defs: Record<string, Shape> = {
     },
     "required": [
       "type"
+    ],
+    "type": "object"
+  },
+  "Band": {
+    "properties": {
+      "blocks": {
+        "items": {
+          "$ref": "#/$defs/Block"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "header": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "id": {
+        "type": "string"
+      },
+      "rows": {
+        "items": {
+          "$ref": "#/$defs/SceneRow"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "type": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "type",
+      "id"
     ],
     "type": "object"
   },
@@ -901,9 +955,13 @@ export const defs: Record<string, Shape> = {
         ]
       },
       "subtitle": {
-        "type": [
-          "string",
-          "null"
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Toned"
+          },
+          {
+            "type": "null"
+          }
         ]
       },
       "tap": {
@@ -1600,12 +1658,13 @@ export const defs: Record<string, Shape> = {
         ]
       },
       "nodes": {
-        "additionalProperties": {
-          "$ref": "#/$defs/Node"
-        },
-        "type": [
-          "object",
-          "null"
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Nodes"
+          },
+          {
+            "type": "null"
+          }
         ]
       },
       "selected": {
@@ -2078,6 +2137,19 @@ export const defs: Record<string, Shape> = {
         "type": "object"
       },
       {
+        "$ref": "#/$defs/UploadField",
+        "properties": {
+          "type": {
+            "const": "upload",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      {
         "$ref": "#/$defs/OtherField"
       }
     ]
@@ -2097,6 +2169,12 @@ export const defs: Record<string, Shape> = {
   },
   "Figure": {
     "properties": {
+      "act": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
       "avatar": {
         "type": [
           "string",
@@ -2138,6 +2216,29 @@ export const defs: Record<string, Shape> = {
         ]
       }
     },
+    "type": "object"
+  },
+  "FileRef": {
+    "properties": {
+      "id": {
+        "type": "string"
+      },
+      "name": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "src": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "required": [
+      "id"
+    ],
     "type": "object"
   },
   "Fold": {
@@ -2211,6 +2312,12 @@ export const defs: Record<string, Shape> = {
         "type": "array"
       },
       "id": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "more": {
         "type": [
           "string",
           "null"
@@ -2805,6 +2912,12 @@ export const defs: Record<string, Shape> = {
           "null"
         ]
       },
+      "more": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
       "reorder": {
         "anyOf": [
           {
@@ -2847,6 +2960,21 @@ export const defs: Record<string, Shape> = {
       },
       {
         "type": "number"
+      },
+      {
+        "type": "string"
+      }
+    ]
+  },
+  "Load": {
+    "anyOf": [
+      {
+        "enum": [
+          "calm",
+          "busy",
+          "held"
+        ],
+        "type": "string"
       },
       {
         "type": "string"
@@ -3177,6 +3305,12 @@ export const defs: Record<string, Shape> = {
           "null"
         ]
       },
+      "id": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
       "label": {
         "type": [
           "string",
@@ -3217,6 +3351,22 @@ export const defs: Record<string, Shape> = {
       }
     },
     "type": "object"
+  },
+  "Nodes": {
+    "anyOf": [
+      {
+        "items": {
+          "$ref": "#/$defs/Node"
+        },
+        "type": "array"
+      },
+      {
+        "additionalProperties": {
+          "$ref": "#/$defs/Node"
+        },
+        "type": "object"
+      }
+    ]
   },
   "Other": {
     "properties": {
@@ -4019,6 +4169,25 @@ export const defs: Record<string, Shape> = {
           "null"
         ]
       },
+      "load": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Load"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "repos": {
+        "items": {
+          "$ref": "#/$defs/SceneRepo"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
       "show": {
         "anyOf": [
           {
@@ -4028,8 +4197,129 @@ export const defs: Record<string, Shape> = {
             "type": "null"
           }
         ]
+      },
+      "weather": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Weather"
+          },
+          {
+            "type": "null"
+          }
+        ]
       }
     },
+    "type": "object"
+  },
+  "SceneRepo": {
+    "properties": {
+      "blocks": {
+        "items": {
+          "$ref": "#/$defs/Band"
+        },
+        "type": "array"
+      },
+      "color": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "id": {
+        "type": "string"
+      },
+      "subtitle": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "title": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "id",
+      "title",
+      "blocks"
+    ],
+    "type": "object"
+  },
+  "SceneRow": {
+    "properties": {
+      "blocked_by": {
+        "minimum": 0,
+        "type": [
+          "integer",
+          "null"
+        ]
+      },
+      "figure": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Figure"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "host": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "id": {
+        "type": "string"
+      },
+      "needs": {
+        "minimum": 0,
+        "type": [
+          "integer",
+          "null"
+        ]
+      },
+      "subtitle": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "tap": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Tap"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "title": {
+        "type": "string"
+      },
+      "tone": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Tone"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "value": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "required": [
+      "id",
+      "title"
+    ],
     "type": "object"
   },
   "Screen": {
@@ -4526,6 +4816,22 @@ export const defs: Record<string, Shape> = {
       }
     ]
   },
+  "Sky": {
+    "anyOf": [
+      {
+        "enum": [
+          "clear",
+          "windy",
+          "fog",
+          "storm"
+        ],
+        "type": "string"
+      },
+      {
+        "type": "string"
+      }
+    ]
+  },
   "SortDir": {
     "anyOf": [
       {
@@ -4974,6 +5280,12 @@ export const defs: Record<string, Shape> = {
       "focus": {
         "type": [
           "string",
+          "null"
+        ]
+      },
+      "keep": {
+        "type": [
+          "boolean",
           "null"
         ]
       },
@@ -5689,6 +6001,151 @@ export const defs: Record<string, Shape> = {
     },
     "required": [
       "action"
+    ],
+    "type": "object"
+  },
+  "UploadField": {
+    "additionalProperties": true,
+    "properties": {
+      "accept": {
+        "items": {
+          "$ref": "#/$defs/Accept"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "capture": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "checks": {
+        "items": {
+          "$ref": "#/$defs/Check"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "doc": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "enabled": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "error": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "files": {
+        "items": {
+          "$ref": "#/$defs/FileRef"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "label": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "many": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "mb": {
+        "minimum": 0,
+        "type": [
+          "integer",
+          "null"
+        ]
+      },
+      "name": {
+        "type": "string"
+      },
+      "open": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "show": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "was": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "required": [
+      "name"
+    ],
+    "type": "object"
+  },
+  "Weather": {
+    "properties": {
+      "fog": {
+        "maximum": 255,
+        "minimum": 0,
+        "type": [
+          "integer",
+          "null"
+        ]
+      },
+      "line": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "sky": {
+        "$ref": "#/$defs/Sky"
+      },
+      "storm": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "wind": {
+        "type": [
+          "number",
+          "null"
+        ]
+      }
+    },
+    "required": [
+      "sky"
     ],
     "type": "object"
   },

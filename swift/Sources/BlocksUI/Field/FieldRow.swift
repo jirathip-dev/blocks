@@ -1,10 +1,11 @@
 import Blocks
 
-/// How a row edits its field: a tap flips it, an alert types it, or a dialog picks one of its options.
+/// How a row edits its field: a tap flips it, an alert types it, a dialog picks one of its options, or it lists files.
 internal enum FieldEdit {
     case flip
     case type(secure: Bool, hint: String?, number: Bool)
     case pick([String])
+    case files(UploadField)
 }
 
 /// What one field type gives the row every type shares: its own parts, its start value, its edit and its shown text.
@@ -33,6 +34,7 @@ extension Field {
         case .toggle(let f): f
         case .picker(let f): f
         case .secret(let f): f
+        case .upload(let f): f
         case .otherField(let v): PlainField(json: v)
         }
     }

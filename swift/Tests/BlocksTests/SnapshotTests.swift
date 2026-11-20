@@ -54,6 +54,55 @@ final class SnapshotTests: XCTestCase {
         }
     }
 
+    func testEachFieldsFixtureDrawsAndSwiftRecordsTheHTMLFieldsTreeUploadIncluded() throws {
+        let names = try FileManager.default.contentsOfDirectory(atPath: fixtures.appendingPathComponent("fields").path)
+            .filter { $0.hasSuffix(".json") }.map { String($0.dropLast(5)) }.sorted()
+        XCTAssertTrue(names.contains("upload"))
+        for name in names {
+            let run = try Snapshot(try load(Block.self, "fields/\(name).json")).run([], name: name, check: true)
+            XCTAssertEqual(run.faults, [], name)
+            let swift = try Data(contentsOf: fixtures.appendingPathComponent("trees/swift/fields/\(name).json"))
+            XCTAssertEqual(swift, try Data(contentsOf: fixtures.appendingPathComponent("fields/trees/\(name).json")), name)
+            let form = try XCTUnwrap(try load(TreeNode.self, "trees/swift/fields/\(name).json").children.first)
+            XCTAssertEqual(Set(form.fields?.map { "\($0.type) \($0.drawn.rawValue)" } ?? []), ["\(name) native"], name)
+        }
+    }
+
+    func testEachFilesFixtureCaseSendsAndDropsWhatBlocksShotDoes() throws {
+        struct Case: Decodable {
+            let name: String
+            let steps: [Step]
+            let sent: [Action]
+            let dropped: [String]
+        }
+        struct Cases: Decodable {
+            let screen: String
+            let cases: [Case]
+        }
+        let all = try load(Cases.self, "files/upload.json")
+        XCTAssertEqual(all.cases.map(\.name), ["taken", "busy", "gone"])
+        for c in all.cases {
+            let run = try Snapshot(try load(Block.self, all.screen)).run(c.steps, name: c.name)
+            XCTAssertEqual(run.report.sent, c.sent, c.name)
+            XCTAssertEqual(run.report.dropped, c.dropped, c.name)
+        }
+    }
+
+    func testAnUploadRefusesBeforeTheHandlerAndItsSubmitSaysWhyItWaits() throws {
+        let screen = try load(Block.self, "fields/upload.json")
+        guard case .screen(let s) = screen, case .form(let form)? = s.blocks?.first, case .upload(let field)? = form.fields.dropFirst().first
+        else { return XCTFail("fields/upload.json has no photos field") }
+        let pick = { (name: String, size: UInt64, mime: String) in FileRow(key: name, name: name, size: size, mime: mime) }
+        let rows = field.picked(field.held, [pick("big.jpg", 20_971_520, "image/jpeg")])
+        XCTAssertEqual(rows.map(field.status), ["", "refused: 20.0 MB is over 10 MB"])
+        let next = field.picked(rows, [pick("note.pdf", 900, "application/pdf"), pick("door.jpg", 3000, "image/jpeg")])
+        XCTAssertEqual(next.map(field.status), ["", "refused: only images", "uploading 0 %"])
+        XCTAssertEqual(next.waits, "waiting for 1 upload")
+        XCTAssertEqual((next + [FileRow(key: "x", name: "x.jpg", size: 2000, mime: "image/jpeg", state: .failed)]).waits, "an upload failed: retry or remove it")
+        XCTAssertEqual(field.pick(next), "add photos")
+        XCTAssertEqual(field.hint(on: true), "images · up to 10 MB each")
+    }
+
     func testEachIdsFixtureIsTheBlockAndActionIdsItsScreenDraws() throws {
         let names = try FileManager.default.contentsOfDirectory(atPath: fixtures.appendingPathComponent("ids").path)
             .map { String($0.dropLast(5)) }.sorted()

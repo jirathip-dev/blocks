@@ -3,7 +3,7 @@ use std::path::Path;
 use serde_json::Value;
 
 use super::Files;
-use crate::{tree, Block, Built, Field, Form, Lang, Locale, Screen};
+use crate::{site, tree, Block, Built, Field, Form, Lang, Locale, Screen, Submit};
 
 const STATES: [(&str, &str); 4] = [
     ("error", "Check this one"),
@@ -16,13 +16,15 @@ const STATES: [(&str, &str); 4] = [
 ];
 
 pub(super) fn files(root: &Path) -> std::io::Result<Files> {
-    let names = drawn(root, "web/src/render/field")?;
+    let names = drawn(root, "web/src/render/field", ".ts")?;
     let types: Vec<&str> = names.iter().map(String::as_str).collect();
     let mut out = words();
     out.push(views("web/src/gen/fields.ts", "../render/field", &types));
-    let react = drawn(root, "web/react/src/fields")?;
+    let react = drawn(root, "web/react/src/fields", ".ts")?;
     let react: Vec<&str> = react.iter().map(String::as_str).collect();
     out.push(views("web/react/src/gen/fields.ts", "../fields", &react));
+    let swift = drawn(root, "swift/Sources/BlocksUI/Field", "Field.swift")?;
+    let swift: Vec<&str> = swift.iter().map(String::as_str).collect();
     for f in Field::samples() {
         let filled = serde_json::to_value(&f)?;
         let kind = filled
@@ -31,9 +33,16 @@ pub(super) fn files(root: &Path) -> std::io::Result<Files> {
             .unwrap_or_default()
             .to_string();
         let screen = Built::of(&screen(&kind, &filled)?);
-        let tree = tree::expect_fields(&screen, Block::KINDS, &types, &crate::behave::start(&screen));
+        let start = crate::behave::start(&screen);
+        let tree = tree::expect_fields(&screen, Block::KINDS, &types, &start);
+        let plain = tree::expect_fields(&screen, Block::KINDS, &swift, &start);
         out.push((format!("fixtures/fields/{kind}.json"), pretty(screen.value())?));
         out.push((format!("fixtures/fields/trees/{kind}.json"), pretty(&tree)?));
+        out.push((format!("fixtures/trees/swift/fields/{kind}.json"), pretty(&plain)?));
+        out.push((
+            format!("fixtures/fields/html/{kind}.html"),
+            site::fragment(&screen, "/act") + "\n",
+        ));
     }
     Ok(out)
 }
@@ -59,7 +68,12 @@ fn screen(kind: &str, filled: &Value) -> std::io::Result<Screen> {
         fields.push(f);
     }
     let fields: Vec<Field> = serde_json::from_value(Value::Array(fields))?;
-    let form = Form::new(fields).id(kind);
+    let send = Submit {
+        label: "send".into(),
+        action: "send".into(),
+        ..Submit::default()
+    };
+    let form = Form::new(fields).id(kind).submit(send);
     let locale = Locale {
         lang: Some(Lang::En),
         ..Locale::default()
@@ -70,14 +84,14 @@ fn screen(kind: &str, filled: &Value) -> std::io::Result<Screen> {
         .blocks(vec![Block::Form(Box::new(form))]))
 }
 
-fn drawn(root: &Path, dir: &str) -> std::io::Result<Vec<String>> {
+fn drawn(root: &Path, dir: &str, suffix: &str) -> std::io::Result<Vec<String>> {
     let mut types = vec![];
     for f in std::fs::read_dir(root.join(dir))? {
         let name = f?.file_name().to_string_lossy().into_owned();
         types.extend(
-            name.strip_suffix(".ts")
-                .filter(|t| !t.starts_with('_'))
-                .map(String::from),
+            name.strip_suffix(suffix)
+                .filter(|t| !t.is_empty() && !t.starts_with('_'))
+                .map(str::to_lowercase),
         );
     }
     types.sort();

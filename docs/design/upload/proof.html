@@ -1,0 +1,24 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="../neutral-default/tokens.css"><link rel="stylesheet" href="../../../web/dist/blocks.css"><link rel="stylesheet" href="upload.css"><link rel="stylesheet" href="page.css">
+<script src="upload.js"></script><title>upload: a delivery proof</title></head>
+<body><main class="scr">
+<div class="top"><div class="tabh"><span class="tw">Stop 3 of 8 · Marlow Bakery · proof</span><button type="button"><span>call</span></button></div></div>
+<h2>While a photo uploads <small>· two are done, one is on its way; the submit waits for it</small></h2>
+<div data-f='{"id":"proof","submit":"record delivery","fields":[
+ {"type":"upload","name":"photos","label":"Photos of the drop","doc":"the crates at the door, and any damage","accept":["image"],"capture":true,"many":true,"mb":10,"files":[
+  {"name":"IMG_2041.jpg","size":2516582,"src":"crate.svg","state":"done"},
+  {"name":"IMG_2042.jpg","size":3040870,"src":"door.svg","state":"done"},
+  {"name":"IMG_2043.jpg","size":4404019,"src":"milk.svg","state":"uploading","part":0.62}]},
+ {"type":"text","name":"recipient","label":"Recipient name","value":"J. Okafor"},
+ {"type":"toggle","name":"ack","label":"I confirm the quantities above","value":true}]}'></div>
+<h2>Before the first photo <small>· empty; on a phone the camera comes first</small></h2>
+<div data-f='{"id":"proof2","submit":"record delivery","fields":[
+ {"type":"upload","name":"photos","label":"Photos of the drop","doc":"the crates at the door, and any damage","accept":["image"],"capture":true,"many":true,"mb":10},
+ {"type":"text","name":"recipient","label":"Recipient name","placeholder":"who signed for it"}]}'></div>
+<h2>A photo that did not go up <small>· retry or remove; the submit stays off and says why</small></h2>
+<div data-f='{"id":"proof3","submit":"record delivery","fields":[
+ {"type":"upload","name":"photos","label":"Photos of the drop","accept":["image"],"capture":true,"many":true,"mb":10,"files":[
+  {"name":"IMG_2041.jpg","size":2516582,"src":"crate.svg","state":"done"},
+  {"name":"IMG_2043.jpg","size":4404019,"src":"milk.svg","state":"failed"}]},
+ {"type":"text","name":"recipient","label":"Recipient name","value":"J. Okafor"}]}'></div>
+</main><script>draw()</script></body></html>

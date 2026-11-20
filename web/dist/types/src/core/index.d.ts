@@ -10,4 +10,5 @@ export * from "../gen/builders.ts";
 export { built, type Built } from "./built.ts";
 export { share } from "./share.ts";
 export { actions, check, linkable } from "./check.ts";
+export { accepts, fill, held, hint, ids, pick, picked, refused, send, sized, status, waits, type FileRow, type FileState, type OnFile, type Picked } from "./field/files.ts";
 export type { Fault } from "../gen/shapes.ts";

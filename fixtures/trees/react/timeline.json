@@ -2,7 +2,7 @@
   "kind": "timeline",
   "id": "plan",
   "variant": null,
-  "drawn": "fallback",
+  "drawn": "native",
   "role": "group",
   "name": "Crews",
   "children": []
