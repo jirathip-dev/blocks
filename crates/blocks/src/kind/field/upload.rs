@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 use super::Word;
 use crate::expr::Expr;
-use crate::kind::{Check, Fields};
+use crate::kind::Check;
 
 words!(Accept { Image, Pdf, Sheet });
 

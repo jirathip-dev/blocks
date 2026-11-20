@@ -1,8 +1,31 @@
 use serde::{Deserialize, Serialize};
 use serde_json::Number;
 
-use super::{Gesture, Media, Tone};
 use crate::gesture::{Dir, Nudge, Rules, Word};
+use crate::kind::{Block, Gesture, Tone};
+
+listed! { 25: Media(Media) = "media" }
+
+kind! {
+    /// A picture or a video of a known size.
+    pub struct Media {
+        id: Option<String>,
+        src: String,
+        alt: String,
+        width: u32,
+        height: u32,
+        video: Option<bool>,
+        poster: Option<String>,
+        caption: Option<String>,
+        marks: Option<Vec<Mark>>,
+        tools: Option<Vec<MarkKind>>,
+        draw: Option<Gesture>,
+        #[serde(rename = "move")]
+        moves: Option<Gesture>,
+        stretch: Option<Gesture>,
+        remove: Option<Gesture>,
+    }
+}
 
 words!(MarkKind {
     Arrow,
@@ -399,4 +422,42 @@ impl Rules for Media {
             None => what,
         }
     }
+}
+
+fn at(x: f64, y: f64) -> Vec<serde_json::Number> {
+    [x, y].into_iter().filter_map(serde_json::Number::from_f64).collect()
+}
+
+fn marks() -> Vec<Mark> {
+    let mark = |id: &str, kind: MarkKind, a: Vec<serde_json::Number>| Mark {
+        id: id.into(),
+        kind,
+        at: a,
+        ..Mark::default()
+    };
+    vec![
+        Mark {
+            to: Some(at(0.62, 0.9)),
+            tone: Some(Tone::Warn),
+            ..mark("peak", MarkKind::Highlight, at(0.5, 0.2))
+        },
+        Mark {
+            to: Some(at(0.48, 0.3)),
+            ..mark("arrow", MarkKind::Arrow, at(0.3, 0.15))
+        },
+        Mark {
+            text: Some("Release week".into()),
+            ..mark("note", MarkKind::Text, at(0.05, 0.08))
+        },
+        Mark {
+            text: Some("1".into()),
+            tone: Some(Tone::Info),
+            ..mark("dip", MarkKind::Pin, at(0.78, 0.7))
+        },
+    ]
+}
+
+pub(super) fn sample() -> Vec<Block> {
+    let media = Media::new("/media/chart.png", "a bar chart", 640_u32, 360_u32).caption("This week");
+    vec![Block::Media(Box::new(media.id("chart").marks(marks())))]
 }

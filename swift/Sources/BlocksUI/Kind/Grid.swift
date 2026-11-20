@@ -10,6 +10,7 @@ internal struct GridState: Equatable {
     internal var sheet: String?
 
     internal static func key(_ row: String, _ col: String) -> String { "\(row)\n\(col)" }
+    internal var busy: Bool { held != nil || typed != nil || sheet != nil }
 
     internal static func items(_ rows: [Blocks.TableRow], _ at: Int) -> [Blocks.TableRow] {
         Array(rows.dropFirst(at + 1).prefix { $0.group != true })

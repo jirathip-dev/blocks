@@ -9,7 +9,7 @@ mod fields;
 mod fixtures;
 mod hooks;
 mod model;
-mod rules;
+pub mod rust;
 mod shapes;
 mod skill;
 mod swift;
@@ -66,7 +66,7 @@ pub fn write(root: &Path) -> std::io::Result<()> {
         hooks::files,
         theme::files,
         fixtures::files,
-        rules::files,
+        rust::files,
     ] {
         for (path, text) in area(root, &schema)? {
             let path = root.join(path);

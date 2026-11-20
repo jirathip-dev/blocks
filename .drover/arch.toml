@@ -47,7 +47,7 @@ generated = [
     "fixtures/behave/sim.json",
     "fixtures/gesture/sim.json",
     "fixtures/css/*.css",
-    "crates/blocks/src/guard/rules/mod.rs",
+    "crates/blocks/src/guard/rules/mod.rs", "crates/blocks/src/kind/core/mod.rs", "crates/blocks/src/site/kind/drawn.rs", "swift/Sources/BlocksUI/Gen/Kinds.swift",
     "skill/blocks/**",
     "crates/blocks-cli/src/gen/skill.rs",
     "web/src/gen/fields.ts",
@@ -115,8 +115,8 @@ dir = "web/src/css"
 glob = "**/*.css"
 
 [[collect]]
-dir = "crates/blocks/src/kind/field"
-glob = "*.rs"
+dir = "crates/blocks/src/kind"
+glob = "*/*.rs"
 
 [[collect]]
 dir = "crates/blocks/src/site/field"
