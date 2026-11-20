@@ -57,17 +57,18 @@ const pics = (page) => page.evaluate(() => [...document.querySelectorAll(".dc>im
 async function run(adapter) {
   const page = await open(adapter);
   const states = [{ ...(await seen(page)), pics: await pics(page) }];
+  const press = (q) => async () => (await page.focus(q), await page.keyboard.press("Enter"));
   const steps = [
     () => page.focus(".dcw"),
     () => page.keyboard.press("+"),
     () => page.keyboard.press("PageDown"),
     () => page.evaluate((s) => window.draw({ ...s, blocks: [{ ...s.blocks[0], note: "Redrawn by the app." }] }), screen),
     () => page.evaluate(() => new Promise((r) => queueMicrotask(r))),
-    () => page.click('[aria-label="next page"]'),
-    () => page.click('[aria-label="previous page"]'),
-    () => page.click('[aria-label="zoom in"]'),
-    () => page.click('[aria-label="zoom out"]'),
-    () => page.click('[aria-label="fit to width"]'),
+    press('[aria-label="next page"]'),
+    press('[aria-label="previous page"]'),
+    press('[aria-label="zoom in"]'),
+    press('[aria-label="zoom out"]'),
+    press('[aria-label="fit to width"]'),
     () => page.evaluate(() => document.querySelector(".dcw").dispatchEvent(new WheelEvent("wheel", { ctrlKey: true, deltaY: -50, cancelable: true }))),
     () => page.clock.runFor(200),
     () => page.focus(".dcw"),
@@ -88,6 +89,7 @@ test("a React pages view pages and zooms as the web view does by keys, the named
   deepStrictEqual(web[0].root, ["SECTION", "b b-pages dcs", "group", "Q-2026-0418 rev 3"]);
   deepStrictEqual([web[3].count, web[3].fit], ["page 2 of 3", "125%"]);
   deepStrictEqual([web[5].count, web[5].fit, web[5].focus], ["page 2 of 3", "125%", "Q-2026-0418 rev 3, 3 pages"]);
+  deepStrictEqual([web[6].focus, web[10].focus, web[11].focus], Array(3).fill("Q-2026-0418 rev 3, 3 pages"));
   strictEqual(web[12].fit, `${Math.round(100 * Math.exp(0.5))}%`);
   deepStrictEqual([web.at(-1).fit, web.at(-1).z], ["fit", "1"]);
   deepStrictEqual(web.at(-1).sent, []);

@@ -61,8 +61,10 @@ export function paging(s: HTMLElement, b: Pages, had: string | null): void {
   let w = 1;
   const sync = () => {
     count.textContent = `page ${at() + 1} of ${n}`;
+    const had = document.activeElement;
     [prev.disabled, next.disabled] = [at() === 0, at() === n - 1];
     [out.disabled, fit.disabled, into.disabled] = [w <= 1, w <= 1, w >= MOST];
+    if ([prev, next, out, fit, into].some((x) => x.disabled && x === had)) well.focus({ preventScroll: true });
     fit.replaceChildren(h("span", "", w <= 1 ? "fit" : `${Math.round(w * 100)}%`));
   };
   const go = (i: number) => {

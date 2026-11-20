@@ -1509,8 +1509,10 @@ function paging(s, b, had) {
   let w = 1;
   const sync = () => {
     count.textContent = `page ${at2() + 1} of ${n}`;
+    const had2 = document.activeElement;
     [prev.disabled, next.disabled] = [at2() === 0, at2() === n - 1];
     [out2.disabled, fit2.disabled, into.disabled] = [w <= 1, w <= 1, w >= MOST];
+    if ([prev, next, out2, fit2, into].some((x) => x.disabled && x === had2)) well.focus({ preventScroll: true });
     fit2.replaceChildren(h2("span", "", w <= 1 ? "fit" : `${Math.round(w * 100)}%`));
   };
   const go2 = (i) => {
