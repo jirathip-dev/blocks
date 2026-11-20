@@ -1,8 +1,9 @@
 use serde_json::{Map, Value};
 
-use super::{fallback, get, W};
+use super::fallback;
+use crate::site::write::{get, W};
 
-pub(super) fn toast(w: &mut W<'_>, b: &Value) {
+pub(super) fn draw(w: &mut W<'_>, b: &Value) {
     let Some(title) = get(b, "title").filter(|t| !t.is_empty()) else {
         let mut b = b.clone();
         if let Some(o) = b
