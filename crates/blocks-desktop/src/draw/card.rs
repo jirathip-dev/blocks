@@ -25,7 +25,7 @@ fn draw(b: &Card, ui: &mut Ui, cx: &mut Cx<'_>) {
             t
         });
         if let Some(s) = &b.subtitle {
-            ui.label(RichText::new(s).color(look.mute(ui)));
+            super::row::toned(ui, cx, s);
         }
         cx.blocks(ui, b.blocks.as_deref().unwrap_or_default());
         ui.horizontal_wrapped(|ui| cx.blocks(ui, b.buttons.as_deref().unwrap_or_default()));

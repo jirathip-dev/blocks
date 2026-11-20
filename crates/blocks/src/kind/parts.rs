@@ -1,3 +1,5 @@
+use std::collections::BTreeMap;
+
 use serde::{Deserialize, Serialize};
 use serde_json::{Map, Number, Value};
 
@@ -53,6 +55,13 @@ words!(ButtonStyle {
     Destructive
 });
 words!(TextStyle { Body, Footnote });
+words!(Load { Calm, Busy, Held });
+words!(Sky {
+    Clear,
+    Windy,
+    Fog,
+    Storm
+});
 words!(ImageSize { Small, Large });
 
 wire! {
@@ -123,6 +132,12 @@ pub enum Toned {
     Label(Label),
 }
 
+impl From<&str> for Toned {
+    fn from(s: &str) -> Self {
+        Self::Text(s.into())
+    }
+}
+
 wire! {
     /// What a tap does: open a screen or sheet, send an action, open a thread or a URL, focus, copy.
     pub struct Tap {
@@ -135,6 +150,7 @@ wire! {
         focus: Option<String>,
         copy: Option<String>,
         set: Option<Vec<Set>>,
+        keep: Option<bool>,
     }
 }
 
@@ -241,6 +257,7 @@ wire! {
         avatar: Option<String>,
         coat: Option<String>,
         grow: Option<String>,
+        act: Option<String>,
     }
 }
 
@@ -292,8 +309,86 @@ wire! {
 }
 
 wire! {
+    /// A scene's sky: its kind, wind from 0 to 1, fog from 0 to 2, a storm, and its line.
+    pub struct Weather {
+        sky: Sky,
+        wind: Option<Number>,
+        fog: Option<u8>,
+        storm: Option<bool>,
+        line: Option<String>,
+    }
+}
+
+wire! {
+    /// A scene's repo: its colour, its summary line and its bands of lanes.
+    pub struct SceneRepo {
+        id: String,
+        title: String,
+        color: Option<String>,
+        subtitle: Option<String>,
+        blocks: Vec<Band>,
+    }
+}
+
+wire! {
+    /// A band of a scene's repo: a header over its rows, or over blocks.
+    pub struct Band {
+        #[serde(rename = "type")]
+        kind: String,
+        id: String,
+        header: Option<String>,
+        rows: Option<Vec<SceneRow>>,
+        blocks: Option<Vec<Block>>,
+    }
+}
+
+wire! {
+    /// One row of a scene's band: an issue or a lane, with its host, the issue it needs you on and its blocker.
+    pub struct SceneRow {
+        id: String,
+        title: String,
+        subtitle: Option<String>,
+        figure: Option<Figure>,
+        tone: Option<Tone>,
+        value: Option<String>,
+        tap: Option<Tap>,
+        #[serde(deserialize_with = "null_kept")]
+        host: Option<Nullable<String>>,
+        #[serde(deserialize_with = "null_kept")]
+        needs: Option<Nullable<u64>>,
+        #[serde(deserialize_with = "null_kept")]
+        blocked_by: Option<Nullable<u64>>,
+    }
+}
+
+fn null_kept<'de, D: serde::Deserializer<'de>, T: Deserialize<'de>>(d: D) -> Result<Option<Nullable<T>>, D::Error> {
+    Option::<T>::deserialize(d).map(Some)
+}
+
+/// A diagram's nodes: a list of nodes by `id`, or a map of nodes by name.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
+#[serde(untagged)]
+pub enum Nodes {
+    List(Vec<Node>),
+    Map(BTreeMap<String, Node>),
+}
+
+impl Nodes {
+    /// The node of this id.
+    #[must_use]
+    pub fn get(&self, id: &str) -> Option<&Node> {
+        match self {
+            Self::List(l) => l.iter().find(|n| n.id.as_deref() == Some(id)),
+            Self::Map(m) => m.get(id),
+        }
+    }
+}
+
+wire! {
     /// A node of a diagram.
     pub struct Node {
+        id: Option<String>,
         state: Option<Tone>,
         coat: Option<String>,
         tap: Option<Tap>,

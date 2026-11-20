@@ -14,6 +14,8 @@ export type Answer = { close?: boolean | null; open?: string | null; ops?: Op[] 
 
 export type AppBlock = { fallback?: Fallback | null; id?: string | null; type: string };
 
+export type Band = { blocks?: Block[] | null; header?: string | null; id: string; rows?: SceneRow[] | null; type: string };
+
 export type Bar = { label: string; sub?: string | null; tone?: Tone | null; value: number };
 
 export type Block = ({ type: "screen" } & Screen) | ({ type: "sheet" } & Sheet) | ({ type: "section" } & Section) | ({ type: "list" } & List) | ({ type: "row" } & Row) | ({ type: "card" } & Card) | ({ type: "choice" } & Choice) | ({ type: "form" } & Form) | ({ type: "config" } & Form) | ({ type: "secret" } & Secret) | ({ type: "run" } & Run) | ({ type: "button" } & Button) | ({ type: "chips" } & Chips) | ({ type: "stat" } & Stat) | ({ type: "text" } & Text) | ({ type: "images" } & Images) | ({ type: "web" } & Web) | ({ type: "diff" } & Diff) | ({ type: "editor" } & Editor) | ({ type: "scene" } & Scene) | ({ type: "diagram" } & Diagram) | ({ type: "composer" } & Composer) | ({ type: "lines" } & Lines) | ({ type: "prose" } & Prose) | ({ type: "hero" } & Hero) | ({ type: "media" } & Media) | ({ type: "nav" } & Nav) | ({ type: "island" } & Island) | ({ type: "table" } & Table) | ({ type: "steps" } & Steps) | ({ type: "chart" } & Chart) | ({ type: "toast" } & Toast) | ({ type: "timeline" } & Timeline) | (AppBlock & { [key: string]: unknown });
@@ -28,7 +30,7 @@ export type ButtonStyle = "primary" | "plain" | "destructive";
 
 export type Bye = { why: Why };
 
-export type Card = { badge?: Label | null; blocks?: Block[] | null; buttons?: Block[] | null; fold?: Fold | null; id?: string | null; kind?: CardKind | null; menu?: Act[] | null; meta?: Shown | null; push?: boolean | null; show?: Expr | null; subtitle?: string | null; tap?: Tap | null; title?: string | null; tone?: Tone | null };
+export type Card = { badge?: Label | null; blocks?: Block[] | null; buttons?: Block[] | null; fold?: Fold | null; id?: string | null; kind?: CardKind | null; menu?: Act[] | null; meta?: Shown | null; push?: boolean | null; show?: Expr | null; subtitle?: Toned | null; tap?: Tap | null; title?: string | null; tone?: Tone | null };
 
 export type CardKind = "ask" | "run" | "secret" | "config" | "proposal";
 
@@ -66,7 +68,7 @@ export type Confirm = { destructive?: boolean | null; message?: string | null; o
 
 export type DaySpan = { end: string; id?: string | null; row?: string | null; start: string };
 
-export type Diagram = { counts?: Record<string, number> | null; id?: string | null; nodes?: Record<string, Node> | null; selected?: string | null; show?: Expr | null; source: string; title?: string | null };
+export type Diagram = { counts?: Record<string, number> | null; id?: string | null; nodes?: Nodes | null; selected?: string | null; show?: Expr | null; source: string; title?: string | null };
 
 export type Diff = { file: string; hunks: Hunk[]; id?: string | null; show?: Expr | null; summary?: string | null };
 
@@ -86,7 +88,7 @@ export type FieldKind = "text" | "toggle" | "picker" | "secret";
 
 export type FieldValue = string | number | boolean;
 
-export type Figure = { avatar?: string | null; coat?: string | null; grow?: string | null; icon?: string | null; state?: Tone | null; tool?: string | null };
+export type Figure = { act?: string | null; avatar?: string | null; coat?: string | null; grow?: string | null; icon?: string | null; state?: Tone | null; tool?: string | null };
 
 export type Finding = { at: string; file: string; fix: string; line?: number | null; message: string; rule: string; severity: Severity; steps?: string | null };
 
@@ -94,7 +96,7 @@ export type Fold = { line: string; main?: FoldMain | null };
 
 export type FoldMain = { action: string; block?: string | null; label: string; value?: string | null; values?: Record<string, unknown> | null };
 
-export type Form = { action?: string | null; fields: Field[]; id?: string | null; show?: Expr | null; submit?: Submit | null };
+export type Form = { action?: string | null; fields: Field[]; id?: string | null; more?: string | null; show?: Expr | null; submit?: Submit | null };
 
 export type Gesture = { action: string; enabled?: Expr | null; name: string };
 
@@ -134,9 +136,11 @@ export type Lines = { action?: string | null; add?: string | null; balance?: str
 
 export type Link = { label: string; tap: Tap };
 
-export type List = { id?: string | null; reorder?: Gesture | null; rows: Block[]; show?: Expr | null };
+export type List = { id?: string | null; more?: string | null; reorder?: Gesture | null; rows: Block[]; show?: Expr | null };
 
 export type Lit = null | boolean | number | string;
+
+export type Load = "calm" | "busy" | "held";
 
 export type Mark = { at: number[]; fixed?: boolean | null; group?: string | null; id: string; kind: MarkKind; path?: number[][] | null; text?: string | null; to?: number[] | null; tone?: Tone | null };
 
@@ -150,7 +154,9 @@ export type Nav = { brand?: NavLink | null; id?: string | null; links: NavLink[]
 
 export type NavLink = { current?: boolean | null; href: string; label: string };
 
-export type Node = { coat?: string | null; label?: string | null; limit?: string | null; state?: Tone | null; tap?: Tap | null; value?: string | null };
+export type Node = { coat?: string | null; id?: string | null; label?: string | null; limit?: string | null; state?: Tone | null; tap?: Tap | null; value?: string | null };
+
+export type Nodes = Node[] | Record<string, Node>;
 
 export type OldFrame = { ops: Op[]; seq: number };
 
@@ -188,7 +194,11 @@ export type RowStyle = "link" | "destructive";
 
 export type Run = { action: string; command: string; dir?: string | null; id?: string | null; sha: string; show?: Expr | null; touches?: string | null; until?: string | null };
 
-export type Scene = { id?: string | null; label?: string | null; lanes?: Lane[] | null; show?: Expr | null };
+export type Scene = { id?: string | null; label?: string | null; lanes?: Lane[] | null; load?: Load | null; repos?: SceneRepo[] | null; show?: Expr | null; weather?: Weather | null };
+
+export type SceneRepo = { blocks: Band[]; color?: string | null; id: string; subtitle?: string | null; title: string };
+
+export type SceneRow = { blocked_by?: number | null; figure?: Figure | null; host?: string | null; id: string; needs?: number | null; subtitle?: string | null; tap?: Tap | null; title: string; tone?: Tone | null; value?: string | null };
 
 export type Screen = { actions?: Act[] | null; back?: string | null; badge?: number | null; blocks?: Block[] | null; done?: Submit | null; focus?: boolean | null; id?: string | null; large?: boolean | null; pending?: Pending | null; personas?: Record<string, unknown>[] | null; refresh?: boolean | null; show?: Expr | null; sites?: number | null; source?: string | null; state?: Record<string, Lit> | null; stream?: string | null; threads?: Record<string, unknown>[] | null; title?: string | null; url?: string | null };
 
@@ -209,6 +219,8 @@ export type Severity = "error" | "warn";
 export type Sheet = { blocks: Block[]; cancel?: string | null; done?: Submit | null; id?: string | null; show?: Expr | null; title: string };
 
 export type Shown = string | number | Bound | Time;
+
+export type Sky = "clear" | "windy" | "fog" | "storm";
 
 export type SortDir = "asc" | "desc";
 
@@ -246,7 +258,7 @@ export type TableSelect = { actions: BulkAction[] };
 
 export type TableSort = { by: string; dir: SortDir };
 
-export type Tap = { action?: string | null; copy?: string | null; focus?: string | null; open?: string | null; set?: SetState[] | null; sheet?: string | null; thread?: string | null; url?: string | null; values?: Record<string, unknown> | null };
+export type Tap = { action?: string | null; copy?: string | null; focus?: string | null; keep?: boolean | null; open?: string | null; set?: SetState[] | null; sheet?: string | null; thread?: string | null; url?: string | null; values?: Record<string, unknown> | null };
 
 export type Text = { center?: boolean | null; font?: string | null; id?: string | null; markdown?: string | null; show?: Expr | null; size?: number | null; style?: TextStyle | null; text?: string | null; tone?: Tone | null; top?: number | null; until?: string | null; weight?: string | null };
 
@@ -279,6 +291,8 @@ export type TreeNode = { children: TreeNode[]; drawn: TreeDrawn; id?: string | n
 export type Undo = { action: string; confirm?: Confirm | null; label?: string | null; values?: Record<string, unknown> | null };
 
 export type Via = "pointer" | "keys" | "action";
+
+export type Weather = { fog?: number | null; line?: string | null; sky: Sky; storm?: boolean | null; wind?: number | null };
 
 export type Web = { height: number; id?: string | null; show?: Expr | null; src: string };
 

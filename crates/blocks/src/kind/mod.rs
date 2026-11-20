@@ -76,6 +76,8 @@ kind! {
         id: Option<String>,
         rows: Vec<Block>,
         reorder: Option<Gesture>,
+        #[serde(rename = "more")]
+        next: Option<String>,
     }
 }
 
@@ -110,7 +112,7 @@ kind! {
         kind: Option<CardKind>,
         tone: Option<Tone>,
         title: Option<String>,
-        subtitle: Option<String>,
+        subtitle: Option<Toned>,
         meta: Option<Shown>,
         badge: Option<Label>,
         buttons: Option<Vec<Block>>,
@@ -143,6 +145,8 @@ kind! {
         submit: Option<Submit>,
         action: Option<String>,
         fields: Vec<Field>,
+        #[serde(rename = "more")]
+        next: Option<String>,
     }
 }
 
@@ -274,18 +278,21 @@ kind! {
         id: Option<String>,
         label: Option<String>,
         lanes: Option<Vec<Lane>>,
+        load: Option<Load>,
+        weather: Option<Weather>,
+        repos: Option<Vec<SceneRepo>>,
     }
 }
 
 kind! {
-    /// A diagram from its source, with counts and nodes by name.
+    /// A diagram from its source, with counts and its nodes.
     pub struct Diagram {
         id: Option<String>,
         title: Option<String>,
         source: String,
         selected: Option<String>,
         counts: Option<BTreeMap<String, Number>>,
-        nodes: Option<BTreeMap<String, Node>>,
+        nodes: Option<Nodes>,
     }
 }
 

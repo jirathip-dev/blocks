@@ -113,7 +113,7 @@ function map(g: ReturnType<typeof chart>, b: Blk, c: Ctx, m: Metrics, counts: Co
     if (s === 0) return [[t.mx > f.mx ? f.x + f.w : f.x, f.my], [t.mx, f.my], [t.mx, down ? t.y : t.y + t.h]];
     return [[f.mx, down ? f.y + f.h : f.y], [f.mx, t.my], [t.mx > f.mx ? t.x : t.x + t.w, t.my]];
   };
-  const nodes = obj(b.nodes), node = (id: string) => obj(nodes[id]);
+  const nodes = b.nodes, node = (id: string) => obj(Array.isArray(nodes) ? nodes.find((n) => obj(n).id === id) : obj(nodes)[id]);
   const first = g.spine[0] === undefined ? null : box(g.spine[0]);
   if (first) svg.append(svgEl("circle", { cx: first.mx, cy: 10, r: 6, class: "dgs" }), svgEl("path", { d: d([[first.mx, 16], [first.mx, first.y]]), class: "dge" }));
   for (const e of g.edges) {
