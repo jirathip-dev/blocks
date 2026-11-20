@@ -19,7 +19,6 @@ export type Opts = {
     w(key: string): string;
     pages?: Page[] | undefined;
 };
-export declare const PROF: unknown[];
 export declare const quadOf: (src: Blob) => Promise<Shot & {
     quad: Quad;
 }>;

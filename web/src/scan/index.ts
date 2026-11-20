@@ -13,7 +13,7 @@ export type Opts = { label: string; max: number; w(key: string): string; pages?:
 
 type Pic = ImageBitmap | { src: Blob; n: number };
 type Ask = { op: "find"; pic: Pic } | { op: "page"; pic: Pic; quad: Quad } | { op: "pdf"; pages: Uint8Array[] };
-type Reply = { id: number; quad?: Quad | null; jpeg?: Blob; pdf?: Blob; made?: number; T?: number[] };
+type Reply = { id: number; quad?: Quad | null; jpeg?: Blob; pdf?: Blob; made?: number };
 type Edit = Shot & { quad: Quad; auto: Quad; at: number };
 type S = {
   o: Opts;
@@ -41,7 +41,6 @@ const scaled = (q: Quad, k: number): Quad => {
 const pixels = (b: ImageBitmap, long = Infinity) => {
   const k = Math.min(1, long / Math.max(b.width, b.height)), c = new OffscreenCanvas(Math.round(b.width * k), Math.round(b.height * k));
   const x = c.getContext("2d", { willReadFrequently: true });
-  if (x) x.imageSmoothingEnabled = k === 1;
   x?.drawImage(b, 0, 0, c.width, c.height);
   return { k, img: x?.getImageData(0, 0, c.width, c.height) ?? new ImageData(1, 1) };
 };
@@ -58,24 +57,19 @@ async function decoded(p: Pic): Promise<ImageBitmap> {
 
 async function work(a: Ask, made: (n: number) => void): Promise<Omit<Reply, "id">> {
   if (a.op === "find") {
-    const T = [performance.now()], ph = await decoded(a.pic); T.push(performance.now());
-    const { k, img } = pixels(ph, 640); T.push(performance.now());
-    const q = corners(img); T.push(performance.now());
-    return { quad: q ? scaled(q, k) : null, T: T.slice(1).map((v, j) => Math.round(v - (T[j] ?? 0))) };
+    const { k, img } = pixels(await decoded(a.pic), 640), q = corners(img);
+    return { quad: q ? scaled(q, k) : null };
   }
   if (a.op === "page") {
-    const T = [performance.now()], photo = await decoded(a.pic); T.push(performance.now());
-    const xs = a.quad.map(([x]) => x), ys = a.quad.map(([, y]) => y), x0 = Math.max(0, Math.floor(Math.min(...xs))), y0 = Math.max(0, Math.floor(Math.min(...ys)));
+    const photo = await decoded(a.pic), xs = a.quad.map(([x]) => x), ys = a.quad.map(([, y]) => y), x0 = Math.max(0, Math.floor(Math.min(...xs))), y0 = Math.max(0, Math.floor(Math.min(...ys)));
     const sw = Math.min(photo.width, Math.ceil(Math.max(...xs))) - x0, sh = Math.min(photo.height, Math.ceil(Math.max(...ys))) - y0;
     const k = Math.min(1, Math.max(...A4) / Math.max(sw, sh, 1)), crop = new OffscreenCanvas(Math.max(1, Math.round(sw * k)), Math.max(1, Math.round(sh * k)));
     const cx = crop.getContext("2d", { willReadFrequently: true });
-    cx?.drawImage(photo, x0, y0, sw, sh, 0, 0, crop.width, crop.height); T.push(performance.now());
+    cx?.drawImage(photo, x0, y0, sw, sh, 0, 0, crop.width, crop.height);
     const f = ([x, y]: Pt): Pt => [(x - x0) * k, (y - y0) * k], [p, q, r, t] = a.quad;
     const c = new OffscreenCanvas(A4[0], A4[1]), page = warp(cx?.getImageData(0, 0, crop.width, crop.height) ?? new ImageData(1, 1), [f(p), f(q), f(r), f(t)]);
-    T.push(performance.now());
     c.getContext("2d")?.putImageData(new ImageData(page.data, A4[0], A4[1]), 0, 0);
-    const jpeg = await c.convertToBlob({ type: "image/jpeg", quality: 0.8 }); T.push(performance.now());
-    return { jpeg, T: T.slice(1).map((v, j) => Math.round(v - (T[j] ?? 0))) };
+    return { jpeg: await c.convertToBlob({ type: "image/jpeg", quality: 0.8 }) };
   }
   const jpegs = [];
   for (const bytes of a.pages) made(jpegs.push({ bytes, width: A4[0], height: A4[1] }));
@@ -106,17 +100,14 @@ function ask(a: Ask, made?: (n: number) => void): Promise<Reply> {
   worker.postMessage({ ...a, id });
   return new Promise((done) => waiting.set(id, { done, made }));
 }
-export const PROF: unknown[] = [];
 /// The shot of the encoded photo `src`, decoded here and in the worker at once, with the corners the worker found or the frame's inset.
 export const quadOf = async (src: Blob): Promise<Shot & { quad: Quad }> => {
-  const t = performance.now(), [photo, r] = await Promise.all([createImageBitmap(src).then((b) => (PROF.push(["main-decode", Math.round(performance.now() - t)]), b)), ask({ op: "find", pic: pic(src) })]);
-  PROF.push(["find", Math.round(performance.now() - t), r.T]);
+  const [photo, r] = await Promise.all([createImageBitmap(src), ask({ op: "find", pic: pic(src) })]);
   return { src, photo, quad: r.quad ?? inset(photo.width, photo.height) };
 };
 /// The page inside `quad` in the shot, corrected to A4 and drawn to a JPEG in the worker.
 export const pageOf = async ({ src, photo }: Shot, quad: Quad, auto: Quad): Promise<Page> => {
-  const t = performance.now(), r = await ask({ op: "page", pic: pic(src), quad }); PROF.push(["page", Math.round(performance.now() - t), r.T]);
-  const jpeg = new Uint8Array((await r.jpeg?.arrayBuffer()) ?? new ArrayBuffer(0));
+  const jpeg = new Uint8Array((await (await ask({ op: "page", pic: pic(src), quad })).jpeg?.arrayBuffer()) ?? new ArrayBuffer(0));
   return { src, photo, quad, auto, jpeg, url: URL.createObjectURL(new Blob([jpeg], { type: "image/jpeg" })) };
 };
 
