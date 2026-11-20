@@ -1,0 +1,9 @@
+Decided: a bridge (blocksLook plus a public Palette init, tiles nil for no dots or build-up), not a rename of BlocksUI's Look
+Because: "Rename BlocksUI's or give a bridge that hands BlocksUI the app's palette and turns the dot grid and build-up animation off"
+Because: swift/Tests/AppFixtureTests/AppFixtureTests.swift:79
+Rejected: renaming Look/Palette/look in BlocksUI — breaks every current user while the app's own names already shadow them
+Decided: menu block stays in cooee; its account and settings-group rows are no core kind
+Decided: PendingBar stays in cooee; Refreshing ships, as a generic bar needs raw sizes the token lint refuses
+Rejected: a tag cut from the lane — release.yml tags v<SCHEMA_VERSION>.<n> on a green main
+Check: AppFixtureTests imports BlocksUI without @testable and builds an app block from ActButton, BlockStack, RelativeValue, CardContext and MenuItems
+Owner: apps can now build their own blocks from BlocksUI's pieces and keep their own look beside it
