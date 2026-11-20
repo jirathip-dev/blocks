@@ -14,7 +14,7 @@ with the `/react` path; react-dom, @types/react and @types/react-dom approved as
 
 | File | What |
 |---|---|
-| `usage.md` | how the callers read: a synergy route end to end (screen, loader, view, actions, island, brand, test), and a second adapter |
+| `usage.md` | how the callers read: a client app route end to end (screen, loader, view, actions, island, brand, test), and a second adapter |
 | `adr.md` | the question, the two modes, the options, the decision in ten parts, consequences, open questions, hot files, the `.drover/arch.toml` lines |
 | `shapes.md` | the layout, the data shapes: builders, `Built`, `Fault`, the view's props, islands, the look, the adapter's boot |
 | `boundaries.md` | which module may call which and what enforces it, the adapter contract with its conformance fixtures, two statecharts |
@@ -24,7 +24,7 @@ with the `/react` path; react-dom, @types/react and @types/react-dom approved as
 
 | | Mode A, server-driven | Mode B, client-built |
 |---|---|---|
-| Who | drover, cooee | synergy |
+| Who | drover, cooee | the client app |
 | The screen is built by | a Rust server, with the kinds' `new` and setters | TS builders in a route loader |
 | It changes by | row ops over the device stream | the loader running again: a new screen |
 | Drawn by | the HTML shell, SwiftUI, the static site | the React adapter |
@@ -52,7 +52,7 @@ the `codegen/` folder is one slice shared with #79's G1, filed once.
 | later | adapter: the Mode A kinds | the other 14 kinds, filed and not queued until an app needs one | about +650 | R7 |
 
 R3 and R4 can run side by side. `table` (#80) adds its React view in whichever of #80 and R6 lands second. The guard
-kit (#79) builds on R3's `check()` and `actions()` and R4's `gated()`. Synergy's first app can start after R7.
+kit (#79) builds on R3's `check()` and `actions()` and R4's `gated()`. The client app's first app can start after R7.
 
 ## Where each amendment is answered
 

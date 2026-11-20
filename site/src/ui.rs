@@ -16,15 +16,17 @@ pub struct Page {
     pub title: String,
     pub description: String,
     pub screen: Screen,
+    pub js: &'static str,
 }
 
-const LINKS: [(&str, &str); 6] = [
+const LINKS: [(&str, &str); 7] = [
     ("gallery", "gallery.html"),
     ("styles", "styles.html"),
     ("numbers", "numbers.html"),
     ("behaviours", "behaviours.html"),
     ("islands", "islands.html"),
     ("layout", "layout.html"),
+    ("playground", "playground.html"),
 ];
 
 fn nav(current: &str) -> Block {
@@ -60,6 +62,7 @@ pub fn page(id: &str, file: &str, title: &str, description: &str, body: Vec<Bloc
         title: title.into(),
         description: description.into(),
         screen: Screen::new().id(id).title(title).blocks(blocks),
+        js: "blocks.js",
     }
 }
 

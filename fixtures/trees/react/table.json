@@ -2,7 +2,7 @@
   "kind": "table",
   "id": "invoices",
   "variant": null,
-  "drawn": "fallback",
+  "drawn": "native",
   "role": "group",
   "name": "Invoices",
   "children": []

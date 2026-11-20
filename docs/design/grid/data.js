@@ -1,4 +1,4 @@
-/* The worked case for the previews: synergy's product mark-up (components/ProductPanel.tsx), trimmed to three groups. */
+/* The worked case for the previews: the client app's product mark-up (components/ProductPanel.tsx), trimmed to three groups. */
 const G = (id, name) => ({ id, group: true, cells: { name } });
 const I = (id, name, qty, price, mult, margin, final, more = {}) => ({ id, cells: { name, qty, price, mult, margin, final }, ...more });
 const markup = {

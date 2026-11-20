@@ -1,5 +1,5 @@
 import { deepStrictEqual, ok, strictEqual } from "node:assert/strict";
-import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync } from "node:fs";
 import { extname, join } from "node:path";
 import { after, before, test } from "node:test";
 import { webkit } from "playwright";
@@ -52,7 +52,7 @@ test("every page is the same PNG and tree before and after blocks.js adopts it, 
   const warm = await open("index.html", { js: false });
   await warm.page.screenshot({ fullPage: true });
   await warm.close();
-  for (const f of files) {
+  for (const f of files.filter((f) => f !== "playground.html")) {
     const off = await open(f, { js: false });
     const png = await off.page.screenshot({ fullPage: true });
     deepStrictEqual(off.stray, [], f);
@@ -210,4 +210,75 @@ test("layout: the switch moves the same screens between compact and wide without
   ok(await phone.page.isVisible('[data-id="json"]'));
   ok((await phone.page.textContent('[data-id="json"]')).includes('"place": "menu"'));
   await phone.close();
+});
+
+const SHOTS = process.env.SHOTS ?? join(SITE, "..", "shots");
+const typed = (page, text) => page.fill(".pg-area", text);
+const inFrame = (page, fn, arg) => page.frames()[1].evaluate(fn, arg);
+
+test("playground: a sample draws in the preview, edits redraw it in place, bad JSON and schema faults are marked and keep the last good screen", async () => {
+  mkdirSync(SHOTS, { recursive: true });
+  for (const width of [390, 1440]) {
+    const { page, close, stray } = await open("playground.html#k=stat", { width });
+    await page.waitForSelector(".pg-status:not(.bad)");
+    await page.waitForFunction(() => document.querySelector(".pg-frame")?.contentDocument?.querySelector('[data-id="week"]'));
+    strictEqual(await page.getAttribute('[data-id="pick"] a[href="playground.html#k=stat"]', "aria-current"), "page");
+    strictEqual(await page.textContent(".pg-status"), "screen · 1 blocks · drawn");
+    await page.screenshot({ path: join(SHOTS, `playground-${width}.png`), fullPage: true });
+    await page.evaluate(() => (window.kept = true));
+    const text = await page.inputValue(".pg-area");
+    await typed(page, text.replace('"open"', '"opened"'));
+    ok((await inFrame(page, () => document.querySelector('[data-id="week"]').textContent)).includes("opened"));
+    await typed(page, text.replace('"open"', '"shut"').replace('"type": "stat"', '"type": "stats"'));
+    const line = text.split("\n").findIndex((l) => l.includes('"type": "stat"')) + 1;
+    deepStrictEqual(await page.$$eval(".pg-gut i.err", (is) => is.map((i) => i.textContent)), [String(line)]);
+    strictEqual(await page.textContent(".pg-status"), `line ${line} · schema: "stats" is not a kind`);
+    ok(await page.isVisible(".pg-note"));
+    ok((await inFrame(page, () => document.querySelector('[data-id="week"]').textContent)).includes("opened"), "the last good screen stays");
+    await typed(page, text.replace('"open"', '"open",'));
+    ok((await page.textContent(".pg-status")).includes("not JSON"));
+    await page.screenshot({ path: join(SHOTS, `playground-error-${width}.png`), fullPage: true });
+    ok(await page.evaluate(() => window.kept === true), "no reload");
+    deepStrictEqual(stray, []);
+    await close();
+  }
+});
+
+test("playground: look, dark and width switch the preview only; share packs the screen into the link and the link brings it back", async () => {
+  const { page, close } = await open("playground.html#k=chips", { width: 1440 });
+  await page.waitForSelector(".pg-status:not(.bad)");
+  const frameBg = () => inFrame(page, () => getComputedStyle(document.documentElement).getPropertyValue("--bg").trim());
+  strictEqual(await frameBg(), "#f6f6f6");
+  await page.click('.pg-seg button[value="console"]');
+  await page.click('.pg-seg button[value="dark"]');
+  await page.click('.pg-seg button[value="1440"]');
+  strictEqual(await frameBg(), "#0d0d0c");
+  strictEqual(await bg(page), "#f6f6f6");
+  strictEqual(await page.evaluate(() => document.documentElement.dataset.look), undefined);
+  strictEqual(await page.$eval(".pg-frame", (f) => f.style.width), "1440px");
+  const text = (await page.inputValue(".pg-area")).replace('"medium"', '"max"');
+  await typed(page, text);
+  await page.click(".pg-share");
+  await page.waitForSelector(".pg-url");
+  const url = await page.inputValue(".pg-url");
+  ok(url.startsWith(`${BASE}playground.html#s=`), url);
+  strictEqual(page.url(), url);
+  await close();
+  const back = await open(url.slice(BASE.length), { width: 390 });
+  await back.page.waitForSelector(".pg-status:not(.bad)");
+  strictEqual(await back.page.inputValue(".pg-area"), text);
+  strictEqual(await back.page.textContent(".pg-from"), "From a shared link.");
+  await back.close();
+});
+
+test("kind pages: the sample's Rust tab is shown first and the JSON tab swaps in place", async () => {
+  const { page, close } = await open("kind-stat.html", { width: 1440 });
+  ok(await page.isVisible('[data-id="rust"]'));
+  ok(await page.isHidden('[data-id="json"]'));
+  ok((await page.textContent('[data-id="rust"]')).includes("fn figures() -> Vec<Block> {"));
+  await page.click('[data-id="tabs"] a[href="#json"]');
+  ok(await page.isHidden('[data-id="rust"]'));
+  ok(await page.isVisible('[data-id="json"]'));
+  strictEqual(page.url(), `${BASE}kind-stat.html`);
+  await close();
 });

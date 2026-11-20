@@ -3,7 +3,7 @@
 ## Which module may call which
 
 ```
-an app (a synergy route) ───────────────┬──────────────▶ web/react  (@jirathip-dev/blocks/react)
+an app (a client app route) ───────────────┬──────────────▶ web/react  (@jirathip-dev/blocks/react)
                                         │                    │ react only
                                         ▼                    ▼
 web/src/render, shell.ts, stream.ts ──▶ web/src/core  ◀── web/shot (the harness) ──▶ one adapter's boot

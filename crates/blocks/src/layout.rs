@@ -80,7 +80,9 @@ pub enum Transition {
 }
 
 /// The two widths a layout places for: iPhone is `Compact`, iPad and Mac are `Wide`.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
+#[serde(rename_all = "lowercase")]
 pub enum SizeClass {
     Compact,
     Wide,
@@ -117,6 +119,28 @@ pub struct PlaceEntry {
     pub id: String,
     pub label: Option<String>,
     pub screen: String,
+}
+
+/// One edit to a layout: the tree is one for both size classes, how a node shows is per size class.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[cfg_attr(feature = "schema", derive(schemars::JsonSchema), schemars(rename = "LayoutEdit"))]
+#[serde(tag = "edit", rename_all = "lowercase")]
+pub enum Edit {
+    Move {
+        id: String,
+        into: String,
+        slot: String,
+        before: Option<String>,
+    },
+    Swap {
+        a: String,
+        b: String,
+    },
+    Show {
+        id: String,
+        size: SizeClass,
+        place: Place,
+    },
 }
 
 /// Why a layout was refused, and where: `line` and `col` count from 1.
@@ -445,4 +469,205 @@ fn host<'a>(n: &'a mut Node, slot: &str, c: &Contract, depth: usize) -> Option<&
         .values_mut()
         .flatten()
         .find_map(|child| host(child, slot, c, depth + 1))
+}
+
+fn refused(why: String) -> Broken {
+    Broken { line: 1, col: 1, why }
+}
+
+fn find<'a, P>(n: &'a Node<P>, id: &str) -> Option<&'a Node<P>> {
+    if n.id == id {
+        return Some(n);
+    }
+    n.slots.values().flatten().find_map(|k| find(k, id))
+}
+
+fn find_mut<'a>(n: &'a mut Node, id: &str) -> Option<&'a mut Node> {
+    if n.id == id {
+        return Some(n);
+    }
+    n.slots.values_mut().flatten().find_map(|k| find_mut(k, id))
+}
+
+fn take(n: &mut Node, id: &str) -> Option<Node> {
+    for list in n.slots.values_mut() {
+        if let Some(i) = list.iter().position(|k| k.id == id) {
+            return Some(list.remove(i));
+        }
+        if let Some(found) = list.iter_mut().find_map(|k| take(k, id)) {
+            return Some(found);
+        }
+    }
+    None
+}
+
+fn swap(n: &mut Node, a: &Node, b: &Node) {
+    for k in n.slots.values_mut().flatten() {
+        if k.id == a.id {
+            *k = b.clone();
+        } else if k.id == b.id {
+            *k = a.clone();
+        } else {
+            swap(k, a, b);
+        }
+    }
+}
+
+/// `l` after `e`, checked: `Ok` passes `check`, `Err` leaves the caller's layout as it was.
+pub fn edit(l: &Layout, e: &Edit, c: &Contract) -> Result<Layout, Broken> {
+    let named = |id: &str| find(&l.root, id).ok_or_else(|| refused(format!("no node \"{id}\"")));
+    let root = |ids: &[&String]| {
+        if ids.iter().any(|id| **id == l.root.id) {
+            return Err(refused("the root can't move".into()));
+        }
+        Ok(())
+    };
+    let mut next = l.clone();
+    match e {
+        Edit::Move { id, into, slot, before } => {
+            let (node, _) = (named(id)?, named(into)?);
+            root(&[id])?;
+            if find(node, into).is_some() {
+                return Err(refused(format!("\"{id}\" can't go inside itself")));
+            }
+            let node = take(&mut next.root, id).ok_or_else(|| refused(format!("no node \"{id}\"")))?;
+            let host = find_mut(&mut next.root, into).ok_or_else(|| refused(format!("no node \"{into}\"")))?;
+            let list = host.slots.entry(slot.clone()).or_default();
+            let at = match before {
+                None => list.len(),
+                Some(b) => list
+                    .iter()
+                    .position(|k| &k.id == b)
+                    .ok_or_else(|| refused(format!("no \"{b}\" in {slot} of \"{into}\"")))?,
+            };
+            list.insert(at, node);
+        }
+        Edit::Swap { a, b } => {
+            let (na, nb) = (named(a)?.clone(), named(b)?.clone());
+            root(&[a, b])?;
+            if find(&na, b).is_some() || find(&nb, a).is_some() {
+                return Err(refused(format!("\"{a}\" and \"{b}\" are on one branch")));
+            }
+            swap(&mut next.root, &na, &nb);
+        }
+        Edit::Show { id, size, place } => {
+            let n = find_mut(&mut next.root, id).ok_or_else(|| refused(format!("no node \"{id}\"")))?;
+            match size {
+                SizeClass::Compact => n.place.compact = *place,
+                SizeClass::Wide => n.place.wide = *place,
+            }
+        }
+    }
+    let text = serde_json::to_string(&next).map_err(|e| refused(e.to_string()))?;
+    check(&text, c)
+}
+
+/// The slots each of the contract's components holds: what a shell needs to offer only drops that can pass.
+pub fn slots(c: &Contract) -> BTreeMap<&'static str, &'static [&'static str]> {
+    std::iter::once(&NAV)
+        .chain(c.components)
+        .map(|k| (k.kind, k.slots))
+        .collect()
+}
+
+fn height<P>(n: &Node<P>) -> usize {
+    1 + n.slots.values().flatten().map(height).max().unwrap_or(0)
+}
+
+fn path<'a, P>(n: &'a Node<P>, id: &str) -> Option<Vec<&'a str>> {
+    if n.id == id {
+        return Some(vec![n.id.as_str()]);
+    }
+    let below = n.slots.values().flatten().find_map(|k| path(k, id))?;
+    Some(std::iter::once(n.id.as_str()).chain(below).collect())
+}
+
+struct Places<'a> {
+    slots: &'a BTreeMap<&'a str, &'a [&'a str]>,
+    grabbed: &'a str,
+    height: usize,
+    depth: usize,
+    above: Vec<&'a str>,
+}
+
+impl Places<'_> {
+    fn walk<P>(&self, host: &Node<P>, depth: usize, out: &mut Vec<Edit>) {
+        let kind = match &host.content {
+            Content::Component { kind } => kind.as_str(),
+            Content::Screen { .. } => return,
+        };
+        let mut held = self.slots.get(kind).map_or_else(Vec::new, |s| s.to_vec());
+        held.sort_unstable();
+        let fits = depth + self.height <= MAX_DEPTH;
+        let to = |slot: &str, before: Option<&str>| Edit::Move {
+            id: self.grabbed.into(),
+            into: host.id.clone(),
+            slot: slot.into(),
+            before: before.map(str::to_owned),
+        };
+        for slot in held {
+            for k in host.slots.get(slot).into_iter().flatten() {
+                if k.id == self.grabbed {
+                    continue;
+                }
+                if fits {
+                    out.push(to(slot, Some(&k.id)));
+                }
+                if fits && !self.above.contains(&k.id.as_str()) && self.depth + height(k) <= MAX_DEPTH + 1 {
+                    out.push(Edit::Swap {
+                        a: self.grabbed.into(),
+                        b: k.id.clone(),
+                    });
+                }
+                self.walk(k, depth + 1, out);
+            }
+            if fits {
+                out.push(to(slot, None));
+            }
+        }
+    }
+}
+
+fn places(tree: &Resolved, slots: &BTreeMap<&str, &[&str]>, grabbed: &str) -> Vec<Edit> {
+    let (Some(at), Some(g)) = (path(tree, grabbed), find(tree, grabbed)) else {
+        return Vec::new();
+    };
+    if at.len() < 2 {
+        return Vec::new();
+    }
+    let mut above = at;
+    above.pop();
+    let p = Places {
+        slots,
+        grabbed,
+        height: height(g),
+        depth: above.len() + 1,
+        above,
+    };
+    let mut out = Vec::new();
+    p.walk(tree, 1, &mut out);
+    out
+}
+
+fn stay<P>(tree: &Node<P>, grabbed: &str) -> Option<Edit> {
+    tree.slots
+        .iter()
+        .find_map(|(slot, kids)| {
+            let i = kids.iter().position(|k| k.id == grabbed)?;
+            Some(Edit::Move {
+                id: grabbed.into(),
+                into: tree.id.clone(),
+                slot: slot.clone(),
+                before: kids.get(i + 1).map(|k| k.id.clone()),
+            })
+        })
+        .or_else(|| tree.slots.values().flatten().find_map(|k| stay(k, grabbed)))
+}
+
+/// Every edit a grabbed node can end in, in reading order: `places` without where it is now.
+pub fn drops(tree: &Resolved, slots: &BTreeMap<&str, &[&str]>, grabbed: &str) -> Vec<Edit> {
+    let now = stay(tree, grabbed);
+    let mut out = places(tree, slots, grabbed);
+    out.retain(|e| Some(e) != now.as_ref());
+    out
 }

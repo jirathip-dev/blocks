@@ -2,7 +2,7 @@
   "kind": "table",
   "id": "grid",
   "variant": null,
-  "drawn": "fallback",
+  "drawn": "native",
   "role": "group",
   "name": "Mark-up · K-12 tower",
   "children": []

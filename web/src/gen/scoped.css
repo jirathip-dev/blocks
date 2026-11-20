@@ -728,6 +728,9 @@ polygon.mki{fill:var(--mk)}
 .web .wf.none{display:flex;align-items:center;justify-content:center;padding:var(--s3);color:var(--mute);font-size:var(--fs-meta);text-align:center}
 .web .wm{display:flex;align-items:center;gap:var(--s3);min-height:var(--ctl);font-size:var(--fs-meta);color:var(--mute)}
 .web .wu{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-variant-numeric:tabular-nums}
+.b-arrange>[data-drop=onto]{opacity:.6}
+.b-arrange>[data-drop=before]{transform:translateY(var(--s2))}
+.b-arrange>[data-drop=after]{transform:translateY(calc(var(--s2) * -1))}
 .b-confirm{position:fixed;left:var(--s4);right:var(--s4);top:30%;z-index:7;padding:var(--s4);background:var(--card);border:1px solid var(--edge);border-radius:var(--radius)}
 .b-sheet{position:fixed;inset:0;z-index:5;display:flex;align-items:flex-end;justify-content:center;background:var(--scrim)}
 .b-sheet[hidden]{display:none}
