@@ -41,6 +41,7 @@ const scaled = (q: Quad, k: number): Quad => {
 const pixels = (b: ImageBitmap, long = Infinity) => {
   const k = Math.min(1, long / Math.max(b.width, b.height)), c = new OffscreenCanvas(Math.round(b.width * k), Math.round(b.height * k));
   const x = c.getContext("2d", { willReadFrequently: true });
+  if (x) x.imageSmoothingEnabled = k === 1;
   x?.drawImage(b, 0, 0, c.width, c.height);
   return { k, img: x?.getImageData(0, 0, c.width, c.height) ?? new ImageData(1, 1) };
 };
