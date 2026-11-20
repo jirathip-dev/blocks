@@ -1,8 +1,8 @@
 use serde_json::Value;
 
-use super::{get, link, list, Go, W};
+use crate::site::write::{get, link, list, Go, W};
 
-pub(super) fn pages(w: &mut W<'_>, b: &Value) {
+pub(super) fn draw(w: &mut W<'_>, b: &Value) {
     let title = get(b, "title").filter(|t| !t.is_empty()).unwrap_or("Document");
     let all = list(b, "pages");
     let n = all.len();

@@ -1,6 +1,7 @@
 use serde_json::{Map, Value};
 
-use super::{fallback, W};
+use super::fallback;
+use crate::site::write::{fields, sends, W};
 use crate::{Chart, ChartFormat, ChartKind, Era, Series, SeriesMark, Tone};
 
 const H: f64 = 180.0;
@@ -225,9 +226,9 @@ fn tap(w: &mut W<'_>, b: &Value, x: &str, cls: &str, attrs: &[(&str, &str)]) {
     let t = b.get("tap");
     let mut all: Vec<(&str, &str)> = attrs.to_vec();
     let form;
-    let action = t.and_then(|t| super::sends(Some(t)));
+    let action = t.and_then(|t| sends(Some(t)));
     if let Some(a) = action {
-        let mut values: Map<String, Value> = super::fields(&[t.and_then(|t| t.get("values"))]);
+        let mut values: Map<String, Value> = fields(&[t.and_then(|t| t.get("values"))]);
         values.insert("x".into(), x.into());
         form = w.post(b.get("id"), a, &values);
         all.extend([("type", "submit"), ("form", form.as_str()), ("data-action", a)]);
@@ -466,7 +467,7 @@ fn donut(w: &mut W<'_>, c: &Chart, b: &Value) {
     table(w, c, &head, &rows);
 }
 
-pub(super) fn chart(w: &mut W<'_>, b: &Value) {
+pub(super) fn draw(w: &mut W<'_>, b: &Value) {
     let Ok(c) = serde_json::from_value::<Chart>(b.clone()) else {
         return fallback(w, b);
     };
