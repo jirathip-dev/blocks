@@ -796,7 +796,7 @@ test("a link that is not http, https, mailto or relative is dropped and its text
 });
 
 test("a labelled time gives fixtures/times/labels.json's text at its clock, and a card draws one in its badge, meta, row and tile", async () => {
-  const { value } = await import("../src/render/index.ts");
+  const { value } = await import("../src/core/text.ts");
   const f = JSON.parse(readFileSync(new URL("../../fixtures/times/labels.json", import.meta.url), "utf8"));
   mock.timers.enable({ apis: ["Date"], now: Date.parse(f.now) });
   try {

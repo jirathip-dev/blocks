@@ -13,6 +13,7 @@ export type KindProps = { block: Record<string, unknown> & { type: string }; act
 export type IslandProps = { props: Record<string, unknown>; emit: (name: string, values?: Record<string, unknown>) => void };
 export type Islands = Record<string, (p: IslandProps) => ReactNode>;
 export type Ctx = {
+  screen: string;
   v: View;
   busy: ReadonlySet<string>;
   act: (a: Post) => Promise<boolean>;
@@ -31,7 +32,7 @@ export type Props = {
 
 const none: View = { hidden: new Set(), disabled: new Set(), says: {}, acts: new Set(), values: {} };
 /// What every block under a view reads: the local state's view, the busy senders and the way out.
-export const Cx = createContext<Ctx>({ v: none, busy: new Set(), act: async () => false, tap: () => {}, report: () => {}, kinds: {}, islands: {} });
+export const Cx = createContext<Ctx>({ screen: "", v: none, busy: new Set(), act: async () => false, tap: () => {}, report: () => {}, kinds: {}, islands: {} });
 
 const goOf = (t: Tap): Go | null => (t.open != null ? { open: t.open } : t.sheet != null ? { sheet: t.sheet } : t.thread != null ? { thread: t.thread } : null);
 
@@ -86,8 +87,8 @@ export function useCx(p: Props, screen: Built): { cx: Ctx; ask: ReactNode } {
       if (t.set?.length) setEdits((e) => ({ ...e, ...sets }));
       if (!go && t.action) void act({ action: t.action, values: t.values });
     };
-    return { v, busy, act, tap, report, kinds: p.kinds ?? {}, islands: p.islands ?? {} };
-  }, [key, p.kinds, p.islands]);
+    return { screen: String(screen.id ?? ""), v, busy, act, tap, report, kinds: p.kinds ?? {}, islands: p.islands ?? {} };
+  }, [key, screen.id, p.kinds, p.islands]);
   const end = (ok: boolean) => {
     asking?.done(ok);
     setAsking(null);
