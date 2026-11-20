@@ -66,11 +66,16 @@ internal struct BlockActs: ViewModifier {
     }
 }
 
-internal struct MenuItems: View {
-    internal let acts: [Act]
-    internal let run: (Act) -> Void
+/// Acts as menu buttons, a `bad` tone destructive; `run` gets the picked one.
+public struct MenuItems: View {
+    private let acts: [Act]
+    private let run: (Act) -> Void
 
-    internal var body: some View {
+    public init(acts: [Act], run: @escaping (Act) -> Void) {
+        (self.acts, self.run) = (acts, run)
+    }
+
+    public var body: some View {
         ForEach(Array(acts.enumerated()), id: \.offset) { _, item in
             Button(item.label, role: item.tone?.rawValue == "bad" ? .destructive : nil) { run(item) }
                 .modifier(Identified(id: Source(item).sent()?.action, action: true))
@@ -109,5 +114,18 @@ extension EnvironmentValues {
     internal var refresh: (@MainActor () -> Void)? {
         get { self[RefreshKey.self] }
         set { self[RefreshKey.self] = newValue }
+    }
+}
+
+/// Pull to refresh when `refresh` is set; the content as it is otherwise.
+public struct Refreshing: ViewModifier {
+    private let refresh: (@MainActor () -> Void)?
+
+    public init(refresh: (@MainActor () -> Void)?) {
+        self.refresh = refresh
+    }
+
+    public func body(content: Content) -> some View {
+        if let refresh { content.refreshable { refresh() } } else { content }
     }
 }
