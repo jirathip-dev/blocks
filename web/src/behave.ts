@@ -1,4 +1,4 @@
-import { ev, find, list, own, read, rec, sound, start, type State, view } from "./core/eval.ts";
+import { ev, find, list, lit, own, read, rec, sound, start, type State, view } from "./core/eval.ts";
 
 /// Keeps the blocks under `root` in step with local state: typing, a toggle, a pick or a tap's `set` changes it, nothing is sent.
 export function behave(root: HTMLElement, model: () => unknown): () => void {
@@ -15,7 +15,7 @@ export function behave(root: HTMLElement, model: () => unknown): () => void {
       const id = e.dataset.id ?? "";
       e.hidden = v.hidden.has(id);
       const go = e.dataset.block === "form" ? e.querySelector("[data-submit]") : e;
-      if (go instanceof HTMLButtonElement) go.disabled = v.disabled.has(id);
+      if (go instanceof HTMLButtonElement) go.disabled = v.disabled.has(id) || e.hasAttribute("data-busy");
     });
     root.querySelectorAll<HTMLButtonElement>("button[data-act]").forEach((b) => (b.disabled = v.acts.has(b.dataset.act ?? "")));
     root.querySelectorAll<HTMLElement>("td[data-act]").forEach((t) => t.toggleAttribute("aria-disabled", v.acts.has(t.dataset.act ?? "")));
@@ -35,6 +35,12 @@ export function behave(root: HTMLElement, model: () => unknown): () => void {
     if (!(i instanceof HTMLInputElement || i instanceof HTMLSelectElement) || !i.name) return;
     edits[i.name] = i instanceof HTMLInputElement && i.type === "checkbox" ? i.checked : i.value;
     touched.add(i.name);
+    sync();
+  });
+  root.addEventListener("field", (e) => {
+    if (!(e instanceof CustomEvent) || !rec(e.detail) || typeof e.detail.name !== "string") return;
+    edits[e.detail.name] = lit(null, e.detail.value);
+    touched.add(e.detail.name);
     sync();
   });
   root.addEventListener("click", (e) => {

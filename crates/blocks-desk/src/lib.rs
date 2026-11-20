@@ -251,6 +251,7 @@ impl Live {
             Step::Scroll(on) => format!("scroll {}", on.id),
             Step::Gesture(g) => format!("gesture {}", g.id),
             Step::Refuse(r) => format!("refuse {}", r.toast),
+            Step::File(f) => format!("file {}", f.field),
         };
         self.run.report.dropped.push(dropped);
     }
