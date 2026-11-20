@@ -2,8 +2,8 @@ use super::{
     Act, Block, BulkAction, Button, Card, CardKind, Cell, Chart, ChartFormat, ChartKind, ChipOption, Chips, Choice,
     ChoiceOption, Column, ColumnKind, Composer, Diagram, Diff, Editor, Era, ExportFormat, Fallback, Field, Form,
     Gesture, Hero, Hunk, Image, Images, Island, Keyboard, Label, Lane, LaneState, LineItem, Lines, Link, List, Mark,
-    MarkKind, Media, Nav, NavLink, Part, PhonePart, PickerField, Prose, Round, RoundLane, Row, RowError, Run, Scene,
-    Screen, Secret, Section, Series, SeriesMark, Sheet, Shown, SortDir, Span, Stage, Stat, Steps, Submit, Table,
+    MarkKind, Media, Nav, NavLink, Page, Part, PhonePart, PickerField, Prose, Round, RoundLane, Row, RowError, Run,
+    Scene, Screen, Secret, Section, Series, SeriesMark, Sheet, Shown, SortDir, Span, Stage, Stat, Steps, Submit, Table,
     TableRow, TableSelect, TableSort, Tap, Text, TextField, Time, Toast, Tone, Toned, Total, Undo, Web,
 };
 use crate::expr::{Expr, Lit, State};
@@ -621,6 +621,53 @@ fn table() -> Block {
     Block::Table(Box::new(table))
 }
 
+fn paged() -> Block {
+    let col = |id: &str, label: &str, kind: ColumnKind| Column {
+        id: id.into(),
+        label: label.into(),
+        kind,
+        ..Column::default()
+    };
+    let hours = Column {
+        total: Some(Total::Sum),
+        ..col("hours", "Hours", ColumnKind::Number)
+    };
+    let columns = vec![
+        col("req", "Request", ColumnKind::Text),
+        col("who", "Employee", ColumnKind::Text),
+        col("status", "Status", ColumnKind::Tone),
+        hours,
+    ];
+    let row = |id: &str, who: &str, status: &str, tone: Tone, hours: u32| TableRow {
+        id: id.into(),
+        cells: std::collections::BTreeMap::from([
+            ("req".to_string(), Cell::Text(id.into())),
+            ("who".into(), Cell::Text(who.into())),
+            (
+                "status".into(),
+                Cell::Label(Label {
+                    text: status.into(),
+                    tone: Some(tone),
+                }),
+            ),
+            ("hours".into(), Cell::Number(hours.into())),
+        ]),
+        ..TableRow::default()
+    };
+    let rows = vec![
+        row("OT-2400", "Somchai P.", "pending", Tone::Warn, 2),
+        row("OT-2399", "Nattaya K.", "pending", Tone::Warn, 3),
+        row("OT-2398", "Arthit W.", "approved", Tone::Ok, 4),
+        row("OT-2397", "Wanida T.", "rejected", Tone::Bad, 2),
+    ];
+    let more = Page {
+        action: "ot-more".into(),
+        cursor: "c:2397".into(),
+    };
+    let table = Table::new(columns, rows).id("ot").title("OT requests").next(more);
+    Block::Table(Box::new(table))
+}
+
 fn toast() -> Block {
     let ids = serde_json::Value::from(vec!["o-4821", "o-4822", "o-4825"]);
     let undo = Undo {
@@ -641,7 +688,7 @@ pub fn samples() -> Vec<(&'static str, Block)> {
         controls(),
         content(),
         stepper(),
-        vec![table(), grid(), toast(), super::timeline::sample()],
+        vec![table(), grid(), paged(), toast(), super::timeline::sample()],
     ]
     .concat();
     let kind = |b: &Block| {

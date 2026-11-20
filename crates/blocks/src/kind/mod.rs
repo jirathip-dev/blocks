@@ -83,7 +83,7 @@ kind! {
         rows: Vec<Block>,
         reorder: Option<Gesture>,
         #[serde(rename = "more")]
-        next: Option<String>,
+        next: Option<More>,
     }
 }
 
