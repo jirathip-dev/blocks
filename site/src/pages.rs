@@ -1,63 +1,9 @@
-use blocks::theme::{Hex, Mode, Scheme, Tokens};
 use blocks::{Act, Block, ButtonStyle, ChipOption, Chips, Hero, List, Media, Prose, Shown, Stat, Tile, Tone};
 use serde_json::Value;
 
 use crate::ui::{
     b, bold, code, heading, link_row, listing, marked, open, page, para, section, span, text, url, Page, REPO,
 };
-
-const PAPER: [&str; 19] = [
-    "#f3eee4",
-    "#fcfaf5",
-    "#d3c9b6",
-    "#e5ddce",
-    "#2a22144d",
-    "#1f1c17",
-    "#5a5347",
-    "#24406b",
-    "#24406b",
-    "#547850",
-    "#8a6a2f",
-    "#9f5049",
-    "#74678e",
-    "#3c797d",
-    "#24406b",
-    "#64597c",
-    "#31666a",
-    "#456642",
-    "#775d2c",
-];
-
-/// Paper: the site's own light scheme, to show that an app brings its own.
-pub fn paper() -> Result<Scheme, String> {
-    let [bg, card, edge, rule, scrim, fg, mute, l, link, g, a, r, p, c, fk_l, fk_p, fk_c, fk_g, fk_a] =
-        PAPER.map(|h| Hex::try_from(h.to_string()));
-    Ok(Scheme {
-        label: "Paper".into(),
-        mode: Mode::Light,
-        tokens: Tokens {
-            bg: bg?,
-            card: card?,
-            edge: edge?,
-            line: rule?,
-            scrim: scrim?,
-            fg: fg?,
-            mute: mute?,
-            l: l?,
-            link: link?,
-            g: g?,
-            a: a?,
-            r: r?,
-            p: p?,
-            c: c?,
-            fk_l: fk_l?,
-            fk_p: fk_p?,
-            fk_c: fk_c?,
-            fk_g: fk_g?,
-            fk_a: fk_a?,
-        },
-    })
-}
 
 fn tile(value: &str, unit: &str, label: &str) -> Tile {
     Tile {
@@ -137,11 +83,11 @@ pub fn home(kinds: usize, bench: Option<&Value>) -> Page {
             "gallery.html",
         ),
         link_row(
-            "to-schemes",
-            "Schemes",
-            "the default pair, light and dark, and a scheme this site brings itself",
-            "3",
-            "schemes.html",
+            "to-styles",
+            "Styles",
+            "four looks, and each part of a style drawn in the one you wear",
+            "4 looks",
+            "styles.html",
         ),
         link_row(
             "to-numbers",
@@ -183,7 +129,7 @@ pub const SWATCHES: [&str; 10] = [
     "--bg", "--card", "--edge", "--fg", "--mute", "--l", "--g", "--a", "--r", "--c",
 ];
 
-fn panel(id: &str, label: &str) -> Block {
+pub fn panel(id: &str, label: &str) -> Block {
     let chip = |v: &str| ChipOption {
         value: v.into(),
         label: v.into(),
@@ -221,53 +167,6 @@ fn panel(id: &str, label: &str) -> Block {
             b!(Chips(picks)),
             button("save", ButtonStyle::Primary),
             button("delete", ButtonStyle::Destructive),
-        ],
-    )
-}
-
-pub fn schemes(paper: &Scheme) -> Page {
-    let look = blocks::Button::new("look").id("look").tap(blocks::Tap {
-        sheet: Some("look".into()),
-        ..blocks::Tap::default()
-    });
-    let json = serde_json::to_string_pretty(paper).unwrap_or_default();
-    let own = Prose::new(vec![
-        heading("Bring your own"),
-        para(vec![
-            span("A scheme is the 19 colour tokens and a label. The site hands it to the page with the default pair; the look sheet lists what it is given. "),
-            code("theme::gate"),
-            span(" checks contrast and colour distance before a scheme ships, and this site's build runs it on Paper."),
-        ]),
-    ])
-    .id("own");
-    page(
-        "schemes",
-        "schemes.html",
-        "Schemes",
-        "The built-in default pair, light and dark, and a scheme this site brings itself.",
-        vec![
-            text(
-                "intro",
-                "blocks ships one scheme: the default pair, light and dark. An app brings any other itself. With JS off you see all three below; with `blocks.js`, the **look** button opens the shell's look sheet and the whole site changes.",
-            ),
-            b!(Button(look)),
-            section(
-                "panels",
-                "",
-                vec![
-                    panel("light", "Default light · built in"),
-                    panel("dark", "Default dark · built in"),
-                    panel("paper", "Paper · this site's own"),
-                ],
-            ),
-            section(
-                "pair-own",
-                "",
-                vec![
-                    b!(Prose(own)),
-                    b!(Prose(Prose::new(vec![heading("Paper's JSON"), listing("json", &json)]).id("paper-json"))),
-                ],
-            ),
         ],
     )
 }

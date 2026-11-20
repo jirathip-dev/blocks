@@ -1,0 +1,14 @@
+{
+  "action": "import",
+  "columns": [],
+  "id": "products",
+  "into": "Products",
+  "mb": 10,
+  "read": "read",
+  "template": {
+    "name": "products.xlsx",
+    "src": "https://example.com/files/template-products.xlsx"
+  },
+  "title": "Import products",
+  "type": "import"
+}

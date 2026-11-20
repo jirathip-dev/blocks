@@ -5,8 +5,8 @@ use serde_json::{Map, Number, Value};
 
 use super::Files;
 use crate::{
-    site, theme, tree, Block, Built, Card, Child, Composer, ComposerChip, Diagram, List, Node, OldFrame, Op, Queued,
-    Row, Screen, Tap, Text, Tone,
+    site, theme, tree, Block, Built, Card, Child, Composer, ComposerChip, Diagram, List, Node, Nodes, OldFrame, Op,
+    Queued, Row, Screen, Tap, Text, Tone,
 };
 
 pub(super) fn files(root: &Path, _: &Value) -> std::io::Result<Files> {
@@ -18,18 +18,24 @@ pub(super) fn files(root: &Path, _: &Value) -> std::io::Result<Files> {
             format!("import type {{ OldFrame }} from \"./types.ts\";\n\nexport const sample: OldFrame[] = {sample};\n"),
         ),
     ];
-    for (kind, b) in crate::samples() {
+    for (kind, b) in crate::fixtures() {
         let text = serde_json::to_string_pretty(&b)? + "\n";
         out.push((format!("fixtures/blocks/{kind}.json"), text));
     }
+    let every = Screen::new()
+        .id("every")
+        .blocks(crate::samples().into_iter().map(|(_, b)| b).collect::<Vec<_>>());
+    let every = serde_json::to_string_pretty(Built::of(&every).value())? + "\n";
+    out.push(("fixtures/built/every.json".into(), every));
     out.extend(trees(root)?);
     out.extend(html(root)?);
+    out.extend(super::fields::files(root)?);
     Ok(out)
 }
 
 fn html(root: &Path) -> std::io::Result<Files> {
     let mut out = vec![];
-    for (kind, b) in crate::samples() {
+    for (kind, b) in crate::fixtures() {
         let text = site::fragment(&Built::new(serde_json::to_value(&b)?), "/act") + "\n";
         out.push((format!("fixtures/html/{kind}.html"), text));
     }
@@ -111,23 +117,18 @@ fn workflow() -> Diagram {
                 .into_iter()
                 .collect::<BTreeMap<_, _>>(),
         )
-        .nodes(
+        .nodes(Nodes::Map(
             nodes
                 .map(|(k, n)| (k.to_string(), n))
                 .into_iter()
                 .collect::<BTreeMap<_, _>>(),
-        )
+        ))
 }
 
 const SWIFT_FALLBACKS: [&str; 6] = ["composer", "prose", "hero", "media", "nav", "island"];
 
 fn trees(root: &Path) -> std::io::Result<Files> {
-    let mut drawn = vec![];
-    for f in std::fs::read_dir(root.join("web/src/render"))? {
-        let name = f?.file_name().to_string_lossy().into_owned();
-        drawn.extend(name.strip_suffix(".ts").filter(|k| *k != "index").map(String::from));
-    }
-    let web: Vec<&str> = drawn.iter().map(String::as_str).collect();
+    let web = super::ts::kinds::native(root)?;
     let swift: Vec<&str> = Block::KINDS
         .iter()
         .copied()
@@ -135,24 +136,61 @@ fn trees(root: &Path) -> std::io::Result<Files> {
         .collect();
     let mut out = expected("fixtures/trees", &web)?;
     out.extend(expected("fixtures/trees/swift", &swift)?);
+    out.extend(react(root)?);
+    Ok(out)
+}
+
+fn react(root: &Path) -> std::io::Result<Files> {
+    let dir = root.join("web/react/src/kinds");
+    let mut kinds = vec![];
+    if dir.is_dir() {
+        for f in std::fs::read_dir(dir)? {
+            let name = f?.file_name().to_string_lossy().into_owned();
+            kinds.extend(name.strip_suffix(".ts").map(String::from));
+        }
+    }
+    kinds.sort();
+    let mut views = String::from("import type { Views } from \"../block.ts\";\n");
+    for k in &kinds {
+        views += &format!("import {{ {} }} from \"../kinds/{k}.ts\";\n", super::model::js(k));
+    }
+    let list = if kinds.is_empty() {
+        String::new()
+    } else {
+        let named: Vec<String> = kinds
+            .iter()
+            .map(|k| match super::model::js(k) {
+                f if f == *k => f,
+                f => format!("{k}: {f}"),
+            })
+            .collect();
+        format!(" {} ", named.join(", "))
+    };
+    views += &format!("\nexport const views: Views = {{{list}}};\n");
+    let drawn: Vec<&str> = kinds.iter().map(String::as_str).collect();
+    let mut out = expected("fixtures/trees/react", &drawn)?;
+    out.push(("web/react/src/gen/views.ts".into(), views));
     Ok(out)
 }
 
 fn expected(dir: &str, kinds: &[&str]) -> std::io::Result<Files> {
     let mut out = vec![];
-    for (kind, b) in crate::samples() {
-        let v = serde_json::to_value(&b)?;
-        let state = v
-            .get("state")
-            .cloned()
-            .map(serde_json::from_value)
-            .transpose()?
-            .unwrap_or_default();
-        let t = tree::expect(&Built::new(v), kinds, &state);
-        let text = serde_json::to_string_pretty(&t)? + "\n";
+    for (kind, b) in crate::fixtures() {
+        let text = serde_json::to_string_pretty(&tree_of(&b, kinds)?)? + "\n";
         out.push((format!("{dir}/{kind}.json"), text));
     }
     Ok(out)
+}
+
+pub(super) fn tree_of(b: &Block, kinds: &[&str]) -> std::io::Result<tree::Node> {
+    let v = serde_json::to_value(b)?;
+    let state = v
+        .get("state")
+        .cloned()
+        .map(serde_json::from_value)
+        .transpose()?
+        .unwrap_or_default();
+    Ok(tree::expect(&Built::new(v), kinds, &state))
 }
 
 fn row(id: &str, title: &str) -> Block {

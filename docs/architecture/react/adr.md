@@ -10,7 +10,7 @@ Open questions, all answered yes by the owner (q2271); the cap stays at 19,000 (
 
 ## Question
 
-synergy-apps (React 19, Vite, TanStack Router, about 1,300 app `.tsx` files) needs blocks as its UI vocabulary
+The client app's repo (React 19, Vite, TanStack Router, about 1,300 app `.tsx` files) needs blocks as its UI vocabulary
 without leaving React. How does a TS app with no Rust server build, check and draw a blocks screen, how does React
 draw it, and what must any later adapter (Solid or another) provide?
 
@@ -41,7 +41,7 @@ Both were built as a spike and run on the same screens in headless WebKit; `meas
 | Context (router, query, auth) | reaches islands through portals; app kinds need the same detour | simply there |
 | Server rendering | an empty box | the full markup |
 | App bundle, gzipped | 15.4 KB (all of the HTML renderer) | 4.4 KB for 10 kinds, about 7 KB for 13 |
-| Mode A's habits | all imported: synergy's forms would never send | the adapter decides per kind |
+| Mode A's habits | all imported: the client app's forms would never send | the adapter decides per kind |
 | A Solid adapter later | about 70 lines again | another copy of the kinds it draws |
 
 A third way, **C. one view description, two interpreters** (each kind returns a small element tree as data; the
@@ -66,7 +66,7 @@ it no longer server-renders, needs a host registry and portals to carry React co
 
 1. **Two modes, named.** README's opening becomes: "blocks is an opinionated UI framework whose screens are data:
    typed blocks, checked, then drawn by a renderer. It has two modes. Mode A, server-driven (drover, cooee): a Rust
-   server builds screens and sends row ops over the device stream. Mode B, client-built (synergy): TS builders in a
+   server builds screens and sends row ops over the device stream. Mode B, client-built (a client-built app): TS builders in a
    route loader build the screen and the React adapter draws it, with no server and no stream; it uses the kinds,
    the generated types, the builders, check, `blocks.css` and the guard kit, and not shelf, mirror, the stream,
    wire versioning or site." The Intent bullet "Screens change by row ops" gains "in Mode A".

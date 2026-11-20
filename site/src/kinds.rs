@@ -2,24 +2,67 @@ use std::collections::BTreeMap;
 
 use blocks::site::fragment;
 use blocks::{
-    Act, Block, Built, Button, ButtonStyle, Card, CardKind, ChipOption, Chips, Choice, ChoiceOption, Composer,
-    ComposerChip, Diagram, Diff, Editor, Fallback, Field, FieldKind, FieldValue, Form, Hero, Hunk, Image, Images,
-    Island, IslandSize, Label, Lane, LaneState, LineError, List, Media, Nav, NavLink, Node, Other, Part, Prose, Queued,
-    Row, Run, Scene, Screen, Secret, Sheet, Shown, Stat, Submit, Text, Tile, Tone, Web,
+    Accept, Act, Bar, Block, Built, Button, ButtonStyle, Card, CardKind, ChipOption, Chips, Choice, ChoiceOption,
+    Composer, ComposerChip, Diagram, Diff, Editor, Fallback, Field, FieldValue, Form, Hero, Hunk, Image, Images,
+    Island, IslandSize, Label, Lane, LaneState, LineError, List, Mark, MarkKind, Media, Nav, NavLink, Node, Other,
+    Pages, Part, PickerField, Prose, Queued, Row, Run, ScanField, Scene, Screen, Secret, SecretField, Sheet, Shown,
+    Span, Stage, Stat, Steps, Submit, Tap, Text, TextField, Tile, ToggleField, Tone, UploadField, Web,
 };
 use serde_json::{Number, Value};
 
+use crate::play;
 use crate::ui::{b, bold, heading, link_row, listing, marked, open, page, para, row, section, span, text, Page};
 
 const GROUPS: [(&str, &[&str]); 4] = [
     ("Layout", &["screen", "section", "sheet", "card"]),
     (
         "Words and pictures",
-        &["text", "prose", "hero", "nav", "media", "images", "diagram"],
+        &["text", "prose", "hero", "nav", "media", "images", "pages", "diagram"],
     ),
-    ("Lists and figures", &["list", "row", "stat", "chips"]),
-    ("Input", &["button", "choice", "form", "composer", "run"]),
+    (
+        "Lists and figures",
+        &["list", "row", "stat", "chart", "table", "steps", "chips", "timeline"],
+    ),
+    (
+        "Input",
+        &[
+            "button", "choice", "form", "lines", "composer", "run", "toast", "import",
+        ],
+    ),
 ];
+
+fn place(x: f64, y: f64) -> Vec<Number> {
+    [x, y].into_iter().filter_map(Number::from_f64).collect()
+}
+
+fn markup() -> Vec<Mark> {
+    let mark = |id: &str, kind: MarkKind, at: Vec<Number>| Mark {
+        id: id.into(),
+        kind,
+        at,
+        ..Mark::default()
+    };
+    vec![
+        Mark {
+            to: Some(place(0.86, 0.95)),
+            tone: Some(Tone::Warn),
+            ..mark("best", MarkKind::Highlight, place(0.72, 0.1))
+        },
+        Mark {
+            to: Some(place(0.7, 0.3)),
+            ..mark("why", MarkKind::Arrow, place(0.45, 0.2))
+        },
+        Mark {
+            text: Some("Launch week".into()),
+            ..mark("note", MarkKind::Text, place(0.2, 0.12))
+        },
+        Mark {
+            text: Some("1".into()),
+            tone: Some(Tone::Info),
+            ..mark("dip", MarkKind::Pin, place(0.36, 0.72))
+        },
+    ]
+}
 
 fn about(kind: &str) -> &'static str {
     match kind {
@@ -33,10 +76,13 @@ fn about(kind: &str) -> &'static str {
         "nav" => "A site's link bar.",
         "media" => "A picture or a video of a known size.",
         "images" => "A strip of images.",
+        "pages" => "A document as the app's pictures of its pages: paged and zoomed, with its PDF.",
         "diagram" => "A diagram from its source, with counts on its nodes.",
         "list" => "A list of rows.",
         "row" => "One row: a title, a line, a value.",
         "stat" => "Figures: one tile, or a list of tiles.",
+        "steps" => "A stepper with its current step, or progress bars.",
+        "chart" => "Bars, stacked bars, a line, a combo or a donut, with its legend and table.",
         "chips" => "A row of chips, one or many picked.",
         "button" => "A button that posts its action.",
         "choice" => "A question with options and a free answer.",
@@ -47,9 +93,16 @@ fn about(kind: &str) -> &'static str {
         "secret" => "A secret's input; its value is never sent back.",
         "diff" => "A file's diff.",
         "editor" => "A text editor and its errors.",
+        "lines" => "Rows of fields with add and remove, totals and a balance check.",
         "web" => "A web view of a fixed height.",
         "scene" => "Workers at work, each in its state.",
         "island" => "An app's own component, its props in and events out.",
+        "table" => "Typed columns: sort, filter, totals, row select and export; rows on a phone.",
+        "toast" => "A short line after an action, in a tone, with an optional undo.",
+        "timeline" => "Rows of bars on a day axis: move a bar or pull an edge, by pointer, keys or VoiceOver.",
+        "import" => {
+            "A spreadsheet import the app's server reads: upload, the column match and row errors, then one confirm."
+        }
         _ => "",
     }
 }
@@ -70,22 +123,20 @@ fn chip(v: &str) -> ChipOption {
     }
 }
 
-fn field(kind: FieldKind, name: &str, label: &str, value: Option<FieldValue>) -> Field {
-    Field {
-        kind,
-        name: name.into(),
-        label: Some(label.into()),
-        value,
-        ..Field::default()
-    }
+fn field(name: &str, label: &str, value: FieldValue) -> Field {
+    TextField::new(name).label(label).value(value).into()
+}
+
+fn toggle(name: &str, label: &str, on: bool) -> Field {
+    ToggleField::new(name).label(label).value(FieldValue::Flag(on)).into()
 }
 
 fn picker(name: &str, label: &str, options: &[&str]) -> Field {
-    Field {
-        options: Some(options.iter().map(|o| (*o).to_string()).collect()),
-        value: options.first().map(|o| FieldValue::Text((*o).into())),
-        ..field(FieldKind::Picker, name, label, None)
-    }
+    let mut p = PickerField::new(name)
+        .label(label)
+        .options(options.iter().map(|o| (*o).to_string()).collect::<Vec<_>>());
+    p.value = options.first().map(|o| FieldValue::Text((*o).into()));
+    p.into()
 }
 
 fn sample_svg(alt: &str) -> Image {
@@ -187,7 +238,12 @@ fn words() -> Vec<Block> {
         b!(Prose(prose)),
         b!(Hero(hero)),
         b!(Nav(nav)),
-        b!(Media(chart.id("downloads").caption("Downloads by week, 8 weeks"))),
+        b!(Media(
+            chart
+                .id("downloads")
+                .caption("Downloads by week, 8 weeks, marked up")
+                .marks(markup())
+        )),
         b!(Images(Images::new(shots).id("shots"))),
         b!(Diagram(release())),
     ]
@@ -221,7 +277,28 @@ fn release() -> Diagram {
         .id("release")
         .title("Release flow")
         .counts(counts)
-        .nodes(nodes)
+        .nodes(blocks::Nodes::Map(nodes))
+}
+
+fn stage(id: &str, label: &str, sub: Option<&str>, tap: bool) -> Stage {
+    Stage {
+        id: id.into(),
+        label: label.into(),
+        sub: sub.map(Into::into),
+        tap: tap.then(|| Tap {
+            action: Some(format!("open-{id}")),
+            ..Tap::default()
+        }),
+    }
+}
+
+fn bar(label: &str, value: u8, tone: Option<Tone>, sub: &str) -> Bar {
+    Bar {
+        label: label.into(),
+        value,
+        tone,
+        sub: Some(sub.into()),
+    }
 }
 
 fn figures() -> Vec<Block> {
@@ -253,12 +330,38 @@ fn figures() -> Vec<Block> {
             tile("p50", 12, Some("ms"), None),
             tile("failing", 2, None, Some(Tone::Warn)),
         ]))),
+        b!(Steps(
+            Steps::new()
+                .id("stop")
+                .title("Stop 3 of 8 · Marlow Bakery")
+                .steps(vec![
+                    stage("stop", "Stop", Some("arrived 09:42"), true),
+                    stage("lines", "Lines", Some("4 of 6 checked"), false),
+                    stage("proof", "Proof", None, false),
+                ])
+                .current("lines")
+        )),
+        b!(Steps(Steps::new().id("planner").title("Planned maintenance").bars(
+            vec![
+                bar("Boiler service", 100, Some(Tone::Ok), "done Mon"),
+                bar("Roof gutters", 40, None, "2 of 5 blocks"),
+                bar("Fire door closers", 15, Some(Tone::Bad), "overdue since Fri"),
+            ]
+        ))),
         b!(Chips(
             Chips::new("effort", vec![chip("low"), chip("medium"), chip("high"), chip("max")])
                 .id("effort")
                 .selected(vec!["medium".to_string()])
         )),
     ]
+    .into_iter()
+    .chain(
+        blocks::samples()
+            .into_iter()
+            .filter(|(k, _)| *k == "chart")
+            .map(|(_, b)| b),
+    )
+    .collect()
 }
 
 fn input() -> Vec<Block> {
@@ -283,20 +386,10 @@ fn input() -> Vec<Block> {
         r#for: None,
     });
     let form = Form::new(vec![
-        field(
-            FieldKind::Text,
-            "name",
-            "Name",
-            Some(FieldValue::Text("Ada Lovelace".into())),
-        ),
-        field(
-            FieldKind::Text,
-            "email",
-            "Email",
-            Some(FieldValue::Text("ada@example.com".into())),
-        ),
+        field("name", "Name", FieldValue::Text("Ada Lovelace".into())),
+        field("email", "Email", FieldValue::Text("ada@example.com".into())),
         picker("plan", "Plan", &["team", "solo", "school"]),
-        field(FieldKind::Toggle, "updates", "Updates", Some(FieldValue::Flag(true))),
+        toggle("updates", "Updates", true),
     ])
     .id("signup")
     .submit(Submit {
@@ -339,13 +432,8 @@ fn input() -> Vec<Block> {
 fn others() -> Vec<Block> {
     let settings = Form::new(vec![
         picker("region", "Region", &["eu-west", "us-east"]),
-        field(
-            FieldKind::Text,
-            "retries",
-            "Retries",
-            Some(FieldValue::Number(3.into())),
-        ),
-        field(FieldKind::Toggle, "notify", "Notify", Some(FieldValue::Flag(false))),
+        field("retries", "Retries", FieldValue::Number(3.into())),
+        toggle("notify", "Notify", false),
     ])
     .id("settings")
     .action("save-settings");
@@ -409,9 +497,45 @@ fn others() -> Vec<Block> {
     ]
 }
 
+fn document() -> Block {
+    let page = |n: u32, alt: &str| blocks::PageImage {
+        src: "media/page.svg".into(),
+        alt: format!("{alt}, page {n}"),
+        width: 620,
+        height: 877,
+    };
+    b!(Pages(
+        Pages::new(vec![page(1, "Priced items"), page(2, "Terms"), page(3, "Acceptance")])
+            .id("quote")
+            .title("Quotation Q-0418")
+            .note("Drawn by the app's server; zoom and paging send nothing.")
+    ))
+}
+
 /// Every core kind's sample, one or more blocks each, in `Block::KINDS` order.
 pub fn samples() -> Vec<(String, Vec<Block>)> {
-    let all = [holders(), words(), figures(), input(), others()].concat();
+    let picked = |kind: &str| {
+        blocks::samples()
+            .into_iter()
+            .filter(|(k, _)| *k == kind)
+            .map(|(_, b)| b)
+            .collect::<Vec<_>>()
+    };
+    let all = [
+        holders(),
+        words(),
+        figures(),
+        input(),
+        picked("lines"),
+        others(),
+        picked("table"),
+        picked("toast"),
+        vec![document()],
+        picked("timeline"),
+        picked("import"),
+        vec![paperwork()],
+    ]
+    .concat();
     Block::KINDS
         .iter()
         .map(|k| {
@@ -543,14 +667,10 @@ fn fallback_of(kind: &str, sample: &[Block]) -> Vec<Block> {
     }
 }
 
-/// One kind's page: its sample drawn, its JSON, its fallback, its style hooks and the kinds either side.
+/// One kind's page: its sample drawn, its Rust and JSON, its fallback, its style hooks and the kinds either side.
 pub fn kind_page(all: &[(String, Vec<Block>)], at: usize) -> Option<Page> {
     let (kind, sample) = all.get(at)?;
-    let json = sample
-        .iter()
-        .map(|b| serde_json::to_string_pretty(b).unwrap_or_default())
-        .collect::<Vec<_>>()
-        .join("\n");
+    let json = play::json(&play::screen(kind, sample));
     let prev = all.get(at.checked_sub(1).unwrap_or(all.len() - 1))?;
     let next = all.get((at + 1) % all.len())?;
     let id = sample.first().and_then(Block::id).unwrap_or_default();
@@ -564,22 +684,40 @@ pub fn kind_page(all: &[(String, Vec<Block>)], at: usize) -> Option<Page> {
         ))),
         b!(Row(row("hook-id", &format!("[data-id={id}]"), "this one block", ""))),
     ];
-    let link = |label: String, href: String| NavLink {
-        label,
+    let link = |label: &str, href: String, current: bool| NavLink {
+        label: label.into(),
         href,
-        current: None,
+        current: current.then_some(true),
     };
     let around = Nav::new(vec![
-        link(format!("← {}", prev.0), format!("kind-{}.html", prev.0)),
-        link("gallery".into(), format!("gallery.html#kind-{kind}")),
-        link(format!("{} →", next.0), format!("kind-{}.html", next.0)),
+        link(&format!("← {}", prev.0), format!("kind-{}.html", prev.0), false),
+        link("gallery", format!("gallery.html#kind-{kind}"), false),
+        link(&format!("{} →", next.0), format!("kind-{}.html", next.0), false),
     ])
     .id("around");
+    let tabs = Nav::new(vec![
+        link("Rust", "#rust".into(), true),
+        link("JSON", "#json".into(), false),
+        link("edit in the playground →", format!("playground.html#k={kind}"), false),
+    ])
+    .id("tabs");
+    let rust: Vec<Part> = play::cuts(sample)
+        .iter()
+        .flat_map(|c| {
+            let at = format!("{}:{}–{}", c.file, c.from, c.to);
+            [
+                para(vec![Span {
+                    link: Some(play::source_url(c)),
+                    ..span(&at)
+                }]),
+                listing("rust", &c.code),
+            ]
+        })
+        .collect();
     let mut drawn = vec![section("spec", "", sample.clone())];
     if fallback_only(sample) {
         drawn.insert(0, marker(kind));
     }
-    let src = format!("{}/blob/main/site/src/kinds.rs", crate::ui::REPO);
     let body = vec![
         text("about", about(kind)),
         section(
@@ -591,8 +729,9 @@ pub fn kind_page(all: &[(String, Vec<Block>)], at: usize) -> Option<Page> {
                     "sample",
                     "The sample",
                     vec![
+                        b!(Nav(tabs)),
+                        b!(Prose(Prose::new(rust).id("rust"))),
                         b!(Prose(Prose::new(vec![listing("json", &json)]).id("json"))),
-                        text("rust", &format!("Built with the typed API: {src}")),
                     ],
                 ),
             ],
@@ -610,6 +749,67 @@ pub fn kind_page(all: &[(String, Vec<Block>)], at: usize) -> Option<Page> {
     let description = format!("{kind}: {} Drawn by blocks' HTML renderer.", about(kind));
     Some(page("gallery", &format!("kind-{kind}.html"), kind, &description, body)).map(|p| Page {
         screen: p.screen.id(format!("kind-{kind}")),
+        js: "play.js",
         ..p
     })
+}
+
+fn paperwork() -> Block {
+    let photos = UploadField::new("photos")
+        .label("Photos of the damage")
+        .accept(vec![Accept::Image])
+        .capture(true)
+        .many(true)
+        .mb(10u32);
+    let note = ScanField::new("note").label("Delivery note").max(20u32);
+    let pin = SecretField::new("pin").label("Order PIN").placeholder("4 digits");
+    b!(Form(
+        Form::new(vec![photos.into(), note.into(), pin.into()])
+            .id("claim")
+            .submit(Submit {
+                label: "send claim".into(),
+                action: "send-claim".into(),
+                ..Submit::default()
+            })
+    ))
+}
+
+#[cfg(test)]
+mod tests {
+    use blocks::{Block, Field};
+    use serde_json::Value;
+
+    use super::{about, samples};
+
+    #[test]
+    fn every_core_kind_has_a_blurb_and_a_sample() {
+        let all = samples();
+        assert_eq!(all.len(), Block::KINDS.len());
+        for (kind, sample) in &all {
+            assert!(!about(kind).is_empty(), "{kind}: no blurb");
+            assert!(!sample.is_empty(), "{kind}: no sample");
+        }
+    }
+
+    fn field_types(v: &Value, out: &mut Vec<String>) {
+        match v {
+            Value::Object(o) => {
+                for f in o.get("fields").and_then(Value::as_array).into_iter().flatten() {
+                    out.extend(f.get("type").and_then(Value::as_str).map(String::from));
+                }
+                o.values().for_each(|x| field_types(x, out));
+            }
+            Value::Array(a) => a.iter().for_each(|x| field_types(x, out)),
+            _ => {}
+        }
+    }
+
+    #[test]
+    fn every_field_type_is_in_a_sample() {
+        let mut used = Vec::new();
+        field_types(&serde_json::to_value(samples()).unwrap(), &mut used);
+        for t in Field::TYPES {
+            assert!(used.iter().any(|u| u == t), "field type {t}: in no sample");
+        }
+    }
 }

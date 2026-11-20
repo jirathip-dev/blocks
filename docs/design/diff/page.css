@@ -1,0 +1,18 @@
+/* The host page for these previews only: #53's tile rules (tokens from ../neutral-default/tokens.css). */
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;color:var(--fg);font:13px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+background:conic-gradient(from 270deg at var(--dot-size) var(--dot-size),var(--dot) 25%,transparent 0) 0 0/var(--dot-gap) var(--dot-gap),var(--bg)}
+a{color:var(--link);text-decoration:underline;text-underline-offset:2px}
+main{max-width:880px;margin:0 auto;padding:var(--s4);display:grid;grid-template-columns:minmax(0,1fr);gap:var(--seam)}
+.tile{min-width:0;background:var(--card);border:1px solid var(--edge);border-radius:0;padding:var(--s3) var(--s4)}
+.tile>.sh:first-child,.tile>.tabh{margin-top:0;margin-bottom:0}
+.tile .row:last-child{border-bottom:0}
+.gap{height:var(--s4)}
+.cap{color:var(--mute);font-size:var(--fs-meta);margin:var(--s4) 0 var(--s1)}
+.cap b{color:var(--fg);font-weight:600}
+.tw{font-weight:700}
+.wide{max-width:1200px}
+.cases{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:var(--s4) var(--seam);align-items:start}
+.cases>div{min-width:0}
+@media (max-width:600px){main{padding:var(--s2)}}
+.cases .cap{min-height:2.9em;display:flex;align-items:flex-end}

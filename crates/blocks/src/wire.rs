@@ -5,10 +5,10 @@ use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
-use crate::kind::{Block, Fields, Lane, Round};
+use crate::kind::{Block, Fields, Lane, Round, TableRow, Toast};
 use crate::SCHEMA_VERSION;
 
-/// What an `insert` adds: a block, or a scene's lane or a row's round.
+/// What an `insert` adds: a block, a scene's lane, a row's round or a table's row.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
 #[serde(untagged)]
@@ -16,6 +16,7 @@ pub enum Child {
     Block(Block),
     Lane(Box<Lane>),
     Round(Box<Round>),
+    TableRow(Box<TableRow>),
 }
 
 /// One edit to a screen; a block is named by its id.
@@ -81,7 +82,7 @@ pub struct Answer {
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub ops: Vec<Op>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub toast: Option<String>,
+    pub toast: Option<Toast>,
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub close: bool,
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -249,6 +250,15 @@ impl From<serde_json::Error> for Broken {
 }
 
 impl Action {
+    /// The typed result of a gesture, sent under `name` in the values.
+    pub fn read<T: DeserializeOwned>(&self, name: &str) -> Result<T, Broken> {
+        let v = self
+            .values
+            .get(name)
+            .ok_or_else(|| Broken(format!("no value named {name}")))?;
+        Ok(T::deserialize(v)?)
+    }
+
     /// A static page's `<form>` post: `_screen`, `_block` and `_action`, every other field a string value.
     pub fn from_form(body: &str) -> Result<Action, Broken> {
         let mut a = Action::default();
@@ -324,10 +334,20 @@ impl MediaType {
         )
     }
 
-    /// `value` in this format and version.
+    /// `value` in this format and version: one version behind, an answer's toast is its plain text.
     pub fn write<T: Serialize>(&self, value: &T) -> Result<Vec<u8>, Broken> {
+        if self.v >= SCHEMA_VERSION {
+            return match self.format {
+                Format::Json => Ok(serde_json::to_vec(value)?),
+            };
+        }
+        let mut v = serde_json::to_value(value)?;
+        if let Some(t) = v.get_mut("toast").filter(|t| t.is_object()) {
+            let text = t.get("title").and_then(Value::as_str).filter(|s| !s.is_empty());
+            *t = Value::from(text.unwrap_or("Done"));
+        }
         match self.format {
-            Format::Json => Ok(serde_json::to_vec(value)?),
+            Format::Json => Ok(serde_json::to_vec(&v)?),
         }
     }
 

@@ -1,0 +1,58 @@
+{
+  "action": "check-journal",
+  "add": "add line",
+  "balance": [
+    "debit",
+    "credit"
+  ],
+  "columns": [
+    {
+      "label": "Account",
+      "name": "account",
+      "options": [
+        "6100 Rent",
+        "6200 Utilities",
+        "2100 Payables"
+      ],
+      "type": "picker"
+    },
+    {
+      "label": "Description",
+      "name": "memo",
+      "type": "text"
+    },
+    {
+      "keyboard": "number",
+      "label": "Debit",
+      "name": "debit",
+      "type": "text"
+    },
+    {
+      "keyboard": "number",
+      "label": "Credit",
+      "name": "credit",
+      "type": "text"
+    }
+  ],
+  "errors": [
+    {
+      "message": "pick an account for line 2",
+      "name": "account",
+      "row": "l2"
+    }
+  ],
+  "id": "journal",
+  "items": [],
+  "label": "journal lines",
+  "min": 2,
+  "name": "lines",
+  "submit": {
+    "action": "post-journal",
+    "label": "post entry"
+  },
+  "sum": [
+    "debit",
+    "credit"
+  ],
+  "type": "lines"
+}

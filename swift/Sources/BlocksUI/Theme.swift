@@ -29,6 +29,17 @@ public struct Palette: Sendable, Equatable {
     public var purple: Color
     public var cyan: Color
     public var dark: Bool
+
+    /// An app's own colours, handed to BlocksUI.
+    public init(
+        background: Color, card: Color, edge: Color, line: Color, foreground: Color, mute: Color, lead: Color,
+        link: Color, green: Color, amber: Color, red: Color, purple: Color, cyan: Color, dark: Bool
+    ) {
+        (self.background, self.card, self.edge, self.line, self.foreground, self.mute, self.lead) =
+            (background, card, edge, line, foreground, mute, lead)
+        (self.link, self.green, self.amber, self.red, self.purple, self.cyan, self.dark) =
+            (link, green, amber, red, purple, cyan, dark)
+    }
 }
 
 extension Palette {
@@ -84,4 +95,28 @@ extension EnvironmentValues {
         get { self[LookKey.self] }
         set { self[LookKey.self] = newValue }
     }
+}
+
+extension Palette {
+    internal func tone(_ name: String?) -> Color? {
+        switch name {
+        case "ok", "done": green
+        case "warn", "needs": amber
+        case "bad", "fail": red
+        case "info": link
+        case "working": cyan
+        case "accent": lead
+        case "mute", "idle": mute
+        default: nil
+        }
+    }
+}
+
+internal enum Token {
+    internal static let s2: CGFloat = 8
+    internal static let s4: CGFloat = 16
+    internal static let fs: CGFloat = 13
+    internal static let meta: CGFloat = 12
+    internal static let rule: CGFloat = 3
+    internal static let paper = Color.white
 }

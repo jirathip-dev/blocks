@@ -9,6 +9,18 @@ private struct Red: BlockStyle {
     func body(content: Content) -> some View { content.background(Color(red: 1, green: 0, blue: 0)) }
 }
 
+private struct Squash: BlockStyle {
+    func body(content: Content) -> some View { content.frame(height: 0).clipped() }
+}
+
+private struct Shove: BlockStyle {
+    func body(content: Content) -> some View { content.frame(width: 300).padding(.leading, 200) }
+}
+
+private struct Pin: BlockStyle {
+    func body(content: Content) -> some View { content.frame(width: 340, alignment: .leading) }
+}
+
 @MainActor
 final class SnapshotTests: XCTestCase {
     private let fixtures = URL(fileURLWithPath: #filePath).deletingLastPathComponent()
@@ -29,7 +41,7 @@ final class SnapshotTests: XCTestCase {
     func testEveryFixtureBlockPassesCheckAndItsTreeHasTheHTMLTreesShape() throws {
         let kinds = try FileManager.default.contentsOfDirectory(atPath: fixtures.appendingPathComponent("blocks").path)
             .map { String($0.dropLast(5)) }.sorted()
-        XCTAssertEqual(kinds.count, 27)
+        XCTAssertEqual(kinds.count, 37)
         for kind in kinds {
             let expect = try load(TreeNode.self, "trees/swift/\(kind).json")
             let run = try Snapshot(try load(Block.self, "blocks/\(kind).json")).run(
@@ -40,6 +52,55 @@ final class SnapshotTests: XCTestCase {
             let tree = try XCTUnwrap(run.trees[kind])
             XCTAssertEqual(shape(tree), shape(try load(TreeNode.self, "trees/\(kind).json")), kind)
         }
+    }
+
+    func testEachFieldsFixtureDrawsAndSwiftRecordsTheHTMLFieldsTreeUploadIncluded() throws {
+        let names = try FileManager.default.contentsOfDirectory(atPath: fixtures.appendingPathComponent("fields").path)
+            .filter { $0.hasSuffix(".json") }.map { String($0.dropLast(5)) }.sorted()
+        XCTAssertTrue(names.contains("upload"))
+        for name in names {
+            let run = try Snapshot(try load(Block.self, "fields/\(name).json")).run([], name: name, check: true)
+            XCTAssertEqual(run.faults, [], name)
+            let swift = try Data(contentsOf: fixtures.appendingPathComponent("trees/swift/fields/\(name).json"))
+            XCTAssertEqual(swift, try Data(contentsOf: fixtures.appendingPathComponent("fields/trees/\(name).json")), name)
+            let form = try XCTUnwrap(try load(TreeNode.self, "trees/swift/fields/\(name).json").children.first)
+            XCTAssertEqual(Set(form.fields?.map { "\($0.type) \($0.drawn.rawValue)" } ?? []), ["\(name) native"], name)
+        }
+    }
+
+    func testEachFilesFixtureCaseSendsAndDropsWhatBlocksShotDoes() throws {
+        struct Case: Decodable {
+            let name: String
+            let steps: [Step]
+            let sent: [Action]
+            let dropped: [String]
+        }
+        struct Cases: Decodable {
+            let screen: String
+            let cases: [Case]
+        }
+        let all = try load(Cases.self, "files/upload.json")
+        XCTAssertEqual(all.cases.map(\.name), ["taken", "busy", "gone"])
+        for c in all.cases {
+            let run = try Snapshot(try load(Block.self, all.screen)).run(c.steps, name: c.name)
+            XCTAssertEqual(run.report.sent, c.sent, c.name)
+            XCTAssertEqual(run.report.dropped, c.dropped, c.name)
+        }
+    }
+
+    func testAnUploadRefusesBeforeTheHandlerAndItsSubmitSaysWhyItWaits() throws {
+        let screen = try load(Block.self, "fields/upload.json")
+        guard case .screen(let s) = screen, case .form(let form)? = s.blocks?.first, case .upload(let field)? = form.fields.dropFirst().first
+        else { return XCTFail("fields/upload.json has no photos field") }
+        let pick = { (name: String, size: UInt64, mime: String) in FileRow(key: name, name: name, size: size, mime: mime) }
+        let rows = field.picked(field.held, [pick("big.jpg", 20_971_520, "image/jpeg")])
+        XCTAssertEqual(rows.map(field.status), ["", "refused: 20.0 MB is over 10 MB"])
+        let next = field.picked(rows, [pick("note.pdf", 900, "application/pdf"), pick("door.jpg", 3000, "image/jpeg")])
+        XCTAssertEqual(next.map(field.status), ["", "refused: only images", "uploading 0 %"])
+        XCTAssertEqual(next.waits, "waiting for 1 upload")
+        XCTAssertEqual((next + [FileRow(key: "x", name: "x.jpg", size: 2000, mime: "image/jpeg", state: .failed)]).waits, "an upload failed: retry or remove it")
+        XCTAssertEqual(field.pick(next), "add photos")
+        XCTAssertEqual(field.hint(on: true), "images · up to 10 MB each")
     }
 
     func testEachIdsFixtureIsTheBlockAndActionIdsItsScreenDraws() throws {
@@ -75,7 +136,7 @@ final class SnapshotTests: XCTestCase {
         let run = try Snapshot(try load(Block.self, "blocks/button.json")).run([], name: "button", expect: want, check: true)
         XCTAssertEqual(run.faults, [#"button/button#save: drew button "Save", expected link "Send""#])
         let bare = try decode(Block.self, #"{"type": "screen", "id": "bare", "blocks": [{"type": ""}]}"#)
-        XCTAssertEqual(try Snapshot(bare).run([], name: "bare", check: true).faults, ["bare/screen#bare/: has no name"])
+        XCTAssertEqual(try Snapshot(bare).run([], name: "bare", check: true).faults, ["bare: render/no-name screen#bare/~0: the block has no name"])
     }
 
     func testATapSendsTheButtonsActionAndAnAnswersOpsAreDrawn() throws {
@@ -128,5 +189,42 @@ final class SnapshotTests: XCTestCase {
         let plain = try Snapshot(button).run([])
         let red = try Snapshot(button).blockStyle("button", Red()).run([])
         XCTAssertNotEqual(plain.pngs["shot"], red.pngs["shot"])
+    }
+
+    private func plan(_ name: String, _ screens: [String]) throws -> (URL, Plan) {
+        let out = URL(fileURLWithPath: ProcessInfo.processInfo.environment["DROVER_SCRATCH_TARGET"] ?? NSTemporaryDirectory())
+            .appendingPathComponent("snap-\(name)-\(UUID().uuidString)")
+        let runs = screens.map {
+            #"{"name": "\#(URL(fileURLWithPath: $0).deletingPathExtension().lastPathComponent)", "screen": "\#(fixtures.appendingPathComponent($0).path)", "size": "390x844", "css": [], "scripts": [], "kinds": [], "steps": [], "probes": true}"#
+        }
+        return (out, try decode(Plan.self, #"{"out": "\#(out.path)", "runs": [\#(runs.joined(separator: ","))]}"#))
+    }
+
+    func testThePlanRunnerSeesNothingOnEveryFixtureBlockAndWritesEachRunAndAnEmptySeenJson() throws {
+        let kinds = try FileManager.default.contentsOfDirectory(atPath: fixtures.appendingPathComponent("blocks").path).sorted()
+        let (out, plan) = try plan("blocks", kinds.map { "blocks/\($0)" })
+        XCTAssertEqual(try Snapshot.plan(plan), [])
+        XCTAssertEqual(try JSONDecoder().decode([Seen].self, from: Data(contentsOf: out.appendingPathComponent("seen.json"))), [])
+        for kind in kinds.map({ String($0.dropLast(5)) }) {
+            XCTAssertTrue(FileManager.default.fileExists(atPath: out.appendingPathComponent("\(kind)/\(kind).png").path), kind)
+        }
+    }
+
+    func testThePlanRunnerSeesWhatBlocksShotSeesForTheFourTreeRulesOnTheBadFixtures() throws {
+        let bad = ["no-name", "no-size", "overflow", "overlap"]
+        let (out, plan) = try plan("bad", bad.map { "guard/bad/render/\($0).json" })
+        var look = Look(still: true)
+        look.tiles?.dotGap = -15
+        try Snapshot.plan(plan) { run, screen, size in
+            switch run.name {
+            case "no-size": Snapshot(screen, size: size).blockStyle("text", Squash())
+            case "overflow": Snapshot(screen, size: size).blockStyle("text", Shove()).blockStyle("screen", Pin())
+            case "overlap": Snapshot(screen, size: size, look: look)
+            default: Snapshot(screen, size: size)
+            }
+        }
+        let seen = try JSONDecoder().decode([Seen].self, from: Data(contentsOf: out.appendingPathComponent("seen.json")))
+        let want = try load([[String: String]].self, "guard/seen.json")
+        XCTAssertEqual(seen.map { ["rule": $0.rule, "run": $0.run ?? "", "at": $0.at] }, want)
     }
 }

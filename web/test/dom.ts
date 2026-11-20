@@ -105,6 +105,9 @@ class El extends Parent {
   get isConnected() {
     return false;
   }
+  get parentElement() {
+    return this.parentNode instanceof El ? this.parentNode : null;
+  }
   setAttribute(k, v) {
     this.attrs.set(k, String(v));
   }
@@ -177,6 +180,7 @@ export function install() {
   g.document = {
     baseURI: "http://blocks.test/",
     body: new El("body"),
+    documentElement: Object.assign(new El("html"), { lang: "" }),
     createElement: (t) => new El(t),
     createElementNS: (_, t) => new El(t),
     createTextNode: (t) => new Text(t),

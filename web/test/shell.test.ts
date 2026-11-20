@@ -85,7 +85,7 @@ test("a two-tab layout draws its tabs, opens the first tab's key on one stream a
   const tabs = all(root).filter((e) => e.classList.contains("b-tab"));
   deepStrictEqual(tabs.map((t) => t.textContent), ["Queue", "Done", "menu"]);
   strictEqual(sources.length, 1);
-  strictEqual(sources[0].url, "http://app.test/core/stream?v=1");
+  strictEqual(sources[0].url, "http://app.test/core/stream?v=2");
   answers.push({ status: 200, body: { keys: [{ k: "/screens/queue", rev: 3, screen: queue }] } });
   sources[0].emit("hello", { v: 1, sid: "s1", epoch: "e1", keys: 16 });
   await tick();
@@ -116,24 +116,37 @@ test("a kept copy paints before the stream answers", () => {
   shell.close();
 });
 
-test("an action posts to its source; its answer's ops patch the screen and its toast shows", async () => {
+test("an action posts to its source; its answer's ops patch the screen, its toast shows and its undo posts the undo first", async () => {
   const root = fresh();
   kept.set("b:core/screens/queue", JSON.stringify(queue));
   const shell = mount({ root, layout, url });
-  answers.push({ status: 200, body: { ops: [{ op: "merge", id: "r1", fields: { title: "acted" } }], toast: "went" } });
+  const toast = { title: "went", tone: "ok", undo: { action: "ungo", values: { n: 1 } } };
+  answers.push({ status: 200, body: { ops: [{ op: "merge", id: "r1", fields: { title: "acted" } }], toast } });
   byId(root, "go").onclick();
   await tick();
   deepStrictEqual(posts[0], { url: "http://app.test/core/action", body: { action: "go", block: "go", values: {}, screen: "queue" } });
   strictEqual(find(byId(root, "r1"), (x) => x.classList.contains("b-row__title"))?.textContent, "acted");
-  const toast = find(root, (x) => x.classList.contains("b-toast"));
-  strictEqual(toast.textContent, "went");
-  ok(!toast.hidden);
+  const shown = () => find(root, (x) => x.classList.contains("tst"));
+  const text = (cls) => find(shown(), (x) => x.classList.contains(cls))?.textContent;
+  deepStrictEqual([shown().className, shown().getAttribute("role"), shown().getAttribute("aria-label"), text("tsx")], ["tst ok", "status", "went", "went"]);
+  strictEqual(find(root, (x) => x.classList.contains("tsts")).getAttribute("aria-live"), "polite");
+  const undo = find(shown(), (x) => x.tagName === "BUTTON" && x.textContent === "undo");
+  answers.push({ status: 200, body: { toast: { title: "back" } } });
+  undo.onclick();
+  await tick();
+  deepStrictEqual(posts[1], { url: "http://app.test/core/action", body: { action: "ungo", values: { n: 1 }, screen: "queue" } });
+  deepStrictEqual([text("tsx"), shown().className], ["back", "tst"]);
   answers.push({ status: 500, body: {} });
   byId(root, "go").onclick();
   await tick();
-  strictEqual(toast.textContent, "action failed: 500");
-  ok(toast.classList.contains("bad"));
+  deepStrictEqual([text("tsx"), text("tsn")], ["back", "+1"]);
+  find(shown(), (x) => x.getAttribute("aria-label") === "dismiss").onclick();
+  strictEqual(shown(), undefined);
+  await new Promise((r) => setTimeout(r, 200));
+  deepStrictEqual([text("tsx"), shown().getAttribute("role"), shown().className], ["action failed: 500", "alert", "tst bad"]);
+  strictEqual(find(shown(), (x) => x.classList.contains("tsk")), undefined);
   shell.close();
+  strictEqual(find(root, (x) => x.classList.contains("tsts")), undefined);
 });
 
 test("the menu lists the menu's screens but hidden ones, and the look sheet wears a scheme the app gave", () => {
@@ -151,5 +164,64 @@ test("the menu lists the menu's screens but hidden ones, and the look sheet wear
   find(sheet, (x) => x.classList.contains("rt") && x.textContent === scheme.label).parentNode.parentNode.onclick();
   strictEqual(kept.get("b:look"), name);
   ok(document.head.children.findLast((e) => e.id === "b-look").textContent.startsWith(`${tiles}:root{--bg:${scheme.tokens["--bg"]};`));
+  shell.close();
+});
+
+const fire = (e, type, ev = {}) => e.listeners.filter(([t]) => t === type).forEach(([, f]) => f({ preventDefault() {}, ...ev }));
+const editable = () => {
+  const saved = [];
+  const replies = [];
+  const edit = { slots: { nav: ["side", "main", "menu"] }, save: async (e) => (saved.push(e), replies.shift() ?? true) };
+  const root = fresh();
+  kept.set("b:core/screens/queue", JSON.stringify(queue));
+  const shell = mount({ root, layout, url, edit });
+  find(root, (x) => x.textContent === "edit layout" && x.classList.contains("b-tab")).onclick();
+  const sheet = find(root, (x) => x.classList.contains("b-sheet") && !x.hidden);
+  const order = () => all(sheet).filter((x) => x.classList.contains("row") && x.dataset.id).map((x) => x.dataset.id);
+  const handle = (label) => find(sheet, (x) => x.getAttribute("aria-label") === `Move ${label}`);
+  return { saved, replies, root, shell, sheet, order, handle };
+};
+const later = { edit: "move", id: "queue", into: "root", slot: "main", before: null };
+
+test("edit mode sends one edit for a node moved by pointer, by keys and by a named action", async () => {
+  const { saved, shell, sheet, order, handle } = editable();
+  deepStrictEqual(order(), ["root", "queue", "done", "about", "gone"]);
+  strictEqual(handle("root"), undefined);
+  const hd = handle("Queue");
+  hd.setPointerCapture = () => {};
+  hd.parentNode.offsetHeight = 40;
+  fire(hd, "pointerdown", { button: 0, pointerId: 1, clientX: 0, clientY: 0 });
+  fire(hd, "pointermove", { clientX: 0, clientY: 40 });
+  fire(hd, "pointerup");
+  await tick();
+  for (const key of [" ", "ArrowDown", "Enter"]) fire(handle("Queue"), "keydown", { key });
+  await tick();
+  find(sheet, (x) => x.tagName === "BUTTON" && x.textContent === "Move later" && x.parentNode === handle("Queue").parentNode).onclick();
+  await tick();
+  deepStrictEqual(saved, [later, later, later]);
+  shell.close();
+});
+
+test("a refused edit leaves the layout as it was and shows why; a saved one is drawn once the host hands it in", async () => {
+  const { saved, replies, root, shell, sheet, order, handle } = editable();
+  replies.push("not yours");
+  find(sheet, (x) => x.tagName === "BUTTON" && x.textContent === "Swap with the next" && x.parentNode === handle("Queue").parentNode).onclick();
+  await tick();
+  deepStrictEqual(saved, [{ edit: "swap", a: "queue", b: "done" }]);
+  deepStrictEqual(order(), ["root", "queue", "done", "about", "gone"]);
+  strictEqual(find(sheet, (x) => x.getAttribute("role") === "alert")?.textContent, "not yours");
+  const pick = find(sheet, (x) => x.getAttribute("aria-label") === "About shows on compact as");
+  replies.push(false);
+  pick.value = "hidden";
+  pick.onchange();
+  await tick();
+  deepStrictEqual(saved[1], { edit: "show", id: "about", size: "compact", place: "hidden" });
+  strictEqual(pick.value, "menu");
+  const [queueNode, doneNode] = layout.root.slots.main;
+  shell.layout({ ...layout, root: { ...layout.root, slots: { ...layout.root.slots, main: [doneNode, queueNode] } } });
+  const again = find(root, (x) => x.classList.contains("b-sheet") && !x.hidden);
+  deepStrictEqual(all(again).filter((x) => x.classList.contains("row") && x.dataset.id).map((x) => x.dataset.id), ["root", "done", "queue", "about", "gone"]);
+  fire(find(again, (x) => x.classList.contains("b-arrange")), "keydown", { key: "Escape" });
+  ok(again.hidden);
   shell.close();
 });

@@ -3,7 +3,7 @@ import SwiftUI
 
 /// A resolved layout drawn: `nav` sets its `column` nodes beside its first `main` node, every other node is the app's.
 public struct SlotView<Content: View>: View {
-    private let node: LayoutNode<LayoutPlace>
+    internal let node: LayoutNode<LayoutPlace>
     private let content: (LayoutNode<LayoutPlace>) -> Content
 
     public init(_ node: LayoutNode<LayoutPlace>, @ViewBuilder content: @escaping (LayoutNode<LayoutPlace>) -> Content) {
@@ -30,7 +30,8 @@ public struct SlotView<Content: View>: View {
 }
 
 extension LayoutTransition {
-    fileprivate var entering: AnyTransition {
+    /// How a node placed with this transition comes in.
+    public var entering: AnyTransition {
         switch self {
         case .sheet: .move(edge: .bottom)
         case .fade: .opacity

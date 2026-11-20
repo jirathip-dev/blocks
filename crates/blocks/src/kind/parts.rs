@@ -1,3 +1,5 @@
+use std::collections::BTreeMap;
+
 use serde::{Deserialize, Serialize};
 use serde_json::{Map, Number, Value};
 
@@ -31,12 +33,6 @@ words!(LaneState {
     Fail,
     Merged
 });
-words!(FieldKind {
-    Text,
-    Toggle,
-    Picker,
-    Secret
-});
 words!(Keyboard { Default, Url, Number });
 words!(Accessory { Chevron, None });
 words!(RowStyle { Link, Destructive });
@@ -53,13 +49,21 @@ words!(ButtonStyle {
     Destructive
 });
 words!(TextStyle { Body, Footnote });
+words!(Load { Calm, Busy, Held });
+words!(Sky {
+    Clear,
+    Windy,
+    Fog,
+    Storm
+});
 words!(ImageSize { Small, Large });
 
 wire! {
-    /// A moment a value counts from or to.
+    /// A moment a value counts from or to; `label` shows it, `{}` the age since `since`, `{rel}` what is left until `until`.
     pub struct Time {
         since: Option<String>,
         until: Option<String>,
+        label: Option<String>,
     }
 }
 
@@ -70,7 +74,7 @@ wire! {
     }
 }
 
-/// A row's or a tile's value: a string, a number, a state key's value, or a time.
+/// A shown value (a row's or tile's value, a card's meta, a label's text): a string, a number, a state key's value, or a time.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
 #[serde(untagged)]
@@ -87,10 +91,28 @@ impl Default for Shown {
     }
 }
 
+impl From<&str> for Shown {
+    fn from(s: &str) -> Self {
+        Self::Text(s.into())
+    }
+}
+
+impl From<String> for Shown {
+    fn from(s: String) -> Self {
+        Self::Text(s)
+    }
+}
+
+impl From<Time> for Shown {
+    fn from(t: Time) -> Self {
+        Self::Time(t)
+    }
+}
+
 wire! {
     /// A short text and its tone: a badge, or a toned subtitle.
     pub struct Label {
-        text: String,
+        text: Shown,
         tone: Option<Tone>,
     }
 }
@@ -105,6 +127,29 @@ pub enum Toned {
 }
 
 wire! {
+    /// A table's or list's next page: the action to send and the app's opaque cursor.
+    pub struct Page {
+        action: String,
+        cursor: String,
+    }
+}
+
+/// A list's next page: a link to it, or an action that loads it in place.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
+#[serde(untagged)]
+pub enum More {
+    Link(String),
+    Page(Page),
+}
+
+impl From<&str> for Toned {
+    fn from(s: &str) -> Self {
+        Self::Text(s.into())
+    }
+}
+
+wire! {
     /// What a tap does: open a screen or sheet, send an action, open a thread or a URL, focus, copy.
     pub struct Tap {
         open: Option<String>,
@@ -116,6 +161,7 @@ wire! {
         focus: Option<String>,
         copy: Option<String>,
         set: Option<Vec<Set>>,
+        keep: Option<bool>,
     }
 }
 
@@ -182,28 +228,6 @@ pub enum FieldValue {
 }
 
 wire! {
-    /// One input of a form.
-    pub struct Field {
-        #[serde(rename = "type")]
-        kind: FieldKind,
-        name: String,
-        label: Option<String>,
-        placeholder: Option<String>,
-        keyboard: Option<Keyboard>,
-        value: Option<FieldValue>,
-        options: Option<Vec<String>>,
-        set: Option<bool>,
-        doc: Option<String>,
-        was: Option<String>,
-        error: Option<String>,
-        open: Option<bool>,
-        show: Option<Expr>,
-        enabled: Option<Expr>,
-        checks: Option<Vec<Check>>,
-    }
-}
-
-wire! {
     /// A screen's bar of unsaved changes.
     pub struct Pending {
         count: String,
@@ -222,6 +246,7 @@ wire! {
         avatar: Option<String>,
         coat: Option<String>,
         grow: Option<String>,
+        act: Option<String>,
     }
 }
 
@@ -273,8 +298,86 @@ wire! {
 }
 
 wire! {
+    /// A scene's sky: its kind, wind from 0 to 1, fog from 0 to 2, a storm, and its line.
+    pub struct Weather {
+        sky: Sky,
+        wind: Option<Number>,
+        fog: Option<u8>,
+        storm: Option<bool>,
+        line: Option<String>,
+    }
+}
+
+wire! {
+    /// A scene's repo: its colour, its summary line and its bands of lanes.
+    pub struct SceneRepo {
+        id: String,
+        title: String,
+        color: Option<String>,
+        subtitle: Option<String>,
+        blocks: Vec<Band>,
+    }
+}
+
+wire! {
+    /// A band of a scene's repo: a header over its rows, or over blocks.
+    pub struct Band {
+        #[serde(rename = "type")]
+        kind: String,
+        id: String,
+        header: Option<String>,
+        rows: Option<Vec<SceneRow>>,
+        blocks: Option<Vec<Block>>,
+    }
+}
+
+wire! {
+    /// One row of a scene's band: an issue or a lane, with its host, the issue it needs you on and its blocker.
+    pub struct SceneRow {
+        id: String,
+        title: String,
+        subtitle: Option<String>,
+        figure: Option<Figure>,
+        tone: Option<Tone>,
+        value: Option<String>,
+        tap: Option<Tap>,
+        #[serde(deserialize_with = "null_kept")]
+        host: Option<Nullable<String>>,
+        #[serde(deserialize_with = "null_kept")]
+        needs: Option<Nullable<u64>>,
+        #[serde(deserialize_with = "null_kept")]
+        blocked_by: Option<Nullable<u64>>,
+    }
+}
+
+fn null_kept<'de, D: serde::Deserializer<'de>, T: Deserialize<'de>>(d: D) -> Result<Option<Nullable<T>>, D::Error> {
+    Option::<T>::deserialize(d).map(Some)
+}
+
+/// A diagram's nodes: a list of nodes by `id`, or a map of nodes by name.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
+#[serde(untagged)]
+pub enum Nodes {
+    List(Vec<Node>),
+    Map(BTreeMap<String, Node>),
+}
+
+impl Nodes {
+    /// The node of this id.
+    #[must_use]
+    pub fn get(&self, id: &str) -> Option<&Node> {
+        match self {
+            Self::List(l) => l.iter().find(|n| n.id.as_deref() == Some(id)),
+            Self::Map(m) => m.get(id),
+        }
+    }
+}
+
+wire! {
     /// A node of a diagram.
     pub struct Node {
+        id: Option<String>,
         state: Option<Tone>,
         coat: Option<String>,
         tap: Option<Tap>,
@@ -350,6 +453,26 @@ wire! {
 }
 
 wire! {
+    /// One step of a stepper: a done one with a tap can be pressed.
+    pub struct Stage {
+        id: String,
+        label: String,
+        sub: Option<String>,
+        tap: Option<Tap>,
+    }
+}
+
+wire! {
+    /// One progress bar: its value from 0 to 100 and its tone.
+    pub struct Bar {
+        label: String,
+        value: u8,
+        tone: Option<Tone>,
+        sub: Option<String>,
+    }
+}
+
+wire! {
     /// One image.
     pub struct Image {
         src: String,
@@ -370,6 +493,23 @@ wire! {
     /// An editor's error on a line.
     pub struct LineError {
         line: i64,
+        message: String,
+    }
+}
+
+wire! {
+    /// One row of a `lines` block: its id and its values by column name.
+    pub struct LineItem {
+        id: String,
+        values: Fields,
+    }
+}
+
+wire! {
+    /// An app's check on a `lines` block: on a row and a column, or on the whole block.
+    pub struct RowError {
+        row: Option<String>,
+        name: Option<String>,
         message: String,
     }
 }
@@ -399,10 +539,11 @@ wire! {
 }
 
 wire! {
-    /// A reorderable list's action.
-    pub struct Reorder {
+    /// A gesture a block allows: the action its result is sent as, under `name` in the action's values.
+    pub struct Gesture {
         action: String,
         name: String,
+        enabled: Option<Expr>,
     }
 }
 
@@ -412,5 +553,25 @@ wire! {
         title: String,
         subtitle: Option<String>,
         tap: Option<Tap>,
+    }
+}
+
+wire! {
+    /// A toast's undo: its label (default "undo") and the action it sends, with any confirm.
+    pub struct Undo {
+        label: Option<String>,
+        action: String,
+        values: Option<Fields>,
+        confirm: Option<Confirm>,
+    }
+}
+
+wire! {
+    /// One page of a `pages` block: its picture, what it shows, and its size in pixels.
+    pub struct PageImage {
+        src: String,
+        alt: String,
+        width: u32,
+        height: u32,
     }
 }

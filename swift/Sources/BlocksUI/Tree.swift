@@ -80,10 +80,6 @@ extension Block {
 
     fileprivate var head: (type: String, id: String?, variant: String?, source: Source) {
         switch self {
-        case .screen(let b): ("screen", b.id, nil, Source())
-        case .sheet(let b): ("sheet", b.id, nil, Source())
-        case .section(let b): ("section", b.id, nil, Source())
-        case .list(let b): ("list", b.id, nil, Source())
         case .row(let b): ("row", b.id, b.style?.rawValue, Source(tap: b.tap))
         case .card(let b): ("card", b.id, b.kind?.rawValue, Source(tap: b.tap))
         case .choice(let b): ("choice", b.id, nil, Source(action: b.action, values: b.values))
@@ -93,29 +89,21 @@ extension Block {
         case .run(let b): ("run", b.id, nil, Source(action: b.action))
         case .button(let b): ("button", b.id, b.style?.rawValue, Source(action: b.action, tap: b.tap, values: b.values))
         case .chips(let b): ("chips", b.id, nil, Source(action: b.action))
-        case .stat(let b): ("stat", b.id, nil, Source())
         case .text(let b): ("text", b.id, b.style?.rawValue, Source())
         case .images(let b): ("images", b.id, b.size?.rawValue, Source())
-        case .web(let b): ("web", b.id, nil, Source())
-        case .diff(let b): ("diff", b.id, nil, Source())
         case .editor(let b): ("editor", b.id, nil, Source(action: b.action))
-        case .scene(let b): ("scene", b.id, nil, Source())
-        case .diagram(let b): ("diagram", b.id, nil, Source())
         case .composer(let b): ("composer", b.id, nil, Source(action: b.action, values: b.values))
-        case .prose(let b): ("prose", b.id, nil, Source())
-        case .hero(let b): ("hero", b.id, nil, Source())
-        case .media(let b): ("media", b.id, nil, Source())
-        case .nav(let b): ("nav", b.id, nil, Source())
-        case .island(let b): ("island", b.id, nil, Source())
+        case .lines(let b): ("lines", b.id, nil, Source(action: b.action))
         case .appBlock(let b):
             (
                 b.type, b.id, nil,
                 Source(action: b.string("action"), tap: try? b["tap"]?.decode(Tap.self), values: b["values"]?.fields)
             )
+        default: (typeAndID.type, typeAndID.id, nil, Source())
         }
     }
 
-    private static let roles = ["section": "region", "form": "form", "config": "form", "nav": "navigation"]
+    private static let roles = ["section": "region", "form": "form", "config": "form", "nav": "navigation", "chart": "figure", "toast": "status"]
     private static let names = ["label", "title", "header", "question", "alt", "file", "command", "placeholder", "name"]
 
     /// The accessible role and name every renderer gives this block's root, as `tree::a11y` in Rust.
@@ -150,10 +138,18 @@ extension Block {
         case .editor(let b): [b.name]
         case .scene(let b): [b.label]
         case .diagram(let b): [b.title]
+        case .chart(let b): [b.title]
         case .composer(let b): [b.label, b.placeholder]
+        case .lines(let b): [b.label, b.name]
         case .hero(let b): [b.title]
         case .media(let b): [b.alt]
         case .island(let b): [b.name]
+        case .table(let b): [b.title]
+        case .steps(let b): [b.title]
+        case .toast(let b): [b.title]
+        case .pages(let b): [b.title]
+        case .timeline(let b): [b.title]
+        case .import(let b): [b.title]
         case .appBlock(let b): Self.names.map { b.string($0) }
         default: []
         }
@@ -187,7 +183,7 @@ extension [Block] {
 extension Blocks.Form {
     internal var fieldValues: [String: JSONValue] {
         fields.reduce(into: [:]) { values, field in
-            if let value = field.value { values[field.name] = value.json }
+            if let value = field.kind.start { values[field.kind.name] = value }
         }
     }
 }

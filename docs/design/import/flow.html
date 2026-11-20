@@ -1,0 +1,18 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="../neutral-default/tokens.css"><link rel="stylesheet" href="../../../web/dist/blocks.css"><link rel="stylesheet" href="import.css"><link rel="stylesheet" href="page.css">
+<script src="import.js"></script><script src="data.js"></script><title>import: pick, upload, the server reads, check</title></head>
+<body><main class="scr">
+<div class="top"><div class="tabh"><span class="tw">Shop · products</span></div></div>
+<h2>1 · Empty</h2><p class="note">A drop area with [choose file] and a hint built from the screen's accept and size limit. Under it, the columns the file needs: required ones in bold, optional ones with their allowed values. [download template] is a link to a file the app serves. blocks does not write a workbook.</p>
+<div data-i='{"phase":"empty"}'></div>
+<div class="cases">
+<div><h2>2 · Uploading</h2><p class="note">The picked file goes to the app's file handler, the same one an upload field uses, with the same progress bar. [cancel] stops it.</p>
+<div data-base="WITH_ERRS" data-i='{"phase":"uploading","p":62}'></div></div>
+<div><h2>3 · The server reads it</h2><p class="note">Once the handler gives back the file's id, the block sends a read action. The app reads the file and answers with its sheets, its headers, a suggested match for each column, a sample of the rows and every row error.</p>
+<div data-base="WITH_ERRS" data-i='{"phase":"reading"}'></div></div>
+</div>
+<h2>4 · File read: columns matched, rows previewed</h2><p class="note">Everything here comes from the app's answer. The app matches each declared column to a header in the file, so most files need no change, and gives two sample values for each. A header nothing asked for (Supplier) is listed as not imported. The rows are numbered by their row in the spreadsheet, so a user can find one in Excel. The app sends the first rows, and the line under them counts the rest.</p>
+<div data-i='{}'></div>
+<h2>5 · Row errors</h2><p class="note">The app checks every row and sends each error: a required cell that is empty, a number or date it can't read, a value not in the allowed list, a repeated unique key. A bad row gets a red edge, its bad cell is marked "!", and the reason is on the line under it. [4 with errors] shows only those rows. Rows with errors are left out: the user fixes the file and picks it again, or imports the rest. Cells are not edited here.</p>
+<div data-base="WITH_ERRS" data-i='{"show":"errors"}'></div>
+</main><script>draw()</script></body></html>

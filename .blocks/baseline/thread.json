@@ -1,0 +1,49 @@
+{
+  "guard": 2,
+  "known": [
+    {
+      "rule": "render/contrast",
+      "at": "screen#thread-t2/row#who"
+    },
+    {
+      "rule": "render/overlap",
+      "at": "screen#thread-t2/card#m-11"
+    },
+    {
+      "rule": "render/overlap",
+      "at": "screen#thread-t2/card#m-12"
+    },
+    {
+      "rule": "render/tap-target",
+      "at": "screen#thread-t2"
+    },
+    {
+      "rule": "render/tap-target",
+      "at": "screen#thread-t2/card#m-11/button#m-11-retry"
+    },
+    {
+      "rule": "render/tap-target",
+      "at": "screen#thread-t2/card#m-12/choice#q33"
+    },
+    {
+      "rule": "render/tap-target",
+      "at": "screen#thread-t2/card#m-8/button#m-8-link"
+    },
+    {
+      "rule": "render/tap-target",
+      "at": "screen#thread-t2/card#m-8/text#m-8-t"
+    },
+    {
+      "rule": "render/tap-target",
+      "at": "screen#thread-t2/composer#say"
+    },
+    {
+      "rule": "render/tree",
+      "at": "screen#thread-t2/card#m-6"
+    },
+    {
+      "rule": "render/tree",
+      "at": "screen#thread-t2/card#m-6/text#m-6-t"
+    }
+  ]
+}

@@ -40,8 +40,7 @@ internal struct ZoomedPicture: View {
     internal let alt: String?
 
     internal var body: some View {
-        Picture(src: src, alt: alt, fit: true).scaleEffect(scale)
-            .gesture(MagnifyGesture().onChanged { scale = max(1, $0.magnification) })
+        Picture(src: src, alt: alt, fit: true).scaleEffect(scale).modifier(Zoomed(scale: $scale, most: 4))
     }
 }
 

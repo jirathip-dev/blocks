@@ -1,7 +1,7 @@
 name: release
 on:
   workflow_run:
-    workflows: [ci, web, swift, cap, compat]
+    workflows: [ci, web, swift, cap, compat, desktop]
     types: [completed]
     branches: [main]
 
@@ -28,3 +28,21 @@ jobs:
           ref: ${{ env.SHA }}
       - name: "tag v<SCHEMA_VERSION>.<n> once every push workflow at this sha is green (docs/consume.md)"
         run: scripts/release.sh
+
+  scan-perf:
+    if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' && github.event.workflow_run.name == 'web'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: "Playwright's WebKit"
+        run: npm --prefix web ci --no-audit --no-fund && npx --prefix web playwright install --with-deps webkit
+      - name: "scan perf: one page, shutter to corrected image, within 400 ms at p95 in WebKit's worker (docs/design/scan/README.md)"
+        working-directory: web
+        env:
+          BLOCKS_SCAN_BUDGET_MS: "400"
+        run: node --no-warnings --test --test-name-pattern="shutter to corrected image" test/scan.test.ts

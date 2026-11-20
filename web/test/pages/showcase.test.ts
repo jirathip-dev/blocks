@@ -1,5 +1,5 @@
 import { deepStrictEqual, ok, strictEqual } from "node:assert/strict";
-import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync } from "node:fs";
 import { extname, join } from "node:path";
 import { after, before, test } from "node:test";
 import { webkit } from "playwright";
@@ -48,11 +48,11 @@ const tree = (page) =>
 const files = SITE ? readdirSync(SITE).filter((f) => f.endsWith(".html")).sort() : [];
 
 test("every page is the same PNG and tree before and after blocks.js adopts it, all under /blocks/", async () => {
-  strictEqual(files.length, 33);
+  strictEqual(files.length, 43);
   const warm = await open("index.html", { js: false });
   await warm.page.screenshot({ fullPage: true });
   await warm.close();
-  for (const f of files) {
+  for (const f of files.filter((f) => f !== "playground.html")) {
     const off = await open(f, { js: false });
     const png = await off.page.screenshot({ fullPage: true });
     deepStrictEqual(off.stray, [], f);
@@ -81,21 +81,47 @@ test("with JS off a link bar link goes to its page under the sub-path", async ()
 
 const bg = (page, sel = ":root") => page.evaluate((s) => getComputedStyle(document.querySelector(s)).getPropertyValue("--bg").trim(), sel);
 
-test("JS off: the three schemes side by side; JS on: the look sheet switches the whole site and keeps it", async () => {
-  const off = await open("schemes.html", { js: false });
-  deepStrictEqual(await Promise.all(["light", "dark", "paper"].map((s) => bg(off.page, `[data-id="s-${s}"]`))), ["#f6f6f6", "#161616", "#f3eee4"]);
+test("JS off: Styles pins each look's colours side by side; JS on: the nav's switcher restyles in place, follows the device and holds across pages", async () => {
+  const off = await open("styles.html", { js: false });
+  deepStrictEqual(await Promise.all(["default", "paper", "console", "playful"].map((s) => bg(off.page, `[data-id="s-${s}"]`))), ["#f6f6f6", "#f4ecdc", "#fbfaf6", "#ffffff"]);
   await off.close();
-  const on = await open("schemes.html");
+  const on = await open("index.html", { width: 1440 });
+  const root = (k) => on.page.evaluate((p) => getComputedStyle(document.documentElement).getPropertyValue(p).trim(), k);
+  const pressed = () =>
+    on.page.$$eval('[data-id="looks"] button', (bs) => {
+      const probe = document.body.appendChild(document.createElement("i"));
+      probe.style.background = "var(--l)";
+      const l = getComputedStyle(probe).backgroundColor;
+      probe.remove();
+      return bs.filter((b) => getComputedStyle(b).backgroundColor === l).map((b) => b.dataset.id);
+    });
   strictEqual(await bg(on.page), "#f6f6f6");
-  await on.page.click('[data-id="look"]');
-  const rows = on.page.locator(".b-sheet .row");
-  deepStrictEqual(await rows.allTextContents(), ["✓ the app's own", "Default dark", "Default light", "Paper"]);
-  await rows.filter({ hasText: "Paper" }).click();
-  strictEqual(await bg(on.page), "#f3eee4");
-  strictEqual(await on.page.locator(".b-sheet .row.on").textContent(), "✓ Paper");
+  await on.page.evaluate(() => (window.kept = true));
+  await on.page.click('[data-id="look-console"]');
+  deepStrictEqual([await bg(on.page), await root("--motion"), await root("--radius")], ["#fbfaf6", "0", "0px"]);
+  await on.page.click('[data-id="look-paper"]');
+  deepStrictEqual([await bg(on.page), await root("--motion"), await root("--radius")], ["#f4ecdc", "1.75", "0px"]);
+  ok(/serif/.test(await on.page.evaluate(() => getComputedStyle(document.body).fontFamily)), "Paper sets serif type");
+  ok(await on.page.evaluate(() => window.kept === true), "no reload");
+  const rise = (page) => page.evaluate(() => getComputedStyle(document.querySelector('[data-id="hero"]')).animationDuration);
+  strictEqual(await rise(on.page), "0s", "none under reduced motion");
+  deepStrictEqual(await pressed(), ["look-paper"]);
   await on.page.goto(`${BASE}gallery.html`);
-  strictEqual(await bg(on.page), "#f3eee4");
+  strictEqual(await bg(on.page), "#f4ecdc");
+  deepStrictEqual(await pressed(), ["look-paper"]);
   await on.close();
+  const ctx = await browser.newContext({ colorScheme: "dark", reducedMotion: "no-preference" });
+  const dark = await ctx.newPage();
+  await dark.route("**/*", (r) => {
+    const path = r.request().url().slice(BASE.length).split(/[?#]/)[0] || "index.html";
+    return r.fulfill({ body: readFileSync(join(SITE, path)), contentType: TYPES[extname(path)] ?? "application/octet-stream" });
+  });
+  await dark.goto(BASE + "index.html");
+  strictEqual(await bg(dark), "#161616");
+  await dark.click('[data-id="look-playful"]');
+  strictEqual(await bg(dark), "#0e0e11");
+  strictEqual(await rise(dark), "0.65s", "Playful's motion 1.25 scales the 520 ms rise");
+  await ctx.close();
 });
 
 const screenOf = (f) => JSON.parse(readFileSync(join(SITE, f), "utf8").match(/id="blocks-screen"[^>]*>(.*?)<\/script>/s)[1]);
@@ -149,4 +175,110 @@ test("in blocks-shot, behaviours' toggle shows and hides a field, its check spea
   deepStrictEqual([find(tree, "echo").drawn, find(tree, "echo").text], ["native", '{"says":"hello"}']);
   deepStrictEqual([find(tree, "later").drawn, find(tree, "later").text], ["fallback", "An echo of its propsx-echo needs JS; until it loads, this row"]);
   deepStrictEqual(i.report.sent, [{ screen: "islands", action: "echo", block: "echo", values: { says: "hello" } }]);
+});
+
+test("layout: the switch moves the same screens between compact and wide without a reload; on a phone the file opens on a tap", async () => {
+  const { page, close } = await open("layout.html", { width: 1440 });
+  const boxes = () =>
+    page.$$eval('[data-id="app"]>section', (all) =>
+      all.map((s) => {
+        const r = s.getBoundingClientRect();
+        const p = s.parentElement.getBoundingClientRect();
+        return { id: s.dataset.id, blocks: [...s.querySelectorAll("[data-id]")].map((b) => b.dataset.id), x: Math.round(r.left - p.left), y: Math.round(r.top - p.top), w: Math.round(r.width) };
+      }),
+    );
+  const at = (all, id) => all.find((s) => s.id === id);
+  const url = page.url();
+  const auto = await boxes();
+  await page.click('[data-id="to-compact"]');
+  const compact = await boxes();
+  await page.click('[data-id="to-wide"]');
+  const wide = await boxes();
+  strictEqual(page.url(), url);
+  deepStrictEqual(auto, wide, "at 1440 the page starts wide");
+  deepStrictEqual(compact.map((s) => [s.id, s.blocks]), wide.map((s) => [s.id, s.blocks]), "the same screens and blocks");
+  ok(at(wide, "plants").x < at(wide, "today").x && at(wide, "today").x < at(wide, "weather").x, "wide: column, panel, cards side by side");
+  ok(at(wide, "settings").y > at(wide, "today").y, "wide: settings in the bar below");
+  ok(at(compact, "weather").y > at(compact, "today").y && at(compact, "weather").w === at(compact, "today").w, "compact: weather a sheet over today");
+  ok(at(compact, "plants").y > at(compact, "weather").y && at(compact, "settings").y === at(compact, "plants").y, "compact: plants and settings in the tab bar");
+  ok(await page.isVisible('[data-id="json"]'), "at 1440 the file sits beside the drawing");
+  ok(!(await page.isVisible('[data-id="open-file"]')));
+  await close();
+  const phone = await open("layout.html", { width: 390 });
+  ok(!(await phone.page.isVisible('[data-id="json"]')), "at 390 the file starts folded");
+  await phone.page.click('[data-id="open-file"]');
+  ok(await phone.page.isVisible('[data-id="json"]'));
+  ok((await phone.page.textContent('[data-id="json"]')).includes('"place": "menu"'));
+  await phone.close();
+});
+
+const SHOTS = process.env.SHOTS ?? join(SITE, "..", "shots");
+const typed = (page, text) => page.fill(".pg-area", text);
+const inFrame = (page, fn, arg) => page.frames()[1].evaluate(fn, arg);
+
+test("playground: a sample draws in the preview, edits redraw it in place, bad JSON and schema faults are marked and keep the last good screen", async () => {
+  mkdirSync(SHOTS, { recursive: true });
+  for (const width of [390, 1440]) {
+    const { page, close, stray } = await open("playground.html#k=stat", { width });
+    await page.waitForSelector(".pg-status:not(.bad)");
+    await page.waitForFunction(() => document.querySelector(".pg-frame")?.contentDocument?.querySelector('[data-id="week"]'));
+    strictEqual(await page.getAttribute('[data-id="pick"] a[href="playground.html#k=stat"]', "aria-current"), "page");
+    strictEqual(await page.textContent(".pg-status"), "screen · 1 blocks · drawn");
+    await page.screenshot({ path: join(SHOTS, `playground-${width}.png`), fullPage: true });
+    await page.evaluate(() => (window.kept = true));
+    const text = await page.inputValue(".pg-area");
+    await typed(page, text.replace('"open"', '"opened"'));
+    ok((await inFrame(page, () => document.querySelector('[data-id="week"]').textContent)).includes("opened"));
+    await typed(page, text.replace('"open"', '"shut"').replace('"type": "stat"', '"type": "stats"'));
+    const line = text.split("\n").findIndex((l) => l.includes('"type": "stat"')) + 1;
+    deepStrictEqual(await page.$$eval(".pg-gut i.err", (is) => is.map((i) => i.textContent)), [String(line)]);
+    strictEqual(await page.textContent(".pg-status"), `line ${line} · schema: "stats" is not a kind`);
+    ok(await page.isVisible(".pg-note"));
+    ok((await inFrame(page, () => document.querySelector('[data-id="week"]').textContent)).includes("opened"), "the last good screen stays");
+    await typed(page, text.replace('"open"', '"open",'));
+    ok((await page.textContent(".pg-status")).includes("not JSON"));
+    await page.screenshot({ path: join(SHOTS, `playground-error-${width}.png`), fullPage: true });
+    ok(await page.evaluate(() => window.kept === true), "no reload");
+    deepStrictEqual(stray, []);
+    await close();
+  }
+});
+
+test("playground: look, dark and width switch the preview only; share packs the screen into the link and the link brings it back", async () => {
+  const { page, close } = await open("playground.html#k=chips", { width: 1440 });
+  await page.waitForSelector(".pg-status:not(.bad)");
+  const frameBg = () => inFrame(page, () => getComputedStyle(document.documentElement).getPropertyValue("--bg").trim());
+  strictEqual(await frameBg(), "#f6f6f6");
+  await page.click('.pg-seg button[value="console"]');
+  await page.click('.pg-seg button[value="dark"]');
+  await page.click('.pg-seg button[value="1440"]');
+  strictEqual(await frameBg(), "#0d0d0c");
+  strictEqual(await bg(page), "#f6f6f6");
+  strictEqual(await page.evaluate(() => document.documentElement.dataset.look), undefined);
+  strictEqual(await page.$eval(".pg-frame", (f) => f.style.width), "1440px");
+  const text = (await page.inputValue(".pg-area")).replace('"medium"', '"max"');
+  await typed(page, text);
+  await page.click(".pg-share");
+  await page.waitForSelector(".pg-url");
+  const url = await page.inputValue(".pg-url");
+  ok(url.startsWith(`${BASE}playground.html#s=`), url);
+  strictEqual(page.url(), url);
+  await close();
+  const back = await open(url.slice(BASE.length), { width: 390 });
+  await back.page.waitForSelector(".pg-status:not(.bad)");
+  strictEqual(await back.page.inputValue(".pg-area"), text);
+  strictEqual(await back.page.textContent(".pg-from"), "From a shared link.");
+  await back.close();
+});
+
+test("kind pages: the sample's Rust tab is shown first and the JSON tab swaps in place", async () => {
+  const { page, close } = await open("kind-stat.html", { width: 1440 });
+  ok(await page.isVisible('[data-id="rust"]'));
+  ok(await page.isHidden('[data-id="json"]'));
+  ok((await page.textContent('[data-id="rust"]')).includes("fn figures() -> Vec<Block> {"));
+  await page.click('[data-id="tabs"] a[href="#json"]');
+  ok(await page.isHidden('[data-id="rust"]'));
+  ok(await page.isVisible('[data-id="json"]'));
+  strictEqual(page.url(), `${BASE}kind-stat.html`);
+  await close();
 });

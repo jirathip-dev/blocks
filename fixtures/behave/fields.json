@@ -1,0 +1,17 @@
+{
+  "state": {},
+  "cases": [],
+  "lit": [
+    { "field": { "type": "text", "name": "who" }, "held": "Ada", "want": "Ada" },
+    { "field": { "type": "text", "name": "who" }, "held": null, "want": null },
+    { "field": { "type": "text", "name": "seats", "keyboard": "number" }, "held": 3, "want": 3 },
+    { "field": { "type": "toggle", "name": "ack" }, "held": true, "want": true },
+    { "field": { "type": "toggle", "name": "ack" }, "held": false, "want": false },
+    { "field": { "type": "picker", "name": "plan", "options": ["free", "team"] }, "held": "team", "want": "team" },
+    { "field": { "type": "secret", "name": "key" }, "held": "", "want": "" },
+    { "field": { "type": "rating", "name": "stars" }, "held": "4", "want": "4" },
+    { "field": { "type": "text", "name": "who" }, "held": { "from": "a" }, "want": null },
+    { "field": { "type": "upload", "name": "photos" }, "held": [{ "id": "f-1" }, { "id": "f-2" }], "want": 2 },
+    { "field": { "type": "upload", "name": "photos" }, "held": [], "want": null }
+  ]
+}

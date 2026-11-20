@@ -1,0 +1,35 @@
+## Summary
+
+Decision: a `table` or `list` with `more` (an action name and the app's opaque cursor) shows a quiet "Loading more ↻" row under its last row. When that row comes into view, by scroll or keyboard, the block sends the action with the cursor once and waits for the app's merge, which appends rows and a new cursor or drops `more`. On a refusal or failure the row becomes "Couldn't load more. [load more]" with a red edge, beside #135's toast; only that button sends again. While more remain, the table says its controls cover only the loaded rows: "50 loaded, more below", "3 of 50 loaded", "sorted among these", "of 50 loaded" by the bulk bar and "Total of 50 loaded".
+Screens: an OT-requests table scrolled to the bottom while it loads; a sheet of every state (waiting, answered, failed, complete, filter, sort, select, #138's reorder, phone rows, older client, list); a notifications list whose load failed, with the toast. Each light and dark, at 1440 and 390.
+Open questions: (1) With a filter on, the loading row keeps loading while in view, so a narrow filter pulls in page after page, one at a time. Keep that, or pause under a filter until the reader taps [load more]? (2) Today's product CSS has two class clashes that hit the table: chart's global `.chg` gives a changed row `display:grid`, and editor's global `.ed` gives an editable table a monospace frame. Impl should scope or rename both here. OK?
+
+## Images
+
+| Image | What it shows |
+|---|---|
+| `table-light-1440.png`, `table-dark-1440.png` | The real placement: 50 OT requests (the client app's page size) in a tile whose grid scrolls inside it, scrolled to the end. The last row is in view, so "Loading more ↻" sits under OT-2351, above the sticky totals. The bar reads "50 loaded, more below" and the totals "Total of 50 loaded" |
+| `table-light-390.png`, `table-dark-390.png` | The same on a phone: the page scrolls, the bar sticks to the top, and the loading row is one more stacked row under the last one |
+| `states-*-1440.png`, `states-*-390.png` | 1 waiting: what is sent, once; aria-busy. 2 answered: 5 rows appended with the ink edge, focus kept on the old last row, and what the screen reader hears. 3 refused or failed: the retry row and the toast. 4 complete: no `more`, so "13 rows" and "Total". 5 filter: "4 of 10 loaded", "Total of 4 shown". 6 sort: "sorted among these"; new rows land where they sort. 7 select: select-all ticks loaded rows only; "of 10 loaded". 8 #138's reorder: while a row is lifted the loading row waits ("more below · loads once the row is placed"). 9 phone rows: waiting with focus, and the retry. 10 older client and static page: rows only. 11 list: waiting, answered, failed, complete |
+| `list-light-1440.png`, `list-dark-1440.png`, and the `-390` pair | A notifications list scrolled to the end after a failed load: the retry row (it gets a tile and the red edge), with the shell's bad toast floating above it. The screen keeps room at its bottom so the toast never covers the retry |
+
+## Decisions
+
+- **Shape.** `more: { action, cursor }` on `Table` and `List`, both strings; the cursor is opaque to blocks. No `more` means the block is complete. Additive: same `SCHEMA_VERSION`; an older client ignores it and draws the rows it has (state 10).
+- **Trigger.** The loading row is the trigger. When it comes into view (in the tile's scroller at 1440, the page on a phone), or keyboard focus reaches the last row, the block sends `Action{block, action: more.action, values: {cursor}}` once. Nothing is sent again until the app answers. If the row is still in view after an answer, the next page is asked for at once, still one at a time. So a first page shorter than the view fills it.
+- **Answer.** The app answers with the existing merge: rows appended (keyed by `id`, so a row it sends again updates in place) and a new `more`, or none when done. No new op. New rows get the 3px ink edge until the next update, as any row diff does. Focus and scroll position stay with the row they were on.
+- **Loading row.** One row under the last row, above the totals, `--hit` tall: "Loading more" plus the house busy mark ↻ in the meta size and `--mute`. The ↻ stands still with reduced motion. The table (or list) is `aria-busy` while waiting. On a list the row has no tile, so it stays quiet.
+- **Failure.** The row turns into "Couldn't load more. [load more]" with the `--mark` red edge (`--r`), as `td.no` has. The toast is the app's own from its refusal, else the shell's bad toast (#135). Scrolling or focus does not resend; only [load more] does, with the same cursor, and the row goes back to Loading more.
+- **Wording while more remain** (the issue left it to design). Bar count: "N loaded, more below". Filtered: "K of N loaded". Sorted: "N loaded, more below · sorted among these". Bulk bar: "of N loaded" after "M selected". Totals row: "Total" plus a mute "of N loaded" ("of K shown" under a filter). Once `more` is gone, every phrase returns to today's ("N rows", "Total").
+- **Sort, filter, totals, select** act on the loaded rows only. A page that lands merges into the current sort and filter. Select-all never ticks rows that are not loaded, and new rows arrive unticked (the header box shows a dash).
+- **Accessibility.** One polite live region per block says "K more rows loaded, N in all" per page. The loading row is not focusable; the retry's [load more] is. Tab or arrow keys reaching the last row load the same way as scrolling.
+- **With #138.** An edit or a reorder never triggers a load. While a row is lifted or a cell editor is open, the row reads "more below · loads once the row is placed" and waits. Auto-scroll during a drag moves among the loaded rows only, and the loading row is no drop slot.
+- **Phone.** Under 600px the loading and retry rows are one more stacked row, with the text at the start and the red edge on the row.
+- **Static site writer:** the rows it has, with no loading row (nobody is there to answer).
+- **SwiftUI:** the same loading row after the last `ForEach` item, sending from its `.onAppear` once while nothing is pending. The retry is the house button. An `AccessibilityNotification.Announcement` is posted for the new rows, and `aria-busy` maps to `.accessibilityValue("loading")` on the grid.
+
+## What impl builds
+
+`more` on the crate's `Table` and `List`, then `just gen`; the web renderer's loading row, retry and wording; SwiftUI; cross-language fixtures (`more` waiting, answered, done) and a showcase sample. `more.css` here is everything the kind adds, about 12 rules on tokens only, to go into `table.css` and `list.css`.
+
+`more.js`, `data.js` and `page.css` are preview-only. `more.js` draws over `../table/table.js`, the table design's port. Its `wait`, `fresh`, `focus`, `said` and `grip` fields fake runtime state for the images; they are not wire fields. `page.css` also holds a preview-only fix for open question 2, so the images show the intended look. The pages load the product's `web/dist/blocks.css` with `../neutral-default/tokens.css`. Images: `./render.sh` (Playwright's cached headless Chromium, light and dark, reduced motion).

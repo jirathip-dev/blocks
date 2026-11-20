@@ -13,9 +13,9 @@ private struct Red: BlockStyle {
 final class RenderTests: XCTestCase {
     private static let core = [
         "screen", "sheet", "section", "list", "row", "card", "choice", "form", "config", "secret", "run", "button",
-        "chips", "stat", "text", "images", "web", "diff", "editor", "scene", "diagram", "composer",
+        "chips", "stat", "text", "images", "web", "diff", "editor", "scene", "diagram", "composer", "lines",
     ]
-    private static let content = ["prose", "hero", "media", "nav"]
+    private static let content = ["prose", "hero", "media", "nav", "steps", "toast", "pages", "timeline", "import"]
     private let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent().appendingPathComponent("../../..")
 
     private func pixels(
@@ -69,7 +69,8 @@ final class RenderTests: XCTestCase {
     }
 
     func testEveryCoreKindInTheFixturesDraws() throws {
-        let found = try samples()
+        var found = try samples()
+        found["lines"] = try found["lines"] ?? fixture("lines")
         XCTAssertEqual(Set(found.keys), Set(Self.core))
         for (kind, sample) in found.sorted(by: { $0.key < $1.key }) {
             XCTAssertGreaterThan(try pixels(BlocksView(sample, source: .core)), 0, "\(kind) draws nothing")
@@ -90,6 +91,43 @@ final class RenderTests: XCTestCase {
             XCTAssertGreaterThan(try pixels(BlocksView(fixture(kind), source: .core)), 0, "\(kind) draws nothing")
         }
         XCTAssertGreaterThan(height(BlocksView(try fixture("prose"), source: .core)), 150, "every part laid out")
+    }
+
+    func testATableIsAGridWhenWideAndStackedRowsOnAPhone() throws {
+        let table = BlocksView(try fixture("table"), source: .core).environment(\.look, Look(still: true))
+        let wide = NSHostingView(rootView: table.frame(width: 1440)).fittingSize.height
+        let phone = NSHostingView(rootView: table.frame(width: 390)).fittingSize.height
+        XCTAssertGreaterThan(try pixels(BlocksView(try fixture("table"), source: .core)), 0)
+        XCTAssertGreaterThan(wide, 6 * 20, "a head, five rows and the totals")
+        XCTAssertGreaterThan(phone, wide * 1.4, "each row is a title line and a meta line")
+    }
+
+    func testAnEditableGridDrawsGroupsHandlesAndFieldsWideAndASheetRowOnAPhone() throws {
+        let grid = BlocksView(try fixture("table-grid"), source: .core).environment(\.look, Look(still: true))
+        let wide = NSHostingView(rootView: grid.frame(width: 1440)).fittingSize.height
+        let phone = NSHostingView(rootView: grid.frame(width: 390)).fittingSize.height
+        XCTAssertGreaterThan(try pixels(BlocksView(try fixture("table-grid"), source: .core)), 0)
+        XCTAssertGreaterThan(wide, 11 * 20, "a head, three groups, six items and the totals")
+        XCTAssertGreaterThan(phone, wide, "each item is a title line and a meta line")
+    }
+
+    func testATableWithMoreAsksForItsNextPageOnceAndARefusalLeavesARetry() async throws {
+        var sent: [BlockAction] = []
+        let view = BlocksView(try fixture("table-ot"), source: .core, acted: { sent.append($0); return false })
+        let host = NSHostingView(rootView: view.frame(width: 1440).environment(\.look, Look(still: true)))
+        let window = NSWindow(contentRect: CGRect(x: 0, y: 0, width: 1440, height: 900), styleMask: [], backing: .buffered, defer: false)
+        window.contentView = host
+        host.layout()
+        for _ in 0..<20 where sent.isEmpty { await Task.yield() }
+        XCTAssertEqual(sent, [BlockAction(action: "ot-more", values: ["cursor": .string("c:2397")])])
+        host.layout()
+        for _ in 0..<20 { await Task.yield() }
+        XCTAssertEqual(sent.count, 1, "a refusal does not send again by itself")
+        let done = try fixture("table-ot")
+        guard case .table(var t) = done else { return XCTFail("table-ot is a table") }
+        t.more = nil
+        let plain = NSHostingView(rootView: BlocksView(.table(t), source: .core).frame(width: 1440).environment(\.look, Look(still: true)))
+        XCTAssertGreaterThan(host.fittingSize.height, plain.fittingSize.height + 40, "the retry row sits under the last row")
     }
 
     func testMediaAndHeroKeepTheMediaBoxBeforeThePictureLoads() throws {
@@ -115,6 +153,111 @@ final class RenderTests: XCTestCase {
         let busy = #"{"type": "composer", "action": "say", "acts": {"stop": "halt"}, "working": {"since": "2026-01-01T00:00:00Z"}}"#
         XCTAssertEqual(try pixels(BlocksView(block(idle), source: .core), red), 0)
         XCTAssertGreaterThan(try pixels(BlocksView(block(busy), source: .core), red), 0)
+    }
+
+    func testPagesFrameEachPageAtItsSizeFittedToTheWidthAndSayNoPagesYetWhenEmpty() throws {
+        let three = height(BlocksView(try fixture("pages"), source: .core))
+        let page = (390 - 32) * 1754.0 / 1240
+        XCTAssertGreaterThan(three, 3 * page, "three pages at fit, each at its aspect")
+        XCTAssertLessThan(three, 3 * page + 200, "and only the head, the note and the gaps besides")
+        let empty = height(BlocksView(try block(#"{"type": "pages", "id": "e", "title": "Report", "pages": []}"#), source: .core))
+        XCTAssertGreaterThan(empty, 44)
+        XCTAssertLessThan(empty, 200)
+    }
+
+    private func near(_ colour: Color) throws -> (UInt8, UInt8, UInt8, UInt8) -> Bool {
+        let rgb = try XCTUnwrap(NSColor(colour).usingColorSpace(.sRGB))
+        let want = [rgb.redComponent, rgb.greenComponent, rgb.blueComponent].map { Int($0 * 255) }
+        return { r, g, b, a in a > 200 && zip([r, g, b].map(Int.init), want).allSatisfy { abs($0 - $1) < 12 } }
+    }
+
+    func testAChartDrawsItsBarsInInkAndItsWarnLineInAmberAndAnEmptyOneNeither() throws {
+        let palette = Look(still: true).palette
+        let (ink, amber) = (try near(palette.lead), try near(palette.amber))
+        let chart = BlocksView(try fixture("chart"), source: .core)
+        XCTAssertGreaterThan(try pixels(chart, ink), 2000, "six revenue bars")
+        XCTAssertGreaterThan(try pixels(chart, amber), 150, "the target line")
+        let empty = try block(
+            #"{"type": "chart", "title": "Revenue", "chart": "combo", "x": [], "series": [], "empty": "None yet"}"#)
+        XCTAssertLessThan(try pixels(BlocksView(empty, source: .core), ink), 300, "no bars, text only")
+        XCTAssertEqual(try pixels(BlocksView(empty, source: .core), amber), 0)
+        let donut = try block(
+            #"{"type": "chart", "title": "Spend", "chart": "donut", "x": ["a", "b"], "series": [{"name": "s", "values": [3, 1]}]}"#)
+        XCTAssertGreaterThan(try pixels(BlocksView(donut, source: .core), ink), 2000, "the biggest slice in ink")
+    }
+
+    func testAToastTicksItsToneCutsLongTextAtThreeLinesAndDrawsDoneWhenEmpty() throws {
+        let palette = Look(still: true).palette
+        func near(_ color: Color) throws -> (UInt8, UInt8, UInt8, UInt8) -> Bool {
+            let rgb = try XCTUnwrap(NSColor(color).usingColorSpace(.sRGB))
+            let want = [rgb.redComponent, rgb.greenComponent, rgb.blueComponent].map { Int($0 * 255) }
+            return { r, g, b, a in a > 200 && zip([r, g, b].map(Int.init), want).allSatisfy { abs($0 - $1) < 6 } }
+        }
+        func toast(_ fields: String) throws -> some View {
+            BlocksView(try block(#"{"type": "toast", \#(fields)}"#), source: .core)
+        }
+        let (green, red) = (try near(palette.green), try near(palette.red))
+        XCTAssertGreaterThan(try pixels(toast(#""title": "Archived", "tone": "ok""#), green), 0, "the ok tick and glyph")
+        XCTAssertEqual(try pixels(toast(#""title": "Archived""#), green), 0, "no tone: an ink tick")
+        XCTAssertGreaterThan(try pixels(toast(#""title": "Declined", "tone": "bad""#), red), 0)
+        let one = height(try toast(#""title": "Archived""#))
+        let long = height(try toast(#""title": "\#(String(repeating: "a long line that wraps ", count: 40))""#))
+        XCTAssertGreaterThan(long, one, "long text wraps")
+        XCTAssertLessThan(long, one + 3 * 20, "and stops at 3 lines")
+        let empty = try toast(#""title": """#)
+        let done = BlocksView(try block(#"{"type": "row", "title": "Done"}"#), source: .core)
+        XCTAssertEqual(height(empty), height(done))
+        XCTAssertEqual(try pixels(empty), try pixels(done))
+    }
+
+    func testStepsFillsInkByValueTicksItsToneAndDrawsItsFallbackWhenUnplaced() throws {
+        let palette = Look(still: true).palette
+        func near(_ color: Color) throws -> (UInt8, UInt8, UInt8, UInt8) -> Bool {
+            let rgb = try XCTUnwrap(NSColor(color).usingColorSpace(.sRGB))
+            let want = [rgb.redComponent, rgb.greenComponent, rgb.blueComponent].map { Int($0 * 255) }
+            return { r, g, b, a in a > 200 && zip([r, g, b].map(Int.init), want).allSatisfy { abs($0 - $1) < 6 } }
+        }
+        let (ink, amber) = (try near(palette.lead), try near(palette.amber))
+        func bar(_ value: Int, _ tone: String = "") throws -> some View {
+            let toned = tone.isEmpty ? "" : #", "tone": "\#(tone)""#
+            return BlocksView(
+                try block(#"{"type": "steps", "bars": [{"label": "Fire", "value": \#(value)\#(toned)}]}"#), source: .core)
+        }
+        let (empty, half, full) = (try pixels(bar(0), ink), try pixels(bar(50), ink), try pixels(bar(130), ink))
+        XCTAssertGreaterThan(half, empty + 500, "half a bar of ink")
+        XCTAssertGreaterThan(full, half + 500, "130 fills the whole bar")
+        XCTAssertEqual(try pixels(bar(62), amber), 0)
+        XCTAssertGreaterThan(try pixels(bar(62, "warn"), amber), 0, "the tick and the number")
+        let steps = #""steps": [{"id": "a", "label": "Stop"}, {"id": "b", "label": "Lines"}]"#
+        let first = try pixels(BlocksView(block(#"{"type": "steps", "current": "a", \#(steps)}"#), source: .core), ink)
+        let done = try pixels(BlocksView(block(#"{"type": "steps", "done": true, \#(steps)}"#), source: .core), ink)
+        XCTAssertGreaterThan(done, first + 400, "a done step is an ink square")
+        let fallback = #""fallback": {"title": "No steps yet"}"#
+        let unplaced = try block(#"{"type": "steps", "current": "z", \#(steps), \#(fallback)}"#)
+        let row = try block(#"{"type": "pinned", \#(fallback)}"#)
+        XCTAssertEqual(height(BlocksView(unplaced, source: .core)), height(BlocksView(row, source: .core)))
+        XCTAssertEqual(try pixels(BlocksView(unplaced, source: .core)), try pixels(BlocksView(row, source: .core)))
+    }
+
+    func testSolidFillsARowButtonInItsFullToneWithItsTextInTheBackground() throws {
+        let palette = Look(still: true).palette
+        func near(_ color: Color) throws -> (UInt8, UInt8, UInt8, UInt8) -> Bool {
+            let rgb = try XCTUnwrap(NSColor(color).usingColorSpace(.sRGB))
+            let want = [rgb.redComponent, rgb.greenComponent, rgb.blueComponent].map { Int($0 * 255) }
+            return { r, g, b, a in a > 200 && zip([r, g, b].map(Int.init), want).allSatisfy { abs($0 - $1) < 6 } }
+        }
+        var solid = Style.bundled
+        solid.fills = .solid
+        let row = try block(#"{"type": "row", "title": "Build", "button": {"label": "Ship", "action": "ship", "tone": "ok"}}"#)
+        func drawn(_ style: Style) -> some View {
+            BlocksView(row, source: .core).environment(\.look, Look(style: style, still: true))
+        }
+        let green = try near(palette.green)
+        let (tinted, filled) = (try pixels(drawn(.bundled), green), try pixels(drawn(solid), green))
+        XCTAssertGreaterThan(filled, tinted + 500, "the pill is the full tone")
+        let ink = try near(palette.background)
+        let label = (try pixels(drawn(.bundled), columns: 0.7...1, ink), try pixels(drawn(solid), columns: 0.7...1, ink))
+        XCTAssertGreaterThan(label.1, label.0, "its label is in the background colour")
     }
 
     func testAnAppKindDrawsItsRegisteredViewElseItsFallback() throws {

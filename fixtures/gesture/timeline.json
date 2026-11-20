@@ -1,0 +1,72 @@
+{
+  "block": {
+    "type": "timeline",
+    "id": "plan",
+    "title": "Crews",
+    "from": "2026-12-01",
+    "to": "2026-12-31",
+    "tracks": [
+      { "id": "j1", "title": "Tower A", "bars": [
+        { "id": "b7", "start": "2026-12-03", "end": "2026-12-05", "label": "Pour" },
+        { "id": "b8", "start": "2026-12-10", "end": "2026-12-12", "label": "Roof", "fixed": true }
+      ] },
+      { "id": "j2", "title": "Tower B", "bars": [
+        { "id": "b9", "start": "2026-11-28", "end": "2026-12-02", "label": "Fit-out" },
+        { "id": "b10", "start": "2026-12-29", "end": "2027-01-03", "label": "Dig" }
+      ] },
+      { "id": "j3", "title": "Old Mill", "bars": [] }
+    ],
+    "move": { "action": "schedule", "name": "bar" },
+    "stretch": { "action": "schedule", "name": "bar" },
+    "draw": { "action": "schedule", "name": "bar" }
+  },
+  "cases": [
+    { "grab": { "bar": "b7", "part": "body" }, "reach": { "days": 3 }, "want": { "id": "b7", "start": "2026-12-06", "end": "2026-12-08" }, "says": "6 Dec to 8 Dec, 3 days" },
+    { "grab": { "bar": "b7", "part": "body" }, "reach": { "days": 0 }, "want": { "id": "b7", "start": "2026-12-03", "end": "2026-12-05" }, "says": "3 Dec to 5 Dec, 3 days" },
+    { "grab": { "bar": "b7", "part": "body" }, "reach": { "days": 40 }, "want": null },
+    { "grab": { "bar": "b7", "part": "body" }, "reach": { "days": -3 }, "want": null },
+    { "grab": { "bar": "b7", "part": "body" }, "reach": { "days": 5 }, "want": null },
+    { "grab": { "bar": "b7", "part": "end" }, "reach": { "days": 2 }, "want": { "id": "b7", "start": "2026-12-03", "end": "2026-12-07" }, "says": "3 Dec to 7 Dec, 5 days" },
+    { "grab": { "bar": "b7", "part": "end" }, "reach": { "days": -5 }, "want": { "id": "b7", "start": "2026-12-03", "end": "2026-12-03" }, "says": "3 Dec, 1 day" },
+    { "grab": { "bar": "b7", "part": "end" }, "reach": { "days": 5 }, "want": null },
+    { "grab": { "bar": "b7", "part": "start" }, "reach": { "days": 9 }, "want": { "id": "b7", "start": "2026-12-05", "end": "2026-12-05" }, "says": "5 Dec, 1 day" },
+    { "grab": { "bar": "b7", "part": "start" }, "reach": { "days": -2 }, "want": { "id": "b7", "start": "2026-12-01", "end": "2026-12-05" }, "says": "1 Dec to 5 Dec, 5 days" },
+    { "grab": { "bar": "b7", "part": "start" }, "reach": { "days": -3 }, "want": null },
+    { "grab": { "bar": "b8", "part": "body" }, "reach": { "days": 1 }, "want": null },
+    { "grab": { "bar": "b8", "part": "end" }, "reach": { "days": 1 }, "want": null },
+    { "grab": { "bar": "b9", "part": "end" }, "reach": { "days": 1 }, "want": { "id": "b9", "start": "2026-11-28", "end": "2026-12-03" }, "says": "28 Nov to 3 Dec, 6 days" },
+    { "grab": { "bar": "b9", "part": "start" }, "reach": { "days": 1 }, "want": null },
+    { "grab": { "bar": "b9", "part": "body" }, "reach": { "days": 1 }, "want": null },
+    { "grab": { "bar": "b9", "part": "body" }, "reach": { "days": 3 }, "want": { "id": "b9", "start": "2026-12-01", "end": "2026-12-05" }, "says": "1 Dec to 5 Dec, 5 days" },
+    { "grab": { "bar": "b10", "part": "end" }, "reach": { "days": -3 }, "want": { "id": "b10", "start": "2026-12-29", "end": "2026-12-31" }, "says": "29 Dec to 31 Dec, 3 days" },
+    { "grab": { "bar": "b10", "part": "start" }, "reach": { "days": -1 }, "want": { "id": "b10", "start": "2026-12-28", "end": "2027-01-03" }, "says": "28 Dec to 3 Jan, 7 days" },
+    { "grab": { "bar": "nope", "part": "body" }, "reach": { "days": 1 }, "want": null },
+    { "grab": { "row": "j3" }, "reach": { "days": 0 }, "want": { "row": "j3", "start": "2026-12-01", "end": "2026-12-01" }, "says": "1 Dec, 1 day" },
+    { "grab": { "row": "j3" }, "reach": { "days": 2, "from": "2026-12-10" }, "want": { "row": "j3", "start": "2026-12-10", "end": "2026-12-12" }, "says": "10 Dec to 12 Dec, 3 days" },
+    { "grab": { "row": "j3" }, "reach": { "days": -2, "from": "2026-12-10" }, "want": { "row": "j3", "start": "2026-12-08", "end": "2026-12-10" }, "says": "8 Dec to 10 Dec, 3 days" },
+    { "grab": { "row": "j3" }, "reach": { "days": 2, "from": "2026-12-30" }, "want": null },
+    { "grab": { "row": "j1" }, "reach": { "days": 2, "from": "2026-12-01" }, "want": null },
+    { "grab": { "row": "j1" }, "reach": { "days": 0 }, "want": { "row": "j1", "start": "2026-12-01", "end": "2026-12-01" }, "says": "1 Dec, 1 day" },
+    { "grab": { "bar": "b7", "part": "body" }, "nudges": [{ "dir": "right" }], "want": { "id": "b7", "start": "2026-12-04", "end": "2026-12-06" }, "says": "4 Dec to 6 Dec, 3 days" },
+    { "grab": { "bar": "b7", "part": "body" }, "nudges": [{ "dir": "right", "big": true }], "want": null },
+    { "grab": { "bar": "b7", "part": "body" }, "nudges": [{ "dir": "left" }, { "dir": "left" }], "want": { "id": "b7", "start": "2026-12-01", "end": "2026-12-03" }, "says": "1 Dec to 3 Dec, 3 days" },
+    { "grab": { "bar": "b7", "part": "body" }, "nudges": [{ "dir": "left" }, { "dir": "left" }, { "dir": "left" }], "want": null },
+    { "grab": { "bar": "b7", "part": "body" }, "nudges": [{ "dir": "up" }], "want": null },
+    { "grab": { "bar": "b7", "part": "end" }, "nudges": [{ "dir": "right" }], "want": { "id": "b7", "start": "2026-12-03", "end": "2026-12-06" }, "says": "3 Dec to 6 Dec, 4 days" },
+    { "grab": { "bar": "b7", "part": "start" }, "nudges": [{ "dir": "right" }, { "dir": "right" }], "want": { "id": "b7", "start": "2026-12-05", "end": "2026-12-05" }, "says": "5 Dec, 1 day" },
+    { "grab": { "bar": "b7", "part": "start" }, "nudges": [{ "dir": "right" }, { "dir": "right" }, { "dir": "right" }], "want": null },
+    { "grab": { "row": "j3" }, "nudges": [{ "dir": "right" }], "want": { "row": "j3", "start": "2026-12-01", "end": "2026-12-01" }, "says": "1 Dec, 1 day" },
+    { "grab": { "row": "j3" }, "nudges": [{ "dir": "right" }, { "dir": "right" }], "want": { "row": "j3", "start": "2026-12-01", "end": "2026-12-02" }, "says": "1 Dec to 2 Dec, 2 days" },
+    { "grab": { "row": "j3" }, "nudges": [{ "dir": "right", "big": true }], "want": { "row": "j3", "start": "2026-12-01", "end": "2026-12-07" }, "says": "1 Dec to 7 Dec, 7 days" },
+    { "grab": { "row": "j1" }, "nudges": [{ "dir": "right" }, { "dir": "right" }], "want": { "row": "j1", "start": "2026-12-01", "end": "2026-12-02" }, "says": "1 Dec to 2 Dec, 2 days" },
+    { "grab": { "row": "j1" }, "nudges": [{ "dir": "right" }, { "dir": "right" }, { "dir": "right" }], "want": null }
+  ],
+  "steps": [
+    { "grab": { "bar": "b7", "part": "body" }, "want": ["One day earlier", "One day later"] },
+    { "grab": { "bar": "b7", "part": "start" }, "want": ["Start one day earlier", "Start one day later"] },
+    { "grab": { "bar": "b7", "part": "end" }, "want": ["End one day earlier", "End one day later"] },
+    { "grab": { "bar": "b8", "part": "body" }, "want": [] },
+    { "grab": { "bar": "b10", "part": "body" }, "want": ["One week earlier"] },
+    { "grab": { "row": "j3" }, "want": ["Add a bar"] }
+  ]
+}

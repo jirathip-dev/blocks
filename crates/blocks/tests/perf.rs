@@ -133,3 +133,21 @@ fn viewing_a_200_row_screen_with_a_show_on_every_block_stays_under_budget() {
         Duration::from_micros(1000),
     );
 }
+
+#[test]
+#[ignore = "release only: `just perf`"]
+fn linting_the_42_goldens_stays_under_budget() {
+    let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../fixtures/screens");
+    let goldens: Vec<Built> = ["cooee", "drover"]
+        .iter()
+        .flat_map(|app| std::fs::read_dir(root.join(app)).unwrap())
+        .map(|e| Built::new(serde_json::from_str(&std::fs::read_to_string(e.unwrap().path()).unwrap()).unwrap()))
+        .collect();
+    assert_eq!(goldens.len(), 42);
+    let lint = || goldens.iter().map(|g| blocks::guard::lint(g, &[]).len()).sum::<usize>();
+    report(
+        "guard::lint of the 42 goldens",
+        time(20, lint),
+        Duration::from_millis(50),
+    );
+}

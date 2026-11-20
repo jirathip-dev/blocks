@@ -1,0 +1,5 @@
+.sec{margin:calc(2 * var(--dot-gap)) 0 0}
+.sh{font-size:var(--fs);color:var(--mute);margin:var(--s3) 0 var(--s1)}
+.sh.r{color:var(--r)}.sh.g{color:var(--g)}
+.sh .thw{color:inherit}
+.foot{font-size:var(--fs-meta)}

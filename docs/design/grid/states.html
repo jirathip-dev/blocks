@@ -1,0 +1,80 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>table: editable grid, states</title>
+<link rel="stylesheet" href="../neutral-default/tokens.css"><link rel="stylesheet" href="../../../web/dist/blocks.css"><link rel="stylesheet" href="grid.css"><link rel="stylesheet" href="page.css">
+<script src="../table/table.js"></script><script src="grid.js"></script><script src="data.js"></script></head>
+<body><main class="scr" id="page"></main>
+<script>
+const page = document.getElementById("page");
+function add(title, note, ...kids) {
+  const c = h("section", "case", h("h3", "sh", ...title), note ? h("p", "note", note) : null, ...kids);
+  page.append(c);
+  return c;
+}
+const B = (s) => h("b", "", s);
+const P = (s) => h("p", "note", s);
+const toast = (text) => { const t = h("div", "tst bad inl", h("i", "tsg", "!"), h("span", "tsx", text)); t.setAttribute("role", "status"); return t; };
+const pick = (ids) => markup.columns.filter((c) => ids.includes(c.id));
+const byId = Object.fromEntries(markup.rows.map((r) => [r.id, r]));
+const rows = (ids) => ids.map((id) => byId[id]);
+
+const one = sub({ id: "one", title: "Valves", reorder: undefined, columns: pick(["name", "qty", "price", "cost", "final"]), calc: { cost: markup.calc.cost }, rows: rows(["v1", "v2"]) });
+const v2 = { ...byId.v2, cells: { ...byId.v2.cells, qty: 8, final: 17100 } };
+add([B("1 a cell edit"), " · one CellEdit when the cell is left; the model is not touched before the answer"],
+  "Three sorts of cell. Editable (the column has edit: true): a thin underline. Worked out (the table's calc names the column): plain ink, read-only, and it follows what is typed at once, by expr, as do the column totals. The app's (no calc, not editable, like Final, which the app rounds): plain ink, dimmed with ↻ from the send until the answer, in the row, its group and the totals. A cell calc reads but no column draws (a rate the app fills) is data only.");
+add([B("a"), " the cell cursor"], "a focus stop; Enter or a letter starts typing, arrows move it. A read-only cell is a stop too, so a screen reader can read it.", grid(one, { cursor: { row: "v2", col: "qty" } }));
+add([B("b"), " typing (previewing)"], "Qty 6 → 8: Cost and its total follow as you type. Final is not dimmed yet: nothing is sent.", grid(one, { edit: { row: "v2", col: "qty", text: "8" } }));
+add([B("c"), " a value the column cannot take"], "“8x” in a number column has no candidate: the red edge and the reason under the cell, and Cost keeps the last good value. Enter here sends nothing and puts the cell back (the ADR's release with no result); Escape does the same.", grid(one, { edit: { row: "v2", col: "qty", text: "8x" } }));
+add([B("d"), " sent"], "Enter or Tab sent { row: v2, column: qty, value: 8 }. Qty shows 8, dimmed and busy; Final, its total and the screen's waiting stat are dimmed until the answer. The cursor has gone on (down for Enter, right for Tab); other cells can still be typed into.", grid(one, { sent: { "v2:qty": 8 } }));
+add([B("e"), " confirmed"], "the app's answer carries the row: Qty 8, Final 17,100 (its own rounding). The row gets the 3px ink edge until the next update, as #80's row diff draws it.", grid({ ...one, rows: [byId.v1, v2] }, { chg: ["v2"] }));
+const ref = add([B("f"), " refused"], "the handler failed with a toast: the cell shows the data's 6 again with a red edge until the next key or update, the toast (#135) says why, and a screen reader hears “not changed”, then the reason.", grid(one, { refused: { row: "v2", col: "qty" } }));
+ref.append(h("div", "duo", toast("Not changed: quote Q-2207 is sent, so its quantities are locked.")));
+
+const kb = add([B("2 keyboard and VoiceOver"), " · the ADR's edit and reorder rows, nothing more"],
+  "The grid is role=grid with one tab stop: Tab into it lands on the last cell used. Each editable cell is a text field named by its column and row; a worked-out cell is read-only; a group row is a row whose first cell names the group. The handle is its own column and its own stop, a button named “Move <item>”.",
+  grid(sub({ id: "kb", rows: rows(["g-valve", "v1", "v2", "v3"]) }), { cursor: { row: "v2", col: "price" } }));
+const keys = h("dl", "keys");
+for (const [k, d] of [["← → ↑ ↓", "move the cell cursor (focus stays inside the grid)"], ["Enter, or a letter", "start typing (a letter replaces the value)"], ["Enter", "send and go down"], ["Tab, ⇧Tab", "send and go right, left; at the row's end, out of the grid"], ["Esc", "put the value back, keep the cursor"], ["Space on ≡", "grab the row"], ["↑ ↓ (grabbed)", "one place; ⇧: to the first or last place"], ["Enter (grabbed)", "drop: send the order"], ["Esc (grabbed)", "cancel: the row goes back"]]) keys.append(h("dt", "", h("kbd", "", k)), h("dd", "", d));
+const says = h("dl", "says");
+for (const [k, d] of [["cursor on Unit cost", "Unit cost, Ball valve 2in, 1,650.00 baht, text field"], ["on Cost", "Cost, Ball valve 2in, 10,890.00 baht, worked out"], ["sent", "sending"], ["refused", "not changed. Quote Q-2207 is sent, so its quantities are locked."], ["Space on ≡", "Ball valve 2in, grabbed, 2 of 3 in Valves. Up and down arrows to move, Enter to drop."], ["↑", "1 of 3 in Valves"], ["VoiceOver rotor, Actions", "Move up · Move down · Move to top · Move to bottom"]]) says.append(h("dt", "", k), h("dd", "", d));
+kb.append(h("div", "duo", keys, says));
+
+const ro = sub({ id: "ro", title: "Mark-up", columns: pick(["name", "qty", "price", "cost", "final"]), rows: rows(["g-pipe", "p1", "p2", "g-valve", "v1", "v2", "v3", "g-lab", "l1"]) });
+const base = ro.rows.map((r) => r.id);
+const moved = (id, to) => { const o = base.filter((x) => x !== id); o.splice(o.indexOf(to), 0, id); return o; };
+add([B("3 row reorder"), " · one action: every row id in the new order"],
+  "Drag the ≡ handle (a touch on the row's body needs the 300 ms hold; sooner, the page scrolls), or Space on it and the arrows, or a VoiceOver action. The row lifts and follows; the others slide out of its way over --enter (with reduced motion they jump). A row with fixed: true has no handle and stays put, but other rows can pass it.");
+add([B("a"), " pressed"], "Ball valve 2in is lifted (its shadow) where it was.", grid(ro, { lift: { id: "v2", phase: "pressed" } }));
+add([B("b"), " previewing"], "dragged up one place: drawn at the candidate, snapped to a row, “1 of 3 in Valves”.", grid(ro, { order: moved("v2", "v1"), lift: { id: "v2", phase: "previewing" } }));
+add([B("c"), " into another group"], "an item dropped below another group's head belongs to that group: it is the same one result, the order. Labour's subtotals follow at once.", grid(ro, { order: [...base.filter((x) => x !== "v3"), "v3"], lift: { id: "v3", phase: "previewing" } }));
+add([B("d"), " a group with its items"], "the handle on a group's row moves the group and its items together; a group goes only between groups.", grid(ro, { order: ["g-valve", "v1", "v2", "v3", "g-pipe", "p1", "p2", "g-lab", "l1"], lift: { id: "g-valve", phase: "previewing" } }));
+add([B("e"), " no drop here"], "above the first group's head an item has no place: the row is faded and a screen reader hears “no drop here”. Released here, nothing is sent and the row goes back.", grid(ro, { lift: { id: "p1", phase: "dragging" } }));
+add([B("f"), " sent"], "dropped: the row is dimmed where it was dropped until the answer, then drawn from the data. If the answer refuses, it slides back over --settle and the toast says why, as 1f.", grid(ro, { order: moved("v2", "v1"), lift: { id: "v2", phase: "sent" } }));
+
+add([B("4 when rows stay put")],
+  "Reorder works on the block's own order, so a sort or a filter takes the handles away (the bar says why; [as sent] puts the order back). Editing still works, and an edited row keeps its place until the answer, then takes its sorted place. An edit or reorder whose enabled does not hold (here, the quote is sent) draws no handle and no underline: the table reads as #80's.",
+  grid(ro, { sort: { by: "cost", dir: "desc" } }), grid(ro, { q: "valve" }), grid(ro, { off: "quote sent, read-only" }));
+
+const sl = sub({ id: "sl", columns: pick(["name", "qty", "price", "cost", "final"]), rows: rows(["g-valve", "v1", "v2", "v3"]), select: { actions: [{ action: "dup", label: "duplicate" }, { action: "del", label: "remove", bad: true }] } });
+add([B("5 with select"), " · handle, then tick box, then the first column"],
+  "the three lead columns stay put when the grid scrolls sideways. A group row has no tick box. The bulk bar is #80's.",
+  grid(sl, { sel: ["v1", "v3"] }));
+
+const ph = add([B("6 phone"), " · under 600px, #80's phone rows with the handle first"],
+  "a row does not edit in place: a tap on it opens its sheet. Each field there is the same cell and sends its own CellEdit when it is left; there is no draft and [done] only closes. Worked-out cells follow as you type, the app's dim while out. The group row shows its name and the value column's subtotal.");
+const d = h("div", "duo");
+const p1 = h("div", "phone", grid(ro, { order: moved("v2", "v1"), lift: { id: "v2", phase: "previewing" } }));
+const p2 = h("div", "phone", sheet(markup, "v2", { edit: { col: "qty", text: "8x" } }));
+const p3 = h("div", "phone", sheet(markup, "v1", { sent: { "v1:price": 4450 }, refused: { col: "margin" } }), toast("Not changed: margin under 10% needs a manager."));
+d.append(p1, p2, p3);
+ph.append(d);
+ph.append(h("div", "duo", P("a row lifted by its handle, previewing a new place"), P("the sheet: Qty “8x” has no value, so the field keeps its red edge and Enter sends nothing"), P("Unit cost sent (dimmed, Final waiting ↻); Margin refused (red edge, the data's value back)")));
+
+add([B("7 static page"), " (site writer, JS off)"],
+  "the same table, read-only: worked-out cells computed by the same expr in the writer, no handles, no underlines.",
+  grid(ro, { js: false }));
+
+const fb = h("div", "list");
+fb.append(fallback({ ...markup, rows: markup.rows.filter((r) => !r.group).map((r) => ({ ...r, cells: worked(markup, r, {}) })) }));
+add([B("8 fallback"), " · a renderer without table"], "unchanged from #80: one row with the title, the first summed column's total, and the row count.", fb);
+settle();
+</script></body></html>

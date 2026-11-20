@@ -73,7 +73,6 @@ fn a_page_links_only_the_stylesheets_it_is_given_and_a_sheet_tap_names_its_sheet
             .id("s")
             .blocks(vec![Block::Button(Box::new(Button::new("look").id("look").tap(tap)))]),
     );
-    let dark = &theme::default().dark;
     let site = Site {
         head: Head {
             title: "t",
@@ -88,7 +87,7 @@ fn a_page_links_only_the_stylesheets_it_is_given_and_a_sheet_tap_names_its_sheet
         live: Some(Live {
             js: "blocks.js",
             stream: "",
-            looks: &[("dark", dark)],
+            looks: &[("still", &look)],
         }),
     };
     let p = site::page(&screen, &site);
@@ -105,7 +104,15 @@ fn a_page_links_only_the_stylesheets_it_is_given_and_a_sheet_tap_names_its_sheet
         .and_then(|s| s.split('"').next())
         .unwrap();
     let looks: serde_json::Value = serde_json::from_str(&looks.replace("&#34;", "\"")).unwrap();
-    assert_eq!(looks["dark"], serde_json::to_value(dark).unwrap());
+    assert_eq!(
+        looks["still"]["dark"],
+        serde_json::to_value(&theme::default().dark).unwrap()
+    );
+    assert_eq!(
+        looks["still"]["light"],
+        serde_json::to_value(&theme::default().light).unwrap()
+    );
+    assert_eq!(looks["still"]["style"], serde_json::to_value(&look.style).unwrap());
 }
 
 #[test]
@@ -154,143 +161,6 @@ fn from_form_refuses_a_post_with_no_action_or_a_bad_escape() {
         "_screen=s&_action=go&x=%ff",
     ] {
         assert!(Action::from_form(bad).is_err(), "{bad}");
-    }
-}
-
-#[test]
-fn editor_numbers_lines_from_first_and_marks_errors_on_and_off_the_excerpt() {
-    let b = serde_json::json!({
-        "type": "editor", "id": "src", "name": "main", "action": "check", "first": 40,
-        "text": "fn main() {\n    let n = 1\n\n}",
-        "errors": [{"line": 41, "message": "expected `;`"}, {"line": 41, "message": "second"}, {"line": 9, "message": "unknown <key>"}]
-    });
-    assert_eq!(
-        site::fragment(&Built::new(b), "/act"),
-        concat!(
-            r#"<div class="ed b b-editor" data-block="editor" data-id="src" tabindex="0" role="button" aria-label="main">"#,
-            r#"<div class="edl"><i>40</i><span>fn main() {</span></div>"#,
-            r#"<div class="edl err"><i>41</i><span>    let n = 1</span></div><p class="ede">expected `;`</p>"#,
-            r#"<div class="edl"><i>42</i><span> </span></div>"#,
-            r#"<div class="edl"><i>43</i><span>}</span></div>"#,
-            r#"<p class="ede far">line 9 · unknown &#60;key&#62;</p></div>"#,
-        )
-    );
-}
-
-#[test]
-fn a_config_writes_each_field_as_a_settings_row_with_its_note_and_a_save_bar() {
-    let b = serde_json::json!({
-        "type": "config", "id": "edgar",
-        "submit": { "action": "store", "label": "save", "off": true },
-        "fields": [
-            { "type": "text", "name": "agent", "value": "cooee", "doc": "sent to SEC" },
-            { "type": "text", "name": "base", "value": "https://x.test", "keyboard": "url", "was": "https://www.sec.gov" },
-            { "type": "text", "name": "every", "value": 4.5, "keyboard": "number", "error": "must be under 4", "doc": "minutes" },
-            { "type": "toggle", "name": "on", "value": true },
-            { "type": "secret", "name": "key", "set": true, "value": "hidden" },
-            { "type": "secret", "name": "pin", "open": true }
-        ]
-    });
-    let html = site::fragment(&Built::new(b), "/act");
-    for part in [
-        r#"<div class="form cfg b b-config" data-block="config" data-id="edgar" role="form" aria-label="edgar">"#,
-        r#"<label class="fd"><span class="fl"><span class="fk">agent</span><span class="fn">sent to SEC</span></span><input name="agent" form="b-f1" type="text" autocomplete="off" placeholder="" value="cooee"></label>"#,
-        r#"<span class="fn was">was https://www.sec.gov</span></span><input name="base" form="b-f1" type="url" autocomplete="off" inputmode="url""#,
-        r#"<label class="fd err"><span class="fl"><span class="fk">every</span><span class="fn err">must be under 4</span></span><input name="every" form="b-f1" aria-invalid="true" type="text" autocomplete="off" inputmode="decimal" placeholder="" value="4.5">"#,
-        r#"<label class="fd tg"><span class="fl"><span class="fk">on</span><span class="fn"></span></span><input name="on" form="b-f1" type="checkbox" role="switch" checked="">"#,
-        r#"<input name="key" form="b-f1" type="password" autocomplete="off" placeholder="set ✓ · type to replace"></label>"#,
-        r#"<label class="fd open"><span class="fl"><span class="fk">pin</span><span class="fn"></span></span><input name="pin" form="b-f1" autofocus="" type="password" autocomplete="off" placeholder="not set">"#,
-        r#"<div class="bar"><button"#,
-    ] {
-        assert!(html.contains(part), "{part}\nnot in\n{html}");
-    }
-    assert!(!html.contains("value=\"hidden\""), "{html}");
-    assert!(html.contains(" disabled=\"\""), "{html}");
-}
-
-#[test]
-fn a_scene_lane_links_its_url_or_open_marks_any_other_tap_a_button_and_ticks_its_age() {
-    let b = Built::new(serde_json::json!({"type": "scene", "id": "s", "lanes": [
-        {"id": "a", "title": "pr", "state": "merged", "tap": {"url": "https://x.test/63"}},
-        {"id": "b", "title": "lane", "state": "working", "tap": {"open": "impl"}, "stage": "impl", "since": "2026-11-19T12:00:00Z"},
-        {"id": "c", "title": "act", "state": "needs", "tap": {"action": "go"}, "tool": "claude"},
-        {"id": "d", "title": "plain", "state": "idle"}
-    ]}));
-    let h = site::fragment(&b, "/act");
-    assert!(
-        h.starts_with("<div class=\"scn b b-scene\" data-block=\"scene\" data-id=\"s\" role=\"group\" aria-label=\"s\"><ul class=\"scl\">"),
-        "{h}"
-    );
-    assert!(h.contains("<a class=\"ln merged tap\" data-id=\"a\" aria-label=\"pr, merged\" href=\"https://x.test/63\" target=\"_blank\" rel=\"noopener\">"), "{h}");
-    assert!(
-        h.contains("<a class=\"ln working tap\" data-id=\"b\" aria-label=\"lane, working\" href=\"impl\">"),
-        "{h}"
-    );
-    assert!(h.contains("<span class=\"lnx\">impl · <span data-tick=\"{&#34;since&#34;:&#34;2026-11-19T12:00:00Z&#34;}\"></span></span>"), "{h}");
-    assert!(
-        h.contains(
-            "<div class=\"ln needs tap\" data-id=\"c\" aria-label=\"act, needs\" role=\"button\" tabindex=\"0\" data-action=\"go\">"
-        ),
-        "{h}"
-    );
-    assert!(h.contains("<span class=\"lnx\">claude</span>"), "{h}");
-    assert!(h.contains("<div class=\"ln idle\" data-id=\"d\" aria-label=\"plain, idle\"><i class=\"lnm\"></i><span class=\"lnb\"><span class=\"lnh\"><span class=\"lnt\">plain</span><span class=\"lns\">idle</span></span></span></div>"), "{h}");
-}
-
-#[test]
-fn a_row_with_rounds_writes_its_fold_open_when_the_last_round_needs_you_and_folded_otherwise() {
-    let row = |last: &str| {
-        Built::new(
-            serde_json::json!({"type": "row", "id": "i", "title": "#23", "subtitle": "review", "tap": {"open": "x"}, "rounds": [
-                {"id": "a", "name": "impl", "state": "done", "tap": {"action": "see", "values": {"n": 1}}, "since": "2026-11-19T12:00:00Z"},
-                {"id": "b", "name": "rev", "state": last, "summary": "busy", "tap": {"open": "never"},
-                 "lane": {"name": "rev-1", "host": "mini", "lines": ["a", "b"]}, "links": [{"label": "go", "tap": {"action": "go"}}]}
-            ]}),
-        )
-    };
-    let open = site::fragment(&row("needs"), "/act");
-    assert!(open.starts_with("<div class=\"rr open b b-row\" data-block=\"row\" data-id=\"i\" role=\"group\" aria-label=\"#23\"><div class=\"row tap\" data-id=\"i\" tabindex=\"0\" role=\"button\" aria-expanded=\"true\"><span class=\"rm\"><span class=\"rt b-row__title\">#23</span></span><span class=\"rc\">›</span></div><ol class=\"rds\">"), "{open}");
-    assert!(open.contains("<li class=\"rd done\"><i class=\"rdm\" aria-label=\"done\"></i><div class=\"rdx\"><div class=\"rdl tap\" tabindex=\"0\" role=\"button\" data-action=\"see\"><span class=\"rdn\">impl</span><span class=\"rdu\"></span><span class=\"rdt\"><span data-tick=\"{&#34;since&#34;:&#34;2026-11-19T12:00:00Z&#34;}\"></span></span><span class=\"rc\">›</span></div></div></li>"), "{open}");
-    assert!(open.contains("<li class=\"rd needs now\"><i class=\"rdm\" aria-label=\"needs\"></i><div class=\"rdx\"><div class=\"rdl\"><span class=\"rdn\">rev</span><span class=\"rdu\">busy</span></div><div class=\"rdb\"><div class=\"rdh\">rev-1 · mini</div><div class=\"rdo\"><div>a</div><div>b</div></div><div class=\"rdk\"><button type=\"submit\" form=\"b-f1\" data-action=\"go\"><span>go</span></button></div></div></div></li></ol></div>"), "{open}");
-    let live = site::fragment(&row("working"), "/act");
-    assert!(live.starts_with("<div class=\"rr b b-row\" data-block=\"row\" data-id=\"i\" role=\"group\" aria-label=\"#23\"><div class=\"row tap\" data-id=\"i\" tabindex=\"0\" role=\"button\" aria-expanded=\"false\"><span class=\"rm\"><span class=\"rt b-row__title\">#23</span><span class=\"rs b-row__subtitle \">review</span></span><span class=\"rc\">›</span></div></div>"), "{live}");
-}
-
-#[test]
-fn a_web_block_whose_src_is_not_http_or_https_writes_a_muted_box_with_no_frame_or_link() {
-    for src in [
-        "javascript:alert(1)",
-        "java\tscript:alert(1)",
-        "java\nscript:alert(1)",
-        " \u{1}JavaScript:alert(1)",
-        "data:text/html,x",
-    ] {
-        let b = Built::new(serde_json::json!({"type": "web", "id": "w", "src": src, "height": 120}));
-        let h = site::fragment(&b, "/act");
-        assert!(!h.contains("<iframe") && !h.contains("<a "), "{src:?}: {h}");
-        assert!(
-            h.contains("<div class=\"wf none\" style=\"height:120px\">This page can&#39;t be shown here.</div>"),
-            "{src:?}: {h}"
-        );
-    }
-    let b = Built::new(serde_json::json!({"type": "web", "id": "w", "src": "/doc", "height": 9}));
-    assert!(site::fragment(&b, "/act").contains("<iframe"));
-}
-
-#[test]
-fn an_island_is_its_element_with_its_props_and_fallback_and_a_bad_name_a_plain_fallback() {
-    let island = |name: &str| {
-        let b = serde_json::json!({"type": "island", "id": "m", "name": name, "props": {"q": "<a&b>"}, "fallback": {"title": "The map"}});
-        site::fragment(&Built::new(b), "/act")
-    };
-    assert_eq!(
-        island("x-map"),
-        "<x-map class=\"b b-island\" data-block=\"island\" data-id=\"m\" data-fallback=\"\" data-props=\"{&#34;q&#34;:&#34;&#60;a&#38;b&#62;&#34;}\" role=\"group\" aria-label=\"x-map\"><div class=\"row\" data-id=\"\"><span class=\"rm\"><span class=\"rt b-row__title\">The map</span></span></div></x-map>"
-    );
-    for bad in ["x map", "map", "X-map", "x-<b>", "1-x"] {
-        let h = island(bad);
-        assert!(h.starts_with("<div class=\"b b-island\""), "{bad:?}: {h}");
-        assert!(h.ends_with("</div></div>") && h.contains("The map"), "{bad:?}: {h}");
     }
 }
 

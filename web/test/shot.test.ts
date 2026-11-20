@@ -16,10 +16,56 @@ const out = mkdtempSync(join(process.env.DROVER_SCRATCH_TARGET ?? tmpdir(), "sho
 const blocks = at("../../fixtures/blocks/");
 const trees = at("../../fixtures/trees/");
 const run = (...args) => spawnSync(process.execPath, ["--no-warnings", cli, ...args], { encoding: "utf8" });
+const RUN = { size: "390x844", css: [], scripts: [], kinds: [], steps: [], probes: true };
+const plan = (name, runs) => {
+  const file = join(out, `${name}.plan.json`);
+  writeFileSync(file, JSON.stringify({ out: join(out, name), runs }));
+  const r = run("--plan", file);
+  strictEqual(r.status, 0, r.stderr);
+  return JSON.parse(readFileSync(join(out, name, "seen.json"), "utf8"));
+};
+const bad = at("../../fixtures/guard/bad/");
+const rules = (seen) => [...new Set(seen.map((s) => s.rule))];
+
+test("each bad fixture fires its probe and no other in WebKit, all in one --plan launch; every probe has one", () => {
+  const draw = readdirSync(join(bad, "render")).filter((f) => f.endsWith(".json")).map((f) => f.replace(/\.json$/, ""));
+  const sheets = readdirSync(join(bad, "css")).map((f) => f.replace(/\.css$/, ""));
+  const probes = readdirSync(at("../shot/probe/")).map((f) => f.replace(/\.ts$/, ""));
+  deepStrictEqual([...draw, ...sheets].sort(), probes.sort());
+  const own = (n, ext) => (existsSync(join(bad, "render", `${n}.${ext}`)) ? [join(bad, "render", `${n}.${ext}`)] : []);
+  const runs = [
+    ...draw.map((n) => ({ ...RUN, name: n, screen: join(bad, "render", `${n}.json`), css: own(n, "css"), scripts: own(n, "js"), kinds: ["gauge"] })),
+    ...sheets.map((n) => ({ ...RUN, name: n, screen: join(blocks, "text.json"), css: [join(bad, "css", `${n}.css`)] })),
+  ];
+  const seen = plan("bad", runs);
+  for (const n of draw) deepStrictEqual(rules(seen.filter((s) => s.run === n)), [`render/${n}`], n);
+  for (const n of sheets) deepStrictEqual(rules(seen.filter((s) => s.run === n || s.file === join(bad, "css", `${n}.css`))), [`css/${n}`], n);
+  deepStrictEqual(seen.filter((s) => s.file).map((s) => [s.rule, s.line, s.at]), sheets.map((n) => [`css/${n}`, 3, ""]));
+  const tree = ["render/no-name", "render/no-size", "render/overflow", "render/overlap"];
+  const snap = JSON.parse(readFileSync(at("../../fixtures/guard/seen.json"), "utf8"));
+  deepStrictEqual(seen.filter((s) => tree.includes(s.rule)).map((s) => ({ rule: s.rule, run: s.run, at: s.at })), snap, "blocks-snap's test holds SwiftUI to the same file");
+});
+
+test("a plan's script registers an app kind's view on window.blocksApps: the gauge draws natively and render/tree is quiet", () => {
+  const script = join(out, "gauge.js");
+  writeFileSync(script, 'window.blocksApps = { gauge: (b) => Object.assign(document.createElement("div"), { textContent: b.title }) };');
+  const seen = plan("gauge", [{ ...RUN, name: "gauge", screen: join(bad, "render", "tree.json"), kinds: ["gauge"], scripts: [script] }]);
+  deepStrictEqual(seen, []);
+  strictEqual(JSON.parse(readFileSync(join(out, "gauge", "gauge", "tree.tree.json"), "utf8")).children[0].drawn, "native");
+});
+
+test("the fixtures/blocks files draw in one --plan launch, each run's PNG, tree and report in its own folder", () => {
+  const kinds = readdirSync(blocks).map((f) => f.replace(/\.json$/, ""));
+  plan("all", kinds.map((k) => ({ ...RUN, name: `390/${k}`, screen: join(blocks, `${k}.json`), probes: false })));
+  for (const k of kinds) {
+    ok(existsSync(join(out, "all", "390", k, `${k}.png`)), k);
+    deepStrictEqual(JSON.parse(readFileSync(join(out, "all", "390", k, "report.json"), "utf8")).shots, [k]);
+  }
+});
 
 test("every fixtures/blocks file passes --check against its fixtures/trees tree in WebKit at 390 and 1440", () => {
   const kinds = readdirSync(blocks).map((f) => f.replace(/\.json$/, ""));
-  strictEqual(kinds.length, 27);
+  strictEqual(kinds.length, 37);
   for (const size of ["390x844", "1440x900"])
     for (const k of kinds) {
       const dir = join(out, size, k);
@@ -27,20 +73,18 @@ test("every fixtures/blocks file passes --check against its fixtures/trees tree 
       strictEqual(r.status, 0, `${k} ${size}: ${r.stderr}`);
       ok(existsSync(join(dir, `${k}.png`)), k);
       const tree = JSON.parse(readFileSync(join(dir, `${k}.tree.json`), "utf8"));
-      strictEqual(tree.kind, k);
+      strictEqual(tree.kind, k.split("-")[0]);
       ok(tree.role && tree.name, `${k}: ${tree.role} "${tree.name}"`);
       deepStrictEqual(JSON.parse(readFileSync(join(dir, "report.json"), "utf8")).shots, [k]);
     }
 });
 
-test("every fixtures/stress variant passes --check at 390 in WebKit: inside the width, over no sibling", () => {
+test("every fixtures/stress variant draws at 390 in one --plan launch with each block sized, inside the width and over no sibling", () => {
   const stress = at("../../fixtures/stress/");
   const names = readdirSync(stress).filter((f) => f !== "table.json").map((f) => f.replace(/\.json$/, ""));
-  strictEqual(names.length, 51);
-  for (const n of names) {
-    const r = run("--screen", join(stress, `${n}.json`), "--check", "--out", join(out, n));
-    strictEqual(r.status, 0, `${n}: ${r.stderr}`);
-  }
+  strictEqual(names.length, 81);
+  const seen = plan("stress", names.map((n) => ({ ...RUN, name: n, screen: join(stress, `${n}.json`) })));
+  deepStrictEqual(seen.filter((s) => ["render/no-size", "render/overlap"].includes(s.rule) || (s.rule === "render/overflow" && s.at)), []);
 });
 
 test("--check exits 1 when the drawn tree is not the expected one", () => {
@@ -55,12 +99,12 @@ test("--check fails a node whose role or name is not the expected one, a node wi
   writeFileSync(renamed, JSON.stringify({ ...want, role: "link", name: "Send" }));
   const r = run("--screen", join(blocks, "button.json"), "--expect", renamed, "--check", "--out", join(out, "renamed"));
   strictEqual(r.status, 1);
-  strictEqual(r.stderr, 'button/button#save: drew button "Save", expected link "Send"\n');
+  strictEqual(r.stderr, 'button: render/tree button#save: drew button "Save", expected link "Send"\n');
   const bare = join(out, "bare.json");
   writeFileSync(bare, JSON.stringify({ type: "screen", id: "bare", blocks: [{ type: "" }, { type: "nav", links: [{ label: "", href: "/x" }] }] }));
   const b = run("--screen", bare, "--check", "--out", join(out, "bare"));
   strictEqual(b.status, 1);
-  strictEqual(b.stderr, "bare/screen#bare/: has no name\nbare: nav: an unnamed a\n");
+  strictEqual(b.stderr, "bare: render/no-name screen#bare/~0: the block has no name\nbare: render/no-name screen#bare/nav~0: an unnamed a\n");
 });
 
 test("each fixtures/ids file is the block and action ids its screen draws, and --check fails on others", () => {
@@ -123,6 +167,54 @@ test("scripted typing and taps change local state: a check's message, a disabled
   deepStrictEqual(report.sent.filter((x) => x.action === "save").length, 1, "a disabled act posts nothing; once more is on, save posts");
 });
 
+const proof = (more = {}) => ({ type: "screen", id: "proof", blocks: [{ type: "form", id: "proof", submit: { action: "send", label: "send" }, fields: [{ type: "upload", name: "photos", label: "Photos", accept: ["image"], many: true, mb: 1, files: [{ id: "f-0", name: "crate.jpg" }], ...more }] }] });
+const picks = (name, steps, adapter, screen = proof()) => {
+  const [file, script] = [join(out, `${name}.json`), join(out, `${name}-steps.json`)];
+  writeFileSync(file, JSON.stringify(screen));
+  writeFileSync(script, JSON.stringify(steps));
+  const r = run("--screen", file, "--script", script, "--adapter", adapter, "--out", join(out, `${name}-${adapter}`));
+  const read = (f) => JSON.parse(readFileSync(join(out, `${name}-${adapter}`, f), "utf8"));
+  return { r, report: read("report.json"), text: (n) => read(`${n}.tree.json`).children[0].text };
+};
+const file = (name, size, mime, handler = "answers") => ({ file: { field: "photos", name, size, mime, handler } });
+
+test("an upload refuses a file of the wrong type or over its size before the handler, and sends ids, never bytes, in HTML and React", () => {
+  for (const adapter of ["html", "react"]) {
+    const steps = [file("big.jpg", 2 * 1048576, "image/jpeg"), { shot: { name: "big" } }, file("note.pdf", 900, "application/pdf"), { shot: { name: "type" } }, file("door.jpg", 3000, "image/jpeg"), { shot: { name: "done" } }, { tap: { id: "proof" } }];
+    const { r, report, text } = picks("upload", steps, adapter);
+    strictEqual(r.status, 0, `${adapter}: ${r.stderr}`);
+    ok(text("big").includes("big.jpgrefused: 2.0 MB is over 1 MB"), `${adapter}: ${text("big")}`);
+    ok(text("type").includes("note.pdfrefused: only images") && !text("type").includes("big.jpg"), `${adapter}: the next pick drops a refused row: ${text("type")}`);
+    ok(text("done").includes("door.jpg3 KB") && !text("done").includes("note.pdf"), `${adapter}: ${text("done")}`);
+    deepStrictEqual(report.sent, [{ screen: "proof", action: "send", block: "proof", values: { photos: ["f-0", "file-1"] } }], `${adapter}: the handler got door.jpg only, as its first file`);
+    ok(!JSON.stringify(report.sent).includes("data:"), adapter);
+  }
+});
+
+test("an upload's submit waits while a file is uploading or failed, and says why; the field is off with no file input to find", () => {
+  for (const adapter of ["html", "react"]) {
+    const steps = [file("a.jpg", 2000, "image/jpeg", "waits"), { shot: { name: "waiting" } }, { tap: { id: "proof" } }, file("b.jpg", 2000, "image/jpeg", "fails"), { shot: { name: "failed" } }, { tap: { id: "proof" } }];
+    const { r, report, text } = picks("busy", steps, adapter);
+    strictEqual(r.status, 0, `${adapter}: ${r.stderr}`);
+    for (const line of ["uploading 0 %", "waiting for 1 upload"]) ok(text("waiting").includes(line), `${adapter}: ${text("waiting")}`);
+    for (const line of ["upload failed", "an upload failed: retry or remove it"]) ok(text("failed").includes(line), `${adapter}: ${text("failed")}`);
+    deepStrictEqual([report.sent, report.dropped], [[], ["tap proof", "tap proof"]], adapter);
+  }
+  const { r, report } = picks("gone", [file("a.jpg", 10, "image/jpeg"), { tap: { id: "proof" } }], "html", { type: "form", id: "proof", fields: [{ type: "text", name: "photos" }] });
+  strictEqual(r.status, 0, r.stderr);
+  deepStrictEqual(report.dropped, ["file photos"]);
+});
+
+test("fixtures/files/upload.json: each case sends and drops what it says in HTML and React, as blocks-snap does", () => {
+  const steps = JSON.parse(readFileSync(at("../../fixtures/files/upload.json"), "utf8"));
+  const screen = JSON.parse(readFileSync(at(`../../fixtures/${steps.screen}`), "utf8"));
+  for (const c of steps.cases) for (const adapter of ["html", "react"]) {
+    const { r, report } = picks(`files-${c.name}`, c.steps, adapter, screen);
+    strictEqual(r.status, 0, `${adapter}: ${r.stderr}`);
+    deepStrictEqual([report.sent, report.dropped], [c.sent, c.dropped], `${c.name} ${adapter}`);
+  }
+});
+
 const corner = (png) => {
   const idat = [];
   for (let at = 8; at < png.length; at += png.readUInt32BE(at) + 12) {
@@ -161,6 +253,15 @@ test("an island gets its props, its named event is sent as an action, an unnamed
   } finally {
     await browser.close();
   }
+});
+
+test("a patch that redraws a form keeps its focused field, its typed text and its caret", async () => {
+  const fields = (label) => [{ type: "text", name: "q", label }, { type: "toggle", name: "all", label: "All" }];
+  const screen = { type: "screen", id: "people", blocks: [{ type: "form", id: "find", fields: fields("Search") }] };
+  const steps = [{ type: { id: "find", text: "ada" } }, { frame: { ops: [{ op: "merge", id: "find", fields: { fields: fields("Search people") } }] } }, { shot: { name: "shot" } }];
+  const { report, trees } = await shot({ screen, steps });
+  ok(trees.shot.children[0].text.includes("Search people"), trees.shot.children[0].text);
+  deepStrictEqual(report.focus, { shot: "q@3" });
 });
 
 const rows = Array.from({ length: 200 }, (_, i) => ({ type: "row", id: `r${i}`, title: `Row ${i}`, subtitle: "green", value: "2m" }));

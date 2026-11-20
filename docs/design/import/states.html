@@ -1,0 +1,30 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="../neutral-default/tokens.css"><link rel="stylesheet" href="../../../web/dist/blocks.css"><link rel="stylesheet" href="import.css"><link rel="stylesheet" href="page.css">
+<script src="import.js"></script><script src="data.js"></script><title>import: every other state</title></head>
+<body><main class="scr">
+<div class="top"><div class="tabh"><span class="tw">import · every other state</span></div></div>
+<h2>10 · Server errors</h2><p class="note">There are three ways it can fail. The upload fails (the handler refused it, or the network dropped): the file line turns red with [retry]. The app can't use the file (an old .xls, more rows than it takes, no header row): its own message sits above the drop area, and nothing is previewed. The app doesn't answer the read: the same red line, with [retry]. A retry sends the same file id again, so it is safe.</p>
+<div class="cases">
+<div data-base="WITH_ERRS" data-i='{"phase":"failed","why":"upload failed: the connection dropped"}'></div>
+<div data-base="WITH_ERRS" data-i='{"phase":"failed","why":"the server did not answer"}'></div>
+<div data-i='{"phase":"empty","error":"Can’t read budget-2019.xls: it is an old Excel file. Save it as .xlsx or .csv and pick it again."}'></div>
+<div data-i='{"phase":"empty","error":"orders-2026.xlsx has 7,240 rows; this import takes up to 5,000. Split the file and import each part."}'></div>
+</div>
+<h2>11 · Wrong columns, and a column changed</h2><p class="note">The app found no column for a required one (Price). Its row turns red with "required: pick a column", its cells in the preview show "—", and the button is off with the reason. When the user picks a column or another sheet, the block sends the read again with the new match. Until the app answers, the rows dim and the bar says it is checking. Errors depend on the match, so only the app's answer can clear them.</p>
+<div data-base="WRONG" data-i='{"map":{"sku":"Code","name":"Product","stock":"Counted"}}'></div>
+<div data-base="WRONG" data-i='{"phase":"checking","changed":"price","was":{"sku":"Code","name":"Product","stock":"Counted"},"map":{"sku":"Code","name":"Product","stock":"Counted","price":"Shelf"}}'></div>
+<h2>12 · A workbook with several sheets</h2><p class="note">The app picks the first sheet that has a header row and lists the others. A select under the file name changes the sheet, and that reads the file again.</p>
+<div data-base="SHEETS" data-i="{}"></div>
+<h2>13 · Thai</h2><p class="note">The block's words follow the screen's language. The labels, the rows and the error text are the app's own.</p>
+<div data-base="TH" data-i="{}"></div>
+<h2>14 · Off, and with JavaScript off</h2><p class="note">With no file handler or no import action, the block is drawn off and says so. The static page (JavaScript off) lists the columns a file needs, required ones in bold. The template link still works there, since it is a plain link.</p>
+<div class="cases">
+<div data-i='{"phase":"empty","off":true}'></div>
+<div data-i='{"phase":"static"}'></div>
+</div>
+<h2>15 · A table's export</h2><p class="note">Unchanged: a table with export: ["xlsx"] sends its export action, and the app makes the file and sends it. The import block adds no export of its own.</p>
+<div class="tbl"><div class="tbh"><span class="tbn">Products · 48 rows</span><button type="button"><span>export excel</span></button></div>
+<div class="tbw"><table><caption>Products</caption><thead><tr><th>SKU</th><th>Name</th><th class="end">Price ฿</th></tr></thead><tbody>
+<tr><td class="p-meta" data-l="SKU">BK-0101</td><td class="p-title">Sourdough loaf</td><td class="end p-value">85.00</td></tr>
+<tr><td class="p-meta" data-l="SKU">BK-0102</td><td class="p-title">Butter croissant</td><td class="end p-value">45.00</td></tr></tbody></table></div></div>
+</main><script>draw()</script></body></html>

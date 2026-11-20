@@ -1,0 +1,14 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>load more: OT requests</title>
+<link rel="stylesheet" href="../neutral-default/tokens.css"><link rel="stylesheet" href="../../../web/dist/blocks.css"><link rel="stylesheet" href="more.css"><link rel="stylesheet" href="page.css">
+<script src="../table/table.js"></script><script src="data.js"></script><script src="more.js"></script></head>
+<body><div class="vp" id="vp"><main class="scr">
+<div class="tile"><div class="tabh"><span class="tw">Acme · OT requests</span><button type="button"><span>new request</span></button></div></div>
+<div id="t"></div>
+</main></div>
+<script>
+document.getElementById("t").replaceWith(moreTable(otTable(otRows(0, 50)), { wait: "loading" }));
+const vp = document.getElementById("vp");
+document.querySelector(".tbw").scrollTop = 1e6;
+if (innerWidth < 600) scrolled(vp, 844); else settle();
+</script></body></html>

@@ -1,18 +1,32 @@
 import type { LayoutPlace, LayoutTransition } from "./gen/layout.ts";
 import type { Scheme } from "./gen/schemes.ts";
-import type { Answer, Block, Kind, Op } from "./gen/types.ts";
+import type { Answer, Block, Kind, Op, Toast } from "./gen/types.ts";
+import { type Editing, editor } from "./arrange.ts";
 import { behave } from "./behave.ts";
+import type { Held } from "./gesture.ts";
+import { choose, type Pair, type Scale } from "./core/look.ts";
 import { apply, patcher } from "./patch.ts";
-import { type Blk, blks, btn, type Ctx, el, h, isBlk, linkable, obj, type Post, type Renderer, render, type Store, tick } from "./render/index.ts";
+import { type Blk, blks, isBlk } from "./core/tree.ts";
+import { linkable } from "./render/act.ts";
+import { render } from "./render/block.ts";
+import { type Ctx, obj, type Post, type Renderer, type Store } from "./render/ctx.ts";
+import { btn, el, h } from "./render/dom.ts";
+import { tick } from "./render/text.ts";
+import type { OnFile } from "./core/field/files.ts";
 import { settle } from "./motion.ts";
 import { stream } from "./stream.ts";
+import { toasts } from "./toasts.ts";
 import { plain, type Theme, tiles } from "./theme.ts";
 
-export { behave, evaluate, start, view } from "./behave.ts";
+export type { Editing } from "./arrange.ts";
+export { behave } from "./behave.ts";
+export { evaluate, start, view } from "./core/eval.ts";
 export { dump } from "./dump.ts";
 export { settle } from "./motion.ts";
 export { apply, patcher } from "./patch.ts";
-export { el, h, kids, render } from "./render/index.ts";
+export { kids, render } from "./render/block.ts";
+export { el, h } from "./render/dom.ts";
+export type { OnFile, Picked } from "./core/field/files.ts";
 export { packs, plain, tiles } from "./theme.ts";
 
 /// A layout node as the server's checked `layout.json` writes it; `P` is its place, per size class or resolved.
@@ -44,18 +58,20 @@ export type Mount = {
   theme?: Theme;
   schemes?: Record<string, Scheme>;
   store?: Store;
+  edit?: Editing;
+  file?: OnFile;
 };
 
-type View = { source: string; path: string; back: string[]; open: Set<string>; box: HTMLElement; body: HTMLElement; model?: Block; built: Set<string>; stop?: () => void; sync: () => void };
-type Tab = { node: Resolved; button: HTMLElement; pane: HTMLElement; view?: View };
+type View = { source: string; path: string; back: string[]; open: Set<string>; box: HTMLElement; body: HTMLElement; model?: Block | undefined; built: Set<string>; held: Map<string, Held>; view: Map<string, Record<string, unknown>>; stop?: (() => void) | undefined; sync: () => void };
+type Tab = { node: Resolved; button: HTMLElement; pane: HTMLElement; view?: View | undefined };
 
 const ALWAYS: LayoutPlace[] = ["cards", "column", "panel", "inline"];
 const SHEET: LayoutPlace[] = ["menu", "sheet", "push"];
 
 /// The tree for one size class: each node keeps the place the file gave that size.
 export function resolved(n: Layout["root"], wide: boolean): Resolved {
-  const slots = n.slots && Object.fromEntries(Object.entries(n.slots).map(([k, v]) => [k, v.map((x) => resolved(x, wide))]));
-  return { ...n, place: wide ? n.place.wide : n.place.compact, slots };
+  const { slots, ...rest } = n;
+  return { ...rest, place: wide ? n.place.wide : n.place.compact, ...(slots && { slots: Object.fromEntries(Object.entries(slots).map(([k, v]) => [k, v.map((x) => resolved(x, wide))])) }) };
 }
 
 const walk = (n: Resolved): Resolved[] => Object.values(n.slots ?? {}).flatMap((ns) => ns.flatMap((x) => [x, ...walk(x)]));
@@ -89,45 +105,61 @@ const row = (label: string, f: () => void, on = false) => {
   return r;
 };
 
-function wearer(schemes: Record<string, Scheme>, theme: Theme) {
+/// A look on offer: one scheme, or a light and dark pair with the style it wears.
+export type Worn = Scheme | (Pair & { style?: Scale });
+
+function wearer(schemes: Record<string, Worn>, theme: Theme, own: Element | null = null) {
   const look = el("style");
   look.id = "b-look";
   document.head.append(look);
-  const wear = (name: string | null) => {
-    const s: Scheme | undefined = name ? schemes[name] : undefined;
-    look.textContent = tiles + (s ? theme.css(s) : "");
+  const base = own?.textContent ?? "";
+  const wear = (name: string | null, keep?: Store) => {
+    keep?.put("b:look", name);
+    const dark = typeof matchMedia === "function" && matchMedia("(prefers-color-scheme: dark)").matches;
+    const w = name !== null && Object.prototype.hasOwnProperty.call(schemes, name) ? schemes[name] : undefined;
+    if (own) own.textContent = w && !("tokens" in w) ? "" : base;
+    look.textContent = tiles + (!w ? (name ? theme.css(choose(name, dark)) : "") : "tokens" in w ? theme.css(w) : theme.css(w, w.style));
+    if (w && name) document.documentElement.dataset["look"] = name;
+    else document.documentElement.removeAttribute("data-look");
   };
   return { look, wear };
 }
 
-function looks(schemes: Record<string, Scheme>, store: Store, wear: (name: string | null) => void, again: () => void): HTMLElement {
+function looks(schemes: Record<string, Worn>, store: Store, wear: (name: string | null, keep?: Store) => void, again: () => void): HTMLElement {
   const now = store.get("b:look");
   const pick = (name: string | null) => () => {
-    store.put("b:look", name);
-    wear(name);
+    wear(name, store);
     again();
   };
-  const rows = Object.entries(schemes).map(([name, s]) => row(s.label, pick(name), name === now));
+  const rows = Object.entries(schemes).map(([name, s]) => row("tokens" in s ? s.label : name, pick(name), name === now));
   return h("div", "list", row("the app's own", pick(null), !now), ...rows);
 }
 
 /// Draws `o.layout` into `o.root`: its tabs, cards and menu, each screen kept and live on its source's one stream.
-export function mount(o: Mount): { close(): void } {
+export function mount(o: Mount): { layout(next: Layout): void; close(): void } {
   const store = o.store ?? local();
   const theme = o.theme ?? plain;
   for (const href of o.css ?? []) document.head.append(Object.assign(el("link"), { rel: "stylesheet", href }));
   const { look, wear } = wearer(o.schemes ?? {}, theme);
   wear(store.get("b:look"));
   const wide = matchMedia("(min-width: 1000px)");
-  let shell = draw(o, store, theme, wear, wide.matches);
+  const ed = o.edit && editor(o.edit, o.root);
+  let shell: { close(): void } = { close() {} };
   const change = () => {
     shell.close();
-    shell = draw(o, store, theme, wear, wide.matches);
+    shell = draw(o, store, theme, wear, wide.matches, ed ? [ed.tab] : []);
+    ed?.draw(resolved(o.layout.root, wide.matches), wide.matches ? "wide" : "compact");
   };
+  change();
   wide.addEventListener("change", change);
   const timer = setInterval(() => tick(o.root), 1000);
   return {
+    layout(next) {
+      o = { ...o, layout: next };
+      change();
+    },
     close() {
+      ed?.sheet.remove();
       wide.removeEventListener("change", change);
       clearInterval(timer);
       shell.close();
@@ -136,58 +168,57 @@ export function mount(o: Mount): { close(): void } {
   };
 }
 
-function draw(o: Mount, store: Store, theme: Theme, wear: (name: string | null) => void, wide: boolean): { close(): void } {
+function draw(o: Mount, store: Store, theme: Theme, wear: (name: string | null, keep?: Store) => void, wide: boolean, extra: HTMLElement[]): { close(): void } {
   const nodes = walk(resolved(o.layout.root, wide)).filter((n) => n.place !== "hidden");
   const streams = new Map<string, ReturnType<typeof stream>>();
   const live = (source: string) => {
-    const s = streams.get(source) ?? stream({ url: o.url(source, "/stream"), state: (st) => (o.root.dataset.stream = st) });
+    const s = streams.get(source) ?? stream({ url: o.url(source, "/stream"), state: (st) => (o.root.dataset["stream"] = st) });
     streams.set(source, s);
     return s;
   };
   const strip = el("nav", "b-tabs");
   const main = el("main", "b-main");
-  const toastBox = el("p", "b-toast");
+  const notes = toasts();
   const ask = el("div", "b-confirm");
   const sheet = el("div", "b-sheet");
   const head = el("header", "b-sheet__head");
   const sheetBody = el("div", "b-sheet__body");
-  toastBox.hidden = ask.hidden = sheet.hidden = true;
+  ask.hidden = sheet.hidden = true;
   sheet.append(h("div", "b-sheet__card", head, sheetBody));
   sheet.addEventListener("click", (e) => e.target === sheet && closeSheet());
   let sheetView: View | undefined;
-  let toastTimer: ReturnType<typeof setTimeout> | undefined;
-
-  const toast = (text: string, bad = false) => {
-    toastBox.textContent = text;
-    toastBox.className = `b-toast${bad ? " bad" : ""}`;
-    toastBox.hidden = false;
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => (toastBox.hidden = true), bad ? 8000 : 3000);
+  const say = (v: View, t: Toast, first = false) => {
+    const u = t.undo;
+    notes.say(t, u ? (b) => act(v, { action: u.action, values: u.values, confirm: u.confirm }, b, true) : undefined, first);
   };
 
   const confirmed = (c: Blk): Promise<boolean> =>
     new Promise((done) => {
       const no = btn("cancel");
-      const yes = btn(c.ok ?? "ok", c.destructive ? "bad" : "");
+      const yes = btn(c["ok"] ?? "ok", c["destructive"] ? "bad" : "");
       const end = (v: boolean) => {
         ask.hidden = true;
         done(v);
       };
       no.onclick = () => end(false);
       yes.onclick = () => end(true);
-      ask.replaceChildren(h("p", "", h("b", "", String(c.title ?? ""))), ...(c.message ? [h("p", "m", String(c.message))] : []), h("div", "bar", no, yes));
+      ask.replaceChildren(h("p", "", h("b", "", String(c["title"] ?? ""))), ...(c["message"] ? [h("p", "m", String(c["message"]))] : []), h("div", "bar", no, yes));
       ask.hidden = false;
       yes.focus();
     });
 
   const ctx = (v: View): Ctx => ({
     screen: String(v.model?.id ?? v.path),
+    locale: v.model && (v.model.type === "screen" || v.model.type === "sheet") ? (v.model.locale ?? undefined) : undefined,
     act: (a, b) => act(v, a, b),
     tap: (t) => tap(v, t),
     open: v.open,
     theme,
     store,
     apps: o.blocks,
+    held: v.held,
+    view: v.view,
+    file: o.file,
   });
 
   const paint = (v: View) => {
@@ -205,7 +236,7 @@ function draw(o: Mount, store: Store, theme: Theme, wear: (name: string | null) 
 
   const view = (source: string, path: string, box: HTMLElement): View => {
     const body = el("div", "b-view");
-    const v: View = { source, path, back: [], open: new Set(), box, body, built: new Set(), sync: () => {} };
+    const v: View = { source, path, back: [], open: new Set(), box, body, built: new Set(), held: new Map(), view: new Map(), sync: () => {} };
     v.sync = behave(body, () => v.model);
     v.body.addEventListener("redraw", () => paint(v));
     return v;
@@ -266,7 +297,7 @@ function draw(o: Mount, store: Store, theme: Theme, wear: (name: string | null) 
     if (prev) b.onclick = prev;
     head.replaceChildren(...(prev ? [b] : []), h("b", "b-sheet__title", title), x);
   };
-  const heading = (v: View) => frame(String(obj(v.model).title ?? ""), v.back.length ? () => back(v) : undefined);
+  const heading = (v: View) => frame(String(obj(v.model)["title"] ?? ""), v.back.length ? () => back(v) : undefined);
   const openSheet = (source: string, path: string) => {
     if (sheetView && !sheet.hidden) return go(sheetView, path);
     closeSheet();
@@ -278,13 +309,13 @@ function draw(o: Mount, store: Store, theme: Theme, wear: (name: string | null) 
 
   const tap = (v: View, t: unknown) => {
     const x = obj(t);
-    if (typeof x.sheet === "string") openSheet(v.source, x.sheet);
-    else if (typeof x.open === "string") go(v, x.open);
-    else if (typeof x.copy === "string") void navigator.clipboard?.writeText(x.copy).then(() => toast("copied"));
-    else if (typeof x.action === "string") void act(v, { action: x.action, values: x.values });
+    if (typeof x["sheet"] === "string") openSheet(v.source, x["sheet"]);
+    else if (typeof x["open"] === "string") go(v, x["open"]);
+    else if (typeof x["copy"] === "string") void navigator.clipboard?.writeText(x["copy"]).then(() => say(v, { title: "copied" }));
+    else if (typeof x["action"] === "string") void act(v, { action: x["action"], values: x["values"] });
   };
 
-  const act = async (v: View, a: Post, b?: HTMLElement): Promise<boolean> => {
+  const act = async (v: View, a: Post, b?: HTMLElement, first = false): Promise<boolean> => {
     if (isBlk(a.confirm) && !(await confirmed(a.confirm))) return false;
     b?.setAttribute("aria-busy", "true");
     try {
@@ -292,7 +323,7 @@ function draw(o: Mount, store: Store, theme: Theme, wear: (name: string | null) 
       const r = await fetch(o.url(v.source, "/action"), { method: "POST", headers: { "content-type": "application/json" }, body });
       const j: Answer = await r.json().catch(() => ({}));
       if (!r.ok) {
-        toast(j.toast ?? `action failed: ${r.status}`, true);
+        say(v, { title: `action failed: ${r.status}`, ...j.toast, tone: "bad" }, first);
         return false;
       }
       const next = v.model && j.ops?.length ? apply(v.model, j.ops) : undefined;
@@ -302,10 +333,10 @@ function draw(o: Mount, store: Store, theme: Theme, wear: (name: string | null) 
       }
       if (j.close && v === sheetView) closeSheet();
       if (j.open) tap(v, { open: j.open });
-      if (j.toast) toast(j.toast);
+      if (j.toast) say(v, j.toast, first);
       return true;
     } catch (e) {
-      toast(e instanceof Error ? e.message : String(e), true);
+      say(v, { title: e instanceof Error ? e.message : String(e), tone: "bad" }, first);
       return false;
     } finally {
       b?.removeAttribute("aria-busy");
@@ -313,8 +344,8 @@ function draw(o: Mount, store: Store, theme: Theme, wear: (name: string | null) 
   };
 
   const part = (n: Resolved, box: HTMLElement): View | undefined => {
-    box.dataset.place = n.place;
-    box.dataset.id = n.id;
+    box.dataset["place"] = n.place;
+    box.dataset["id"] = n.id;
     if (!isScreen(n)) {
       const c = o.components?.[n.type]?.(n);
       box.replaceChildren(...(c ? [c] : []));
@@ -366,23 +397,23 @@ function draw(o: Mount, store: Store, theme: Theme, wear: (name: string | null) 
   };
   const more = btn("menu", "b-tab b-menu");
   more.onclick = menu;
-  strip.append(more);
+  strip.append(more, ...extra);
 
-  o.root.append(...parts, strip, main, sheet, ask, toastBox);
+  o.root.append(...parts, strip, main, sheet, ask, notes.box);
   const first = tabs.find((t) => `#${t.node.id}` === location.hash) ?? tabs[0];
   if (first) pick(first);
 
   return {
     close() {
       for (const v of [...tabs.map((t) => t.view), ...always, sheetView]) hide(v);
-      for (const e of [...parts, strip, main, sheet, ask, toastBox]) e.remove();
-      clearTimeout(toastTimer);
+      for (const e of [...parts, strip, main, sheet, ask]) e.remove();
+      notes.close();
     },
   };
 }
 
 const drawn = (b: Blk): [string, string][] =>
-  [...(typeof b.id === "string" ? [[b.id, String(b.type)] satisfies [string, string]] : []), ...["blocks", "rows", "buttons"].flatMap((k) => (Array.isArray(b[k]) ? b[k].filter(isBlk).flatMap(drawn) : []))];
+  [...(typeof b["id"] === "string" ? [[b["id"], String(b["type"])] satisfies [string, string]] : []), ...["blocks", "rows", "buttons"].flatMap((k) => (Array.isArray(b[k]) ? b[k].filter(isBlk).flatMap(drawn) : []))];
 
 /// Takes over a page `site` wrote without redrawing it: its forms post in place and the stream patches it; false: it stays static.
 export function adopt(o: { theme?: Theme; store?: Store; blocks?: AppBlocks } = {}): boolean {
@@ -392,19 +423,19 @@ export function adopt(o: { theme?: Theme; store?: Store; blocks?: AppBlocks } = 
   let model: Block = JSON.parse(data.textContent ?? "null");
   const want = new Map(drawn(obj(model)));
   const els = Array.from(root.querySelectorAll<HTMLElement>("[data-block]"));
-  const top = [obj(model), ...blks(obj(model).blocks)];
+  const top = [obj(model), ...blks(obj(model)["blocks"])];
   const off =
-    els.find((e) => e.dataset.id && want.get(e.dataset.id) !== e.dataset.block)?.dataset.id ??
-    top.find((b) => typeof b.id === "string" && !els.some((e) => e.dataset.id === b.id && e.dataset.block === b.type))?.id;
+    els.find((e) => e.dataset["id"] && want.get(e.dataset["id"]) !== e.dataset["block"])?.dataset["id"] ??
+    top.find((b) => typeof b["id"] === "string" && !els.some((e) => e.dataset["id"] === b["id"] && e.dataset["block"] === b["type"]))?.["id"];
   if (off !== undefined) {
     console.warn(`blocks: the page stays static, block ${off} is missing or differs`);
     return false;
   }
-  const screen = String(obj(model).id ?? "");
+  const screen = String(obj(model)["id"] ?? "");
   const theme = o.theme ?? plain;
   const store = o.store ?? local();
-  const schemes: Record<string, Scheme> = JSON.parse(data.dataset.looks || "{}");
-  const { wear } = wearer(schemes, theme);
+  const schemes: Record<string, Worn> = JSON.parse(data.dataset["looks"] || "{}");
+  const { wear } = wearer(schemes, theme, document.head.querySelector("style"));
   wear(store.get("b:look"));
   const sheet = el("div", "b-sheet");
   const lookSheet = () => {
@@ -417,17 +448,18 @@ export function adopt(o: { theme?: Theme; store?: Store; blocks?: AppBlocks } = 
   sheet.addEventListener("click", (e) => e.target === sheet && (sheet.hidden = true));
   document.addEventListener("click", (e) => {
     const s = e.target instanceof Element ? e.target.closest<HTMLElement>("[data-sheet]") : null;
-    if (s) tap({ sheet: s.dataset.sheet });
+    if (s) tap({ sheet: s.dataset["sheet"] });
   });
   const p = patcher({ root, model: () => model, draw: (b) => render(b, ctx) });
+  behave(root, () => model);
   const take = (ops: Op[]) => {
     model = apply(model, ops) ?? model;
     p.queue(ops);
   };
   const act = async (a: Post): Promise<boolean> => {
-    if (isBlk(a.confirm) && !confirm(String(a.confirm.title ?? ""))) return false;
+    if (isBlk(a.confirm) && !confirm(String(a.confirm["title"] ?? ""))) return false;
     const body = JSON.stringify({ screen, action: a.action, block: a.block ?? undefined, values: a.values ?? undefined });
-    const r = await fetch(data.dataset.action ?? "", { method: "POST", headers: { "content-type": "application/json" }, body }).catch(() => undefined);
+    const r = await fetch(data.dataset["action"] ?? "", { method: "POST", headers: { "content-type": "application/json" }, body }).catch(() => undefined);
     const j: Answer = (await r?.json().catch(() => undefined)) ?? {};
     if (j.ops?.length) take(j.ops);
     if (j.open && linkable(j.open)) location.assign(j.open);
@@ -435,15 +467,16 @@ export function adopt(o: { theme?: Theme; store?: Store; blocks?: AppBlocks } = 
   };
   const tap = (t: unknown) => {
     const x = obj(t);
-    if (typeof x.url === "string") {
-      if (linkable(x.url)) open(x.url, "_blank", "noopener");
-    } else if (typeof x.open === "string") {
-      if (linkable(x.open)) location.assign(x.open);
+    if (typeof x["url"] === "string") {
+      if (linkable(x["url"])) open(x["url"], "_blank", "noopener");
+    } else if (typeof x["open"] === "string") {
+      if (linkable(x["open"])) location.assign(x["open"]);
     }
-    else if (typeof x.action === "string") void act({ action: x.action, values: x.values });
-    else if (x.sheet === "look") lookSheet();
+    else if (typeof x["action"] === "string") void act({ action: x["action"], values: x["values"] });
+    else if (x["sheet"] === "look") lookSheet();
+    else if (typeof x["sheet"] === "string" && x["sheet"].startsWith("look:")) wear(x["sheet"].slice(5), store);
   };
-  const ctx: Ctx = { screen, act, tap, open: new Set(), theme, store, apps: o.blocks };
+  const ctx: Ctx = { screen, act, tap, open: new Set(), theme, store, apps: o.blocks, held: new Map(), view: new Map() };
   document.addEventListener("submit", (e) => {
     const f = e.target;
     if (!(f instanceof HTMLFormElement) || !f.elements.namedItem("_action")) return;
@@ -453,8 +486,8 @@ export function adopt(o: { theme?: Theme; store?: Store; blocks?: AppBlocks } = 
     const { _block, _action, _screen, ...values } = v;
     void act({ action: _action, block: _block || undefined, values });
   });
-  if (data.dataset.stream)
-    stream({ url: data.dataset.stream }).open(location.pathname, (s, ops) => {
+  if (data.dataset["stream"])
+    stream({ url: data.dataset["stream"] }).open(location.pathname, (s, ops) => {
       const same = JSON.stringify(s) === JSON.stringify(model);
       model = s;
       if (ops) return p.queue(ops);

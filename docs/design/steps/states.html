@@ -1,0 +1,29 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="../neutral-default/tokens.css"><link rel="stylesheet" href="../../../web/dist/blocks.css"><link rel="stylesheet" href="steps.css"><link rel="stylesheet" href="page.css">
+<script src="steps.js"></script><title>steps: every state</title></head>
+<body><main class="scr">
+<div class="top"><div class="tabh"><span class="tw">steps · every state</span></div></div>
+<h2>1 · Step states</h2><p class="note">Done: an ink square with a tick and a 2 px ink line on. A done step with a tap underlines its name and is a button (left); without a tap it is plain (right). Current: a 2 px ink ring, bold name, "step N of M" under it. To do: grey outline and grey name.</p>
+<div class="cases"><div data-b='{"type":"steps","id":"a","title":"Done ones tappable","current":"c","steps":[{"id":"a","label":"Stop","sub":"arrived 09:42","tap":{"open":"a"}},{"id":"b","label":"Lines","sub":"6 checked","tap":{"open":"b"}},{"id":"c","label":"Proof"},{"id":"d","label":"Leave"}]}'></div>
+<div data-b='{"type":"steps","id":"b","title":"Done ones plain","current":"c","steps":[{"id":"a","label":"Stop","sub":"arrived 09:42"},{"id":"b","label":"Lines","sub":"6 checked"},{"id":"c","label":"Proof"},{"id":"d","label":"Leave"}]}'></div></div>
+<h2>2 · Keyboard focus, first and last</h2><p class="note">Focus on a done step: a 2 px ink ring 2 px out around its square, and its underline thickens to 2 px. The first step current: nothing done yet. No current: every step done, "All done" on phones.</p>
+<div class="cases"><div data-b='{"type":"steps","id":"f","title":"Focus on a done step","current":"c","focus":"b","steps":[{"id":"a","label":"Stop","tap":{"open":"a"}},{"id":"b","label":"Lines","tap":{"open":"b"}},{"id":"c","label":"Proof"}]}'></div>
+<div data-b='{"type":"steps","id":"g","title":"First step current","current":"a","steps":[{"id":"a","label":"Stop"},{"id":"b","label":"Lines"},{"id":"c","label":"Proof"}]}'></div>
+<div data-b='{"type":"steps","id":"h","title":"Finished (no current)","steps":[{"id":"a","label":"Stop","sub":"09:42","tap":{"open":"a"}},{"id":"b","label":"Lines","sub":"6 checked","tap":{"open":"b"}},{"id":"c","label":"Proof","sub":"signed J. Okafor","tap":{"open":"c"}}]}'></div></div>
+<h2>3 · Stress: long text, many steps, empty</h2><p class="note">Names and subtitles keep one line and end in "…"; the full name is the step's accessible name. Five or more steps on a phone: numbers only, the current one's name on a line under them. No steps: the block's fallback.</p>
+<div data-b='{"type":"steps","id":"l","title":"Long text","current":"b","steps":[{"id":"a","label":"Collect the signed paperwork from the site office","sub":"ask for the duty manager at reception","tap":{"open":"a"}},{"id":"b","label":"Unload and count every pallet against the delivery note","sub":"scan each pallet label before you move it"},{"id":"c","label":"Photograph the drop point and take a signature"}]}'></div>
+<div data-b='{"type":"steps","id":"n","title":"Many steps","current":"s6","steps":[{"id":"s1","label":"Gate","tap":{"open":"1"}},{"id":"s2","label":"Check in","tap":{"open":"2"}},{"id":"s3","label":"Dock","tap":{"open":"3"}},{"id":"s4","label":"Unload","tap":{"open":"4"}},{"id":"s5","label":"Count","tap":{"open":"5"}},{"id":"s6","label":"Lines","sub":"12 of 40"},{"id":"s7","label":"Returns"},{"id":"s8","label":"Proof"},{"id":"s9","label":"Leave"}]}'></div>
+<div data-b='{"type":"steps","id":"e","title":"Delivery steps","steps":[],"fallback":"No steps for this stop yet."}'></div>
+<h2>4 · Bar values and tones</h2><p class="note">The fill is always ink. A tone colours the number and a 3 px tick at the fill's end; warn and bad also colour the note. 0 % is a grey number on an empty track. A value outside 0–100 is clamped (here 130 draws 100 %).</p>
+<div class="cases"><div data-b='{"type":"steps","id":"p0","label":"Not started","value":0,"sub":"starts Thu"}'></div>
+<div data-b='{"type":"steps","id":"p1","label":"No tone","value":35}'></div>
+<div data-b='{"type":"steps","id":"p2","label":"ok","value":88,"tone":"ok","sub":"on track"}'></div>
+<div data-b='{"type":"steps","id":"p3","label":"warn","value":62,"tone":"warn","sub":"3 need a second look"}'></div>
+<div data-b='{"type":"steps","id":"p4","label":"bad","value":15,"tone":"bad","sub":"overdue since Fri"}'></div>
+<div data-b='{"type":"steps","id":"p5","label":"info","value":70,"tone":"info"}'></div>
+<div data-b='{"type":"steps","id":"p6","label":"Full (130 given)","value":130,"tone":"ok","sub":"done"}'></div>
+<div data-b='{"type":"steps","id":"p7","label":"A very long label for a progress bar that runs past the width of its tile","value":50,"sub":"and a long note under it that also runs past the width of its tile"}'></div></div>
+<h2>5 · Bars in rows, and empty</h2><p class="note">At 600 px and up a row is label | bar | number; under 600 px the label and number share a line over the bar. No bars and no value: the fallback.</p>
+<div data-b='{"type":"steps","id":"r","title":"Planner rows","bars":[{"label":"Boiler service","value":100,"tone":"ok","sub":"done Mon"},{"label":"Roof gutters, blocks A–C and the bin store","value":40,"sub":"2 of 5 blocks"},{"label":"Fire door closers","value":15,"tone":"bad","sub":"overdue since Fri"},{"label":"Communal lighting","value":0}]}'></div>
+<div data-b='{"type":"steps","id":"r0","title":"Planner rows","bars":[],"fallback":"Nothing planned this week."}'></div>
+</main><script>draw()</script></body></html>

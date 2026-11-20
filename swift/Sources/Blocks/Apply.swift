@@ -135,7 +135,12 @@ extension JSONValue {
         case .replace(let r):
             let block = try Self.json(r.block)
             guard edit(r.id, { _ in block }) else { throw .noBlock(r.id) }
-        case .badge, .dot:
+        case .badge(let b):
+            if type == "screen", case .object(var o) = self {
+                o["badge"] = .number(Double(b.count))
+                self = .object(o)
+            }
+        case .dot:
             break
         case .screen(let s):
             self = try Self.json(s.screen)
@@ -154,7 +159,7 @@ extension JSONValue {
         let keys: [String] =
             switch type {
             case "screen", "sheet", "section": ["blocks"]
-            case "list": ["rows"]
+            case "list", "table": ["rows"]
             case "card": ["blocks", "buttons"]
             default: []
             }
@@ -208,7 +213,7 @@ extension JSONValue {
     private mutating func insert(_ child: Self, into: String, before: String?, after: String?) throws(ApplyError) {
         let hosts = [
             "screen": "blocks", "sheet": "blocks", "section": "blocks", "card": "blocks", "list": "rows",
-            "scene": "lanes", "row": "rounds",
+            "scene": "lanes", "row": "rounds", "table": "rows",
         ]
         var fits = true
         let found = edit(into) { host in

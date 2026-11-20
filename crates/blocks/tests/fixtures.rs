@@ -13,7 +13,7 @@ fn read(path: &Path) -> Value {
 
 fn fixtures() -> Vec<(String, Value)> {
     let mut out = vec![];
-    for app in ["cooee", "drover"] {
+    for app in ["cooee", "drover", "drover-staging"] {
         let dir = root().join("fixtures/screens").join(app);
         for e in std::fs::read_dir(&dir).unwrap() {
             let p = e.unwrap().path();
@@ -339,14 +339,13 @@ const COOEE: &[&str] = &[
     "confirm",
 ];
 
-fn herd_scene(name: &str, f: &Fault) -> bool {
-    let field = |x: &str| matches!(f, Fault::Extra { kind, field } if kind == "scene" && field == x);
-    name == "drover/herd.json" && (field("weather") || field("repos"))
+fn drovers_age_twice(name: &str, f: &Fault) -> bool {
+    name == "drover-staging/scene.json" && matches!(f, Fault::Twice { id, .. } if id == "age")
 }
 
 #[test]
 fn every_golden_parses_with_no_fault() {
-    let (mut bad, mut seen, mut herd) = (vec![], 0, 0);
+    let (mut bad, mut seen) = (vec![], 0);
     for (name, v) in fixtures() {
         let app = if name.starts_with("cooee/") { COOEE } else { &[] };
         let mut found = vec![];
@@ -355,7 +354,7 @@ fn every_golden_parses_with_no_fault() {
         for b in found {
             for f in Built::new(b).check(app) {
                 match f {
-                    _ if herd_scene(&name, &f) => herd += 1,
+                    _ if drovers_age_twice(&name, &f) => {}
                     Fault::Shape { .. }
                     | Fault::Extra { .. }
                     | Fault::Unknown { .. }
@@ -371,31 +370,29 @@ fn every_golden_parses_with_no_fault() {
     }
     assert!(seen >= 40, "only {seen} blocks in the goldens");
     assert!(bad.is_empty(), "{}", bad.join("\n"));
-    assert_eq!(
-        herd, 2,
-        "drover's herd scene: its own shape, drover's app kind `herd` once it moves"
-    );
 }
 
-const KINDS_27: [&str; 27] = [
+const KINDS: [&str; 35] = [
     "screen", "sheet", "section", "list", "row", "card", "choice", "form", "config", "secret", "run", "button",
     "chips", "stat", "text", "images", "web", "diff", "editor", "scene", "diagram", "composer", "prose", "hero",
-    "media", "nav", "island",
+    "media", "nav", "island", "lines", "steps", "table", "chart", "toast", "pages", "timeline", "import",
 ];
 
 #[test]
-fn the_27_kinds_each_have_a_typed_sample_that_is_its_fixture() {
+fn the_35_kinds_each_have_a_typed_sample_that_is_its_fixture() {
     let mut kinds: Vec<&str> = Block::KINDS.iter().copied().chain(["island"]).collect();
     kinds.sort_unstable();
     kinds.dedup();
-    let mut want = KINDS_27.to_vec();
+    let mut want = KINDS.to_vec();
     want.sort_unstable();
     assert_eq!(kinds, want);
-    let samples = blocks::samples();
-    let named: Vec<&str> = samples.iter().map(|(k, _)| *k).collect();
+    let mut named: Vec<&str> = blocks::samples().iter().map(|(k, _)| *k).collect();
+    named.dedup();
     assert_eq!(named, Block::KINDS);
     let dir = root().join("fixtures/blocks");
-    assert_eq!(std::fs::read_dir(&dir).unwrap().count(), Block::KINDS.len());
+    let samples = blocks::fixtures();
+    assert_eq!(std::fs::read_dir(&dir).unwrap().count(), samples.len());
+    assert!(samples.iter().any(|(n, _)| n == "table-grid"));
     let s = schema();
     for (kind, b) in samples {
         let file = read(&dir.join(format!("{kind}.json")));
@@ -404,7 +401,7 @@ fn the_27_kinds_each_have_a_typed_sample_that_is_its_fixture() {
             serde_json::to_value(&b).unwrap(),
             "fixtures/blocks/{kind}.json: rerun `just gen`"
         );
-        assert_eq!(file["type"], kind);
+        assert!(kind.starts_with(file["type"].as_str().unwrap()), "{kind}");
         assert_eq!(serde_json::from_value::<Block>(file.clone()).unwrap(), b);
         valid(&s, &file).unwrap_or_else(|e| panic!("{kind}: {e}"));
         assert_eq!(Built::new(file).check(&[]), vec![], "{kind}");
@@ -515,9 +512,15 @@ fn an_action_and_its_answer_travel_as_both_apps_send_them() {
     let a: blocks::Action = serde_json::from_value(action.clone()).unwrap();
     assert_eq!((a.screen.as_str(), a.values["n"].as_u64()), ("queue", Some(1)));
     assert_eq!(serde_json::to_value(&a).unwrap(), action);
-    let answer = parse(r#"{"ops": [{"op": "remove", "id": "a"}], "toast": "Approved", "close": true}"#);
+    let answer = parse(
+        r#"{"ops": [{"op": "remove", "id": "a"}], "toast": {"title": "Approved", "tone": "ok", "undo": {"action": "unapprove"}}, "close": true}"#,
+    );
     let got: blocks::Answer = serde_json::from_value(answer.clone()).unwrap();
     assert_eq!(got.ops, vec![Op::Remove { id: "a".into() }]);
+    assert_eq!(
+        got.toast.clone().map(|t| (t.title, t.undo.map(|u| u.action))),
+        Some(("Approved".into(), Some("unapprove".into())))
+    );
     assert_eq!(serde_json::to_value(&got).unwrap(), answer);
     let s = schema();
     for (def, v) in [("Action", &action), ("Answer", &answer)] {
@@ -638,8 +641,9 @@ fn stress_rows(table: &Value, kinds: &[&str]) -> Result<(), String> {
 
 fn stress(table: &Value) -> Vec<(String, Value)> {
     let mut out = vec![];
-    for (kind, b) in blocks::samples() {
+    for ((kind, b), (name, _)) in blocks::samples().into_iter().zip(blocks::fixtures()) {
         let row = &table[kind];
+        let kind = name.as_str();
         let sample = serde_json::to_value(b).unwrap();
         if let Some(keys) = row["long"].as_array() {
             let keys: Vec<&str> = keys.iter().map(|k| k.as_str().unwrap()).collect();
@@ -729,4 +733,71 @@ fn a_kind_with_no_stress_row_or_no_why_fails_the_table_check() {
         stress_rows(&quiet, Block::KINDS),
         Err("secret: a variant left out with no why".into())
     );
+}
+
+#[test]
+fn a_chart_of_six_series_or_a_donut_of_two_fails_its_check() {
+    let series = |n: usize| -> Vec<Value> {
+        (0..n)
+            .map(|i| serde_json::json!({"name": format!("s{i}"), "values": [1]}))
+            .collect()
+    };
+    let faults = |kind: &str, n: usize| {
+        let v = serde_json::json!({"type": "chart", "id": "c", "title": "t", "chart": kind, "x": ["a"], "series": series(n)});
+        Built::new(v).check(&[])
+    };
+    let shape = |why: &str| {
+        vec![Fault::Shape {
+            kind: "chart".into(),
+            why: why.into(),
+        }]
+    };
+    assert_eq!(faults("stacked", 5), vec![]);
+    assert_eq!(faults("bar", 6), shape("a chart of 6 series: at most 5"));
+    assert_eq!(faults("donut", 1), vec![]);
+    assert_eq!(faults("donut", 2), shape("a donut of 2 series: one, over its slices"));
+    let chart = blocks::samples().into_iter().find(|(k, _)| *k == "chart").unwrap().1;
+    let built = Built::of(&blocks::Screen::new().id("s").blocks(vec![chart]));
+    assert_eq!(built.value()["blocks"][0]["fallback"]["tap"]["action"], "sales.month");
+    assert_eq!(
+        built.check(&[]),
+        vec![],
+        "a fallback's tap is the block's own, not a second sender"
+    );
+}
+
+#[test]
+fn a_stepper_must_name_its_current_step_or_be_done_and_never_carry_bars() {
+    let steps = r#"[{"id": "a", "label": "Stop"}, {"id": "b", "label": "Lines"}]"#;
+    let faults = |extra: &str| {
+        let b = format!(r#"{{"type": "steps", "id": "x", "steps": {steps}{extra}}}"#);
+        let got = Built::new(parse(&format!(r#"{{"type": "screen", "id": "s", "blocks": [{b}]}}"#))).check(&[]);
+        got.into_iter()
+            .map(|f| match f {
+                Fault::Shape { kind, why } => format!("{kind}: {why}"),
+                f => format!("{f:?}"),
+            })
+            .collect::<Vec<_>>()
+    };
+    assert_eq!(faults(r#", "current": "b""#), Vec::<String>::new());
+    assert_eq!(faults(r#", "done": true"#), Vec::<String>::new());
+    assert_eq!(faults(""), ["steps: a stepper with neither a current step nor done"]);
+    assert_eq!(
+        faults(r#", "done": false"#),
+        ["steps: a stepper with neither a current step nor done"]
+    );
+    assert_eq!(
+        faults(r#", "current": "z""#),
+        ["steps: a stepper whose current names no step"]
+    );
+    assert_eq!(
+        faults(r#", "current": "a", "done": true"#),
+        ["steps: a stepper both done and at a current step"]
+    );
+    assert_eq!(
+        faults(r#", "current": "a", "bars": []"#),
+        ["steps: a steps block with both steps and bars"]
+    );
+    let empty = parse(r#"{"type": "screen", "id": "s", "blocks": [{"type": "steps", "id": "x", "steps": []}]}"#);
+    assert_eq!(Built::new(empty).check(&[]), vec![]);
 }

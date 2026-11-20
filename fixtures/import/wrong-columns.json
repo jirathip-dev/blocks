@@ -1,0 +1,82 @@
+{
+  "type": "import",
+  "id": "products",
+  "title": "Import products",
+  "into": "Products",
+  "columns": [
+    {
+      "key": "sku",
+      "label": "SKU",
+      "type": "text",
+      "required": true
+    },
+    {
+      "key": "name",
+      "label": "Name",
+      "type": "text"
+    },
+    {
+      "key": "cat",
+      "label": "Category",
+      "type": "choice",
+      "values": [
+        "Bakery",
+        "Dairy"
+      ]
+    },
+    {
+      "key": "price",
+      "label": "Price ฿",
+      "type": "money",
+      "required": true
+    }
+  ],
+  "mb": 10,
+  "template": {
+    "name": "products.xlsx",
+    "src": "https://example.com/files/template-products.xlsx"
+  },
+  "read": "read",
+  "action": "import",
+  "sheet": {
+    "file": {
+      "id": "f-7",
+      "name": "stock-count.csv",
+      "size": 86016,
+      "rows": 96
+    },
+    "headers": [
+      "Code",
+      "Product",
+      "Shelf",
+      "Counted"
+    ],
+    "map": {
+      "sku": "Code",
+      "name": "Product"
+    },
+    "rows": [
+      {
+        "n": 2,
+        "cells": {
+          "sku": "BK-0101",
+          "name": "Sourdough loaf"
+        }
+      },
+      {
+        "n": 3,
+        "cells": {
+          "sku": "BK-0102",
+          "name": "Butter croissant"
+        }
+      },
+      {
+        "n": 4,
+        "cells": {
+          "sku": "DA-0310",
+          "name": "Fresh milk 1 L"
+        }
+      }
+    ]
+  }
+}

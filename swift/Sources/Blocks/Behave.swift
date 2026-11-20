@@ -137,6 +137,8 @@ extension Expr {
         case .is(let m): return m.value.eval(state).matches(m.pattern)
         case .add(let xs): return sum(xs, +)
         case .sub(let xs): return sum(xs, -)
+        case .mul(let xs): return sum(xs, *)
+        case .div(let xs): return sum(xs, /)
         case .cat(let xs): return .string(xs.map { of($0).text }.joined())
         case .pick(let xs):
             guard xs.count == 3, let f = of(xs[0]).flag else { return .null }
@@ -151,7 +153,7 @@ extension Expr {
         case .lit, .get: true
         case .not(let x), .len(let x): x.known
         case .all(let xs), .any(let xs), .cat(let xs): xs.allSatisfy(\.known)
-        case .eq(let xs), .lt(let xs), .has(let xs), .add(let xs), .sub(let xs): xs.count == 2 && xs.allSatisfy(\.known)
+        case .eq(let xs), .lt(let xs), .has(let xs), .add(let xs), .sub(let xs), .mul(let xs), .div(let xs): xs.count == 2 && xs.allSatisfy(\.known)
         case .pick(let xs): xs.count == 3 && xs.allSatisfy(\.known)
         case .is(let m): Pattern.all.contains(m.pattern) && m.value.known
         case .unknown: false
@@ -179,6 +181,12 @@ public struct Behaviour: Equatable, Sendable {
         return s.merging(edits.filter { s[$0.key] != nil }) { $1 }
     }
 
+    /// What `field` holding `held` puts in local state: null, a switch, a number or a string; a list puts its length, an empty one null.
+    public static func lit(_ field: JSONValue, _ held: JSONValue?) -> Lit {
+        guard case .array(let all) = held else { return Lit(held) }
+        return all.isEmpty ? .null : .number(Double(all.count))
+    }
+
     /// The values a tap's `sets` give, each in the state the ones before it left; an unknown one is skipped.
     public static func tap(_ sets: [SetState], state: BlockState) -> BlockState {
         var s = state
@@ -195,7 +203,7 @@ public struct Behaviour: Equatable, Sendable {
     }
 
     private static func seed(_ b: JSONValue, _ s: inout BlockState) {
-        for f in b.list("fields") { if let name = f.string("name") { s[name] = Lit(f["value"]) } }
+        for f in b.list("fields") { if let name = f.string("name") { s[name] = lit(f, f["value"] ?? f["files"] ?? f["file"].flatMap { if case .object = $0 { .array([$0]) } else { nil } }) } }
         if b.type == "chips", let name = b.string("name") { s[name] = Lit(b["selected"]?.items.first) }
         for c in kids(b) { seed(c, &s) }
     }
@@ -228,7 +236,7 @@ public struct Behaviour: Equatable, Sendable {
             }
         }
         if failing, let id { disabled.insert(id) }
-        let all = b.list("actions") + b.list("swipe") + b.list("menu") + (b["button"].map { [$0] } ?? [])
+        let all = b.list("actions") + b.list("swipe") + b.list("menu") + (["button"] + Word.all).compactMap { b[$0] }
         for a in all + all.flatMap({ $0.list("menu") }) where Self.holds(a["enabled"], state) == false {
             if let key = a.string("action") ?? a["tap"]?.string("action") { acts.insert(key) }
         }

@@ -1,0 +1,43 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>lines: every state</title>
+<link rel="stylesheet" href="../../../web/dist/blocks.css"><link rel="stylesheet" href="../neutral-default/tokens.css"><link rel="stylesheet" href="lines.css"><link rel="stylesheet" href="page.css">
+<script src="lines.js"></script></head>
+<body><main class="scr">
+<div class="tile"><div class="tabh"><span class="tw">lines · states</span></div></div>
+<div class="cases" id="cases"></div>
+</main>
+<script>
+const money = (name, label) => ({ type: "text", name, label, keyboard: "number" });
+const two = [{ type: "text", name: "item", label: "Item" }, money("amount", "Amount")];
+const lq = (o) => ({ type: "lines", id: "l", name: "lines", action: "check-lines", add: "add line", columns: two, sum: ["amount"], ...o });
+const acct = ["1100 Cash", "4100 Sales", "2200 Sales tax payable"];
+const jcols = [{ type: "picker", name: "account", label: "Account", options: acct }, money("debit", "Debit"), money("credit", "Credit")];
+const many = Array.from({ length: 12 }, (_, i) => ({ id: `m${i}`, values: { item: `Pallet ${i + 1} · SKU-${4100 + i}`, amount: String(120 + i * 7.25) } }));
+const cases = [
+  ["1 · the fixture", "fixtures/blocks/lines.json: two columns, one row, one summed column.", lq({ rows: [{ id: "r1", values: { item: "Coffee beans, 1 kg", amount: "24.50" } }] })],
+  ["2 · balanced", "Debits equal credits: a moss marker and \"balanced\"; the submit is live.", lq({ columns: jcols, sum: ["debit", "credit"], balance: ["debit", "credit"], min: 2, submit: { label: "post entry", action: "post" },
+    rows: [{ id: "a", values: { account: "1100 Cash", debit: "107" } }, { id: "b", values: { account: "4100 Sales", credit: "100" } }, { id: "c", values: { account: "2200 Sales tax payable", credit: "7" } }] })],
+  ["3 · empty (stress)", "No rows: one muted line where the rows go, the add button, and a zero total.", lq({ rows: [] })],
+  ["4 · at the minimum", "`min: 2` with two rows: each [×] is off, so a journal always keeps two lines. `max` turns [add line] off the same way.", lq({ columns: jcols, sum: ["debit", "credit"], balance: ["debit", "credit"], min: 2,
+    rows: [{ id: "a", values: { account: "1100 Cash", debit: "50" } }, { id: "b", values: { account: "4100 Sales", credit: "50" } }] })],
+  ["5 · long text (stress)", "A field keeps one line and scrolls inside itself; a read-only cell wraps under its own column. Numbers never wrap.", lq({ columns: [{ type: "text", name: "item", label: "Item" }, { type: "text", name: "note", label: "Note", enabled: false }, money("amount", "Amount")],
+    rows: [{ id: "a", values: { item: "Replacement compressor assembly for the walk-in cold room, rear unit, model CR-2240-B", note: "Supplier says the part ships from the regional warehouse after the 28th, so the delivery slips a week", amount: "18450.00" } }] })],
+  ["6 · many rows (stress)", "Twelve rows: the block grows with its rows, no inner scroll; the total stays under the last row.", lq({ rows: many })],
+  ["7 · fixed lines", "No `add`: no [add line] and no [×], only the cells change (a delivery's received quantities). A column with `enabled: false` is text.", lq({ add: undefined, sum: [],
+    columns: [{ type: "text", name: "item", label: "Item", enabled: false }, { type: "text", name: "ordered", label: "Ordered", keyboard: "number", enabled: false }, { type: "text", name: "got", label: "Received", keyboard: "number" }],
+    rows: [{ id: "a", values: { item: "Copy paper A4, box", ordered: "10", got: "10" } }, { id: "b", values: { item: "Toner, black", ordered: "4", got: "3" } }], submit: { label: "confirm delivery", action: "confirm" } })],
+  ["8 · focus and saving", "Tab moves cell by cell, row by row; the focused cell gets the 2px ink ring. While the submit runs it says ↻ and the cells stay as typed.", lq({ submit: { label: "save", action: "save" }, rows: [{ id: "a", values: { item: "Desk lamp", amount: "39" } }, { id: "b", values: { item: "", amount: "" } }] }), { focus: "b.item", busy: true }],
+  ["9 · an error for the whole block", "An error with no `row` goes under the rows, in brick, like a row's.", lq({ columns: jcols, sum: ["debit", "credit"], balance: ["debit", "credit"], submit: { label: "post entry", action: "post" },
+    rows: [{ id: "a", values: { account: "1100 Cash", debit: "20" } }, { id: "b", values: { account: "4100 Sales", credit: "20" } }], errors: [{ message: "the entry date falls in a closed period (October)" }] })],
+];
+const host = document.getElementById("cases");
+for (const [h, n, b, o] of cases) {
+  const t = document.createElement("div");
+  t.className = "tile";
+  const sh = Object.assign(document.createElement("div"), { className: "sh", textContent: h });
+  const note = Object.assign(document.createElement("p"), { className: "note", textContent: n });
+  t.append(sh, note, lines(b, o));
+  host.append(t);
+}
+document.body.dataset.h = Math.ceil(document.documentElement.scrollHeight);
+</script></body></html>

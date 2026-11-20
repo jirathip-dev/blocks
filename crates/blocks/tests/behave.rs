@@ -1,7 +1,7 @@
 use std::collections::BTreeSet;
 use std::path::Path;
 
-use blocks::behave::{start, view, View};
+use blocks::behave::{lit, start, view, View};
 use blocks::expr::{eval, Expr, Lit, State};
 use blocks::Built;
 use serde::Deserialize;
@@ -23,6 +23,15 @@ struct File {
     screen: Option<Value>,
     #[serde(default)]
     view: Option<View>,
+    #[serde(default)]
+    lit: Vec<LitCase>,
+}
+
+#[derive(Deserialize)]
+struct LitCase {
+    field: Value,
+    held: Value,
+    want: Lit,
 }
 
 fn ops(v: &Value, out: &mut BTreeSet<String>) {
@@ -70,10 +79,21 @@ fn eval_gives_every_fixtures_behave_case_its_value() {
     assert!(n >= 50, "only {n} cases");
     assert!(bad.is_empty(), "{}", bad.join("\n"));
     let every = [
-        "get", "not", "all", "any", "eq", "lt", "len", "has", "is", "add", "sub", "cat", "pick", "lit", "fold",
+        "get", "not", "all", "any", "eq", "lt", "len", "has", "is", "add", "sub", "mul", "div", "cat", "pick", "lit",
+        "fold",
     ];
     let missing: Vec<&str> = every.into_iter().filter(|k| !seen.contains(*k)).collect();
     assert!(missing.is_empty(), "no case uses {missing:?}");
+}
+
+#[test]
+fn lit_gives_every_fixtures_behave_fields_case_its_local_state() {
+    let p = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../fixtures/behave/fields.json");
+    let file: File = serde_json::from_str(&std::fs::read_to_string(p).unwrap()).unwrap();
+    assert!(file.lit.len() >= 8, "only {} cases", file.lit.len());
+    for c in file.lit {
+        assert_eq!(lit(&c.field, &c.held), c.want, "{} holding {}", c.field, c.held);
+    }
 }
 
 fn screen() -> Built {

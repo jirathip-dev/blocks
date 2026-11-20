@@ -5,6 +5,7 @@ use serde_json::Value;
 
 use crate::built::{children, Built};
 use crate::expr::{eval, text, Expr, Lit, Pattern, State};
+use crate::gesture::Word;
 use crate::kind::Check;
 
 /// What the state makes of a screen: hidden blocks and fields, disabled controls and acts, messages, bound values.
@@ -33,7 +34,7 @@ fn acts(o: &serde_json::Map<String, Value>) -> Vec<&Value> {
         .iter()
         .filter_map(|k| o.get(*k)?.as_array())
         .flatten()
-        .chain(o.get("button"))
+        .chain(std::iter::once("button").chain(Word::ALL).filter_map(|k| o.get(k)))
         .collect();
     let menus: Vec<&Value> = all.iter().filter_map(|a| a.get("menu")?.as_array()).flatten().collect();
     all.extend(menus);
@@ -52,6 +53,42 @@ fn bound(v: &Value) -> Option<&str> {
 fn fields(o: &serde_json::Map<String, Value>) -> impl Iterator<Item = (&str, &Value)> {
     let all = o.get("fields").and_then(Value::as_array).into_iter().flatten();
     all.filter_map(|f| Some((f.get("name")?.as_str()?, f)))
+}
+
+fn plain(s: &str) -> Option<f64> {
+    let t: String = s.chars().filter(|c| *c != ',' && !c.is_whitespace()).collect();
+    let body = t.strip_prefix(['+', '-']).unwrap_or(&t);
+    let (int, frac) = body.split_once('.').unwrap_or((body, ""));
+    let digits = |p: &str| p.chars().all(|c| c.is_ascii_digit());
+    (!(int.is_empty() && frac.is_empty()) && digits(int) && digits(frac)).then(|| t.parse().ok())?
+}
+
+pub(crate) fn calc(e: &Value, values: &Value) -> Value {
+    let Ok(e) = Expr::deserialize(e) else {
+        return Value::Null;
+    };
+    let lit = |v: &Value| match v {
+        Value::String(s) => plain(s)
+            .and_then(serde_json::Number::from_f64)
+            .map_or_else(|| Lit::Str(s.clone()), Lit::Num),
+        v => Lit::deserialize(v).unwrap_or_default(),
+    };
+    let state = values
+        .as_object()
+        .into_iter()
+        .flatten()
+        .map(|(k, v)| (k.clone(), lit(v)))
+        .collect();
+    serde_json::to_value(eval(&e, &state)).unwrap_or_default()
+}
+
+/// What `field` holding `held` puts in local state: null, a switch, a number or a string; a list puts its length, an empty one null.
+pub fn lit(_field: &Value, held: &Value) -> Lit {
+    match held.as_array().map(Vec::len) {
+        Some(0) => Lit::Null,
+        Some(n) => Lit::Num(n.into()),
+        None => Lit::deserialize(held).unwrap_or_default(),
+    }
 }
 
 /// The screen's start state: its `state`, each field's `value` and each chips' first `selected`.
@@ -77,8 +114,12 @@ pub(crate) fn at_start(v: &Value) -> View {
 fn seed(b: &Value, s: &mut State) {
     let Some(o) = b.as_object() else { return };
     for (name, f) in fields(o) {
-        let v = f.get("value").and_then(|v| serde_json::from_value(v.clone()).ok());
-        s.insert(name.into(), v.unwrap_or_default());
+        let one = f
+            .get("file")
+            .filter(|x| x.is_object())
+            .map(|x| Value::Array(vec![x.clone()]));
+        let held = f.get("value").or_else(|| f.get("files")).or(one.as_ref());
+        s.insert(name.into(), lit(f, held.unwrap_or(&Value::Null)));
     }
     if let (Some("chips"), Some(Value::String(name))) = (o.get("type").and_then(Value::as_str), o.get("name")) {
         let first = o.get("selected").and_then(Value::as_array).and_then(|a| a.first());

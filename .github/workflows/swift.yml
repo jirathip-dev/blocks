@@ -2,9 +2,9 @@ name: swift
 on:
   push:
     branches: [main, staging]
-    paths: ["Package.swift", "swift/**", "schema/sample.json", "fixtures/screens/**", "fixtures/blocks/**", "fixtures/trees/**", "fixtures/protocol/**", "fixtures/behave/**", "fixtures/sim/**", "fixtures/stress/**", ".github/workflows/swift.yml"]
+    paths: ["Package.swift", "swift/**", "schema/sample.json", "fixtures/screens/**", "fixtures/blocks/**", "fixtures/trees/**", "fixtures/protocol/**", "fixtures/behave/**", "fixtures/sim/**", "fixtures/stress/**", "fixtures/look/**", "fixtures/styles/**", "fixtures/guard/**", ".github/workflows/swift.yml", "web/lint.mjs", "ci/tokens/**", "ci/lint-fixtures/swift/**", "scripts/lint-fixtures.sh"]
   pull_request:
-    paths: ["Package.swift", "swift/**", "schema/sample.json", "fixtures/screens/**", "fixtures/blocks/**", "fixtures/trees/**", "fixtures/protocol/**", "fixtures/behave/**", "fixtures/sim/**", "fixtures/stress/**", ".github/workflows/swift.yml"]
+    paths: ["Package.swift", "swift/**", "schema/sample.json", "fixtures/screens/**", "fixtures/blocks/**", "fixtures/trees/**", "fixtures/protocol/**", "fixtures/behave/**", "fixtures/sim/**", "fixtures/stress/**", "fixtures/look/**", "fixtures/styles/**", "fixtures/guard/**", ".github/workflows/swift.yml", "web/lint.mjs", "ci/tokens/**", "ci/lint-fixtures/swift/**", "scripts/lint-fixtures.sh"]
 
 permissions:
   contents: read
@@ -14,6 +14,13 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: "the token lint on swift/Sources/BlocksUI against ci/tokens/baseline.txt, and its fixtures (each ci/lint-fixtures/swift/<name>.swift fails it; clean.swift passes)"
+        run: |
+          node --no-warnings web/lint.mjs swift/Sources/BlocksUI
+          scripts/lint-fixtures.sh swift
       - name: "the Swift package: op apply, the generated types, a render test per core kind"
         env:
           BLOCKS_STRICT: "1"
@@ -30,6 +37,16 @@ jobs:
               "$snap" --screen "$f" --size "$size" --expect "fixtures/trees/swift/$k.json" --check --out "shots/swift/$size/$k"
             done
           done
+      - name: "blocks-snap --plan on every fixtures/blocks file at 390 in one process: seen.json is empty"
+        env:
+          BLOCKS_STRICT: "1"
+        run: |
+          snap="$(swift build --show-bin-path)/blocks-snap"
+          for f in fixtures/blocks/*.json; do
+            jq -n --arg f "$f" '{name: ($f | ltrimstr("fixtures/blocks/") | rtrimstr(".json")), screen: $f, size: "390x844", css: [], scripts: [], kinds: [], steps: [], probes: true}'
+          done | jq -s '{out: "shots/plan", runs: .}' > plan.json
+          "$snap" --plan plan.json
+          jq -e 'length == 0' shots/plan/seen.json
       - name: "blocks-snap --check at 390 on every fixtures/stress variant: inside the width, over no sibling"
         env:
           BLOCKS_STRICT: "1"

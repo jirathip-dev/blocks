@@ -1,0 +1,13 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>load more: notifications</title>
+<link rel="stylesheet" href="../neutral-default/tokens.css"><link rel="stylesheet" href="../../../web/dist/blocks.css"><link rel="stylesheet" href="more.css"><link rel="stylesheet" href="page.css">
+<script src="../table/table.js"></script><script src="data.js"></script><script src="more.js"></script></head>
+<body><div class="vp" id="vp"><main class="scr room">
+<div class="tile"><div class="tabh"><span class="tw">Acme · notifications</span><button type="button"><span>mark all read</span></button></div></div>
+<div id="l"></div>
+</main></div>
+<script>
+document.getElementById("l").replaceWith(moreList(Array.from({ length: 50 }, (_, i) => note(i)), { wait: "failed" }));
+document.body.append(failToast("Couldn’t reach the server. Check the connection and try again.", true));
+scrolled(document.getElementById("vp"), innerWidth < 600 ? 844 : 800);
+</script></body></html>

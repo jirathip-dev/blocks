@@ -4,8 +4,8 @@ import BlocksUI
 import Foundation
 
 let usage =
-    "usage: blocks-snap --screen <file> [--size 390x844] [--scheme light|dark] [--script <steps.json>]"
-    + " [--expect <tree.json>] [--ids <ids.json>] [--check] --out <dir>\n"
+    "usage: blocks-snap --plan <plan.json> | --screen <file> [--size 390x844] [--scheme light|dark] [--script <steps.json>]"
+    + " [--expect <tree.json>] [--ids <ids.json>] [--check] [--measure] --out <dir>\n"
 
 func fail(_ text: String, _ code: Int32) -> Never {
     FileHandle.standardError.write(Data(text.utf8))
@@ -14,20 +14,19 @@ func fail(_ text: String, _ code: Int32) -> Never {
 
 var options: [String: String] = [:]
 var check = false
+var measure = false
 var args = CommandLine.arguments.dropFirst()
 while let arg = args.popFirst() {
     if arg == "--check" {
         check = true
+    } else if arg == "--measure" {
+        measure = true
     } else if arg.hasPrefix("--"), let value = args.popFirst() {
         options[String(arg.dropFirst(2))] = value
     } else {
         fail(usage, 2)
     }
 }
-guard let screenFile = options["screen"], let out = options["out"] else { fail(usage, 2) }
-let sides = (options["size"] ?? "390x844").split(separator: "x").compactMap { Double($0) }
-guard sides.count == 2 else { fail(usage, 2) }
-
 func read<T: Decodable>(_ type: T.Type, _ path: String) -> T {
     do {
         return try JSONDecoder().decode(type, from: Data(contentsOf: URL(fileURLWithPath: path)))
@@ -35,6 +34,14 @@ func read<T: Decodable>(_ type: T.Type, _ path: String) -> T {
         fail("blocks-snap: \(path): \(error)\n", 2)
     }
 }
+
+if let plan = options["plan"] {
+    do { try Snapshot.plan(read(Plan.self, plan)) } catch { fail("blocks-snap --plan: \(error)\n", 2) }
+    exit(0)
+}
+guard let screenFile = options["screen"], let out = options["out"] else { fail(usage, 2) }
+let sides = (options["size"] ?? "390x844").split(separator: "x").compactMap { Double($0) }
+guard sides.count == 2 else { fail(usage, 2) }
 
 var look = Look(still: true)
 if let name = options["scheme"] {
@@ -49,16 +56,8 @@ do {
         options["script"].map { read([Step].self, $0) } ?? [],
         name: URL(fileURLWithPath: screenFile).deletingPathExtension().lastPathComponent,
         expect: options["expect"].map { read(TreeNode.self, $0) }, ids: options["ids"].map { read(DrawnIdList.self, $0) },
-        check: check)
-    let dir = URL(fileURLWithPath: out)
-    try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
-    let json = JSONEncoder()
-    json.outputFormatting = [.prettyPrinted, .sortedKeys]
-    for name in run.report.shots {
-        try run.pngs[name]?.write(to: dir.appendingPathComponent("\(name).png"))
-        try json.encode(run.trees[name]).write(to: dir.appendingPathComponent("\(name).tree.json"))
-    }
-    try json.encode(run.report).write(to: dir.appendingPathComponent("report.json"))
+        check: check, measure: measure)
+    try run.save(to: URL(fileURLWithPath: out))
     for fault in run.faults { FileHandle.standardError.write(Data("\(fault)\n".utf8)) }
     exit(run.faults.isEmpty ? 0 : 1)
 } catch {

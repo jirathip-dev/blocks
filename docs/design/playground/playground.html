@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>playground · blocks</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="../../../web/dist/blocks.css">
+<link rel="stylesheet" href="site.css">
+<link rel="stylesheet" href="playground.css">
+</head>
+<body>
+<main>
+<div class="scr b b-screen" data-block="screen" data-id="playground" role="group" aria-label="playground">
+<p class="tabh"><span class="tw b-screen__title">playground</span></p>
+<section class="sec b b-section" data-block="section" data-id="site-top" role="region" aria-label="site-top"><nav class="nav b b-nav" data-block="nav" data-id="site-nav" role="navigation" aria-label="site-nav"><a class="brand" href="index.html">blocks</a><a href="gallery.html">gallery</a><a href="styles.html">styles</a><a href="numbers.html">numbers</a><a href="behaviours.html">behaviours</a><a href="islands.html">islands</a><a href="layout.html">layout</a><a href="playground.html" aria-current="page">playground</a><a href="https://github.com/jirathip-dev/blocks">github</a></nav><section class="sec b b-section" data-block="section" data-id="looks" role="region" aria-label="look"><h3 class="sh ">look</h3><button class="b b-button" data-block="button" data-id="look-default" type="button" data-sheet="look:default" role="button" aria-label="Default"><span>Default</span></button><button class="b b-button" data-block="button" data-id="look-paper" type="button" data-sheet="look:paper" role="button" aria-label="Paper"><span>Paper</span></button><button class="b b-button" data-block="button" data-id="look-console" type="button" data-sheet="look:console" role="button" aria-label="Console"><span>Console</span></button><button class="b b-button" data-block="button" data-id="look-playful" type="button" data-sheet="look:playful" role="button" aria-label="Playful"><span>Playful</span></button></section></section>
+<div class="txt b b-text" data-block="text" data-id="about" role="group" aria-label="about">Edit a screen's JSON and blocks.js draws it in the preview, in your browser: nothing is sent or stored. Start from any sample on the site. <b>share</b> puts the screen in the link itself.</div>
+<section class="sec b b-section" data-block="section" data-id="start" role="region" aria-label="Start from"><h3 class="sh">Start from</h3><div id="pick"></div></section>
+<section class="sec b b-section" data-block="section" data-id="pair-play" role="region" aria-label="pair-play" id="play"></section>
+<noscript><div class="txt b b-text">The playground needs JavaScript. The <a href="gallery.html">gallery</a> shows every sample drawn, with its Rust and its JSON.</div></noscript>
+<div class="txt b b-text" data-block="text" data-id="foot" role="group" aria-label="foot">Every page here is a blocks <code>Screen</code>, written by <code>site::page</code>: no hand-written HTML. Source: <a href="https://github.com/jirathip-dev/blocks">https://github.com/jirathip-dev/blocks</a></div>
+</div>
+</main>
+<script type="module">
+import { picker, playground, settled } from "./page.js";
+const q = new URLSearchParams(location.search);
+const p = playground({ sample: q.get("k") ?? "steps", tab: q.get("tab") ?? "json", rows: Number(q.get("rows") ?? 28), view: q.get("w") ? { width: Number(q.get("w")) } : {} });
+document.getElementById("pick").replaceWith(picker(q.get("k") ?? "steps", (n) => p.pick(n)));
+document.getElementById("play").append(p.edit, p.prev);
+await p.ready; await settled();
+document.body.dataset.h = String(document.documentElement.scrollHeight);
+document.querySelector("main").dataset.h = document.body.dataset.h;
+</script>
+</body>
+</html>

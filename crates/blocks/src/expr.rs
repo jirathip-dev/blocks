@@ -55,6 +55,8 @@ pub enum Expr {
     Is(Box<Match>),
     Add(Box<[Expr; 2]>),
     Sub(Box<[Expr; 2]>),
+    Mul(Box<[Expr; 2]>),
+    Div(Box<[Expr; 2]>),
     Cat(Vec<Expr>),
     Pick(Box<[Expr; 3]>),
     #[serde(untagged)]
@@ -78,7 +80,9 @@ impl Expr {
             Self::Lit(_) | Self::Get(_) => true,
             Self::Not(x) | Self::Len(x) => x.known(),
             Self::All(xs) | Self::Any(xs) | Self::Cat(xs) => all(xs),
-            Self::Eq(p) | Self::Lt(p) | Self::Has(p) | Self::Add(p) | Self::Sub(p) => all(&**p),
+            Self::Eq(p) | Self::Lt(p) | Self::Has(p) | Self::Add(p) | Self::Sub(p) | Self::Mul(p) | Self::Div(p) => {
+                all(&**p)
+            }
             Self::Is(m) => !matches!(m.pattern, Pattern::Other(_)) && m.value.known(),
             Self::Pick(p) => all(&**p),
             Self::Unknown(_) => false,
@@ -198,6 +202,8 @@ pub fn eval(e: &Expr, state: &State) -> Lit {
         Expr::Is(m) => is(&of(&m.value), &m.pattern),
         Expr::Add(p) => nums(p).map_or(Lit::Null, |(a, b)| num(a + b)),
         Expr::Sub(p) => nums(p).map_or(Lit::Null, |(a, b)| num(a - b)),
+        Expr::Mul(p) => nums(p).map_or(Lit::Null, |(a, b)| num(a * b)),
+        Expr::Div(p) => nums(p).map_or(Lit::Null, |(a, b)| num(a / b)),
         Expr::Cat(xs) => Lit::Str(xs.iter().map(|x| text(&of(x))).collect()),
         Expr::Pick(p) => {
             let [c, a, b] = &**p;

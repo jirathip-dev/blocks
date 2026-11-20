@@ -1,8 +1,15 @@
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
+import { buildSync } from "esbuild";
 import { webkit } from "playwright";
+import { native } from "../src/gen/kinds.ts";
+import { native as drawn } from "../react/src/view.ts";
 import { defaultPair } from "../src/gen/schemes.ts";
 import { tiles, css as wear } from "../src/theme.ts";
-import { expect as differ } from "../src/tree.ts";
+import { tree } from "../src/core/tree.ts";
+import { at, blocks } from "./at.ts";
+import { leaks, pick } from "./file.ts";
+import { gesture } from "./gesture.ts";
+import { declared, measure } from "./look.ts";
 
 const BASE = "http://blocks.test/";
 const BUDGET_MS = 16.7;
@@ -11,32 +18,44 @@ const LOOK = `${tiles}${wear(defaultPair.light)}@media (prefers-color-scheme: da
 const ECHO = `customElements.define("x-echo", class extends HTMLElement {
   set props(p) { this.textContent = JSON.stringify(p); this.dispatchEvent(new CustomEvent("blocks-event", { bubbles: true, detail: { name: "echo", values: p } })); }
 });`;
-const PAGE = (css) =>
+const CHECKED = ["render/tree", "render/no-size", "render/overflow", "render/overlap", "render/no-name"];
+const PROBES = await Promise.all(readdirSync(new URL("./probe/", import.meta.url)).sort().map((f) => import(`./probe/${f}`)));
+let bundled;
+/// The React boot (`shot/react.ts`) as one script that sets `window.R`, built once.
+export const reactJs = () => (bundled ??= buildSync({ entryPoints: [new URL("./react.ts", import.meta.url).pathname], bundle: true, format: "iife", globalName: "R", write: false, define: { "process.env.NODE_ENV": '"production"' } }).outputFiles[0].text);
+const PAGE = (css, scripts, adapter) =>
   `<!doctype html><meta charset=utf-8><link rel=stylesheet href=blocks.css><link rel=stylesheet href=look.css>${css.map((_, i) => `<link rel=stylesheet href=css/${i}>`).join("")}` +
-  `<body><div id=root></div><script type=module>import * as B from "./blocks.js"; window.B = B;</script><script>${ECHO}</script>`;
+  `<body><div id=root></div><script type=module>import * as B from "./blocks.js"; window.B = B;</script><script>${ECHO}${at}</script>${scripts.map((_, i) => `<script src=js/${i}></script>`).join("")}${adapter === "react" ? "<script src=react.js></script>" : ""}`;
+
+/// What the `css/` probes see in the stylesheet `file`, as `Seen`s.
+export const sheets = (file) => PROBES.filter((p) => p.sheet).flatMap((p) => p.sheet(readFileSync(file, "utf8")).map((s) => ({ rule: p.rule, at: "", file, ...s })));
 
 function boot(screen) {
   const B = window.B;
   const root = document.getElementById("root");
-  const h = { model: screen, sent: [], dropped: [] };
+  const h = { model: screen, sent: [], dropped: [], files: [] };
+  const file = (_, a) => (h.files.push(a.name), h.handler === "fails" ? Promise.reject(new Error("refused")) : h.handler === "waits" ? new Promise(() => {}) : Promise.resolve({ id: `file-${h.files.length}`, name: a.name }));
   const ctx = {
-    screen: String(screen.id ?? ""),
-    act: async (a) => (h.sent.push({ screen: ctx.screen, action: a.action, block: a.block ?? null, values: a.values ?? null }), true),
+    file, screen: String(screen.id ?? ""),
+    act: async (a) => (h.sent.push({ screen: ctx.screen, action: a.action, block: a.block ?? null, values: a.values ?? null }), h.hold ? new Promise((done) => (h.wait = done)) : true),
     tap: (t) => typeof t?.action === "string" && ctx.act({ action: t.action, values: t.values }),
     open: new Set(),
     theme: B.plain,
     store: { get: () => null, put: () => {} },
     drop: (what) => h.dropped.push(what),
+    apps: window.blocksApps,
+    held: new Map(),
   };
-  const sync = B.behave(root, () => h.model);
-  h.paint = () => (root.replaceChildren(...[B.render(h.model, ctx)].filter(Boolean)), sync());
+  const R = window.R, out = { sent: (a) => (h.sent.push(a), h.hold ? new Promise((done) => (h.wait = done)) : true), dropped: (w) => h.dropped.push(w), file };
+  const sync = R ? () => {} : B.behave(root, () => h.model);
+  h.paint = R ? () => (h.react ? h.react.set(h.model) : (h.react = R.boot(root, h.model, out))) : () => (root.replaceChildren(...[B.render(h.model, ctx)].filter(Boolean)), sync());
   h.ops = (ops) => ((h.model = (ops?.length && B.apply(h.model, ops)) || h.model), h.paint());
   h.patch = [];
   const p = B.patcher({ root, draw: (b) => B.render(b, ctx), model: () => ((h.t = performance.now()), h.model), saved: () => (sync(), h.patch.push(performance.now() - h.t)) });
   h.frame = (f) => {
     const next = f.screen ?? (f.ops?.length && B.apply(h.model, f.ops));
     if (next) h.model = next;
-    if (f.screen) h.paint();
+    if (f.screen || R) h.paint();
     else if (next) p.queue(f.ops);
   };
   h.meter = () => {
@@ -92,53 +111,30 @@ function boot(screen) {
   return new Promise((done) => requestAnimationFrame(() => requestAnimationFrame(() => done(performance.now() - t0))));
 }
 
-const who = (n) => `${n.kind}${n.id ? `#${n.id}` : ""}`;
-
-function fit(n, width, at, out) {
-  const here = `${at}/${who(n)}`;
-  const [x, , w, h] = n.rect ?? [0, 0, 0, 0];
-  if (n.drawn !== "hidden" && !(w > 0 && h > 0)) out.push(`${here}: has no size`);
-  if (x < -0.5 || x + w > width + 0.5) out.push(`${here}: leaves the screen's width`);
-  const kids = n.children.filter((c) => c.drawn !== "hidden");
-  const over = (a, b) => Math.min(a[0] + a[2], b[0] + b[2]) - Math.max(a[0], b[0]) > 0.5 && Math.min(a[1] + a[3], b[1] + b[3]) - Math.max(a[1], b[1]) > 0.5;
-  kids.forEach((a, i) => kids.slice(i + 1).forEach((b) => over(a.rect, b.rect) && out.push(`${here}: ${who(a)} overlaps ${who(b)}`)));
-  kids.forEach((c) => fit(c, width, here, out));
-}
-
-function named(n, at, out) {
-  const here = `${at}/${who(n)}`;
-  if (!n.role) out.push(`${here}: has no role`);
-  if (!n.name) out.push(`${here}: has no name`);
-  n.children.forEach((c) => named(c, here, out));
-}
-
-const UNNAMED = () => {
-  const said = (e) => e.getAttribute("aria-label") || e.labels?.length || e.getAttribute("placeholder") || e.textContent.trim() || e.querySelector("img[alt]:not([alt=''])");
-  const ok = (e) => (e.matches("img") ? e.hasAttribute("alt") : e.matches("svg") ? e.matches("[role=img][aria-label]") : said(e));
-  return Array.from(document.querySelectorAll("#root :is(button, a[href], input, textarea, select, [role=button], [role=switch], [tabindex], img, svg)"))
-    .filter((e) => !e.closest("[hidden], [aria-hidden=true]") && !ok(e))
-    .map((e) => `${e.closest("[data-block]")?.dataset.block ?? "root"}: an unnamed ${e.matches("img, svg") ? "image" : e.tagName.toLowerCase()}`);
-};
-
-/// Draws `screen` in WebKit, runs `steps`, and gives each shot's PNG and tree, the report and the failed checks.
-export async function shot({ screen, steps = [], name = "shot", size = "390x844", css = [], expect, ids, check = false, browser }) {
+/// Draws `screen` in WebKit in `scheme`, runs `steps`, and gives each shot's PNG and tree, the report, what the probes saw and the failed checks.
+export async function shot({ screen, steps = [], name = "shot", size = "390x844", css = [], scripts = [], kinds = [], expect, ids, check = false, probes = false, scheme = "light", look = false, adapter = "html", browser }) {
   const [width, height] = size.split("x").map(Number);
   const own = browser ?? (await webkit.launch());
-  const page = await own.newPage({ viewport: { width, height } });
+  const page = await own.newPage({ viewport: { width, height }, colorScheme: scheme });
   try {
     await page.route("**/*", (r) => {
       const p = r.request().url().slice(BASE.length);
       if (!r.request().url().startsWith(BASE)) return r.abort();
-      if (p === "") return r.fulfill({ body: PAGE(css), contentType: "text/html" });
+      if (p === "") return r.fulfill({ body: PAGE(css, scripts, adapter), contentType: "text/html" });
+      if (p.startsWith("js/")) return r.fulfill({ body: readFileSync(scripts[Number(p.slice(3))]), contentType: "text/javascript" });
+      if (p === "react.js") return r.fulfill({ body: reactJs(), contentType: "text/javascript" });
       if (p === "look.css") return r.fulfill({ body: LOOK, contentType: "text/css" });
       if (p.startsWith("css/")) return r.fulfill({ body: readFileSync(css[Number(p.slice(4))]), contentType: "text/css" });
-      if (p === "blocks.js" || p === "blocks.css") return r.fulfill({ body: dist(p), contentType: p.endsWith(".css") ? "text/css" : "text/javascript" });
+      if (p === "blocks.js" || p === "import.js" || p === "scan.js" || p === "blocks.css") return r.fulfill({ body: dist(p), contentType: p.endsWith(".css") ? "text/css" : "text/javascript" });
       return r.fulfill({ status: 404 });
     });
+    const logged = [];
+    if (probes || check) page.on("pageerror", (e) => logged.push(e.message));
+    if (probes || check) page.on("console", (m) => m.type() === "error" && !m.text().startsWith("Failed to load resource") && logged.push(m.text()));
     await page.goto(BASE);
     await page.waitForFunction(() => window.B);
     const report = { shots: [], sent: [], dropped: [], timings: { first_paint_ms: await page.evaluate(boot, screen), steps_ms: [] } };
-    const pngs = {}, trees = {}, faults = [], frames = [];
+    const pngs = {}, trees = {}, seen = [], faults = [], frames = [];
     const script = steps.some((s) => s.shot) ? steps : [...steps, { shot: { name } }];
     for (let i = 0; i < script.length; i++) {
       const s = script[i];
@@ -158,21 +154,24 @@ export async function shot({ screen, steps = [], name = "shot", size = "390x844"
         return (await t.count()) ? t : on(id);
       };
       const live = async (t) => (await t.isVisible()) && (await t.isEnabled());
-      const tap = s.tap && (await hit(s.tap.id, "self::button or self::a or @role='button'"));
+      const tap = s.tap && ((await on(s.tap.id).locator("[data-submit]").count()) ? on(s.tap.id).locator("[data-submit]").first() : await hit(s.tap.id, "self::button or self::a or @role='button'"));
       const type = s.type && (await hit(s.type.id, "self::input or self::textarea"));
       if (tap) await ((await live(tap)) ? tap.click() : report.dropped.push(`tap ${s.tap.id}`));
       if (type) await ((await live(type)) ? type.fill(s.type.text) : report.dropped.push(`type ${s.type.id}`));
       if (s.scroll) frames.push(...(await page.evaluate((id) => window.h.scroll(id), s.scroll.id)));
-      if (s.answer) await page.evaluate((ops) => window.h.ops(ops), s.answer.ops ?? []);
+      if (s.answer) await page.evaluate((ops) => (window.h.ops(ops), window.h.wait?.(true)), s.answer.ops ?? []);
+      await (s.gesture || s.refuse ? gesture(page, s) : s.file ? pick(page, s.file, report.dropped) : null);
       if (s.shot) {
         const n = s.shot.name;
         pngs[n] = await page.screenshot();
         trees[n] = await page.evaluate(() => window.h.dump());
         report.shots.push(n);
-        if (check && expect) differ(trees[n], expect, n, faults);
-        if (check && trees[n]) fit(trees[n], width, n, faults);
-        if (check && trees[n]) named(trees[n], n, faults);
-        if (check) faults.push(...(await page.evaluate(UNNAMED)).map((f) => `${n}: ${f}`));
+        const f = await page.evaluate(() => (document.activeElement instanceof HTMLInputElement ? `${document.activeElement.name}@${document.activeElement.selectionStart}` : ""));
+        if (f) (report.focus ??= {})[n] = f;
+        const want = expect ?? (probes ? tree(await page.evaluate(() => window.h.model), [...(adapter === "react" ? drawn : native), ...kinds]) : undefined);
+        const cx = { page, width, logged, tree: trees[n], want, blocks: trees[n] ? blocks(trees[n]) : [] };
+        for (const p of PROBES.filter((p) => p.shot && (probes || (check && CHECKED.includes(p.rule))))) seen.push(...(await p.shot(cx)).map((s) => ({ rule: p.rule, shot: n, ...s })));
+        if (check && look) faults.push(...measure(pngs[n], trees[n], defaultPair[scheme].tokens, await declared(page)).map((f) => `${n}: ${f}`));
         const drew = ids && (await page.evaluate(() => window.h.ids()));
         if (check && ids && JSON.stringify(drew) !== JSON.stringify(ids)) faults.push(`${n}: drew ids ${JSON.stringify(drew)}, expected ${JSON.stringify(ids)}`);
       }
@@ -186,7 +185,8 @@ export async function shot({ screen, steps = [], name = "shot", size = "390x844"
     }
     const patch = await page.evaluate(() => window.h.patch);
     if (patch.length) report.timings.longest_patch_ms = Math.max(...patch);
-    return { report, pngs, trees, faults };
+    faults.unshift(...seen.map((s) => `${s.shot}: ${s.rule} ${s.at}: ${s.detail}`), ...leaks(report.sent));
+    return { report, pngs, trees, seen, faults };
   } finally {
     await page.close();
     if (!browser) await own.close();

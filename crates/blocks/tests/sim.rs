@@ -200,9 +200,10 @@ fn expr(rng: &mut Rng, depth: usize) -> Expr {
         Pattern::Number,
         Pattern::Other("zip".into()),
     ];
-    match rng.below(15) {
+    match rng.below(16) {
         0 => Expr::Get(key(rng)),
         1 => Expr::Not(Box::new(e(rng))),
+        2 => Expr::Mul(Box::new([e(rng), e(rng)])),
         3 => Expr::All((0..rng.below(4)).map(|_| e(rng)).collect()),
         4 => Expr::Any((0..rng.below(4)).map(|_| e(rng)).collect()),
         5 => Expr::Eq(Box::new([e(rng), e(rng)])),
@@ -217,6 +218,7 @@ fn expr(rng: &mut Rng, depth: usize) -> Expr {
         11 => Expr::Sub(Box::new([e(rng), e(rng)])),
         12 => Expr::Cat((0..rng.below(4)).map(|_| e(rng)).collect()),
         13 => Expr::Pick(Box::new([e(rng), e(rng), e(rng)])),
+        15 => Expr::Div(Box::new([e(rng), e(rng)])),
         14 => Expr::Unknown(serde_json::Map::from_iter([(
             "fold".into(),
             serde_json::Value::from(1),
@@ -232,7 +234,11 @@ fn exprs(seed: u64) -> Result<Vec<Value>, String> {
     for _ in 0..50 {
         let depth = 1 + rng.below(6);
         let e = expr(&mut rng, depth);
-        cases.push(json!({"state": state, "expr": e, "want": eval(&e, &state)}));
+        let want = eval(&e, &state);
+        let read = serde_json::from_str::<Lit>(&serde_json::to_string(&want).unwrap()).unwrap();
+        if read == want {
+            cases.push(json!({"state": state, "expr": e, "want": want}));
+        }
         let back: Expr = serde_json::from_value(serde_json::to_value(&e).unwrap()).map_err(|x| x.to_string())?;
         if back != e {
             return Err(format!("{e:?} does not read back as itself"));

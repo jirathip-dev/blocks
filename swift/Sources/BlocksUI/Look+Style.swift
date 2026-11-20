@@ -5,6 +5,7 @@ extension Look {
     internal var type: TypeDesign { style.type }
     internal var glass: Bool { style.surface == .glass }
     internal var outline: Bool { style.fills == .outline }
+    internal var solid: Bool { style.fills == .solid }
     internal var textMarks: Bool { style.marks == .text }
     internal var quiet: Bool { style.sections == .quiet }
     internal var square: Bool { tiles.map { $0.radius == 0 } ?? (style.radius == 0) }
@@ -18,9 +19,20 @@ extension Look {
     }
 }
 
+internal enum Scale {
+    static let title: CGFloat = 15
+    static let cell: CGFloat = 14
+    static let meta: CGFloat = 12
+    static let count: CGFloat = 11
+    static let glyph: CGFloat = 16
+    static let gap: CGFloat = 6
+    static let pad: CGFloat = 4
+    static let mark: CGFloat = 3
+}
+
 extension View {
     internal func ui(_ size: CGFloat, _ weight: Font.Weight = .regular, _ look: Look) -> some View {
-        font(.system(size: size, weight: weight, design: look.type == .mono ? .monospaced : .default))
+        font(.system(size: size, weight: weight, design: look.type == .mono ? .monospaced : look.type == .serif ? .serif : .default))
     }
 
     internal func surface(_ look: Look, radius: CGFloat = 22, interactive: Bool = false) -> some View {

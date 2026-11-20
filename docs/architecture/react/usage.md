@@ -1,6 +1,6 @@
 # Usage: how the callers read
 
-A synergy route end to end, then a second adapter. Every name here is specified in `shapes.md`.
+A client app route end to end, then a second adapter. Every name here is specified in `shapes.md`.
 
 ## 1. The pin and the stylesheet
 
@@ -160,7 +160,7 @@ export function RouteMap({ props, emit }: IslandProps) {
 // apps/delivery/src/brand.ts
 import { gated } from "@jirathip-dev/blocks";
 
-export const brand = gated({ light: { label: "Synergy", "color-scheme": "light", tokens: { "--bg": "#ffffff" /* the 19 tokens */ } }, dark: synergyDark });
+export const brand = gated({ light: { label: "Acme", "color-scheme": "light", tokens: { "--bg": "#ffffff" /* the 19 tokens */ } }, dark: acmeDark });
 ```
 
 `gated` throws when the module loads, listing every contrast miss, so a failing brand fails the dev server's start

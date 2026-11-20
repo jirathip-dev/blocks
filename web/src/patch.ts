@@ -7,18 +7,18 @@ type Spot = { list: unknown[]; at: number } | "root";
 export type Draw = (block: Block) => HTMLElement | null;
 
 const walked = ["blocks", "rows", "buttons", "rounds"];
-const hosts: Record<string, string> = { screen: "blocks", sheet: "blocks", section: "blocks", card: "blocks", list: "rows", scene: "lanes", row: "rounds" };
+const hosts: Record<string, string> = { screen: "blocks", sheet: "blocks", section: "blocks", card: "blocks", list: "rows", scene: "lanes", row: "rounds", table: "rows" };
 const isRec = (v: unknown): v is Rec => typeof v === "object" && v !== null && !Array.isArray(v);
 
 function locate(node: Rec, id: string): Spot | undefined {
-  if (node.id === id) return "root";
+  if (node["id"] === id) return "root";
   for (const key of walked) {
     const list = node[key];
     if (!Array.isArray(list)) continue;
     for (let at = 0; at < list.length; at++) {
       const x: unknown = list[at];
       if (!isRec(x)) continue;
-      if (x.id === id) return { list, at };
+      if (x["id"] === id) return { list, at };
       const deeper = locate(x, id);
       if (deeper && deeper !== "root") return deeper;
     }
@@ -34,11 +34,11 @@ function get(root: Rec, id: string): Rec | undefined {
 
 function place(root: Rec, into: string, child: unknown, before?: string | null, after?: string | null): boolean {
   const host = get(root, into);
-  const key = host && typeof host.type === "string" ? hosts[host.type] : undefined;
+  const key = host && typeof host["type"] === "string" ? hosts[host["type"]] : undefined;
   if (!host || !key) return false;
   const list = host[key] ?? (host[key] = []);
   if (!Array.isArray(list)) return false;
-  const find = (id?: string | null) => (id ? list.findIndex((x) => isRec(x) && x.id === id) : -1);
+  const find = (id?: string | null) => (id ? list.findIndex((x) => isRec(x) && x["id"] === id) : -1);
   const b = find(before);
   const a = find(after);
   list.splice(b >= 0 ? b : a >= 0 ? a + 1 : list.length, 0, child);
@@ -80,10 +80,10 @@ export function apply(screen: Block, ops: Op[]): Block | undefined {
         out = structuredClone(op.screen);
         break;
       case "badge":
-      case "dot":
+        if (root["type"] === "screen") root["badge"] = op.count;
         break;
       default:
-        return undefined;
+        if (op.op !== "dot") return undefined;
     }
   }
   return out;
@@ -118,11 +118,14 @@ function one(v: View, op: Op, model: Block): void {
     if (n) el.replaceWith(n);
     else el.remove();
   };
+  const at = "id" in op ? node(v.root, op.id) : undefined;
+  const host = at && !at.hasAttribute("data-block") ? at.parentElement?.closest<HTMLElement>("[data-block][data-id]")?.dataset["id"] : undefined;
+  if (host && op.op !== "move") return redraw(host);
   switch (op.op) {
     case "merge": {
       const el = node(v.root, op.id);
       if (el?.getAttribute("data-block") !== "island" || Object.keys(op.fields).some((k) => k !== "props")) return redraw(op.id);
-      return void Reflect.set(el, "props", get(model, op.id)?.props ?? {});
+      return void Reflect.set(el, "props", get(model, op.id)?.["props"] ?? {});
     }
     case "replace":
       return redraw(op.id);
@@ -150,8 +153,17 @@ function one(v: View, op: Op, model: Block): void {
 }
 
 function isBlock(r: Rec): r is Rec & Block {
-  return typeof r.type === "string";
+  return typeof r["type"] === "string";
 }
+
+type Kept = { form: string; name: string; value: string; from: number | null; to: number | null };
+const kept = (root: HTMLElement, a = globalThis.document?.activeElement): Kept | undefined => {
+  const i = a && a instanceof HTMLInputElement && root.contains(a) ? a : undefined;
+  const form = i?.closest<HTMLElement>(".form[data-id]")?.dataset["id"];
+  return i && form ? { form, name: i.name, value: i.value, from: i.selectionStart, to: i.selectionEnd } : undefined;
+};
+const refocus = (root: HTMLElement, k: Kept, i = root.querySelector(`.form[data-id="${CSS.escape(k.form)}"] [name="${CSS.escape(k.name)}"]`)) =>
+  i instanceof HTMLInputElement && i !== document.activeElement && ((i.value = k.value), i.focus(), k.from === null || i.setSelectionRange(k.from, k.to));
 
 /// Patches the view in `root` with every op queued within one animation frame, in one pass; over 500 it redraws.
 export function patcher(o: { root: HTMLElement; model: () => Block; draw: Draw; saved?: () => void }) {
@@ -161,11 +173,11 @@ export function patcher(o: { root: HTMLElement; model: () => Block; draw: Draw; 
   const run = (): void => {
     due = false;
     if (!ops.length && !over) return;
-    const model = o.model();
-    const todo = ops;
+    const [model, todo, k] = [o.model(), ops, kept(o.root)];
     ops = [];
     if (over) whole(o, model);
     else for (const op of todo) one(o, op, model);
+    if (k) refocus(o.root, k);
     over = false;
     o.saved?.();
   };

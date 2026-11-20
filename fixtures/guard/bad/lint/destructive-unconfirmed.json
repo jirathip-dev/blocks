@@ -1,0 +1,14 @@
+{
+  "type": "screen",
+  "id": "s",
+  "title": "Queue",
+  "blocks": [
+    {
+      "type": "button",
+      "id": "rm",
+      "label": "Remove fleet",
+      "action": "remove",
+      "style": "destructive"
+    }
+  ]
+}

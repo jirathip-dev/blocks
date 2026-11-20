@@ -51,7 +51,8 @@ extension Look {
 }
 
 extension Palette {
-    internal func token(_ name: String) -> Color {
+    /// The colour a tile token such as `--edge` names.
+    public func token(_ name: String) -> Color {
         switch name {
         case "--line": line
         case "--mute": mute
@@ -140,4 +141,9 @@ internal struct Settles: ViewModifier {
                 Task { @MainActor in late = false }
             }
     }
+}
+
+extension View {
+    /// Draws the BlocksUI views below in `look`; an app with its own `look` entry sets BlocksUI's with this.
+    public func blocksLook(_ look: Look) -> some View { environment(\.look, look) }
 }

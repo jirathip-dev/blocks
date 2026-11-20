@@ -6,8 +6,11 @@ use super::model::{camel, defs, Case, Def, Out, Prop, Ty};
 use super::Files;
 use crate::{layout, theme, SCHEMA_VERSION};
 
-pub(super) fn files(_: &Path, s: &Value) -> std::io::Result<Files> {
-    Ok(vec![
+mod kinds;
+
+pub(super) fn files(root: &Path, s: &Value) -> std::io::Result<Files> {
+    let mut out = kinds::files(root)?;
+    out.extend([
         (
             "swift/Sources/Blocks/Gen/Blocks.swift".into(),
             swift(s).map_err(std::io::Error::other)?,
@@ -20,7 +23,8 @@ pub(super) fn files(_: &Path, s: &Value) -> std::io::Result<Files> {
             "swift/Sources/Blocks/Gen/LayoutShapes.swift".into(),
             layout_swift().map_err(std::io::Error::other)?,
         ),
-    ])
+    ]);
+    Ok(out)
 }
 
 impl Ty<'_> {
@@ -288,6 +292,6 @@ fn style_swift() -> Out {
 }
 
 fn layout_swift() -> Out {
-    let place = swift_defs(&schemars::schema_for!(layout::Place).to_value())?;
+    let place = swift_defs(&schemars::schema_for!(layout::Edit).to_value())?;
     Ok(place + &swift_defs(&schemars::schema_for!(layout::Transition).to_value())?)
 }

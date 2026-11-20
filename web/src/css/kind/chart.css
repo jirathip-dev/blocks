@@ -1,0 +1,50 @@
+.chart{container-type:inline-size;padding:var(--s2) var(--s3) var(--s3)}
+.chart .cht{font-weight:600}
+.chl{display:flex;flex-wrap:wrap;align-items:baseline;gap:var(--s1) var(--s4);margin:var(--s1) 0 var(--s2);font-size:var(--fs-meta);color:var(--mute)}
+.chl .chx{color:var(--fg);font-weight:600}
+.chl span{display:inline-flex;align-items:baseline;gap:var(--s1);min-width:0}
+.chl b{color:var(--fg);font-weight:600;font-variant-numeric:tabular-nums}
+.chk{width:8px;height:8px;flex:none;align-self:center;background:var(--k)}
+.chk.chkl{width:12px;height:2px}.chk.chkd{background:repeating-linear-gradient(90deg,var(--k) 0 3px,transparent 3px 5px)}
+:where(.chart) .chg{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:var(--s2)}
+.chy{position:relative;width:40px;height:var(--chh,180px);font-size:var(--fs-meta);color:var(--mute);text-align:right;font-variant-numeric:tabular-nums}
+.chy span{position:absolute;right:0;transform:translateY(-50%);white-space:nowrap}
+.chp{position:relative;height:var(--chh,180px)}
+.chp svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.chp .grid{stroke:var(--line);stroke-width:1}.chp .base{stroke:var(--edge);stroke-width:1}
+.chp line,.chp path{vector-effect:non-scaling-stroke;fill:none}
+.chp path.s{stroke:var(--k);stroke-width:2;stroke-linejoin:round}.chp path.s.dash{stroke-dasharray:4 3}
+.chp rect.s{fill:var(--k)}
+.chb{position:absolute;top:0;bottom:0;background:var(--line)}
+.chc{position:absolute;top:0;bottom:0;height:auto;padding:0;border:0;background:none;border-radius:0;min-height:0;cursor:pointer}
+.chc::after,.chc::before,.chr::before,.chr::after{content:none}
+.chc:hover::before{content:"";position:absolute;top:0;bottom:0;left:50%;border-left:1px solid var(--edge)}
+.chc:focus-visible{outline:2px solid var(--l);outline-offset:-2px}
+.chd{position:absolute;width:8px;height:8px;margin:-4px 0 0 -4px;background:var(--k);box-shadow:0 0 0 2px var(--card);pointer-events:none}
+.chx2{position:relative;height:18px;font-size:var(--fs-meta);color:var(--mute);grid-column:2}
+.chx2 span{position:absolute;top:var(--s1);transform:translateX(-50%);white-space:nowrap;font-variant-numeric:tabular-nums}
+.chx2 span.sel{color:var(--fg);font-weight:600}
+.chx2 span:not(.w){display:none}
+@container (max-width:700px){.chx2 span.w{display:none}.chx2 span.p{display:inline}}
+@container (max-width:520px){.chart{--chh:150px}}
+.che{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--mute)}
+.chn{display:grid;grid-template-columns:180px minmax(0,1fr);gap:var(--s4);align-items:center}
+.chn .ring{position:relative;width:180px;height:180px}
+.chn svg{width:100%;height:100%;transform:rotate(-90deg)}
+.chn circle{fill:none;stroke-width:14;stroke:var(--k)}
+.chn circle.sel{stroke-width:18}
+.chn .mid{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:var(--fs-meta);color:var(--mute)}
+.chn .mid b{font-size:17px;color:var(--fg);font-weight:650;font-variant-numeric:tabular-nums}
+.chn .rows{display:flex;flex-direction:column;min-width:0}
+.chn .chr{text-transform:none;height:auto;display:flex;align-items:center;gap:var(--s2);min-height:32px;padding:0 var(--s1);border:0;border-bottom:1px solid var(--line);background:none;border-radius:0;font:inherit;color:var(--fg);text-align:left;width:100%}
+.chn .chr::after{display:none}
+.chn .chr.sel{box-shadow:inset 3px 0 0 var(--l)}
+.chn .chr .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chn .chr b{font-weight:600;font-variant-numeric:tabular-nums}.chn .chr .pc{font-style:normal;color:var(--mute);width:44px;text-align:right;font-variant-numeric:tabular-nums}
+@container (max-width:520px){.chn{grid-template-columns:minmax(0,1fr)}.chn .ring{margin:0 auto;width:160px;height:160px}}
+.chart details{margin-top:var(--s2);font-size:var(--fs-meta)}
+.chart summary{color:var(--mute);cursor:pointer}
+.chart table{border-collapse:collapse;margin-top:var(--s1);width:100%;font-variant-numeric:tabular-nums}
+.chart th,.chart td{padding:2px var(--s2) 2px 0;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+.chart th:first-child,.chart td:first-child{text-align:left}.chart th{color:var(--mute);font-weight:400}
+.chart .tw{overflow-x:auto}

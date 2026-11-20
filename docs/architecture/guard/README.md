@@ -6,7 +6,7 @@ Decision: all rules and verdicts live in the Rust crate. One new command lints a
 files, has the existing harnesses draw them at 390 and only measure, and fails only on new findings in changed files,
 against a per-screen baseline that can only shrink. Every finding carries its fix.
 Slices: nine in blocks (codegen folder, lint, command and ratchet, render at 390, skill, SwiftUI, explore, kind
-folders, new-kind scaffold), then drover's hook and one adopting issue each in drover, cooee and synergy.
+folders, new-kind scaffold), then drover's hook and one adopting issue each in drover, cooee and the client app.
 Decided (q2269): one cap raise to 19,000 before G2; cooee's SwiftUI render nightly first; kind folders queued last;
 `render/no-name` joins the rules once #91 lands. README.md's agent prompt (q2270) lands with G5.
 
@@ -39,7 +39,7 @@ Decided (q2269): one cap raise to 19,000 before G2; cooee's SwiftUI render night
 ## The kit in one picture
 
 ```
-an app (drover, cooee, synergy)                                        blocks, at the app's pin
+an app (drover, cooee, the client app)                                        blocks, at the app's pin
   its builders ──fixture writer──> fixtures/screens/<screen>.<seed>.json
   .blocks/guard.json   ignore/<fixture>.json   baseline/<fixture>.json
         │

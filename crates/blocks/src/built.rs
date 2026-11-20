@@ -1,11 +1,15 @@
 use std::collections::{BTreeMap, BTreeSet};
 
+use serde::Serialize;
 use serde_json::{Map, Value};
 
-use crate::kind::{Block, Fallback, Fields, Screen, Tap};
+use crate::gesture::Word;
+use crate::kind::{Block, Fallback, Fields, Screen, Steps, Table, Tap};
 
 /// What makes a screen unfit to send: a server checks its own before it serves it.
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
+#[serde(tag = "fault", rename_all = "kebab-case")]
 pub enum Fault {
     Twice {
         id: String,
@@ -65,7 +69,11 @@ pub(crate) fn linkable(url: &str) -> bool {
 }
 
 fn placed(o: &Fields) -> impl Iterator<Item = (String, &Value)> {
-    let lists = LISTS.iter().filter_map(|k| Some(((*k).to_string(), o.get(*k)?)));
+    let rows = kind(o) != "table";
+    let lists = LISTS
+        .iter()
+        .filter(move |k| rows || **k != "rows")
+        .filter_map(|k| Some(((*k).to_string(), o.get(*k)?)));
     let rounds = o.get("rounds").and_then(Value::as_array).into_iter().flatten();
     let in_rounds = rounds
         .enumerate()
@@ -77,7 +85,16 @@ fn placed(o: &Fields) -> impl Iterator<Item = (String, &Value)> {
 }
 
 pub(crate) fn children(o: &Fields) -> impl Iterator<Item = &Value> {
-    placed(o).map(|(_, v)| v)
+    let rounds = o.get("rounds").and_then(Value::as_array).into_iter().flatten();
+    let in_rounds = rounds.filter_map(|r| r.get("blocks"));
+    let rows = kind(o) != "table";
+    LISTS
+        .iter()
+        .filter(move |k| rows || **k != "rows")
+        .filter_map(|k| o.get(*k))
+        .chain(in_rounds)
+        .filter_map(Value::as_array)
+        .flatten()
 }
 
 fn kind(o: &Fields) -> &str {
@@ -85,12 +102,20 @@ fn kind(o: &Fields) -> &str {
 }
 
 fn plain(o: &Fields) -> Fallback {
+    let table = (kind(o) == "table").then(|| serde_json::from_value::<Table>(Value::Object(o.clone())).ok());
+    if let Some(t) = table.flatten() {
+        return t.fallback();
+    }
     let text = |k: &str| o.get(k).and_then(Value::as_str).filter(|s| !s.is_empty());
     let named = [
         "title", "label", "header", "question", "name", "file", "command", "source", "src",
     ];
     Fallback {
-        title: named.into_iter().find_map(text).unwrap_or(kind(o)).into(),
+        title: named
+            .into_iter()
+            .find_map(text)
+            .unwrap_or(if kind(o) == "toast" { "Done" } else { kind(o) })
+            .into(),
         subtitle: text("subtitle").map(Into::into),
         tap: o.get("tap").and_then(|t| serde_json::from_value::<Tap>(t.clone()).ok()),
     }
@@ -136,6 +161,39 @@ fn shallow(o: &Fields) -> Value {
     Value::Object(top)
 }
 
+fn sent_once(top: &Value) -> Option<Value> {
+    let mut seen = BTreeSet::new();
+    let action = |w: &str| top.get(w)?.get("action")?.as_str();
+    let twice: Vec<&str> = Word::ALL
+        .into_iter()
+        .filter(|w| action(w).is_some_and(|a| !seen.insert(a)))
+        .collect();
+    if twice.is_empty() {
+        return None;
+    }
+    let mut v = top.clone();
+    let o = v.as_object_mut()?;
+    for w in twice {
+        drop(o.remove(w));
+    }
+    Some(v)
+}
+
+fn unplaced(s: &Steps) -> Option<&'static str> {
+    let steps = s.steps.as_deref().unwrap_or_default();
+    let at = s.current.as_ref().map(|c| steps.iter().any(|x| &x.id == c));
+    if steps.is_empty() {
+        return None;
+    }
+    match (s.bars.is_some(), at, s.done == Some(true)) {
+        (true, ..) => Some("a steps block with both steps and bars"),
+        (false, Some(false), _) => Some("a stepper whose current names no step"),
+        (false, Some(true), true) => Some("a stepper both done and at a current step"),
+        (false, None, false) => Some("a stepper with neither a current step nor done"),
+        (false, Some(true), false) | (false, None, true) => None,
+    }
+}
+
 struct Walk<'a> {
     app: &'a [&'a str],
     ids: BTreeMap<String, String>,
@@ -165,7 +223,9 @@ impl Walk<'_> {
                     });
                 }
             }
-            None if k == "island" => self.out.push(Fault::Unnamed { kind: k.clone() }),
+            None if k == "island" || Word::ALL.iter().any(|w| o.get(*w).is_some_and(Value::is_object)) => {
+                self.out.push(Fault::Unnamed { kind: k.clone() });
+            }
             _ => {}
         }
         let bare = || {
@@ -180,7 +240,7 @@ impl Walk<'_> {
         if Block::KINDS.contains(&k.as_str()) {
             let scope = id.filter(|i| !i.is_empty()).unwrap_or(scope);
             let top = shallow(o);
-            self.sends(&top, at, scope);
+            self.sends(sent_once(&top).as_ref().unwrap_or(&top), at, scope);
             self.core(&k, o, top);
             placed(o).for_each(|(p, c)| self.block(c, &format!("{at}/{p}"), scope));
         } else if !self.app.contains(&k.as_str()) {
@@ -208,7 +268,7 @@ impl Walk<'_> {
                         });
                     }
                 }
-                for (k, x) in o {
+                for (k, x) in o.iter().filter(|(k, _)| *k != "fallback") {
                     if let Some(p) = inner(x, k) {
                         self.sends(x, &p, scope);
                     }
@@ -238,6 +298,12 @@ impl Walk<'_> {
                     field: f.clone(),
                 });
                 self.out.extend(faults.collect::<Vec<_>>());
+                let why = match &b {
+                    Block::Steps(s) => unplaced(s).map(Into::into),
+                    Block::Chart(c) => c.unfit(),
+                    _ => None,
+                };
+                self.out.extend(why.map(|why| Fault::Shape { kind: k.into(), why }));
             }
         }
         let chip = o.get("name").and_then(Value::as_str);
@@ -255,7 +321,7 @@ fn gets<'a>(v: &'a Value, out: &mut Vec<&'a str>) {
     match v {
         Value::Object(o) => match (o.len(), o.get("get").and_then(Value::as_str)) {
             (1, Some(k)) => out.push(k),
-            _ => o.values().for_each(|x| gets(x, out)),
+            _ => o.iter().filter(|(k, _)| *k != "calc").for_each(|(_, x)| gets(x, out)),
         },
         Value::Array(a) => a.iter().for_each(|x| gets(x, out)),
         _ => {}

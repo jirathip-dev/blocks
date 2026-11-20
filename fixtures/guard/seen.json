@@ -1,0 +1,7 @@
+[
+  { "rule": "render/no-name", "run": "no-name", "at": "screen#s/~0" },
+  { "rule": "render/no-size", "run": "no-size", "at": "screen#s/text#a" },
+  { "rule": "render/overflow", "run": "overflow", "at": "screen#s/text#a" },
+  { "rule": "render/overflow", "run": "overflow", "at": "" },
+  { "rule": "render/overlap", "run": "overlap", "at": "screen#s/text#a" }
+]

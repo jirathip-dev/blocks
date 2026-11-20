@@ -101,8 +101,16 @@ internal struct FieldsBlock: View {
     @Environment(\.behaved) private var behaved
     @Environment(\.form) private var shared
     @Environment(\.act) private var act
+    @Environment(\.fileRows) private var given
     @State private var own: [String: JSONValue] = [:]
+    @State private var files: [String: [FileRow]] = [:]
     internal let block: Blocks.Form
+
+    private var uploads: Binding<[String: [FileRow]]> { given.map { .constant($0) } ?? $files }
+
+    private var waits: String? {
+        block.fields.flatMap { uploads.wrappedValue[$0.kind.name] ?? [] }.waits
+    }
 
     private var live: Binding<[String: JSONValue]>? {
         guard let action = block.action else { return nil }
@@ -127,16 +135,21 @@ internal struct FieldsBlock: View {
         let edits = live ?? (block.submit == nil ? shared ?? $own : $own)
         return VStack(alignment: .leading, spacing: 10) {
             ForEach(Array(block.fields.enumerated()), id: \.offset) { _, field in
-                if !behaved.view.hidden.contains(field.name) { FieldRow(field: field, edits: edits) }
+                if !behaved.view.hidden.contains(field.kind.name) { FieldRow(field: field.kind, edits: edits) }
             }
             if let submit = block.submit {
                 let source = Source(action: submit.action, values: submit.values)
-                ActButton(source: source, values: block.fieldValues.merging(own) { $1 }) {
+                let sent = block.fields.reduce(into: [String: JSONValue]()) { out, f in
+                    if let rows = uploads.wrappedValue[f.kind.name] { out[f.kind.name] = .array(rows.ids.map(JSONValue.string)) }
+                }
+                if let waits { Text(waits).ui(Scale.count, .regular, look).foregroundStyle(look.palette.mute) }
+                ActButton(source: source, values: block.fieldValues.merging(own) { $1 }.merging(sent) { $1 }) {
                     CardButton(title: submit.label, primary: true, tint: context.tint)
                 }
-                .disabled(block.id.map(behaved.view.disabled.contains) == true)
+                .disabled(block.id.map(behaved.view.disabled.contains) == true || waits != nil)
             }
         }
+        .environment(\.uploads, uploads).environment(\.formId, block.id)
     }
 }
 
@@ -147,32 +160,36 @@ internal struct FieldRow: View {
     @Environment(\.edit) private var edit
     @State private var editing = false
     @State private var draft = ""
-    internal let field: Field
+    internal let field: any FieldKind
     @Binding internal var edits: [String: JSONValue]
 
     private var name: String { field.name }
     private var value: JSONValue? {
-        edits[name] ?? (behaved.edited.contains(name) ? behaved.state[name]?.json : nil) ?? field.value?.json
+        edits[name] ?? (behaved.edited.contains(name) ? behaved.state[name]?.json : nil) ?? field.start
     }
 
-    private var shown: String {
-        switch field.type {
-        case .toggle: value?.bool == true ? "on" : "off"
-        case .secret: edits[name] == nil ? (field.set == true ? "set ✓" : "") : "••••••••"
-        default: value?.string ?? value?.number?.formatted() ?? field.placeholder ?? ""
+    private var options: [String]? {
+        if case .pick(let all) = field.edit { all } else { nil }
+    }
+
+    @ViewBuilder internal var body: some View {
+        switch field.edit {
+        case .files(let f): UploadRow(field: f)
+        case .scan(let f): ScanRow(field: f)
+        default: row
         }
     }
 
-    internal var body: some View {
+    private var row: some View {
         let palette = look.palette
-        Button(action: tap) {
+        return Button(action: tap) {
             HStack {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(field.label ?? name).ui(14, .regular, look).foregroundStyle(palette.mute)
                     if let note { Text(note.text).ui(11, .regular, look).foregroundStyle(note.tint) }
                 }
                 Spacer()
-                Text(shown).ui(14, .regular, look)
+                Text(field.shown(value, edited: edits[name] != nil)).ui(14, .regular, look)
             }
             .padding(.horizontal, 12).frame(minHeight: 38).padding(.vertical, note == nil ? 0 : 4)
             .background(palette.background.opacity(0.5), in: .rect(cornerRadius: look.radius(10)))
@@ -183,7 +200,7 @@ internal struct FieldRow: View {
         .buttonStyle(.plain).id(name).disabled(behaved.view.disabled.contains(name))
         .alert(field.label ?? name, isPresented: typing) { editor }
         .confirmationDialog(field.label ?? name, isPresented: picking) {
-            ForEach(field.options ?? [], id: \.self) { option in
+            ForEach(options ?? [], id: \.self) { option in
                 Button(option) { set(.string(option)) }
             }
         }
@@ -193,23 +210,23 @@ internal struct FieldRow: View {
         let palette = look.palette
         if behaved.edited.contains(name), let say = behaved.view.says[name] { return (say, palette.red) }
         if let error = field.error { return (error, palette.red) }
-        if let was = field.was { return ("was \(was)", palette.lead) }
+        if let was = field.was { return ("\(fieldWords["was"]?.en ?? "was") \(was)", palette.lead) }
         return field.doc.map { ($0, palette.mute) }
     }
 
     private var typing: Binding<Bool> {
-        Binding(get: { editing && field.type != .picker }, set: { editing = $0 })
+        Binding(get: { editing && options == nil }, set: { editing = $0 })
     }
 
     private var picking: Binding<Bool> {
-        Binding(get: { editing && field.type == .picker }, set: { editing = $0 })
+        Binding(get: { editing && options != nil }, set: { editing = $0 })
     }
 
     @ViewBuilder private var editor: some View {
-        if field.type == .secret {
+        if case .type(secure: true, _, _) = field.edit {
             SecureField(name, text: $draft)
-        } else {
-            TextField(field.placeholder ?? name, text: $draft)
+        } else if case .type(_, let hint, _) = field.edit {
+            SwiftUI.TextField(hint ?? name, text: $draft)
         }
         Button("OK") { set(.string(draft)) }
         Button("Cancel", role: .cancel) {}
@@ -221,11 +238,10 @@ internal struct FieldRow: View {
     }
 
     private func tap() {
-        if field.type == .toggle {
-            set(.bool(value?.bool != true))
-        } else {
-            draft = field.type == .secret ? "" : value?.string ?? ""
-            editing = true
+        switch field.edit {
+        case .flip: set(.bool(value?.bool != true))
+        case .type(secure: true, _, _): (draft, editing) = ("", true)
+        default: (draft, editing) = (value?.string ?? "", true)
         }
     }
 }

@@ -2,22 +2,26 @@ use std::path::Path;
 
 use serde_json::Value;
 
+pub(super) mod kinds;
+
 use super::model::{defs, Case, Def, Out, Prop, Ty};
 use super::Files;
 use crate::{layout, Block, SCHEMA_VERSION};
 
-pub(super) fn files(_: &Path, s: &Value) -> std::io::Result<Files> {
-    Ok(vec![
+pub(super) fn files(root: &Path, s: &Value) -> std::io::Result<Files> {
+    let mut out = vec![
         ("web/src/gen/types.ts".into(), ts(s).map_err(std::io::Error::other)?),
         (
             "web/src/gen/layout.ts".into(),
             layout_ts().map_err(std::io::Error::other)?,
         ),
-    ])
+    ];
+    out.extend(kinds::files(root, s)?);
+    Ok(out)
 }
 
 impl Ty<'_> {
-    fn ts(&self) -> String {
+    pub(super) fn ts(&self) -> String {
         match self {
             Self::Null => "null".into(),
             Self::Str => "string".into(),
@@ -53,7 +57,7 @@ fn ts(s: &Value) -> Out {
     Ok(out)
 }
 
-fn ts_defs(s: &Value) -> Out {
+pub(super) fn ts_defs(s: &Value) -> Out {
     let mut out = String::new();
     for (name, d) in defs(s)? {
         let body = match &d {
@@ -79,6 +83,6 @@ fn ts_defs(s: &Value) -> Out {
 }
 
 fn layout_ts() -> Out {
-    let place = ts_defs(&schemars::schema_for!(layout::Place).to_value())?;
+    let place = ts_defs(&schemars::schema_for!(layout::Edit).to_value())?;
     Ok(place + &ts_defs(&schemars::schema_for!(layout::Transition).to_value())?)
 }

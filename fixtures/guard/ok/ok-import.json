@@ -1,0 +1,143 @@
+{
+  "type": "screen",
+  "id": "products",
+  "title": "Products",
+  "blocks": [
+    {
+      "type": "import",
+      "id": "import-products",
+      "title": "Import products",
+      "into": "Products",
+      "columns": [
+        {
+          "key": "sku",
+          "label": "SKU",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "name",
+          "label": "Name",
+          "type": "text"
+        },
+        {
+          "key": "cat",
+          "label": "Category",
+          "type": "choice",
+          "values": [
+            "Bakery",
+            "Dairy"
+          ]
+        },
+        {
+          "key": "price",
+          "label": "Price ฿",
+          "type": "money",
+          "required": true
+        }
+      ],
+      "mb": 10,
+      "template": {
+        "name": "products.xlsx",
+        "src": "https://example.com/files/template-products.xlsx"
+      },
+      "read": "read-products",
+      "action": "import-products",
+      "sheet": {
+        "file": {
+          "id": "f-7",
+          "name": "price-list-nov.xlsx",
+          "size": 86016,
+          "rows": 48,
+          "sheet": "Sheet1"
+        },
+        "headers": [
+          "Item code",
+          "Description",
+          "Group",
+          "Unit price",
+          "Supplier"
+        ],
+        "map": {
+          "sku": "Item code",
+          "name": "Description",
+          "cat": "Group",
+          "price": "Unit price"
+        },
+        "rows": [
+          {
+            "n": 2,
+            "cells": {
+              "sku": "BK-0101",
+              "name": "Sourdough loaf",
+              "cat": "Bakery",
+              "price": "85.00"
+            }
+          },
+          {
+            "n": 3,
+            "cells": {
+              "sku": "BK-0102",
+              "name": "Butter croissant",
+              "cat": "Bakery",
+              "price": "45.00"
+            }
+          },
+          {
+            "n": 4,
+            "cells": {
+              "sku": "DA-0310",
+              "name": "Fresh milk 1 L",
+              "cat": "Dairy",
+              "price": "52.00"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "table",
+      "id": "list",
+      "title": "Products",
+      "export": [
+        "xlsx"
+      ],
+      "columns": [
+        {
+          "id": "sku",
+          "label": "SKU",
+          "kind": "text"
+        },
+        {
+          "id": "name",
+          "label": "Name",
+          "kind": "text"
+        },
+        {
+          "id": "price",
+          "label": "Price ฿",
+          "kind": "money",
+          "digits": 2
+        }
+      ],
+      "rows": [
+        {
+          "id": "BK-0101",
+          "cells": {
+            "sku": "BK-0101",
+            "name": "Sourdough loaf",
+            "price": 85
+          }
+        },
+        {
+          "id": "BK-0102",
+          "cells": {
+            "sku": "BK-0102",
+            "name": "Butter croissant",
+            "price": 45
+          }
+        }
+      ]
+    }
+  ]
+}

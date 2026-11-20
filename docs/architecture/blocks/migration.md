@@ -125,7 +125,7 @@ routes, so it should get a short ADR in cooee before it is queued.
 
 | # | What | Needs first |
 |---|---|---|
-| **L1** a Rust desktop renderer (Linux, Windows, macOS; no HTML, no JS) | its own ADR picks egui, iced or Slint; it links the crate, so `patch`, `mirror` and `eval` are the crate's; it passes `renderers.md` section 7 with a harness of its own | B13 |
+| **L1** a Rust desktop renderer (Linux, Windows, macOS; no HTML, no JS) | its own ADR ([`docs/architecture/desktop/`](../desktop/adr.md)) picks egui, iced or Slint; it links the crate, so `patch`, `mirror` and `eval` are the crate's; it passes `renderers.md` section 7 with a harness of its own | B13 |
 | **L2** a wasm build of the core: no-go (#46, q2240; [`wasm-core`](../wasm-core/adr.md): 264 KB gzipped against 2.8 KB of TS) | `patch`, `diff`, `mirror`, `eval` and `view` compiled to wasm; `stream.ts`, `patch.ts` and `behave.ts` become calls into it. The crate's bans already keep those modules free of the host | B11, a measured bundle size |
 | **L3** a markdown reader for `prose` | `Prose::from_markdown`, Rust only: the tree is what travels, so no renderer changes | B8 |
 

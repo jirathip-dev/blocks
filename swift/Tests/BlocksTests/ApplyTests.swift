@@ -35,6 +35,21 @@ final class ApplyTests: XCTestCase {
         try JSONValue(screen).list("blocks").first?.list("rows").compactMap(\.id) ?? []
     }
 
+    func testRowOpsChangeAddAndRemoveATablesRows() throws {
+        let table = """
+            {"type": "screen", "id": "s", "blocks": [{"type": "table", "id": "t", "columns": [{"id": "n", "label": "N", "kind": "number"}],
+              "rows": [{"id": "a", "cells": {"n": 1}}, {"id": "b", "cells": {"n": 2}}]}]}
+            """
+        let screen = try applied(
+            #"""
+            [{"op": "merge", "id": "a", "fields": {"cells": {"n": 5}}}, {"op": "remove", "id": "b"},
+             {"op": "insert", "into": "t", "before": "a", "block": {"id": "c", "cells": {"n": 3}}}]
+            """#, to: table)
+        guard case .screen(let s) = screen, case .table(let t)? = s.blocks?.first else { return XCTFail("no table") }
+        XCTAssertEqual(t.rows.map(\.id), ["c", "a"])
+        XCTAssertEqual(t.rows.last?.cells["n"], .number(5))
+    }
+
     func testMergeSetsFieldsOnANestedBlock() throws {
         let screen = try applied(#"[{"op": "merge", "id": "b", "fields": {"title": "Bee", "subtitle": "new"}}]"#)
         let row = try JSONValue(screen).list("blocks").first?.list("rows").last
@@ -82,8 +97,13 @@ final class ApplyTests: XCTestCase {
         XCTAssertEqual(stat.label, "Up")
     }
 
-    func testBadgeAndDotLeaveTheScreenAsItIs() throws {
-        XCTAssertEqual(try applied(#"[{"op": "badge", "count": 3}, {"op": "dot", "on": true}]"#), try block(base))
+    func testBadgeSetsTheScreensBadgeAndDotLeavesTheScreenAsItIs() throws {
+        guard case .screen(var s) = try applied(#"[{"op": "badge", "count": 3}, {"op": "dot", "on": true}]"#) else {
+            return XCTFail("no screen")
+        }
+        XCTAssertEqual(s.badge, 3)
+        s.badge = nil
+        XCTAssertEqual(Block.screen(s), try block(base))
     }
 
     func testScreenReplacesTheRoot() throws {
@@ -164,7 +184,8 @@ final class ApplyTests: XCTestCase {
         XCTAssertEqual(replica.frame(try frame(#"{"k": "k", "from": 1, "rev": 2, "ops": \#(marks)}"#)), .patched)
         XCTAssertEqual(replica.badge, 2)
         XCTAssertTrue(replica.dot)
-        XCTAssertEqual(replica.screen("k"), try block(base))
+        guard case .screen(let s) = replica.screen("k") else { return XCTFail("no screen") }
+        XCTAssertEqual(s.badge, 2)
     }
 
     func testABurstOfFramesChangesTheReplicaOnceAndEndsAsEachFrameInTurnWould() throws {

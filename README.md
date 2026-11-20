@@ -2,7 +2,7 @@
 
 blocks is an opinionated UI framework whose screens are data: typed blocks, checked, then drawn by a renderer. It has
 two modes. Mode A, server-driven (drover, cooee): a Rust server builds screens and sends row ops over the device
-stream. Mode B, client-built (synergy): TS builders in a route loader build the screen and the React adapter draws it,
+stream. Mode B, client-built (a client-built app): TS builders in a route loader build the screen and the React adapter draws it,
 with no server and no stream; it uses the kinds, the generated types, the builders, check, `blocks.css` and the guard
 kit, and not shelf, mirror, the stream, wire versioning or site.
 
@@ -36,14 +36,28 @@ harnesses (`docs/architecture/blocks/migration.md`).
   and patcher), then the node tests in `web/test/`
 - `just arch`, `just cap`: drover's arch-check (`.drover/arch.toml`), and the line cap: the highest `line_cap` in `ci/cap.toml`
   and `ci/cap.d/*.toml`, now 15,000 (`scripts/line-cap.sh`)
+- `just desktop`: the desktop renderer's tests (`crates/blocks-desktop`, egui), and no egui in the `blocks` crate's tree
 - `just actionlint`, `just swift`: the workflows, and the Swift package on macOS (op apply, the generated types, a
   render test per core kind), warnings as errors
+
+## For agents
+
+Start a screen with the usage skill `skill/blocks/` (an app's lanes get it from `blocks skill --to <dir>`), from an
+example screen in `skill/blocks/examples/`, and check it headlessly with `blocks check --shot` (`docs/guard.md`).
 
 ## The Swift package
 
 The root `Package.swift` ships `Blocks` (the generated types, `JSONValue`, op `apply`, `Replica`: the ADR's Swift `Mirror`, renamed so it does not shadow Swift's own) and `BlocksUI`
-(`BlocksView`, `.appBlocks` for an app's own kinds, `.blockStyle`). An app pins one commit, never a tag:
-`.package(url: "https://github.com/jirathip-dev/blocks", revision: "<40 hex>")`.
+(`BlocksView`, `.appBlocks` for an app's own kinds, `.blockStyle`). An app pins a release tag, the
+`v<SCHEMA_VERSION>.<n>` the release workflow cuts on a green `main`:
+`.package(url: "https://github.com/jirathip-dev/blocks", exact: "<tag>")`.
+
+An app block is built from public pieces: `BlockNode` and `BlockStack` (blocks inside it), `ActButton` with a `Source`
+(a tap or action), `MenuItems` (acts as menu buttons), `RelativeValue` (a text redrawn each minute), the `card`
+environment entry's `CardContext`, `Refreshing` (pull to refresh) and `LayoutTransition.entering`. An app with its own
+`Look`, `Palette` or `look` entry keeps them: its own names shadow BlocksUI's, and `.blocksLook(Look(palette:
+Palette(...), tiles: nil))` hands BlocksUI the app's colours with no dot grid and no build-up. A menu screen stays the
+app's own: its rows (an account, settings groups) are no core kind.
 
 ## Licence
 
