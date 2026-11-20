@@ -18,7 +18,7 @@ pub(super) fn files(root: &Path, _: &Value) -> std::io::Result<Files> {
             format!("import type {{ OldFrame }} from \"./types.ts\";\n\nexport const sample: OldFrame[] = {sample};\n"),
         ),
     ];
-    for (kind, b) in crate::samples() {
+    for (kind, b) in crate::fixtures() {
         let text = serde_json::to_string_pretty(&b)? + "\n";
         out.push((format!("fixtures/blocks/{kind}.json"), text));
     }
@@ -35,7 +35,7 @@ pub(super) fn files(root: &Path, _: &Value) -> std::io::Result<Files> {
 
 fn html(root: &Path) -> std::io::Result<Files> {
     let mut out = vec![];
-    for (kind, b) in crate::samples() {
+    for (kind, b) in crate::fixtures() {
         let text = site::fragment(&Built::new(serde_json::to_value(&b)?), "/act") + "\n";
         out.push((format!("fixtures/html/{kind}.html"), text));
     }
@@ -173,7 +173,7 @@ fn react(root: &Path) -> std::io::Result<Files> {
 
 fn expected(dir: &str, kinds: &[&str]) -> std::io::Result<Files> {
     let mut out = vec![];
-    for (kind, b) in crate::samples() {
+    for (kind, b) in crate::fixtures() {
         let text = serde_json::to_string_pretty(&tree_of(&b, kinds)?)? + "\n";
         out.push((format!("{dir}/{kind}.json"), text));
     }

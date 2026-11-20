@@ -1,5 +1,20 @@
 {
   "$defs": {
+    "Accept": {
+      "anyOf": [
+        {
+          "enum": [
+            "image",
+            "pdf",
+            "sheet"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "string"
+        }
+      ]
+    },
     "Accessory": {
       "anyOf": [
         {
@@ -1441,6 +1456,12 @@
             "null"
           ]
         },
+        "edit": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
         "era": {
           "anyOf": [
             {
@@ -2221,6 +2242,19 @@
           "type": "object"
         },
         {
+          "$ref": "#/$defs/UploadField",
+          "properties": {
+            "type": {
+              "const": "upload",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
           "$ref": "#/$defs/OtherField"
         }
       ],
@@ -2327,6 +2361,30 @@
           ]
         }
       },
+      "type": "object"
+    },
+    "FileRef": {
+      "description": "A file the app holds, as its file handler answered it; `src` is a picture of it the app serves.",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "src": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "id"
+      ],
       "type": "object"
     },
     "Finding": {
@@ -2556,6 +2614,15 @@
         "name"
       ],
       "type": "object"
+    },
+    "Handler": {
+      "description": "What the harness's file handler does with a picked file: answers with an id, rejects it, or never answers.",
+      "enum": [
+        "answers",
+        "fails",
+        "waits"
+      ],
+      "type": "string"
     },
     "Have": {
       "description": "A key a client opens, with the rev of its copy when that copy came from the same epoch.",
@@ -5775,8 +5842,50 @@
             "refuse"
           ],
           "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "file": {
+              "$ref": "#/$defs/StepFile"
+            }
+          },
+          "required": [
+            "file"
+          ],
+          "type": "object"
         }
       ]
+    },
+    "StepFile": {
+      "description": "A file picked in an upload field: its name, its size in bytes, its media type and what the handler does.",
+      "properties": {
+        "field": {
+          "type": "string"
+        },
+        "handler": {
+          "$ref": "#/$defs/Handler"
+        },
+        "mime": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "size": {
+          "format": "uint64",
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "field",
+        "name",
+        "size",
+        "mime",
+        "handler"
+      ],
+      "type": "object"
     },
     "StepGesture": {
       "description": "A gesture on one item of a block: pointer offsets `[dx, dy]` in px, key nudges, or named actions, in turn.",
@@ -5992,11 +6101,30 @@
       "additionalProperties": true,
       "description": "A data table: typed columns, rows by id, sort, filter, totals, row select and export.",
       "properties": {
+        "calc": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Expr"
+          },
+          "type": [
+            "object",
+            "null"
+          ]
+        },
         "columns": {
           "items": {
             "$ref": "#/$defs/Column"
           },
           "type": "array"
+        },
+        "edit": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Gesture"
+            },
+            {
+              "type": "null"
+            }
+          ]
         },
         "empty": {
           "type": [
@@ -6023,6 +6151,16 @@
           "type": [
             "string",
             "null"
+          ]
+        },
+        "reorder": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Gesture"
+            },
+            {
+              "type": "null"
+            }
           ]
         },
         "rows": {
@@ -6075,13 +6213,25 @@
       "type": "object"
     },
     "TableRow": {
-      "description": "One row of a table: its id, its cells by column id, and what a tap on it does.",
+      "description": "One row of a table: its id, its cells by column id, what a tap on it does, whether it stays put, or heads a group.",
       "properties": {
         "cells": {
           "additionalProperties": {
             "$ref": "#/$defs/Cell"
           },
           "type": "object"
+        },
+        "fixed": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "group": {
+          "type": [
+            "boolean",
+            "null"
+          ]
         },
         "id": {
           "type": "string"
@@ -7007,6 +7157,116 @@
       },
       "required": [
         "action"
+      ],
+      "type": "object"
+    },
+    "UploadField": {
+      "additionalProperties": true,
+      "description": "Files or photos: each picked file goes to the app's file handler, and the field sends their ids.",
+      "properties": {
+        "accept": {
+          "items": {
+            "$ref": "#/$defs/Accept"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "capture": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "checks": {
+          "items": {
+            "$ref": "#/$defs/Check"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "doc": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "enabled": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "files": {
+          "items": {
+            "$ref": "#/$defs/FileRef"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "many": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "mb": {
+          "format": "uint32",
+          "minimum": 0,
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "open": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "was": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "name"
       ],
       "type": "object"
     },

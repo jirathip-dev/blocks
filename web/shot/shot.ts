@@ -7,6 +7,7 @@ import { defaultPair } from "../src/gen/schemes.ts";
 import { tiles, css as wear } from "../src/theme.ts";
 import { tree } from "../src/core/tree.ts";
 import { at, blocks } from "./at.ts";
+import { leaks, pick } from "./file.ts";
 import { gesture } from "./gesture.ts";
 import { declared, measure } from "./look.ts";
 
@@ -32,9 +33,10 @@ export const sheets = (file) => PROBES.filter((p) => p.sheet).flatMap((p) => p.s
 function boot(screen) {
   const B = window.B;
   const root = document.getElementById("root");
-  const h = { model: screen, sent: [], dropped: [] };
+  const h = { model: screen, sent: [], dropped: [], files: [] };
+  const file = (_, a) => (h.files.push(a.name), h.handler === "fails" ? Promise.reject(new Error("refused")) : h.handler === "waits" ? new Promise(() => {}) : Promise.resolve({ id: `file-${h.files.length}`, name: a.name }));
   const ctx = {
-    screen: String(screen.id ?? ""),
+    file, screen: String(screen.id ?? ""),
     act: async (a) => (h.sent.push({ screen: ctx.screen, action: a.action, block: a.block ?? null, values: a.values ?? null }), h.hold ? new Promise((done) => (h.wait = done)) : true),
     tap: (t) => typeof t?.action === "string" && ctx.act({ action: t.action, values: t.values }),
     open: new Set(),
@@ -44,7 +46,7 @@ function boot(screen) {
     apps: window.blocksApps,
     held: new Map(),
   };
-  const R = window.R, out = { sent: (a) => (h.sent.push(a), true), dropped: (w) => h.dropped.push(w) };
+  const R = window.R, out = { sent: (a) => (h.sent.push(a), true), dropped: (w) => h.dropped.push(w), file };
   const sync = R ? () => {} : B.behave(root, () => h.model);
   h.paint = R ? () => (h.react ? h.react.set(h.model) : (h.react = R.boot(root, h.model, out))) : () => (root.replaceChildren(...[B.render(h.model, ctx)].filter(Boolean)), sync());
   h.ops = (ops) => ((h.model = (ops?.length && B.apply(h.model, ops)) || h.model), h.paint());
@@ -152,13 +154,13 @@ export async function shot({ screen, steps = [], name = "shot", size = "390x844"
         return (await t.count()) ? t : on(id);
       };
       const live = async (t) => (await t.isVisible()) && (await t.isEnabled());
-      const tap = s.tap && (await hit(s.tap.id, "self::button or self::a or @role='button'"));
+      const tap = s.tap && ((await on(s.tap.id).locator("[data-submit]").count()) ? on(s.tap.id).locator("[data-submit]").first() : await hit(s.tap.id, "self::button or self::a or @role='button'"));
       const type = s.type && (await hit(s.type.id, "self::input or self::textarea"));
       if (tap) await ((await live(tap)) ? tap.click() : report.dropped.push(`tap ${s.tap.id}`));
       if (type) await ((await live(type)) ? type.fill(s.type.text) : report.dropped.push(`type ${s.type.id}`));
       if (s.scroll) frames.push(...(await page.evaluate((id) => window.h.scroll(id), s.scroll.id)));
       if (s.answer) await page.evaluate((ops) => (window.h.ops(ops), window.h.wait?.(true)), s.answer.ops ?? []);
-      if (s.gesture || s.refuse) await gesture(page, s);
+      await (s.gesture || s.refuse ? gesture(page, s) : s.file ? pick(page, s.file, report.dropped) : null);
       if (s.shot) {
         const n = s.shot.name;
         pngs[n] = await page.screenshot();
@@ -183,7 +185,7 @@ export async function shot({ screen, steps = [], name = "shot", size = "390x844"
     }
     const patch = await page.evaluate(() => window.h.patch);
     if (patch.length) report.timings.longest_patch_ms = Math.max(...patch);
-    faults.unshift(...seen.map((s) => `${s.shot}: ${s.rule} ${s.at}: ${s.detail}`));
+    faults.unshift(...seen.map((s) => `${s.shot}: ${s.rule} ${s.at}: ${s.detail}`), ...leaks(report.sent));
     return { report, pngs, trees, seen, faults };
   } finally {
     await page.close();

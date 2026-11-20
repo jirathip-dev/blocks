@@ -143,3 +143,44 @@ test("the next screen keeps an island's own state while its id stays", async () 
   ok(await el.evaluate((e) => e.isConnected));
   await p.close();
 });
+
+test("a form sends only once its checks pass, says what fails once edited, and clears its drafts only when the handler resolves true", async () => {
+  const q = { type: "text", name: "q", label: "Q", checks: [{ ok: { is: { value: { get: "q" }, pattern: "filled" } }, say: "Fill it" }] };
+  const p = await page(screen({ type: "form", id: "f", submit: { action: "ask", label: "Ask", values: { k: 1 } }, fields: [q, { type: "toggle", name: "t", value: true }, { type: "secret", name: "pw" }] }), true);
+  const input = p.locator('[data-id="f"] input[name="q"]');
+  strictEqual(await p.locator('[data-id="f"] .fe').count(), 0);
+  await input.fill("x");
+  await input.fill("");
+  strictEqual(await p.locator('[data-id="f"] .fe').textContent(), "Fill it");
+  ok(await p.locator('[data-id="f"] [data-submit]').isDisabled());
+  await input.press("Enter");
+  deepStrictEqual((await read(p)).sent, []);
+  await input.fill("hi");
+  strictEqual(await p.locator('[data-id="f"] .fe').count(), 0);
+  await input.press("Enter");
+  strictEqual(await p.locator('[data-id="f"] [data-submit]').textContent(), "sending…");
+  await p.evaluate(() => window.release(false));
+  await p.waitForFunction(() => document.querySelector("[data-submit]")?.textContent === "Ask");
+  strictEqual(await input.inputValue(), "hi");
+  await p.click('[data-id="f"] [data-submit]');
+  await p.evaluate(() => window.release(true));
+  await p.waitForFunction(() => document.querySelector('input[name="q"]')?.value === "");
+  const one = { screen: "s", action: "ask", block: "f", values: { k: 1, q: "hi", t: true } };
+  deepStrictEqual((await read(p)).sent, [one, one]);
+  await p.close();
+});
+
+test("chips send the next selection under their name: one, or with multi the toggled set", async () => {
+  const opts = [{ label: "A", value: "a" }, { label: "B", value: "b" }];
+  const p = await page(screen({ type: "chips", id: "one", name: "s", action: "pick", selected: ["a"], options: opts }, { type: "chips", id: "many", name: "m", action: "pick", multi: true, selected: ["b"], options: opts }));
+  await p.click('[data-id="one"] button:has-text("B")');
+  await p.click('[data-id="many"] button:has-text("A")');
+  await p.click('[data-id="many"] button:has-text("B")');
+  strictEqual(await p.locator('[data-id="many"] button:has-text("B")').getAttribute("aria-pressed"), "true");
+  deepStrictEqual((await read(p)).sent, [
+    { screen: "s", action: "pick", block: "one", values: { s: ["b"] } },
+    { screen: "s", action: "pick", block: "many", values: { m: ["b", "a"] } },
+    { screen: "s", action: "pick", block: "many", values: { m: ["all"] } },
+  ]);
+  await p.close();
+});

@@ -8,6 +8,15 @@ public struct Frame: Codable, Equatable, Sendable {
     public var screen: Block?
 }
 
+public struct Accept: RawRepresentable, Hashable, Codable, Equatable, Sendable {
+    public let rawValue: String
+    public init(rawValue: String) { self.rawValue = rawValue }
+    public static let image = Self(rawValue: "image")
+    public static let pdf = Self(rawValue: "pdf")
+    public static let sheet = Self(rawValue: "sheet")
+    public static let all: [Self] = [.image, .pdf, .sheet]
+}
+
 public struct Accessory: RawRepresentable, Hashable, Codable, Equatable, Sendable {
     public let rawValue: String
     public init(rawValue: String) { self.rawValue = rawValue }
@@ -374,6 +383,7 @@ public struct Column: Codable, Equatable, Sendable {
     public var align: Align?
     public var currency: String?
     public var digits: UInt8?
+    public var edit: Bool?
     public var era: Era?
     public var hide: Bool?
     public var id: String
@@ -563,6 +573,7 @@ public enum Field: Codable, Equatable, Sendable {
     case toggle(ToggleField)
     case picker(PickerField)
     case secret(SecretField)
+    case upload(UploadField)
     case otherField(JSONValue)
 
     private enum Tag: String, CodingKey { case tag = "type" }
@@ -573,6 +584,7 @@ public enum Field: Codable, Equatable, Sendable {
         case "toggle": self = .toggle(try ToggleField(from: decoder))
         case "picker": self = .picker(try PickerField(from: decoder))
         case "secret": self = .secret(try SecretField(from: decoder))
+        case "upload": self = .upload(try UploadField(from: decoder))
         default: self = .otherField(try JSONValue(from: decoder))
         }
     }
@@ -583,6 +595,7 @@ public enum Field: Codable, Equatable, Sendable {
         case .toggle(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("toggle", forKey: .tag)
         case .picker(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("picker", forKey: .tag)
         case .secret(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("secret", forKey: .tag)
+        case .upload(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("upload", forKey: .tag)
         case .otherField(let v): try v.encode(to: encoder)
         }
     }
@@ -633,6 +646,12 @@ public struct Figure: Codable, Equatable, Sendable {
     public var tool: String?
 }
 
+public struct FileRef: Codable, Equatable, Sendable {
+    public var id: String
+    public var name: String?
+    public var src: String?
+}
+
 public struct Finding: Codable, Equatable, Sendable {
     public var at: String
     public var file: String
@@ -670,6 +689,15 @@ public struct Gesture: Codable, Equatable, Sendable {
     public var action: String
     public var enabled: Expr?
     public var name: String
+}
+
+public struct Handler: RawRepresentable, Hashable, Codable, Equatable, Sendable {
+    public let rawValue: String
+    public init(rawValue: String) { self.rawValue = rawValue }
+    public static let answers = Self(rawValue: "answers")
+    public static let fails = Self(rawValue: "fails")
+    public static let waits = Self(rawValue: "waits")
+    public static let all: [Self] = [.answers, .fails, .waits]
 }
 
 public struct Have: Codable, Equatable, Sendable {
@@ -1470,6 +1498,7 @@ public indirect enum Step: Codable, Equatable, Sendable {
     case shot(StepShot)
     case gesture(StepGesture)
     case refuse(StepRefuse)
+    case file(StepFile)
     case unknown(JSONValue)
 
     private struct Key: CodingKey {
@@ -1491,6 +1520,7 @@ public indirect enum Step: Codable, Equatable, Sendable {
             case "shot": if let v = try? c.decode(StepShot.self, forKey: k) { self = .shot(v); return }
             case "gesture": if let v = try? c.decode(StepGesture.self, forKey: k) { self = .gesture(v); return }
             case "refuse": if let v = try? c.decode(StepRefuse.self, forKey: k) { self = .refuse(v); return }
+            case "file": if let v = try? c.decode(StepFile.self, forKey: k) { self = .file(v); return }
             default: break
             }
             self = .unknown(try JSONValue(from: decoder)); return
@@ -1508,9 +1538,18 @@ public indirect enum Step: Codable, Equatable, Sendable {
         case .shot(let v): var c = encoder.container(keyedBy: Key.self); try c.encode(v, forKey: Key("shot"))
         case .gesture(let v): var c = encoder.container(keyedBy: Key.self); try c.encode(v, forKey: Key("gesture"))
         case .refuse(let v): var c = encoder.container(keyedBy: Key.self); try c.encode(v, forKey: Key("refuse"))
+        case .file(let v): var c = encoder.container(keyedBy: Key.self); try c.encode(v, forKey: Key("file"))
         case .unknown(let v): try v.encode(to: encoder)
         }
     }
+}
+
+public struct StepFile: Codable, Equatable, Sendable {
+    public var field: String
+    public var handler: Handler
+    public var mime: String
+    public var name: String
+    public var size: UInt64
 }
 
 public struct StepGesture: Codable, Equatable, Sendable {
@@ -1565,11 +1604,14 @@ public struct Synced: Codable, Equatable, Sendable {
 }
 
 public struct Table: Codable, Equatable, Sendable {
+    public var calc: [String: Expr]?
     public var columns: [Column]
+    public var edit: Gesture?
     public var empty: String?
     public var export: [ExportFormat]?
     public var filter: Bool?
     public var id: String?
+    public var reorder: Gesture?
     public var rows: [TableRow]
     public var select: TableSelect?
     public var show: Expr?
@@ -1579,6 +1621,8 @@ public struct Table: Codable, Equatable, Sendable {
 
 public struct TableRow: Codable, Equatable, Sendable {
     public var cells: [String: Cell]
+    public var fixed: Bool?
+    public var group: Bool?
     public var id: String
     public var tap: Tap?
 }
@@ -1789,6 +1833,23 @@ public struct Undo: Codable, Equatable, Sendable {
     public var confirm: Confirm?
     public var label: String?
     public var values: [String: JSONValue]?
+}
+
+public struct UploadField: Codable, Equatable, Sendable {
+    public var accept: [Accept]?
+    public var capture: Bool?
+    public var checks: [Check]?
+    public var doc: String?
+    public var enabled: Expr?
+    public var error: String?
+    public var files: [FileRef]?
+    public var label: String?
+    public var many: Bool?
+    public var mb: UInt32?
+    public var name: String
+    public var open: Bool?
+    public var show: Expr?
+    public var was: String?
 }
 
 public struct Via: RawRepresentable, Hashable, Codable, Equatable, Sendable {

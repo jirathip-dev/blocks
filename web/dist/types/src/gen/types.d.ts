@@ -6,6 +6,7 @@ export type Frame = {
     rev: number;
     screen?: Block | null;
 };
+export type Accept = "image" | "pdf" | "sheet";
 export type Accessory = "chevron" | "none";
 export type Act = {
     action?: string | null;
@@ -219,6 +220,7 @@ export type Column = {
     align?: Align | null;
     currency?: string | null;
     digits?: number | null;
+    edit?: boolean | null;
     era?: Era | null;
     hide?: boolean | null;
     id: string;
@@ -333,7 +335,9 @@ export type Field = ({
     type: "picker";
 } & PickerField) | ({
     type: "secret";
-} & SecretField) | (OtherField & {
+} & SecretField) | ({
+    type: "upload";
+} & UploadField) | (OtherField & {
     [key: string]: unknown;
 });
 export type FieldDrawn = "native" | "plain" | "hidden";
@@ -353,6 +357,11 @@ export type Figure = {
     icon?: string | null;
     state?: Tone | null;
     tool?: string | null;
+};
+export type FileRef = {
+    id: string;
+    name?: string | null;
+    src?: string | null;
 };
 export type Finding = {
     at: string;
@@ -388,6 +397,7 @@ export type Gesture = {
     enabled?: Expr | null;
     name: string;
 };
+export type Handler = "answers" | "fails" | "waits";
 export type Have = {
     k: string;
     rev?: number | null;
@@ -889,6 +899,15 @@ export type Step = {
     gesture: StepGesture;
 } | {
     refuse: StepRefuse;
+} | {
+    file: StepFile;
+};
+export type StepFile = {
+    field: string;
+    handler: Handler;
+    mime: string;
+    name: string;
+    size: number;
 };
 export type StepGesture = {
     grab: unknown;
@@ -933,11 +952,14 @@ export type Synced = {
     keys: KeyState[];
 };
 export type Table = {
+    calc?: Record<string, Expr> | null;
     columns: Column[];
+    edit?: Gesture | null;
     empty?: string | null;
     export?: ExportFormat[] | null;
     filter?: boolean | null;
     id?: string | null;
+    reorder?: Gesture | null;
     rows: TableRow[];
     select?: TableSelect | null;
     show?: Expr | null;
@@ -946,6 +968,8 @@ export type Table = {
 };
 export type TableRow = {
     cells: Record<string, Cell>;
+    fixed?: boolean | null;
+    group?: boolean | null;
     id: string;
     tap?: Tap | null;
 };
@@ -1087,6 +1111,22 @@ export type Undo = {
     confirm?: Confirm | null;
     label?: string | null;
     values?: Record<string, unknown> | null;
+};
+export type UploadField = {
+    accept?: Accept[] | null;
+    capture?: boolean | null;
+    checks?: Check[] | null;
+    doc?: string | null;
+    enabled?: Expr | null;
+    error?: string | null;
+    files?: FileRef[] | null;
+    label?: string | null;
+    many?: boolean | null;
+    mb?: number | null;
+    name: string;
+    open?: boolean | null;
+    show?: Expr | null;
+    was?: string | null;
 };
 export type Via = "pointer" | "keys" | "action";
 export type Weather = {

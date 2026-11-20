@@ -20,11 +20,12 @@ function boot(screen) {
   window.model = screen;
   const ctx = {
     screen: "s",
-    act: async (a) => (window.sent.push({ action: a.action, block: a.block, values: a.values }), true),
+    act: async (a) => (window.sent.push({ action: a.action, block: a.block, values: a.values }), window.hold ? new Promise((done) => (window.done = done)) : !window.no),
     tap: (t) => window.tapped.push(t),
     open: new Set(),
     theme: B.plain,
     store: { get: () => null, put: () => {} },
+    held: new Map(),
   };
   const p = B.patcher({ root, draw: (b) => B.render(b, ctx), model: () => window.model });
   window.ops = (ops) => ((window.model = B.apply(window.model, ops)), p.queue(ops), p.flush());
@@ -35,7 +36,7 @@ let browser;
 before(async () => (browser = await webkit.launch()));
 after(() => browser.close());
 
-async function open({ width = 1440, lang = "en" } = {}) {
+async function open({ width = 1440, lang = "en", block = table } = {}) {
   const page = await browser.newPage({ viewport: { width, height: 900 } });
   await page.route("**/*", (r) => {
     const p = r.request().url().slice(BASE.length);
@@ -45,7 +46,7 @@ async function open({ width = 1440, lang = "en" } = {}) {
   });
   await page.goto(BASE);
   await page.waitForFunction(() => window.B);
-  await page.evaluate(boot, { type: "screen", id: "s", blocks: [table] });
+  await page.evaluate(boot, { type: "screen", id: "s", blocks: [block] });
   const ids = () => page.$$eval(".tbl tbody tr", (rs) => rs.map((r) => r.dataset.id));
   const bar = () => page.$eval(".tbh", (e) => e.innerText.replace(/\s+/g, " ").trim());
   const total = () => page.$eval(".tbl tfoot", (e) => e.innerText.replace(/\s+/g, " ").trim());
@@ -153,4 +154,73 @@ test("a Buddhist-Era date has Thai month names on a Thai page, English ones othe
   const en = await open();
   ok((await en.page.$eval(".tbl tbody", (e) => e.innerText)).includes("18 Oct 2569"));
   await en.page.close();
+});
+
+const grid = JSON.parse(read("../../fixtures/blocks/table-grid.json"));
+const at = (page, row, col) => page.locator(`tr[data-id="${row}"] > td[data-c="${col}"]`);
+const said = (page, sel) => page.$eval(sel, (e) => e.innerText.replace(/\s+/g, " ").trim());
+
+test("typing into a grid cell works out its row, its group and the totals before anything is sent; Enter sends one cell edit", async () => {
+  const { page, total } = await open({ block: grid });
+  ok((await total()).includes("68,984.00"), await total());
+  await at(page, "p1", "qty").click();
+  await at(page, "p1", "qty").locator("input").fill("48");
+  strictEqual(await at(page, "p1", "cost").innerText(), "20,664.00");
+  strictEqual(await said(page, 'tr[data-id="g-pipe"] > td[data-l="Cost"]'), "23,058.00");
+  ok((await total()).includes("72,428.00"), await total());
+  deepStrictEqual(await page.evaluate(() => window.sent), []);
+  await page.evaluate(() => (window.hold = true));
+  await page.keyboard.press("Enter");
+  deepStrictEqual(await page.evaluate(() => window.sent), [{ action: "set-cell", block: "grid", values: { cell: { row: "p1", column: "qty", value: 48 } } }]);
+  strictEqual(await at(page, "p1", "qty").getAttribute("aria-busy"), "true");
+  ok((await at(page, "p1", "final").getAttribute("class")).includes("wait"));
+  deepStrictEqual(await page.evaluate(() => [document.activeElement.parentElement.dataset.id, document.activeElement.dataset.c]), ["p2", "qty"]);
+  await page.evaluate(() => window.done(false));
+  await page.waitForFunction(() => !document.querySelector('tr[data-id="p1"] > td[data-c="final"]').classList.contains("wait"));
+  strictEqual(await at(page, "p1", "qty").innerText(), "40");
+  await page.close();
+});
+
+test("a value the column can't take sends nothing and puts the cell back; a refused edit shows the data's value with a red edge", async () => {
+  const { page } = await open({ block: grid });
+  await at(page, "v1", "qty").click();
+  await at(page, "v1", "qty").locator("input").fill("8x");
+  ok((await at(page, "v1", "qty").getAttribute("class")).includes("bad"));
+  strictEqual(await at(page, "v1", "qty").locator(".tbx").innerText(), "not a number");
+  strictEqual(await at(page, "v1", "cost").innerText(), "18,480.00");
+  await page.keyboard.press("Enter");
+  strictEqual(await at(page, "v1", "qty").innerText(), "4");
+  await page.evaluate(() => (window.no = true));
+  await at(page, "v2", "qty").focus();
+  await page.keyboard.press("8");
+  await page.keyboard.press("Tab");
+  await page.waitForFunction(() => document.querySelector('tr[data-id="v2"] > td[data-c="qty"]').classList.contains("no"));
+  strictEqual(await at(page, "v2", "qty").innerText(), "6");
+  deepStrictEqual(await page.evaluate(() => window.sent.map((a) => a.values.cell)), [{ row: "v2", column: "qty", value: 8 }]);
+  await page.close();
+});
+
+test("a sorted grid sorts items within their groups, takes the handles away and says why; as sent puts them back", async () => {
+  const { page, ids, bar } = await open({ block: grid });
+  strictEqual(await page.locator(".tbg .b-hd").count(), 8);
+  await page.getByRole("button", { name: "Cost ฿", exact: true }).click();
+  deepStrictEqual(await ids(), ["g-pipe", "p2", "p1", "g-valve", "v2", "v1", "g-lab", "l2", "l1"]);
+  strictEqual(await page.locator(".tbg").count(), 0);
+  ok((await bar()).includes("sorted, so rows stay put"), await bar());
+  await page.locator(".tbh button", { hasText: "as sent" }).click();
+  deepStrictEqual(await ids(), grid.rows.map((r) => r.id));
+  strictEqual(await page.locator(".tbg .b-hd").count(), 8);
+  await page.close();
+});
+
+test("on a phone a grid row opens its sheet, whose field sends its own cell edit when it is left", async () => {
+  const { page } = await open({ block: grid, width: 390 });
+  await page.locator('tr[data-id="v2"] .tbo button').click();
+  const sheet = page.locator(".tbsh [role=dialog]");
+  strictEqual(await sheet.getAttribute("aria-label"), "Edit Ball valve 2in");
+  await sheet.getByLabel("Qty, Ball valve 2in").fill("8");
+  ok((await sheet.innerText()).includes("14,520.00"), await sheet.innerText());
+  await page.keyboard.press("Tab");
+  deepStrictEqual(await page.evaluate(() => window.sent), [{ action: "set-cell", block: "grid", values: { cell: { row: "v2", column: "qty", value: 8 } } }]);
+  await page.close();
 });
