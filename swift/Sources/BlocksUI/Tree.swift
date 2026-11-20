@@ -80,10 +80,6 @@ extension Block {
 
     fileprivate var head: (type: String, id: String?, variant: String?, source: Source) {
         switch self {
-        case .screen(let b): ("screen", b.id, nil, Source())
-        case .sheet(let b): ("sheet", b.id, nil, Source())
-        case .section(let b): ("section", b.id, nil, Source())
-        case .list(let b): ("list", b.id, nil, Source())
         case .row(let b): ("row", b.id, b.style?.rawValue, Source(tap: b.tap))
         case .card(let b): ("card", b.id, b.kind?.rawValue, Source(tap: b.tap))
         case .choice(let b): ("choice", b.id, nil, Source(action: b.action, values: b.values))
@@ -93,31 +89,17 @@ extension Block {
         case .run(let b): ("run", b.id, nil, Source(action: b.action))
         case .button(let b): ("button", b.id, b.style?.rawValue, Source(action: b.action, tap: b.tap, values: b.values))
         case .chips(let b): ("chips", b.id, nil, Source(action: b.action))
-        case .stat(let b): ("stat", b.id, nil, Source())
         case .text(let b): ("text", b.id, b.style?.rawValue, Source())
         case .images(let b): ("images", b.id, b.size?.rawValue, Source())
-        case .web(let b): ("web", b.id, nil, Source())
-        case .diff(let b): ("diff", b.id, nil, Source())
         case .editor(let b): ("editor", b.id, nil, Source(action: b.action))
-        case .scene(let b): ("scene", b.id, nil, Source())
-        case .diagram(let b): ("diagram", b.id, nil, Source())
-        case .chart(let b): ("chart", b.id, nil, Source())
         case .composer(let b): ("composer", b.id, nil, Source(action: b.action, values: b.values))
         case .lines(let b): ("lines", b.id, nil, Source(action: b.action))
-        case .prose(let b): ("prose", b.id, nil, Source())
-        case .hero(let b): ("hero", b.id, nil, Source())
-        case .media(let b): ("media", b.id, nil, Source())
-        case .nav(let b): ("nav", b.id, nil, Source())
-        case .island(let b): ("island", b.id, nil, Source())
-        case .table(let b): ("table", b.id, nil, Source())
-        case .steps(let b): ("steps", b.id, nil, Source())
-        case .toast(let b): ("toast", b.id, nil, Source())
-        case .timeline(let b): ("timeline", b.id, nil, Source())
         case .appBlock(let b):
             (
                 b.type, b.id, nil,
                 Source(action: b.string("action"), tap: try? b["tap"]?.decode(Tap.self), values: b["values"]?.fields)
             )
+        default: (typeAndID.type, typeAndID.id, nil, Source())
         }
     }
 

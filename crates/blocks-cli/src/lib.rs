@@ -1,6 +1,7 @@
 mod draw;
 mod explore;
 mod files;
+mod new;
 mod skill;
 
 mod gen {
@@ -13,7 +14,7 @@ use std::process::ExitCode;
 
 use blocks::guard::{self, Baseline, Finding, Held, Outcome, Scope, Severity};
 
-const USAGE: &str = "usage: blocks check [--base <ref>] [--all] [--render] [--explore [--seed <n>] [--minutes <n>]] [--tighten] [--format text|json|sarif] [--out <file>] | blocks check --replay <steps.json> [--render] | blocks check --shot <fixture>… | blocks skill --to <dir>";
+const USAGE: &str = "usage: blocks check [--base <ref>] [--all] [--render] [--explore [--seed <n>] [--minutes <n>]] [--tighten] [--format text|json|sarif] [--out <file>] | blocks check --replay <steps.json> [--render] | blocks check --shot <fixture>… | blocks skill --to <dir> | blocks new kind <name>";
 
 #[derive(Default)]
 enum Format {
@@ -38,7 +39,7 @@ struct Flags {
     out: Option<String>,
 }
 
-/// `blocks check` lints, draws with `--render` and judges the screens `.blocks/guard.json` names; `blocks skill` writes the usage skill; exit 0 ok, 1 a finding, 2 a broken setup.
+/// `blocks check` lints, draws with `--render` and judges the screens `.blocks/guard.json` names; `blocks skill` writes the usage skill; `blocks new kind` writes a kind's five files; exit 0 ok, 1 a finding, 2 a broken setup.
 pub fn main() -> ExitCode {
     let args: Vec<String> = std::env::args().skip(1).collect();
     match run(&args) {
@@ -95,6 +96,7 @@ fn run(args: &[String]) -> Result<bool, String> {
     match args.split_first() {
         Some((cmd, rest)) if cmd == "check" => check(rest),
         Some((cmd, rest)) if cmd == "skill" => skill::run(rest),
+        Some((cmd, rest)) if cmd == "new" => new::run(rest),
         _ => Err(USAGE.into()),
     }
 }

@@ -26,17 +26,15 @@ macro_rules! switch {
         }
 
         pub(crate) fn draw(b: &Block, name: &str, ui: &mut Ui, cx: &mut Cx<'_>) -> Way {
+            $(if let Block::$v(x) = b {
+                return either($m::DRAW, x, b, name, ui, cx);
+            })*
             match b {
-                $(Block::$v(x) => either($m::DRAW, x, b, name, ui, cx),)*
-                Block::App(a) => {
-                    island::app(a, b, name, ui, cx);
-                    Way::Fallback
-                }
-                Block::Island(x) => {
-                    island::island(x, b, name, ui, cx);
-                    Way::Fallback
-                }
+                Block::App(a) => island::app(a, b, name, ui, cx),
+                Block::Island(x) => island::island(x, b, name, ui, cx),
+                _ => fallback::draw(b, name, ui, cx),
             }
+            Way::Fallback
         }
     };
 }
