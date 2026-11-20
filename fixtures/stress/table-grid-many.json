@@ -1,0 +1,2067 @@
+{
+  "calc": {
+    "cost": {
+      "mul": [
+        {
+          "mul": [
+            {
+              "get": "qty"
+            },
+            {
+              "get": "price"
+            }
+          ]
+        },
+        {
+          "get": "mult"
+        }
+      ]
+    },
+    "sell": {
+      "div": [
+        {
+          "get": "cost"
+        },
+        {
+          "sub": [
+            1,
+            {
+              "div": [
+                {
+                  "get": "margin"
+                },
+                100
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "columns": [
+    {
+      "edit": true,
+      "id": "name",
+      "kind": "text",
+      "label": "Item",
+      "width": 22
+    },
+    {
+      "digits": 0,
+      "edit": true,
+      "id": "qty",
+      "kind": "number",
+      "label": "Qty"
+    },
+    {
+      "currency": "THB",
+      "edit": true,
+      "id": "price",
+      "kind": "money",
+      "label": "Unit cost",
+      "phone": "meta"
+    },
+    {
+      "edit": true,
+      "id": "mult",
+      "kind": "number",
+      "label": "Mult"
+    },
+    {
+      "currency": "THB",
+      "id": "cost",
+      "kind": "money",
+      "label": "Cost",
+      "total": "sum"
+    },
+    {
+      "digits": 1,
+      "edit": true,
+      "id": "margin",
+      "kind": "number",
+      "label": "Margin",
+      "unit": "%"
+    },
+    {
+      "currency": "THB",
+      "id": "sell",
+      "kind": "money",
+      "label": "Price",
+      "total": "sum"
+    },
+    {
+      "currency": "THB",
+      "id": "final",
+      "kind": "money",
+      "label": "Final",
+      "total": "sum"
+    }
+  ],
+  "edit": {
+    "action": "set-cell",
+    "name": "cell"
+  },
+  "id": "grid",
+  "reorder": {
+    "action": "order",
+    "name": "rows"
+  },
+  "rows": [
+    {
+      "cells": {
+        "name": "Pipework-0"
+      },
+      "group": true,
+      "id": "g-pipe-0"
+    },
+    {
+      "cells": {
+        "final": 21000,
+        "margin": 18,
+        "mult": 1.05,
+        "name": "Steel pipe 2in, sch 40-1",
+        "price": 410,
+        "qty": 40
+      },
+      "id": "p1-1"
+    },
+    {
+      "cells": {
+        "final": 3100,
+        "margin": 22,
+        "mult": 1.05,
+        "name": "Elbow 2in 90°-2",
+        "price": 95,
+        "qty": 24
+      },
+      "id": "p2-2"
+    },
+    {
+      "cells": {
+        "name": "Valves-3"
+      },
+      "group": true,
+      "id": "g-valve-3"
+    },
+    {
+      "cells": {
+        "final": 21800,
+        "margin": 15,
+        "mult": 1.1,
+        "name": "Gate valve 3in-4",
+        "price": 4200,
+        "qty": 4
+      },
+      "id": "v1-4"
+    },
+    {
+      "cells": {
+        "final": 12800,
+        "margin": 15,
+        "mult": 1.1,
+        "name": "Ball valve 2in-5",
+        "price": 1650,
+        "qty": 6
+      },
+      "id": "v2-5"
+    },
+    {
+      "cells": {
+        "name": "Labour-6"
+      },
+      "group": true,
+      "id": "g-lab-6"
+    },
+    {
+      "cells": {
+        "final": 19200,
+        "margin": 25,
+        "mult": 1,
+        "name": "Fitter, day-7",
+        "price": 2400,
+        "qty": 6
+      },
+      "id": "l1-7"
+    },
+    {
+      "cells": {
+        "final": 5600,
+        "margin": 0,
+        "mult": 1,
+        "name": "Transport, by weight-8",
+        "price": 5600,
+        "qty": 1
+      },
+      "fixed": true,
+      "id": "l2-8"
+    },
+    {
+      "cells": {
+        "name": "Pipework-9"
+      },
+      "group": true,
+      "id": "g-pipe-9"
+    },
+    {
+      "cells": {
+        "final": 21000,
+        "margin": 18,
+        "mult": 1.05,
+        "name": "Steel pipe 2in, sch 40-10",
+        "price": 410,
+        "qty": 40
+      },
+      "id": "p1-10"
+    },
+    {
+      "cells": {
+        "final": 3100,
+        "margin": 22,
+        "mult": 1.05,
+        "name": "Elbow 2in 90°-11",
+        "price": 95,
+        "qty": 24
+      },
+      "id": "p2-11"
+    },
+    {
+      "cells": {
+        "name": "Valves-12"
+      },
+      "group": true,
+      "id": "g-valve-12"
+    },
+    {
+      "cells": {
+        "final": 21800,
+        "margin": 15,
+        "mult": 1.1,
+        "name": "Gate valve 3in-13",
+        "price": 4200,
+        "qty": 4
+      },
+      "id": "v1-13"
+    },
+    {
+      "cells": {
+        "final": 12800,
+        "margin": 15,
+        "mult": 1.1,
+        "name": "Ball valve 2in-14",
+        "price": 1650,
+        "qty": 6
+      },
+      "id": "v2-14"
+    },
+    {
+      "cells": {
+        "name": "Labour-15"
+      },
+      "group": true,
+      "id": "g-lab-15"
+    },
+    {
+      "cells": {
+        "final": 19200,
+        "margin": 25,
+        "mult": 1,
+        "name": "Fitter, day-16",
+        "price": 2400,
+        "qty": 6
+      },
+      "id": "l1-16"
+    },
+    {
+      "cells": {
+        "final": 5600,
+        "margin": 0,
+        "mult": 1,
+        "name": "Transport, by weight-17",
+        "price": 5600,
+        "qty": 1
+      },
+      "fixed": true,
+      "id": "l2-17"
+    },
+    {
+      "cells": {
+        "name": "Pipework-18"
+      },
+      "group": true,
+      "id": "g-pipe-18"
+    },
+    {
+      "cells": {
+        "final": 21000,
+        "margin": 18,
+        "mult": 1.05,
+        "name": "Steel pipe 2in, sch 40-19",
+        "price": 410,
+        "qty": 40
+      },
+      "id": "p1-19"
+    },
+    {
+      "cells": {
+        "final": 3100,
+        "margin": 22,
+        "mult": 1.05,
+        "name": "Elbow 2in 90°-20",
+        "price": 95,
+        "qty": 24
+      },
+      "id": "p2-20"
+    },
+    {
+      "cells": {
+        "name": "Valves-21"
+      },
+      "group": true,
+      "id": "g-valve-21"
+    },
+    {
+      "cells": {
+        "final": 21800,
+        "margin": 15,
+        "mult": 1.1,
+        "name": "Gate valve 3in-22",
+        "price": 4200,
+        "qty": 4
+      },
+      "id": "v1-22"
+    },
+    {
+      "cells": {
+        "final": 12800,
+        "margin": 15,
+        "mult": 1.1,
+        "name": "Ball valve 2in-23",
+        "price": 1650,
+        "qty": 6
+      },
+      "id": "v2-23"
+    },
+    {
+      "cells": {
+        "name": "Labour-24"
+      },
+      "group": true,
+      "id": "g-lab-24"
+    },
+    {
+      "cells": {
+        "final": 19200,
+        "margin": 25,
+        "mult": 1,
+        "name": "Fitter, day-25",
+        "price": 2400,
+        "qty": 6
+      },
+      "id": "l1-25"
+    },
+    {
+      "cells": {
+        "final": 5600,
+        "margin": 0,
+        "mult": 1,
+        "name": "Transport, by weight-26",
+        "price": 5600,
+        "qty": 1
+      },
+      "fixed": true,
+      "id": "l2-26"
+    },
+    {
+      "cells": {
+        "name": "Pipework-27"
+      },
+      "group": true,
+      "id": "g-pipe-27"
+    },
+    {
+      "cells": {
+        "final": 21000,
+        "margin": 18,
+        "mult": 1.05,
+        "name": "Steel pipe 2in, sch 40-28",
+        "price": 410,
+        "qty": 40
+      },
+      "id": "p1-28"
+    },
+    {
+      "cells": {
+        "final": 3100,
+        "margin": 22,
+        "mult": 1.05,
+        "name": "Elbow 2in 90°-29",
+        "price": 95,
+        "qty": 24
+      },
+      "id": "p2-29"
+    },
+    {
+      "cells": {
+        "name": "Valves-30"
+      },
+      "group": true,
+      "id": "g-valve-30"
+    },
+    {
+      "cells": {
+        "final": 21800,
+        "margin": 15,
+        "mult": 1.1,
+        "name": "Gate valve 3in-31",
+        "price": 4200,
+        "qty": 4
+      },
+      "id": "v1-31"
+    },
+    {
+      "cells": {
+        "final": 12800,
+        "margin": 15,
+        "mult": 1.1,
+        "name": "Ball valve 2in-32",
+        "price": 1650,
+        "qty": 6
+      },
+      "id": "v2-32"
+    },
+    {
+      "cells": {
+        "name": "Labour-33"
+      },
+      "group": true,
+      "id": "g-lab-33"
+    },
+    {
+      "cells": {
+        "final": 19200,
+        "margin": 25,
+        "mult": 1,
+        "name": "Fitter, day-34",
+        "price": 2400,
+        "qty": 6
+      },
+      "id": "l1-34"
+    },
+    {
+      "cells": {
+        "final": 5600,
+        "margin": 0,
+        "mult": 1,
+        "name": "Transport, by weight-35",
+        "price": 5600,
+        "qty": 1
+      },
+      "fixed": true,
+      "id": "l2-35"
+    },
+    {
+      "cells": {
+        "name": "Pipework-36"
+      },
+      "group": true,
+      "id": "g-pipe-36"
+    },
+    {
+      "cells": {
+        "final": 21000,
+        "margin": 18,
+        "mult": 1.05,
+        "name": "Steel pipe 2in, sch 40-37",
+        "price": 410,
+        "qty": 40
+      },
+      "id": "p1-37"
+    },
+    {
+      "cells": {
+        "final": 3100,
+        "margin": 22,
+        "mult": 1.05,
+        "name": "Elbow 2in 90°-38",
+        "price": 95,
+        "qty": 24
+      },
+      "id": "p2-38"
+    },
+    {
+      "cells": {
+        "name": "Valves-39"
+      },
+      "group": true,
+      "id": "g-valve-39"
+    },
+    {
+      "cells": {
+        "final": 21800,
+        "margin": 15,
+        "mult": 1.1,
+        "name": "Gate valve 3in-40",
+        "price": 4200,
+        "qty": 4
+      },
+      "id": "v1-40"
+    },
+    {
+      "cells": {
+        "final": 12800,
+        "margin": 15,
+        "mult": 1.1,
+        "name": "Ball valve 2in-41",
+        "price": 1650,
+        "qty": 6
+      },
+      "id": "v2-41"
+    },
+    {
+      "cells": {
+        "name": "Labour-42"
+      },
+      "group": true,
+      "id": "g-lab-42"
+    },
+    {
+      "cells": {
+        "final": 19200,
+        "margin": 25,
+        "mult": 1,
+        "name": "Fitter, day-43",
+        "price": 2400,
+        "qty": 6
+      },
+      "id": "l1-43"
+    },
+    {
+      "cells": {
+        "final": 5600,
+        "margin": 0,
+        "mult": 1,
+        "name": "Transport, by weight-44",
+        "price": 5600,
+        "qty": 1
+      },
+      "fixed": true,
+      "id": "l2-44"
+    },
+    {
+      "cells": {
+        "name": "Pipework-45"
+      },
+      "group": true,
+      "id": "g-pipe-45"
+    },
+    {
+      "cells": {
+        "final": 21000,
+        "margin": 18,
+        "mult": 1.05,
+        "name": "Steel pipe 2in, sch 40-46",
+        "price": 410,
+        "qty": 40
+      },
+      "id": "p1-46"
+    },
+    {
+      "cells": {
+        "final": 3100,
+        "margin": 22,
+        "mult": 1.05,
+        "name": "Elbow 2in 90°-47",
+        "price": 95,
+        "qty": 24
+      },
+      "id": "p2-47"
+    },
+    {
+      "cells": {
+        "name": "Valves-48"
+      },
+      "group": true,
+      "id": "g-valve-48"
+    },
+    {
+      "cells": {
+        "final": 21800,
+        "margin": 15,
+        "mult": 1.1,
+        "name": "Gate valve 3in-49",
+        "price": 4200,
+        "qty": 4
+      },
+      "id": "v1-49"
+    },
+    {
+      "cells": {
+        "final": 12800,
+        "margin": 15,
+        "mult": 1.1,
+        "name": "Ball valve 2in-50",
+        "price": 1650,
+        "qty": 6
+      },
+      "id": "v2-50"
+    },
+    {
+      "cells": {
+        "name": "Labour-51"
+      },
+      "group": true,
+      "id": "g-lab-51"
+    },
+    {
+      "cells": {
+        "final": 19200,
+        "margin": 25,
+        "mult": 1,
+        "name": "Fitter, day-52",
+        "price": 2400,
+        "qty": 6
+      },
+      "id": "l1-52"
+    },
+    {
+      "cells": {
+        "final": 5600,
+        "margin": 0,
+        "mult": 1,
+        "name": "Transport, by weight-53",
+        "price": 5600,
+        "qty": 1
+      },
+      "fixed": true,
+      "id": "l2-53"
+    },
+    {
+      "cells": {
+        "name": "Pipework-54"
+      },
+      "group": true,
+      "id": "g-pipe-54"
+    },
+    {
+      "cells": {
+        "final": 21000,
+        "margin": 18,
+        "mult": 1.05,
+        "name": "Steel pipe 2in, sch 40-55",
+        "price": 410,
+        "qty": 40
+      },
+      "id": "p1-55"
+    },
+    {
+      "cells": {
+        "final": 3100,
+        "margin": 22,
+        "mult": 1.05,
+        "name": "Elbow 2in 90°-56",
+        "price": 95,
+        "qty": 24
+      },
+      "id": "p2-56"
+    },
+    {
+      "cells": {
+        "name": "Valves-57"
+      },
+      "group": true,
+      "id": "g-valve-57"
+    },
+    {
+      "cells": {
+        "final": 21800,
+        "margin": 15,
+        "mult": 1.1,
+        "name": "Gate valve 3in-58",
+        "price": 4200,
+        "qty": 4
+      },
+      "id": "v1-58"
+    },
+    {
+      "cells": {
+        "final": 12800,
+        "margin": 15,
+        "mult": 1.1,
+        "name": "Ball valve 2in-59",
+        "price": 1650,
+        "qty": 6
+      },
+      "id": "v2-59"
+    },
+    {
+      "cells": {
+        "name": "Labour-60"
+      },
+      "group": true,
+      "id": "g-lab-60"
+    },
+    {
+      "cells": {
+        "final": 19200,
+        "margin": 25,
+        "mult": 1,
+        "name": "Fitter, day-61",
+        "price": 2400,
+        "qty": 6
+      },
+      "id": "l1-61"
+    },
+    {
+      "cells": {
+        "final": 5600,
+        "margin": 0,
+        "mult": 1,
+        "name": "Transport, by weight-62",
+        "price": 5600,
+        "qty": 1
+      },
+      "fixed": true,
+      "id": "l2-62"
+    },
+    {
+      "cells": {
+        "name": "Pipework-63"
+      },
+      "group": true,
+      "id": "g-pipe-63"
+    },
+    {
+      "cells": {
+        "final": 21000,
+        "margin": 18,
+        "mult": 1.05,
+        "name": "Steel pipe 2in, sch 40-64",
+        "price": 410,
+        "qty": 40
+      },
+      "id": "p1-64"
+    },
+    {
+      "cells": {
+        "final": 3100,
+        "margin": 22,
+        "mult": 1.05,
+        "name": "Elbow 2in 90°-65",
+        "price": 95,
+        "qty": 24
+      },
+      "id": "p2-65"
+    },
+    {
+      "cells": {
+        "name": "Valves-66"
+      },
+      "group": true,
+      "id": "g-valve-66"
+    },
+    {
+      "cells": {
+        "final": 21800,
+        "margin": 15,
+        "mult": 1.1,
+        "name": "Gate valve 3in-67",
+        "price": 4200,
+        "qty": 4
+      },
+      "id": "v1-67"
+    },
+    {
+      "cells": {
+        "final": 12800,
+        "margin": 15,
+        "mult": 1.1,
+        "name": "Ball valve 2in-68",
+        "price": 1650,
+        "qty": 6
+      },
+      "id": "v2-68"
+    },
+    {
+      "cells": {
+        "name": "Labour-69"
+      },
+      "group": true,
+      "id": "g-lab-69"
+    },
+    {
+      "cells": {
+        "final": 19200,
+        "margin": 25,
+        "mult": 1,
+        "name": "Fitter, day-70",
+        "price": 2400,
+        "qty": 6
+      },
+      "id": "l1-70"
+    },
+    {
+      "cells": {
+        "final": 5600,
+        "margin": 0,
+        "mult": 1,
+        "name": "Transport, by weight-71",
+        "price": 5600,
+        "qty": 1
+      },
+      "fixed": true,
+      "id": "l2-71"
+    },
+    {
+      "cells": {
+        "name": "Pipework-72"
+      },
+      "group": true,
+      "id": "g-pipe-72"
+    },
+    {
+      "cells": {
+        "final": 21000,
+        "margin": 18,
+        "mult": 1.05,
+        "name": "Steel pipe 2in, sch 40-73",
+        "price": 410,
+        "qty": 40
+      },
+      "id": "p1-73"
+    },
+    {
+      "cells": {
+        "final": 3100,
+        "margin": 22,
+        "mult": 1.05,
+        "name": "Elbow 2in 90°-74",
+        "price": 95,
+        "qty": 24
+      },
+      "id": "p2-74"
+    },
+    {
+      "cells": {
+        "name": "Valves-75"
+      },
+      "group": true,
+      "id": "g-valve-75"
+    },
+    {
+      "cells": {
+        "final": 21800,
+        "margin": 15,
+        "mult": 1.1,
+        "name": "Gate valve 3in-76",
+        "price": 4200,
+        "qty": 4
+      },
+      "id": "v1-76"
+    },
+    {
+      "cells": {
+        "final": 12800,
+        "margin": 15,
+        "mult": 1.1,
+        "name": "Ball valve 2in-77",
+        "price": 1650,
+        "qty": 6
+      },
+      "id": "v2-77"
+    },
+    {
+      "cells": {
+        "name": "Labour-78"
+      },
+      "group": true,
+      "id": "g-lab-78"
+    },
+    {
+      "cells": {
+        "final": 19200,
+        "margin": 25,
+        "mult": 1,
+        "name": "Fitter, day-79",
+        "price": 2400,
+        "qty": 6
+      },
+      "id": "l1-79"
+    },
+    {
+      "cells": {
+        "final": 5600,
+        "margin": 0,
+        "mult": 1,
+        "name": "Transport, by weight-80",
+        "price": 5600,
+        "qty": 1
+      },
+      "fixed": true,
+      "id": "l2-80"
+    },
+    {
+      "cells": {
+        "name": "Pipework-81"
+      },
+      "group": true,
+      "id": "g-pipe-81"
+    },
+    {
+      "cells": {
+        "final": 21000,
+        "margin": 18,
+        "mult": 1.05,
+        "name": "Steel pipe 2in, sch 40-82",
+        "price": 410,
+        "qty": 40
+      },
+      "id": "p1-82"
+    },
+    {
+      "cells": {
+        "final": 3100,
+        "margin": 22,
+        "mult": 1.05,
+        "name": "Elbow 2in 90°-83",
+        "price": 95,
+        "qty": 24
+      },
+      "id": "p2-83"
+    },
+    {
+      "cells": {
+        "name": "Valves-84"
+      },
+      "group": true,
+      "id": "g-valve-84"
+    },
+    {
+      "cells": {
+        "final": 21800,
+        "margin": 15,
+        "mult": 1.1,
+        "name": "Gate valve 3in-85",
+        "price": 4200,
+        "qty": 4
+      },
+      "id": "v1-85"
+    },
+    {
+      "cells": {
+        "final": 12800,
+        "margin": 15,
+        "mult": 1.1,
+        "name": "Ball valve 2in-86",
+        "price": 1650,
+        "qty": 6
+      },
+      "id": "v2-86"
+    },
+    {
+      "cells": {
+        "name": "Labour-87"
+      },
+      "group": true,
+      "id": "g-lab-87"
+    },
+    {
+      "cells": {
+        "final": 19200,
+        "margin": 25,
+        "mult": 1,
+        "name": "Fitter, day-88",
+        "price": 2400,
+        "qty": 6
+      },
+      "id": "l1-88"
+    },
+    {
+      "cells": {
+        "final": 5600,
+        "margin": 0,
+        "mult": 1,
+        "name": "Transport, by weight-89",
+        "price": 5600,
+        "qty": 1
+      },
+      "fixed": true,
+      "id": "l2-89"
+    },
+    {
+      "cells": {
+        "name": "Pipework-90"
+      },
+      "group": true,
+      "id": "g-pipe-90"
+    },
+    {
+      "cells": {
+        "final": 21000,
+        "margin": 18,
+        "mult": 1.05,
+        "name": "Steel pipe 2in, sch 40-91",
+        "price": 410,
+        "qty": 40
+      },
+      "id": "p1-91"
+    },
+    {
+      "cells": {
+        "final": 3100,
+        "margin": 22,
+        "mult": 1.05,
+        "name": "Elbow 2in 90°-92",
+        "price": 95,
+        "qty": 24
+      },
+      "id": "p2-92"
+    },
+    {
+      "cells": {
+        "name": "Valves-93"
+      },
+      "group": true,
+      "id": "g-valve-93"
+    },
+    {
+      "cells": {
+        "final": 21800,
+        "margin": 15,
+        "mult": 1.1,
+        "name": "Gate valve 3in-94",
+        "price": 4200,
+        "qty": 4
+      },
+      "id": "v1-94"
+    },
+    {
+      "cells": {
+        "final": 12800,
+        "margin": 15,
+        "mult": 1.1,
+        "name": "Ball valve 2in-95",
+        "price": 1650,
+        "qty": 6
+      },
+      "id": "v2-95"
+    },
+    {
+      "cells": {
+        "name": "Labour-96"
+      },
+      "group": true,
+      "id": "g-lab-96"
+    },
+    {
+      "cells": {
+        "final": 19200,
+        "margin": 25,
+        "mult": 1,
+        "name": "Fitter, day-97",
+        "price": 2400,
+        "qty": 6
+      },
+      "id": "l1-97"
+    },
+    {
+      "cells": {
+        "final": 5600,
+        "margin": 0,
+        "mult": 1,
+        "name": "Transport, by weight-98",
+        "price": 5600,
+        "qty": 1
+      },
+      "fixed": true,
+      "id": "l2-98"
+    },
+    {
+      "cells": {
+        "name": "Pipework-99"
+      },
+      "group": true,
+      "id": "g-pipe-99"
+    },
+    {
+      "cells": {
+        "final": 21000,
+        "margin": 18,
+        "mult": 1.05,
+        "name": "Steel pipe 2in, sch 40-100",
+        "price": 410,
+        "qty": 40
+      },
+      "id": "p1-100"
+    },
+    {
+      "cells": {
+        "final": 3100,
+        "margin": 22,
+        "mult": 1.05,
+        "name": "Elbow 2in 90°-101",
+        "price": 95,
+        "qty": 24
+      },
+      "id": "p2-101"
+    },
+    {
+      "cells": {
+        "name": "Valves-102"
+      },
+      "group": true,
+      "id": "g-valve-102"
+    },
+    {
+      "cells": {
+        "final": 21800,
+        "margin": 15,
+        "mult": 1.1,
+        "name": "Gate valve 3in-103",
+        "price": 4200,
+        "qty": 4
+      },
+      "id": "v1-103"
+    },
+    {
+      "cells": {
+        "final": 12800,
+        "margin": 15,
+        "mult": 1.1,
+        "name": "Ball valve 2in-104",
+        "price": 1650,
+        "qty": 6
+      },
+      "id": "v2-104"
+    },
+    {
+      "cells": {
+        "name": "Labour-105"
+      },
+      "group": true,
+      "id": "g-lab-105"
+    },
+    {
+      "cells": {
+        "final": 19200,
+        "margin": 25,
+        "mult": 1,
+        "name": "Fitter, day-106",
+        "price": 2400,
+        "qty": 6
+      },
+      "id": "l1-106"
+    },
+    {
+      "cells": {
+        "final": 5600,
+        "margin": 0,
+        "mult": 1,
+        "name": "Transport, by weight-107",
+        "price": 5600,
+        "qty": 1
+      },
+      "fixed": true,
+      "id": "l2-107"
+    },
+    {
+      "cells": {
+        "name": "Pipework-108"
+      },
+      "group": true,
+      "id": "g-pipe-108"
+    },
+    {
+      "cells": {
+        "final": 21000,
+        "margin": 18,
+        "mult": 1.05,
+        "name": "Steel pipe 2in, sch 40-109",
+        "price": 410,
+        "qty": 40
+      },
+      "id": "p1-109"
+    },
+    {
+      "cells": {
+        "final": 3100,
+        "margin": 22,
+        "mult": 1.05,
+        "name": "Elbow 2in 90°-110",
+        "price": 95,
+        "qty": 24
+      },
+      "id": "p2-110"
+    },
+    {
+      "cells": {
+        "name": "Valves-111"
+      },
+      "group": true,
+      "id": "g-valve-111"
+    },
+    {
+      "cells": {
+        "final": 21800,
+        "margin": 15,
+        "mult": 1.1,
+        "name": "Gate valve 3in-112",
+        "price": 4200,
+        "qty": 4
+      },
+      "id": "v1-112"
+    },
+    {
+      "cells": {
+        "final": 12800,
+        "margin": 15,
+        "mult": 1.1,
+        "name": "Ball valve 2in-113",
+        "price": 1650,
+        "qty": 6
+      },
+      "id": "v2-113"
+    },
+    {
+      "cells": {
+        "name": "Labour-114"
+      },
+      "group": true,
+      "id": "g-lab-114"
+    },
+    {
+      "cells": {
+        "final": 19200,
+        "margin": 25,
+        "mult": 1,
+        "name": "Fitter, day-115",
+        "price": 2400,
+        "qty": 6
+      },
+      "id": "l1-115"
+    },
+    {
+      "cells": {
+        "final": 5600,
+        "margin": 0,
+        "mult": 1,
+        "name": "Transport, by weight-116",
+        "price": 5600,
+        "qty": 1
+      },
+      "fixed": true,
+      "id": "l2-116"
+    },
+    {
+      "cells": {
+        "name": "Pipework-117"
+      },
+      "group": true,
+      "id": "g-pipe-117"
+    },
+    {
+      "cells": {
+        "final": 21000,
+        "margin": 18,
+        "mult": 1.05,
+        "name": "Steel pipe 2in, sch 40-118",
+        "price": 410,
+        "qty": 40
+      },
+      "id": "p1-118"
+    },
+    {
+      "cells": {
+        "final": 3100,
+        "margin": 22,
+        "mult": 1.05,
+        "name": "Elbow 2in 90°-119",
+        "price": 95,
+        "qty": 24
+      },
+      "id": "p2-119"
+    },
+    {
+      "cells": {
+        "name": "Valves-120"
+      },
+      "group": true,
+      "id": "g-valve-120"
+    },
+    {
+      "cells": {
+        "final": 21800,
+        "margin": 15,
+        "mult": 1.1,
+        "name": "Gate valve 3in-121",
+        "price": 4200,
+        "qty": 4
+      },
+      "id": "v1-121"
+    },
+    {
+      "cells": {
+        "final": 12800,
+        "margin": 15,
+        "mult": 1.1,
+        "name": "Ball valve 2in-122",
+        "price": 1650,
+        "qty": 6
+      },
+      "id": "v2-122"
+    },
+    {
+      "cells": {
+        "name": "Labour-123"
+      },
+      "group": true,
+      "id": "g-lab-123"
+    },
+    {
+      "cells": {
+        "final": 19200,
+        "margin": 25,
+        "mult": 1,
+        "name": "Fitter, day-124",
+        "price": 2400,
+        "qty": 6
+      },
+      "id": "l1-124"
+    },
+    {
+      "cells": {
+        "final": 5600,
+        "margin": 0,
+        "mult": 1,
+        "name": "Transport, by weight-125",
+        "price": 5600,
+        "qty": 1
+      },
+      "fixed": true,
+      "id": "l2-125"
+    },
+    {
+      "cells": {
+        "name": "Pipework-126"
+      },
+      "group": true,
+      "id": "g-pipe-126"
+    },
+    {
+      "cells": {
+        "final": 21000,
+        "margin": 18,
+        "mult": 1.05,
+        "name": "Steel pipe 2in, sch 40-127",
+        "price": 410,
+        "qty": 40
+      },
+      "id": "p1-127"
+    },
+    {
+      "cells": {
+        "final": 3100,
+        "margin": 22,
+        "mult": 1.05,
+        "name": "Elbow 2in 90°-128",
+        "price": 95,
+        "qty": 24
+      },
+      "id": "p2-128"
+    },
+    {
+      "cells": {
+        "name": "Valves-129"
+      },
+      "group": true,
+      "id": "g-valve-129"
+    },
+    {
+      "cells": {
+        "final": 21800,
+        "margin": 15,
+        "mult": 1.1,
+        "name": "Gate valve 3in-130",
+        "price": 4200,
+        "qty": 4
+      },
+      "id": "v1-130"
+    },
+    {
+      "cells": {
+        "final": 12800,
+        "margin": 15,
+        "mult": 1.1,
+        "name": "Ball valve 2in-131",
+        "price": 1650,
+        "qty": 6
+      },
+      "id": "v2-131"
+    },
+    {
+      "cells": {
+        "name": "Labour-132"
+      },
+      "group": true,
+      "id": "g-lab-132"
+    },
+    {
+      "cells": {
+        "final": 19200,
+        "margin": 25,
+        "mult": 1,
+        "name": "Fitter, day-133",
+        "price": 2400,
+        "qty": 6
+      },
+      "id": "l1-133"
+    },
+    {
+      "cells": {
+        "final": 5600,
+        "margin": 0,
+        "mult": 1,
+        "name": "Transport, by weight-134",
+        "price": 5600,
+        "qty": 1
+      },
+      "fixed": true,
+      "id": "l2-134"
+    },
+    {
+      "cells": {
+        "name": "Pipework-135"
+      },
+      "group": true,
+      "id": "g-pipe-135"
+    },
+    {
+      "cells": {
+        "final": 21000,
+        "margin": 18,
+        "mult": 1.05,
+        "name": "Steel pipe 2in, sch 40-136",
+        "price": 410,
+        "qty": 40
+      },
+      "id": "p1-136"
+    },
+    {
+      "cells": {
+        "final": 3100,
+        "margin": 22,
+        "mult": 1.05,
+        "name": "Elbow 2in 90°-137",
+        "price": 95,
+        "qty": 24
+      },
+      "id": "p2-137"
+    },
+    {
+      "cells": {
+        "name": "Valves-138"
+      },
+      "group": true,
+      "id": "g-valve-138"
+    },
+    {
+      "cells": {
+        "final": 21800,
+        "margin": 15,
+        "mult": 1.1,
+        "name": "Gate valve 3in-139",
+        "price": 4200,
+        "qty": 4
+      },
+      "id": "v1-139"
+    },
+    {
+      "cells": {
+        "final": 12800,
+        "margin": 15,
+        "mult": 1.1,
+        "name": "Ball valve 2in-140",
+        "price": 1650,
+        "qty": 6
+      },
+      "id": "v2-140"
+    },
+    {
+      "cells": {
+        "name": "Labour-141"
+      },
+      "group": true,
+      "id": "g-lab-141"
+    },
+    {
+      "cells": {
+        "final": 19200,
+        "margin": 25,
+        "mult": 1,
+        "name": "Fitter, day-142",
+        "price": 2400,
+        "qty": 6
+      },
+      "id": "l1-142"
+    },
+    {
+      "cells": {
+        "final": 5600,
+        "margin": 0,
+        "mult": 1,
+        "name": "Transport, by weight-143",
+        "price": 5600,
+        "qty": 1
+      },
+      "fixed": true,
+      "id": "l2-143"
+    },
+    {
+      "cells": {
+        "name": "Pipework-144"
+      },
+      "group": true,
+      "id": "g-pipe-144"
+    },
+    {
+      "cells": {
+        "final": 21000,
+        "margin": 18,
+        "mult": 1.05,
+        "name": "Steel pipe 2in, sch 40-145",
+        "price": 410,
+        "qty": 40
+      },
+      "id": "p1-145"
+    },
+    {
+      "cells": {
+        "final": 3100,
+        "margin": 22,
+        "mult": 1.05,
+        "name": "Elbow 2in 90°-146",
+        "price": 95,
+        "qty": 24
+      },
+      "id": "p2-146"
+    },
+    {
+      "cells": {
+        "name": "Valves-147"
+      },
+      "group": true,
+      "id": "g-valve-147"
+    },
+    {
+      "cells": {
+        "final": 21800,
+        "margin": 15,
+        "mult": 1.1,
+        "name": "Gate valve 3in-148",
+        "price": 4200,
+        "qty": 4
+      },
+      "id": "v1-148"
+    },
+    {
+      "cells": {
+        "final": 12800,
+        "margin": 15,
+        "mult": 1.1,
+        "name": "Ball valve 2in-149",
+        "price": 1650,
+        "qty": 6
+      },
+      "id": "v2-149"
+    },
+    {
+      "cells": {
+        "name": "Labour-150"
+      },
+      "group": true,
+      "id": "g-lab-150"
+    },
+    {
+      "cells": {
+        "final": 19200,
+        "margin": 25,
+        "mult": 1,
+        "name": "Fitter, day-151",
+        "price": 2400,
+        "qty": 6
+      },
+      "id": "l1-151"
+    },
+    {
+      "cells": {
+        "final": 5600,
+        "margin": 0,
+        "mult": 1,
+        "name": "Transport, by weight-152",
+        "price": 5600,
+        "qty": 1
+      },
+      "fixed": true,
+      "id": "l2-152"
+    },
+    {
+      "cells": {
+        "name": "Pipework-153"
+      },
+      "group": true,
+      "id": "g-pipe-153"
+    },
+    {
+      "cells": {
+        "final": 21000,
+        "margin": 18,
+        "mult": 1.05,
+        "name": "Steel pipe 2in, sch 40-154",
+        "price": 410,
+        "qty": 40
+      },
+      "id": "p1-154"
+    },
+    {
+      "cells": {
+        "final": 3100,
+        "margin": 22,
+        "mult": 1.05,
+        "name": "Elbow 2in 90°-155",
+        "price": 95,
+        "qty": 24
+      },
+      "id": "p2-155"
+    },
+    {
+      "cells": {
+        "name": "Valves-156"
+      },
+      "group": true,
+      "id": "g-valve-156"
+    },
+    {
+      "cells": {
+        "final": 21800,
+        "margin": 15,
+        "mult": 1.1,
+        "name": "Gate valve 3in-157",
+        "price": 4200,
+        "qty": 4
+      },
+      "id": "v1-157"
+    },
+    {
+      "cells": {
+        "final": 12800,
+        "margin": 15,
+        "mult": 1.1,
+        "name": "Ball valve 2in-158",
+        "price": 1650,
+        "qty": 6
+      },
+      "id": "v2-158"
+    },
+    {
+      "cells": {
+        "name": "Labour-159"
+      },
+      "group": true,
+      "id": "g-lab-159"
+    },
+    {
+      "cells": {
+        "final": 19200,
+        "margin": 25,
+        "mult": 1,
+        "name": "Fitter, day-160",
+        "price": 2400,
+        "qty": 6
+      },
+      "id": "l1-160"
+    },
+    {
+      "cells": {
+        "final": 5600,
+        "margin": 0,
+        "mult": 1,
+        "name": "Transport, by weight-161",
+        "price": 5600,
+        "qty": 1
+      },
+      "fixed": true,
+      "id": "l2-161"
+    },
+    {
+      "cells": {
+        "name": "Pipework-162"
+      },
+      "group": true,
+      "id": "g-pipe-162"
+    },
+    {
+      "cells": {
+        "final": 21000,
+        "margin": 18,
+        "mult": 1.05,
+        "name": "Steel pipe 2in, sch 40-163",
+        "price": 410,
+        "qty": 40
+      },
+      "id": "p1-163"
+    },
+    {
+      "cells": {
+        "final": 3100,
+        "margin": 22,
+        "mult": 1.05,
+        "name": "Elbow 2in 90°-164",
+        "price": 95,
+        "qty": 24
+      },
+      "id": "p2-164"
+    },
+    {
+      "cells": {
+        "name": "Valves-165"
+      },
+      "group": true,
+      "id": "g-valve-165"
+    },
+    {
+      "cells": {
+        "final": 21800,
+        "margin": 15,
+        "mult": 1.1,
+        "name": "Gate valve 3in-166",
+        "price": 4200,
+        "qty": 4
+      },
+      "id": "v1-166"
+    },
+    {
+      "cells": {
+        "final": 12800,
+        "margin": 15,
+        "mult": 1.1,
+        "name": "Ball valve 2in-167",
+        "price": 1650,
+        "qty": 6
+      },
+      "id": "v2-167"
+    },
+    {
+      "cells": {
+        "name": "Labour-168"
+      },
+      "group": true,
+      "id": "g-lab-168"
+    },
+    {
+      "cells": {
+        "final": 19200,
+        "margin": 25,
+        "mult": 1,
+        "name": "Fitter, day-169",
+        "price": 2400,
+        "qty": 6
+      },
+      "id": "l1-169"
+    },
+    {
+      "cells": {
+        "final": 5600,
+        "margin": 0,
+        "mult": 1,
+        "name": "Transport, by weight-170",
+        "price": 5600,
+        "qty": 1
+      },
+      "fixed": true,
+      "id": "l2-170"
+    },
+    {
+      "cells": {
+        "name": "Pipework-171"
+      },
+      "group": true,
+      "id": "g-pipe-171"
+    },
+    {
+      "cells": {
+        "final": 21000,
+        "margin": 18,
+        "mult": 1.05,
+        "name": "Steel pipe 2in, sch 40-172",
+        "price": 410,
+        "qty": 40
+      },
+      "id": "p1-172"
+    },
+    {
+      "cells": {
+        "final": 3100,
+        "margin": 22,
+        "mult": 1.05,
+        "name": "Elbow 2in 90°-173",
+        "price": 95,
+        "qty": 24
+      },
+      "id": "p2-173"
+    },
+    {
+      "cells": {
+        "name": "Valves-174"
+      },
+      "group": true,
+      "id": "g-valve-174"
+    },
+    {
+      "cells": {
+        "final": 21800,
+        "margin": 15,
+        "mult": 1.1,
+        "name": "Gate valve 3in-175",
+        "price": 4200,
+        "qty": 4
+      },
+      "id": "v1-175"
+    },
+    {
+      "cells": {
+        "final": 12800,
+        "margin": 15,
+        "mult": 1.1,
+        "name": "Ball valve 2in-176",
+        "price": 1650,
+        "qty": 6
+      },
+      "id": "v2-176"
+    },
+    {
+      "cells": {
+        "name": "Labour-177"
+      },
+      "group": true,
+      "id": "g-lab-177"
+    },
+    {
+      "cells": {
+        "final": 19200,
+        "margin": 25,
+        "mult": 1,
+        "name": "Fitter, day-178",
+        "price": 2400,
+        "qty": 6
+      },
+      "id": "l1-178"
+    },
+    {
+      "cells": {
+        "final": 5600,
+        "margin": 0,
+        "mult": 1,
+        "name": "Transport, by weight-179",
+        "price": 5600,
+        "qty": 1
+      },
+      "fixed": true,
+      "id": "l2-179"
+    },
+    {
+      "cells": {
+        "name": "Pipework-180"
+      },
+      "group": true,
+      "id": "g-pipe-180"
+    },
+    {
+      "cells": {
+        "final": 21000,
+        "margin": 18,
+        "mult": 1.05,
+        "name": "Steel pipe 2in, sch 40-181",
+        "price": 410,
+        "qty": 40
+      },
+      "id": "p1-181"
+    },
+    {
+      "cells": {
+        "final": 3100,
+        "margin": 22,
+        "mult": 1.05,
+        "name": "Elbow 2in 90°-182",
+        "price": 95,
+        "qty": 24
+      },
+      "id": "p2-182"
+    },
+    {
+      "cells": {
+        "name": "Valves-183"
+      },
+      "group": true,
+      "id": "g-valve-183"
+    },
+    {
+      "cells": {
+        "final": 21800,
+        "margin": 15,
+        "mult": 1.1,
+        "name": "Gate valve 3in-184",
+        "price": 4200,
+        "qty": 4
+      },
+      "id": "v1-184"
+    },
+    {
+      "cells": {
+        "final": 12800,
+        "margin": 15,
+        "mult": 1.1,
+        "name": "Ball valve 2in-185",
+        "price": 1650,
+        "qty": 6
+      },
+      "id": "v2-185"
+    },
+    {
+      "cells": {
+        "name": "Labour-186"
+      },
+      "group": true,
+      "id": "g-lab-186"
+    },
+    {
+      "cells": {
+        "final": 19200,
+        "margin": 25,
+        "mult": 1,
+        "name": "Fitter, day-187",
+        "price": 2400,
+        "qty": 6
+      },
+      "id": "l1-187"
+    },
+    {
+      "cells": {
+        "final": 5600,
+        "margin": 0,
+        "mult": 1,
+        "name": "Transport, by weight-188",
+        "price": 5600,
+        "qty": 1
+      },
+      "fixed": true,
+      "id": "l2-188"
+    },
+    {
+      "cells": {
+        "name": "Pipework-189"
+      },
+      "group": true,
+      "id": "g-pipe-189"
+    },
+    {
+      "cells": {
+        "final": 21000,
+        "margin": 18,
+        "mult": 1.05,
+        "name": "Steel pipe 2in, sch 40-190",
+        "price": 410,
+        "qty": 40
+      },
+      "id": "p1-190"
+    },
+    {
+      "cells": {
+        "final": 3100,
+        "margin": 22,
+        "mult": 1.05,
+        "name": "Elbow 2in 90°-191",
+        "price": 95,
+        "qty": 24
+      },
+      "id": "p2-191"
+    },
+    {
+      "cells": {
+        "name": "Valves-192"
+      },
+      "group": true,
+      "id": "g-valve-192"
+    },
+    {
+      "cells": {
+        "final": 21800,
+        "margin": 15,
+        "mult": 1.1,
+        "name": "Gate valve 3in-193",
+        "price": 4200,
+        "qty": 4
+      },
+      "id": "v1-193"
+    },
+    {
+      "cells": {
+        "final": 12800,
+        "margin": 15,
+        "mult": 1.1,
+        "name": "Ball valve 2in-194",
+        "price": 1650,
+        "qty": 6
+      },
+      "id": "v2-194"
+    },
+    {
+      "cells": {
+        "name": "Labour-195"
+      },
+      "group": true,
+      "id": "g-lab-195"
+    },
+    {
+      "cells": {
+        "final": 19200,
+        "margin": 25,
+        "mult": 1,
+        "name": "Fitter, day-196",
+        "price": 2400,
+        "qty": 6
+      },
+      "id": "l1-196"
+    },
+    {
+      "cells": {
+        "final": 5600,
+        "margin": 0,
+        "mult": 1,
+        "name": "Transport, by weight-197",
+        "price": 5600,
+        "qty": 1
+      },
+      "fixed": true,
+      "id": "l2-197"
+    },
+    {
+      "cells": {
+        "name": "Pipework-198"
+      },
+      "group": true,
+      "id": "g-pipe-198"
+    },
+    {
+      "cells": {
+        "final": 21000,
+        "margin": 18,
+        "mult": 1.05,
+        "name": "Steel pipe 2in, sch 40-199",
+        "price": 410,
+        "qty": 40
+      },
+      "id": "p1-199"
+    }
+  ],
+  "title": "Mark-up · K-12 tower",
+  "type": "table"
+}

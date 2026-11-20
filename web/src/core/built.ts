@@ -1,6 +1,7 @@
 import type { Of } from "../gen/builders.ts";
 import { hooks } from "../gen/hooks.ts";
 import type { Fallback, Table } from "../gen/types.ts";
+import { worked } from "./kind/table.ts";
 import { total, unit } from "./table.ts";
 
 const checked: unique symbol = Symbol("built");
@@ -19,9 +20,10 @@ const isTable = (o: Obj): o is Obj & Table => o.type === "table" && Array.isArra
 const text = (o: Obj, k: string) => (typeof o[k] === "string" && o[k] !== "" ? o[k] : undefined);
 
 function tabled(t: Table): Fallback {
-  const n = t.rows.length;
+  const rows = t.rows.filter((r) => !r.group).map((r) => worked(t, r));
+  const n = rows.length;
   const sum = t.columns.find((c) => c.total === "sum");
-  const v = sum && total(sum, t.rows);
+  const v = sum && total(sum, rows);
   const count = `${n} row${n === 1 ? "" : "s"}`;
   const sub = sum && v ? `${count} · total ${sum.label.toLowerCase()} ${unit(sum) ?? ""}${v[1]}` : count;
   return { title: t.title ?? "Table", subtitle: sub };

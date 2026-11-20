@@ -197,9 +197,20 @@ public struct Snapshot {
         case .media(let m)?:
             guard let grab = MarkGrab(g.grab), let gesture = m.gesture(grab) else { return [] }
             return ways(m, grab, g).map { (gesture, $0.value) }
+        case .table(let t)?: return grid(t, g)
         case .timeline(let t)?: return timed(t, g)
         default: return []
         }
+    }
+
+    private static func grid(_ t: Blocks.Table, _ g: StepGesture) -> [(Blocks.Gesture, JSONValue)] {
+        if let id = g.grab.string, let reorder = t.reorder { return ways(t, .row(id), g).map { (reorder, $0.json) } }
+        let cell = GridGrab.cell(row: g.grab.string("row") ?? "", column: g.grab.string("column") ?? "")
+        guard let edit = t.edit, g.via != .pointer, var d = Driven(t, cell), let text = g.reach.first?.string else { return [] }
+        d.on(.press)
+        d.reach(.text(text))
+        guard case .send(let c)? = d.on(.release) else { return [] }
+        return [(edit, c.json)]
     }
 
     private static func timed(_ t: Timeline, _ g: StepGesture) -> [(Blocks.Gesture, JSONValue)] {

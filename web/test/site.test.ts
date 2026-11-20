@@ -48,20 +48,20 @@ const tree = (page) =>
 test("site and render give the same element per kind: tag, classes, hooks, role, name and text", async () => {
   const { page, close } = await open({ page: "<!doctype html><body>" });
   const kinds = readdirSync(at("../../fixtures/blocks/")).map((f) => f.replace(/\.json$/, ""));
-  strictEqual(kinds.length, 33);
+  strictEqual(kinds.length, 34);
   for (const k of kinds) {
     const [written, drawn] = await page.evaluate(
       async ([html, b]) => {
         const B = await import("/blocks.js");
         const bare = (x) => {
           const c = x.cloneNode(true);
-          c.querySelectorAll(".tbh :is(select, button), .tbm, .tmz, .b-sr").forEach((e) => e.remove());
+          c.querySelectorAll(".tbh :is(select, button), .tbm, .tbg, .tbo, .tmz, .b-sr").forEach((e) => e.remove());
           return c;
         };
         const sig = (e) =>
           [e, ...e.querySelectorAll("*")]
             .filter((x) => !x.classList.contains("b-sr"))
-            .filter((x) => x.hasAttribute("data-block") || x.hasAttribute("data-action") || [...x.classList].some((c) => c.startsWith("b-")))
+            .filter((x) => !x.closest(".tbg") && (x.hasAttribute("data-block") || x.hasAttribute("data-action") || [...x.classList].some((c) => c.startsWith("b-"))))
             .map((x) => ({
               tag: x.tagName,
               cls: [...x.classList].sort().join(" "),

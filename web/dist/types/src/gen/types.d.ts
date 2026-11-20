@@ -212,6 +212,7 @@ export type Column = {
     align?: Align | null;
     currency?: string | null;
     digits?: number | null;
+    edit?: boolean | null;
     era?: Era | null;
     hide?: boolean | null;
     id: string;
@@ -897,11 +898,14 @@ export type Synced = {
     keys: KeyState[];
 };
 export type Table = {
+    calc?: Record<string, Expr> | null;
     columns: Column[];
+    edit?: Gesture | null;
     empty?: string | null;
     export?: ExportFormat[] | null;
     filter?: boolean | null;
     id?: string | null;
+    reorder?: Gesture | null;
     rows: TableRow[];
     select?: TableSelect | null;
     show?: Expr | null;
@@ -910,6 +914,8 @@ export type Table = {
 };
 export type TableRow = {
     cells: Record<string, Cell>;
+    fixed?: boolean | null;
+    group?: boolean | null;
     id: string;
     tap?: Tap | null;
 };

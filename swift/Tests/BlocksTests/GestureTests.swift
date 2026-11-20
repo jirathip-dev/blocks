@@ -91,6 +91,61 @@ final class GestureTests: XCTestCase {
         }
     }
 
+    private func cell(_ v: JSONValue?) -> GridGrab {
+        if let id = v?.string { return .row(id) }
+        return .cell(row: v?.string("row") ?? "", column: v?.string("column") ?? "")
+    }
+
+    func testTableRulesGiveEveryCaseTheCratesCellOrOrderWordsStepsAndWorkedCells() throws {
+        let f = try read("table.json")
+        let t = try XCTUnwrap(f["block"]).decode(Blocks.Table.self)
+        let cases = f.list("cases")
+        XCTAssertGreaterThanOrEqual(cases.count, 20)
+        for c in cases {
+            let g = cell(c["grab"])
+            let got: GridChange? =
+                if let r = c["reach"] {
+                    t.candidate(g, r.string.map(GridReach.text) ?? .rows(Int(r.number ?? 0)))
+                } else {
+                    c.list("nudges").reduce(t.start(g)) { from, n in from.flatMap { t.nudge(g, from: $0, by: nudge(n)) } }
+                }
+            let want = c["want"] == .null ? nil : c["want"]
+            XCTAssertEqual(got?.json, want, "\(g) \(String(describing: c["reach"]))")
+            XCTAssertEqual(got.map { t.says(g, $0) }, c.string("says"), "\(g)")
+        }
+        for (id, want) in f["steps"]?.fields ?? [:] {
+            XCTAssertEqual(t.steps(.row(id)).map(\.0), want.items.compactMap(\.string), id)
+        }
+        for (id, cells) in f["worked"]?.fields ?? [:] {
+            let r = try XCTUnwrap(t.rows.first { $0.id == id })
+            let w = t.worked(r)
+            for (k, v) in cells.fields { XCTAssertEqual(w.cells[k], .number(v.number ?? -1), "\(id) \(k)") }
+            XCTAssertEqual(w.cells["cost"] != nil, r.group != true, id)
+        }
+    }
+
+    func testACellEditAndARowMoveSendTheSameChangeByKeysAndByANamedAction() throws {
+        let t = try XCTUnwrap(try read("table.json")["block"]).decode(Blocks.Table.self)
+        var typed = try XCTUnwrap(Driven(t, .cell(row: "v2", column: "qty")))
+        typed.on(.press)
+        typed.reach(.text("8"))
+        XCTAssertEqual(typed.on(.release), .send(.cell(CellEdit(row: "v2", column: "qty", value: .number(8)))))
+        var bad = try XCTUnwrap(Driven(t, .cell(row: "v2", column: "qty")))
+        bad.on(.press)
+        bad.reach(.text("8x"))
+        XCTAssertNil(bad.on(.release))
+        XCTAssertEqual(bad.phase, .idle)
+        var keys = try XCTUnwrap(Driven(t, .row("v1")))
+        keys.on(.press)
+        keys.nudge(Nudge(.down))
+        var named = try XCTUnwrap(Driven(t, .row("v1")))
+        let want = Effect<GridChange>.send(.order(["ga", "p1", "p2", "gb", "v2", "v1", "x"]))
+        XCTAssertEqual(keys.on(.release), want)
+        XCTAssertEqual(named.named(Nudge(.down)), want)
+        XCTAssertNil(Driven(t, .row("x")))
+        XCTAssertNil(Driven(t, .cell(row: "v2", column: "cost")))
+    }
+
     func testMediaRulesGiveEveryCaseTheCratesChangeWordsStepsAndNames() throws {
         let f = try read("media.json")
         let media = try XCTUnwrap(f["block"]).decode(Media.self)
@@ -196,6 +251,30 @@ final class GestureSnapshotTests: XCTestCase {
             let run = try Snapshot(screen).run([step, refuse])
             XCTAssertEqual(try JSONValue(run.report.sent), via == "pointer" ? .array([]) : want, via)
             XCTAssertEqual(run.report.dropped, via == "pointer" ? ["gesture pointer accounts"] : [], via)
+        }
+    }
+}
+
+@MainActor
+final class GridSnapshotTests: XCTestCase {
+    func testTheHarnessSendsOneCellEditAndOneOrderByKeysAndByANamedActionAndDropsAPointer() throws {
+        let url = URL(fileURLWithPath: #filePath).deletingLastPathComponent()
+            .appendingPathComponent("../../../fixtures/gesture/table.json")
+        let table = try XCTUnwrap(try JSONDecoder().decode(JSONValue.self, from: Data(contentsOf: url))["block"])
+        let json = { (s: String) in try JSONDecoder().decode(JSONValue.self, from: Data(s.utf8)) }
+        let screen = try JSONValue.object(["type": .string("screen"), "id": .string("s"), "title": .string("Q"), "blocks": .array([table])])
+            .decode(Block.self)
+        let cell = try json(#"[{"screen":"s","action":"set-cell","block":"quote","values":{"cell":{"row":"v2","column":"qty","value":8}}}]"#)
+        let order = try json(#"[{"screen":"s","action":"order","block":"quote","values":{"rows":["ga","p1","p2","gb","v2","v1","x"]}}]"#)
+        let ways: [(String, String, String, JSONValue)] = [
+            ("keys", #"{"row":"v2","column":"qty"}"#, #"["8"]"#, cell), ("action", #"{"row":"v2","column":"qty"}"#, #"["8"]"#, cell),
+            ("keys", #""v1""#, #"[{"dir":"down"}]"#, order), ("action", #""v1""#, #"["Move down"]"#, order),
+            ("pointer", #""v1""#, "[[0, 50]]", .array([])),
+        ]
+        for (via, grab, reach, want) in ways {
+            let step = try json(#"{"gesture":{"id":"quote","grab":\#(grab),"via":"\#(via)","reach":\#(reach)}}"#).decode(Step.self)
+            let run = try Snapshot(screen).run([step])
+            XCTAssertEqual(try JSONValue(run.report.sent), want, "\(via) \(grab)")
         }
     }
 }
