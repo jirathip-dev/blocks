@@ -4,9 +4,11 @@ use std::collections::BTreeMap;
 use serde::{Deserialize, Serialize};
 use serde_json::Number;
 
-use super::{Era, Fallback, Fields, Gesture, Label, Shown, Tap, Tone};
 use crate::expr::{eval, Expr, Lit};
 use crate::gesture::{Dir, Nudge, Rules, Word};
+use crate::kind::{Block, Era, Fallback, Gesture, Label, Shown, Tap, Tone};
+
+listed! { 28: Table(Table) = "table" }
 
 words!(ColumnKind {
     Text,
@@ -671,4 +673,236 @@ impl Rules for Table {
             (GridGrab::Cell { .. }, GridChange::Order(_)) => String::new(),
         }
     }
+}
+
+fn invoice(id: &str, client: &str, status: Cell, due: Option<&str>, late: Option<u32>, amount: u32) -> TableRow {
+    let mut cells = std::collections::BTreeMap::from([
+        ("inv".to_string(), Cell::Text(id.into())),
+        ("client".into(), Cell::Text(client.into())),
+        ("status".into(), status),
+        ("amount".into(), Cell::Number(amount.into())),
+    ]);
+    cells.extend(due.map(|d| ("due".into(), Cell::Text(d.into()))));
+    cells.extend(late.map(|l| ("late".into(), Cell::Number(l.into()))));
+    TableRow {
+        id: id.into(),
+        cells,
+        tap: Some(Tap {
+            open: Some(format!("/invoice/{id}")),
+            ..Tap::default()
+        }),
+        ..TableRow::default()
+    }
+}
+
+fn columns() -> Vec<Column> {
+    let col = |id: &str, label: &str, kind: ColumnKind| Column {
+        id: id.into(),
+        label: label.into(),
+        kind,
+        ..Column::default()
+    };
+    vec![
+        Column {
+            phone: Some(PhonePart::Meta),
+            ..col("inv", "Invoice", ColumnKind::Text)
+        },
+        Column {
+            width: Some(18),
+            phone: Some(PhonePart::Title),
+            ..col("client", "Client", ColumnKind::Text)
+        },
+        col("status", "Status", ColumnKind::Tone),
+        Column {
+            era: Some(Era::Be),
+            ..col("due", "Due", ColumnKind::Date)
+        },
+        Column {
+            unit: Some("days".into()),
+            tone: Some(Tone::Warn),
+            max: Some(60.into()),
+            digits: Some(0),
+            ..col("late", "Overdue", ColumnKind::Bar)
+        },
+        Column {
+            currency: Some("THB".into()),
+            total: Some(Total::Sum),
+            ..col("amount", "Amount", ColumnKind::Money)
+        },
+    ]
+}
+
+fn markup() -> Vec<Column> {
+    let col = |id: &str, label: &str, kind: ColumnKind, edit: bool| Column {
+        id: id.into(),
+        label: label.into(),
+        kind,
+        edit: edit.then_some(true),
+        ..Column::default()
+    };
+    let money = |id: &str, label: &str, edit: bool| Column {
+        currency: Some("THB".into()),
+        total: (!edit).then_some(Total::Sum),
+        ..col(id, label, ColumnKind::Money, edit)
+    };
+    vec![
+        Column {
+            width: Some(22),
+            ..col("name", "Item", ColumnKind::Text, true)
+        },
+        Column {
+            digits: Some(0),
+            ..col("qty", "Qty", ColumnKind::Number, true)
+        },
+        Column {
+            phone: Some(PhonePart::Meta),
+            ..money("price", "Unit cost", true)
+        },
+        col("mult", "Mult", ColumnKind::Number, true),
+        money("cost", "Cost", false),
+        Column {
+            unit: Some("%".into()),
+            digits: Some(1),
+            ..col("margin", "Margin", ColumnKind::Number, true)
+        },
+        money("sell", "Price", false),
+        money("final", "Final", false),
+    ]
+}
+
+fn item(id: &str, name: &str, n: [f64; 5]) -> TableRow {
+    let [qty, price, mult, margin, fin] =
+        n.map(|v| Cell::Number(serde_json::from_str(&v.to_string()).unwrap_or(0.into())));
+    let cells = [
+        ("qty", qty),
+        ("price", price),
+        ("mult", mult),
+        ("margin", margin),
+        ("final", fin),
+    ];
+    let mut cells: std::collections::BTreeMap<String, Cell> = cells.map(|(k, v)| (k.to_string(), v)).into();
+    cells.insert("name".into(), Cell::Text(name.into()));
+    TableRow {
+        id: id.into(),
+        cells,
+        ..TableRow::default()
+    }
+}
+
+fn grid() -> Block {
+    let group = |id: &str, name: &str| TableRow {
+        id: id.into(),
+        cells: [("name".to_string(), Cell::Text(name.into()))].into(),
+        group: Some(true),
+        ..TableRow::default()
+    };
+    let get = |k: &str| Expr::Get(k.into());
+    let cost = Expr::Mul(Box::new([Expr::Mul(Box::new([get("qty"), get("price")])), get("mult")]));
+    let share = Expr::Div(Box::new([get("margin"), Expr::Lit(Lit::Num(100.into()))]));
+    let keep = Expr::Sub(Box::new([Expr::Lit(Lit::Num(1.into())), share]));
+    let sell = Expr::Div(Box::new([get("cost"), keep]));
+    let rows = vec![
+        group("g-pipe", "Pipework"),
+        item("p1", "Steel pipe 2in, sch 40", [40.0, 410.0, 1.05, 18.0, 21_000.0]),
+        item("p2", "Elbow 2in 90°", [24.0, 95.0, 1.05, 22.0, 3_100.0]),
+        group("g-valve", "Valves"),
+        item("v1", "Gate valve 3in", [4.0, 4_200.0, 1.1, 15.0, 21_800.0]),
+        item("v2", "Ball valve 2in", [6.0, 1_650.0, 1.1, 15.0, 12_800.0]),
+        group("g-lab", "Labour"),
+        item("l1", "Fitter, day", [6.0, 2_400.0, 1.0, 25.0, 19_200.0]),
+        TableRow {
+            fixed: Some(true),
+            ..item("l2", "Transport, by weight", [1.0, 5_600.0, 1.0, 0.0, 5_600.0])
+        },
+    ];
+    let gesture = |action: &str, name: &str| Gesture {
+        action: action.into(),
+        name: name.into(),
+        enabled: None,
+    };
+    let table = Table::new(markup(), rows)
+        .id("grid")
+        .title("Mark-up · K-12 tower")
+        .calc(
+            [("cost".to_string(), cost), ("sell".to_string(), sell)]
+                .into_iter()
+                .collect::<std::collections::BTreeMap<_, _>>(),
+        )
+        .edit(gesture("set-cell", "cell"))
+        .reorder(gesture("order", "rows"));
+    Block::Table(Box::new(table))
+}
+
+fn table() -> Block {
+    let label = |text: &str, tone: Tone| {
+        Cell::Label(Label {
+            text: text.into(),
+            tone: Some(tone),
+        })
+    };
+    let rows = vec![
+        invoice(
+            "INV-0133",
+            "Orchard Lane Clinic",
+            label("overdue", Tone::Warn),
+            Some("2026-10-18"),
+            Some(32),
+            48_750,
+        ),
+        invoice(
+            "INV-0136",
+            "Bluepeak Logistics",
+            label("disputed", Tone::Bad),
+            Some("2026-11-05"),
+            Some(14),
+            31_500,
+        ),
+        invoice(
+            "INV-0138",
+            "Saffron & Salt",
+            label("sent", Tone::Done),
+            Some("2026-11-19"),
+            None,
+            18_000,
+        ),
+        invoice(
+            "INV-0139",
+            "Tidewater Bakery",
+            label("paid", Tone::Ok),
+            Some("2026-11-26"),
+            None,
+            15_000,
+        ),
+        invoice(
+            "INV-0143",
+            "Moss Hill School",
+            label("draft", Tone::Mute),
+            None,
+            None,
+            13_500,
+        ),
+    ];
+    let bulk = |action: &str, label: &str, bad: Option<bool>| BulkAction {
+        action: action.into(),
+        label: label.into(),
+        bad,
+    };
+    let select = TableSelect {
+        actions: vec![bulk("remind", "send reminder", None), bulk("void", "void", Some(true))],
+    };
+    let table = Table::new(columns(), rows)
+        .id("invoices")
+        .title("Invoices")
+        .sort(TableSort {
+            by: "due".into(),
+            dir: SortDir::Asc,
+        })
+        .empty("No invoices yet.")
+        .select(select)
+        .export(vec![ExportFormat::Csv, ExportFormat::Xlsx]);
+    Block::Table(Box::new(table))
+}
+
+pub(super) fn sample() -> Vec<Block> {
+    vec![table(), grid()]
 }

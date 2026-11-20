@@ -1,5 +1,19 @@
-use super::{Block, List};
 use crate::gesture::{Dir, Nudge, Rules, Word};
+use crate::kind::sample::text;
+use crate::kind::{Block, Gesture, LaneState, Link, Round, RoundLane, Tap};
+
+listed! { 3: List(List) = "list" }
+
+kind! {
+    /// A list of rows.
+    pub struct List {
+        id: Option<String>,
+        rows: Vec<Block>,
+        reorder: Option<Gesture>,
+        #[serde(rename = "more")]
+        next: Option<String>,
+    }
+}
 
 const STEPS: [(&str, Dir, bool); 4] = [
     ("Move up", Dir::Up, false),
@@ -78,4 +92,42 @@ impl Rules for List {
         let at = change.iter().position(|i| i == grab).map_or(0, |i| i + 1);
         format!("{title}, {at} of {}", change.len())
     }
+}
+
+pub(super) fn sample() -> Vec<Block> {
+    let past = Round {
+        id: "r1".into(),
+        name: "impl".into(),
+        state: LaneState::Done,
+        summary: Some("pushed".into()),
+        tap: Some(Tap {
+            url: Some("/runs/1".into()),
+            ..Tap::default()
+        }),
+        ..Round::default()
+    };
+    let now = Round {
+        id: "r2".into(),
+        name: "review 1".into(),
+        state: LaneState::Needs,
+        summary: Some("one finding".into()),
+        lane: Some(RoundLane {
+            name: Some("rev-1".into()),
+            lines: Some(vec!["reading the diff".into()]),
+            ..RoundLane::default()
+        }),
+        blocks: Some(vec![text("finding", "Fix the test")]),
+        links: Some(vec![Link {
+            label: "verdict".into(),
+            tap: Tap {
+                url: Some("/verdict".into()),
+                ..Tap::default()
+            },
+        }]),
+        ..Round::default()
+    };
+    let row = super::row::build().id("row").rounds(vec![past, now]);
+    vec![Block::List(Box::new(
+        List::new(vec![Block::Row(Box::new(row))]).id("rows"),
+    ))]
 }

@@ -1,8 +1,9 @@
 use serde::{Deserialize, Serialize};
 use serde_json::Number;
 
-use super::{Era, Fields, Tap, Tone};
-use crate::expr::Expr;
+use crate::kind::{Block, Era, Tap, Tone};
+
+listed! { 30: Chart(Chart) = "chart" }
 
 words!(ChartKind {
     Bar,
@@ -59,4 +60,36 @@ impl Chart {
         }
         (self.chart == ChartKind::Donut && n > 1).then(|| format!("a donut of {n} series: one, over its slices"))
     }
+}
+
+fn chart() -> Chart {
+    let months = ["2024-01", "2024-02", "2024-03", "2024-04", "2024-05", "2024-06"];
+    let series = |name: &str, values: [u32; 6]| Series {
+        name: name.into(),
+        values: values.map(|v| (v * 100_000).into()).to_vec(),
+        ..Series::default()
+    };
+    let target = Series {
+        tone: Some(Tone::Warn),
+        mark: Some(SeriesMark::Line),
+        ..series("Target", [110, 110, 120, 120, 120, 125])
+    };
+    Chart::new(
+        "Revenue and target",
+        ChartKind::Combo,
+        months.map(String::from).to_vec(),
+        vec![series("Revenue", [111, 106, 129, 118, 122, 114]), target],
+    )
+    .id("revenue")
+    .era(Era::Be)
+    .format(ChartFormat::ThbM)
+    .selected("2024-03")
+    .tap(Tap {
+        action: Some("sales.month".into()),
+        ..Tap::default()
+    })
+}
+
+pub(super) fn sample() -> Vec<Block> {
+    vec![Block::Chart(Box::new(chart()))]
 }

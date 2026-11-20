@@ -1,8 +1,6 @@
-use serde::{Deserialize, Serialize};
-
 use super::Word;
 use crate::expr::Expr;
-use crate::kind::{Check, FieldValue, Fields};
+use crate::kind::{Check, FieldValue};
 
 field! {
     /// An on or off switch.
