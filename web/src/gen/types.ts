@@ -2,6 +2,8 @@ export const schemaVersion = 2;
 
 export type Frame = { from?: number | null; k: string; ops?: Op[] | null; rev: number; screen?: Block | null };
 
+export type Accept = "image" | "pdf" | "sheet";
+
 export type Accessory = "chevron" | "none";
 
 export type Act = { action?: string | null; confirm?: Confirm | null; enabled?: Expr | null; icon?: string | null; label: string; menu?: Act[] | null; tap?: Tap | null; tone?: Tone | null; values?: Record<string, unknown> | null };
@@ -80,7 +82,7 @@ export type Expr = { get: string } | { not: Expr } | { all: Expr[] } | { any: Ex
 
 export type Fallback = { subtitle?: string | null; tap?: Tap | null; title: string };
 
-export type Field = ({ type: "text" } & TextField) | ({ type: "toggle" } & ToggleField) | ({ type: "picker" } & PickerField) | ({ type: "secret" } & SecretField) | (OtherField & { [key: string]: unknown });
+export type Field = ({ type: "text" } & TextField) | ({ type: "toggle" } & ToggleField) | ({ type: "picker" } & PickerField) | ({ type: "secret" } & SecretField) | ({ type: "upload" } & UploadField) | (OtherField & { [key: string]: unknown });
 
 export type FieldDrawn = "native" | "plain" | "hidden";
 
@@ -89,6 +91,8 @@ export type FieldNode = { drawn: FieldDrawn; label: string; name: string; role: 
 export type FieldValue = string | number | boolean;
 
 export type Figure = { avatar?: string | null; coat?: string | null; grow?: string | null; icon?: string | null; state?: Tone | null; tool?: string | null };
+
+export type FileRef = { id: string; name?: string | null; src?: string | null };
 
 export type Finding = { at: string; file: string; fix: string; line?: number | null; message: string; rule: string; severity: Severity; steps?: string | null };
 
@@ -99,6 +103,8 @@ export type FoldMain = { action: string; block?: string | null; label: string; v
 export type Form = { action?: string | null; fields: Field[]; id?: string | null; show?: Expr | null; submit?: Submit | null };
 
 export type Gesture = { action: string; enabled?: Expr | null; name: string };
+
+export type Handler = "answers" | "fails" | "waits";
 
 export type Have = { k: string; rev?: number | null };
 
@@ -230,7 +236,9 @@ export type Stage = { id: string; label: string; sub?: string | null; tap?: Tap 
 
 export type Stat = { id?: string | null; items?: Tile[] | null; label?: string | null; show?: Expr | null; spark?: number[] | null; tone?: Tone | null; unit?: string | null; value?: Shown | null };
 
-export type Step = { tap: StepOn } | { type: StepType } | { scroll: StepOn } | { frame: Frame } | { answer: Answer } | { shot: StepShot } | { gesture: StepGesture } | { refuse: StepRefuse };
+export type Step = { tap: StepOn } | { type: StepType } | { scroll: StepOn } | { frame: Frame } | { answer: Answer } | { shot: StepShot } | { gesture: StepGesture } | { refuse: StepRefuse } | { file: StepFile };
+
+export type StepFile = { field: string; handler: Handler; mime: string; name: string; size: number };
 
 export type StepGesture = { grab: unknown; id: string; reach: unknown[]; via: Via };
 
@@ -293,6 +301,8 @@ export type TreeDrawn = "native" | "fallback" | "hidden";
 export type TreeNode = { children: TreeNode[]; drawn: TreeDrawn; fields?: FieldNode[] | null; id?: string | null; kind: string; name: string; rect?: number[] | null; role: string; text?: string | null; variant?: string | null };
 
 export type Undo = { action: string; confirm?: Confirm | null; label?: string | null; values?: Record<string, unknown> | null };
+
+export type UploadField = { accept?: Accept[] | null; capture?: boolean | null; checks?: Check[] | null; doc?: string | null; enabled?: Expr | null; error?: string | null; files?: FileRef[] | null; label?: string | null; many?: boolean | null; mb?: number | null; name: string; open?: boolean | null; show?: Expr | null; was?: string | null };
 
 export type Via = "pointer" | "keys" | "action";
 

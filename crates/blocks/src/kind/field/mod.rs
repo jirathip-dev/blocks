@@ -7,11 +7,13 @@ mod picker;
 mod secret;
 mod text;
 mod toggle;
+mod upload;
 
 pub use picker::PickerField;
 pub use secret::SecretField;
 pub use text::TextField;
 pub use toggle::ToggleField;
+pub use upload::{Accept, FileRef, UploadField};
 
 /// One word a field draws itself: its key, then English and Thai.
 pub type Word = (&'static str, &'static str, &'static str);
@@ -23,6 +25,7 @@ fields! {
     Toggle(ToggleField) = "toggle",
     Picker(PickerField) = "picker",
     Secret(SecretField) = "secret",
+    Upload(UploadField) = "upload",
 }
 
 field! {

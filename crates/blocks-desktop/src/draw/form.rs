@@ -14,6 +14,7 @@ macro_rules! each {
             Field::Toggle($x) => $e,
             Field::Picker($x) => $e,
             Field::Secret($x) => $e,
+            Field::Upload($x) => $e,
             Field::Other($x) => $e,
         }
     };
@@ -86,7 +87,7 @@ fn input(f: &Field, ui: &mut Ui, cx: &mut Cx<'_>, on: bool) -> (Response, Value)
             (r, Value::from(v))
         }
         Field::Secret(s) => return secret(s, ui, cx, on),
-        Field::Text(_) | Field::Other(_) => {
+        Field::Text(_) | Field::Upload(_) | Field::Other(_) => {
             let mut v = text;
             let hint = match f {
                 Field::Text(t) => t.placeholder.as_deref(),

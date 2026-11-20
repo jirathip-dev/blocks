@@ -162,6 +162,7 @@ public struct Snapshot {
                 let ways = Self.gestured(block, g).map { Self.sent(key, g.id, $0) }
                 if ways.isEmpty { dropped.append("gesture \(g.via.rawValue) \(g.id)") } else { sent += ways }
             case .refuse: seen = hear(draw(screen, edits))
+            case .file(let f): dropped.append("file \(f.field)")
             case .unknown(let value): dropped.append("unknown \(value)")
             }
             times.append(ms(clock.now - begun))

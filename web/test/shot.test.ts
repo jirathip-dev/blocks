@@ -167,6 +167,44 @@ test("scripted typing and taps change local state: a check's message, a disabled
   deepStrictEqual(report.sent.filter((x) => x.action === "save").length, 1, "a disabled act posts nothing; once more is on, save posts");
 });
 
+const proof = (more = {}) => ({ type: "screen", id: "proof", blocks: [{ type: "form", id: "proof", submit: { action: "send", label: "send" }, fields: [{ type: "upload", name: "photos", label: "Photos", accept: ["image"], many: true, mb: 1, files: [{ id: "f-0", name: "crate.jpg" }], ...more }] }] });
+const picks = (name, steps, adapter, screen = proof()) => {
+  const [file, script] = [join(out, `${name}.json`), join(out, `${name}-steps.json`)];
+  writeFileSync(file, JSON.stringify(screen));
+  writeFileSync(script, JSON.stringify(steps));
+  const r = run("--screen", file, "--script", script, "--adapter", adapter, "--out", join(out, `${name}-${adapter}`));
+  const read = (f) => JSON.parse(readFileSync(join(out, `${name}-${adapter}`, f), "utf8"));
+  return { r, report: read("report.json"), text: (n) => read(`${n}.tree.json`).children[0].text };
+};
+const file = (name, size, mime, handler = "answers") => ({ file: { field: "photos", name, size, mime, handler } });
+
+test("an upload refuses a file of the wrong type or over its size before the handler, and sends ids, never bytes, in HTML and React", () => {
+  for (const adapter of ["html", "react"]) {
+    const steps = [file("big.jpg", 2 * 1048576, "image/jpeg"), { shot: { name: "big" } }, file("note.pdf", 900, "application/pdf"), { shot: { name: "type" } }, file("door.jpg", 3000, "image/jpeg"), { shot: { name: "done" } }, { tap: { id: "proof" } }];
+    const { r, report, text } = picks("upload", steps, adapter);
+    strictEqual(r.status, 0, `${adapter}: ${r.stderr}`);
+    ok(text("big").includes("big.jpgrefused: 2.0 MB is over 1 MB"), `${adapter}: ${text("big")}`);
+    ok(text("type").includes("note.pdfrefused: only images") && !text("type").includes("big.jpg"), `${adapter}: the next pick drops a refused row: ${text("type")}`);
+    ok(text("done").includes("door.jpg3 KB") && !text("done").includes("note.pdf"), `${adapter}: ${text("done")}`);
+    deepStrictEqual(report.sent, [{ screen: "proof", action: "send", block: "proof", values: { photos: ["f-0", "file-1"] } }], `${adapter}: the handler got door.jpg only, as its first file`);
+    ok(!JSON.stringify(report.sent).includes("data:"), adapter);
+  }
+});
+
+test("an upload's submit waits while a file is uploading or failed, and says why; the field is off with no file input to find", () => {
+  for (const adapter of ["html", "react"]) {
+    const steps = [file("a.jpg", 2000, "image/jpeg", "waits"), { shot: { name: "waiting" } }, { tap: { id: "proof" } }, file("b.jpg", 2000, "image/jpeg", "fails"), { shot: { name: "failed" } }, { tap: { id: "proof" } }];
+    const { r, report, text } = picks("busy", steps, adapter);
+    strictEqual(r.status, 0, `${adapter}: ${r.stderr}`);
+    for (const line of ["uploading 0 %", "waiting for 1 upload"]) ok(text("waiting").includes(line), `${adapter}: ${text("waiting")}`);
+    for (const line of ["upload failed", "an upload failed: retry or remove it"]) ok(text("failed").includes(line), `${adapter}: ${text("failed")}`);
+    deepStrictEqual([report.sent, report.dropped], [[], ["tap proof", "tap proof"]], adapter);
+  }
+  const { r, report } = picks("gone", [file("a.jpg", 10, "image/jpeg"), { tap: { id: "proof" } }], "html", { type: "form", id: "proof", fields: [{ type: "text", name: "photos" }] });
+  strictEqual(r.status, 0, r.stderr);
+  deepStrictEqual(report.dropped, ["file photos"]);
+});
+
 const corner = (png) => {
   const idat = [];
   for (let at = 8; at < png.length; at += png.readUInt32BE(at) + 12) {

@@ -7,6 +7,7 @@ mod plain;
 mod secret;
 mod text;
 mod toggle;
+mod upload;
 
 type View = fn(&mut W<'_>, &Value, &[(&str, &str)]);
 
@@ -15,6 +16,7 @@ const VIEWS: &[(&str, &str, View)] = &[
     ("toggle", " tg", toggle::view),
     ("picker", "", picker::view),
     ("secret", "", secret::view),
+    ("upload", " up", upload::view),
 ];
 
 fn note(w: &W<'_>, x: &Value) -> (&'static str, String) {
