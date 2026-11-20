@@ -1,0 +1,14 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="../neutral-default/tokens.css"><link rel="stylesheet" href="../../../web/dist/blocks.css"><link rel="stylesheet" href="import.css"><link rel="stylesheet" href="page.css">
+<script src="import.js"></script><script src="data.js"></script><title>import: confirm, send, done</title></head>
+<body><main class="scr">
+<div class="top"><div class="tabh"><span class="tw">Shop · products</span></div></div>
+<h2>6 · Confirm</h2><p class="note">[import 308 rows] asks once, in the action bar: how many rows go in, how many are left out, and that the file is not changed. The rows stay in view. [back] returns to the check.</p>
+<div data-base="WITH_ERRS" data-i='{"phase":"ask"}'></div>
+<h2>7 · Sending</h2><p class="note">One import action: the file's id, the sheet and the column match. The rows are not sent back, since the app already has the file. While it runs, the button spins and every control is off.</p>
+<div data-base="WITH_ERRS" data-i='{"phase":"sending"}'></div>
+<h2>8 · Done</h2><p class="note">The app answers with how many rows it took. If rows were left out, it can add a link to a file of them with an "error" column, ready to fix and import again. [download left-out rows] is that link.</p>
+<div data-base="WITH_ERRS" data-i='{"phase":"done","done":{"n":308,"left":4}}'></div>
+<h2>9 · The app refuses some rows at import</h2><p class="note">The app takes all the rows or none. If something changed since the read (here, two products were archived), it answers with its message and those rows' errors. The screen goes back to the check with those rows marked, and [import 46 rows] sends the rest.</p>
+<div data-base="PRODUCTS" data-i='{"error":"Nothing was imported: SKU DA-0310 and DA-0311 are archived. Import the other 46 rows, or fix the file and pick it again.","errs":2,"show":"errors","rows":[{"n":4,"cells":{"sku":"DA-0310","name":"Fresh milk 1 L","cat":"Dairy","price":52,"stock":140,"exp":"2026-11-28"},"bad":{"sku":"DA-0310 is archived"}},{"n":5,"cells":{"sku":"DA-0311","name":"Greek yoghurt 450 g","cat":"Dairy","price":119,"stock":36,"exp":"2026-12-04"},"bad":{"sku":"DA-0311 is archived"}}]}'></div>
+</main><script>draw()</script></body></html>
