@@ -26,7 +26,12 @@ jobs:
       - name: "Playwright's WebKit"
         run: npm --prefix web ci --no-audit --no-fund && npx --prefix web playwright install --with-deps webkit
       - name: "same PNG and tree before and after blocks.js, links and the look sheet under /blocks/"
-        run: cd web && SITE="$GITHUB_WORKSPACE/_site" node --no-warnings --test test/pages/showcase.test.ts
+        run: cd web && SITE="$GITHUB_WORKSPACE/_site" SHOTS="$GITHUB_WORKSPACE/shots" node --no-warnings --test test/pages/showcase.test.ts
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playground-webkit-390-1440
+          path: shots
       - if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: actions/upload-pages-artifact@v3
         with:

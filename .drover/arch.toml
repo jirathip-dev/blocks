@@ -28,7 +28,7 @@ generated = [
     "fixtures/built/*.json",
     "web/dist/blocks.js",
     "web/dist/blocks.css",
-    "web/dist/core.js",
+    "web/dist/core.js", "web/dist/play.js",
     "web/src/gen/scoped.css",
     "web/dist/blocks.scoped.css",
     "web/dist/types/**",

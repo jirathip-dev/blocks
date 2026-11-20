@@ -5,11 +5,12 @@ use blocks::{
     Act, Bar, Block, Built, Button, ButtonStyle, Card, CardKind, ChipOption, Chips, Choice, ChoiceOption, Composer,
     ComposerChip, Diagram, Diff, Editor, Fallback, Field, FieldValue, Form, Hero, Hunk, Image, Images, Island,
     IslandSize, Label, Lane, LaneState, LineError, List, Mark, MarkKind, Media, Nav, NavLink, Node, Other, Part,
-    PickerField, Prose, Queued, Row, Run, Scene, Screen, Secret, Sheet, Shown, Stage, Stat, Steps, Submit, Tap, Text,
-    TextField, Tile, ToggleField, Tone, Web,
+    PickerField, Prose, Queued, Row, Run, Scene, Screen, Secret, Sheet, Shown, Span, Stage, Stat, Steps, Submit, Tap,
+    Text, TextField, Tile, ToggleField, Tone, Web,
 };
 use serde_json::{Number, Value};
 
+use crate::play;
 use crate::ui::{b, bold, heading, link_row, listing, marked, open, page, para, row, section, span, text, Page};
 
 const GROUPS: [(&str, &[&str]); 4] = [
@@ -642,14 +643,10 @@ fn fallback_of(kind: &str, sample: &[Block]) -> Vec<Block> {
     }
 }
 
-/// One kind's page: its sample drawn, its JSON, its fallback, its style hooks and the kinds either side.
+/// One kind's page: its sample drawn, its Rust and JSON, its fallback, its style hooks and the kinds either side.
 pub fn kind_page(all: &[(String, Vec<Block>)], at: usize) -> Option<Page> {
     let (kind, sample) = all.get(at)?;
-    let json = sample
-        .iter()
-        .map(|b| serde_json::to_string_pretty(b).unwrap_or_default())
-        .collect::<Vec<_>>()
-        .join("\n");
+    let json = play::json(&play::screen(kind, sample));
     let prev = all.get(at.checked_sub(1).unwrap_or(all.len() - 1))?;
     let next = all.get((at + 1) % all.len())?;
     let id = sample.first().and_then(Block::id).unwrap_or_default();
@@ -663,22 +660,40 @@ pub fn kind_page(all: &[(String, Vec<Block>)], at: usize) -> Option<Page> {
         ))),
         b!(Row(row("hook-id", &format!("[data-id={id}]"), "this one block", ""))),
     ];
-    let link = |label: String, href: String| NavLink {
-        label,
+    let link = |label: &str, href: String, current: bool| NavLink {
+        label: label.into(),
         href,
-        current: None,
+        current: current.then_some(true),
     };
     let around = Nav::new(vec![
-        link(format!("← {}", prev.0), format!("kind-{}.html", prev.0)),
-        link("gallery".into(), format!("gallery.html#kind-{kind}")),
-        link(format!("{} →", next.0), format!("kind-{}.html", next.0)),
+        link(&format!("← {}", prev.0), format!("kind-{}.html", prev.0), false),
+        link("gallery", format!("gallery.html#kind-{kind}"), false),
+        link(&format!("{} →", next.0), format!("kind-{}.html", next.0), false),
     ])
     .id("around");
+    let tabs = Nav::new(vec![
+        link("Rust", "#rust".into(), true),
+        link("JSON", "#json".into(), false),
+        link("edit in the playground →", format!("playground.html#k={kind}"), false),
+    ])
+    .id("tabs");
+    let rust: Vec<Part> = play::cuts(sample)
+        .iter()
+        .flat_map(|c| {
+            let at = format!("{}:{}–{}", c.file, c.from, c.to);
+            [
+                para(vec![Span {
+                    link: Some(play::source_url(c)),
+                    ..span(&at)
+                }]),
+                listing("rust", &c.code),
+            ]
+        })
+        .collect();
     let mut drawn = vec![section("spec", "", sample.clone())];
     if fallback_only(sample) {
         drawn.insert(0, marker(kind));
     }
-    let src = format!("{}/blob/main/site/src/kinds.rs", crate::ui::REPO);
     let body = vec![
         text("about", about(kind)),
         section(
@@ -690,8 +705,9 @@ pub fn kind_page(all: &[(String, Vec<Block>)], at: usize) -> Option<Page> {
                     "sample",
                     "The sample",
                     vec![
+                        b!(Nav(tabs)),
+                        b!(Prose(Prose::new(rust).id("rust"))),
                         b!(Prose(Prose::new(vec![listing("json", &json)]).id("json"))),
-                        text("rust", &format!("Built with the typed API: {src}")),
                     ],
                 ),
             ],
@@ -709,6 +725,7 @@ pub fn kind_page(all: &[(String, Vec<Block>)], at: usize) -> Option<Page> {
     let description = format!("{kind}: {} Drawn by blocks' HTML renderer.", about(kind));
     Some(page("gallery", &format!("kind-{kind}.html"), kind, &description, body)).map(|p| Page {
         screen: p.screen.id(format!("kind-{kind}")),
+        js: "play.js",
         ..p
     })
 }
