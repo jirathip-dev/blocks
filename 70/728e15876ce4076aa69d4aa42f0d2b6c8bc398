@@ -1,0 +1,9 @@
+Decided: merge origin/staging and move the pages static writer into staging's one-file-per-kind layout as kind/pages.rs draw
+Because: crates/blocks/src/site/kind/mod.rs:52
+Decided: the pages site test moves to its own tests/site_pages.rs, as each kind's test now has its own file
+Because: crates/blocks/tests/site_pages.rs:5
+Decided: the btn link's trailing-space trim moves with the button writer into write.rs
+Because: crates/blocks/src/site/write.rs:219
+Rejected: none
+Check: cargo test -p blocks --test site_pages passes; the static pages output is byte-identical to the previous head's test
+Owner: The document view sits on the latest staging, where the static site keeps each kind in its own file; nothing changes in how it works.
