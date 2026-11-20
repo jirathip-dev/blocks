@@ -2,18 +2,22 @@ use std::path::Path;
 
 use serde_json::Value;
 
+pub(super) mod kinds;
+
 use super::model::{defs, Case, Def, Out, Prop, Ty};
 use super::Files;
 use crate::{layout, Block, SCHEMA_VERSION};
 
-pub(super) fn files(_: &Path, s: &Value) -> std::io::Result<Files> {
-    Ok(vec![
+pub(super) fn files(root: &Path, s: &Value) -> std::io::Result<Files> {
+    let mut out = vec![
         ("web/src/gen/types.ts".into(), ts(s).map_err(std::io::Error::other)?),
         (
             "web/src/gen/layout.ts".into(),
             layout_ts().map_err(std::io::Error::other)?,
         ),
-    ])
+    ];
+    out.extend(kinds::files(root, s)?);
+    Ok(out)
 }
 
 impl Ty<'_> {

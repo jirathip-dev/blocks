@@ -1,6 +1,6 @@
 import type { Toast } from "./gen/types.ts";
-import { btn, el, h } from "./render/index.ts";
-import { line } from "./render/toast.ts";
+import { btn, el, h } from "./render/dom.ts";
+import { line } from "./render/kind/toast.ts";
 
 /// Sends a toast's undo from its button; false: it was not sent (a confirm said no) or failed.
 export type Undo = (b: HTMLElement) => Promise<boolean>;

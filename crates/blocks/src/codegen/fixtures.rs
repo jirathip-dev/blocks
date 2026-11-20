@@ -5,8 +5,8 @@ use serde_json::{Map, Number, Value};
 
 use super::Files;
 use crate::{
-    site, theme, tree, Block, Built, Card, Child, Composer, ComposerChip, Diagram, List, Node, OldFrame, Op, Queued,
-    Row, Screen, Tap, Text, Tone,
+    site, theme, tree, Block, Built, Card, Child, Composer, ComposerChip, Diagram, List, Node, Nodes, OldFrame, Op,
+    Queued, Row, Screen, Tap, Text, Tone,
 };
 
 pub(super) fn files(root: &Path, _: &Value) -> std::io::Result<Files> {
@@ -117,23 +117,18 @@ fn workflow() -> Diagram {
                 .into_iter()
                 .collect::<BTreeMap<_, _>>(),
         )
-        .nodes(
+        .nodes(Nodes::Map(
             nodes
                 .map(|(k, n)| (k.to_string(), n))
                 .into_iter()
                 .collect::<BTreeMap<_, _>>(),
-        )
+        ))
 }
 
 const SWIFT_FALLBACKS: [&str; 6] = ["composer", "prose", "hero", "media", "nav", "island"];
 
 fn trees(root: &Path) -> std::io::Result<Files> {
-    let mut drawn = vec![];
-    for f in std::fs::read_dir(root.join("web/src/render"))? {
-        let name = f?.file_name().to_string_lossy().into_owned();
-        drawn.extend(name.strip_suffix(".ts").filter(|k| *k != "index").map(String::from));
-    }
-    let web: Vec<&str> = drawn.iter().map(String::as_str).collect();
+    let web = super::ts::kinds::native(root)?;
     let swift: Vec<&str> = Block::KINDS
         .iter()
         .copied()

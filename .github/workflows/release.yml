@@ -1,7 +1,7 @@
 name: release
 on:
   workflow_run:
-    workflows: [ci, web, swift, cap, compat]
+    workflows: [ci, web, swift, cap, compat, desktop]
     types: [completed]
     branches: [main]
 

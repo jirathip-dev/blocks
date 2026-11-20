@@ -10,7 +10,7 @@ import { native } from "../src/view.ts";
 const web = fileURLToPath(new URL("../../", import.meta.url));
 const fixture = (k) => JSON.parse(readFileSync(new URL(`../../../fixtures/blocks/${k}.json`, import.meta.url), "utf8"));
 const fields = readdirSync(new URL("../../../fixtures/fields/", import.meta.url)).filter((f) => f.endsWith(".json")).map((f) => JSON.parse(readFileSync(new URL(`../../../fixtures/fields/${f}`, import.meta.url), "utf8")));
-const html = buildSync({ stdin: { contents: 'export { render } from "./src/render/index.ts"; export { plain } from "./src/theme.ts";', resolveDir: web, loader: "ts" }, bundle: true, format: "iife", globalName: "H", write: false }).outputFiles[0].text;
+const html = buildSync({ stdin: { contents: 'export { render } from "./src/render/block.ts"; export { plain } from "./src/theme.ts";', resolveDir: web, loader: "ts" }, bundle: true, format: "iife", globalName: "H", write: false }).outputFiles[0].text;
 
 const more = [
   { type: "screen", id: "thread-1", title: "Talk", focus: true, actions: [{ label: "Add", action: "add" }, { label: "Docs", tap: { url: "https://x.test/d" } }, { label: "More", menu: [{ label: "Mute", action: "mute", enabled: false }] }], blocks: [{ type: "row", id: "top", title: "Pinned", sticky: true }, { type: "text", id: "m", markdown: "see t12 and `a **b**`\n[docs](https://x.test/a) or https://x.test/b.\n```sh\nls\n```" }] },
@@ -47,7 +47,7 @@ async function markup(p, b) {
 }
 
 test("each kind React draws natively writes the HTML renderer's markup: tags, classes, data-*, role, aria-* and own text, in order", async () => {
-  deepStrictEqual([...native].sort(), ["button", "card", "chips", "form", "images", "list", "row", "screen", "section", "sheet", "stat", "text"]);
+  deepStrictEqual([...native].sort(), ["button", "card", "chips", "form", "images", "list", "row", "screen", "section", "sheet", "stat", "text", "timeline"]);
   const p = await browser.newPage();
   await p.setContent("<base href=https://x.test/><div id=html></div><div id=react></div>");
   await p.addScriptTag({ content: reactJs() });

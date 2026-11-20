@@ -3,7 +3,7 @@ use blocks::Block;
 use egui::Ui;
 
 use crate::cx::{Cx, Draw};
-use crate::fallback;
+use crate::{fallback, island};
 
 fn either<T>(view: Option<Draw<T>>, x: &T, b: &Block, name: &str, ui: &mut Ui, cx: &mut Cx<'_>) -> Way {
     if let Some(view) = view {
@@ -28,8 +28,12 @@ macro_rules! switch {
         pub(crate) fn draw(b: &Block, name: &str, ui: &mut Ui, cx: &mut Cx<'_>) -> Way {
             match b {
                 $(Block::$v(x) => either($m::DRAW, x, b, name, ui, cx),)*
-                Block::App(_) => {
-                    fallback::draw(b, name, ui, cx);
+                Block::App(a) => {
+                    island::app(a, b, name, ui, cx);
+                    Way::Fallback
+                }
+                Block::Island(x) => {
+                    island::island(x, b, name, ui, cx);
                     Way::Fallback
                 }
             }
@@ -65,7 +69,6 @@ switch! {
     Hero => hero,
     Media => media,
     Nav => nav,
-    Island => island,
     Table => table,
     Steps => steps,
     Toast => toast,

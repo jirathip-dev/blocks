@@ -1,7 +1,7 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { buildSync } from "esbuild";
 import { webkit } from "playwright";
-import { native } from "../src/render/native.ts";
+import { native } from "../src/gen/kinds.ts";
 import { native as drawn } from "../react/src/view.ts";
 import { defaultPair } from "../src/gen/schemes.ts";
 import { tiles, css as wear } from "../src/theme.ts";

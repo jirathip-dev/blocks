@@ -338,8 +338,7 @@ fn map(w: &mut W<'_>, g: &Chart, b: &Value, m: &Metrics, counts: &HashMap<String
 
 fn lines(g: &Chart, b: &Value, m: &Metrics, at: &dyn Fn(&str) -> Box, width: f64, height: f64) -> String {
     let mut svg = format!("<svg width=\"{width}\" height=\"{height}\" aria-hidden=\"true\">");
-    let nodes = b.get("nodes");
-    let node = |id: &str| nodes.and_then(|n| n.get(id)).filter(|n| n.is_object());
+    let node = |id: &str| node_of(b, id);
     let limit = |id: &str| node(id).and_then(|n| n.get("limit")).is_some_and(|l| !l.is_null());
     if let Some(first) = g.spine.first().map(|f| at(f)) {
         let line = path(&[(first.mx, 16.0), (first.mx, first.y)]);
@@ -367,8 +366,16 @@ fn lines(g: &Chart, b: &Value, m: &Metrics, at: &dyn Fn(&str) -> Box, width: f64
     svg + "</svg>"
 }
 
+fn node_of<'a>(b: &'a Value, id: &str) -> Option<&'a Value> {
+    let n = match b.get("nodes")? {
+        Value::Array(l) => l.iter().find(|n| n.get("id").and_then(Value::as_str) == Some(id)),
+        m => m.get(id),
+    };
+    n.filter(|n| n.is_object())
+}
+
 fn node(w: &mut W<'_>, g: &Chart, b: &Value, id: &String, p: Box, counts: &HashMap<String, f64>) {
-    let n = b.get("nodes").and_then(|n| n.get(id)).filter(|n| n.is_object());
+    let n = node_of(b, id);
     let field = |k: &str| n.and_then(|n| n.get(k)).filter(|v| !v.is_null());
     let name = g.names.get(id).unwrap_or(id);
     let label = field("label").map_or_else(|| name.clone(), |l| shown(Some(l)));
