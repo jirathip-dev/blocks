@@ -142,9 +142,11 @@ impl Stage {
         }
         let plan = expect(&built, &kinds(), &self.state);
         let local = local(&built, &self.state);
-        let mut kept = std::collections::BTreeSet::new();
-        ids(&plan, &mut kept);
-        self.islands.retain(|k, _| kept.contains(k));
+        if !self.islands.is_empty() {
+            let mut kept = std::collections::BTreeSet::new();
+            ids(&plan, &mut kept);
+            self.islands.retain(|k, _| kept.contains(k));
+        }
         self.held = Some(Held {
             block: b.clone(),
             built,
