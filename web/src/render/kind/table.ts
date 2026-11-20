@@ -1,9 +1,8 @@
-import type { Cell, Column, SortDir, Table, TableRow, TableSort } from "../../gen/types.ts";
+import type { Cell, Column, Table, TableRow, TableSort } from "../../gen/types.ts";
 import type { Ctx } from "../ctx.ts";
 import { btn, el, h } from "../dom.ts";
-import { value } from "../../core/text.ts";
 import { at, total, unit } from "../../core/table.ts";
-import { type CellEdit, chunks, editable, grid as rules, named, shown as text, worked } from "../../core/kind/table.ts";
+import { atEnd as end, type CellEdit, cellRole as role, cellText, chunks, grid as rules, itemsOf, named, roles, sorted, worked } from "../../core/kind/table.ts";
 import { edited, gestured, held } from "../../gesture.ts";
 import { paged } from "../more.ts";
 
@@ -13,49 +12,11 @@ type St = { sort: TableSort | null; q: string; hidden: Set<string>; sel: Set<str
 const FORMAT: Record<string, string> = { csv: "CSV", xlsx: "Excel" };
 const states = new Map<string, St>();
 
-const numeric = (c: Column) => c.kind === "number" || c.kind === "money" || c.kind === "bar";
-const end = (c: Column) => (c.align ?? (numeric(c) ? "end" : "start")) === "end";
 const thai = () => document.documentElement.lang.startsWith("th");
-const shown = (c: Column, v: Cell | undefined) => (typeof v === "object" ? value(v.text) : text(c, v, thai()));
+const shown = (c: Column, v: Cell | undefined) => cellText(c, v, thai());
 const pk = (p: Pos) => `${p.row}\n${p.col}`;
 const isIds = (v: unknown): v is string[] => Array.isArray(v) && v.every((x) => typeof x === "string");
 const isEdit = (v: unknown): v is CellEdit => typeof v === "object" && v !== null && !Array.isArray(v) && "value" in v;
-
-const key = (c: Column, v: Cell) => (c.kind === "date" && typeof v === "string" ? v : shown(c, v).toLowerCase());
-const cmp = (c: Column, a: Cell, b: Cell) => (numeric(c) && typeof a === "number" && typeof b === "number" ? a - b : key(c, a) < key(c, b) ? -1 : key(c, a) > key(c, b) ? 1 : 0);
-
-function sorted(rows: TableRow[], c?: Column, dir?: SortDir): TableRow[] {
-  if (!c) return rows;
-  const by = (r: TableRow, s: TableRow) => {
-    const a = at(r, c.id), b = at(s, c.id);
-    if (a === undefined || b === undefined) return Number(a === undefined) - Number(b === undefined);
-    return dir === "desc" ? cmp(c, b, a) : cmp(c, a, b);
-  };
-  const out: TableRow[] = [];
-  let run: TableRow[] = [];
-  for (const r of rows) {
-    if (!r.group) run.push(r);
-    else (out.push(...run.sort(by), r), (run = []));
-  }
-  return [...out, ...run.sort(by)];
-}
-
-const itemsOf = (rows: TableRow[], i: number) => {
-  const n = rows.slice(i + 1).findIndex((r) => r.group);
-  return rows.slice(i + 1, n < 0 ? undefined : i + 1 + n);
-};
-
-function roles(cols: Column[]): string[] {
-  const r: (string | undefined)[] = cols.map((c) => c.phone ?? undefined);
-  const claim = (part: string, ok: (c: Column) => boolean, pick: (free: number[]) => number | undefined) => {
-    const i = r.includes(part) ? undefined : pick(cols.flatMap((c, i) => (r[i] === undefined && ok(c) ? [i] : [])));
-    if (i !== undefined) r[i] = part;
-  };
-  claim("title", (c) => c.kind === "text", (f) => f[0]);
-  claim("tag", (c) => c.kind === "tone", (f) => f[0]);
-  claim("value", (c) => c.kind === "number" || c.kind === "money", (f) => f.filter((i) => cols[i]?.total).pop() ?? f.pop());
-  return r.map((x) => x ?? "meta");
-}
 
 function cell(tag: "td" | "th", c: Column, role: string, kids: (Node | string)[], blank: boolean) {
   const e = h(tag, `${end(c) ? "end" : "start"} k-${c.kind} p-${role}${c.width ? " w" : ""}${blank ? " nil" : ""}`, ...kids);
@@ -80,7 +41,6 @@ const sent = (v: View, row: string, col: string) => {
 };
 const waits = (v: View, r: TableRow) => v.b.columns.some((x) => sent(v, r.id, x.id) !== undefined);
 const sort = (v: View) => v.b.columns.find((x) => x.id === v.st.sort?.by);
-const role = (b: Table, x: Column) => (b.edit && editable(b, x) ? "ed" : b.calc?.[x.id] != null ? "fx" : x.kind === "number" || x.kind === "money" ? "app" : "");
 
 function tick(v: View, on: boolean, label: string, set: (on: boolean) => void, mixed = false) {
   const i = Object.assign(el("input"), { type: "checkbox", checked: on, indeterminate: mixed });
