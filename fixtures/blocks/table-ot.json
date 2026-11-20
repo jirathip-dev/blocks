@@ -1,0 +1,82 @@
+{
+  "type": "table",
+  "id": "ot",
+  "title": "OT requests",
+  "columns": [
+    {
+      "id": "req",
+      "label": "Request",
+      "kind": "text"
+    },
+    {
+      "id": "who",
+      "label": "Employee",
+      "kind": "text"
+    },
+    {
+      "id": "status",
+      "label": "Status",
+      "kind": "tone"
+    },
+    {
+      "id": "hours",
+      "label": "Hours",
+      "kind": "number",
+      "total": "sum"
+    }
+  ],
+  "rows": [
+    {
+      "id": "OT-2400",
+      "cells": {
+        "hours": 2,
+        "req": "OT-2400",
+        "status": {
+          "text": "pending",
+          "tone": "warn"
+        },
+        "who": "Somchai P."
+      }
+    },
+    {
+      "id": "OT-2399",
+      "cells": {
+        "hours": 3,
+        "req": "OT-2399",
+        "status": {
+          "text": "pending",
+          "tone": "warn"
+        },
+        "who": "Nattaya K."
+      }
+    },
+    {
+      "id": "OT-2398",
+      "cells": {
+        "hours": 4,
+        "req": "OT-2398",
+        "status": {
+          "text": "approved",
+          "tone": "ok"
+        },
+        "who": "Arthit W."
+      }
+    },
+    {
+      "id": "OT-2397",
+      "cells": {
+        "hours": 2,
+        "req": "OT-2397",
+        "status": {
+          "text": "rejected",
+          "tone": "bad"
+        },
+        "who": "Wanida T."
+      }
+    }
+  ],
+  "more": {
+    "action": "ot-more",
+    "cursor": "c:2397"
+  }
+}

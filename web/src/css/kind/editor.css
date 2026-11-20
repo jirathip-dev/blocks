@@ -1,5 +1,5 @@
-.ed{margin:var(--s2) 0 0;padding:var(--s2) 0;font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:var(--bg);border:1px solid var(--edge);border-radius:var(--radius);cursor:text}
-.ed:focus-visible,.ed textarea:focus-visible{outline:2px solid var(--l);outline-offset:-2px}
+.ed:where(:not(.tbl)){margin:var(--s2) 0 0;padding:var(--s2) 0;font:13px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:var(--bg);border:1px solid var(--edge);border-radius:var(--radius);cursor:text}
+.ed:where(:not(.tbl)):focus-visible,.ed textarea:focus-visible{outline:2px solid var(--l);outline-offset:-2px}
 .edl{display:flex;gap:10px;padding:0 var(--s3) 0 0;white-space:pre-wrap;overflow-wrap:anywhere}
 .edl>i{flex:none;width:4ch;text-align:right;font-style:normal;color:var(--mute);user-select:none}
 .edl>span{flex:1;min-width:0;color:var(--fg)}

@@ -15,6 +15,7 @@ The Rust type `Table`; in TS, `table(fields: Table)` from `web/src/gen/builders.
 | `export` | `ExportFormat[]` | optional |
 | `filter` | `boolean` | optional |
 | `id` | `string` | optional |
+| `more` | `Page` | optional |
 | `reorder` | `Gesture` | optional |
 | `rows` | `TableRow[]` | required |
 | `select` | `TableSelect` | optional |
