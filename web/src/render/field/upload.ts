@@ -1,6 +1,6 @@
 import { accepts, type FileRow, fill, held, hint, ids, pick, picked, send, status, waits } from "../../core/field/files.ts";
 import type { UploadField } from "../../gen/types.ts";
-import { btn, el, h } from "../index.ts";
+import { btn, el, h } from "../dom.ts";
 import { type FieldView, word } from "./_view.ts";
 
 const named = (b: HTMLElement, name: string) => (b.setAttribute("aria-label", name), b);
