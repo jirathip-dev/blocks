@@ -111,7 +111,11 @@ fn views(file: &str, dir: &str, types: &[&str]) -> (String, String) {
 }
 
 fn words() -> Files {
-    let all: Vec<_> = Field::WORDS.iter().flat_map(|ws| ws.iter()).chain(Import::WORDS).collect();
+    let all: Vec<_> = Field::WORDS
+        .iter()
+        .flat_map(|ws| ws.iter())
+        .chain(Import::WORDS)
+        .collect();
     let ts: String = all
         .iter()
         .map(|(k, en, th)| format!("  {k}: [\"{en}\", \"{th}\"],\n"))

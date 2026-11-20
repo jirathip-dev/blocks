@@ -1,4 +1,4 @@
-import type { Column, Import, ImportColumn } from "../../gen/types.ts";
+import type { Cell, Column, Import, ImportColumn, TableRow } from "../../gen/types.ts";
 import { words } from "../../gen/words.ts";
 import type { Book, Row } from "../../sheet/index.ts";
 import { shown } from "./table.ts";
@@ -62,4 +62,11 @@ export async function leftOut(b: Import, v: ImportView, lang?: string | null) {
   const M = await load(), head = [say(lang, "imRow"), ...b.columns.map((c) => c.label), say(lang, "imError")];
   const rows = v.bad.map((r) => [r.n, ...b.columns.map((c) => r.cells[c.key]), Object.entries(r.bad).map(([k, m]) => `${b.columns.find((c) => c.key === k)?.label ?? k}: ${m}`).join(" · ")]);
   M.save(`${b.title} – ${say(lang, "imError")}.xlsx`, M.book([{ name: b.title, rows: [head, ...rows] }]));
+}
+
+/// Writes a table's rows as shown (only the ticked ones, if any) to an .xlsx on the device.
+export async function exported(title: string, cols: Column[], rows: TableRow[], ticked: ReadonlySet<string>) {
+  const M = await load(), cell = (c: Column, v: Cell | undefined) => (typeof v === "number" ? v : shown(c, v));
+  const picked = rows.filter((r) => !r.group && (!ticked.size || ticked.has(r.id))).map((r) => cols.map((c) => cell(c, r.cells[c.id])));
+  M.save(`${title}.xlsx`, M.book([{ name: title, rows: [cols.map((c) => c.label), ...picked], bold: cols.map(() => true) }]));
 }

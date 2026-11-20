@@ -821,6 +821,11 @@ async function leftOut(b, v, lang) {
   const rows2 = v.bad.map((r) => [r.n, ...b.columns.map((c) => r.cells[c.key]), Object.entries(r.bad).map(([k, m]) => `${b.columns.find((c) => c.key === k)?.label ?? k}: ${m}`).join(" \xB7 ")]);
   M.save(`${b.title} \u2013 ${say(lang, "imError")}.xlsx`, M.book([{ name: b.title, rows: [head3, ...rows2] }]));
 }
+async function exported(title, cols, rows2, ticked2) {
+  const M = await load(), cell3 = (c, v) => typeof v === "number" ? v : shown(c, v);
+  const picked2 = rows2.filter((r) => !r.group && (!ticked2.size || ticked2.has(r.id))).map((r) => cols.map((c) => cell3(c, r.cells[c.id])));
+  M.save(`${title}.xlsx`, M.book([{ name: title, rows: [cols.map((c) => c.label), ...picked2], bold: cols.map(() => true) }]));
+}
 
 // react/src/kinds/import.ts
 var num2 = (c) => c.type === "money" || c.type === "number";
@@ -1736,7 +1741,7 @@ var menu = (v, name, label2) => btn(label2, "", void 0, void 0, { "aria-expanded
 function exporter(v, d, f) {
   const label2 = v.b.export?.length === 1 ? `export ${(FORMAT[f] ?? f).toLowerCase()}` : FORMAT[f] ?? f;
   const values2 = () => ({ format: f, columns: d.cols.map((x) => x.id), sort: v.st.sort, q: v.st.q, rows: [...v.st.sel] });
-  return btn(label2, "", void 0, "export", { onClick: () => send2(v, "export", values2()) });
+  return btn(label2, "", void 0, "export", { onClick: () => f === "xlsx" && !v.b.more ? void exported(v.b.title ?? "Table", d.cols, d.items, v.st.sel) : send2(v, "export", values2()) });
 }
 function sorter(v, d) {
   const opts2 = [h("option", "", { value: "" }, "sort: as sent")];

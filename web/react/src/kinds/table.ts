@@ -1,6 +1,7 @@
 import { type ChangeEvent, type MouseEvent, type KeyboardEvent, type ReactNode, type RefObject, useContext, useLayoutEffect, useReducer, useRef } from "react";
 import type { Cell, Column, Tap, Table, TableRow, TableSort } from "../../../src/core/index.ts";
 import { atEnd, type CellEdit, cellRole as role, cellText, chunks, grid as rules, itemsOf, named, roles, sorted, worked } from "../../../src/core/kind/table.ts";
+import { exported } from "../../../src/core/kind/import.ts";
 import { at, total, unit } from "../../../src/core/table.ts";
 import { type Driven, edited, gestured, type Held, held } from "../../../src/gesture.ts";
 import { Cx } from "../act.ts";
@@ -69,7 +70,7 @@ const menu = (v: View, name: string, label: string) => btn(label, "", undefined,
 function exporter(v: View, d: Shown, f: string) {
   const label = v.b.export?.length === 1 ? `export ${(FORMAT[f] ?? f).toLowerCase()}` : (FORMAT[f] ?? f);
   const values = () => ({ format: f, columns: d.cols.map((x) => x.id), sort: v.st.sort, q: v.st.q, rows: [...v.st.sel] });
-  return btn(label, "", undefined, "export", { onClick: () => send(v, "export", values()) });
+  return btn(label, "", undefined, "export", { onClick: () => (f === "xlsx" && !v.b.more ? void exported(v.b.title ?? "Table", d.cols, d.items, v.st.sel) : send(v, "export", values())) });
 }
 
 function sorter(v: View, d: Shown) {

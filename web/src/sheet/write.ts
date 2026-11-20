@@ -5,9 +5,10 @@ import { zip } from "./zip.ts";
 export type Cell = string | number;
 export type Tab = { name: string; rows: Cell[][]; bold?: boolean[] };
 
-const esc = (s: string) => s.replace(/[&<>"]/g, (c) => `&#${c.charCodeAt(0)};`);
+const esc = (s: string) => s.replace(/[&<>\u0022]/g, (c) => `&#${c.charCodeAt(0)};`);
 const ref = (i: number): string => (i >= 26 ? ref(Math.floor(i / 26) - 1) : "") + String.fromCharCode(65 + (i % 26));
-const NS = 'xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"';
+const SML = "http://schemas.openxmlformats.org/spreadsheetml/2006/main";
+const NS = `xmlns="${SML}"`;
 const REL = "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
 const STYLES = `<styleSheet ${NS}><fonts count="2"><font/><font><b/></font></fonts><fills count="1"><fill/></fills><borders count="1"><border/></borders><cellStyleXfs count="1"><xf/></cellStyleXfs><cellXfs count="2"><xf/><xf fontId="1" applyFont="1"/></cellXfs></styleSheet>`;
 

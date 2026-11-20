@@ -1,4 +1,4 @@
-import type { Column, Import, ImportColumn } from "../../gen/types.ts";
+import type { Column, Import, ImportColumn, TableRow } from "../../gen/types.ts";
 import type { Book, Row } from "../../sheet/index.ts";
 type Sheet = typeof import("../../sheet/index.ts");
 export type Picked = {
@@ -45,4 +45,5 @@ export declare const values: (st: ImportState, v: ImportView) => {
 };
 export declare function template(b: Import, lang?: string | null): Promise<void>;
 export declare function leftOut(b: Import, v: ImportView, lang?: string | null): Promise<void>;
+export declare function exported(title: string, cols: Column[], rows: TableRow[], ticked: ReadonlySet<string>): Promise<void>;
 export {};

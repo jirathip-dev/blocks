@@ -7,6 +7,8 @@ export function save(name: string, data: Uint8Array) {
   const a = document.createElement("a");
   a.href = URL.createObjectURL(new Blob([data.slice()], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" }));
   a.download = name;
+  document.body.append(a);
   a.click();
+  a.remove();
   setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 }
