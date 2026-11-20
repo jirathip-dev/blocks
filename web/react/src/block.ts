@@ -1,6 +1,7 @@
 import { Component, createElement, memo, type ReactNode, useContext } from "react";
 import { type Fallback, hooks, type Kind, named, type Of, role } from "../../src/core/index.ts";
 import { type Ctx, Cx } from "./act.ts";
+import { press } from "./draw.ts";
 import { views } from "./gen/views.ts";
 import { type Attrs, h } from "./h.ts";
 import { Isle } from "./island.ts";
@@ -36,9 +37,9 @@ export function hooksOf(b: Blk, cx: Ctx, fallback: boolean): Attrs {
 /// A fallback's row: its title and subtitle, pressable when it has a tap.
 export function row(f: Fallback, cx: Ctx): ReactNode {
   const tap = f.tap;
-  const press = tap ? { role: "button", tabIndex: 0, onClick: () => cx.tap(tap), onKeyDown: (e: { key: string }) => e.key === "Enter" && cx.tap(tap) } : null;
+  const pressed = tap ? press(() => cx.tap(tap)) : null;
   const sub = f.subtitle != null ? h("span", "rs b-row__subtitle", null, f.subtitle) : null;
-  return h("div", tap ? "row tap" : "row", press, h("span", "rm", null, h("span", "rt b-row__title", null, f.title), sub));
+  return h("div", tap ? "row tap" : "row", pressed, h("span", "rm", null, h("span", "rt b-row__title", null, f.title), sub));
 }
 
 /// Each block of `bs` drawn by the draw rule, keyed by its id.
