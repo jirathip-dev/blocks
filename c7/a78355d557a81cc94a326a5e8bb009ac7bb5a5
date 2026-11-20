@@ -1,0 +1,9 @@
+Decided: site/looks.json, site/site.css and site/media hero SVGs are the approved docs/design/looks/proposal files, copied as is
+Because: q2423
+Decided: Paper stats lay out as a centred wrapping flex row (flex-flow row wrap, label at 100%) instead of the auto/auto grid the spanning label stretched
+Because: "Paper: close the wide gap between the stat number and its unit (13.7 KB)"
+Decided: Console box hero keeps 13px at 390; only the printed tree drops to 12px so its 45-char line fits 358px
+Because: "Console: make the box-character hero larger at 390 so it reads on a phone"
+Rejected: grid with max-content tracks for Paper stats — a spanning label still widens the tracks
+Check: blocks.css sets .st flex-direction column, so the Paper rule must set row explicitly (site/site.css:193)
+Owner: the site's Console, Paper and Playful looks now match the design you approved, with your two last fixes
