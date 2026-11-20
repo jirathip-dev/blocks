@@ -10,7 +10,7 @@ export type Scanned = { pdf: Blob; pages: Page[] };
 export type Opts = { label: string; max: number; w(key: string): string; pages?: Page[] | undefined };
 
 type Ask = { op: "find"; frame: ImageBitmap } | { op: "page"; photo: ImageBitmap; quad: Quad } | { op: "pdf"; pages: Uint8Array[] };
-type Reply = { id: number; quad?: Quad | null; page?: ImageBitmap; pdf?: Blob; made?: number };
+type Reply = { id: number; quad?: Quad | null; jpeg?: Blob; pdf?: Blob; made?: number };
 type Edit = { photo: ImageBitmap; quad: Quad; auto: Quad; at: number };
 type S = {
   o: Opts;
@@ -56,7 +56,7 @@ async function work(a: Ask, made: (n: number) => void): Promise<Omit<Reply, "id"
     const f = ([x, y]: Pt): Pt => [(x - x0) * k, (y - y0) * k], [p, q, r, t] = a.quad;
     const c = new OffscreenCanvas(A4[0], A4[1]), page = warp(cx?.getImageData(0, 0, crop.width, crop.height) ?? new ImageData(1, 1), [f(p), f(q), f(r), f(t)]);
     c.getContext("2d")?.putImageData(new ImageData(page.data, A4[0], A4[1]), 0, 0);
-    return { page: c.transferToImageBitmap() };
+    return { jpeg: await c.convertToBlob({ type: "image/jpeg", quality: 0.8 }) };
   }
   const jpegs = [];
   for (const bytes of a.pages) made(jpegs.push({ bytes, width: A4[0], height: A4[1] }));
@@ -66,7 +66,7 @@ async function work(a: Ask, made: (n: number) => void): Promise<Omit<Reply, "id"
 if (typeof document === "undefined")
   addEventListener("message", (e: MessageEvent<Ask & { id: number }>) => {
     const id = e.data.id;
-    work(e.data, (made) => postMessage({ id, made })).then((out) => postMessage({ id, ...out }, { transfer: out.page ? [out.page] : [] }));
+    work(e.data, (made) => postMessage({ id, made })).then((out) => postMessage({ id, ...out }));
   });
 
 let worker: Worker | undefined, seq = 0;
@@ -87,12 +87,9 @@ function ask(a: Ask, made?: (n: number) => void): Promise<Reply> {
 }
 /// The corners found in `photo`, or the frame's inset when none are.
 export const quadOf = async (photo: ImageBitmap): Promise<Quad> => (await ask({ op: "find", frame: photo })).quad ?? inset(photo.width, photo.height);
-/// The page inside `quad` in `photo`, corrected to A4 in the worker and drawn to a JPEG.
+/// The page inside `quad` in `photo`, corrected to A4 and drawn to a JPEG in the worker.
 export const pageOf = async (photo: ImageBitmap, quad: Quad, auto: Quad): Promise<Page> => {
-  const page = (await ask({ op: "page", photo, quad })).page, c = Object.assign(document.createElement("canvas"), { width: A4[0], height: A4[1] });
-  if (page) c.getContext("bitmaprenderer")?.transferFromImageBitmap(page);
-  const blob = await new Promise<Blob | null>((done) => c.toBlob(done, "image/jpeg", 0.8));
-  const jpeg = new Uint8Array(blob ? await blob.arrayBuffer() : new ArrayBuffer(0));
+  const jpeg = new Uint8Array((await (await ask({ op: "page", photo, quad })).jpeg?.arrayBuffer()) ?? new ArrayBuffer(0));
   return { photo, quad, auto, jpeg, url: URL.createObjectURL(new Blob([jpeg], { type: "image/jpeg" })) };
 };
 
