@@ -1,0 +1,62 @@
+/* All that `edit`, `reorder` and `calc` add to web/src/css/kind/table.css: tokens only, square corners, only transform and opacity move. */
+.tbl.ed tbody td,.tbl.ed tfoot :is(th,td){height:var(--hit);box-sizing:border-box;padding-block:0}
+.tbl .tbg{width:var(--hit);padding:0;text-align:center}
+.tbl .tbg+:is(th,td){position:sticky;left:var(--hit);z-index:1}
+.tbl .tbg+.tbc+:is(th,td){position:sticky;left:calc(var(--hit) + var(--s4) + var(--s3));z-index:1}
+.tbl .tbg .b-hd{margin:0;touch-action:none}
+.tbl .tbf{display:block;margin:0 calc(var(--s2) * -1);padding:var(--s1) var(--s2);box-shadow:inset 0 -1px var(--edge)}
+.tbl td.cur{outline:2px solid var(--l);outline-offset:-2px}
+.tbl td.ing{position:relative;padding:0}
+.tbl td.ing>.tbf{visibility:hidden}
+.tbl .tbi{position:absolute;inset:0;box-sizing:border-box;width:100%;height:100%;padding:0 var(--s3);border:0;background:var(--card);font-size:var(--fs);text-align:inherit;outline:2px solid var(--l);outline-offset:-2px}
+.tbl .w .tbf{overflow:hidden;text-overflow:ellipsis}
+.tbl td.bad .tbi{box-shadow:inset 3px 0 0 var(--r)}
+.tbl .tbx{position:absolute;z-index:4;left:0;top:100%;padding:var(--s1) var(--s2);background:var(--card);border:1px solid var(--r);color:var(--r);font-size:var(--fs-meta);font-weight:600;white-space:nowrap}
+.tbl td.sent .tbf,.tbl :is(td,th).wait{color:var(--mute);font-weight:400}
+.tbl td.sent .tbf::after,.tbl td.wait:not(.nil)::after{content:" ↻";display:inline-block;color:var(--mute)}
+.tbl td.no{box-shadow:inset 3px 0 0 var(--r)}
+.tbl tr.grp>td{background:var(--bg);font-weight:600}
+.tbl tr.grp>td.nil{font-weight:400}
+.tbl .tbgn{margin-left:1ch;color:var(--mute);font-size:var(--fs-meta);font-weight:400}
+.tbl tr.grp+tr:not(.grp)>.p-title,.tbl tbody tr:not(.grp)>.p-title{padding-inline-start:calc(var(--s3) + var(--s3))}
+.tbl tbody tr.grp>.p-title{padding-inline-start:var(--s3)}
+.tbl tbody tr{transition:transform calc(var(--enter) * var(--motion,1)) var(--ease),opacity calc(var(--enter) * var(--motion,1)) var(--ease)}
+.tbl tr.lift:is(.pressed,.previewing){position:relative;z-index:3;transform:translateY(-2px)}
+.tbl tr.lift:is(.pressed,.previewing)>td{background:var(--card);box-shadow:inset 0 var(--lt) var(--l),inset 0 var(--lb) var(--l)}
+.tbl tr.lift{--lt:0;--lb:0}.tbl tr.lift.lt{--lt:2px}.tbl tr.lift.lb{--lb:-2px}
+.tbl tr.lift:is(.pressed,.previewing)>td:first-child{box-shadow:inset 0 var(--lt) var(--l),inset 0 var(--lb) var(--l),inset 2px 0 var(--l)}
+.tbl tr.lift:is(.pressed,.previewing)>td:last-child{box-shadow:inset 0 var(--lt) var(--l),inset 0 var(--lb) var(--l),inset -2px 0 var(--l)}
+.tbl tr.lift .b-hd[data-phase]{color:var(--fg);cursor:grabbing}
+.tbl tr.lift.dragging{opacity:.6}
+.tbl tr.lift.sent{opacity:.5}
+@container (width < 600px){
+.tbl.ed tbody td,.tbl.ed tfoot :is(th,td){height:auto}
+.tbl .tbg{display:block;order:0;width:auto;margin-inline-start:calc(var(--s3) * -1)}
+.tbl .tbg .b-hd{min-height:var(--hit);margin-block:calc(var(--s2) * -1)}
+.tbl .tbg+:is(th,td),.tbl .tbg+.tbc+:is(th,td){position:static}
+.tbl tfoot .tbg{visibility:hidden}
+.tbl .tbf{display:inline;margin:0;padding:0;box-shadow:none}
+.tbl td.ing{padding:0;outline:0}
+.tbl td.ing>.tbf{visibility:visible}
+.tbl :is(.tbi,.tbx){display:none}
+.tbl tbody tr:not(.grp)>.p-title,.tbl tr.grp+tr:not(.grp)>.p-title{padding-inline-start:0}
+.tbl tr.grp{align-items:center;background:var(--bg)}
+.tbl tr.grp::before,.tbl tr.grp>.p-meta{display:none!important}
+.tbl tr.grp>.p-value{font-weight:600}
+.tbl.ed tbody tr:not(.grp)[data-id]::after{content:"›";order:3;width:var(--s4);color:var(--mute);font-weight:700;text-align:center}
+.tbl tr.lift:is(.pressed,.previewing){box-shadow:inset 2px 0 var(--l),inset -2px 0 var(--l),inset 0 var(--lt) var(--l),inset 0 var(--lb) var(--l);background:var(--card)}
+.tbl tr.lift:is(.pressed,.previewing)>td:nth-child(n){box-shadow:none}
+}
+.b-sheet__head .shp{display:block;font-weight:400;font-size:var(--fs-meta)}
+.shf{gap:var(--s3)}
+.shf .fk{flex:1;text-align:start}
+.shf input:not([type=checkbox]){flex:0 1 50%;width:0;text-align:inherit;font-variant-numeric:tabular-nums}
+.shf.end{text-align:end}
+.shf .shv{font-variant-numeric:tabular-nums}
+.shf.ing input{outline:2px solid var(--l);outline-offset:-1px}
+.shf.bad input{box-shadow:inset 3px 0 0 var(--r)}
+.shf .fe{flex-basis:100%;text-align:end;font-weight:600}
+.shf{flex-wrap:wrap}
+.shf.sent input,.shf.wait .shv{color:var(--mute)}
+.shf.wait .shv::after{content:" ↻";color:var(--mute)}
+.shf.no{box-shadow:inset 3px 0 0 var(--r);padding-inline-start:var(--s3)}

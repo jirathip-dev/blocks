@@ -5,7 +5,7 @@ import { behave } from "./behave.ts";
 import type { Held } from "./gesture.ts";
 import { choose, type Pair, type Scale } from "./core/look.ts";
 import { apply, patcher } from "./patch.ts";
-import { type Blk, blks, btn, type Ctx, el, h, isBlk, linkable, obj, type Post, type Renderer, render, type Store, tick } from "./render/index.ts";
+import { type Blk, blks, btn, type Ctx, el, h, isBlk, linkable, obj, type OnFile, type Post, type Renderer, render, type Store, tick } from "./render/index.ts";
 import { settle } from "./motion.ts";
 import { stream } from "./stream.ts";
 import { toasts } from "./toasts.ts";
@@ -16,7 +16,7 @@ export { evaluate, start, view } from "./core/eval.ts";
 export { dump } from "./dump.ts";
 export { settle } from "./motion.ts";
 export { apply, patcher } from "./patch.ts";
-export { el, h, kids, render } from "./render/index.ts";
+export { el, h, kids, render, type OnFile, type Picked } from "./render/index.ts";
 export { packs, plain, tiles } from "./theme.ts";
 
 /// A layout node as the server's checked `layout.json` writes it; `P` is its place, per size class or resolved.
@@ -48,6 +48,7 @@ export type Mount = {
   theme?: Theme;
   schemes?: Record<string, Scheme>;
   store?: Store;
+  file?: OnFile;
 };
 
 type View = { source: string; path: string; back: string[]; open: Set<string>; box: HTMLElement; body: HTMLElement; model?: Block; built: Set<string>; held: Map<string, Held>; view: Map<string, Record<string, unknown>>; stop?: () => void; sync: () => void };
@@ -198,6 +199,7 @@ function draw(o: Mount, store: Store, theme: Theme, wear: (name: string | null, 
     apps: o.blocks,
     held: v.held,
     view: v.view,
+    file: o.file,
   });
 
   const paint = (v: View) => {

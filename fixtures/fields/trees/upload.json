@@ -1,0 +1,63 @@
+{
+  "kind": "screen",
+  "id": "fields-upload",
+  "variant": null,
+  "drawn": "native",
+  "role": "group",
+  "name": "fields-upload",
+  "children": [
+    {
+      "kind": "form",
+      "id": "upload",
+      "variant": null,
+      "drawn": "native",
+      "role": "form",
+      "name": "upload",
+      "fields": [
+        {
+          "name": "photos-empty",
+          "type": "upload",
+          "drawn": "native",
+          "role": "group",
+          "label": "Photos of the problem"
+        },
+        {
+          "name": "photos",
+          "type": "upload",
+          "drawn": "native",
+          "role": "group",
+          "label": "Photos of the problem"
+        },
+        {
+          "name": "photos-error",
+          "type": "upload",
+          "drawn": "native",
+          "role": "group",
+          "label": "Photos of the problem"
+        },
+        {
+          "name": "photos-was",
+          "type": "upload",
+          "drawn": "native",
+          "role": "group",
+          "label": "Photos of the problem"
+        },
+        {
+          "name": "photos-doc",
+          "type": "upload",
+          "drawn": "native",
+          "role": "group",
+          "label": "Photos of the problem"
+        },
+        {
+          "name": "photos-label",
+          "type": "upload",
+          "drawn": "native",
+          "role": "group",
+          "label": "A label long enough to wrap onto a second line on a phone held upright"
+        }
+      ],
+      "children": []
+    }
+  ]
+}

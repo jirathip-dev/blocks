@@ -768,6 +768,211 @@
       "type": "table"
     },
     {
+      "calc": {
+        "cost": {
+          "mul": [
+            {
+              "mul": [
+                {
+                  "get": "qty"
+                },
+                {
+                  "get": "price"
+                }
+              ]
+            },
+            {
+              "get": "mult"
+            }
+          ]
+        },
+        "sell": {
+          "div": [
+            {
+              "get": "cost"
+            },
+            {
+              "sub": [
+                1,
+                {
+                  "div": [
+                    {
+                      "get": "margin"
+                    },
+                    100
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "columns": [
+        {
+          "edit": true,
+          "id": "name",
+          "kind": "text",
+          "label": "Item",
+          "width": 22
+        },
+        {
+          "digits": 0,
+          "edit": true,
+          "id": "qty",
+          "kind": "number",
+          "label": "Qty"
+        },
+        {
+          "currency": "THB",
+          "edit": true,
+          "id": "price",
+          "kind": "money",
+          "label": "Unit cost",
+          "phone": "meta"
+        },
+        {
+          "edit": true,
+          "id": "mult",
+          "kind": "number",
+          "label": "Mult"
+        },
+        {
+          "currency": "THB",
+          "id": "cost",
+          "kind": "money",
+          "label": "Cost",
+          "total": "sum"
+        },
+        {
+          "digits": 1,
+          "edit": true,
+          "id": "margin",
+          "kind": "number",
+          "label": "Margin",
+          "unit": "%"
+        },
+        {
+          "currency": "THB",
+          "id": "sell",
+          "kind": "money",
+          "label": "Price",
+          "total": "sum"
+        },
+        {
+          "currency": "THB",
+          "id": "final",
+          "kind": "money",
+          "label": "Final",
+          "total": "sum"
+        }
+      ],
+      "edit": {
+        "action": "set-cell",
+        "name": "cell"
+      },
+      "fallback": {
+        "subtitle": "6 rows · total cost ฿68,984.00",
+        "title": "Mark-up · K-12 tower"
+      },
+      "id": "grid",
+      "reorder": {
+        "action": "order",
+        "name": "rows"
+      },
+      "rows": [
+        {
+          "cells": {
+            "name": "Pipework"
+          },
+          "group": true,
+          "id": "g-pipe"
+        },
+        {
+          "cells": {
+            "final": 21000,
+            "margin": 18,
+            "mult": 1.05,
+            "name": "Steel pipe 2in, sch 40",
+            "price": 410,
+            "qty": 40
+          },
+          "id": "p1"
+        },
+        {
+          "cells": {
+            "final": 3100,
+            "margin": 22,
+            "mult": 1.05,
+            "name": "Elbow 2in 90°",
+            "price": 95,
+            "qty": 24
+          },
+          "id": "p2"
+        },
+        {
+          "cells": {
+            "name": "Valves"
+          },
+          "group": true,
+          "id": "g-valve"
+        },
+        {
+          "cells": {
+            "final": 21800,
+            "margin": 15,
+            "mult": 1.1,
+            "name": "Gate valve 3in",
+            "price": 4200,
+            "qty": 4
+          },
+          "id": "v1"
+        },
+        {
+          "cells": {
+            "final": 12800,
+            "margin": 15,
+            "mult": 1.1,
+            "name": "Ball valve 2in",
+            "price": 1650,
+            "qty": 6
+          },
+          "id": "v2"
+        },
+        {
+          "cells": {
+            "name": "Labour"
+          },
+          "group": true,
+          "id": "g-lab"
+        },
+        {
+          "cells": {
+            "final": 19200,
+            "margin": 25,
+            "mult": 1,
+            "name": "Fitter, day",
+            "price": 2400,
+            "qty": 6
+          },
+          "id": "l1"
+        },
+        {
+          "cells": {
+            "final": 5600,
+            "margin": 0,
+            "mult": 1,
+            "name": "Transport, by weight",
+            "price": 5600,
+            "qty": 1
+          },
+          "fixed": true,
+          "id": "l2"
+        }
+      ],
+      "title": "Mark-up · K-12 tower",
+      "type": "table"
+    },
+    {
       "done": true,
       "fallback": {
         "title": "Stop 3 of 8"

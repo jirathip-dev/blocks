@@ -1,17 +1,26 @@
+import type { OnFile } from "../../core/field/files.ts";
 import type { Field, Locale } from "../../gen/types.ts";
 import type { Store } from "../index.ts";
 export type FieldCtx = {
     locale: Locale;
     store: Store;
     key: string;
+    screen: string;
+    block?: string;
+    file?: OnFile;
     set?(value: unknown): void;
 };
 export type FieldOut = {
-    el: HTMLInputElement | HTMLSelectElement;
+    el: HTMLElement;
     sent(): unknown;
+    busy?(): {
+        up: number;
+        failed: number;
+    };
 };
 export type FieldView<F = Field> = {
     row?: string;
+    group?: boolean;
     draw(field: F, c: FieldCtx): FieldOut;
 };
 export declare const word: (c: FieldCtx, key: string) => string;
