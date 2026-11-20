@@ -212,8 +212,12 @@ internal struct Identified: ViewModifier {
     internal let id: String?
     internal var action = false
 
-    @ViewBuilder
     internal func body(content: Content) -> some View {
+        if action { marked(content) } else { marked(content).environment(\.actionBlock, id) }
+    }
+
+    @ViewBuilder
+    private func marked(_ content: Content) -> some View {
         if let id, !id.isEmpty {
             let name = "\(action ? "action" : "block"):\(id)"
             let marked = Group {

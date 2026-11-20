@@ -103,13 +103,34 @@ public enum Relative {
     }
 }
 
-/// What a tap sends: the action's name and its values.
-public struct BlockAction: Sendable, Equatable {
+/// What a tap sends: the action's name, the block it came from and its values; the screen is the app's to add.
+public struct BlockAction: Codable, Sendable, Equatable {
     public let action: String
+    public let block: String?
     public let values: [String: JSONValue]
 
-    public init(action: String, values: [String: JSONValue]) {
-        self.action = action
-        self.values = values
+    public init(action: String, block: String? = nil, values: [String: JSONValue]) {
+        (self.action, self.block, self.values) = (action, block, values)
+    }
+
+    private enum Key: String, CodingKey { case action, block, values }
+
+    public init(from decoder: any Decoder) throws {
+        let c = try decoder.container(keyedBy: Key.self)
+        self.init(
+            action: try c.decode(String.self, forKey: .action), block: try c.decodeIfPresent(String.self, forKey: .block),
+            values: try c.decodeIfPresent([String: JSONValue].self, forKey: .values) ?? [:])
+    }
+
+    public func encode(to encoder: any Encoder) throws {
+        var c = encoder.container(keyedBy: Key.self)
+        try c.encode(action, forKey: .action)
+        try c.encodeIfPresent(block, forKey: .block)
+        if !values.isEmpty { try c.encode(values, forKey: .values) }
+    }
+
+    /// This action, from `block` unless it names its own.
+    public func from(_ block: String?) -> Self {
+        Self(action: action, block: self.block ?? block, values: values)
     }
 }

@@ -1,6 +1,7 @@
 import { deepStrictEqual } from "node:assert/strict";
 import { readdirSync, readFileSync } from "node:fs";
 import { test } from "node:test";
+import { posted } from "../src/render/ctx.ts";
 import { Mirror } from "../src/stream.ts";
 
 const dir = new URL("../../fixtures/protocol/", import.meta.url);
@@ -20,6 +21,7 @@ for (const name of names) {
       else if (s.have) deepStrictEqual(m.have(), s.have, at);
       else if (s.frame) deepStrictEqual(m.frame(s.frame), s.took, at);
       else if (s.synced) deepStrictEqual(m.synced(s.sent, s.synced), s.took, at);
+      else if (s.action) deepStrictEqual(JSON.parse(posted(s.action.screen, s.action)), s.action, at);
       else throw new Error(`${at}: no such step`);
     });
     for (const [k, want] of Object.entries(c.screens)) deepStrictEqual(m.screen(k) ?? null, want, k);

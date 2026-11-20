@@ -28,6 +28,7 @@ export type Ctx = {
     view?: Map<string, Record<string, unknown>>;
     file?: OnFile | undefined;
 };
+export declare const posted: (screen: string, a: Post) => string;
 export declare const obj: (v: unknown) => Blk;
 export declare const draft: (i: HTMLInputElement, key: string, store: Store) => void;
 export declare const sent: (box: Element, store: Store) => void;

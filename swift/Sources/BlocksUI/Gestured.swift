@@ -7,7 +7,11 @@ private struct ActedKey: EnvironmentKey {
 
 extension EnvironmentValues {
     internal var acted: (@MainActor (BlockAction) async -> Bool)? {
-        get { self[ActedKey.self] }
+        get {
+            guard let acted = self[ActedKey.self] else { return nil }
+            let block = actionBlock
+            return { await acted($0.from(block)) }
+        }
         set { self[ActedKey.self] = newValue }
     }
 }

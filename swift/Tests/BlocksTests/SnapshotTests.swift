@@ -184,6 +184,18 @@ final class SnapshotTests: XCTestCase {
         XCTAssertEqual(own.report.sent.map(\.action), ["echo"])
     }
 
+    func testAFoldedCardDrawsItsLineAndMainActionAsTheHTMLDoes() throws {
+        let card = try decode(
+            Block.self,
+            #"{"type": "card", "id": "c", "title": "acme · paused", "fold": {"line": "acme · paused · 2 queued", "main": {"block": "q", "action": "resume", "label": "resume"}}, "blocks": [{"type": "choice", "id": "q", "action": "answer", "options": [{"value": "a", "label": "a"}]}]}"#)
+        let run = try Snapshot(card).run([], ids: DrawnIdList(blocks: ["c"], actions: ["resume"]), check: true)
+        XCTAssertEqual(run.faults, [])
+        guard case .card(var open) = card else { return XCTFail("a card") }
+        open.fold = nil
+        let full = try Snapshot(.card(open)).run([], ids: DrawnIdList(blocks: ["c", "q"], actions: ["answer"]), check: true)
+        XCTAssertEqual(full.faults, [])
+    }
+
     func testABlockStyleIsDrawn() throws {
         let button = try load(Block.self, "blocks/button.json")
         let plain = try Snapshot(button).run([])

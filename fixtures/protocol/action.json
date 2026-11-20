@@ -1,0 +1,18 @@
+{
+  "why": "an action carries the screen, the id of the block it came from, its name and its values, as each app sends it",
+  "v": 1,
+  "steps": [
+    {
+      "action": {
+        "screen": "queue",
+        "block": "q-1",
+        "action": "approve",
+        "values": {
+          "choice": "approve",
+          "n": 1
+        }
+      }
+    }
+  ],
+  "screens": {}
+}
