@@ -1,0 +1,10 @@
+button,a.btn{text-decoration:none;position:relative;display:inline-flex;align-items:center;justify-content:center;flex:none;height:var(--ctl);min-width:28px;max-width:100%;margin:0;padding:0 1ch;border:0;border-radius:var(--radius);background:none;color:var(--l);font:inherit;font-size:var(--fs);line-height:1;white-space:nowrap;text-transform:lowercase}
+button>span,a.btn>span{min-width:0;overflow:hidden;text-overflow:ellipsis}
+button::before,a.btn::before{content:"[";position:absolute;left:0}
+button::after,a.btn::after{content:"]";position:absolute;inset:calc(-1 * var(--s2));display:flex;align-items:center;justify-content:flex-end;padding-right:var(--s2)}
+button:active,a.btn:active{background:var(--l);color:var(--bg)}
+button:disabled{color:var(--mute);opacity:.6}
+button.bad,button.destructive,a.btn.bad{color:var(--r)}
+button[aria-busy=true]>span::after{content:" ↻";display:inline-block;animation:s calc(1s * var(--motion,1)) linear infinite}
+input,select{font:inherit;font-size:var(--fs-input);color:var(--fg);background:var(--card);border:1px solid var(--edge);border-radius:var(--radius);padding:var(--s1) var(--s2);min-width:0}
+input[type=checkbox]{width:var(--s4);height:var(--s4);accent-color:var(--l)}

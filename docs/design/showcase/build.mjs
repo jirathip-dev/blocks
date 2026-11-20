@@ -44,7 +44,7 @@ const page = (id, body, extra = {}) => {
   return `<!doctype html><html lang="en"${extra.html ?? ""}><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${t}</title><meta name="description" content="${desc}"><meta property="og:title" content="${t}"><meta property="og:description" content="${desc}">
 <meta property="og:url" content="https://jirathip-dev.github.io/blocks/${file === "index.html" ? "" : file.replace(".html", "/")}"><meta property="og:image" content="media/og.png"><meta name="twitter:card" content="summary_large_image">
-<link rel="stylesheet" href="../neutral-default/tokens.css"><link rel="stylesheet" href="../../../web/src/blocks.css"><link rel="stylesheet" href="site.css"></head>
+<link rel="stylesheet" href="../neutral-default/tokens.css"><link rel="stylesheet" href="../../../web/dist/blocks.css"><link rel="stylesheet" href="site.css"></head>
 <body class="${id}"><main><div class="scr b b-screen" data-block="screen" data-id="${id}"><p class="tabh"><span class="tw b-screen__title">${title}</span></p>
 ${nav(extra.nav ?? id)}${body}${foot}</div></main>${extra.after ?? ""}
 <script>document.querySelectorAll(".scr>*").forEach((e,i)=>e.style.setProperty("--i",i));addEventListener("load",()=>document.body.dataset.h=document.documentElement.scrollHeight)</script></body></html>\n`;

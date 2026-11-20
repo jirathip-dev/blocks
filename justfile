@@ -2,14 +2,17 @@ drover := env("DROVER", "drover")
 test_allow := "-A clippy::unwrap_used -A clippy::expect_used -A clippy::panic -A clippy::indexing_slicing -A clippy::as_conversions -A clippy::print_stdout -A clippy::print_stderr -A clippy::let_underscore_must_use"
 
 # Every gate CI runs, in one go; passes on a clean tree.
-check: fmt clippy fixtures test perf soak deps deny web arch cap actionlint swift
+check: fmt clippy fixtures test guard perf soak deps deny web arch cap actionlint swift desktop
 
 # Every generated file (.drover/arch.toml `generated`) from the Rust types; arch-check fails on a difference.
 gen: web-install
     cargo run -q --locked -p blocks --features schema --bin blocks-codegen
     npm --prefix web run build
     BLOCKS_GEN=1 cargo test -q --locked -p blocks --test sim generated
+    BLOCKS_GEN=1 cargo test -q --locked -p blocks --test gesture generated
+    BLOCKS_GEN=1 cargo test -q --locked -p blocks --test check generated
     BLOCKS_GEN=1 cargo test -q --locked -p blocks --test fixtures every_kind_has_a_stress_row
+    BLOCKS_GEN=1 cargo test -q --locked -p blocks --test theme css_writes_each_fixtures_css_file
 
 fmt:
     cargo fmt --check
@@ -19,13 +22,18 @@ clippy:
     cargo clippy --workspace --all-features --lib --bins --locked -- -D warnings
     cargo clippy --workspace --all-features --tests --locked -- -D warnings {{test_allow}}
 
-# Each ci/lint-fixtures/rust/<lint>.rs fails clippy and each web/lint-fixtures/<name>.ts fails web/lint.mjs.
+# Each ci/lint-fixtures/rust/<lint>.rs fails clippy and each web/lint-fixtures/<name>.ts and ci/lint-fixtures/swift/<name>.swift fails web/lint.mjs.
 fixtures: web-install
     scripts/lint-fixtures.sh rust
     scripts/lint-fixtures.sh ts
+    scripts/lint-fixtures.sh swift
 
 test:
     cargo test --workspace --all-features --locked
+
+# `blocks check` on this repo's screens (.blocks/guard.json); BASE narrows it to the fixtures a branch changed.
+guard:
+    cargo run -q --locked -p blocks-cli -- check ${BASE:+--base "$BASE"}
 
 # The hard perf gate in release: each budget is in crates/blocks/tests/perf.rs.
 perf:
@@ -48,6 +56,15 @@ sim n="500":
 
 deps:
     scripts/deps-gate.sh
+
+# The desktop renderer's tests (docs/architecture/desktop/), then the blocks crate's tree, which must link no egui.
+desktop:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    cargo test --locked -p blocks-desktop
+    tree=$(cargo tree --locked -p blocks --all-features --target all -e normal,build --prefix none)
+    if grep -q egui <<<"$tree"; then echo "the blocks crate links egui"; exit 1; fi
+    echo "desktop: the blocks crate links no egui"
 
 deny:
     cargo deny --locked check
@@ -76,10 +93,11 @@ cap:
 actionlint:
     actionlint -color
 
-# The Swift package's tests, warnings as errors; macOS only (CI's swift job).
+# The token lint on the SwiftUI views (ci/tokens), then the Swift package's tests, warnings as errors; macOS only (CI's swift job).
 swift:
     #!/usr/bin/env bash
     set -euo pipefail
+    node --no-warnings web/lint.mjs swift/Sources/BlocksUI
     if [ "$(uname)" != Darwin ]; then echo "swift: macOS only, skipped (CI's swift job runs it)"; exit 0; fi
     BLOCKS_STRICT=1 swift test
 

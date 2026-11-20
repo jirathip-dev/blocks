@@ -20,7 +20,8 @@ function under(b: Blk, drawn: TreeDrawn): unknown[] {
   return lists.concat(blks(b.rounds).flatMap((r) => (Array.isArray(r.blocks) ? r.blocks : [])));
 }
 
-function role(b: Blk, kind: string): string {
+/// The role block `b` of `kind` is drawn with, as the crate's `tree::expect` reads it.
+export function role(b: Blk, kind: string): string {
   const tap = isBlk(b.tap) ? b.tap : null;
   const wrapped = ["rounds", "swipe"].some((k) => Array.isArray(b[k]) && b[k].length > 0);
   if ((kind === "button" || kind === "row") && tap?.url != null && !wrapped) return "link";

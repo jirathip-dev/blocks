@@ -16,11 +16,13 @@ pub(crate) const VARIANTS: [(&str, &str); 5] = [
     ("images", "size"),
 ];
 
-pub(crate) const ROLES: [(&str, &str); 4] = [
+pub(crate) const ROLES: [(&str, &str); 6] = [
     ("section", "region"),
     ("form", "form"),
     ("config", "form"),
     ("nav", "navigation"),
+    ("chart", "figure"),
+    ("toast", "status"),
 ];
 pub(crate) const NAMES: [&str; 9] = [
     "label",
@@ -109,6 +111,33 @@ pub struct Shot {
     pub name: String,
 }
 
+/// How a scripted gesture comes in: a pointer, the keys, or a named accessibility action.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
+#[serde(rename_all = "lowercase")]
+pub enum Via {
+    Pointer,
+    Keys,
+    Action,
+}
+
+/// A gesture on one item of a block: pointer offsets `[dx, dy]` in px, key nudges, or named actions, in turn.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[cfg_attr(feature = "schema", derive(schemars::JsonSchema), schemars(rename = "StepGesture"))]
+pub struct Gesturing {
+    pub id: String,
+    pub grab: Value,
+    pub reach: Vec<Value>,
+    pub via: Via,
+}
+
+/// The action out fails, with its toast as the reason.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[cfg_attr(feature = "schema", derive(schemars::JsonSchema), schemars(rename = "StepRefuse"))]
+pub struct Refusal {
+    pub toast: String,
+}
+
 /// One scripted input: by block id, a stream frame arriving, an action answered, or a shot.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
@@ -118,8 +147,10 @@ pub enum Step {
     Type(Typing),
     Scroll(On),
     Frame(Frame),
-    Answer(Answer),
+    Answer(Box<Answer>),
     Shot(Shot),
+    Gesture(Gesturing),
+    Refuse(Refusal),
 }
 
 /// How long the first paint and each step took; the frame fields only where a harness draws real frames.

@@ -2,12 +2,16 @@ use std::path::Path;
 
 use serde_json::{Map, Value};
 
-use crate::{tree, Action, Answer, Block, Bye, Frame, Hello, OldFrame, Sync, Synced, SCHEMA_VERSION};
+use crate::{guard, tree, Action, Answer, Block, Bye, Frame, Hello, OldFrame, Sync, Synced, SCHEMA_VERSION};
 
+mod builders;
 mod fixtures;
 mod hooks;
 mod kinds;
 mod model;
+mod rules;
+mod shapes;
+mod skill;
 mod swift;
 mod theme;
 mod ts;
@@ -27,6 +31,10 @@ pub fn schema() -> Value {
     g.subschema_for::<tree::Report>();
     g.subschema_for::<tree::Step>();
     g.subschema_for::<tree::Node>();
+    g.subschema_for::<guard::Seen>();
+    g.subschema_for::<guard::Finding>();
+    g.subschema_for::<guard::Plan>();
+    g.subschema_for::<crate::DaySpan>();
     let mut v = g.into_root_schema_for::<Frame>().to_value();
     if let Some(o) = v.as_object_mut() {
         let id = format!("https://github.com/jirathip-dev/blocks/schema/v{SCHEMA_VERSION}");
@@ -49,13 +57,16 @@ pub fn schema() -> Value {
 pub fn write(root: &Path) -> std::io::Result<()> {
     let schema = schema();
     for area in [
+        skill::files,
         model::files,
         ts::files,
+        builders::files,
+        shapes::files,
         swift::files,
         hooks::files,
         theme::files,
-        kinds::files,
         fixtures::files,
+        rules::files,
     ] {
         for (path, text) in area(root, &schema)? {
             let path = root.join(path);

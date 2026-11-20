@@ -73,7 +73,6 @@ fn a_page_links_only_the_stylesheets_it_is_given_and_a_sheet_tap_names_its_sheet
             .id("s")
             .blocks(vec![Block::Button(Box::new(Button::new("look").id("look").tap(tap)))]),
     );
-    let dark = &theme::default().dark;
     let site = Site {
         head: Head {
             title: "t",
@@ -88,7 +87,7 @@ fn a_page_links_only_the_stylesheets_it_is_given_and_a_sheet_tap_names_its_sheet
         live: Some(Live {
             js: "blocks.js",
             stream: "",
-            looks: &[("dark", dark)],
+            looks: &[("still", &look)],
         }),
     };
     let p = site::page(&screen, &site);
@@ -105,7 +104,15 @@ fn a_page_links_only_the_stylesheets_it_is_given_and_a_sheet_tap_names_its_sheet
         .and_then(|s| s.split('"').next())
         .unwrap();
     let looks: serde_json::Value = serde_json::from_str(&looks.replace("&#34;", "\"")).unwrap();
-    assert_eq!(looks["dark"], serde_json::to_value(dark).unwrap());
+    assert_eq!(
+        looks["still"]["dark"],
+        serde_json::to_value(&theme::default().dark).unwrap()
+    );
+    assert_eq!(
+        looks["still"]["light"],
+        serde_json::to_value(&theme::default().light).unwrap()
+    );
+    assert_eq!(looks["still"]["style"], serde_json::to_value(&look.style).unwrap());
 }
 
 #[test]
@@ -155,6 +162,26 @@ fn from_form_refuses_a_post_with_no_action_or_a_bad_escape() {
     ] {
         assert!(Action::from_form(bad).is_err(), "{bad}");
     }
+}
+
+#[test]
+fn a_diff_writes_its_summary_and_lines_its_header_alone_with_no_hunks_and_its_fallback_with_no_hunks_list() {
+    let w = |v: serde_json::Value| site::fragment(&Built::new(v), "/act");
+    let full = w(
+        serde_json::json!({"type": "diff", "file": "a<b", "summary": "+1", "hunks": [{"at": "@@", "lines": [" c", "\\ x", ""]}]}),
+    );
+    assert!(full.contains("<span class=\"dfs\">+1</span></div><div class=\"dfb\"><div class=\"dfk\">@@</div><div class=\"dfl ctx\"><i class=\"dfm\"> </i>c</div><div class=\"dfl ctx\"><i class=\"dfm\">\\</i> x</div><div class=\"dfl ctx\"><i class=\"dfm\"> </i></div></div>"), "{full}");
+    assert!(full.contains("aria-label=\"a&#60;b\""), "{full}");
+    let bare = w(serde_json::json!({"type": "diff", "file": "gone.rs", "hunks": []}));
+    assert!(
+        bare.ends_with("<span class=\"dff\">gone.rs</span></div></div>"),
+        "{bare}"
+    );
+    let odd = w(serde_json::json!({"type": "diff", "file": "a", "fallback": {"title": "Change"}}));
+    assert!(
+        odd.contains("data-fallback") && odd.contains("Change") && !odd.contains("dfh"),
+        "{odd}"
+    );
 }
 
 #[test]
@@ -292,6 +319,72 @@ fn an_island_is_its_element_with_its_props_and_fallback_and_a_bad_name_a_plain_f
         assert!(h.starts_with("<div class=\"b b-island\""), "{bad:?}: {h}");
         assert!(h.ends_with("</div></div>") && h.contains("The map"), "{bad:?}: {h}");
     }
+}
+
+fn chart(v: serde_json::Value) -> String {
+    site::fragment(&Built::new(v), "/act")
+}
+
+#[test]
+fn a_chart_writes_its_format_months_era_and_axis_and_posts_a_tapped_month_with_no_js() {
+    let combo = chart(serde_json::json!({
+        "type": "chart", "id": "rev", "title": "Revenue", "chart": "combo", "x": ["2024-02", "2024-03"],
+        "era": "be", "format": "thb_m", "selected": "2024-03", "tap": {"action": "sales.month"},
+        "series": [{"name": "Revenue", "values": [845_000, 12_345_678]}, {"name": "Target", "as": "line", "values": [1, 2]}]
+    }));
+    for want in [
+        ">Mar 2567<",
+        ">Feb 67<",
+        "<b>฿12.3M</b>",
+        "Feb 2567: Revenue ฿845K, Target ฿1",
+        "aria-pressed=\"true\"",
+        ">฿0</span>",
+        "name=\"_action\" value=\"sales.month\"",
+        "name=\"x\" value=\"2024-03\"",
+        "class=\"chk chkl\"",
+    ] {
+        assert!(combo.contains(want), "{want} in {combo}");
+    }
+    let line = chart(serde_json::json!({
+        "type": "chart", "title": "Margin", "chart": "line", "x": ["2023-10", "2023-11"], "lang": "th", "format": "percent",
+        "series": [{"name": "FY", "values": [28.14, 33.5]}, {"name": "Last", "tone": "mute", "dash": true, "values": [30, 31]}]
+    }));
+    for want in [
+        ">25%</span>",
+        ">30%</span>",
+        ">35%</span>",
+        ">ต.ค. 2023<",
+        "<b>33.5%</b>",
+        "class=\"s dash\"",
+        "var(--mute)",
+        ">ตาราง<",
+    ] {
+        assert!(line.contains(want), "{want} in {line}");
+    }
+    assert!(!line.contains(">0%</span>"), "a line chart fits its axis to the data");
+    let empty = chart(
+        serde_json::json!({"type": "chart", "title": "Orders", "chart": "bar", "x": [], "series": [], "empty": "None yet"}),
+    );
+    assert!(empty.contains(">None yet<") && !empty.contains("chc"), "{empty}");
+}
+
+#[test]
+fn a_donut_folds_all_but_its_four_biggest_slices_into_other_and_reads_a_picked_one() {
+    let x = ["Payroll", "Stock", "Rent", "Ads", "Delivery", "Software", "Power"];
+    let d = chart(serde_json::json!({
+        "type": "chart", "title": "Spend", "chart": "donut", "x": x, "format": "thb", "selected": "Stock",
+        "series": [{"name": "Spend", "values": [3_820_000, 2_950_000, 1_200_000, 640_000, 410_000, 180_000, 150_000]}]
+    }));
+    for want in [
+        ">Other (3)<",
+        ">฿740,000<",
+        "class=\"chr sel\"",
+        "<b>฿2,950,000</b><span>Stock</span>",
+        "Payroll: ฿3,820,000, 41%",
+    ] {
+        assert!(d.contains(want), "{want} in {d}");
+    }
+    assert!(!d.contains(">Delivery<"), "a folded slice is in Other");
 }
 
 fn invoice(qty: &str) -> serde_json::Value {
@@ -469,4 +562,38 @@ fn a_link_that_is_not_http_https_mailto_or_relative_is_dropped_and_its_text_draw
             "{good} not linked in {html}"
         );
     }
+}
+
+#[test]
+fn a_toast_writes_one_quiet_line_with_no_undo_and_an_empty_one_its_fallback_done() {
+    let toast = blocks::samples().into_iter().find(|(k, _)| *k == "toast").unwrap().1;
+    let h = site::fragment(&Built::of(&Screen::new().id("s").blocks(vec![toast])), "/act");
+    assert!(h.contains("<div class=\"tst inl ok b b-toast\" data-block=\"toast\" data-id=\"archived\" data-tone=\"ok\" role=\"status\" aria-label=\"Archived 3 orders\"><i class=\"tsg\" aria-hidden=\"true\">✓</i><span class=\"tsx\">Archived 3 orders</span></div>"), "{h}");
+    assert!(!h.contains("unarchive") && !h.contains("<button"), "{h}");
+    let plain = site::fragment(
+        &Built::new(serde_json::json!({"type": "toast", "title": "Copied", "tone": "info"})),
+        "/act",
+    );
+    assert!(plain.starts_with("<div class=\"tst inl b b-toast\""), "{plain}");
+    assert!(plain.contains("<i class=\"tsg\" aria-hidden=\"true\"></i>"), "{plain}");
+    for (v, want) in [
+        (serde_json::json!({"type": "toast", "id": "e", "title": ""}), "Done"),
+        (
+            serde_json::json!({"type": "toast", "id": "e", "title": "", "fallback": {"title": "Saved"}}),
+            "Saved",
+        ),
+    ] {
+        let h = site::fragment(&Built::new(v), "/act");
+        assert!(
+            h.starts_with("<div class=\"b b-toast\" data-block=\"toast\" data-id=\"e\" data-fallback=\"\""),
+            "{h}"
+        );
+        assert!(h.contains(&format!(">{want}<")), "{h}");
+    }
+    let empty = Built::of(
+        &Screen::new()
+            .id("s")
+            .blocks(vec![Block::Toast(Box::new(blocks::Toast::new("")))]),
+    );
+    assert_eq!(empty.value()["blocks"][0]["fallback"]["title"], "Done");
 }

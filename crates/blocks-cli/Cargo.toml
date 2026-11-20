@@ -1,0 +1,20 @@
+[package]
+name = "blocks-cli"
+description = "`blocks check`: the guard's lint and ratchet over an app's screen fixtures"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+repository.workspace = true
+
+[dependencies]
+blocks = { path = "../blocks" }
+serde.workspace = true
+serde_json.workspace = true
+
+[[bin]]
+name = "blocks"
+path = "src/main.rs"
+
+[lints]
+workspace = true

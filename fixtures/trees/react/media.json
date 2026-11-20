@@ -1,0 +1,9 @@
+{
+  "kind": "media",
+  "id": "chart",
+  "variant": null,
+  "drawn": "fallback",
+  "role": "group",
+  "name": "a bar chart",
+  "children": []
+}

@@ -1,16 +1,16 @@
 import { deepStrictEqual, ok, strictEqual } from "node:assert/strict";
 import { readdirSync, readFileSync } from "node:fs";
-import { test } from "node:test";
+import { mock, test } from "node:test";
 import { all, ctx, dir, fixture, part, render, rounds } from "./kit.ts";
 
 const { css, packs } = await import("../src/theme.ts");
 const { defaultPair } = await import("../src/gen/schemes.ts");
 
-const gaps = ["diff", "island"];
+const gaps = ["island"];
 
 test("every fixture is drawn with its hooks, natively or as its fallback", () => {
   const kinds = readdirSync(dir).map((f) => f.replace(/\.json$/, ""));
-  strictEqual(kinds.length, 30);
+  strictEqual(kinds.length, 33);
   for (const kind of kinds) {
     const b = fixture(kind);
     const e = render(b, ctx());
@@ -100,4 +100,20 @@ test("a link that is not http, https, mailto or relative is dropped and its text
   const { linkable } = await import("../src/render/act.ts");
   for (const u of f.safe) strictEqual(linkable(u), true, u);
   for (const u of f.unsafe) strictEqual(linkable(u), false, u);
+});
+
+test("a labelled time gives fixtures/times/labels.json's text at its clock, and a card draws one in its badge, meta, row and tile", async () => {
+  const { value } = await import("../src/render/text.ts");
+  const f = JSON.parse(readFileSync(new URL("../../fixtures/times/labels.json", import.meta.url), "utf8"));
+  mock.timers.enable({ apis: ["Date"], now: Date.parse(f.now) });
+  try {
+    for (const c of f.cases) strictEqual(value(c.value), c.want, JSON.stringify(c.value));
+    const e = render(fixture("card"), ctx());
+    deepStrictEqual(
+      ["b-card__badge", "m", "b-row__subtitle", "b-row__value", "b-stat__value"].map((k) => part(e, k).textContent),
+      ["lapses in 13m", "as of 5m ago", "decides in 13m", "5m ago", "5m"],
+    );
+  } finally {
+    mock.timers.reset();
+  }
 });

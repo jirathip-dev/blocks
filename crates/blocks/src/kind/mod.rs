@@ -7,15 +7,21 @@ use crate::expr::{Expr, State};
 
 #[macro_use]
 mod macros;
+mod chart;
 mod content;
+mod list;
 mod parts;
 mod sample;
 mod table;
+mod timeline;
 
+pub use chart::*;
 pub use content::*;
 pub use parts::*;
 pub use sample::samples;
 pub use table::*;
+pub(crate) use timeline::{civil, day, words as timeline_words};
+pub use timeline::{BarGrab, BarPart, DaySpan, Days, TimeBar, TimeRow, Timeline};
 
 kind! {
     /// A whole screen.
@@ -67,7 +73,7 @@ kind! {
     pub struct List {
         id: Option<String>,
         rows: Vec<Block>,
-        reorder: Option<Reorder>,
+        reorder: Option<Gesture>,
     }
 }
 
@@ -103,7 +109,7 @@ kind! {
         tone: Option<Tone>,
         title: Option<String>,
         subtitle: Option<String>,
-        meta: Option<String>,
+        meta: Option<Shown>,
         badge: Option<Label>,
         buttons: Option<Vec<Block>>,
         tap: Option<Tap>,
@@ -332,6 +338,17 @@ kind! {
     }
 }
 
+kind! {
+    /// A short line after an action, in a tone, with an optional undo: an answer's toast, or drawn where it sits.
+    pub struct Toast {
+        id: Option<String>,
+        tone: Option<Tone>,
+        title: String,
+        undo: Option<Undo>,
+        fallback: Option<Fallback>,
+    }
+}
+
 wire! {
     /// A block of a `type` that is no core kind: an app's own, kept whole.
     pub struct AppBlock {
@@ -369,6 +386,14 @@ macro_rules! kinds {
         impl Block {
             /// The core kinds' `type` names.
             pub const KINDS: &[&str] = &[$($name),*];
+
+            /// The block's `type`: a core kind's name, or an app's own.
+            pub fn kind(&self) -> &str {
+                match self {
+                    $(Self::$v(_) => $name,)*
+                    Self::App(b) => &b.kind,
+                }
+            }
 
             /// The block's id, when it has one.
             pub fn id(&self) -> Option<&str> {
@@ -420,4 +445,7 @@ kinds! {
     Island(Island) = "island",
     Table(Table) = "table",
     Steps(Steps) = "steps",
+    Chart(Chart) = "chart",
+    Toast(Toast) = "toast",
+    Timeline(Timeline) = "timeline",
 }

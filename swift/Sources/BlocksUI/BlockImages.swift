@@ -35,14 +35,10 @@ private struct Opened: Identifiable {
 }
 
 internal struct ZoomedPicture: View {
-    @State private var scale: CGFloat = 1
     internal let src: String
     internal let alt: String?
 
-    internal var body: some View {
-        Picture(src: src, alt: alt, fit: true).scaleEffect(scale)
-            .gesture(MagnifyGesture().onChanged { scale = max(1, $0.magnification) })
-    }
+    internal var body: some View { Picture(src: src, alt: alt, fit: true).modifier(Zoomed(most: 4)) }
 }
 
 internal struct Picture: View {

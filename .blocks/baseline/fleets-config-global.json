@@ -1,0 +1,9 @@
+{
+  "guard": 2,
+  "known": [
+    {
+      "rule": "render/contrast",
+      "at": "screen#global/section~0/list~0/row~1"
+    }
+  ]
+}

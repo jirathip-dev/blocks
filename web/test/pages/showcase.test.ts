@@ -48,7 +48,7 @@ const tree = (page) =>
 const files = SITE ? readdirSync(SITE).filter((f) => f.endsWith(".html")).sort() : [];
 
 test("every page is the same PNG and tree before and after blocks.js adopts it, all under /blocks/", async () => {
-  strictEqual(files.length, 36);
+  strictEqual(files.length, 40);
   const warm = await open("index.html", { js: false });
   await warm.page.screenshot({ fullPage: true });
   await warm.close();
@@ -81,21 +81,47 @@ test("with JS off a link bar link goes to its page under the sub-path", async ()
 
 const bg = (page, sel = ":root") => page.evaluate((s) => getComputedStyle(document.querySelector(s)).getPropertyValue("--bg").trim(), sel);
 
-test("JS off: the three schemes side by side; JS on: the look sheet switches the whole site and keeps it", async () => {
-  const off = await open("schemes.html", { js: false });
-  deepStrictEqual(await Promise.all(["light", "dark", "paper"].map((s) => bg(off.page, `[data-id="s-${s}"]`))), ["#f6f6f6", "#161616", "#f3eee4"]);
+test("JS off: Styles pins each look's colours side by side; JS on: the nav's switcher restyles in place, follows the device and holds across pages", async () => {
+  const off = await open("styles.html", { js: false });
+  deepStrictEqual(await Promise.all(["default", "paper", "console", "playful"].map((s) => bg(off.page, `[data-id="s-${s}"]`))), ["#f6f6f6", "#f3eee4", "#eef1ee", "#ffffff"]);
   await off.close();
-  const on = await open("schemes.html");
+  const on = await open("index.html", { width: 1440 });
+  const root = (k) => on.page.evaluate((p) => getComputedStyle(document.documentElement).getPropertyValue(p).trim(), k);
+  const pressed = () =>
+    on.page.$$eval('[data-id="looks"] button', (bs) => {
+      const probe = document.body.appendChild(document.createElement("i"));
+      probe.style.background = "var(--l)";
+      const l = getComputedStyle(probe).backgroundColor;
+      probe.remove();
+      return bs.filter((b) => getComputedStyle(b).backgroundColor === l).map((b) => b.dataset.id);
+    });
   strictEqual(await bg(on.page), "#f6f6f6");
-  await on.page.click('[data-id="look"]');
-  const rows = on.page.locator(".b-sheet .row");
-  deepStrictEqual(await rows.allTextContents(), ["✓ the app's own", "Default dark", "Default light", "Paper"]);
-  await rows.filter({ hasText: "Paper" }).click();
-  strictEqual(await bg(on.page), "#f3eee4");
-  strictEqual(await on.page.locator(".b-sheet .row.on").textContent(), "✓ Paper");
+  await on.page.evaluate(() => (window.kept = true));
+  await on.page.click('[data-id="look-console"]');
+  deepStrictEqual([await bg(on.page), await root("--motion"), await root("--radius")], ["#eef1ee", "0", "0px"]);
+  await on.page.click('[data-id="look-paper"]');
+  deepStrictEqual([await bg(on.page), await root("--motion"), await root("--radius")], ["#f3eee4", "1.75", "6px"]);
+  ok(/serif/.test(await on.page.evaluate(() => getComputedStyle(document.body).fontFamily)), "Paper sets serif type");
+  ok(await on.page.evaluate(() => window.kept === true), "no reload");
+  const rise = (page) => page.evaluate(() => getComputedStyle(document.querySelector('[data-id="hero"]')).animationDuration);
+  strictEqual(await rise(on.page), "0s", "none under reduced motion");
+  deepStrictEqual(await pressed(), ["look-paper"]);
   await on.page.goto(`${BASE}gallery.html`);
   strictEqual(await bg(on.page), "#f3eee4");
+  deepStrictEqual(await pressed(), ["look-paper"]);
   await on.close();
+  const ctx = await browser.newContext({ colorScheme: "dark", reducedMotion: "no-preference" });
+  const dark = await ctx.newPage();
+  await dark.route("**/*", (r) => {
+    const path = r.request().url().slice(BASE.length).split(/[?#]/)[0] || "index.html";
+    return r.fulfill({ body: readFileSync(join(SITE, path)), contentType: TYPES[extname(path)] ?? "application/octet-stream" });
+  });
+  await dark.goto(BASE + "index.html");
+  strictEqual(await bg(dark), "#161616");
+  await dark.click('[data-id="look-playful"]');
+  strictEqual(await bg(dark), "#0f0f12");
+  strictEqual(await rise(dark), "0.65s", "Playful's motion 1.25 scales the 520 ms rise");
+  await ctx.close();
 });
 
 const screenOf = (f) => JSON.parse(readFileSync(join(SITE, f), "utf8").match(/id="blocks-screen"[^>]*>(.*?)<\/script>/s)[1]);
@@ -149,4 +175,39 @@ test("in blocks-shot, behaviours' toggle shows and hides a field, its check spea
   deepStrictEqual([find(tree, "echo").drawn, find(tree, "echo").text], ["native", '{"says":"hello"}']);
   deepStrictEqual([find(tree, "later").drawn, find(tree, "later").text], ["fallback", "An echo of its propsx-echo needs JS; until it loads, this row"]);
   deepStrictEqual(i.report.sent, [{ screen: "islands", action: "echo", block: "echo", values: { says: "hello" } }]);
+});
+
+test("layout: the switch moves the same screens between compact and wide without a reload; on a phone the file opens on a tap", async () => {
+  const { page, close } = await open("layout.html", { width: 1440 });
+  const boxes = () =>
+    page.$$eval('[data-id="app"]>section', (all) =>
+      all.map((s) => {
+        const r = s.getBoundingClientRect();
+        const p = s.parentElement.getBoundingClientRect();
+        return { id: s.dataset.id, blocks: [...s.querySelectorAll("[data-id]")].map((b) => b.dataset.id), x: Math.round(r.left - p.left), y: Math.round(r.top - p.top), w: Math.round(r.width) };
+      }),
+    );
+  const at = (all, id) => all.find((s) => s.id === id);
+  const url = page.url();
+  const auto = await boxes();
+  await page.click('[data-id="to-compact"]');
+  const compact = await boxes();
+  await page.click('[data-id="to-wide"]');
+  const wide = await boxes();
+  strictEqual(page.url(), url);
+  deepStrictEqual(auto, wide, "at 1440 the page starts wide");
+  deepStrictEqual(compact.map((s) => [s.id, s.blocks]), wide.map((s) => [s.id, s.blocks]), "the same screens and blocks");
+  ok(at(wide, "plants").x < at(wide, "today").x && at(wide, "today").x < at(wide, "weather").x, "wide: column, panel, cards side by side");
+  ok(at(wide, "settings").y > at(wide, "today").y, "wide: settings in the bar below");
+  ok(at(compact, "weather").y > at(compact, "today").y && at(compact, "weather").w === at(compact, "today").w, "compact: weather a sheet over today");
+  ok(at(compact, "plants").y > at(compact, "weather").y && at(compact, "settings").y === at(compact, "plants").y, "compact: plants and settings in the tab bar");
+  ok(await page.isVisible('[data-id="json"]'), "at 1440 the file sits beside the drawing");
+  ok(!(await page.isVisible('[data-id="open-file"]')));
+  await close();
+  const phone = await open("layout.html", { width: 390 });
+  ok(!(await phone.page.isVisible('[data-id="json"]')), "at 390 the file starts folded");
+  await phone.page.click('[data-id="open-file"]');
+  ok(await phone.page.isVisible('[data-id="json"]'));
+  ok((await phone.page.textContent('[data-id="json"]')).includes('"place": "menu"'));
+  await phone.close();
 });

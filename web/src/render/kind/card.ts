@@ -29,7 +29,7 @@ export function card(b: Card, c: Ctx): HTMLElement {
     if (shut) return k;
   }
   const head = h("div", "ch", h("b", "b-card__title", b.title ?? ""));
-  if (b.badge) head.append(" ", h("span", `tag b-card__badge ${b.badge.tone ?? ""}`, b.badge.text));
+  if (b.badge) head.append(" ", h("span", `tag b-card__badge ${b.badge.tone ?? ""}`, ticked(b.badge.text)));
   if (b.meta) head.append(" ", h("span", "m", ticked(b.meta)));
   if (b.title || b.badge) k.append(head);
   if (b.subtitle) k.append(h("p", "m b-card__subtitle", b.subtitle));

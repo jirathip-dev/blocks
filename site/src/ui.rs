@@ -1,4 +1,6 @@
-use blocks::{Block, Figure, Nav, NavLink, Part, Row, Screen, Section, Shown, Span, Tap, Text, Tone, Toned};
+use blocks::{Block, Button, Figure, Nav, NavLink, Part, Row, Screen, Section, Shown, Span, Tap, Text, Tone, Toned};
+
+use crate::looks::NAMES;
 
 pub const REPO: &str = "https://github.com/jirathip-dev/blocks";
 
@@ -16,12 +18,13 @@ pub struct Page {
     pub screen: Screen,
 }
 
-const LINKS: [(&str, &str); 5] = [
+const LINKS: [(&str, &str); 6] = [
     ("gallery", "gallery.html"),
-    ("schemes", "schemes.html"),
+    ("styles", "styles.html"),
     ("numbers", "numbers.html"),
     ("behaviours", "behaviours.html"),
     ("islands", "islands.html"),
+    ("layout", "layout.html"),
 ];
 
 fn nav(current: &str) -> Block {
@@ -32,7 +35,18 @@ fn nav(current: &str) -> Block {
     };
     let mut links: Vec<NavLink> = LINKS.iter().map(|(l, h)| link(l, h)).collect();
     links.push(link("github", REPO));
-    b!(Nav(Nav::new(links).id("site-nav").brand(link("blocks", "index.html"))))
+    let nav = b!(Nav(Nav::new(links).id("site-nav").brand(link("blocks", "index.html"))));
+    let looks = NAMES
+        .iter()
+        .map(|(name, label)| {
+            let tap = Tap {
+                sheet: Some(format!("look:{name}")),
+                ..Tap::default()
+            };
+            b!(Button(Button::new(*label).id(format!("look-{name}")).tap(tap)))
+        })
+        .collect();
+    section("site-top", "", vec![nav, section("looks", "look", looks)])
 }
 
 pub fn page(id: &str, file: &str, title: &str, description: &str, body: Vec<Block>) -> Page {

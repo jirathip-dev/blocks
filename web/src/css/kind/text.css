@@ -1,0 +1,4 @@
+.txt{margin:var(--s1) 0}
+.cb{position:relative}
+.cb>.cpy{position:absolute;top:0;right:0}
+.cb>pre{padding-right:calc(6ch + var(--s4))}

@@ -1,4 +1,5 @@
 import { type Blk, isBlk } from "../core/tree.ts";
+import type { Held } from "../gesture.ts";
 import type { Theme } from "../theme.ts";
 
 export type Post = { action: unknown; block?: unknown; values?: unknown; confirm?: unknown };
@@ -13,6 +14,7 @@ export type Ctx = {
   store: Store;
   apps?: Record<string, Renderer>;
   drop?: (what: string) => void;
+  held?: Map<string, Held>;
 };
 
 export const obj = (v: unknown): Blk => (isBlk(v) ? v : {});

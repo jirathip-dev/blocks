@@ -1,14 +1,31 @@
 {
   "name": "@jirathip-dev/blocks",
   "version": "0.0.0",
-  "description": "The framework-neutral blocks core: generated types, the evaluator and tree tests",
+  "description": "The framework-neutral blocks core (generated types, builders, check, the evaluator, tree tests, choose and the scheme CSS writer), its React adapter, and the HTML renderer and shell a page mounts",
   "type": "module",
   "license": "MIT",
   "exports": {
     ".": {
-      "types": "./web/dist/types/core/index.d.ts",
+      "types": "./web/dist/types/src/core/index.d.ts",
       "default": "./web/dist/core.js"
-    }
+    },
+    "./react": {
+      "types": "./web/dist/types/react/src/index.d.ts",
+      "default": "./web/dist/react.js"
+    },
+    "./shell": {
+      "types": "./web/dist/types/src/shell.d.ts",
+      "default": "./web/dist/blocks.js"
+    },
+    "./blocks.css": "./web/dist/blocks.scoped.css"
   },
-  "files": ["web/dist/core.js", "web/dist/types"]
+  "files": ["web/dist/core.js", "web/dist/react.js", "web/dist/blocks.js", "web/dist/blocks.css", "web/dist/blocks.scoped.css", "web/dist/types"],
+  "peerDependencies": {
+    "react": ">=19"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    }
+  }
 }

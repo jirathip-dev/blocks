@@ -3,6 +3,31 @@
 An app pins a commit on blocks' `staging`: Cargo `rev`, npm `#<sha>`, SwiftPM `revision`, with a test in the app
 that the pins agree. No manifest names a tag (ADR part 9, q2100).
 
+## The npm package
+
+An app's page takes blocks' web code at a 40-hex commit pin; the pin runs no build, the files are the committed
+`web/dist`:
+
+```sh
+npm install github:jirathip-dev/blocks#<sha>   # pnpm add, bun add: the same spec
+```
+
+```ts
+import { choose, css, tiles, type Scheme } from "@jirathip-dev/blocks";
+import { adopt, mount, render } from "@jirathip-dev/blocks/shell";
+import "@jirathip-dev/blocks/blocks.css";
+
+const dark = matchMedia("(prefers-color-scheme: dark)").matches;
+const wear: Scheme = choose(localStorage.getItem("b:look"), dark, schemes);
+style.textContent = tiles + css(wear);
+```
+
+- `@jirathip-dev/blocks`: the core (generated types, the evaluator, `tree`, `gate`), `choose` (the owner's
+  named scheme when on offer, else the device's default) and the one CSS writer: `css(scheme)` for one scheme,
+  `css({ light, dark }, { space, motion })` for the crate's `theme::css` text, `tiles` for the default style.
+- `@jirathip-dev/blocks/shell`: the HTML renderer and shell (`web/dist/blocks.js`): `mount`, `adopt`, `render`.
+- `web/test/consume.test.ts` packs the root, installs it into an empty project and type-checks these imports.
+
 ## Releases
 
 - A push to `main` whose push workflows (`ci`, `web`, `swift`, `cap`, `compat`) all end green is tagged and

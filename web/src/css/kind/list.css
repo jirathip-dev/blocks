@@ -1,0 +1,8 @@
+.list{display:flex;flex-direction:column;gap:var(--seam)}
+.list>.row,.list>.rw{padding:var(--s1) var(--s3)}
+.b-hd{flex:none;min-width:var(--hit);min-height:var(--hit);margin:calc(var(--s1) * -1) calc(var(--s3) * -1) calc(var(--s1) * -1) auto;border:0;background:none;color:var(--mute);font-size:var(--fs-input);cursor:grab}
+.list>.row,.list>.rw{transition:transform calc(var(--enter) * var(--motion,1)) var(--ease),opacity calc(var(--enter) * var(--motion,1)) var(--ease)}
+.list>:has(.b-hd[data-phase=pressed]),.list>:has(.b-hd[data-phase=previewing]){position:relative;z-index:1;box-shadow:0 4px 12px rgb(0 0 0 / .18)}
+.list>:has(.b-hd[data-phase=dragging]){opacity:.6}
+.list>:has(.b-hd[data-phase=sent]){opacity:.5}
+.b-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
