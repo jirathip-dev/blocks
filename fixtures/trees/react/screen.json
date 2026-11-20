@@ -2,7 +2,7 @@
   "kind": "screen",
   "id": "home",
   "variant": null,
-  "drawn": "fallback",
+  "drawn": "native",
   "role": "group",
   "name": "Home",
   "children": [
@@ -10,7 +10,7 @@
       "kind": "text",
       "id": "hint",
       "variant": null,
-      "drawn": "fallback",
+      "drawn": "native",
       "role": "group",
       "name": "hint",
       "children": []

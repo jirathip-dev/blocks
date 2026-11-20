@@ -1,4 +1,5 @@
 import { css, type Pair, type Scale } from "./core/look.ts";
+import { figured } from "./core/text.ts";
 import type { Scheme } from "./gen/schemes.ts";
 import type { Figure } from "./gen/types.ts";
 
@@ -6,9 +7,6 @@ export type ThemeJson = { label: string; scheme: { dark: string; light: string }
 export type Theme = { figure(f: Figure): Node | null; word(key: string, plain: string): Node; css(look: Scheme | Pair, style?: Scale): string };
 
 const NS = "http://www.w3.org/2000/svg";
-const GLYPH: Record<string, string> = { working: "●", needs: "!", fail: "✗", done: "✓", merged: "✓", idle: "○" };
-const WORD: Record<string, string> = { working: "working", needs: "needs you", fail: "failed", done: "done", merged: "merged", idle: "idle" };
-const TONE: Record<string, string> = { working: "g", needs: "r", fail: "r", done: "mute", idle: "mute", merged: "g" };
 
 export { css, tiles } from "./core/look.ts";
 
@@ -21,12 +19,12 @@ const tag = (name: string, cls: string, text = "") => {
 
 function shown(f: Figure, art: Node | null): Node {
   const s = String(f.state);
-  const word = WORD[s] ?? s;
+  const { glyph, word, tone } = figured(s);
   const box = tag("span", `rsg ${s}`);
   box.setAttribute("role", "img");
   box.setAttribute("aria-label", word);
   box.title = word;
-  box.append(art ?? tag("i", `gl ${TONE[s] ?? "mute"}`, GLYPH[s] ?? "·"));
+  box.append(art ?? tag("i", `gl ${tone}`, glyph));
   return box;
 }
 

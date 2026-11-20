@@ -1,5 +1,6 @@
 import type { Cell, Column, SortDir, Table, TableRow, TableSort } from "../gen/types.ts";
-import { btn, type Ctx, el, h, value } from "./index.ts";
+import { btn, type Ctx, el, h } from "./index.ts";
+import { value } from "../core/text.ts";
 import { at, total, unit } from "../core/table.ts";
 import { type CellEdit, chunks, editable, grid as rules, named, shown as text, worked } from "../core/kind/table.ts";
 import { edited, gestured, held } from "../gesture.ts";

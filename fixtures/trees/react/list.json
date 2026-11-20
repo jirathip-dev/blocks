@@ -2,8 +2,28 @@
   "kind": "list",
   "id": "rows",
   "variant": null,
-  "drawn": "fallback",
+  "drawn": "native",
   "role": "group",
   "name": "rows",
-  "children": []
+  "children": [
+    {
+      "kind": "row",
+      "id": "row",
+      "variant": null,
+      "drawn": "native",
+      "role": "group",
+      "name": "Build",
+      "children": [
+        {
+          "kind": "text",
+          "id": "finding",
+          "variant": null,
+          "drawn": "native",
+          "role": "group",
+          "name": "finding",
+          "children": []
+        }
+      ]
+    }
+  ]
 }
