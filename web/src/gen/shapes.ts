@@ -40,6 +40,21 @@ export const kinds: Record<string, string> = {
 };
 
 export const defs: Record<string, Shape> = {
+  "Accept": {
+    "anyOf": [
+      {
+        "enum": [
+          "image",
+          "pdf",
+          "sheet"
+        ],
+        "type": "string"
+      },
+      {
+        "type": "string"
+      }
+    ]
+  },
   "Accessory": {
     "anyOf": [
       {
@@ -1346,6 +1361,12 @@ export const defs: Record<string, Shape> = {
           "null"
         ]
       },
+      "edit": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
       "era": {
         "anyOf": [
           {
@@ -2087,6 +2108,19 @@ export const defs: Record<string, Shape> = {
         "type": "object"
       },
       {
+        "$ref": "#/$defs/UploadField",
+        "properties": {
+          "type": {
+            "const": "upload",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      {
         "$ref": "#/$defs/OtherField"
       }
     ]
@@ -2147,6 +2181,29 @@ export const defs: Record<string, Shape> = {
         ]
       }
     },
+    "type": "object"
+  },
+  "FileRef": {
+    "properties": {
+      "id": {
+        "type": "string"
+      },
+      "name": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "src": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "required": [
+      "id"
+    ],
     "type": "object"
   },
   "Fold": {
@@ -4870,11 +4927,30 @@ export const defs: Record<string, Shape> = {
   "Table": {
     "additionalProperties": true,
     "properties": {
+      "calc": {
+        "additionalProperties": {
+          "$ref": "#/$defs/Expr"
+        },
+        "type": [
+          "object",
+          "null"
+        ]
+      },
       "columns": {
         "items": {
           "$ref": "#/$defs/Column"
         },
         "type": "array"
+      },
+      "edit": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Gesture"
+          },
+          {
+            "type": "null"
+          }
+        ]
       },
       "empty": {
         "type": [
@@ -4901,6 +4977,16 @@ export const defs: Record<string, Shape> = {
         "type": [
           "string",
           "null"
+        ]
+      },
+      "reorder": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Gesture"
+          },
+          {
+            "type": "null"
+          }
         ]
       },
       "rows": {
@@ -4959,6 +5045,18 @@ export const defs: Record<string, Shape> = {
           "$ref": "#/$defs/Cell"
         },
         "type": "object"
+      },
+      "fixed": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "group": {
+        "type": [
+          "boolean",
+          "null"
+        ]
       },
       "id": {
         "type": "string"
@@ -5741,6 +5839,114 @@ export const defs: Record<string, Shape> = {
     },
     "required": [
       "action"
+    ],
+    "type": "object"
+  },
+  "UploadField": {
+    "additionalProperties": true,
+    "properties": {
+      "accept": {
+        "items": {
+          "$ref": "#/$defs/Accept"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "capture": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "checks": {
+        "items": {
+          "$ref": "#/$defs/Check"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "doc": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "enabled": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "error": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "files": {
+        "items": {
+          "$ref": "#/$defs/FileRef"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "label": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "many": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "mb": {
+        "minimum": 0,
+        "type": [
+          "integer",
+          "null"
+        ]
+      },
+      "name": {
+        "type": "string"
+      },
+      "open": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "show": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "was": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "required": [
+      "name"
     ],
     "type": "object"
   },

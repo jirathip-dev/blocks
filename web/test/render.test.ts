@@ -18,15 +18,15 @@ const gaps = ["island"];
 
 test("every fixture is drawn with its hooks, natively or as its fallback", () => {
   const kinds = readdirSync(dir).map((f) => f.replace(/\.json$/, ""));
-  strictEqual(kinds.length, 34);
+  strictEqual(kinds.length, 35);
   for (const kind of kinds) {
     const b = fixture(kind);
     const e = render(b, ctx());
     ok(e, kind);
-    ok(e.classList.contains("b") && e.classList.contains(`b-${kind}`), `${kind}: ${e.className}`);
-    strictEqual(e.dataset.block, kind);
+    ok(e.classList.contains("b") && e.classList.contains(`b-${b.type}`), `${kind}: ${e.className}`);
+    strictEqual(e.dataset.block, b.type);
     strictEqual(e.dataset.id, b.id);
-    strictEqual(e.hasAttribute("data-fallback"), gaps.includes(kind), kind);
+    strictEqual(e.hasAttribute("data-fallback"), gaps.includes(b.type), kind);
   }
 });
 
@@ -412,13 +412,16 @@ const later = () => new Promise((r) => setImmediate(r));
 
 test("each fixtures/fields form draws every field with its type's view, its words in the screen's language", () => {
   const at = new URL("../../fixtures/fields/", import.meta.url);
-  const want = { text: ["text", null], toggle: ["checkbox", "switch"], picker: [undefined, null], secret: ["password", null] };
+  const want = { text: ["text", null], toggle: ["checkbox", "switch"], picker: [undefined, null], secret: ["password", null], upload: ["file", null] };
   for (const f of readdirSync(at).filter((n) => n.endsWith(".json"))) {
     const screen = JSON.parse(readFileSync(new URL(f, at), "utf8"));
     const form = screen.blocks[0];
     const r = rows(render(form, ctx({ locale: screen.locale })));
     deepStrictEqual(r.length, form.fields.length, f);
-    for (const [i, x] of form.fields.entries()) deepStrictEqual([ctl(r[i]).name, ctl(r[i]).type, ctl(r[i]).getAttribute("role")], [x.name, ...want[x.type]], `${f} ${x.name}`);
+    for (const [i, x] of form.fields.entries()) {
+      const name = x.type === "upload" ? part(r[i], "fu").dataset.field : ctl(r[i]).name;
+      deepStrictEqual([name, ctl(r[i]).type, ctl(r[i]).getAttribute("role")], [x.name, ...want[x.type]], `${f} ${x.name}`);
+    }
   }
   const secret = { type: "form", id: "keys", fields: [{ type: "secret", name: "key" }, { type: "text", name: "who", was: "Ada" }] };
   const th = rows(render(secret, ctx({ locale: { lang: "th" } })));

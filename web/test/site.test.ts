@@ -48,20 +48,20 @@ const tree = (page) =>
 test("site and render give the same element per kind: tag, classes, hooks, role, name and text", async () => {
   const { page, close } = await open({ page: "<!doctype html><body>" });
   const kinds = readdirSync(at("../../fixtures/blocks/")).map((f) => f.replace(/\.json$/, ""));
-  strictEqual(kinds.length, 34);
+  strictEqual(kinds.length, 35);
   for (const k of kinds) {
     const [written, drawn] = await page.evaluate(
       async ([html, b]) => {
         const B = await import("/blocks.js");
         const bare = (x) => {
           const c = x.cloneNode(true);
-          c.querySelectorAll(".tbh :is(select, button), .tbm, .dcc, .dcb, .tmz, .b-sr").forEach((e) => e.remove());
+          c.querySelectorAll(".tbh :is(select, button), .tbm, .tbg, .tbo, .dcc, .dcb, .tmz, .b-sr").forEach((e) => e.remove());
           return c;
         };
         const sig = (e) =>
           [e, ...e.querySelectorAll("*")]
             .filter((x) => !x.classList.contains("b-sr"))
-            .filter((x) => x.hasAttribute("data-block") || x.hasAttribute("data-action") || [...x.classList].some((c) => c.startsWith("b-")))
+            .filter((x) => !x.closest(".tbg") && (x.hasAttribute("data-block") || x.hasAttribute("data-action") || [...x.classList].some((c) => c.startsWith("b-"))))
             .map((x) => ({
               tag: x.tagName,
               cls: [...x.classList].sort().join(" "),
@@ -157,6 +157,18 @@ test("the fixture site with JS off: a link goes and a form posts", async () => {
   await page.press('input[name="email"]', "Enter");
   await page.waitForURL(`${BASE}act`);
   deepStrictEqual(posts, [{ path: "act", type: "application/x-www-form-urlencoded", body: "email=a%40b.test&_screen=site&_block=signup&_action=sign-up" }]);
+  await close();
+});
+
+test("an upload with JS off is the browser's own file input: the page's form posts the picked file as multipart", async () => {
+  const doc = `<!doctype html><meta charset=utf-8><link rel=stylesheet href=blocks.css><body>${read("../../fixtures/fields/html/upload.html")}`;
+  const { page, posts, close } = await open({ js: false, page: doc });
+  await page.setInputFiles('input[name="photos"]', { name: "door.jpg", mimeType: "image/jpeg", buffer: Buffer.from("JPEG-BYTES") });
+  await page.click('button[type="submit"]');
+  await page.waitForURL(`${BASE}act`);
+  strictEqual(posts.length, 1);
+  ok(posts[0].type.startsWith("multipart/form-data; boundary="), posts[0].type);
+  ok(/name="photos"; filename="door\.jpg"\r\nContent-Type: image\/jpeg\r\n/.test(posts[0].body), posts[0].body);
   await close();
 });
 

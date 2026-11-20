@@ -76,6 +76,7 @@ pub(crate) struct W<'a> {
     pub(crate) locale: Locale,
     pub(super) out: String,
     pub(super) forms: String,
+    pub(crate) multipart: bool,
     n: u32,
     screen: String,
     action: &'a str,
@@ -93,6 +94,7 @@ impl<'a> W<'a> {
                 .unwrap_or_default(),
             out: String::new(),
             forms: String::new(),
+            multipart: false,
             n: 0,
             screen,
             action,
@@ -161,7 +163,12 @@ impl<'a> W<'a> {
         let id = format!("b-f{}", self.n);
         let block = shown(block);
         let mut f = format!(
-            "<form id=\"{id}\" method=\"post\" action=\"{}\" hidden>",
+            "<form id=\"{id}\" method=\"post\"{} action=\"{}\" hidden>",
+            if self.multipart {
+                " enctype=\"multipart/form-data\""
+            } else {
+                ""
+            },
             esc(self.action)
         );
         let fixed = [

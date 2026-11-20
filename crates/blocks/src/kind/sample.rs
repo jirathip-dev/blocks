@@ -1,10 +1,10 @@
 use super::{
     Act, Block, BulkAction, Button, Card, CardKind, Cell, Chart, ChartFormat, ChartKind, ChipOption, Chips, Choice,
-    ChoiceOption, Column, ColumnKind, Composer, Diagram, Diff, Editor, Era, ExportFormat, Fallback, Field, Form, Hero,
-    Hunk, Image, Images, Island, Keyboard, Label, Lane, LaneState, LineItem, Lines, Link, List, Mark, MarkKind, Media,
-    Nav, NavLink, Page, Pages, Part, PhonePart, PickerField, Prose, Round, RoundLane, Row, RowError, Run, Scene,
-    Screen, Secret, Section, Series, SeriesMark, Sheet, Shown, SortDir, Span, Stage, Stat, Steps, Submit, Table,
-    TableRow, TableSelect, TableSort, Tap, Text, TextField, Time, Toast, Tone, Toned, Total, Undo, Web,
+    ChoiceOption, Column, ColumnKind, Composer, Diagram, Diff, Editor, Era, ExportFormat, Fallback, Field, Form,
+    Gesture, Hero, Hunk, Image, Images, Island, Keyboard, Label, Lane, LaneState, LineItem, Lines, Link, List, Mark,
+    MarkKind, Media, Nav, NavLink, Page, Pages, Part, PhonePart, PickerField, Prose, Round, RoundLane, Row, RowError,
+    Run, Scene, Screen, Secret, Section, Series, SeriesMark, Sheet, Shown, SortDir, Span, Stage, Stat, Steps, Submit,
+    Table, TableRow, TableSelect, TableSort, Tap, Text, TextField, Time, Toast, Tone, Toned, Total, Undo, Web,
 };
 use crate::expr::{Expr, Lit, State};
 
@@ -409,6 +409,7 @@ fn invoice(id: &str, client: &str, status: Cell, due: Option<&str>, late: Option
             open: Some(format!("/invoice/{id}")),
             ..Tap::default()
         }),
+        ..TableRow::default()
     }
 }
 
@@ -447,6 +448,107 @@ fn columns() -> Vec<Column> {
             ..col("amount", "Amount", ColumnKind::Money)
         },
     ]
+}
+
+fn markup() -> Vec<Column> {
+    let col = |id: &str, label: &str, kind: ColumnKind, edit: bool| Column {
+        id: id.into(),
+        label: label.into(),
+        kind,
+        edit: edit.then_some(true),
+        ..Column::default()
+    };
+    let money = |id: &str, label: &str, edit: bool| Column {
+        currency: Some("THB".into()),
+        total: (!edit).then_some(Total::Sum),
+        ..col(id, label, ColumnKind::Money, edit)
+    };
+    vec![
+        Column {
+            width: Some(22),
+            ..col("name", "Item", ColumnKind::Text, true)
+        },
+        Column {
+            digits: Some(0),
+            ..col("qty", "Qty", ColumnKind::Number, true)
+        },
+        Column {
+            phone: Some(PhonePart::Meta),
+            ..money("price", "Unit cost", true)
+        },
+        col("mult", "Mult", ColumnKind::Number, true),
+        money("cost", "Cost", false),
+        Column {
+            unit: Some("%".into()),
+            digits: Some(1),
+            ..col("margin", "Margin", ColumnKind::Number, true)
+        },
+        money("sell", "Price", false),
+        money("final", "Final", false),
+    ]
+}
+
+fn item(id: &str, name: &str, n: [f64; 5]) -> TableRow {
+    let [qty, price, mult, margin, fin] =
+        n.map(|v| Cell::Number(serde_json::from_str(&v.to_string()).unwrap_or(0.into())));
+    let cells = [
+        ("qty", qty),
+        ("price", price),
+        ("mult", mult),
+        ("margin", margin),
+        ("final", fin),
+    ];
+    let mut cells: std::collections::BTreeMap<String, Cell> = cells.map(|(k, v)| (k.to_string(), v)).into();
+    cells.insert("name".into(), Cell::Text(name.into()));
+    TableRow {
+        id: id.into(),
+        cells,
+        ..TableRow::default()
+    }
+}
+
+fn grid() -> Block {
+    let group = |id: &str, name: &str| TableRow {
+        id: id.into(),
+        cells: [("name".to_string(), Cell::Text(name.into()))].into(),
+        group: Some(true),
+        ..TableRow::default()
+    };
+    let get = |k: &str| Expr::Get(k.into());
+    let cost = Expr::Mul(Box::new([Expr::Mul(Box::new([get("qty"), get("price")])), get("mult")]));
+    let share = Expr::Div(Box::new([get("margin"), Expr::Lit(Lit::Num(100.into()))]));
+    let keep = Expr::Sub(Box::new([Expr::Lit(Lit::Num(1.into())), share]));
+    let sell = Expr::Div(Box::new([get("cost"), keep]));
+    let rows = vec![
+        group("g-pipe", "Pipework"),
+        item("p1", "Steel pipe 2in, sch 40", [40.0, 410.0, 1.05, 18.0, 21_000.0]),
+        item("p2", "Elbow 2in 90°", [24.0, 95.0, 1.05, 22.0, 3_100.0]),
+        group("g-valve", "Valves"),
+        item("v1", "Gate valve 3in", [4.0, 4_200.0, 1.1, 15.0, 21_800.0]),
+        item("v2", "Ball valve 2in", [6.0, 1_650.0, 1.1, 15.0, 12_800.0]),
+        group("g-lab", "Labour"),
+        item("l1", "Fitter, day", [6.0, 2_400.0, 1.0, 25.0, 19_200.0]),
+        TableRow {
+            fixed: Some(true),
+            ..item("l2", "Transport, by weight", [1.0, 5_600.0, 1.0, 0.0, 5_600.0])
+        },
+    ];
+    let gesture = |action: &str, name: &str| Gesture {
+        action: action.into(),
+        name: name.into(),
+        enabled: None,
+    };
+    let table = Table::new(markup(), rows)
+        .id("grid")
+        .title("Mark-up · K-12 tower")
+        .calc(
+            [("cost".to_string(), cost), ("sell".to_string(), sell)]
+                .into_iter()
+                .collect::<std::collections::BTreeMap<_, _>>(),
+        )
+        .edit(gesture("set-cell", "cell"))
+        .reorder(gesture("order", "rows"));
+    Block::Table(Box::new(table))
 }
 
 fn table() -> Block {
@@ -551,7 +653,7 @@ fn pages() -> Block {
     ))
 }
 
-/// One typed sample per kind, keyed by its `type`; `fixtures/blocks` is written from them.
+/// One typed sample per kind, keyed by its `type` (a table has two); `fixtures/blocks` is written from them.
 pub fn samples() -> Vec<(&'static str, Block)> {
     let all = [
         holders(),
@@ -559,7 +661,7 @@ pub fn samples() -> Vec<(&'static str, Block)> {
         controls(),
         content(),
         stepper(),
-        vec![table(), toast(), pages(), super::timeline::sample()],
+        vec![table(), grid(), toast(), pages(), super::timeline::sample()],
     ]
     .concat();
     let kind = |b: &Block| {
@@ -569,5 +671,20 @@ pub fn samples() -> Vec<(&'static str, Block)> {
     };
     let mut out: Vec<(&'static str, Block)> = all.into_iter().filter_map(|b| Some((kind(&b)?, b))).collect();
     out.sort_by_key(|(k, _)| Block::KINDS.iter().position(|x| x == k));
+    out
+}
+
+/// Each sample with its fixture name: its kind, or `kind-id` for a kind's later samples.
+pub fn fixtures() -> Vec<(String, Block)> {
+    let mut seen: Vec<&str> = vec![];
+    let mut out = vec![];
+    for (kind, b) in samples() {
+        let name = match b.id() {
+            Some(id) if seen.contains(&kind) => format!("{kind}-{id}"),
+            _ => kind.to_string(),
+        };
+        seen.push(kind);
+        out.push((name, b));
+    }
     out
 }

@@ -172,3 +172,45 @@ export function zoomed(el: HTMLElement, keep: Record<string, unknown>, o: { min:
   });
   to(z());
 }
+
+/// What a view hands the driver for one typed cell: the input holds the text, `show` draws each phase, `left` the key it was left by.
+export type Typed<B, G, C> = Omit<Grabbed<B, G, string, C>, "reach" | "show"> & { show: (p: Phase<C>["at"], c: C | null) => void; left: (key: string) => void };
+
+/// Runs one cell's edit on its input, as `gestured` does a drag: typing previews, Enter, Tab or leaving sends once, Escape puts it back.
+export function edited<B extends Block, G, C>(input: HTMLInputElement, c: Ctx, o: Typed<B, G, C>): void {
+  const start = o.rules.word(o.block, o.grab) ? o.rules.start(o.block, o.grab) : null;
+  if (start === null) return;
+  const k = key(o.block, o.item);
+  let p: Phase<C> = { at: "idle" };
+  let gone = false;
+  const go = (e: Event<C>) => {
+    const [next, fx] = step(p, e, start);
+    p = next;
+    o.show(p.at, p.at === "previewing" ? p.c : null);
+    if (!fx || fx === "tap") return;
+    const back = (ok: boolean) => (go({ on: "answer", ok }), go({ on: "settled" }));
+    const h: Held = { start, c: fx.send, back };
+    c.held?.set(k, h);
+    say("sending");
+    void c.act({ action: o.gesture.action, block: o.block.id, values: { [o.gesture.name]: fx.send } }, input).catch(() => false).then((ok) => {
+      c.held?.delete(k);
+      h.back(ok);
+      say(ok ? o.rules.says(o.block, o.grab, fx.send) : "not changed");
+    });
+  };
+  const leave = (e: Event<C>, how: string) => {
+    if (gone) return;
+    gone = true;
+    go(e);
+    o.left(how);
+  };
+  input.addEventListener("focus", () => p.at === "idle" && (go({ on: "press" }), go({ on: "move", c: o.rules.candidate(o.block, o.grab, input.value) })));
+  input.addEventListener("input", () => go({ on: "move", c: o.rules.candidate(o.block, o.grab, input.value) }));
+  input.addEventListener("blur", () => leave({ on: "release" }, "blur"));
+  input.addEventListener("keydown", (e) => {
+    const how = e.key === "Enter" ? "down" : e.key === "Tab" ? (e.shiftKey ? "left" : "right") : e.key === "Escape" ? "stay" : "";
+    if (!how) return;
+    e.preventDefault();
+    leave({ on: how === "stay" ? "cancel" : "release" }, how);
+  });
+}

@@ -45,6 +45,10 @@
         }
       ],
       "id": "toggle",
+      "submit": {
+        "action": "send",
+        "label": "send"
+      },
       "type": "form"
     }
   ],

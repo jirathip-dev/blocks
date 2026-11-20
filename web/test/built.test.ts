@@ -1,5 +1,5 @@
 import { deepStrictEqual, notStrictEqual, ok, strictEqual } from "node:assert/strict";
-import { readdirSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { test } from "node:test";
 import * as core from "../src/core/index.ts";
 
@@ -22,13 +22,14 @@ function rebuild(v: unknown): unknown {
 
 test("the builders give every fixtures/blocks file back, type and all", () => {
   const files = readdirSync(at("blocks")).filter((f) => f.endsWith(".json"));
-  strictEqual(files.length, 34);
+  strictEqual(files.length, 35);
   for (const f of files) deepStrictEqual(rebuild(json(`blocks/${f}`)), json(`blocks/${f}`), f);
 });
 
 test("built() writes the same fallbacks as Built::of, fixtures/built/every.json", () => {
   const every = json("built/every.json");
-  const blocks = every.blocks.map((b: { type: string }) => rebuild(json(`blocks/${b.type}.json`)));
+  const name = (b: { type: string; id?: string }) => (existsSync(at(`blocks/${b.type}-${b.id}.json`)) ? `${b.type}-${b.id}` : b.type);
+  const blocks = every.blocks.map((b: { type: string }) => rebuild(json(`blocks/${name(b)}.json`)));
   const screen = core.screen({ id: "every", blocks });
   const out = core.built(screen);
   deepStrictEqual(JSON.parse(JSON.stringify(out)), every);

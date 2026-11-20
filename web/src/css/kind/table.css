@@ -40,6 +40,43 @@
 .tbl tfoot :is(th,td){border-top:1px solid var(--edge);border-bottom:0;font-weight:600}
 .tbl .agg{color:var(--mute);font-size:var(--fs-meta);font-weight:400}
 .tbl tr.tbe>td{padding:var(--s4) var(--s3);color:var(--mute);white-space:normal}
+.tbl.ed tbody td,.tbl.ed tfoot :is(th,td){height:var(--hit);box-sizing:border-box;padding-block:0}
+.tbl .tbg{width:var(--hit);padding:0;text-align:center}
+.tbl .tbg+:is(th,td){position:sticky;left:var(--hit);z-index:1}
+.tbl .tbg+.tbc+:is(th,td){position:sticky;left:calc(var(--hit) + var(--s4) + var(--s3));z-index:1}
+.tbl .tbg .b-hd{margin:0}
+.tbl .tbo{display:none}
+.tbl .tbf{display:block;margin:0 calc(var(--s2) * -1);padding:var(--s1) var(--s2);box-shadow:inset 0 calc(1px * -1) var(--edge)}
+.tbl td[aria-disabled] .tbf{box-shadow:none}
+.tbl td[data-c]:focus{outline:var(--ring) solid var(--l);outline-offset:calc(var(--ring) * -1)}
+.tbl td.ing{position:relative;padding:0}
+.tbl td.ing>.tbf{visibility:hidden}
+.tbl .tbi{position:absolute;inset:0;box-sizing:border-box;width:100%;height:100%;padding:0 var(--s3);border:0;background:var(--card);font-size:var(--fs);text-align:inherit;outline:var(--ring) solid var(--l);outline-offset:calc(var(--ring) * -1)}
+.tbl .w .tbf{overflow:hidden;text-overflow:ellipsis}
+.tbl td.bad .tbi{box-shadow:inset var(--mark) 0 0 var(--r)}
+.tbl .tbx{position:absolute;z-index:4;left:0;top:100%;padding:var(--s1) var(--s2);background:var(--card);border:1px solid var(--r);color:var(--r);font-size:var(--fs-meta);font-weight:600;white-space:nowrap}
+.tbl td.sent .tbf,.tbl :is(td,th).wait{color:var(--mute);font-weight:400}
+.tbl td.sent .tbf::after,.tbl td.wait:not(.nil)::after{content:" ↻";color:var(--mute)}
+.tbl td.no{box-shadow:inset var(--mark) 0 0 var(--r)}
+.tbl tr.grp>td{background:var(--bg);font-weight:600}
+.tbl tr.grp>td.nil{font-weight:400}
+.tbl tbody:has(>tr.grp)>tr:not(.grp)>.p-title{padding-inline-start:calc(var(--s3) * 2)}
+.tbl .tbgn{margin-left:var(--sep);color:var(--mute);font-size:var(--fs-meta);font-weight:400}
+.tbl.ed tbody tr{transition:transform calc(var(--enter) * var(--motion,1)) var(--ease),opacity calc(var(--enter) * var(--motion,1)) var(--ease)}
+.tbl tr:is(.lift,:has(>.tbg>.b-hd[data-phase=pressed])){position:relative;z-index:3}
+.tbl tr:is(.lift,:has(>.tbg>.b-hd[data-phase=pressed]))>td{background:var(--card);box-shadow:inset 0 var(--ring) var(--l),inset 0 calc(var(--ring) * -1) var(--l)}
+.tbl tr:has(>.tbg>.b-hd[data-phase=dragging]){opacity:.6}
+.tbl tr:has(>.tbg>.b-hd[data-phase=sent]){opacity:.5}
+.tbsh .shp{display:block;color:var(--mute);font-size:var(--fs-meta);font-weight:400}
+.tbsh .shv .tbi{outline:1px solid var(--edge)}
+.tbsh .shv .tbi:focus{outline:var(--ring) solid var(--l)}
+.tbsh .b-sheet__card{max-width:none;border:1px solid var(--edge);border-radius:0}
+.tbsh .shf{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s3);min-height:var(--hit);border-bottom:1px solid var(--line)}
+.tbsh .fk{flex:1;text-align:start}
+.tbsh .shv{position:relative;flex:0 1 calc(100% / 2);min-height:var(--ctl);font-variant-numeric:tabular-nums}
+.tbsh .shv .tbi{position:static;height:calc(var(--ctl) + var(--s1));font-size:var(--fs-input)}
+.tbsh .shf.sent .shv,.tbsh .shf.wait .shv{color:var(--mute)}
+.tbsh .shf.wait .shv::after{content:" ↻"}
 @container (width < 600px){
 .tbh{position:sticky;top:0;z-index:4;background:var(--card)}
 .tbk{display:block}
@@ -74,4 +111,19 @@
 .tbl tfoot .p-meta{font-weight:400}
 .tbl tr.tbe::before{content:none}
 .tbl tr.tbe>td{display:block;flex:1;padding:var(--s2) 0}
+.tbl.ed tbody td,.tbl.ed tfoot :is(th,td){height:auto}
+.tbl .tbg{display:block;order:0;width:auto;margin-inline-start:calc(var(--s3) * -1)}
+.tbl .tbg .b-hd{min-height:var(--hit);margin-block:calc(var(--s2) * -1)}
+.tbl .tbg+:is(th,td),.tbl .tbg+.tbc+:is(th,td){position:static}
+.tbl tfoot .tbg{visibility:hidden}
+.tbl .tbo{display:block;order:3}
+.tbl .tbo button::before,.tbl .tbo button::after{content:none}
+.tbl tbody:has(>tr.grp)>tr:not(.grp)>.p-title{padding-inline-start:0}
+.tbl .tbo button{min-width:var(--hit);min-height:var(--hit);margin:calc(var(--s2) * -1) 0;border:0;background:none;color:var(--mute);font-weight:700}
+.tbl .tbf{display:inline;margin:0;padding:0;box-shadow:none}
+.tbl td.ing>.tbf{visibility:visible}
+.tbl td.ing>:is(.tbi,.tbx){display:none}
+.tbl tr.grp{align-items:center;background:var(--bg)}
+.tbl tr.grp::before,.tbl tr.grp>.p-meta{display:none}
+.tbl tr.grp>.p-value{font-weight:600}
 }

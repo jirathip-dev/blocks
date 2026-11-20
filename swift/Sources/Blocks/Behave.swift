@@ -181,8 +181,11 @@ public struct Behaviour: Equatable, Sendable {
         return s.merging(edits.filter { s[$0.key] != nil }) { $1 }
     }
 
-    /// What `field` holding `held` puts in local state: null, a switch, a number or a string.
-    public static func lit(_ field: JSONValue, _ held: JSONValue?) -> Lit { Lit(held) }
+    /// What `field` holding `held` puts in local state: null, a switch, a number or a string; a list puts its length, an empty one null.
+    public static func lit(_ field: JSONValue, _ held: JSONValue?) -> Lit {
+        guard case .array(let all) = held else { return Lit(held) }
+        return all.isEmpty ? .null : .number(Double(all.count))
+    }
 
     /// The values a tap's `sets` give, each in the state the ones before it left; an unknown one is skipped.
     public static func tap(_ sets: [SetState], state: BlockState) -> BlockState {
@@ -200,7 +203,7 @@ public struct Behaviour: Equatable, Sendable {
     }
 
     private static func seed(_ b: JSONValue, _ s: inout BlockState) {
-        for f in b.list("fields") { if let name = f.string("name") { s[name] = lit(f, f["value"]) } }
+        for f in b.list("fields") { if let name = f.string("name") { s[name] = lit(f, f["value"] ?? f["files"]) } }
         if b.type == "chips", let name = b.string("name") { s[name] = Lit(b["selected"]?.items.first) }
         for c in kids(b) { seed(c, &s) }
     }

@@ -1,0 +1,63 @@
+{
+  "kind": "screen",
+  "id": "fields-toggle",
+  "variant": null,
+  "drawn": "native",
+  "role": "group",
+  "name": "fields-toggle",
+  "children": [
+    {
+      "kind": "form",
+      "id": "toggle",
+      "variant": null,
+      "drawn": "native",
+      "role": "form",
+      "name": "toggle",
+      "fields": [
+        {
+          "name": "ack-empty",
+          "type": "toggle",
+          "drawn": "native",
+          "role": "switch",
+          "label": "I agree"
+        },
+        {
+          "name": "ack",
+          "type": "toggle",
+          "drawn": "native",
+          "role": "switch",
+          "label": "I agree"
+        },
+        {
+          "name": "ack-error",
+          "type": "toggle",
+          "drawn": "native",
+          "role": "switch",
+          "label": "I agree"
+        },
+        {
+          "name": "ack-was",
+          "type": "toggle",
+          "drawn": "native",
+          "role": "switch",
+          "label": "I agree"
+        },
+        {
+          "name": "ack-doc",
+          "type": "toggle",
+          "drawn": "native",
+          "role": "switch",
+          "label": "I agree"
+        },
+        {
+          "name": "ack-label",
+          "type": "toggle",
+          "drawn": "native",
+          "role": "switch",
+          "label": "A label long enough to wrap onto a second line on a phone held upright"
+        }
+      ],
+      "children": []
+    }
+  ]
+}

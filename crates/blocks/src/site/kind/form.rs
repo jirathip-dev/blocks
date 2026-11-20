@@ -15,7 +15,9 @@ pub(super) fn form_of(w: &mut W<'_>, b: &Value, cls: &str, bar: bool) {
     let submit = b.get("submit").filter(|s| s.is_object());
     w.open_block("div", cls, b, &[]);
     let action = submit.and_then(|s| get(s, "action")).or_else(|| get(b, "action"));
+    w.multipart = list(b, "fields").iter().any(|x| get(x, "type") == Some("upload"));
     let f = action.map(|a| w.post(b.get("id"), a, &fields(&[submit.and_then(|s| s.get("values"))])));
+    w.multipart = false;
     let owner = f.clone().unwrap_or_default();
     let tie: &[(&str, &str)] = if f.is_some() { &[("form", &owner)] } else { &[] };
     for x in list(b, "fields").iter().filter(|x| x.is_object()) {

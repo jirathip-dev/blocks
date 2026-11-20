@@ -1,0 +1,118 @@
+{
+  "blocks": [
+    {
+      "fallback": {
+        "title": "form"
+      },
+      "fields": [
+        {
+          "label": "Photos of the problem",
+          "name": "photos-empty",
+          "type": "upload"
+        },
+        {
+          "accept": [
+            "image"
+          ],
+          "capture": true,
+          "files": [
+            {
+              "id": "f-1",
+              "name": "crate.jpg"
+            }
+          ],
+          "label": "Photos of the problem",
+          "many": true,
+          "mb": 10,
+          "name": "photos",
+          "type": "upload"
+        },
+        {
+          "accept": [
+            "image"
+          ],
+          "capture": true,
+          "error": "Check this one",
+          "files": [
+            {
+              "id": "f-1",
+              "name": "crate.jpg"
+            }
+          ],
+          "label": "Photos of the problem",
+          "many": true,
+          "mb": 10,
+          "name": "photos-error",
+          "type": "upload"
+        },
+        {
+          "accept": [
+            "image"
+          ],
+          "capture": true,
+          "files": [
+            {
+              "id": "f-1",
+              "name": "crate.jpg"
+            }
+          ],
+          "label": "Photos of the problem",
+          "many": true,
+          "mb": 10,
+          "name": "photos-was",
+          "type": "upload",
+          "was": "the old value"
+        },
+        {
+          "accept": [
+            "image"
+          ],
+          "capture": true,
+          "doc": "A line that says what it is for",
+          "files": [
+            {
+              "id": "f-1",
+              "name": "crate.jpg"
+            }
+          ],
+          "label": "Photos of the problem",
+          "many": true,
+          "mb": 10,
+          "name": "photos-doc",
+          "type": "upload"
+        },
+        {
+          "accept": [
+            "image"
+          ],
+          "capture": true,
+          "files": [
+            {
+              "id": "f-1",
+              "name": "crate.jpg"
+            }
+          ],
+          "label": "A label long enough to wrap onto a second line on a phone held upright",
+          "many": true,
+          "mb": 10,
+          "name": "photos-label",
+          "type": "upload"
+        }
+      ],
+      "id": "upload",
+      "submit": {
+        "action": "send",
+        "label": "send"
+      },
+      "type": "form"
+    }
+  ],
+  "fallback": {
+    "title": "screen"
+  },
+  "id": "fields-upload",
+  "locale": {
+    "lang": "en"
+  },
+  "type": "screen"
+}

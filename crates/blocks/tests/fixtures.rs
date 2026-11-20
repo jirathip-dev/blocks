@@ -391,11 +391,13 @@ fn the_34_kinds_each_have_a_typed_sample_that_is_its_fixture() {
     let mut want = KINDS.to_vec();
     want.sort_unstable();
     assert_eq!(kinds, want);
-    let samples = blocks::samples();
-    let named: Vec<&str> = samples.iter().map(|(k, _)| *k).collect();
+    let mut named: Vec<&str> = blocks::samples().iter().map(|(k, _)| *k).collect();
+    named.dedup();
     assert_eq!(named, Block::KINDS);
     let dir = root().join("fixtures/blocks");
-    assert_eq!(std::fs::read_dir(&dir).unwrap().count(), Block::KINDS.len());
+    let samples = blocks::fixtures();
+    assert_eq!(std::fs::read_dir(&dir).unwrap().count(), samples.len());
+    assert!(samples.iter().any(|(n, _)| n == "table-grid"));
     let s = schema();
     for (kind, b) in samples {
         let file = read(&dir.join(format!("{kind}.json")));
@@ -404,7 +406,7 @@ fn the_34_kinds_each_have_a_typed_sample_that_is_its_fixture() {
             serde_json::to_value(&b).unwrap(),
             "fixtures/blocks/{kind}.json: rerun `just gen`"
         );
-        assert_eq!(file["type"], kind);
+        assert!(kind.starts_with(file["type"].as_str().unwrap()), "{kind}");
         assert_eq!(serde_json::from_value::<Block>(file.clone()).unwrap(), b);
         valid(&s, &file).unwrap_or_else(|e| panic!("{kind}: {e}"));
         assert_eq!(Built::new(file).check(&[]), vec![], "{kind}");
@@ -644,8 +646,9 @@ fn stress_rows(table: &Value, kinds: &[&str]) -> Result<(), String> {
 
 fn stress(table: &Value) -> Vec<(String, Value)> {
     let mut out = vec![];
-    for (kind, b) in blocks::samples() {
+    for ((kind, b), (name, _)) in blocks::samples().into_iter().zip(blocks::fixtures()) {
         let row = &table[kind];
+        let kind = name.as_str();
         let sample = serde_json::to_value(b).unwrap();
         if let Some(keys) = row["long"].as_array() {
             let keys: Vec<&str> = keys.iter().map(|k| k.as_str().unwrap()).collect();

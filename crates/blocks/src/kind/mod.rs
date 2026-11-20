@@ -24,7 +24,7 @@ pub use field::*;
 pub use locale::{Era, Lang, Locale};
 pub use media::*;
 pub use parts::*;
-pub use sample::samples;
+pub use sample::{fixtures, samples};
 pub use table::*;
 pub(crate) use timeline::{civil, day, words as timeline_words};
 pub use timeline::{BarGrab, BarPart, DaySpan, Days, TimeBar, TimeRow, Timeline};

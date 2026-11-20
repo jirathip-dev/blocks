@@ -3,46 +3,13 @@ import Foundation
 import SwiftUI
 
 extension Column {
-    private static let months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-    private static let thai = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."]
-
-    internal var numeric: Bool { [.number, .money, .bar].contains(kind) }
     internal var end: Bool { align.map { $0 == .end } ?? numeric }
     internal var sign: String? {
         kind == .money ? currency.map { ["THB": "฿", "USD": "$", "EUR": "€"][$0] ?? $0 } : unit
     }
 
-    internal static func grouped(_ v: Double, _ digits: Int, fixed: Bool) -> String {
-        let f = NumberFormatter()
-        f.locale = Locale(identifier: "en_US")
-        f.numberStyle = .decimal
-        f.minimumFractionDigits = fixed ? digits : 0
-        f.maximumFractionDigits = digits
-        return f.string(from: NSNumber(value: v)) ?? ""
-    }
-
-    internal func number(_ v: Double) -> String {
-        kind == .money ? Self.grouped(v, 2, fixed: true) : Self.grouped(v, Int(digits ?? 2), fixed: false)
-    }
-
-    /// A cell as drawn text; `thai` writes a Buddhist-Era date's month in Thai.
-    internal func shown(_ c: Cell?, thai: Bool) -> String {
-        switch c {
-        case nil: ""
-        case .label(let l): l.text.text(at: Date(), [:])
-        case .number(let n): number(n)
-        case .string(let s) where kind == .date: date(s, thai: thai)
-        case .string(let s): s
-        }
-    }
-
-    private func date(_ iso: String, thai: Bool) -> String {
-        let p = iso.split(separator: "-").compactMap { Int($0) }
-        let be = era == .be
-        let names = be && thai ? Self.thai : Self.months
-        guard p.count == 3, (1...12).contains(p[1]) else { return iso }
-        return "\(p[2]) \(names[p[1] - 1]) \(p[0] + (be ? 543 : 0))"
-    }
+    /// A cell as drawn text, a label's time as of now; `thai` writes a Buddhist-Era date's month in Thai.
+    internal func shown(_ c: Cell?, thai: Bool) -> String { shown(c, thai: thai) { $0.text(at: Date(), [:]) } }
 
     internal func before(_ a: Cell, _ b: Cell) -> Bool {
         if numeric, case .number(let x) = a, case .number(let y) = b { return x < y }
@@ -82,15 +49,23 @@ extension Blocks.Table {
 
     internal func sorted(_ rows: [Blocks.TableRow], by s: TableOrder?) -> [Blocks.TableRow] {
         guard let s, let c = columns.first(where: { $0.id == s.by }) else { return rows }
-        return rows.enumerated().sorted { x, y in
-            switch (x.element.cells[c.id], y.element.cells[c.id]) {
-            case (let a?, let b?):
-                let (p, q) = s.desc ? (b, a) : (a, b)
-                return c.before(p, q) || (!c.before(q, p) && x.offset < y.offset)
-            case (nil, nil): return x.offset < y.offset
-            case (_, let b): return b == nil
-            }
-        }.map(\.element)
+        let by = { (run: [Blocks.TableRow]) in
+            run.enumerated().sorted { x, y in
+                switch (x.element.cells[c.id], y.element.cells[c.id]) {
+                case (let a?, let b?):
+                    let (p, q) = s.desc ? (b, a) : (a, b)
+                    return c.before(p, q) || (!c.before(q, p) && x.offset < y.offset)
+                case (nil, nil): return x.offset < y.offset
+                case (_, let b): return b == nil
+                }
+            }.map(\.element)
+        }
+        var out: [Blocks.TableRow] = []
+        var run: [Blocks.TableRow] = []
+        for r in rows {
+            if r.group == true { out += by(run) + [r]; run = [] } else { run.append(r) }
+        }
+        return out + by(run)
     }
 
     internal func barMax(_ c: Column) -> Double {
@@ -113,6 +88,7 @@ internal struct TableBlock: View {
     @State private var q = ""
     @State private var hidden: Set<String>
     @State private var ticked: Set<String> = []
+    @State private var grid = GridState()
 
     internal init(block: Blocks.Table) {
         self.block = block
@@ -124,29 +100,37 @@ internal struct TableBlock: View {
     private var cols: [Column] { block.columns.enumerated().filter { $0.offset == 0 || !hidden.contains($0.element.id) }.map(\.element) }
     private var kept: [Blocks.TableRow] {
         let words = q.lowercased().split(whereSeparator: \.isWhitespace).map(String.init)
-        return block.rows.filter { r in
+        let hit = { (r: Blocks.TableRow) in
             words.allSatisfy { w in cols.contains { $0.shown(r.cells[$0.id], thai: thai).lowercased().contains(w) } }
         }
+        let all = grid.rows(block)
+        return all.enumerated().filter { i, r in r.group == true ? GridState.items(all, i).contains(where: hit) : hit(r) }.map(\.element)
     }
     private var ticks: [String] { kept.map(\.id).filter(ticked.contains) }
 
     internal var body: some View {
         let rows = block.sorted(kept, by: sort)
+        let items = rows.filter { $0.group != true }
         VStack(alignment: .leading, spacing: 0) {
-            TableBar(block: block, cols: cols, shown: rows.count, sort: $sort, q: $q, hidden: $hidden, ticked: $ticked, ticks: ticks, send: send)
+            TableBar(block: block, cols: cols, shown: items.count, sort: $sort, q: $q, hidden: $hidden, ticked: $ticked, ticks: ticks, send: send)
             Rectangle().fill(look.palette.line).frame(height: 1)
-            if rows.isEmpty {
+            if items.isEmpty {
                 Text(block.rows.isEmpty ? block.empty ?? "No rows yet." : "No rows match “\(q)”.")
                     .ui(14, .regular, look).foregroundStyle(look.palette.mute).padding(12)
             } else {
+                let handles = block.reorder != nil && sort == nil && q.isEmpty
                 ViewThatFits(in: .horizontal) {
-                    TableGrid(block: block, cols: cols, rows: rows, thai: thai, sort: $sort, ticked: $ticked).frame(minWidth: 600)
-                    TablePhone(block: block, cols: cols, rows: rows, thai: thai, ticked: $ticked)
+                    TableGrid(block: block, cols: cols, rows: rows, thai: thai, handles: handles, sort: $sort, ticked: $ticked, grid: $grid).frame(minWidth: 600)
+                    TablePhone(block: block, cols: cols, rows: rows, thai: thai, handles: handles, ticked: $ticked, grid: $grid)
                 }
             }
         }
         .surface(look, radius: 0)
         .onChange(of: q) { ticked.formIntersection(kept.map(\.id)) }
+        .onChange(of: block.rows) { grid.refused = nil }
+        .sheet(isPresented: Binding { grid.sheet != nil } set: { if !$0 { grid.sheet = nil } }) {
+            if let r = rows.first(where: { $0.id == grid.sheet }) { TableSheet(block: block, row: r, thai: thai, grid: $grid) }
+        }
     }
 
     private func send(_ action: String, _ values: [String: JSONValue]) {
@@ -167,11 +151,15 @@ internal struct TableBar: View {
     internal let send: (String, [String: JSONValue]) -> Void
 
     internal var body: some View {
-        let n = block.rows.count
+        let n = block.rows.filter { $0.group != true }.count
         HStack(spacing: 10) {
             if ticks.isEmpty {
                 Text(block.title ?? "").ui(15, .bold, look)
                 Text(q.isEmpty ? "\(n) row\(n == 1 ? "" : "s")" : "\(shown) of \(n) rows").ui(12, .regular, look).foregroundStyle(look.palette.mute)
+                if block.reorder != nil, sort != nil || !q.isEmpty {
+                    Text("\(sort != nil ? "sorted" : "filtered"), so rows stay put").ui(Scale.meta, .regular, look).foregroundStyle(look.palette.mute)
+                    Button("as sent") { (sort, q) = (nil, "") }
+                }
                 Spacer(minLength: 4)
                 if n > 0 { controls }
             } else {
@@ -270,43 +258,62 @@ internal struct TableGrid: View {
     internal let cols: [Column]
     internal let rows: [Blocks.TableRow]
     internal let thai: Bool
+    internal let handles: Bool
     @Binding internal var sort: TableOrder?
     @Binding internal var ticked: Set<String>
+    @Binding internal var grid: GridState
+    @FocusState private var cursor: String?
+
+    private var items: [Blocks.TableRow] { rows.filter { $0.group != true } }
 
     internal var body: some View {
         Grid(alignment: .leading, horizontalSpacing: 16, verticalSpacing: 10) {
             GridRow {
+                if handles { Color.clear.gridCellUnsizedAxes([.horizontal, .vertical]) }
                 if block.select != nil {
-                    TableTick(on: rows.allSatisfy { ticked.contains($0.id) }, label: "Select all shown rows") {
-                        if rows.allSatisfy({ ticked.contains($0.id) }) { ticked = [] } else { ticked = Set(rows.map(\.id)) }
+                    TableTick(on: items.allSatisfy { ticked.contains($0.id) }, label: "Select all shown rows") {
+                        if items.allSatisfy({ ticked.contains($0.id) }) { ticked = [] } else { ticked = Set(items.map(\.id)) }
                     }
                 }
                 ForEach(cols, id: \.id) { c in header(c).gridColumnAlignment(c.end ? .trailing : .leading) }
             }
-            ForEach(rows, id: \.id) { r in
+            ForEach(Array(rows.enumerated()), id: \.element.id) { i, r in
                 GridRow {
-                    if block.select != nil { TableTick(on: ticked.contains(r.id), label: "Select \(r.id)") { flip(r.id) } }
-                    ForEach(Array(cols.enumerated()), id: \.element.id) { i, c in
-                        if i == 0, r.tap != nil {
+                    if handles { GridHandle(block: block, row: r, grid: $grid) }
+                    if block.select != nil {
+                        if r.group == true { Color.clear.gridCellUnsizedAxes([.horizontal, .vertical]) } else {
+                            TableTick(on: ticked.contains(r.id), label: "Select \(r.id)") { flip(r.id) }
+                        }
+                    }
+                    ForEach(Array(cols.enumerated()), id: \.element.id) { j, c in
+                        if r.group == true {
+                            GroupCell(block: block, col: c, first: j == 0, rows: rows, at: i, thai: thai, grid: grid)
+                        } else if j == 0, r.tap != nil, block.edit == nil {
                             ActButton(source: Source(tap: r.tap)) { TableCell(block: block, col: c, cell: r.cells[c.id], thai: thai) }
                         } else {
-                            TableCell(block: block, col: c, cell: r.cells[c.id], thai: thai)
+                            GridCell(block: block, row: r, col: c, thai: thai, cursor: $cursor, grid: $grid, next: next(r))
                         }
                     }
                 }
+                .fontWeight(r.group == true ? .semibold : nil)
             }
             if cols.contains(where: { $0.total != nil }) {
                 GridRow {
+                    if handles { Color.clear.gridCellUnsizedAxes([.horizontal, .vertical]) }
                     if block.select != nil { Color.clear.gridCellUnsizedAxes([.horizontal, .vertical]) }
                     ForEach(Array(cols.enumerated()), id: \.element.id) { i, c in
-                        let t = c.total(rows)
+                        let t = c.total(items)
                         Text(i == 0 ? "Total" : [t?.word, t?.value].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: " "))
-                            .ui(14, .semibold, look)
+                            .ui(14, .semibold, look).opacity(grid.waits(block, c, items) ? 0.5 : 1)
                     }
                 }
             }
         }
         .padding(12)
+    }
+
+    private func next(_ r: Blocks.TableRow) -> String? {
+        items.firstIndex { $0.id == r.id }.flatMap { items.indices.contains($0 + 1) ? items[$0 + 1].id : nil }
     }
 
     private func flip(_ id: String) {
@@ -332,44 +339,60 @@ internal struct TablePhone: View {
     internal let cols: [Column]
     internal let rows: [Blocks.TableRow]
     internal let thai: Bool
+    internal let handles: Bool
     @Binding internal var ticked: Set<String>
+    @Binding internal var grid: GridState
 
     internal var body: some View {
         let roles = Blocks.Table.roles(cols)
         let part = { (p: PhonePart) in cols.indices.filter { roles[$0] == p }.map { cols[$0] } }
+        let items = rows.filter { $0.group != true }
         VStack(alignment: .leading, spacing: 0) {
-            ForEach(rows, id: \.id) { r in
+            ForEach(Array(rows.enumerated()), id: \.element.id) { i, r in
                 HStack(alignment: .firstTextBaseline, spacing: 8) {
-                    if block.select != nil {
+                    if handles { GridHandle(block: block, row: r, grid: $grid) }
+                    if block.select != nil, r.group != true {
                         TableTick(on: ticked.contains(r.id), label: "Select \(r.id)") {
                             if ticked.contains(r.id) { ticked.remove(r.id) } else { ticked.insert(r.id) }
                         }
                     }
-                    ActButton(source: Source(tap: r.tap)) { line(r, part) }
+                    if r.group == true {
+                        Text(block.name(r)).ui(15, .semibold, look)
+                        Spacer(minLength: Scale.pad)
+                        if let c = part(.value).first { GroupCell(block: block, col: c, first: false, rows: rows, at: i, thai: thai, grid: grid) }
+                    } else if block.edit != nil {
+                        Button { grid.sheet = r.id } label: { line(r, part, more: true) }.buttonStyle(.plain)
+                            .accessibilityLabel("Edit \(block.name(r))")
+                    } else {
+                        ActButton(source: Source(tap: r.tap)) { line(r, part, more: r.tap != nil) }
+                    }
                 }
                 .padding(12)
+                .background(r.group == true ? look.palette.background : .clear)
                 Rectangle().fill(look.palette.line).frame(height: 1)
             }
-            if let c = part(.value).first, let t = c.total(rows) {
+            if let c = part(.value).first, let t = c.total(items) {
                 HStack {
                     Text("Total").ui(15, .semibold, look)
                     Spacer()
-                    Text(t.value).ui(15, .semibold, look)
+                    Text(t.value).ui(Scale.title, .semibold, look).opacity(grid.waits(block, c, items) ? 0.5 : 1)
                 }
                 .padding(12)
             }
         }
     }
 
-    private func line(_ r: Blocks.TableRow, _ part: (PhonePart) -> [Column]) -> some View {
+    private func line(_ r: Blocks.TableRow, _ part: (PhonePart) -> [Column], more: Bool) -> some View {
         let meta = part(.meta).filter { r.cells[$0.id] != nil }
             .map { "\($0.label) \($0.shown(r.cells[$0.id], thai: thai))" }.joined(separator: " · ")
         return VStack(alignment: .leading, spacing: 4) {
             HStack(spacing: 8) {
                 Text(part(.title).first.map { $0.shown(r.cells[$0.id], thai: thai) } ?? r.id).ui(16, .regular, look)
                 Spacer(minLength: 4)
-                ForEach(part(.tag) + part(.value), id: \.id) { c in TableCell(block: block, col: c, cell: r.cells[c.id], thai: thai) }
-                if r.tap != nil { Text("›").ui(16, .bold, look).foregroundStyle(look.palette.mute) }
+                ForEach(part(.tag) + part(.value), id: \.id) { c in
+                    TableCell(block: block, col: c, cell: r.cells[c.id], thai: thai).opacity(grid.waits(block, c, [r]) ? 0.5 : 1)
+                }
+                if more { Text("›").ui(16, .bold, look).foregroundStyle(look.palette.mute) }
             }
             if !meta.isEmpty { Text(meta).ui(12, .regular, look).foregroundStyle(look.palette.mute) }
         }
