@@ -2,7 +2,7 @@
   "kind": "scene",
   "id": "scene",
   "variant": null,
-  "drawn": "fallback",
+  "drawn": "native",
   "role": "group",
   "name": "lanes",
   "children": []

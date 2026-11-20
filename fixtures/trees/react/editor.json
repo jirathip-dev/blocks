@@ -2,7 +2,7 @@
   "kind": "editor",
   "id": "editor",
   "variant": null,
-  "drawn": "fallback",
+  "drawn": "native",
   "role": "button",
   "name": "notes",
   "children": []

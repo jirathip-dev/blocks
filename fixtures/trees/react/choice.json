@@ -2,7 +2,7 @@
   "kind": "choice",
   "id": "ask",
   "variant": null,
-  "drawn": "fallback",
+  "drawn": "native",
   "role": "group",
   "name": "Merge it?",
   "children": []

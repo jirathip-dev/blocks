@@ -12,6 +12,9 @@ export type Views = {
 export declare function hooksOf(b: Blk, cx: Ctx, fallback: boolean): Attrs;
 export declare function row(f: Fallback, cx: Ctx): ReactNode;
 export declare const kids: (bs: unknown) => ReactNode[];
+export declare function Fallen({ b }: {
+    b: Blk;
+}): ReactNode;
 type Caught = {
     b: Blk;
     report: Ctx["report"];

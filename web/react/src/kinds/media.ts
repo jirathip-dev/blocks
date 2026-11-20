@@ -72,7 +72,8 @@ function frame(b: Media, img: ReactNode, art: ReactNode[], top: ReactNode[], o: 
   return h("div", `mkw${o.cls ?? ""}`, { ref: o.w, style: { width: `min(100%, ${b.width}px)` } }, z);
 }
 
-function still(b: Media, hooks: Attrs): ReactNode {
+/// A picture with no editing, as the HTML renderer's `figure` draws one.
+export function still(b: Media, hooks: Attrs): ReactNode {
   const marks = b.marks ?? [];
   const alt = marks.length ? `${b.alt}. ${marks.length} marks: ${marks.map((x) => named(b, x.id)).join("; ")}` : b.alt;
   const size = { width: b.width, height: b.height };

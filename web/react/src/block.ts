@@ -46,7 +46,8 @@ export function row(f: Fallback, cx: Ctx): ReactNode {
 export const kids = (bs: unknown): ReactNode[] =>
   (Array.isArray(bs) ? bs.filter(isBlk) : []).map((b, i) => createElement(Block, { key: typeof b["id"] === "string" ? b["id"] : `~${i}`, b }));
 
-function Fallen({ b }: { b: Blk }): ReactNode {
+/// A block's fallback row, then its children.
+export function Fallen({ b }: { b: Blk }): ReactNode {
   const cx = useContext(Cx);
   const f = b["fallback"] ?? { title: String(b["type"]) };
   return h("div", "", hooksOf(b, cx, true), isFallback(f) ? row(f, cx) : null, ...kids(b["blocks"]));
