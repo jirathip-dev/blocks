@@ -534,7 +534,7 @@ reason = "days and numbers are drawn by the rules every renderer shares, not by 
 [[ban]]
 pattern = "readAsDataURL"
 paths = ["web/src/**", "web/react/**"]
-except = ["web/src/render/composer.ts"]
+except = ["web/src/render/kind/composer.ts"]
 reason = "a file leaves as bytes through the file handler, never as base64 inside an action"
 
 [[ban]]
