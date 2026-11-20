@@ -40,7 +40,7 @@ private struct Grabbed: ViewModifier {
         if let gesture {
             content.modifier(
                 Gestured(
-                    rules: block, grab: grab, gesture: gesture, label: label, reach: { Days(Int(($0.width / day).rounded())) },
+                    rules: block, grab: grab, gesture: gesture, label: label, reach: { Days(Int(($0.translation.width / day).rounded())) },
                     value: { (try? JSONValue($0)) ?? .null }, show: show))
         } else {
             content.accessibilityElement(children: .ignore).accessibilityLabel(label)

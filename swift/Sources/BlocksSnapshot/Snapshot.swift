@@ -190,9 +190,16 @@ public struct Snapshot {
     }
 
     private static func gestured(_ block: Block?, _ g: StepGesture) -> [(Blocks.Gesture, JSONValue)] {
-        if case .timeline(let t)? = block { return timed(t, g) }
-        guard case .list(let l)? = block, let reorder = l.reorder, let grab = g.grab.string else { return [] }
-        return ways(l, grab, g).map { (reorder, .array($0.map(JSONValue.string))) }
+        switch block {
+        case .list(let l)?:
+            guard let reorder = l.reorder, let grab = g.grab.string else { return [] }
+            return ways(l, grab, g).map { (reorder, .array($0.map(JSONValue.string))) }
+        case .media(let m)?:
+            guard let grab = MarkGrab(g.grab), let gesture = m.gesture(grab) else { return [] }
+            return ways(m, grab, g).map { (gesture, $0.value) }
+        case .timeline(let t)?: return timed(t, g)
+        default: return []
+        }
     }
 
     private static func timed(_ t: Timeline, _ g: StepGesture) -> [(Blocks.Gesture, JSONValue)] {

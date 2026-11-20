@@ -22,6 +22,7 @@ export type Ctx = {
     apps?: Record<string, Renderer>;
     drop?: (what: string) => void;
     held?: Map<string, Held>;
+    view?: Map<string, Record<string, unknown>>;
 };
 export declare const obj: (v: unknown) => Blk;
 export declare const draft: (i: HTMLInputElement, key: string, store: Store) => void;
