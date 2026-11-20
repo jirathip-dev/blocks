@@ -54,4 +54,4 @@ Filed in each app's fleet by its orchestrator, each blocked on the blocks issue 
 | drover | the hook before `turn done` and `blocks skill --to` at spawn, as `hook.md` | G3; G5 for the skill |
 | drover | adopt: the tool bin, `.blocks/guard.json`, its screens as seeded fixtures (its goldens today, by seed), `--tighten`, the static CI step, `guard.yml`, its raw-UI ban; later an answerer | G3; G4 for `guard.yml`; G7 for the answerer |
 | cooee | adopt: the same, static first; its own bin over `BlocksSnapshot`'s plan runner for the render (open question 2) | G3; G6 |
-| synergy | adopt: the same, with its fixtures written by a node test | G3; G4 |
+| the client app | adopt: the same, with its fixtures written by a node test | G3; G4 |

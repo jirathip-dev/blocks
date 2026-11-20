@@ -7,7 +7,7 @@ decides. Drag, keys and screen-reader actions share one state machine and must s
 Slices: the core with list reorder moved onto it (this issue), then timeline, grid, marks, pages, chart points and
 layout, one issue each: about 4,900 counted lines.
 Open questions: (1) one cap raise for these slices? (2) park #139 and trace the tower curve with marks (#140)?
-(3) file the React views synergy needs per family, when it migrates each screen?
+(3) file the React views the client app needs per family, when it migrates each screen?
 
 ## Read in this order
 
@@ -17,7 +17,7 @@ Open questions: (1) one cap raise for these slices? (2) park #139 and trace the 
 | `adr.md` | the question, what exists, the options, the decision in twelve parts, consequences, islands, the three open questions, hot files, the `.drover/arch.toml` lines |
 | `boundaries.md` | who may call whom, the gesture's statechart, the layout edit mode's, what every view meets, and per gesture its keys, its screen-reader actions, its motion and reduced motion |
 | `shapes.md` | the declaration, the machine, a kind's rules, each family's shapes, layout's edit, what changes in `expr` and `behave`, the fixtures |
-| `families.md` | the six families with synergy's screens as worked cases, and what is left an island |
+| `families.md` | the six families with the client app's screens as worked cases, and what is left an island |
 
 ## The model in one picture
 
@@ -35,7 +35,7 @@ the app         answers with ops: the item is drawn from the data            (co
 
 ## The families at a glance
 
-| Family | Kind | Gestures that send an action | The result | synergy's case |
+| Family | Kind | Gestures that send an action | The result | the client app's case |
 |---|---|---|---|---|
 | time axis | `timeline`, new (#137) | `move`, `stretch`, `draw` | a bar's days | the planner; the activity Gantt as a read-only one |
 | grid | `table` (#138) | `edit`, `reorder`; `calc` for live cells | a cell's value; the row order | product mark-up; the costing grid needs nothing; the workspace is `lines` |
@@ -72,13 +72,13 @@ G2 to G7 do not depend on each other. Each kind's React view is its own later is
 | the data shapes | `shapes.md` |
 | a statechart for a gesture: idle, pressed, dragging, previewing, sent, confirmed, refused | `boundaries.md`, statechart 1 |
 | the callers' usage | `usage.md` |
-| each family, with synergy's islands as worked cases | `families.md` parts 1 to 5 |
+| each family, with the client app's islands as worked cases | `families.md` parts 1 to 5 |
 | layout, #130 folded in | `families.md` part 6; `boundaries.md`, statechart 2; `shapes.md` part 5 |
 | per gesture: keyboard and VoiceOver path, reduced motion, motion held to the rule | `boundaries.md`, the last table |
 | the web renderer and SwiftUI, with cross-language fixtures | `usage.md` parts 3 to 5; `shapes.md` parts 7 and 8 |
 | how `behave` and `expr` are used or extended | `adr.md` part 10; `shapes.md` part 6 |
 | what stays an island, and why | `adr.md`; the last table of `families.md` |
-| no new dependency; no synergy, drover or cooee names in blocks code | none is added; the cases are fixtures with made-up names |
+| no new dependency; no client app, drover or cooee names in blocks code | none is added; the cases are fixtures with made-up names |
 
 ## What was read
 
@@ -87,7 +87,7 @@ G2 to G7 do not depend on each other. Each kind's React view is its own later is
   `motion.ts`, `web/shot/shot.ts`, `BlockEdits.swift`, `BlockRows.swift`, `SlotView.swift`, `.drover/arch.toml`,
   and the ADRs of #81, #113 and #131.
 - The issues #130, #132, #135 and #137 to #141.
-- synergy-apps: `docs/blocks-migration/inventory.md` at `a2ae461dc3`, and the screens it names for the planner,
+- The client app's repo: `docs/blocks-migration/inventory.md` at `a2ae461dc3`, and the screens it names for the planner,
   the activity Gantt, product mark-up, the costing grid, the service workspace, the tower design curve, photo
   markup, the two document previews and the pack drawing. Three read-only surveys reported each with file and
   line; the lines cited in `families.md` were then checked at `a2ae461dc3`.
