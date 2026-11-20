@@ -1,0 +1,9 @@
+Decided: merged origin/staging; its field views in render/field/ import ctx.ts and dom.ts in place of the deleted render/index.ts
+Because: web/src/render/field/_input.ts:2
+Decided: staging's new fixtures/fields test moves verbatim to test/kind/config.test.ts; only its fixtures path and node:fs import change
+Because: "Tests only move or are renamed; no test body changes."
+Decided: kinds.rs moves under ts.rs so codegen/mod.rs stays within its 80-line size rule after staging's mod fields
+Because: crates/blocks/src/codegen/ts.rs:5
+Rejected: none
+Check: web test names equal origin/staging's (164); fixtures/ and the dist CSS are byte-identical; codegen/mod.rs is 80 lines
+Owner: Merged the latest staging; its new form field files now use the split render helpers.
