@@ -205,6 +205,16 @@ test("an upload's submit waits while a file is uploading or failed, and says why
   deepStrictEqual(report.dropped, ["file photos"]);
 });
 
+test("fixtures/files/upload.json: each case sends and drops what it says in HTML and React, as blocks-snap does", () => {
+  const steps = JSON.parse(readFileSync(at("../../fixtures/files/upload.json"), "utf8"));
+  const screen = JSON.parse(readFileSync(at(`../../fixtures/${steps.screen}`), "utf8"));
+  for (const c of steps.cases) for (const adapter of ["html", "react"]) {
+    const { r, report } = picks(`files-${c.name}`, c.steps, adapter, screen);
+    strictEqual(r.status, 0, `${adapter}: ${r.stderr}`);
+    deepStrictEqual([report.sent, report.dropped], [c.sent, c.dropped], `${c.name} ${adapter}`);
+  }
+});
+
 const corner = (png) => {
   const idat = [];
   for (let at = 8; at < png.length; at += png.readUInt32BE(at) + 12) {
