@@ -2,7 +2,8 @@ import type { LayoutEdit, LayoutPlace, SizeClass } from "./gen/layout.ts";
 import { type Nudge, type Rules, same } from "./core/gesture.ts";
 import { places, stay, type Tree } from "./core/layout.ts";
 import { gestured } from "./gesture.ts";
-import { btn, type Ctx, el, h } from "./render/index.ts";
+import type { Ctx } from "./render/ctx.ts";
+import { btn, el, h } from "./render/dom.ts";
 
 /// What a host hands the shell to offer an edit mode: the slots each component holds, and where an edit is saved.
 export type Editing = { slots: Record<string, string[]>; save: (e: LayoutEdit) => Promise<boolean | string> };
@@ -106,13 +107,14 @@ function arrange(tree: Node, size: SizeClass, o: Editing, c: Pick<Ctx, "theme" |
 }
 
 /// The edit mode's sheet and the tab that opens it; `draw` hands it the tree and size on screen, and redraws it while open.
-export function editor(o: Editing, c: Pick<Ctx, "theme" | "store">): { tab: HTMLElement; sheet: HTMLElement; draw(tree: Node, size: SizeClass): void } {
+export function editor(o: Editing, c: Pick<Ctx, "theme" | "store">, root: HTMLElement): { tab: HTMLElement; sheet: HTMLElement; draw(tree: Node, size: SizeClass): void } {
   const sheet = el("div", "b-sheet");
   sheet.hidden = true;
   let now: [Node, SizeClass] | undefined;
   const close = () => (sheet.hidden = true);
   const draw = (tree: Node, size: SizeClass) => {
     now = [tree, size];
+    root.append(sheet);
     if (sheet.hidden) return;
     const why = h("p", "m");
     why.setAttribute("role", "alert");

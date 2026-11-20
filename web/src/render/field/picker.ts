@@ -1,5 +1,5 @@
 import type { PickerField } from "../../gen/types.ts";
-import { el } from "../index.ts";
+import { el } from "../dom.ts";
 import type { FieldView } from "./_view.ts";
 
 export const picker: FieldView<PickerField> = {
