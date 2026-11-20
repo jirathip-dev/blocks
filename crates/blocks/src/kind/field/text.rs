@@ -1,8 +1,6 @@
-use serde::{Deserialize, Serialize};
-
 use super::Word;
 use crate::expr::Expr;
-use crate::kind::{Check, FieldValue, Fields, Keyboard};
+use crate::kind::{Check, FieldValue, Keyboard};
 
 field! {
     /// A one-line text input.

@@ -2,7 +2,7 @@ use std::path::Path;
 
 use serde_json::Value;
 
-use super::Files;
+use super::super::Files;
 
 const DIR: &str = "crates/blocks/src/guard/rules";
 
