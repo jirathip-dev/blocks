@@ -2,7 +2,7 @@
   "kind": "media",
   "id": "chart",
   "variant": null,
-  "drawn": "fallback",
+  "drawn": "native",
   "role": "group",
   "name": "a bar chart",
   "children": []
