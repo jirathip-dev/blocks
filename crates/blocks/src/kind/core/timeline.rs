@@ -1,8 +1,9 @@
 use serde::{Deserialize, Serialize};
 
-use super::{Block, Fields, Gesture, Tap, Tone};
-use crate::expr::Expr;
 use crate::gesture::{Dir, Nudge, Rules, Word};
+use crate::kind::{Block, Gesture, Tap, Tone};
+
+listed! { 32: Timeline(Timeline) = "timeline" }
 
 kind! {
     /// Rows of bars on a day axis from `from` to `to` (ISO days); `move`, `stretch` and `draw` each send a `DaySpan`.
@@ -395,7 +396,7 @@ const SAMPLE: [(&str, &str, &str, &[SampleBar]); 8] = [
     ),
 ];
 
-pub(super) fn sample() -> Block {
+fn timeline() -> Block {
     let bar = |(id, start, end, label, tone, progress, fixed): &SampleBar| TimeBar {
         id: (*id).into(),
         start: (*start).into(),
@@ -430,6 +431,10 @@ pub(super) fn sample() -> Block {
             .stretch(schedule.clone())
             .draw(schedule),
     ))
+}
+
+pub(super) fn sample() -> Vec<Block> {
+    vec![timeline()]
 }
 
 #[cfg(test)]

@@ -1,8 +1,6 @@
-use serde::{Deserialize, Serialize};
-
 use super::Word;
 use crate::expr::Expr;
-use crate::kind::{Check, Fields};
+use crate::kind::Check;
 
 field! {
     /// A password input: its value is never drawn back, and an empty one is not sent.
