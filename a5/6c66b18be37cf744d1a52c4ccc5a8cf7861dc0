@@ -1,0 +1,12 @@
+Decided: a typed secret lives only in egui's temp memory under the field's ui id, never in the stage state, so the tree, the accessible text and `Stage::state` never hold it
+Because: "a secret's value is never in the tree, the PNG's text dump or a log"
+Decided: a form's fields stay typeable while its own checks fail; only its submit goes off, as SwiftUI's FieldsBlock does
+Because: crates/blocks-desktop/src/draw/form.rs:119
+Decided: form and config share one view: `action` with no `submit` sends each committed field (a toggle or picker on change, a text on losing focus); a `submit` sends all fields once
+Because: crates/blocks-desktop/src/draw/form.rs:123
+Decided: `type` clicks the field's rect, selects all and types, so it replaces the text as Playwright's fill does; it finds a block's first text field by block id, or any field by its name
+Because: crates/blocks-desk/src/lib.rs:266
+Rejected: a third Did variant for field values — Pick now carries a JSON value that the stage turns into a Lit with behave::lit, so the views never name blocks::expr
+Rejected: drawing the sheet's done and cancel — the web view draws neither; the shell owns closing a sheet
+Check: the four new desk tests drive the real harness (type, tap, shot) and assert the action sent and that no secret is in the tree
+Owner: Forms, settings, secret inputs and sheets now draw natively on desktop, and test scripts can type into them.
