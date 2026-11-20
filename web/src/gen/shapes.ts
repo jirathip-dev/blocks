@@ -1331,6 +1331,12 @@ export const defs: Record<string, Shape> = {
           "null"
         ]
       },
+      "edit": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
       "era": {
         "anyOf": [
           {
@@ -4771,11 +4777,30 @@ export const defs: Record<string, Shape> = {
   "Table": {
     "additionalProperties": true,
     "properties": {
+      "calc": {
+        "additionalProperties": {
+          "$ref": "#/$defs/Expr"
+        },
+        "type": [
+          "object",
+          "null"
+        ]
+      },
       "columns": {
         "items": {
           "$ref": "#/$defs/Column"
         },
         "type": "array"
+      },
+      "edit": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Gesture"
+          },
+          {
+            "type": "null"
+          }
+        ]
       },
       "empty": {
         "type": [
@@ -4802,6 +4827,16 @@ export const defs: Record<string, Shape> = {
         "type": [
           "string",
           "null"
+        ]
+      },
+      "reorder": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Gesture"
+          },
+          {
+            "type": "null"
+          }
         ]
       },
       "rows": {
@@ -4860,6 +4895,18 @@ export const defs: Record<string, Shape> = {
           "$ref": "#/$defs/Cell"
         },
         "type": "object"
+      },
+      "fixed": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "group": {
+        "type": [
+          "boolean",
+          "null"
+        ]
       },
       "id": {
         "type": "string"

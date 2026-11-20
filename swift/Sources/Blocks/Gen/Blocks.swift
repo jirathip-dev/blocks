@@ -366,6 +366,7 @@ public struct Column: Codable, Equatable, Sendable {
     public var align: Align?
     public var currency: String?
     public var digits: UInt8?
+    public var edit: Bool?
     public var era: Era?
     public var hide: Bool?
     public var id: String
@@ -1494,11 +1495,14 @@ public struct Synced: Codable, Equatable, Sendable {
 }
 
 public struct Table: Codable, Equatable, Sendable {
+    public var calc: [String: Expr]?
     public var columns: [Column]
+    public var edit: Gesture?
     public var empty: String?
     public var export: [ExportFormat]?
     public var filter: Bool?
     public var id: String?
+    public var reorder: Gesture?
     public var rows: [TableRow]
     public var select: TableSelect?
     public var show: Expr?
@@ -1508,6 +1512,8 @@ public struct Table: Codable, Equatable, Sendable {
 
 public struct TableRow: Codable, Equatable, Sendable {
     public var cells: [String: Cell]
+    public var fixed: Bool?
+    public var group: Bool?
     public var id: String
     public var tap: Tap?
 }

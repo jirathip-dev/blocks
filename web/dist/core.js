@@ -546,6 +546,23 @@ function total(c, rows) {
   return c.total === "avg" ? ["avg", grouped(sum / vs.length, 1, false)] : ["", number(c, sum)];
 }
 
+// src/core/kind/table.ts
+var MON = "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec".split(" ");
+var THAI = "\u0E21.\u0E04. \u0E01.\u0E1E. \u0E21\u0E35.\u0E04. \u0E40\u0E21.\u0E22. \u0E1E.\u0E04. \u0E21\u0E34.\u0E22. \u0E01.\u0E04. \u0E2A.\u0E04. \u0E01.\u0E22. \u0E15.\u0E04. \u0E1E.\u0E22. \u0E18.\u0E04.".split(" ");
+function worked(b, r) {
+  if (!b.calc || r.group) return r;
+  const cells = { ...r.cells };
+  for (const c of b.columns) {
+    const e = b.calc[c.id];
+    if (e == null) continue;
+    const s = Object.fromEntries(Object.entries(cells).map(([k, v2]) => [k, typeof v2 !== "object" ? v2 : typeof v2.text === "string" || typeof v2.text === "number" ? v2.text : null]));
+    const v = evaluate(e, s);
+    if (typeof v === "number" || typeof v === "string") cells[c.id] = v;
+    else delete cells[c.id];
+  }
+  return { ...r, cells };
+}
+
 // src/core/built.ts
 var checked = /* @__PURE__ */ Symbol("built");
 var KINDS = Object.keys(hooks);
@@ -556,9 +573,10 @@ var isObj = (v) => typeof v === "object" && v !== null && !Array.isArray(v);
 var isTable = (o) => o.type === "table" && Array.isArray(o.columns) && Array.isArray(o.rows);
 var text3 = (o, k) => typeof o[k] === "string" && o[k] !== "" ? o[k] : void 0;
 function tabled(t) {
-  const n = t.rows.length;
+  const rows = t.rows.filter((r) => !r.group).map((r) => worked(t, r));
+  const n = rows.length;
   const sum = t.columns.find((c) => c.total === "sum");
-  const v = sum && total(sum, t.rows);
+  const v = sum && total(sum, rows);
   const count = `${n} row${n === 1 ? "" : "s"}`;
   const sub = sum && v ? `${count} \xB7 total ${sum.label.toLowerCase()} ${unit(sum) ?? ""}${v[1]}` : count;
   return { title: t.title ?? "Table", subtitle: sub };
@@ -1927,6 +1945,12 @@ var defs = {
         "minimum": 0,
         "type": [
           "integer",
+          "null"
+        ]
+      },
+      "edit": {
+        "type": [
+          "boolean",
           "null"
         ]
       },
@@ -5370,11 +5394,30 @@ var defs = {
   "Table": {
     "additionalProperties": true,
     "properties": {
+      "calc": {
+        "additionalProperties": {
+          "$ref": "#/$defs/Expr"
+        },
+        "type": [
+          "object",
+          "null"
+        ]
+      },
       "columns": {
         "items": {
           "$ref": "#/$defs/Column"
         },
         "type": "array"
+      },
+      "edit": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Gesture"
+          },
+          {
+            "type": "null"
+          }
+        ]
       },
       "empty": {
         "type": [
@@ -5401,6 +5444,16 @@ var defs = {
         "type": [
           "string",
           "null"
+        ]
+      },
+      "reorder": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Gesture"
+          },
+          {
+            "type": "null"
+          }
         ]
       },
       "rows": {
@@ -5459,6 +5512,18 @@ var defs = {
           "$ref": "#/$defs/Cell"
         },
         "type": "object"
+      },
+      "fixed": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "group": {
+        "type": [
+          "boolean",
+          "null"
+        ]
       },
       "id": {
         "type": "string"

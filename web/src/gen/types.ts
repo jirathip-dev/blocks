@@ -54,7 +54,7 @@ export type ChoiceDefault = { label?: string | null; until: string; value: strin
 
 export type ChoiceOption = { confirm?: Confirm | null; label: string; value: string; values?: Record<string, unknown> | null };
 
-export type Column = { align?: Align | null; currency?: string | null; digits?: number | null; era?: Era | null; hide?: boolean | null; id: string; kind: ColumnKind; label: string; max?: number | null; phone?: PhonePart | null; sort?: boolean | null; tone?: Tone | null; total?: Total | null; unit?: string | null; width?: number | null };
+export type Column = { align?: Align | null; currency?: string | null; digits?: number | null; edit?: boolean | null; era?: Era | null; hide?: boolean | null; id: string; kind: ColumnKind; label: string; max?: number | null; phone?: PhonePart | null; sort?: boolean | null; tone?: Tone | null; total?: Total | null; unit?: string | null; width?: number | null };
 
 export type ColumnKind = "text" | "number" | "money" | "date" | "tone" | "bar";
 
@@ -250,9 +250,9 @@ export type Sync = { close?: string[] | null; open: Have[] };
 
 export type Synced = { keys: KeyState[] };
 
-export type Table = { columns: Column[]; empty?: string | null; export?: ExportFormat[] | null; filter?: boolean | null; id?: string | null; rows: TableRow[]; select?: TableSelect | null; show?: Expr | null; sort?: TableSort | null; title?: string | null };
+export type Table = { calc?: Record<string, Expr> | null; columns: Column[]; edit?: Gesture | null; empty?: string | null; export?: ExportFormat[] | null; filter?: boolean | null; id?: string | null; reorder?: Gesture | null; rows: TableRow[]; select?: TableSelect | null; show?: Expr | null; sort?: TableSort | null; title?: string | null };
 
-export type TableRow = { cells: Record<string, Cell>; id: string; tap?: Tap | null };
+export type TableRow = { cells: Record<string, Cell>; fixed?: boolean | null; group?: boolean | null; id: string; tap?: Tap | null };
 
 export type TableSelect = { actions: BulkAction[] };
 
