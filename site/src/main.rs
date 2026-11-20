@@ -2,6 +2,7 @@ mod kinds;
 mod live;
 mod looks;
 mod pages;
+mod play;
 mod sizes;
 mod styles;
 mod ui;
@@ -64,8 +65,10 @@ fn css(looks: &[Named]) -> String {
 
 fn pages(bench: Option<&Value>, looks: &[Named]) -> Result<Vec<Page>, String> {
     let all = kinds::samples();
+    let home = pages::home(all.len(), bench);
     let mut out = vec![
-        pages::home(all.len(), bench),
+        play::playground(&home, &all),
+        home,
         kinds::gallery(&all),
         styles::styles(looks),
         pages::numbers(bench),
@@ -102,7 +105,7 @@ fn write(out: &Path, p: &Page, look: &Look, looks: &[(&str, &Look)]) -> Result<(
         css: &["blocks.css", "site.css"],
         action: "",
         live: Some(Live {
-            js: "blocks.js",
+            js: p.js,
             stream: "",
             looks,
         }),
@@ -137,7 +140,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     for p in pages(bench.as_ref(), &looks)? {
         write(&out, &p, look, &live)?;
     }
-    for f in ["blocks.js", "blocks.css"] {
+    for f in ["blocks.js", "blocks.css", "play.js"] {
         fs::copy(root.join("web/dist").join(f), out.join(f))?;
     }
     for f in fs::read_dir(root.join("site/media"))? {
