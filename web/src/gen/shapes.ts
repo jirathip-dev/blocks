@@ -2150,6 +2150,19 @@ export const defs: Record<string, Shape> = {
         "type": "object"
       },
       {
+        "$ref": "#/$defs/ScanField",
+        "properties": {
+          "type": {
+            "const": "scan",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      {
         "$ref": "#/$defs/OtherField"
       }
     ]
@@ -4171,6 +4184,94 @@ export const defs: Record<string, Shape> = {
       "action",
       "command",
       "sha"
+    ],
+    "type": "object"
+  },
+  "ScanField": {
+    "additionalProperties": true,
+    "properties": {
+      "checks": {
+        "items": {
+          "$ref": "#/$defs/Check"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "doc": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "enabled": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "error": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "file": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/FileRef"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "label": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "max": {
+        "minimum": 0,
+        "type": [
+          "integer",
+          "null"
+        ]
+      },
+      "name": {
+        "type": "string"
+      },
+      "open": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "show": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "was": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "required": [
+      "name"
     ],
     "type": "object"
   },

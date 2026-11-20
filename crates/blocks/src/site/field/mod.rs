@@ -4,6 +4,7 @@ use crate::site::write::{get, on, shown, W};
 
 mod picker;
 mod plain;
+mod scan;
 mod secret;
 mod text;
 mod toggle;
@@ -17,6 +18,7 @@ const VIEWS: &[(&str, &str, View)] = &[
     ("picker", "", picker::view),
     ("secret", "", secret::view),
     ("upload", " up", upload::view),
+    ("scan", " up", scan::view),
 ];
 
 fn note(w: &W<'_>, x: &Value) -> (&'static str, String) {

@@ -1,4 +1,4 @@
-import type { Accept, FileRef, UploadField } from "../../gen/types.ts";
+import type { Accept, FileRef, ScanField, UploadField } from "../../gen/types.ts";
 export type Picked = {
     screen: string;
     block?: string;
@@ -42,4 +42,12 @@ export declare function picked(x: UploadField, rows: FileRow[], files: Blob[], n
     send: FileRow[];
 };
 export declare function send(r: FileRow, file: OnFile, about: Omit<Picked, "name" | "mime" | "size" | "progress" | "signal">, again: () => void): void;
+export declare const scanner: () => Promise<typeof import("../../scan/index.ts")>;
+export type ScanRow = FileRow & {
+    pages?: number;
+};
+export declare const scanHeld: (x: ScanField) => ScanRow[];
+export declare const scanned: (x: ScanField, pdf: Blob, pages: number, first?: string) => ScanRow;
+export declare function scanLine(r: ScanRow, w: Word): string;
+export declare const scanHint: (x: ScanField, w: Word, on: boolean) => string;
 export {};

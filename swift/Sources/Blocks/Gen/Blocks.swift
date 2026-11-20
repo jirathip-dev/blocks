@@ -574,6 +574,7 @@ public enum Field: Codable, Equatable, Sendable {
     case picker(PickerField)
     case secret(SecretField)
     case upload(UploadField)
+    case scan(ScanField)
     case otherField(JSONValue)
 
     private enum Tag: String, CodingKey { case tag = "type" }
@@ -585,6 +586,7 @@ public enum Field: Codable, Equatable, Sendable {
         case "picker": self = .picker(try PickerField(from: decoder))
         case "secret": self = .secret(try SecretField(from: decoder))
         case "upload": self = .upload(try UploadField(from: decoder))
+        case "scan": self = .scan(try ScanField(from: decoder))
         default: self = .otherField(try JSONValue(from: decoder))
         }
     }
@@ -596,6 +598,7 @@ public enum Field: Codable, Equatable, Sendable {
         case .picker(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("picker", forKey: .tag)
         case .secret(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("secret", forKey: .tag)
         case .upload(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("upload", forKey: .tag)
+        case .scan(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("scan", forKey: .tag)
         case .otherField(let v): try v.encode(to: encoder)
         }
     }
@@ -1308,6 +1311,20 @@ public struct Run: Codable, Equatable, Sendable {
     public var show: Expr?
     public var touches: String?
     public var until: String?
+}
+
+public struct ScanField: Codable, Equatable, Sendable {
+    public var checks: [Check]?
+    public var doc: String?
+    public var enabled: Expr?
+    public var error: String?
+    public var file: FileRef?
+    public var label: String?
+    public var max: UInt32?
+    public var name: String
+    public var open: Bool?
+    public var show: Expr?
+    public var was: String?
 }
 
 public struct Scene: Codable, Equatable, Sendable {

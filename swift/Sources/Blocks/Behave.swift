@@ -203,7 +203,7 @@ public struct Behaviour: Equatable, Sendable {
     }
 
     private static func seed(_ b: JSONValue, _ s: inout BlockState) {
-        for f in b.list("fields") { if let name = f.string("name") { s[name] = lit(f, f["value"] ?? f["files"]) } }
+        for f in b.list("fields") { if let name = f.string("name") { s[name] = lit(f, f["value"] ?? f["files"] ?? f["file"].flatMap { if case .object = $0 { .array([$0]) } else { nil } }) } }
         if b.type == "chips", let name = b.string("name") { s[name] = Lit(b["selected"]?.items.first) }
         for c in kids(b) { seed(c, &s) }
     }

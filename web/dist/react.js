@@ -1,5 +1,5 @@
 // react/src/view.ts
-import { createElement as createElement9, useMemo as useMemo2, useRef as useRef9, useSyncExternalStore } from "react";
+import { createElement as createElement10, useMemo as useMemo2, useRef as useRef10, useSyncExternalStore } from "react";
 import { hooks as hooks3, share } from "./core.js";
 
 // react/src/act.ts
@@ -80,7 +80,7 @@ function useCx(p, screen2) {
 }
 
 // react/src/block.ts
-import { Component, createElement as createElement8, memo, useContext as useContext14 } from "react";
+import { Component, createElement as createElement9, memo, useContext as useContext14 } from "react";
 import { hooks as hooks2, named as named3, role } from "./core.js";
 
 // react/src/draw.ts
@@ -154,9 +154,9 @@ function card({ b, hooks: hooks4 }) {
   const fold = b.fold ?? null;
   const main = fold?.main ?? null;
   const shut = fold !== null && !open2;
-  const send3 = main && (() => void cx.act({ action: main.action, block: main.block, values: { ...main.values, choice: main.value } }));
+  const send4 = main && (() => void cx.act({ action: main.action, block: main.block, values: { ...main.values, choice: main.value } }));
   const flip = (e) => e.target instanceof Element && e.target.closest("button") || setOpen((o) => !o);
-  const mainBtn = main && shut ? btn(main.label, "main", void 0, main.action, { onClick: send3 }) : null;
+  const mainBtn = main && shut ? btn(main.label, "main", void 0, main.action, { onClick: send4 }) : null;
   const line = fold ? h("div", "fold", { tabIndex: 0, role: "button", "aria-expanded": String(!shut), onClick: flip }, h("span", "fl", null, fold.line), mainBtn) : null;
   if (shut) return h("div", cls, attrs, line);
   const badge = b.badge ? [" ", h("span", `tag b-card__badge ${b.badge.tone ?? ""}`, null, ticked(b.badge.text, cx))] : [];
@@ -183,7 +183,7 @@ function chips({ b, hooks: hooks4 }) {
 }
 
 // react/src/kinds/form.ts
-import { useContext as useContext4, useRef as useRef3, useState as useState4 } from "react";
+import { useContext as useContext4, useRef as useRef4, useState as useState5 } from "react";
 import { fill as fill2, lit } from "./core.js";
 
 // src/gen/words.ts
@@ -214,7 +214,46 @@ var words = {
   wait1: ["waiting for {n} upload", "\u0E23\u0E2D\u0E2D\u0E31\u0E1B\u0E42\u0E2B\u0E25\u0E14 {n} \u0E44\u0E1F\u0E25\u0E4C"],
   waitN: ["waiting for {n} uploads", "\u0E23\u0E2D\u0E2D\u0E31\u0E1B\u0E42\u0E2B\u0E25\u0E14 {n} \u0E44\u0E1F\u0E25\u0E4C"],
   stuck: ["an upload failed: retry or remove it", "\u0E2D\u0E31\u0E1B\u0E42\u0E2B\u0E25\u0E14\u0E44\u0E21\u0E48\u0E2A\u0E33\u0E40\u0E23\u0E47\u0E08: \u0E25\u0E2D\u0E07\u0E2D\u0E35\u0E01\u0E04\u0E23\u0E31\u0E49\u0E07\u0E2B\u0E23\u0E37\u0E2D\u0E25\u0E1A"],
-  files: ["{label}, {n} files", "{label}, {n} \u0E44\u0E1F\u0E25\u0E4C"]
+  files: ["{label}, {n} files", "{label}, {n} \u0E44\u0E1F\u0E25\u0E4C"],
+  scan: ["scan pages", "\u0E2A\u0E41\u0E01\u0E19\u0E40\u0E2D\u0E01\u0E2A\u0E32\u0E23"],
+  rescan: ["scan again", "\u0E2A\u0E41\u0E01\u0E19\u0E43\u0E2B\u0E21\u0E48"],
+  scanHint: ["makes one A4 PDF \xB7 up to {max} pages", "\u0E44\u0E14\u0E49 PDF \u0E02\u0E19\u0E32\u0E14 A4 \u0E2B\u0E19\u0E36\u0E48\u0E07\u0E44\u0E1F\u0E25\u0E4C \xB7 \u0E44\u0E21\u0E48\u0E40\u0E01\u0E34\u0E19 {max} \u0E2B\u0E19\u0E49\u0E32"],
+  editPages: ["edit pages", "\u0E41\u0E01\u0E49\u0E2B\u0E19\u0E49\u0E32"],
+  scanned1: ["1 page \xB7 A4 \xB7 {kb} KB", "1 \u0E2B\u0E19\u0E49\u0E32 \xB7 A4 \xB7 {kb} KB"],
+  scannedN: ["{n} pages \xB7 A4 \xB7 {kb} KB", "{n} \u0E2B\u0E19\u0E49\u0E32 \xB7 A4 \xB7 {kb} KB"],
+  scanOff: ["scanning is off here", "\u0E2A\u0E41\u0E01\u0E19\u0E44\u0E21\u0E48\u0E44\u0E14\u0E49\u0E17\u0E35\u0E48\u0E19\u0E35\u0E48"],
+  cancel: ["cancel", "\u0E22\u0E01\u0E40\u0E25\u0E34\u0E01"],
+  pickImages: ["pick images", "\u0E40\u0E25\u0E37\u0E2D\u0E01\u0E23\u0E39\u0E1B"],
+  pageN: ["page {n}", "\u0E2B\u0E19\u0E49\u0E32 {n}"],
+  pageOf: ["page {n} of {of}", "\u0E2B\u0E19\u0E49\u0E32 {n} \u0E08\u0E32\u0E01 {of}"],
+  seek: ["looking for the page's edges", "\u0E01\u0E33\u0E25\u0E31\u0E07\u0E2B\u0E32\u0E02\u0E2D\u0E1A\u0E01\u0E23\u0E30\u0E14\u0E32\u0E29"],
+  found: ["page found: hold still and take it", "\u0E1E\u0E1A\u0E2B\u0E19\u0E49\u0E32\u0E01\u0E23\u0E30\u0E14\u0E32\u0E29: \u0E16\u0E37\u0E2D\u0E19\u0E34\u0E48\u0E07\u0E46 \u0E41\u0E25\u0E49\u0E27\u0E16\u0E48\u0E32\u0E22"],
+  noEdge: ["no page edge found: fill the frame with the page, or take it and set the corners by hand", "\u0E44\u0E21\u0E48\u0E1E\u0E1A\u0E02\u0E2D\u0E1A\u0E01\u0E23\u0E30\u0E14\u0E32\u0E29: \u0E43\u0E2B\u0E49\u0E01\u0E23\u0E30\u0E14\u0E32\u0E29\u0E40\u0E15\u0E47\u0E21\u0E01\u0E23\u0E2D\u0E1A \u0E2B\u0E23\u0E37\u0E2D\u0E16\u0E48\u0E32\u0E22\u0E41\u0E25\u0E49\u0E27\u0E15\u0E31\u0E49\u0E07\u0E21\u0E38\u0E21\u0E40\u0E2D\u0E07"],
+  take: ["take page {n}", "\u0E16\u0E48\u0E32\u0E22\u0E2B\u0E19\u0E49\u0E32 {n}"],
+  done1: ["done \xB7 1 page", "\u0E40\u0E2A\u0E23\u0E47\u0E08 \xB7 1 \u0E2B\u0E19\u0E49\u0E32"],
+  doneN: ["done \xB7 {n} pages", "\u0E40\u0E2A\u0E23\u0E47\u0E08 \xB7 {n} \u0E2B\u0E19\u0E49\u0E32"],
+  retake: ["retake", "\u0E16\u0E48\u0E32\u0E22\u0E43\u0E2B\u0E21\u0E48"],
+  usePage: ["use page", "\u0E43\u0E0A\u0E49\u0E2B\u0E19\u0E49\u0E32\u0E19\u0E35\u0E49"],
+  reset: ["reset corners", "\u0E04\u0E37\u0E19\u0E21\u0E38\u0E21\u0E40\u0E14\u0E34\u0E21"],
+  drag: ["drag a corner onto the page's edge, or press space on it and move it with the arrow keys", "\u0E25\u0E32\u0E01\u0E21\u0E38\u0E21\u0E44\u0E1B\u0E17\u0E35\u0E48\u0E02\u0E2D\u0E1A\u0E01\u0E23\u0E30\u0E14\u0E32\u0E29"],
+  tl: ["top-left corner", "\u0E21\u0E38\u0E21\u0E1A\u0E19\u0E0B\u0E49\u0E32\u0E22"],
+  tr: ["top-right corner", "\u0E21\u0E38\u0E21\u0E1A\u0E19\u0E02\u0E27\u0E32"],
+  br: ["bottom-right corner", "\u0E21\u0E38\u0E21\u0E25\u0E48\u0E32\u0E07\u0E02\u0E27\u0E32"],
+  bl: ["bottom-left corner", "\u0E21\u0E38\u0E21\u0E25\u0E48\u0E32\u0E07\u0E0B\u0E49\u0E32\u0E22"],
+  corners: ["corners", "\u0E21\u0E38\u0E21"],
+  rotate: ["rotate", "\u0E2B\u0E21\u0E38\u0E19"],
+  delete: ["delete", "\u0E25\u0E1A"],
+  earlier: ["move earlier", "\u0E40\u0E25\u0E37\u0E48\u0E2D\u0E19\u0E02\u0E36\u0E49\u0E19"],
+  later: ["move later", "\u0E40\u0E25\u0E37\u0E48\u0E2D\u0E19\u0E25\u0E07"],
+  addPage: ["add page", "\u0E40\u0E1E\u0E34\u0E48\u0E21\u0E2B\u0E19\u0E49\u0E32"],
+  making: ["making the PDF \xB7 page {n} of {of}", "\u0E01\u0E33\u0E25\u0E31\u0E07\u0E17\u0E33 PDF \xB7 \u0E2B\u0E19\u0E49\u0E32 {n} \u0E08\u0E32\u0E01 {of}"],
+  noCam: ["no camera here", "\u0E44\u0E21\u0E48\u0E21\u0E35\u0E01\u0E25\u0E49\u0E2D\u0E07"],
+  noCamWhy: ["pick photos of the pages instead: each one gets its corners found the same way", "\u0E40\u0E25\u0E37\u0E2D\u0E01\u0E23\u0E39\u0E1B\u0E02\u0E2D\u0E07\u0E41\u0E15\u0E48\u0E25\u0E30\u0E2B\u0E19\u0E49\u0E32\u0E41\u0E17\u0E19"],
+  limit: ["{n} of {n} pages: the most one scan takes", "{n} \u0E08\u0E32\u0E01 {n} \u0E2B\u0E19\u0E49\u0E32: \u0E2A\u0E41\u0E01\u0E19\u0E44\u0E14\u0E49\u0E21\u0E32\u0E01\u0E17\u0E35\u0E48\u0E2A\u0E38\u0E14\u0E40\u0E17\u0E48\u0E32\u0E19\u0E35\u0E49"],
+  review: ["review", "\u0E15\u0E23\u0E27\u0E08"],
+  strip: ["pages, in order", "\u0E2B\u0E19\u0E49\u0E32\u0E15\u0E32\u0E21\u0E25\u0E33\u0E14\u0E31\u0E1A"],
+  denied: ["the camera is blocked for this site", "\u0E01\u0E25\u0E49\u0E2D\u0E07\u0E16\u0E39\u0E01\u0E1B\u0E34\u0E14\u0E2A\u0E33\u0E2B\u0E23\u0E31\u0E1A\u0E40\u0E27\u0E47\u0E1A\u0E19\u0E35\u0E49"],
+  deniedWhy: ["allow it in the browser's settings, or pick photos of the pages", "\u0E40\u0E1B\u0E34\u0E14\u0E44\u0E14\u0E49\u0E43\u0E19\u0E01\u0E32\u0E23\u0E15\u0E31\u0E49\u0E07\u0E04\u0E48\u0E32\u0E40\u0E1A\u0E23\u0E32\u0E27\u0E4C\u0E40\u0E0B\u0E2D\u0E23\u0E4C \u0E2B\u0E23\u0E37\u0E2D\u0E40\u0E25\u0E37\u0E2D\u0E01\u0E23\u0E39\u0E1B\u0E02\u0E2D\u0E07\u0E41\u0E15\u0E48\u0E25\u0E30\u0E2B\u0E19\u0E49\u0E32"]
 };
 
 // react/src/fields/_view.ts
@@ -242,31 +281,20 @@ var picker = {
   sent: (x, v) => v == null || v === "" ? opts(x)[0] ?? "" : v
 };
 
-// react/src/fields/secret.ts
-var secret = {
-  draw: (x, c, attrs) => input({ name: x.name }, c, attrs, true, x.set ? word(c, "set") : x.placeholder ?? word(c, "unset")),
-  sent: (_x, v) => v === "" || v == null ? void 0 : v
-};
-
-// react/src/fields/toggle.ts
-import { createElement as createElement4 } from "react";
-var toggle = {
-  row: " tg",
-  draw: (_x, c, attrs) => createElement4("input", { ...attrs, type: "checkbox", role: "switch", checked: !!c.value, onChange: (e) => c.put(e.target.checked) }),
-  sent: (_x, v) => !!v
-};
+// react/src/fields/scan.ts
+import { createElement as createElement5, useRef as useRef3, useState as useState4 } from "react";
+import { ids as ids2, scanHeld, scanHint, scanLine, scanned, scanner, send as send2, waits as waits2 } from "./core.js";
 
 // react/src/fields/upload.ts
-import { createElement as createElement5, useRef as useRef2, useState as useState3 } from "react";
+import { createElement as createElement4, useRef as useRef2, useState as useState3 } from "react";
 import { accepts, fill, held, hint, ids, pick, picked, send, status, waits } from "./core.js";
-function item(x, r, w, drop, again) {
-  const line = status(x, r, w);
+function item(line, r, w, drop, again, more = []) {
   const hide = { "aria-hidden": "true" };
   const head3 = r.src && r.state !== "refused" ? h("img", "fut", { ...hide, src: r.src, alt: "" }) : h("span", "fux", hide, r.state === "refused" ? "!" : (r.name.split(".").pop() ?? "").slice(0, 4));
   const p = Math.round(r.part * 100);
   const bar5 = { role: "progressbar", "aria-valuemin": "0", "aria-valuemax": "100", "aria-valuenow": String(p), "aria-label": r.name, style: { "--v": p } };
   const b = (k, f, cls = "") => btn(w(k), cls, void 0, void 0, { "aria-label": `${w(k)} ${r.name}`, onClick: f });
-  const acts = r.state === "failed" ? [b("retry", () => again(r)), b("remove", () => drop(r), "bad")] : [b(r.state === "refused" ? "dismiss" : "remove", () => drop(r))];
+  const acts = r.state === "failed" ? [b("retry", () => again(r)), ...more, b("remove", () => drop(r), "bad")] : [...more, b(r.state === "refused" ? "dismiss" : "remove", () => drop(r))];
   const m = h("span", "fum", null, h("span", "fun", null, r.name), r.state === "uploading" ? h("span", "pgt", bar5, h("b", "", null)) : null, h("span", "fus", null, line));
   return h("li", `fui ${r.state}`, { key: r.id ?? `${r.name}~${r.size}`, "aria-label": `${r.name}, ${line}` }, head3, m, h("span", "fua", null, ...acts));
 }
@@ -312,17 +340,69 @@ function Upload({ x, c, attrs }) {
     h("input", "", { ref: input3, type: "file", tabIndex: -1, multiple: !!x.many, accept: accepts(x.accept ?? []), "aria-hidden": "true", onChange: take })
   );
   const named4 = { role: "group", "data-field": x.name, "aria-label": fill(w("files"), { label: label2, n: rows.filter((r) => r.state !== "refused").length }), "aria-invalid": attrs["aria-invalid"] };
-  return h("div", "fu", named4, x.error ? h("span", "fe", null, x.error) : null, rows.length ? h("ul", "fuf", null, ...rows.map((r) => item(x, r, w, drop, go2))) : null, fub);
+  return h("div", "fu", named4, x.error ? h("span", "fe", null, x.error) : null, rows.length ? h("ul", "fuf", null, ...rows.map((r) => item(status(x, r, w), r, w, drop, go2))) : null, fub);
 }
 var upload = {
   row: " up",
   group: true,
-  draw: (x, c, attrs) => createElement5(Upload, { x, c, attrs }),
+  draw: (x, c, attrs) => createElement4(Upload, { x, c, attrs }),
   sent: (x) => ids(held(x))
 };
 
+// react/src/fields/scan.ts
+function Scan({ x, c, attrs }) {
+  const w = (k) => word(c, k), label2 = x.label ?? x.name, off = !c.file;
+  const [rows, setRows] = useState4(() => scanHeld(x));
+  const live3 = useRef3(rows), kept = useRef3(void 0);
+  const changed = (next) => {
+    live3.current = next;
+    setRows(next);
+    c.hold(ids2(next), waits2(next));
+  };
+  const go2 = (r) => c.file && send2(r, c.file, { screen: c.screen, block: c.block, field: x.name }, () => changed([...live3.current]));
+  const drop = () => {
+    live3.current.forEach((r) => r.stop?.abort());
+    kept.current = void 0;
+    changed([]);
+  };
+  const open2 = async (again2) => {
+    const out2 = await (await scanner()).scan({ label: label2, max: x.max ?? 20, w, pages: again2 ? kept.current : void 0 });
+    if (!out2) return;
+    live3.current.forEach((r2) => r2.stop?.abort());
+    kept.current = out2.pages;
+    const r = scanned(x, out2.pdf, out2.pages.length, out2.pages[0]?.url);
+    changed([r]);
+    go2(r);
+  };
+  const named4 = (k, name, f) => btn(w(k), "", void 0, void 0, { "aria-label": `${w(k)}: ${name}`, onClick: f }, off);
+  const list3 = rows.map((r) => item(scanLine(r, w), r, w, drop, go2, kept.current ? [named4("editPages", r.name, () => open2(true))] : []));
+  const again = rows.length ? "rescan" : "scan";
+  const group2 = { role: "group", "data-field": x.name, "aria-label": label2, "aria-invalid": attrs["aria-invalid"] };
+  return h("div", "fu", group2, x.error ? h("span", "fe", null, x.error) : null, list3.length ? h("ul", "fuf", null, ...list3) : null, h("div", "fub", null, named4(again, label2, () => open2(false)), h("span", "fuh", null, scanHint(x, w, !off))));
+}
+var scan = {
+  row: " up",
+  group: true,
+  draw: (x, c, attrs) => createElement5(Scan, { x, c, attrs }),
+  sent: (x) => ids2(scanHeld(x))
+};
+
+// react/src/fields/secret.ts
+var secret = {
+  draw: (x, c, attrs) => input({ name: x.name }, c, attrs, true, x.set ? word(c, "set") : x.placeholder ?? word(c, "unset")),
+  sent: (_x, v) => v === "" || v == null ? void 0 : v
+};
+
+// react/src/fields/toggle.ts
+import { createElement as createElement6 } from "react";
+var toggle = {
+  row: " tg",
+  draw: (_x, c, attrs) => createElement6("input", { ...attrs, type: "checkbox", role: "switch", checked: !!c.value, onChange: (e) => c.put(e.target.checked) }),
+  sent: (_x, v) => !!v
+};
+
 // react/src/gen/fields.ts
-var views = { picker, secret, text, toggle, upload };
+var views = { picker, scan, secret, text, toggle, upload };
 
 // react/src/kinds/form.ts
 var viewOf = (x) => views[x.type] ?? text;
@@ -345,8 +425,8 @@ function field(x, key2, cx, held3) {
 function form({ b, hooks: hooks4 }) {
   const cx = useContext4(Cx);
   const s = b.submit;
-  const sent2 = useRef3({});
-  const [waits3, setWaits] = useState4({});
+  const sent2 = useRef4({});
+  const [waits4, setWaits] = useState5({});
   const held3 = { sent: sent2.current, wait: (n, w) => setWaits((o) => ({ ...o, [n]: w })), block: b.id ?? void 0 };
   const rows = b.fields.map((x) => field(x, `draft:${cx.screen}:${String(b.id)}:`, cx, held3));
   if (!s) return h("div", "form", { ...hooks4, "data-id": b.id ?? "" }, ...rows);
@@ -359,7 +439,7 @@ function form({ b, hooks: hooks4 }) {
     }
     return v;
   };
-  const send3 = () => {
+  const send4 = () => {
     const v = values();
     if (Object.values(v).every((x) => !String(x || "").trim())) return;
     void cx.act({ action: s.action, block: b.id, values: { ...s.values, ...v } }).then((ok) => ok && b.fields.forEach((x) => cx.put(x.name, void 0)));
@@ -367,12 +447,12 @@ function form({ b, hooks: hooks4 }) {
   const enter = (e) => {
     if (e.key !== "Enter" || !(e.target instanceof HTMLInputElement) || e.target.type === "checkbox") return;
     e.preventDefault();
-    send3();
+    send4();
   };
   const busy = cx.busy.has(b.id ?? s.action);
-  const all = Object.values(waits3), up = all.reduce((n, w) => n + w.up, 0), bad = all.some((w) => w.failed > 0);
+  const all = Object.values(waits4), up = all.reduce((n, w) => n + w.up, 0), bad = all.some((w) => w.failed > 0);
   const off = b.id != null && cx.v.disabled.has(b.id) || up > 0 || bad;
-  const go2 = btn(busy ? "sending\u2026" : s.label, "", void 0, s.action, { "data-submit": "", onClick: send3 }, off);
+  const go2 = btn(busy ? "sending\u2026" : s.label, "", void 0, s.action, { "data-submit": "", onClick: send4 }, off);
   const line = bad ? word(cx, "stuck") : up ? fill2(word(cx, up > 1 ? "waitN" : "wait1"), { n: up }) : "";
   const wait = b.fields.some((x) => viewOf(x).group) ? h("span", `say-busy${bad ? " bad" : ""}`, null, line) : null;
   return h("div", "form say", { ...hooks4, "data-id": b.id ?? "", onKeyDown: enter }, ...rows, wait, go2);
@@ -390,7 +470,7 @@ function images({ b, hooks: hooks4 }) {
 }
 
 // react/src/kinds/list.ts
-import { useContext as useContext5, useLayoutEffect, useRef as useRef4 } from "react";
+import { useContext as useContext5, useLayoutEffect, useRef as useRef5 } from "react";
 
 // src/core/kind/list.ts
 var STEPS = [
@@ -401,10 +481,10 @@ var STEPS = [
 ];
 var order = (b) => b.rows.flatMap((r) => typeof r.id === "string" ? [r.id] : []);
 var row = (b, id) => b.rows.find((r) => r.type === "row" && r.id === id);
-var moved = (ids2, id, to) => {
-  const from = ids2.indexOf(id);
+var moved = (ids3, id, to) => {
+  const from = ids3.indexOf(id);
   if (from < 0) return null;
-  const out2 = ids2.filter((i) => i !== id);
+  const out2 = ids3.filter((i) => i !== id);
   out2.splice(Math.min(Math.max(to, 0), out2.length), 0, id);
   return out2;
 };
@@ -412,8 +492,8 @@ var list = {
   word: (b, g) => b.reorder != null && row(b, g)?.handle === true ? "reorder" : null,
   start: (b, g) => list.word(b, g) ? order(b) : null,
   candidate: (b, g, r) => {
-    const ids2 = list.start(b, g);
-    return ids2 && moved(ids2, g, ids2.indexOf(g) + r);
+    const ids3 = list.start(b, g);
+    return ids3 && moved(ids3, g, ids3.indexOf(g) + r);
   },
   nudge: (b, g, from, by) => {
     const at2 = from.indexOf(g);
@@ -486,7 +566,7 @@ function gestured(el, c, o) {
     go2({ on: "settled" });
   };
   if (out2) out2.back = back;
-  const send3 = async (cand) => {
+  const send4 = async (cand) => {
     const h2 = { start: start2, c: cand, back };
     c.held?.set(k, h2);
     say("sending");
@@ -505,7 +585,7 @@ function gestured(el, c, o) {
     if (p.at === "pressed") say(`${el.getAttribute("aria-label") ?? ""}, grabbed, ${o.rules.says(o.block, o.grab, start2)}. Arrows move, Enter drops, Escape cancels`);
     if (p.at === "dragging") say("no drop here");
     if (p.at === "previewing") say(o.rules.says(o.block, o.grab, p.c));
-    if (fx && fx !== "tap") void send3(fx.send);
+    if (fx && fx !== "tap") void send4(fx.send);
   };
   const phase = () => p.at;
   const live3 = () => p.at === "pressed" || p.at === "dragging" || p.at === "previewing";
@@ -625,8 +705,8 @@ function edited(input3, c, o) {
 var rec2 = (v) => typeof v === "object" && v !== null;
 function list2({ b, hooks: hooks4 }) {
   const cx = useContext5(Cx);
-  const ref3 = useRef4(null);
-  const act2 = useRef4(cx.act);
+  const ref3 = useRef5(null);
+  const act2 = useRef5(cx.act);
   act2.current = cx.act;
   useLayoutEffect(() => {
     const l = ref3.current;
@@ -665,7 +745,7 @@ function list2({ b, hooks: hooks4 }) {
 }
 
 // react/src/kinds/media.ts
-import { createElement as createElement6, Fragment, useContext as useContext6, useLayoutEffect as useLayoutEffect2, useReducer, useRef as useRef5, useState as useState5 } from "react";
+import { createElement as createElement7, Fragment, useContext as useContext6, useLayoutEffect as useLayoutEffect2, useReducer, useRef as useRef6, useState as useState6 } from "react";
 
 // src/core/kind/media.ts
 var SMALL = 0.02;
@@ -858,14 +938,14 @@ function still(b, hooks4) {
 }
 function media2({ b, hooks: hooks4 }) {
   const cx = useContext6(Cx);
-  const live3 = useRef5(cx);
+  const live3 = useRef6(cx);
   live3.current = cx;
-  const keep = useRef5(/* @__PURE__ */ new Map());
-  const v = useRef5({}).current;
+  const keep = useRef6(/* @__PURE__ */ new Map());
+  const v = useRef6({}).current;
   const [, redraw] = useReducer((n) => n + 1, 0);
-  const [now, show] = useState5(null);
-  const [root, z] = [useRef5(null), useRef5(null)];
-  const after = useRef5({});
+  const [now, show] = useState6(null);
+  const [root, z] = [useRef6(null), useRef6(null)];
+  const after = useRef6({});
   const k = JSON.stringify([b, v.tool, v.into, v.sel, v.typing]);
   const c = { act: (a) => live3.current.act(a), held: keep.current };
   const wires = [];
@@ -891,7 +971,7 @@ function media2({ b, hooks: hooks4 }) {
     return { from: at2(x, y), to: at2(x + dx, y + dy) };
   };
   const o = { b, k, v, shown: now?.k === k ? now : null, show, reach, again, wires };
-  return h("figure", "media mkm", { ...hooks4, ref: root }, createElement6(Fragment, { key: k }, ...marked(o, c, z)));
+  return h("figure", "media mkm", { ...hooks4, ref: root }, createElement7(Fragment, { key: k }, ...marked(o, c, z)));
 }
 function marked(o, c, z) {
   const { b, v, shown: shown4 } = o;
@@ -1106,7 +1186,7 @@ function zoom(o, at2) {
 }
 
 // react/src/kinds/row.ts
-import { useContext as useContext7, useRef as useRef6, useState as useState6 } from "react";
+import { useContext as useContext7, useRef as useRef7, useState as useState7 } from "react";
 function round2(d, now, cx) {
   const tap = now ? null : d.tap ?? null;
   const url2 = urlOf(tap);
@@ -1123,8 +1203,8 @@ function round2(d, now, cx) {
 }
 function row2({ b, hooks: hooks4 }) {
   const cx = useContext7(Cx);
-  const [flip, setFlip] = useState6(false);
-  const x0 = useRef6(0);
+  const [flip, setFlip] = useState7(false);
+  const x0 = useRef7(0);
   const toggle2 = () => setFlip((f) => !f);
   const cls = `row${b.style === "link" ? " link" : ""}${b.sticky ? " sticky" : ""}${b.indent ? " in" + Math.min(b.indent, 3) : ""}`;
   const rounds = b.rounds ?? [];
@@ -1196,7 +1276,7 @@ function stat({ b, hooks: hooks4 }) {
 }
 
 // react/src/kinds/table.ts
-import { useContext as useContext10, useLayoutEffect as useLayoutEffect3, useReducer as useReducer2, useRef as useRef7 } from "react";
+import { useContext as useContext10, useLayoutEffect as useLayoutEffect3, useReducer as useReducer2, useRef as useRef8 } from "react";
 
 // src/core/eval.ts
 var own = (o, k) => Object.prototype.hasOwnProperty.call(o, k);
@@ -1534,16 +1614,16 @@ function cell(tag, c, part, kids2, blank2, attrs = {}) {
   const cls = `${atEnd(c) ? "end" : "start"} k-${c.kind} p-${part}${c.width ? " w" : ""}${blank2 ? " nil" : ""}`;
   return h(tag, cls, { "data-l": c.label, ...attrs, style: c.width ? { "--w": `${c.width}ch` } : void 0 }, ...kids2);
 }
-var send2 = (v, action, values) => void v.c.act({ action, block: v.b.id, values });
+var send3 = (v, action, values) => void v.c.act({ action, block: v.b.id, values });
 var go = (v, f) => ({ onClick: () => (f(), v.draw()) });
 var sent = (v, row5, col) => {
   const c = held2(v.c, { block: v.b, rules: grid, grab: { row: row5, column: col }, item: pk({ row: row5, col }) });
   return isEdit(c) ? c.value : void 0;
 };
-var waits2 = (v, r) => v.b.columns.some((x) => sent(v, r.id, x.id) !== void 0);
+var waits3 = (v, r) => v.b.columns.some((x) => sent(v, r.id, x.id) !== void 0);
 var sort = (v) => v.b.columns.find((x) => x.id === v.st.sort?.by);
 var cellAt = (v, p) => Array.from(v.box.current?.querySelectorAll("tbody td[data-c]") ?? []).find((td) => td.dataset.c === p.col && td.parentElement?.dataset.id === p.row);
-var fit = (ids2, i, by) => ids2[Math.max(0, Math.min(ids2.length - 1, ids2.indexOf(i) + by))] ?? i;
+var fit = (ids3, i, by) => ids3[Math.max(0, Math.min(ids3.length - 1, ids3.indexOf(i) + by))] ?? i;
 function tick(v, on, label2, set, mixed = false, cls = "", off = false) {
   const ref3 = (e) => {
     if (e) e.indeterminate = mixed;
@@ -1556,7 +1636,7 @@ var menu = (v, name, label2) => btn(label2, "", void 0, void 0, { "aria-expanded
 function exporter(v, d, f) {
   const label2 = v.b.export?.length === 1 ? `export ${(FORMAT[f] ?? f).toLowerCase()}` : FORMAT[f] ?? f;
   const values = () => ({ format: f, columns: d.cols.map((x) => x.id), sort: v.st.sort, q: v.st.q, rows: [...v.st.sel] });
-  return btn(label2, "", void 0, "export", { onClick: () => send2(v, "export", values()) });
+  return btn(label2, "", void 0, "export", { onClick: () => send3(v, "export", values()) });
 }
 function sorter(v, d) {
   const opts2 = [h("option", "", { value: "" }, "sort: as sent")];
@@ -1575,7 +1655,7 @@ function bar2(v, d) {
   if (d.pick) out2.push(every(v, d, "tbk"));
   if (d.sel) {
     out2.push(h("b", "tbt", null, `${d.sel} selected`));
-    for (const a of b.select?.actions ?? []) out2.push(btn(a.label, a.bad ? "bad" : "", void 0, a.action, { onClick: () => send2(v, a.action, { rows: [...st.sel] }) }));
+    for (const a of b.select?.actions ?? []) out2.push(btn(a.label, a.bad ? "bad" : "", void 0, a.action, { onClick: () => send3(v, a.action, { rows: [...st.sel] }) }));
     out2.push(h("span", "tbn", null));
   } else out2.push(b.title ? h("b", "tbt", null, b.title) : null, h("span", "tbn", null, st.q ? `${d.items.length} of ${n} rows` : `${n} row${n === 1 ? "" : "s"}`));
   if (b.reorder && !d.sel && (st.sort || st.q)) out2.push(h("span", "tbn", null, `${st.sort ? "sorted" : "filtered"}, so rows stay put`), btn("as sent", "", void 0, void 0, go(v, () => (st.sort = null, st.q = ""))));
@@ -1661,9 +1741,9 @@ ${pk(p)}`;
       st.bad.delete(ik);
       if (field2) return st.fields.set(x.id, (st.fields.get(x.id) ?? 0) + 1), v.draw();
       st.open = null;
-      const d = shows(v), ids2 = d.items.map((i) => i.id), cols = d.cols.map((i) => i.id);
+      const d = shows(v), ids3 = d.items.map((i) => i.id), cols = d.cols.map((i) => i.id);
       const [dr, dc] = { down: [1, 0], right: [0, 1], left: [0, -1] }[how] ?? [0, 0];
-      if (how !== "blur") st.cur = { row: fit(ids2, p.row, dr), col: fit(cols, p.col, dc) }, st.focus = true;
+      if (how !== "blur") st.cur = { row: fit(ids3, p.row, dr), col: fit(cols, p.col, dc) }, st.focus = true;
       v.draw();
     };
     edited(e, v.c, { block: b, gesture, rules: grid, grab: { row: p.row, column: p.col }, item: pk(p), show, left });
@@ -1679,7 +1759,7 @@ function group(v, d, i) {
   const items = itemsOf(d.rows, i);
   const tds = d.cols.map((x, j) => {
     const sub = j > 0 && x.total && x.total !== "count" ? total(x, items) : null;
-    const wait = sub && cellRole(v.b, x) === "app" && items.some((it) => waits2(v, it));
+    const wait = sub && cellRole(v.b, x) === "app" && items.some((it) => waits3(v, it));
     return cell("td", x, d.role[j] ?? "meta", j === 0 ? [shown2(x, r.cells[x.id]), h("span", "tbgn", null, String(items.length))] : sub ? [sub[1]] : [], j > 0 && !sub, { className: wait ? "wait" : void 0 });
   });
   return h("tr", "grp", { key: r.id, "data-id": r.id }, d.handles ? grip(v, r) : null, d.pick ? h("td", "tbc", null) : null, ...tds);
@@ -1689,7 +1769,7 @@ function item2(v, d, r) {
   const max = (x) => x.max ?? Math.max(1, ...b.rows.map((r2) => at(r2, x.id)).filter((n) => typeof n === "number"));
   const cls = [r.tap && !d.ed ? "tap" : "", st.changed.has(r.id) ? "chg" : "", st.fresh.has(r.id) ? "b-late" : "", st.sel.has(r.id) ? "sel" : ""].filter(Boolean).join(" ");
   const tap = r.tap;
-  const wait = waits2(v, r);
+  const wait = waits3(v, r);
   const tds = d.cols.map((x, i) => {
     const c = at(r, x.id), t = shown2(x, c), k = cellRole(b, x), p = { row: r.id, col: x.id };
     const fill3 = h("i", "", { style: { width: `${Math.min(1, Math.max(0, Number(c) / max(x))) * 100}%` } });
@@ -1728,7 +1808,7 @@ function body(v, d) {
 }
 function foot(v, d) {
   if (!d.items.length || !d.cols.some((x) => x.total)) return null;
-  const wait = d.items.some((r) => waits2(v, r));
+  const wait = d.items.some((r) => waits3(v, r));
   const tds = d.cols.slice(1).map((x, j) => {
     const i = j + 1;
     const t = total(x, d.items);
@@ -1779,8 +1859,8 @@ function keys(v) {
     if (!td || !row5 || !td.dataset.c) return;
     const p = { row: row5, col: td.dataset.c };
     const m = moves[e.key];
-    const d = shows(v), ids2 = d.items.map((i) => i.id), cols = d.cols.map((i) => i.id);
-    if (m) v.st.cur = { row: fit(ids2, row5, m[0]), col: fit(cols, p.col, m[1]) }, v.st.focus = true;
+    const d = shows(v), ids3 = d.items.map((i) => i.id), cols = d.cols.map((i) => i.id);
+    if (m) v.st.cur = { row: fit(ids3, row5, m[0]), col: fit(cols, p.col, m[1]) }, v.st.focus = true;
     else if (e.key === "Enter") open(v, p);
     else if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && e.key !== " ") open(v, p, e.key);
     else return;
@@ -1814,7 +1894,7 @@ function sheet2(v, d) {
     const bad = ing && st.bad.has(`f
 ${pk({ row: r.id, col: x.id })}`);
     const box = h("span", ["shv", ing ? "ing" : "", bad ? "bad" : ""].filter(Boolean).join(" "), null, ...typed ? ing ? input2(v, r, x, true) : [] : [shown2(x, at(r, x.id))]);
-    const cls = [out2 ? "sent" : "", k === "app" && waits2(v, r) ? "wait" : ""].filter(Boolean).join(" ");
+    const cls = [out2 ? "sent" : "", k === "app" && waits3(v, r) ? "wait" : ""].filter(Boolean).join(" ");
     return h("label", `fd shf ${atEnd(x) ? "end" : "start"}`, { className: cls || void 0 }, h("span", "fk", null, x.label, u ? h("span", "tbu", null, u) : null), box);
   });
   return h("div", "tbsh", { key: `sheet${st.gen}` }, h("div", "b-sheet__card", { role: "dialog", "aria-label": `Edit ${named2(b, r)}` }, top, ...fields));
@@ -1851,12 +1931,12 @@ var init = (b) => ({
 });
 function table({ b, hooks: hooks4 }) {
   const cx = useContext10(Cx);
-  const live3 = useRef7(cx);
+  const live3 = useRef8(cx);
   live3.current = cx;
-  const keep = useRef7(/* @__PURE__ */ new Map());
-  const wired = useRef7(/* @__PURE__ */ new WeakSet());
-  const box = useRef7(null);
-  const kept = useRef7(null);
+  const keep = useRef8(/* @__PURE__ */ new Map());
+  const wired = useRef8(/* @__PURE__ */ new WeakSet());
+  const box = useRef8(null);
+  const kept = useRef8(null);
   const [, draw2] = useReducer2((n) => n + 1, 0);
   const st = state(b, kept.current ??= init(b));
   const v = { b, c: { act: (a) => live3.current.act(a), held: keep.current }, tap: (t2) => live3.current.tap(t2), st, box, wired: wired.current, draw: draw2 };
@@ -1879,7 +1959,7 @@ function text3({ b, hooks: hooks4 }) {
 }
 
 // react/src/kinds/timeline.ts
-import { useContext as useContext12, useLayoutEffect as useLayoutEffect4, useRef as useRef8, useState as useState7 } from "react";
+import { useContext as useContext12, useLayoutEffect as useLayoutEffect4, useRef as useRef9, useState as useState8 } from "react";
 
 // src/core/kind/timeline.ts
 var MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -2161,12 +2241,12 @@ function rove(root) {
 }
 function timeline2({ b, hooks: hooks4 }) {
   const cx = useContext12(Cx);
-  const live3 = useRef8(cx);
+  const live3 = useRef9(cx);
   live3.current = cx;
-  const keep = useRef8(/* @__PURE__ */ new Map());
-  const done = useRef8(/* @__PURE__ */ new WeakSet());
-  const [root, wrap, grid2] = [useRef8(null), useRef8(null), useRef8(null)];
-  const [px, setPx] = useState7(null);
+  const keep = useRef9(/* @__PURE__ */ new Map());
+  const done = useRef9(/* @__PURE__ */ new WeakSet());
+  const [root, wrap, grid2] = [useRef9(null), useRef9(null), useRef9(null)];
+  const [px, setPx] = useState8(null);
   const [f, t] = [day(b.from), day(b.to)];
   const on = b.move != null || b.stretch != null || b.draw != null;
   const z = px === null || px >= 24 ? 1 : px >= 12 ? 2 : 3;
@@ -2206,7 +2286,7 @@ function zooms(ax, px, set, wrap, grid2) {
 var views2 = { button, card, chips, form, images, list: list2, media: media2, row: row2, screen, section, sheet, stat, table, text: text3, timeline: timeline2 };
 
 // react/src/island.ts
-import { createElement as createElement7, Suspense, useContext as useContext13, useLayoutEffect as useLayoutEffect5, useState as useState8 } from "react";
+import { createElement as createElement8, Suspense, useContext as useContext13, useLayoutEffect as useLayoutEffect5, useState as useState9 } from "react";
 function Mark({ on }) {
   useLayoutEffect5(() => {
     on(true);
@@ -2216,13 +2296,13 @@ function Mark({ on }) {
 }
 function Isle({ b, attrs }) {
   const cx = useContext13(Cx);
-  const [live3, setLive] = useState8(false);
+  const [live3, setLive] = useState9(false);
   const C = Object.prototype.hasOwnProperty.call(cx.islands, b.name) ? cx.islands[b.name] : void 0;
   const fallback = row4(b.fallback, cx);
   const id = b.id ?? "";
   const emit = (name, values) => b.events?.includes(name) ? void cx.act({ action: name, block: id, values: values ?? {} }) : cx.report({ what: "dropped", block: id, event: name });
   const style = { overflow: "hidden", aspectRatio: b.size?.aspect ?? void 0, width: b.size?.width ?? void 0, height: b.size?.height ?? void 0 };
-  const inner = C && createElement7(Boundary, { b, report: cx.report, fallback }, createElement7(Suspense, { fallback }, createElement7(Mark, { on: setLive }), createElement7(C, { props: b.props ?? {}, emit })));
+  const inner = C && createElement8(Boundary, { b, report: cx.report, fallback }, createElement8(Suspense, { fallback }, createElement8(Mark, { on: setLive }), createElement8(C, { props: b.props ?? {}, emit })));
   return h("div", "", { ...attrs, "data-fallback": C && live3 ? void 0 : "", style }, inner || fallback);
 }
 
@@ -2254,7 +2334,7 @@ function row4(f, cx) {
   const sub = f.subtitle != null ? h("span", "rs b-row__subtitle", null, f.subtitle) : null;
   return h("div", tap ? "row tap" : "row", pressed, h("span", "rm", null, h("span", "rt b-row__title", null, f.title), sub));
 }
-var kids = (bs) => (Array.isArray(bs) ? bs.filter(isBlk2) : []).map((b, i) => createElement8(Block, { key: typeof b.id === "string" ? b.id : `~${i}`, b }));
+var kids = (bs) => (Array.isArray(bs) ? bs.filter(isBlk2) : []).map((b, i) => createElement9(Block, { key: typeof b.id === "string" ? b.id : `~${i}`, b }));
 function Fallen({ b }) {
   const cx = useContext14(Cx);
   const f = b.fallback ?? { title: String(b.type) };
@@ -2280,19 +2360,19 @@ var Boundary = class extends Component {
 };
 var own2 = (t, b, attrs) => {
   const V = views2[t];
-  return V ? createElement8(V, { b, hooks: attrs }) : void 0;
+  return V ? createElement9(V, { b, hooks: attrs }) : void 0;
 };
 function Draw({ b }) {
   const cx = useContext14(Cx);
-  if (isIsland(b)) return createElement8(Isle, { b, attrs: hooksOf(b, cx, false) });
-  if (core(b)) return own2(b.type, b, hooksOf(b, cx, false)) ?? createElement8(Fallen, { b });
+  if (isIsland(b)) return createElement9(Isle, { b, attrs: hooksOf(b, cx, false) });
+  if (core(b)) return own2(b.type, b, hooksOf(b, cx, false)) ?? createElement9(Fallen, { b });
   const K = cx.kinds[String(b.type)];
   const act2 = (a) => cx.act({ ...a, block: typeof b.id === "string" ? b.id : null });
-  return K ? h("div", "", hooksOf(b, cx, false), createElement8(K, { block: { ...b, type: String(b.type) }, act: act2 })) : createElement8(Fallen, { b });
+  return K ? h("div", "", hooksOf(b, cx, false), createElement9(K, { block: { ...b, type: String(b.type) }, act: act2 })) : createElement9(Fallen, { b });
 }
 var Block = memo(function Block2({ b }) {
   const cx = useContext14(Cx);
-  return createElement8(Boundary, { b, report: cx.report, fallback: createElement8(Fallen, { b }) }, createElement8(Draw, { b }));
+  return createElement9(Boundary, { b, report: cx.report, fallback: createElement9(Fallen, { b }) }, createElement9(Draw, { b }));
 });
 
 // react/src/view.ts
@@ -2304,13 +2384,13 @@ var watch = (on) => {
   return () => m.removeEventListener("change", on);
 };
 function BlocksView(p) {
-  const last = useRef9(void 0);
+  const last = useRef10(void 0);
   const screen2 = useMemo2(() => last.current = share(last.current, p.screen), [p.screen]);
   const { cx, ask } = useCx(p, screen2);
   const dark = useSyncExternalStore(watch, () => matchMedia(DARK).matches, () => false);
   const s = p.look?.[p.mode === "dark" || p.mode !== "light" && dark ? "dark" : "light"];
   const style = s ? { ...s.tokens, colorScheme: s["color-scheme"] } : void 0;
-  return h("div", "b-view", { style }, createElement9(Cx.Provider, { value: cx }, createElement9(Block, { b: screen2 })), ask);
+  return h("div", "b-view", { style }, createElement10(Cx.Provider, { value: cx }, createElement10(Block, { b: screen2 })), ask);
 }
 export {
   BlocksView,
