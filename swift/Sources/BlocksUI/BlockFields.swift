@@ -101,8 +101,16 @@ internal struct FieldsBlock: View {
     @Environment(\.behaved) private var behaved
     @Environment(\.form) private var shared
     @Environment(\.act) private var act
+    @Environment(\.fileRows) private var given
     @State private var own: [String: JSONValue] = [:]
+    @State private var files: [String: [FileRow]] = [:]
     internal let block: Blocks.Form
+
+    private var uploads: Binding<[String: [FileRow]]> { given.map { .constant($0) } ?? $files }
+
+    private var waits: String? {
+        block.fields.flatMap { uploads.wrappedValue[$0.kind.name] ?? [] }.waits
+    }
 
     private var live: Binding<[String: JSONValue]>? {
         guard let action = block.action else { return nil }
@@ -131,12 +139,17 @@ internal struct FieldsBlock: View {
             }
             if let submit = block.submit {
                 let source = Source(action: submit.action, values: submit.values)
-                ActButton(source: source, values: block.fieldValues.merging(own) { $1 }) {
+                let sent = block.fields.reduce(into: [String: JSONValue]()) { out, f in
+                    if let rows = uploads.wrappedValue[f.kind.name] { out[f.kind.name] = .array(rows.ids.map(JSONValue.string)) }
+                }
+                if let waits { Text(waits).ui(Scale.count, .regular, look).foregroundStyle(look.palette.mute) }
+                ActButton(source: source, values: block.fieldValues.merging(own) { $1 }.merging(sent) { $1 }) {
                     CardButton(title: submit.label, primary: true, tint: context.tint)
                 }
-                .disabled(block.id.map(behaved.view.disabled.contains) == true)
+                .disabled(block.id.map(behaved.view.disabled.contains) == true || waits != nil)
             }
         }
+        .environment(\.uploads, uploads).environment(\.formId, block.id)
     }
 }
 
@@ -159,9 +172,13 @@ internal struct FieldRow: View {
         if case .pick(let all) = field.edit { all } else { nil }
     }
 
-    internal var body: some View {
+    @ViewBuilder internal var body: some View {
+        if case .files(let f) = field.edit { UploadRow(field: f) } else { row }
+    }
+
+    private var row: some View {
         let palette = look.palette
-        Button(action: tap) {
+        return Button(action: tap) {
             HStack {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(field.label ?? name).ui(14, .regular, look).foregroundStyle(palette.mute)

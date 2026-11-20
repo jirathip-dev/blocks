@@ -17,43 +17,43 @@
         {
           "name": "photos-empty",
           "type": "upload",
-          "drawn": "plain",
-          "role": "textbox",
+          "drawn": "native",
+          "role": "group",
           "label": "Photos of the problem"
         },
         {
           "name": "photos",
           "type": "upload",
-          "drawn": "plain",
-          "role": "textbox",
+          "drawn": "native",
+          "role": "group",
           "label": "Photos of the problem"
         },
         {
           "name": "photos-error",
           "type": "upload",
-          "drawn": "plain",
-          "role": "textbox",
+          "drawn": "native",
+          "role": "group",
           "label": "Photos of the problem"
         },
         {
           "name": "photos-was",
           "type": "upload",
-          "drawn": "plain",
-          "role": "textbox",
+          "drawn": "native",
+          "role": "group",
           "label": "Photos of the problem"
         },
         {
           "name": "photos-doc",
           "type": "upload",
-          "drawn": "plain",
-          "role": "textbox",
+          "drawn": "native",
+          "role": "group",
           "label": "Photos of the problem"
         },
         {
           "name": "photos-label",
           "type": "upload",
-          "drawn": "plain",
-          "role": "textbox",
+          "drawn": "native",
+          "role": "group",
           "label": "A label long enough to wrap onto a second line on a phone held upright"
         }
       ],
