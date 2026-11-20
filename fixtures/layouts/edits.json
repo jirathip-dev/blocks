@@ -1,0 +1,491 @@
+{
+ "slots": {
+  "box": [
+   "in"
+  ],
+  "nav": [
+   "side",
+   "main",
+   "menu"
+  ],
+  "sidebar": [
+   "top",
+   "list"
+  ]
+ },
+ "locked": [
+  "/screens/pairing"
+ ],
+ "layout": {
+  "format": 1,
+  "root": {
+   "type": "nav",
+   "id": "root",
+   "slots": {
+    "main": [
+     {
+      "type": "screen",
+      "id": "home",
+      "source": "core",
+      "path": "/screens/home",
+      "place": {
+       "compact": "push",
+       "wide": "panel"
+      }
+     },
+     {
+      "type": "box",
+      "id": "box1",
+      "slots": {
+       "in": [
+        {
+         "type": "box",
+         "id": "box2",
+         "slots": {
+          "in": [
+           {
+            "type": "box",
+            "id": "box3",
+            "slots": {
+             "in": [
+              {
+               "type": "box",
+               "id": "box4",
+               "slots": {
+                "in": []
+               }
+              }
+             ]
+            }
+           }
+          ]
+         }
+        }
+       ]
+      }
+     }
+    ],
+    "menu": [
+     {
+      "type": "screen",
+      "id": "about",
+      "source": "core",
+      "path": "/screens/about",
+      "place": "sheet"
+     }
+    ],
+    "side": [
+     {
+      "type": "sidebar",
+      "id": "bar",
+      "place": {
+       "compact": "menu",
+       "wide": "column"
+      },
+      "slots": {
+       "list": [
+        {
+         "type": "box",
+         "id": "pane",
+         "slots": {
+          "in": [
+           {
+            "type": "screen",
+            "id": "inbox",
+            "source": "core",
+            "path": "/screens/inbox",
+            "place": "push"
+           }
+          ]
+         }
+        }
+       ]
+      }
+     }
+    ]
+   }
+  }
+ },
+ "tree": "root(main: home box1(in: box2(in: box3(in: box4(in:)))); menu: about; side: bar(list: pane(in: inbox)))",
+ "drops": {
+  "root": [],
+  "bar": [
+   {
+    "edit": "move",
+    "id": "bar",
+    "into": "root",
+    "slot": "main",
+    "before": "home"
+   },
+   {
+    "edit": "swap",
+    "a": "bar",
+    "b": "home"
+   },
+   {
+    "edit": "move",
+    "id": "bar",
+    "into": "root",
+    "slot": "main",
+    "before": "box1"
+   },
+   {
+    "edit": "swap",
+    "a": "bar",
+    "b": "box1"
+   },
+   {
+    "edit": "move",
+    "id": "bar",
+    "into": "box1",
+    "slot": "in",
+    "before": "box2"
+   },
+   {
+    "edit": "swap",
+    "a": "bar",
+    "b": "box2"
+   },
+   {
+    "edit": "move",
+    "id": "bar",
+    "into": "box2",
+    "slot": "in",
+    "before": "box3"
+   },
+   {
+    "edit": "swap",
+    "a": "bar",
+    "b": "box3"
+   },
+   {
+    "edit": "move",
+    "id": "bar",
+    "into": "box2",
+    "slot": "in",
+    "before": null
+   },
+   {
+    "edit": "move",
+    "id": "bar",
+    "into": "box1",
+    "slot": "in",
+    "before": null
+   },
+   {
+    "edit": "move",
+    "id": "bar",
+    "into": "root",
+    "slot": "main",
+    "before": null
+   },
+   {
+    "edit": "move",
+    "id": "bar",
+    "into": "root",
+    "slot": "menu",
+    "before": "about"
+   },
+   {
+    "edit": "swap",
+    "a": "bar",
+    "b": "about"
+   },
+   {
+    "edit": "move",
+    "id": "bar",
+    "into": "root",
+    "slot": "menu",
+    "before": null
+   }
+  ],
+  "inbox": [
+   {
+    "edit": "move",
+    "id": "inbox",
+    "into": "root",
+    "slot": "main",
+    "before": "home"
+   },
+   {
+    "edit": "swap",
+    "a": "inbox",
+    "b": "home"
+   },
+   {
+    "edit": "move",
+    "id": "inbox",
+    "into": "root",
+    "slot": "main",
+    "before": "box1"
+   },
+   {
+    "edit": "move",
+    "id": "inbox",
+    "into": "box1",
+    "slot": "in",
+    "before": "box2"
+   },
+   {
+    "edit": "swap",
+    "a": "inbox",
+    "b": "box2"
+   },
+   {
+    "edit": "move",
+    "id": "inbox",
+    "into": "box2",
+    "slot": "in",
+    "before": "box3"
+   },
+   {
+    "edit": "swap",
+    "a": "inbox",
+    "b": "box3"
+   },
+   {
+    "edit": "move",
+    "id": "inbox",
+    "into": "box3",
+    "slot": "in",
+    "before": "box4"
+   },
+   {
+    "edit": "swap",
+    "a": "inbox",
+    "b": "box4"
+   },
+   {
+    "edit": "move",
+    "id": "inbox",
+    "into": "box4",
+    "slot": "in",
+    "before": null
+   },
+   {
+    "edit": "move",
+    "id": "inbox",
+    "into": "box3",
+    "slot": "in",
+    "before": null
+   },
+   {
+    "edit": "move",
+    "id": "inbox",
+    "into": "box2",
+    "slot": "in",
+    "before": null
+   },
+   {
+    "edit": "move",
+    "id": "inbox",
+    "into": "box1",
+    "slot": "in",
+    "before": null
+   },
+   {
+    "edit": "move",
+    "id": "inbox",
+    "into": "root",
+    "slot": "main",
+    "before": null
+   },
+   {
+    "edit": "move",
+    "id": "inbox",
+    "into": "root",
+    "slot": "menu",
+    "before": "about"
+   },
+   {
+    "edit": "swap",
+    "a": "inbox",
+    "b": "about"
+   },
+   {
+    "edit": "move",
+    "id": "inbox",
+    "into": "root",
+    "slot": "menu",
+    "before": null
+   },
+   {
+    "edit": "move",
+    "id": "inbox",
+    "into": "root",
+    "slot": "side",
+    "before": "bar"
+   },
+   {
+    "edit": "move",
+    "id": "inbox",
+    "into": "bar",
+    "slot": "list",
+    "before": "pane"
+   },
+   {
+    "edit": "move",
+    "id": "inbox",
+    "into": "bar",
+    "slot": "list",
+    "before": null
+   },
+   {
+    "edit": "move",
+    "id": "inbox",
+    "into": "bar",
+    "slot": "top",
+    "before": null
+   },
+   {
+    "edit": "move",
+    "id": "inbox",
+    "into": "root",
+    "slot": "side",
+    "before": null
+   }
+  ]
+ },
+ "edits": [
+  {
+   "name": "a move before a node",
+   "edit": {
+    "edit": "move",
+    "id": "bar",
+    "into": "root",
+    "slot": "main",
+    "before": "home"
+   },
+   "tree": "root(main: bar(list: pane(in: inbox)) home box1(in: box2(in: box3(in: box4(in:)))); menu: about; side:)"
+  },
+  {
+   "name": "a move to the end of an empty slot, six deep",
+   "edit": {
+    "edit": "move",
+    "id": "home",
+    "into": "box4",
+    "slot": "in",
+    "before": null
+   },
+   "tree": "root(main: box1(in: box2(in: box3(in: box4(in: home)))); menu: about; side: bar(list: pane(in: inbox)))"
+  },
+  {
+   "name": "a swap across slots",
+   "edit": {
+    "edit": "swap",
+    "a": "inbox",
+    "b": "about"
+   },
+   "tree": "root(main: home box1(in: box2(in: box3(in: box4(in:)))); menu: inbox; side: bar(list: pane(in: about)))"
+  },
+  {
+   "name": "a show on one size class",
+   "edit": {
+    "edit": "show",
+    "id": "home",
+    "size": "wide",
+    "place": "hidden"
+   },
+   "tree": "root(main: home box1(in: box2(in: box3(in: box4(in:)))); menu: about; side: bar(list: pane(in: inbox)))",
+   "place": {
+    "id": "home",
+    "compact": "push",
+    "wide": "hidden"
+   }
+  },
+  {
+   "name": "a move into its own subtree",
+   "edit": {
+    "edit": "move",
+    "id": "box1",
+    "into": "box3",
+    "slot": "in",
+    "before": null
+   },
+   "refused": "\"box1\" can't go inside itself"
+  },
+  {
+   "name": "a move over six deep",
+   "edit": {
+    "edit": "move",
+    "id": "bar",
+    "into": "box4",
+    "slot": "in",
+    "before": null
+   },
+   "refused": "root.slots.main[1].slots.in[0].slots.in[0].slots.in[0].slots.in[0].slots.list[0]: over 6 deep"
+  },
+  {
+   "name": "a move into a slot its host does not hold",
+   "edit": {
+    "edit": "move",
+    "id": "home",
+    "into": "about",
+    "slot": "in",
+    "before": null
+   },
+   "refused": "root.slots.menu[0]: unknown slot \"in\""
+  },
+  {
+   "name": "a swap with its own branch",
+   "edit": {
+    "edit": "swap",
+    "a": "bar",
+    "b": "inbox"
+   },
+   "refused": "\"bar\" and \"inbox\" are on one branch"
+  },
+  {
+   "name": "the root does not move",
+   "edit": {
+    "edit": "move",
+    "id": "root",
+    "into": "box4",
+    "slot": "in",
+    "before": null
+   },
+   "refused": "the root can't move"
+  },
+  {
+   "name": "the root is not swapped",
+   "edit": {
+    "edit": "swap",
+    "a": "home",
+    "b": "root"
+   },
+   "refused": "the root can't move"
+  },
+  {
+   "name": "the root is not hidden",
+   "edit": {
+    "edit": "show",
+    "id": "root",
+    "size": "compact",
+    "place": "hidden"
+   },
+   "refused": "root: may not be hidden"
+  },
+  {
+   "name": "a locked screen is no node to grab",
+   "edit": {
+    "edit": "move",
+    "id": "core:/screens/pairing",
+    "into": "root",
+    "slot": "main",
+    "before": null
+   },
+   "refused": "no node \"core:/screens/pairing\""
+  },
+  {
+   "name": "before a node that is not in that slot",
+   "edit": {
+    "edit": "move",
+    "id": "home",
+    "into": "root",
+    "slot": "menu",
+    "before": "box1"
+   },
+   "refused": "no \"box1\" in menu of \"root\""
+  }
+ ]
+}

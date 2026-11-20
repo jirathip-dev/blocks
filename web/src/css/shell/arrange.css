@@ -1,0 +1,3 @@
+.b-arrange>[data-drop=onto]{opacity:.6}
+.b-arrange>[data-drop=before]{transform:translateY(var(--s2))}
+.b-arrange>[data-drop=after]{transform:translateY(calc(var(--s2) * -1))}

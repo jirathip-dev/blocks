@@ -66,4 +66,34 @@ final class LayoutTests: XCTestCase {
         XCTAssertEqual(
             why(#"{"format": 1, "root": {"type": "nav", "place": {"compact": "hidden"}}}"#), "root: may not be hidden")
     }
+
+    func testDropsGiveFixturesLayoutsEditsTheCratesEditsOnBothSizeClasses() throws {
+        struct Edits: Decodable {
+            let slots: [String: [String]]
+            let locked: Set<String>
+            let layout: JSONValue
+            let drops: [String: [LayoutEdit]]
+        }
+        let f = try JSONDecoder().decode(Edits.self, from: layoutFixture("edits.json"))
+        let contract = Blocks.Layout.Contract(
+            components: f.slots.filter { $0.key != "nav" }.map { .init(kind: $0.key, slots: Set($0.value)) }, locked: f.locked)
+        let layout = try Blocks.Layout(json: JSONEncoder().encode(f.layout), contract: contract)
+        XCTAssertEqual(f.drops.count, 3)
+        for size in SizeClass.all {
+            let tree = layout.resolved(for: size)
+            for (grabbed, want) in f.drops { XCTAssertEqual(tree.drops(f.slots, grabbed: grabbed), want, grabbed) }
+        }
+        let rules = LayoutRules(tree: layout.resolved(for: .wide), held: f.slots)
+        let inbox = try XCTUnwrap(f.drops["inbox"])
+        var keys = try XCTUnwrap(Driven(rules, "inbox"))
+        keys.on(.press)
+        keys.nudge(Nudge(.up))
+        XCTAssertEqual(keys.on(.release), .send(inbox[18]))
+        var named = try XCTUnwrap(Driven(rules, "inbox"))
+        XCTAssertEqual(named.named(Nudge(.left)), .send(inbox[15]))
+        XCTAssertNil(named.named(Nudge(.right)))
+        XCTAssertEqual([rules.candidate("inbox", -1), rules.candidate("inbox", 1)], [inbox[18], inbox[19]])
+        XCTAssertEqual(rules.says("inbox", inbox[18]), "before pane in list of bar")
+        XCTAssertNil(Driven(rules, "root"))
+    }
 }

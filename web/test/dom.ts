@@ -105,6 +105,9 @@ class El extends Parent {
   get isConnected() {
     return false;
   }
+  get parentElement() {
+    return this.parentNode instanceof El ? this.parentNode : null;
+  }
   setAttribute(k, v) {
     this.attrs.set(k, String(v));
   }

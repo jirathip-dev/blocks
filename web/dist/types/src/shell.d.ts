@@ -1,10 +1,12 @@
 import type { LayoutPlace, LayoutTransition } from "./gen/layout.ts";
 import type { Scheme } from "./gen/schemes.ts";
 import type { Kind } from "./gen/types.ts";
+import { type Editing } from "./arrange.ts";
 import { type Pair, type Scale } from "./core/look.ts";
 import { type Renderer, type Store } from "./render/ctx.ts";
 import type { OnFile } from "./core/field/files.ts";
 import { type Theme } from "./theme.ts";
+export type { Editing } from "./arrange.ts";
 export { behave } from "./behave.ts";
 export { evaluate, start, view } from "./core/eval.ts";
 export { dump } from "./dump.ts";
@@ -47,6 +49,7 @@ export type Mount = {
     theme?: Theme;
     schemes?: Record<string, Scheme>;
     store?: Store;
+    edit?: Editing;
     file?: OnFile;
 };
 export declare function resolved(n: Layout["root"], wide: boolean): Resolved;
@@ -54,6 +57,7 @@ export type Worn = Scheme | (Pair & {
     style?: Scale;
 });
 export declare function mount(o: Mount): {
+    layout(next: Layout): void;
     close(): void;
 };
 export declare function adopt(o?: {
