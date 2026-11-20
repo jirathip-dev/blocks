@@ -8,7 +8,7 @@ use blocks::{apply, Block, Built, Op};
 use blocks_desktop::{kinds, Event, Kit, Stage};
 use egui::emath::Numeric;
 use egui::epaint::text::{FontData, FontInsert, FontPriority, InsertFontFamily};
-use egui::{Context, FontFamily, Modifiers, PointerButton, Pos2, RawInput, Rect, Vec2, ViewportId};
+use egui::{Context, FontFamily, Key, Modifiers, PointerButton, Pos2, RawInput, Rect, Vec2, ViewportId};
 use serde::Deserialize;
 
 use crate::raster::{Canvas, Textures};
@@ -247,7 +247,7 @@ impl Live {
             }
             Step::Answer(a) => return self.ops(&a.ops),
             Step::Shot(shot) => return self.shot(&shot.name),
-            Step::Type(t) => format!("type {}", t.id),
+            Step::Type(t) => return self.type_in(&t.id, &t.text),
             Step::Scroll(on) => format!("scroll {}", on.id),
             Step::Gesture(g) => format!("gesture {}", g.id),
             Step::Refuse(r) => format!("refuse {}", r.toast),
@@ -257,9 +257,29 @@ impl Live {
 
     fn tap(&mut self, id: &str) {
         let hit = self.stage.drawn().and_then(|d| d.hits.get(id));
-        let Some([x, y, w, h]) = hit.filter(|h| h.live).and_then(|h| h.tap) else {
-            return self.run.report.dropped.push(format!("tap {id}"));
+        match hit.filter(|h| h.live).and_then(|h| h.tap) {
+            Some(at) => self.click(at),
+            None => self.run.report.dropped.push(format!("tap {id}")),
+        }
+    }
+
+    fn type_in(&mut self, id: &str, text: &str) {
+        let hit = self.stage.drawn().and_then(|d| d.hits.get(id));
+        let Some(at) = hit.filter(|h| h.live).and_then(|h| h.field) else {
+            return self.run.report.dropped.push(format!("type {id}"));
         };
+        self.click(at);
+        let all = egui::Event::Key {
+            key: Key::A,
+            physical_key: None,
+            pressed: true,
+            repeat: false,
+            modifiers: Modifiers::COMMAND,
+        };
+        self.passes(vec![all, egui::Event::Text(text.into())]);
+    }
+
+    fn click(&mut self, [x, y, w, h]: [f64; 4]) {
         let pos = Pos2::new(f32::from_f64(x + w / 2.0), f32::from_f64(y + h / 2.0));
         let press = |pressed| egui::Event::PointerButton {
             pos,

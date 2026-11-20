@@ -19,7 +19,7 @@ fn draw(b: &Chips, ui: &mut Ui, cx: &mut Cx<'_>) {
             if !act::press(ui, cx, b.action.as_deref(), chip) {
                 continue;
             }
-            act::pick(cx, &b.name, &o.value);
+            act::pick(cx, &b.name, o.value.as_str());
             if let Some(a) = &b.action {
                 act::send(cx, a, Map::from_iter([(b.name.clone(), Value::from(vec![o.value.clone()]))]));
             }
