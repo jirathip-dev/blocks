@@ -3,9 +3,9 @@ import { say } from "../gesture.ts";
 import type { Ctx } from "./ctx.ts";
 import { btn, h } from "./dom.ts";
 
-type Asked = { cursor: string; n: number; focus?: string; no: boolean; draw: () => void };
+type Asked = { cursor: string; n: number; focus?: string | undefined; no: boolean; draw: () => void };
 /// A table or list that may have more: its id, its page, how many rows it has loaded, the element that is busy while it waits, whether an edit or a move holds the load, and how a row of its own is made.
-export type Paged = { id: string; page?: Page | null; n: number; root: HTMLElement; held?: () => boolean; wrap: (kids: (Node | string)[], no: boolean) => HTMLElement };
+export type Paged = { id: string; page?: Page | null | undefined; n: number; root: HTMLElement; held?: () => boolean; wrap: (kids: (Node | string)[], no: boolean) => HTMLElement };
 
 const asked = new Map<string, Asked>();
 const FOCUSABLE = "button, a[href], input, select, [tabindex]";
@@ -33,7 +33,7 @@ export function paged(c: Ctx, o: Paged): HTMLElement | null {
   let e = o.wrap([], false);
   let paused = false;
   const retry = btn("load more");
-  retry.dataset.action = page.action;
+  retry.dataset["action"] = page.action;
   const draw = () => {
     const no = !!asked.get(o.id)?.no;
     const kids = no ? [h("span", "", "Couldn’t load more."), retry] : paused ? [h("span", "", "more below · loads once the row is placed")] : [h("span", "tbmw", "Loading more")];
@@ -49,7 +49,7 @@ export function paged(c: Ctx, o: Paged): HTMLElement | null {
     paused = !!o.held?.();
     if (paused) return draw();
     seen?.disconnect();
-    const focus = document.activeElement?.closest<HTMLElement>("[data-id]")?.dataset.id;
+    const focus = document.activeElement?.closest<HTMLElement>("[data-id]")?.dataset["id"];
     asked.set(o.id, { cursor: page.cursor, n: o.n, focus, no: false, draw });
     draw();
     void c.act({ action: page.action, block: o.id, values: { cursor: page.cursor } }).then((ok) => {

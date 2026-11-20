@@ -44,7 +44,7 @@ export function row({ b, hooks }: V<Row>) {
   const own = { ...id, ...(tapped ? { "data-action": sends(b.tap), ...press(() => (b.tap ? cx.tap(b.tap) : toggle())) } : null) };
   const rc = url || tapped ? `${cls} tap` : cls;
   if (!swipe.length) return url ? h("a", rc, { ...hooks, ...own, ...out(url) }, ...parts) : h("div", rc, { ...hooks, ...own }, ...parts);
-  const touch = { onTouchStart: (e: TouchEvent) => (x0.current = e.touches[0].clientX), onTouchEnd: (e: TouchEvent) => x0.current - e.changedTouches[0].clientX > 40 && !flip && toggle() };
+  const touch = { onTouchStart: (e: TouchEvent) => (x0.current = e.touches[0]?.clientX ?? x0.current), onTouchEnd: (e: TouchEvent) => x0.current - (e.changedTouches[0]?.clientX ?? x0.current) > 40 && !flip && toggle() };
   const go = (s: (typeof swipe)[number]) => () => void cx.act({ action: s.action ?? "", block: b.id, values: s.values ?? {}, confirm: s.confirm });
   const bar = h("div", "ra b-row__actions", { hidden: !flip }, ...swipe.map((s) => act(s, s.tone === "bad" ? "bad" : "", cx, undefined, go(s))));
   return h("div", "rw", hooks, h("div", rc, { ...own, ...touch }, ...parts), bar);

@@ -1,7 +1,7 @@
 import type { Accept, FileRef, UploadField } from "../../gen/types.ts";
 export type Picked = {
     screen: string;
-    block?: string;
+    block?: string | undefined;
     field: string;
     name: string;
     mime: string;
@@ -17,10 +17,10 @@ export type FileRow = {
     mime: string;
     state: FileState;
     part: number;
-    why?: "type" | "size";
+    why?: "type" | "size" | undefined;
     id?: string;
-    src?: string;
-    blob?: Blob;
+    src?: string | undefined;
+    blob?: Blob | undefined;
     stop?: AbortController;
 };
 type Word = (key: string) => string;

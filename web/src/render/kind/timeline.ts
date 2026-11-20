@@ -66,7 +66,7 @@ function bar(b: Timeline, x: TimeBar, y: number, gap: number, ax: Axis, c: Ctx, 
   if (x.tap) {
     body.tabIndex = -1;
     body.addEventListener("click", () => c.tap(x.tap));
-    body.addEventListener("keydown", (k) => k.key === "Enter" && !k.defaultPrevented && body.dataset.phase !== "previewing" && c.tap(x.tap));
+    body.addEventListener("keydown", (k) => k.key === "Enter" && !k.defaultPrevented && body.dataset["phase"] !== "previewing" && c.tap(x.tap));
   }
   if (!movable) return;
   const grip = (part: "start" | "end") => {
@@ -88,7 +88,7 @@ function bar(b: Timeline, x: TimeBar, y: number, gap: number, ax: Axis, c: Ctx, 
     const show = (span: DaySpan | null) => {
       const [a, z] = span ? [day(span.start) ?? s, day(span.end) ?? e] : [s, e];
       const px = ax.lane() / ax.n;
-      const text = span ? words(span.start, span.end) : g.dataset.phase === "dragging" ? "no drop here" : "";
+      const text = span ? words(span.start, span.end) : g.dataset["phase"] === "dragging" ? "no drop here" : "";
       if (part !== "body") return shown(ghost, tag, home, span ? clip(a, z, ax) : null, px, text);
       w.style.transform = span ? `translate(${(a - s) * px}px, -3px)` : "";
       shown(ghost, tag, home, null, px, text);
@@ -155,7 +155,7 @@ function draw(b: Timeline, r: TimeRow, ax: Axis, c: Ctx, lane: HTMLElement, gest
 function rove(root: HTMLElement) {
   const stops = () => Array.from(root.querySelectorAll<HTMLElement>("[data-grab]"));
   root.addEventListener("focusin", (e) => {
-    if (!(e.target instanceof HTMLElement) || !e.target.dataset.grab) return;
+    if (!(e.target instanceof HTMLElement) || !e.target.dataset["grab"]) return;
     const at = e.target;
     for (const s of stops()) s.tabIndex = s === at || (at.classList.contains("tmbb") && s.parentElement === at.parentElement) ? 0 : -1;
   });

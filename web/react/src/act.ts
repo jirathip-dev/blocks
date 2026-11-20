@@ -8,7 +8,7 @@ export type Report =
   | { what: "dropped"; block: string; event: string }
   | { what: "failed"; action: string; error: unknown }
   | { what: "threw"; block: string; error: unknown };
-export type Post = { action: string; block?: string | null; values?: Record<string, unknown> | null; confirm?: Confirm | null };
+export type Post = { action: string; block?: string | null | undefined; values?: Record<string, unknown> | null | undefined; confirm?: Confirm | null | undefined };
 export type KindProps = { block: Record<string, unknown> & { type: string }; act: (a: Omit<Post, "block">) => Promise<boolean> };
 export type IslandProps = { props: Record<string, unknown>; emit: (name: string, values?: Record<string, unknown>) => void };
 export type Islands = Record<string, (p: IslandProps) => ReactNode>;
@@ -25,7 +25,7 @@ export type Ctx = {
   report: (r: Report) => void;
   kinds: Record<string, (p: KindProps) => ReactNode>;
   islands: Islands;
-  file?: OnFile;
+  file?: OnFile | undefined;
 };
 export type Props = {
   onAction: (a: Action) => Promise<boolean | void> | boolean | void;

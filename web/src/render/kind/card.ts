@@ -7,7 +7,7 @@ import { ticked, tone } from "../text.ts";
 
 export function card(b: Card, c: Ctx): HTMLElement {
   const k = el("div", `card ${b.tone ?? ""} k-${b.kind ?? ""}`);
-  k.dataset.id = b.id ?? "";
+  k.dataset["id"] = b.id ?? "";
   const fold = b.fold ?? null;
   const main = fold?.main ?? null;
   const shut = fold && !c.open.has(String(b.id));

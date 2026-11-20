@@ -53,10 +53,10 @@ function round(d: Round, now: boolean, c: Ctx): HTMLElement {
 export function row(b: Row, c: Ctx): HTMLElement {
   const cls = `row${b.style === "link" ? " link" : ""}${b.sticky ? " sticky" : ""}${b.indent ? " in" + Math.min(b.indent, 3) : ""}`;
   const rounds = b.rounds ?? [];
-  const open = rounds.length > 0 && (rounds[rounds.length - 1].state === "needs") !== c.open.has(String(b.id));
+  const open = rounds.length > 0 && (rounds[rounds.length - 1]?.state === "needs") !== c.open.has(String(b.id));
   const url = rounds.length ? undefined : urlOf(b.tap);
   const r: HTMLElement = url ? href(el("a", cls), url) : el("div", cls);
-  r.dataset.id = b.id ?? "";
+  r.dataset["id"] = b.id ?? "";
   const sub = b.subtitle == null || open ? null : tone(b.subtitle);
   const badge = b.badge == null ? null : tone(b.badge);
   const fig = b.figure ? c.theme.figure(b.figure) : null;
@@ -95,7 +95,7 @@ export function row(b: Row, c: Ctx): HTMLElement {
   }
   w.append(bar);
   let x0 = 0;
-  r.addEventListener("touchstart", (e) => (x0 = e.touches[0].clientX), { passive: true });
-  r.addEventListener("touchend", (e) => x0 - e.changedTouches[0].clientX > 40 && bar.hidden && toggle(r, b.id, c), { passive: true });
+  r.addEventListener("touchstart", (e) => (x0 = e.touches[0]?.clientX ?? x0), { passive: true });
+  r.addEventListener("touchend", (e) => x0 - (e.changedTouches[0]?.clientX ?? x0) > 40 && bar.hidden && toggle(r, b.id, c), { passive: true });
   return w;
 }

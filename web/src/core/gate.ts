@@ -26,12 +26,9 @@ const rgb = (hex: string): Rgb => {
 };
 
 function lab(c: Rgb): Rgb {
-  const [r, g, b] = c.map(lin);
-  const [cx, cy, cz] = [
-    [0.4124, 0.3576, 0.1805],
-    [0.2126, 0.7152, 0.0722],
-    [0.0193, 0.1192, 0.9505],
-  ].map(([x, y, z]) => x * r + y * g + z * b);
+  const [r, g, b] = [lin(c[0]), lin(c[1]), lin(c[2])];
+  const dot = ([x, y, z]: Rgb) => x * r + y * g + z * b;
+  const [cx, cy, cz] = [dot([0.4124, 0.3576, 0.1805]), dot([0.2126, 0.7152, 0.0722]), dot([0.0193, 0.1192, 0.9505])];
   const curve = (t: number) => (t > 216 / 24389 ? Math.cbrt(t) : ((24389 / 27) * t + 16) / 116);
   const [fx, fy, fz] = [curve(cx / 0.95047), curve(cy), curve(cz / 1.08883)];
   return [116 * fy - 16, 500 * (fx - fy), 200 * (fy - fz)];
@@ -66,7 +63,7 @@ export function gate(s: Scheme, fills: "tint" | "outline" | "solid"): Miss[] {
   const checks: Miss[] = [];
   const [bg, r, a] = [c("--bg"), c("--r"), c("--a")];
   const needs: [string, Rgb] = ["the needs-you card", over(r, bg, 0.15)];
-  const tints: [string, Rgb][] = [needs, ["a red group header", over(r, bg, 0.12)], ["an amber group header", over(a, bg, 0.12)]];
+  const tints: [Token, string, Rgb][] = [["--r", ...needs], ["--r", "a red group header", over(r, bg, 0.12)], ["--a", "an amber group header", over(a, bg, 0.12)]];
   const text: Token[] = ["--fg", "--mute", "--l", "--link", "--fk-l", "--fk-p", "--fk-c", "--fk-g", "--fk-a"];
   const states: Token[] = ["--g", "--a", "--r"];
   for (const b of ["--bg", "--card"] as const) {
@@ -78,10 +75,7 @@ export function gate(s: Scheme, fills: "tint" | "outline" | "solid"): Miss[] {
     for (const k of ["--link", "--g", "--a", "--r", "--p", "--c"] as const) checks.push({ what: `--bg on ${k}`, got: ratio(bg, c(k)), min: 4.5 });
   }
   for (const k of ["--fg", "--mute", "--l"] as const) checks.push({ what: `${k} on ${needs[0]}`, got: ratio(c(k), needs[1]), min: 4.5 });
-  (["--r", "--r", "--a"] as const).forEach((k, i) => {
-    const [on, tint] = tints[i];
-    checks.push({ what: `${k} on ${on}`, got: ratio(c(k), tint), min: 3 });
-  });
+  for (const [k, on, tint] of tints) checks.push({ what: `${k} on ${on}`, got: ratio(c(k), tint), min: 3 });
   const pairs: [Token, Token][] = [["--g", "--a"], ["--a", "--r"], ["--g", "--r"]];
   for (const x of ["--l", "--link"] as const) pairs.push(...states.map((y): [Token, Token] => [x, y]));
   for (const [x, y] of pairs) checks.push({ what: `ΔE2000 ${x} ↔ ${y}`, got: de(c(x), c(y)), min: 20 });
