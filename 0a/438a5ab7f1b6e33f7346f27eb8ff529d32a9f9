@@ -1,0 +1,9 @@
+Decided: merge origin/staging for the cap raise, not rebase, so pushed history is never rewritten
+Because: q2392
+Decided: baseline pages' 21 raw CSS and Swift values, as #180 did for each renderer before it; SwiftUI has no spacing or type tokens to use
+Because: "Drawn in the web renderer and in SwiftUI, with cross-language fixtures"
+Decided: the Swift page frame is split into typed lets and Fitted's height closure is Sendable, for CI's compiler
+Because: "Drawn in the web renderer and in SwiftUI"
+Rejected: a new token system for SwiftUI and the CSS bar, ring and paper values — not in this issue's scope
+Check: the swift CI job builds at this head; line-cap 29340 / 38500; web and swift token lints pass
+Owner: The document view is on the latest staging with the raised line limit and the new token check; the Mac/iPhone build error is fixed.
