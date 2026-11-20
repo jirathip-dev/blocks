@@ -7,7 +7,7 @@ const GROUP: Record<string, string> = { waiting: "needs", blocked: "needs", asle
 const SH: Record<string, string> = { needs: "r", working: "g" };
 
 export function section({ b, hooks }: V<Section>) {
-  const w = (b.header ?? "").split(" ")[0];
+  const w = (b.header ?? "").split(" ")[0] ?? "";
   const k = GROUP[w] ?? w;
   return h("section", "sec", hooks, b.header ? h("h3", `sh ${SH[k] ?? ""}`, null, b.header) : null, ...kids(b.blocks), b.footer ? h("p", "m foot", null, b.footer) : null);
 }

@@ -103,7 +103,7 @@ var act = (a, cls, cx, url, go) => {
 };
 var rec = (v) => typeof v === "object" && v !== null;
 function ticked(v, cx) {
-  if (rec(v) && typeof v.get === "string") return h("span", "", { "data-get": v.get }, cx.v.values[v.get] ?? "");
+  if (rec(v) && typeof v["get"] === "string") return h("span", "", { "data-get": v["get"] }, cx.v.values[v["get"]] ?? "");
   return rec(v) && ("since" in v || "until" in v) ? h("span", "", { "data-tick": JSON.stringify(v) }, value(v)) : value(v);
 }
 var figure = (f, cls) => {
@@ -126,9 +126,9 @@ function inline(s, stages) {
 function md(s, refs) {
   const link = new RegExp(String.raw`\[([^\]]+)\]\((https?:[^)\s]+)\)|(https?:\/\/[^\s<]*[^\s<.,;:!?)])|\b(${refs ? "t\\d+" : "(?!)"})\b`, "g");
   const stages = [
-    [/`([^`]+)`/g, (m, n) => h("code", "", null, ...n(m[1]))],
-    [/\*\*([^*]+)\*\*/g, (m, n) => h("b", "", null, ...n(m[1]))],
-    [link, (m, n) => m[4] ? h("a", "", { href: "#", "data-thread": m[4] }, m[4]) : h("a", "", out(m[2] ?? m[3]), ...n(m[1] ?? m[3]))],
+    [/`([^`]+)`/g, (m, n) => h("code", "", null, ...n(m[1] ?? ""))],
+    [/\*\*([^*]+)\*\*/g, (m, n) => h("b", "", null, ...n(m[1] ?? ""))],
+    [link, (m, n) => m[4] ? h("a", "", { href: "#", "data-thread": m[4] }, m[4]) : h("a", "", out(m[2] ?? m[3] ?? ""), ...n(m[1] ?? m[3] ?? ""))],
     [/\n/g, () => h("br", "", null)]
   ];
   const cb = (part) => h("div", "cb", null, h("pre", "", null, part.replace(/\n$/, "")), h("button", "cpy", { type: "button" }, h("span", "", null, "copy")));
@@ -432,7 +432,7 @@ function row({ b, hooks: hooks3 }) {
   const own2 = { ...id, ...tapped ? { "data-action": sends(b.tap), ...press(() => b.tap ? cx.tap(b.tap) : toggle2()) } : null };
   const rc = url || tapped ? `${cls} tap` : cls;
   if (!swipe.length) return url ? h("a", rc, { ...hooks3, ...own2, ...out(url) }, ...parts2) : h("div", rc, { ...hooks3, ...own2 }, ...parts2);
-  const touch = { onTouchStart: (e) => x0.current = e.touches[0].clientX, onTouchEnd: (e) => x0.current - e.changedTouches[0].clientX > 40 && !flip && toggle2() };
+  const touch = { onTouchStart: (e) => x0.current = e.touches[0]?.clientX ?? x0.current, onTouchEnd: (e) => x0.current - (e.changedTouches[0]?.clientX ?? x0.current) > 40 && !flip && toggle2() };
   const go = (s) => () => void cx.act({ action: s.action ?? "", block: b.id, values: s.values ?? {}, confirm: s.confirm });
   const bar3 = h("div", "ra b-row__actions", { hidden: !flip }, ...swipe.map((s) => act(s, s.tone === "bad" ? "bad" : "", cx, void 0, go(s))));
   return h("div", "rw", hooks3, h("div", rc, { ...own2, ...touch }, ...parts2), bar3);
@@ -459,7 +459,7 @@ function screen({ b, hooks: hooks3 }) {
 var GROUP = { waiting: "needs", blocked: "needs", asleep: "idle", in: "working" };
 var SH = { needs: "r", working: "g" };
 function section({ b, hooks: hooks3 }) {
-  const w = (b.header ?? "").split(" ")[0];
+  const w = (b.header ?? "").split(" ")[0] ?? "";
   const k = GROUP[w] ?? w;
   return h("section", "sec", hooks3, b.header ? h("h3", `sh ${SH[k] ?? ""}`, null, b.header) : null, ...kids(b.blocks), b.footer ? h("p", "m foot", null, b.footer) : null);
 }
@@ -665,13 +665,13 @@ function gestured(el, c, o) {
   if (start2 === null) return () => {
   };
   const k = key(o.block, o.item);
-  el.dataset.grab = JSON.stringify(o.grab);
+  el.dataset["grab"] = JSON.stringify(o.grab);
   const out2 = c.held?.get(k);
   let p = out2 ? { at: "sent", c: start2 } : { at: "idle" };
   let x0 = 0;
   let y0 = 0;
   const mark = () => {
-    el.dataset.phase = p.at;
+    el.dataset["phase"] = p.at;
     el.setAttribute("aria-pressed", String(p.at === "pressed" || p.at === "dragging" || p.at === "previewing"));
   };
   const back = (ok) => {
@@ -798,7 +798,7 @@ function bar2(b, x, y, gap, ax, wires) {
     const tap = x.tap;
     if (tap) {
       bd.addEventListener("click", () => c.tap(tap));
-      bd.addEventListener("keydown", (k) => k.key === "Enter" && !k.defaultPrevented && bd.dataset.phase !== "previewing" && c.tap(tap));
+      bd.addEventListener("keydown", (k) => k.key === "Enter" && !k.defaultPrevented && bd.dataset["phase"] !== "previewing" && c.tap(tap));
     }
     for (const [r, part, gesture] of all) {
       const g = r?.current;
@@ -808,7 +808,7 @@ function bar2(b, x, y, gap, ax, wires) {
       const show = (span2) => {
         const [a, z] = span2 ? [day(span2.start) ?? s, day(span2.end) ?? e] : [s, e];
         const px = ax.lane() / ax.n;
-        const text3 = span2 ? words2(span2.start, span2.end) : g.dataset.phase === "dragging" ? "no drop here" : "";
+        const text3 = span2 ? words2(span2.start, span2.end) : g.dataset["phase"] === "dragging" ? "no drop here" : "";
         if (part !== "body") return shown(gh, tg, home, span2 ? clip(a, z, ax) : null, px, text3);
         we.style.transform = span2 ? `translate(${(a - s) * px}px, -3px)` : "";
         shown(gh, tg, home, null, px, text3);
@@ -870,7 +870,7 @@ function track2(b, r, ax, off, wires) {
 function rove(root) {
   const stops = () => Array.from(root.querySelectorAll("[data-grab]"));
   const focus = (e) => {
-    if (!(e.target instanceof HTMLElement) || !e.target.dataset.grab) return;
+    if (!(e.target instanceof HTMLElement) || !e.target.dataset["grab"]) return;
     const at = e.target;
     for (const s of stops()) s.tabIndex = s === at || at.classList.contains("tmbb") && s.parentElement === at.parentElement ? 0 : -1;
   };
@@ -958,19 +958,19 @@ function Isle({ b, attrs }) {
 
 // react/src/block.ts
 var isBlk = (v) => typeof v === "object" && v !== null && !Array.isArray(v);
-var core = (b) => Object.prototype.hasOwnProperty.call(hooks, String(b.type));
-var isIsland = (b) => b.type === "island" && typeof b.name === "string" && isBlk(b.fallback);
-var isFallback = (v) => isBlk(v) && typeof v.title === "string";
+var core = (b) => Object.prototype.hasOwnProperty.call(hooks, String(b["type"]));
+var isIsland = (b) => b["type"] === "island" && typeof b["name"] === "string" && isBlk(b["fallback"]);
+var isFallback = (v) => isBlk(v) && typeof v["title"] === "string";
 function hooksOf(b, cx, fallback) {
-  const t = String(b.type);
-  const id = typeof b.id === "string" ? b.id : void 0;
+  const t = String(b["type"]);
+  const id = typeof b["id"] === "string" ? b["id"] : void 0;
   const v = core(b) ? hooks[b.type].variant : null;
   return {
     className: `b${core(b) ? "" : " b-app"} b-${t}`,
     "data-block": t,
     "data-id": id,
     "data-variant": v && b[v] != null ? String(b[v]) : void 0,
-    "data-tone": typeof b.tone === "string" ? b.tone : void 0,
+    "data-tone": typeof b["tone"] === "string" ? b["tone"] : void 0,
     "data-fallback": fallback ? "" : void 0,
     hidden: id !== void 0 && cx.v.hidden.has(id) ? true : void 0,
     "aria-busy": id !== void 0 && cx.busy.has(id) ? true : void 0,
@@ -984,11 +984,11 @@ function row2(f, cx) {
   const sub = f.subtitle != null ? h("span", "rs b-row__subtitle", null, f.subtitle) : null;
   return h("div", tap ? "row tap" : "row", pressed, h("span", "rm", null, h("span", "rt b-row__title", null, f.title), sub));
 }
-var kids = (bs) => (Array.isArray(bs) ? bs.filter(isBlk) : []).map((b, i) => createElement7(Block, { key: typeof b.id === "string" ? b.id : `~${i}`, b }));
+var kids = (bs) => (Array.isArray(bs) ? bs.filter(isBlk) : []).map((b, i) => createElement7(Block, { key: typeof b["id"] === "string" ? b["id"] : `~${i}`, b }));
 function Fallen({ b }) {
   const cx = useContext11(Cx);
-  const f = b.fallback ?? { title: String(b.type) };
-  return h("div", "", hooksOf(b, cx, true), isFallback(f) ? row2(f, cx) : null, ...kids(b.blocks));
+  const f = b["fallback"] ?? { title: String(b["type"]) };
+  return h("div", "", hooksOf(b, cx, true), isFallback(f) ? row2(f, cx) : null, ...kids(b["blocks"]));
 }
 var Boundary = class extends Component {
   constructor() {
@@ -999,7 +999,7 @@ var Boundary = class extends Component {
     return { threw: true };
   }
   componentDidCatch(error) {
-    this.props.report({ what: "threw", block: String(this.props.b.id ?? this.props.b.type), error });
+    this.props.report({ what: "threw", block: String(this.props.b["id"] ?? this.props.b["type"]), error });
   }
   componentDidUpdate(was) {
     if (was.b !== this.props.b && this.state.threw) this.setState({ threw: false });
@@ -1016,9 +1016,9 @@ function Draw({ b }) {
   const cx = useContext11(Cx);
   if (isIsland(b)) return createElement7(Isle, { b, attrs: hooksOf(b, cx, false) });
   if (core(b)) return own(b.type, b, hooksOf(b, cx, false)) ?? createElement7(Fallen, { b });
-  const K = cx.kinds[String(b.type)];
-  const act2 = (a) => cx.act({ ...a, block: typeof b.id === "string" ? b.id : null });
-  return K ? h("div", "", hooksOf(b, cx, false), createElement7(K, { block: { ...b, type: String(b.type) }, act: act2 })) : createElement7(Fallen, { b });
+  const K = cx.kinds[String(b["type"])];
+  const act2 = (a) => cx.act({ ...a, block: typeof b["id"] === "string" ? b["id"] : null });
+  return K ? h("div", "", hooksOf(b, cx, false), createElement7(K, { block: { ...b, type: String(b["type"]) }, act: act2 })) : createElement7(Fallen, { b });
 }
 var Block = memo(function Block2({ b }) {
   const cx = useContext11(Cx);

@@ -23,7 +23,7 @@ export type Placed<P> = {
     place: P;
     transition: LayoutTransition;
     config?: Record<string, unknown>;
-    slots?: Record<string, Placed<P>[]>;
+    slots?: Record<string, Placed<P>[]> | undefined;
 };
 export type Layout = {
     format: number;

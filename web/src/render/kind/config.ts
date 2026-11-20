@@ -7,7 +7,7 @@ const focused = new Set<string>();
 
 export function config(b: Form, c: Ctx): HTMLElement {
   const f = el("div", "form cfg");
-  f.dataset.id = b.id ?? "";
+  f.dataset["id"] = b.id ?? "";
   const key = `draft:${c.screen}:${String(b.id)}:`;
   const live = (d: Drawn) => {
     const [a, n] = [b.action, d.row.querySelector<HTMLElement>("span.fn")];

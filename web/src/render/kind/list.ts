@@ -11,7 +11,7 @@ const ids = (v: unknown): v is string[] => Array.isArray(v) && v.every((x) => ty
 export function list(b: List, c: Ctx): HTMLElement {
   const l = el("div", "list");
   const rows = kids(b.rows, c);
-  const at = (id: string) => rows.find((e) => e.dataset.id === id);
+  const at = (id: string) => rows.find((e) => e.dataset["id"] === id);
   const out = b.rows.map((r) => r.id && held(c, { block: b, rules, grab: r.id, item: r.id })).find(ids);
   l.append(...(out ? out.flatMap((id) => at(id) ?? []) : rows));
   const page = typeof b.more === "object" ? b.more : null;
@@ -35,7 +35,7 @@ export function list(b: List, c: Ctx): HTMLElement {
     if (!e || !r.id || r.type !== "row" || !rules.word(b, r.id)) continue;
     const hd = Object.assign(el("button", "b-hd"), { type: "button", textContent: "≡" });
     hd.setAttribute("aria-label", `Move ${r.title}`);
-    hd.dataset.act = g.action;
+    hd.dataset["act"] = g.action;
     e.append(hd);
     gestured(hd, c, { block: b, gesture: g, rules, grab: r.id, item: r.id, reach: (_, dy) => Math.round(dy / (e.offsetHeight || 1)), show });
   }

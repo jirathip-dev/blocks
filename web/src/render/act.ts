@@ -9,13 +9,13 @@ export const urlOf = (t?: Tap | null): string | undefined => (t?.url != null && 
 export const sends = (t?: Tap | null, action?: unknown): unknown => (t ? (t.url != null || t.open != null || t.sheet != null ? null : t.action) : action);
 /// Marks `e` with the action a tap on it sends, as `data-action`.
 export const acts = <E extends HTMLElement>(e: E, action: unknown): E => {
-  if (typeof action === "string" && action) e.dataset.action = action;
+  if (typeof action === "string" && action) e.dataset["action"] = action;
   return e;
 };
 /// Marks an act's button with the action its `enabled` turns off, as `data-act`.
 export const offable = <E extends HTMLElement>(e: E, a: Act): E => {
   const k = actionOf(a);
-  if (k) e.dataset.act = k;
+  if (k) e.dataset["act"] = k;
   return e;
 };
 

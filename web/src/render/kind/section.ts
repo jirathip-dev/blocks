@@ -8,7 +8,7 @@ const SH: Record<string, string> = { needs: "r", working: "g" };
 
 export function section(b: Section, c: Ctx): HTMLElement {
   const s = el("section", "sec");
-  const w = (b.header ?? "").split(" ")[0];
+  const w = (b.header ?? "").split(" ")[0] ?? "";
   const k = GROUP[w] ?? w;
   if (b.header) {
     const head = el("h3", `sh ${SH[k] ?? ""}`);

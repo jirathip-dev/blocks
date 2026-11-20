@@ -14,7 +14,7 @@ function item(x: UploadField, r: FileRow, w: (k: string) => string, drop: (r: Fi
     const p = Math.round(r.part * 100);
     const t = h("span", "pgt", el("b"));
     t.setAttribute("style", `--v:${p}`);
-    for (const [k, v] of [["role", "progressbar"], ["aria-valuemin", "0"], ["aria-valuemax", "100"], ["aria-valuenow", String(p)], ["aria-label", r.name]]) t.setAttribute(k, v);
+    for (const [k, v] of [["role", "progressbar"], ["aria-valuemin", "0"], ["aria-valuemax", "100"], ["aria-valuenow", String(p)], ["aria-label", r.name]] satisfies [string, string][]) t.setAttribute(k, v);
     m.append(t);
   }
   m.append(h("span", "fus", line));
@@ -32,7 +32,7 @@ export const upload: FieldView<UploadField> = {
     const w = (k: string) => word(c, k);
     const box = el("div", "fu");
     box.setAttribute("role", "group");
-    box.dataset.field = x.name;
+    box.dataset["field"] = x.name;
     let rows = held(x);
     const input = Object.assign(el("input"), { type: "file", tabIndex: -1, multiple: !!x.many, accept: accepts(x.accept ?? []) });
     input.setAttribute("aria-hidden", "true");

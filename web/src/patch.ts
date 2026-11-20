@@ -11,14 +11,14 @@ const hosts: Record<string, string> = { screen: "blocks", sheet: "blocks", secti
 const isRec = (v: unknown): v is Rec => typeof v === "object" && v !== null && !Array.isArray(v);
 
 function locate(node: Rec, id: string): Spot | undefined {
-  if (node.id === id) return "root";
+  if (node["id"] === id) return "root";
   for (const key of walked) {
     const list = node[key];
     if (!Array.isArray(list)) continue;
     for (let at = 0; at < list.length; at++) {
       const x: unknown = list[at];
       if (!isRec(x)) continue;
-      if (x.id === id) return { list, at };
+      if (x["id"] === id) return { list, at };
       const deeper = locate(x, id);
       if (deeper && deeper !== "root") return deeper;
     }
@@ -34,11 +34,11 @@ function get(root: Rec, id: string): Rec | undefined {
 
 function place(root: Rec, into: string, child: unknown, before?: string | null, after?: string | null): boolean {
   const host = get(root, into);
-  const key = host && typeof host.type === "string" ? hosts[host.type] : undefined;
+  const key = host && typeof host["type"] === "string" ? hosts[host["type"]] : undefined;
   if (!host || !key) return false;
   const list = host[key] ?? (host[key] = []);
   if (!Array.isArray(list)) return false;
-  const find = (id?: string | null) => (id ? list.findIndex((x) => isRec(x) && x.id === id) : -1);
+  const find = (id?: string | null) => (id ? list.findIndex((x) => isRec(x) && x["id"] === id) : -1);
   const b = find(before);
   const a = find(after);
   list.splice(b >= 0 ? b : a >= 0 ? a + 1 : list.length, 0, child);
@@ -80,7 +80,7 @@ export function apply(screen: Block, ops: Op[]): Block | undefined {
         out = structuredClone(op.screen);
         break;
       case "badge":
-        if (root.type === "screen") root.badge = op.count;
+        if (root["type"] === "screen") root["badge"] = op.count;
         break;
       default:
         if (op.op !== "dot") return undefined;
@@ -119,13 +119,13 @@ function one(v: View, op: Op, model: Block): void {
     else el.remove();
   };
   const at = "id" in op ? node(v.root, op.id) : undefined;
-  const host = at && !at.hasAttribute("data-block") ? at.parentElement?.closest<HTMLElement>("[data-block][data-id]")?.dataset.id : undefined;
+  const host = at && !at.hasAttribute("data-block") ? at.parentElement?.closest<HTMLElement>("[data-block][data-id]")?.dataset["id"] : undefined;
   if (host && op.op !== "move") return redraw(host);
   switch (op.op) {
     case "merge": {
       const el = node(v.root, op.id);
       if (el?.getAttribute("data-block") !== "island" || Object.keys(op.fields).some((k) => k !== "props")) return redraw(op.id);
-      return void Reflect.set(el, "props", get(model, op.id)?.props ?? {});
+      return void Reflect.set(el, "props", get(model, op.id)?.["props"] ?? {});
     }
     case "replace":
       return redraw(op.id);
@@ -153,13 +153,13 @@ function one(v: View, op: Op, model: Block): void {
 }
 
 function isBlock(r: Rec): r is Rec & Block {
-  return typeof r.type === "string";
+  return typeof r["type"] === "string";
 }
 
 type Kept = { form: string; name: string; value: string; from: number | null; to: number | null };
 const kept = (root: HTMLElement, a = globalThis.document?.activeElement): Kept | undefined => {
   const i = a && a instanceof HTMLInputElement && root.contains(a) ? a : undefined;
-  const form = i?.closest<HTMLElement>(".form[data-id]")?.dataset.id;
+  const form = i?.closest<HTMLElement>(".form[data-id]")?.dataset["id"];
   return i && form ? { form, name: i.name, value: i.value, from: i.selectionStart, to: i.selectionEnd } : undefined;
 };
 const refocus = (root: HTMLElement, k: Kept, i = root.querySelector(`.form[data-id="${CSS.escape(k.form)}"] [name="${CSS.escape(k.name)}"]`)) =>
