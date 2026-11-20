@@ -3,7 +3,7 @@ import { readdirSync, readFileSync } from "node:fs";
 import { test } from "node:test";
 import { defaultPair } from "../src/gen/schemes.ts";
 import { evaluate, expect, gate, tree } from "../src/core/index.ts";
-import { native } from "../src/render/native.ts";
+import { native } from "../src/gen/kinds.ts";
 
 const at = (p: string) => new URL(`../../fixtures/${p}`, import.meta.url);
 const json = (p: string) => JSON.parse(readFileSync(at(p), "utf8"));

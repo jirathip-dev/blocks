@@ -6,6 +6,8 @@ frozen = [
     "swift/Sources/BlocksUI/BlockCards.swift",
     "swift/Sources/BlocksUI/BlockLeaves.swift",
     "web/src/blocks.css",
+    "web/src/render/index.ts",
+    "web/test/render.test.ts",
 ]
 generated = [
     "schema/blocks.schema.json",
@@ -19,6 +21,7 @@ generated = [
     "swift/Sources/Blocks/Gen/Style.swift",
     "swift/Sources/Blocks/Gen/LayoutShapes.swift",
     "web/src/gen/layout.ts",
+    "web/src/gen/kinds.ts",
     "web/src/gen/builders.ts",
     "web/src/gen/shapes.ts",
     "fixtures/check/*.json",
@@ -43,7 +46,7 @@ generated = [
     "fixtures/behave/sim.json",
     "fixtures/gesture/sim.json",
     "fixtures/css/*.css",
-    "crates/blocks/src/guard/rules/mod.rs",
+    "crates/blocks/src/guard/rules/mod.rs", "crates/blocks/src/kind/core/mod.rs",
     "skill/blocks/**",
     "crates/blocks-cli/src/gen/skill.rs",
     "web/src/gen/fields.ts",
@@ -95,6 +98,14 @@ dir = "docs/schema"
 glob = "*.md"
 
 [[collect]]
+dir = "web/src/render/kind"
+glob = "*.ts"
+
+[[collect]]
+dir = "web/test/kind"
+glob = "*.test.ts"
+
+[[collect]]
 dir = "swift/Sources/BlocksUI/Kind"
 glob = "*.swift"
 
@@ -103,8 +114,8 @@ dir = "web/src/css"
 glob = "**/*.css"
 
 [[collect]]
-dir = "crates/blocks/src/kind/field"
-glob = "*.rs"
+dir = "crates/blocks/src/kind"
+glob = "*/*.rs"
 
 [[collect]]
 dir = "crates/blocks/src/site/field"
@@ -359,6 +370,11 @@ paths = ["web/src/render/**"]
 reason = "a renderer draws one block from what it is handed; the shell and the stream do the network"
 
 [[ban]]
+pattern = "gen/kinds.ts"
+paths = ["web/src/render/kind/**"]
+reason = "a kind draws one block; only block.ts reads the table of kinds"
+
+[[ban]]
 pattern = "localStorage"
 paths = ["web/src/render/**"]
 reason = "a renderer keeps drafts through the Ctx's store; the shell owns the storage"
@@ -518,7 +534,7 @@ reason = "days and numbers are drawn by the rules every renderer shares, not by 
 [[ban]]
 pattern = "readAsDataURL"
 paths = ["web/src/**", "web/react/**"]
-except = ["web/src/render/composer.ts"]
+except = ["web/src/render/kind/composer.ts"]
 reason = "a file leaves as bytes through the file handler, never as base64 inside an action"
 
 [[ban]]
