@@ -1,0 +1,7 @@
+Decided: merged origin/staging twice (#147/#154/#172, then #140), keeping both sides: the grid's group row in the moved site table writer, and the grid and media mark rules side by side in the gesture tests, docs and Swift harness.
+Because: crates/blocks/tests/gesture.rs:253
+Decided: the Swift row drag reads the drag's translation, since #140 hands Gestured's reach the whole drag value, as Timeline now does.
+Because: swift/Sources/BlocksUI/Kind/Timeline.swift:43
+Rejected: none
+Check: the shot variant count is 72: staging's 69 plus the grid's 3.
+Owner: brings the editable grid up to date with the latest shared changes, including photo annotations; nothing new for users.
