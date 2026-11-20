@@ -156,21 +156,27 @@ test("the scan field in WebKit, HTML and React: no camera, pick a skewed photo, 
   }
 });
 
-test("one page, shutter to corrected image (corners on 640 px, then the warp and JPEG of a 3024 × 4032 camera JPEG), stays within 400 ms at p95 in WebKit's worker", { timeout: 60000 }, async () => {
+test("one page, shutter to corrected image (corners on 640 px, then the warp and JPEG of a 1920 × 2560 camera JPEG), stays within 400 ms at p95 in WebKit's worker; a larger photo is scaled to 2560 px long once", { timeout: 60000 }, async () => {
   const { browser, page, errors } = await scanner("html");
   try {
-    const runs = await page.evaluate(async (png) => {
+    const { scaled, runs } = await page.evaluate(async (png) => {
       const blob = new Blob([Uint8Array.from(atob(png), (c) => c.charCodeAt(0))], { type: "image/png" });
       const m = await import("./scan.js"), took = [];
+      const jpeg = async (w, h) => {
+        const c = new OffscreenCanvas(w, h);
+        c.getContext("2d").drawImage(await createImageBitmap(blob), 0, 0, w, h);
+        return c.convertToBlob({ type: "image/jpeg", quality: 0.92 });
+      };
+      const big = await m.quadOf(await jpeg(3024, 4032));
+      const scaled = [big.photo.width, big.photo.height, big.quad[2][0] <= 1920, big.quad[2][1] <= 2560];
       for (let i = 0; i < 6; i++) {
-        const c = new OffscreenCanvas(3024, 4032);
-        c.getContext("2d").drawImage(await createImageBitmap(blob), 0, 0, 3024, 4032);
-        const taken = await c.convertToBlob({ type: "image/jpeg", quality: 0.92 });
+        const taken = await jpeg(1920, 2560);
         const t0 = performance.now(), shot = await m.quadOf(taken), page = await m.pageOf(shot, shot.quad, shot.quad);
-        took.push({ ms: performance.now() - t0, found: shot.quad[0][0] > 3024 * 0.15, jpeg: [page.jpeg[0], page.jpeg[1]] });
+        took.push({ ms: performance.now() - t0, found: shot.quad[0][0] > 1920 * 0.15, jpeg: [page.jpeg[0], page.jpeg[1]] });
       }
-      return took.slice(1);
+      return { scaled, runs: took.slice(1) };
     }, readFileSync(at("../../fixtures/scan/note.png")).toString("base64"));
+    deepStrictEqual(scaled, [1920, 2560, true, true], "a 3024 × 4032 photo is 1920 × 2560 on the page and in the worker, whose corners are in that size");
     for (const r of runs) deepStrictEqual([r.found, r.jpeg], [true, [0xff, 0xd8]], "the corners are the page's, not the inset, and the page is a JPEG");
     const p95 = runs.map((r) => r.ms).sort((a, b) => a - b)[Math.ceil(runs.length * 0.95) - 1];
     ok(p95 <= 400, `p95 ${p95.toFixed(0)} ms over the 400 ms budget: ${runs.map((r) => r.ms.toFixed(0))}`);

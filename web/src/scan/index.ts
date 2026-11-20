@@ -45,12 +45,21 @@ const pixels = (b: ImageBitmap, long = Infinity) => {
   return { k, img: x?.getImageData(0, 0, c.width, c.height) ?? new ImageData(1, 1) };
 };
 
+const LONG = 2560;
+async function opened(src: Blob): Promise<ImageBitmap> {
+  const b = await createImageBitmap(src), k = LONG / Math.max(b.width, b.height);
+  if (k >= 1) return b;
+  const small = await createImageBitmap(b, { resizeWidth: Math.round(b.width * k), resizeHeight: Math.round(b.height * k), resizeQuality: "high" });
+  b.close();
+  return small;
+}
+
 let held: { n: number; photo: ImageBitmap } | undefined;
 async function decoded(p: Pic): Promise<ImageBitmap> {
   if (p instanceof ImageBitmap) return p;
   if (held?.n === p.n) return held.photo;
   held?.photo.close();
-  const photo = await createImageBitmap(p.src);
+  const photo = await opened(p.src);
   held = { n: p.n, photo };
   return photo;
 }
@@ -100,9 +109,9 @@ function ask(a: Ask, made?: (n: number) => void): Promise<Reply> {
   worker.postMessage({ ...a, id });
   return new Promise((done) => waiting.set(id, { done, made }));
 }
-/// The shot of the encoded photo `src`, decoded here and in the worker at once, with the corners the worker found or the frame's inset.
+/// The shot of the encoded photo `src`, decoded here and in the worker at once to at most 2560 px long, with the corners the worker found or the frame's inset.
 export const quadOf = async (src: Blob): Promise<Shot & { quad: Quad }> => {
-  const [photo, r] = await Promise.all([createImageBitmap(src), ask({ op: "find", pic: pic(src) })]);
+  const [photo, r] = await Promise.all([opened(src), ask({ op: "find", pic: pic(src) })]);
   return { src, photo, quad: r.quad ?? inset(photo.width, photo.height) };
 };
 /// The page inside `quad` in the shot, corrected to A4 and drawn to a JPEG in the worker.
@@ -400,7 +409,7 @@ export function scan(o: Opts): Promise<Scanned | undefined> {
       look(s);
     };
     navigator.mediaDevices
-      .getUserMedia({ video: { facingMode: "environment", width: { ideal: 4032 }, height: { ideal: 3024 } } })
+      .getUserMedia({ video: { facingMode: "environment", width: { ideal: 2560 }, height: { ideal: 1920 } } })
       .then(started, (e: unknown) => go(s, { cam: e instanceof DOMException && e.name === "NotAllowedError" ? "denied" : "none" }));
   });
 }
