@@ -492,7 +492,7 @@ fn others() -> Vec<Block> {
 }
 
 fn document() -> Block {
-    let page = |n: u32, alt: &str| blocks::Page {
+    let page = |n: u32, alt: &str| blocks::PageImage {
         src: "media/page.svg".into(),
         alt: format!("{alt}, page {n}"),
         width: 620,
