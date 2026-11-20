@@ -19,7 +19,7 @@ export function list({ b, hooks }: V<List>) {
     const g = b.reorder;
     if (!l || !g) return;
     const drawn = () => Array.from(l.children).filter((e) => e instanceof HTMLElement);
-    const at = (id: string) => drawn().find((e) => e.dataset.id === id);
+    const at = (id: string) => drawn().find((e) => e.dataset["id"] === id);
     const show = (order: string[] | null) => {
       const d = drawn();
       const gap = d.length > 1 && d[0] && d[1] ? d[1].offsetTop - d[0].offsetTop - d[0].offsetHeight : 0;
@@ -37,7 +37,7 @@ export function list({ b, hooks }: V<List>) {
       if (!e || !r.id || r.type !== "row" || !rules.word(b, r.id)) continue;
       const hd = Object.assign(document.createElement("button"), { className: "b-hd", type: "button", textContent: "≡" });
       hd.setAttribute("aria-label", `Move ${r.title}`);
-      hd.dataset.act = g.action;
+      hd.dataset["act"] = g.action;
       e.append(hd);
       gestured(hd, c, { block: b, gesture: g, rules, grab: r.id, item: r.id, reach: (_, dy) => Math.round(dy / (e.offsetHeight || 1)), show });
       for (let n: Element | null = hd; n; n = n.nextElementSibling) added.push(n);

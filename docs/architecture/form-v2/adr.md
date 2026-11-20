@@ -7,11 +7,11 @@ date, days, hours, combo, tags; multi-line and rich are options of text. The ren
 app (calendar, filter, hours, labels); the app answers a search or a long list with a new screen. Files and signature
 PNGs go to a file handler the app passes in and travel as ids. Language, era and today are set once on the screen.
 Slices: ten, about 3,200 counted lines: the fields folder, then search, slider, upload, signature, date, hours, combo, multi-line, rich.
-Decided (q2301): (1) one cap raise; (2) hours takes a break off, as synergy does; (3) table (#80) reads the screen's era.
+Decided (q2301): (1) one cap raise; (2) hours takes a break off, as the client app does; (3) table (#80) reads the screen's era.
 
 ## Question
 
-synergy's 80 block screens need eight inputs no `form` field covers. What is the shape of each, which of their
+The client app's 80 block screens need eight inputs no `form` field covers. What is the shape of each, which of their
 behaviour runs in the renderer and which is the app's, how do a file and a signature leave when an action is JSON,
 where do language and era come in, and in what order is it built so that hub, then delivery, can migrate first?
 
@@ -32,7 +32,7 @@ where do language and era come in, and in what order is it built so that hub, th
   (a ban). #80 fixed how numbers and days are drawn so every renderer agrees, and q2275 speaks of "the screen's
   language", which no shape holds yet.
 - The HTML patcher redraws a block it merges into (`patch.ts:111`): a form that changes while you type loses the focus.
-- synergy today: delivery uploads each photo and the signature PNG, keeps the ids, then sends one submission of
+- The client app today: delivery uploads each photo and the signature PNG, keeps the ids, then sends one submission of
   ids (`apps/delivery/src/App.tsx:260` to `:321`). Its worked hours take one hour off a span of five or more, and
   overtime is what is left over eight (`packages/domain/src/manpower.ts:184`). Hub's search and every list search
   keep their text in the URL (`usePersistentSearch`).
@@ -84,7 +84,7 @@ where do language and era come in, and in what order is it built so that hub, th
    | slider | the label following the thumb | what the number does |
    | upload | picking, the type and size check, thumbnails, remove | taking the bytes; checking them again |
    | signature | drawing, clear, empty or signed | taking the PNG |
-   | date, days | the calendar, `min` and `max`, the era, today's mark | what `today` is (Bangkok's, for synergy) |
+   | date, days | the calendar, `min` and `max`, the era, today's mark | what `today` is (Bangkok's, for the client app) |
    | hours | the times offered, hours worked, the over flag | any finer rule (Sunday and holiday hours) |
    | combo, tags | filtering the options it holds, free text, the tags | the options, when `load` is set |
    | text | growing, the counter, the three marks | |
@@ -121,7 +121,7 @@ where do language and era come in, and in what order is it built so that hub, th
    own (`span`, `picked`, `files`, `file`), which an older reader ignores where it would refuse an object in
    `value`. Nothing here changes a type or a meaning, so the schema's version stays.
 
-10. **Not done.** Preset buttons for hours; marks on calendar days (synergy's crew schedule); underline in rich
+10. **Not done.** Preset buttons for hours; marks on calendar days (the client app's crew schedule); underline in rich
     text; a results dropdown under a search; deleting an uploaded file from the app's storage when it is removed
     from the field. Each is an addition later. Whether a date can also be typed is the date slice's design stage;
     if it can, a typed year is read in the era shown.
@@ -130,7 +130,7 @@ where do language and era come in, and in what order is it built so that hub, th
 
 - drover and cooee build fields with `TextField::new("name")` where they wrote `Field { kind: FieldKind::Text, .. }`:
   a source change at their next pin, no change to what they send. F1's PR says so for apps.
-- synergy stores the quotation scope as HTML with underline today. It converts to the three marks at its edge, and
+- The client app stores the quotation scope as HTML with underline today. It converts to the three marks at its edge, and
   underline is lost.
 - The hours shown are the field's simple sum. An app with finer rules shows its own line beside it and works the
   hours out again when it receives the form.
@@ -148,18 +148,18 @@ where do language and era come in, and in what order is it built so that hub, th
 
 All three recommendations were approved: (1) one cap raise, sized by `drover cap blocks`, in one orchestrator-filed
 issue covering these slices and #81's R5, before whichever of R5 and F2 starts first; (2) hours takes the `rest`
-option, so 08:00 to 17:00 shows 8 h and the over-8 flag matches synergy's overtime; (3) #80's date cells read the
+option, so 08:00 to 17:00 shows 8 h and the over-8 flag matches the client app's overtime; (3) #80's date cells read the
 screen's `locale` and the per-column `era` goes, made by whichever of #80 and F1 lands second. Also accepted: rich
-text keeps bold, italic and bullets only, and underline is lost at synergy's edge; the composer's base64
+text keeps bold, italic and bullets only, and underline is lost at the client app's edge; the composer's base64
 attachments moving to the file handler is its own issue. The questions as they were put:
 
 
 1. **Cap.** The ten slices add about 3,200 counted lines. Today's total is 16,464 of 19,000, and the 2,492 left
    were sized for the guard and React slices (#120). Recommended: one raise, sized by `drover cap blocks`, in one
    orchestrator-filed issue that covers these slices and R5's, before whichever of R5 and F2 starts first.
-2. **Hours and the break.** With plain end minus start, synergy's default 08:00 to 17:00 reads "9 h · over 8",
-   which is wrong by synergy's own rule (one hour off a span of five or more). Recommended: the `rest` option as
-   specified, so the field shows 8 h and the flag matches synergy's overtime. The other way is no hours and no
+2. **Hours and the break.** With plain end minus start, the client app's default 08:00 to 17:00 reads "9 h · over 8",
+   which is wrong by the client app's own rule (one hour off a span of five or more). Recommended: the `rest` option as
+   specified, so the field shows 8 h and the flag matches the client app's overtime. The other way is no hours and no
    flag in the field at all, and the app draws them through a live form.
 3. **Era on the table (#80).** #80's approved design puts `era` on each date column. With `locale` on the screen,
    a column and a date field could disagree. Recommended: an amendment to #80: its date cells read the screen's

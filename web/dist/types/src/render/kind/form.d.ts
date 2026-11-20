@@ -4,10 +4,10 @@ export type Drawn = {
     row: HTMLElement;
     name: string;
     sent(): unknown;
-    busy?(): {
+    busy?: (() => {
         up: number;
         failed: number;
-    };
+    }) | undefined;
 };
 export declare function form(b: Form, c: Ctx): HTMLElement;
 export declare function field(x: Field, key: string, c: Ctx, set?: (v: unknown) => void, block?: string): Drawn;

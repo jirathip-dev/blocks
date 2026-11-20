@@ -122,22 +122,23 @@ internal struct Gestured<R: Rules>: ViewModifier where R.Change: Sendable {
     }
 }
 
-/// The one pinch and double-tap zoom: the image viewer's, and later pages' and marks'.
+/// The one pinch and double-tap zoom: the image viewer's, the pages' and later marks'; a pinch scales by transform, `scale` is written once on release.
 internal struct Zoomed: ViewModifier {
-    @State private var scale: CGFloat = 1
-    @State private var base: CGFloat = 1
+    @Binding internal var scale: CGFloat
+    @State private var live: CGFloat = 1
     internal let most: CGFloat
 
     internal func body(content: Content) -> some View {
-        content.scaleEffect(scale)
+        content.scaleEffect(live)
             .gesture(
                 MagnifyGesture()
-                    .onChanged { scale = min(most, max(1, base * $0.magnification)) }
-                    .onEnded { _ in base = scale }
+                    .onChanged { live = min(most, max(1, scale * $0.magnification)) / scale }
+                    .onEnded { _ in (scale, live) = (scale * live, 1) }
             )
-            .onTapGesture(count: 2) { (scale, base) = scale > 1 ? (1, 1) : (2.5, 2.5) }
-            .accessibilityAction(named: "Zoom in") { (scale, base) = (min(most, scale * 1.25), min(most, scale * 1.25)) }
-            .accessibilityAction(named: "Zoom out") { (scale, base) = (max(1, scale / 1.25), max(1, scale / 1.25)) }
+            .onTapGesture(count: 2) { scale = scale > 1 ? 1 : 2.5 }
+            .accessibilityAction(named: "Zoom in") { scale = min(most, scale * 1.25) }
+            .accessibilityAction(named: "Zoom out") { scale = max(1, scale / 1.25) }
+            .accessibilityAction(named: "Fit") { scale = 1 }
     }
 }
 

@@ -20,19 +20,19 @@ export function md(s: unknown, refs = false): string {
 }
 
 export const ticked = (v: unknown): Node | string => {
-  if (isBlk(v) && typeof v.get === "string") {
+  if (isBlk(v) && typeof v["get"] === "string") {
     const s = el("span", "");
-    s.dataset.get = v.get;
+    s.dataset["get"] = v["get"];
     return s;
   }
   if (!(isBlk(v) && ("since" in v || "until" in v))) return value(v);
   const s = h("span", "", value(v));
-  s.dataset.tick = JSON.stringify(v);
+  s.dataset["tick"] = JSON.stringify(v);
   return s;
 };
 /// Redraws every age under `root`; the shell calls it once a second.
 export const tick = (root: ParentNode) =>
   root.querySelectorAll<HTMLElement>("[data-tick]").forEach((e) => {
-    const t = value(JSON.parse(e.dataset.tick ?? "null"));
+    const t = value(JSON.parse(e.dataset["tick"] ?? "null"));
     if (e.textContent !== t) e.textContent = t;
   });

@@ -101,8 +101,8 @@ function balance(k: K, [dr = "", cr = ""]: string[]): HTMLElement {
 function paint(k: K) {
   const { b, d, foot } = k;
   k.root.querySelectorAll<HTMLElement>(".lqv").forEach((v) => {
-    const r = d.rows.find((x) => x.id === v.dataset.row);
-    const x = b.columns.find((y) => y.name === v.dataset.cell);
+    const r = d.rows.find((x) => x.id === v.dataset["row"]);
+    const x = b.columns.find((y) => y.name === v.dataset["cell"]);
     if (r && x) v.textContent = shown(k, r, x);
   });
   foot.replaceChildren(...(k.sums.size ? [totals(k)] : []), ...(b.balance ? [balance(k, b.balance)] : []));

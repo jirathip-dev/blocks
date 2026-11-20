@@ -35,6 +35,7 @@ export const hooks: Record<Kind, Hook> = {
     steps: { variant: null, parts: ["title"] },
     chart: { variant: null, parts: ["title"] },
     toast: { variant: null, parts: ["title"] },
+    pages: { variant: null, parts: ["title"] },
     timeline: { variant: null, parts: ["title"] },
 };
 

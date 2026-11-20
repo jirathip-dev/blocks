@@ -32,6 +32,7 @@ var hooks = {
   steps: { variant: null, parts: ["title"] },
   chart: { variant: null, parts: ["title"] },
   toast: { variant: null, parts: ["title"] },
+  pages: { variant: null, parts: ["title"] },
   timeline: { variant: null, parts: ["title"] }
 };
 var roles = { section: "region", form: "form", config: "form", nav: "navigation", chart: "figure", toast: "status" };
@@ -130,9 +131,9 @@ function read(v) {
   if (k === "not" || k === "len") return one(read(a));
   if (k === "all" || k === "any" || k === "cat") return list3();
   if (own(PAIRS, k)) return list3(PAIRS[k]);
-  if (k === "is" && rec(a) && typeof a.pattern === "string" && "value" in a) {
-    const x = read(a.value);
-    return x === void 0 ? UNKNOWN : { is: { value: x, pattern: a.pattern } };
+  if (k === "is" && rec(a) && typeof a["pattern"] === "string" && "value" in a) {
+    const x = read(a["value"]);
+    return x === void 0 ? UNKNOWN : { is: { value: x, pattern: a["pattern"] } };
   }
   return UNKNOWN;
 }
@@ -140,7 +141,7 @@ function sound(e) {
   if (!rec(e)) return true;
   const [k = "", a] = Object.entries(e)[0] ?? [];
   if (k === "?") return false;
-  if (k === "is") return rec(a) && PATTERNS.includes(String(a.pattern)) && sound(a.value);
+  if (k === "is") return rec(a) && PATTERNS.includes(String(a["pattern"])) && sound(a["value"]);
   return Array.isArray(a) ? a.every(sound) : k === "get" || sound(a);
 }
 var flag = (l) => l === null ? false : typeof l === "boolean" ? l : void 0;
@@ -199,7 +200,7 @@ function ev(e, s) {
     case "has":
       return typeof x === "string" && typeof y === "string" ? x.includes(y) : null;
     case "is":
-      return rec(a) ? is(ev(a.value, s), a.pattern) : null;
+      return rec(a) ? is(ev(a["value"], s), a["pattern"]) : null;
     case "add":
       return n ? num(n.x + n.y) : null;
     case "sub":
@@ -224,27 +225,27 @@ function holds(e, s) {
   return x === void 0 || !sound(x) ? void 0 : ev(x, s) === true;
 }
 var list = (v) => Array.isArray(v) ? v.filter(rec) : [];
-var kids = (b) => [...list(b.blocks), ...list(b.rows), ...list(b.buttons), ...list(b.rounds).flatMap((r) => list(r.blocks))];
-var named = (b) => list(b.fields).filter((f) => typeof f.name === "string");
+var kids = (b) => [...list(b["blocks"]), ...list(b["rows"]), ...list(b["buttons"]), ...list(b["rounds"]).flatMap((r) => list(r["blocks"]))];
+var named = (b) => list(b["fields"]).filter((f) => typeof f["name"] === "string");
 var actionOf = (a) => {
-  const k = a.action ?? (rec(a.tap) ? a.tap.action : void 0);
+  const k = a["action"] ?? (rec(a["tap"]) ? a["tap"]["action"] : void 0);
   return typeof k === "string" ? k : void 0;
 };
 var acts = (b) => {
-  const all = [...list(b.actions), ...list(b.swipe), ...list(b.menu), ...[b.button, ...WORDS.map((w) => b[w])].filter(rec)];
-  return [...all, ...all.flatMap((a) => list(a.menu))];
+  const all = [...list(b["actions"]), ...list(b["swipe"]), ...list(b["menu"]), ...[b["button"], ...WORDS.map((w) => b[w])].filter(rec)];
+  return [...all, ...all.flatMap((a) => list(a["menu"]))];
 };
 var plain = (v) => v === null || typeof v === "boolean" || typeof v === "number" || typeof v === "string" ? v : null;
 var lit = (_field, held2) => Array.isArray(held2) ? held2.length || null : plain(held2);
 function start(screen2) {
   const s = {};
   const seed = (b) => {
-    for (const f of named(b)) s[String(f.name)] = lit(f, f.value ?? f.files);
-    if (b.type === "chips" && typeof b.name === "string") s[b.name] = plain(Array.isArray(b.selected) ? b.selected[0] : null);
+    for (const f of named(b)) s[String(f["name"])] = lit(f, f["value"] ?? f["files"]);
+    if (b["type"] === "chips" && typeof b["name"] === "string") s[b["name"]] = plain(Array.isArray(b["selected"]) ? b["selected"][0] : null);
     kids(b).forEach(seed);
   };
   if (rec(screen2)) {
-    for (const [k, v] of Object.entries(rec(screen2.state) ? screen2.state : {})) s[k] = plain(v);
+    for (const [k, v] of Object.entries(rec(screen2["state"]) ? screen2["state"] : {})) s[k] = plain(v);
     seed(screen2);
   }
   return s;
@@ -252,33 +253,33 @@ function start(screen2) {
 function view(screen2, s) {
   const v = { hidden: /* @__PURE__ */ new Set(), disabled: /* @__PURE__ */ new Set(), says: {}, acts: /* @__PURE__ */ new Set(), values: {} };
   const walk = (b) => {
-    const id = typeof b.id === "string" ? b.id : void 0;
-    if (holds(b.show, s) === false) {
+    const id = typeof b["id"] === "string" ? b["id"] : void 0;
+    if (holds(b["show"], s) === false) {
       if (id !== void 0) v.hidden.add(id);
       return;
     }
-    if (holds(b.enabled, s) === false && id !== void 0) v.disabled.add(id);
+    if (holds(b["enabled"], s) === false && id !== void 0) v.disabled.add(id);
     let failing = false;
     for (const f of named(b)) {
-      const name = String(f.name);
-      if (holds(f.show, s) === false) {
+      const name = String(f["name"]);
+      if (holds(f["show"], s) === false) {
         v.hidden.add(name);
         continue;
       }
-      if (holds(f.enabled, s) === false) v.disabled.add(name);
-      const bad = list(f.checks).find((c) => typeof c.say === "string" && holds(c.ok, s) === false);
+      if (holds(f["enabled"], s) === false) v.disabled.add(name);
+      const bad = list(f["checks"]).find((c) => typeof c["say"] === "string" && holds(c["ok"], s) === false);
       if (bad) {
         failing = true;
-        v.says[name] = String(bad.say);
+        v.says[name] = String(bad["say"]);
       }
     }
     if (failing && id !== void 0) v.disabled.add(id);
     for (const a of acts(b)) {
       const k = actionOf(a);
-      if (k !== void 0 && holds(a.enabled, s) === false) v.acts.add(k);
+      if (k !== void 0 && holds(a["enabled"], s) === false) v.acts.add(k);
     }
-    for (const i of [b, ...list(b.items)]) {
-      const k = rec(i.value) ? i.value.get : void 0;
+    for (const i of [b, ...list(b["items"])]) {
+      const k = rec(i["value"]) ? i["value"]["get"] : void 0;
       if (typeof k === "string") v.values[k] = text(own(s, k) ? s[k] ?? null : null);
     }
     kids(b).forEach(walk);
@@ -290,20 +291,20 @@ function view(screen2, s) {
 // src/core/tree.ts
 var isBlk = (v) => typeof v === "object" && v !== null;
 var blks = (v) => Array.isArray(v) ? v.filter(isBlk) : [];
-var named2 = (b, t) => String(names.map((k) => b[k]).find((v) => typeof v === "string" && v) ?? (typeof b.id === "string" && b.id ? b.id : t));
+var named2 = (b, t) => String(names.map((k) => b[k]).find((v) => typeof v === "string" && v) ?? (typeof b["id"] === "string" && b["id"] ? b["id"] : t));
 var isLit = (v) => v === null || ["boolean", "number", "string"].includes(typeof v);
 var isExpr = (v) => v !== void 0 && !Array.isArray(v);
 var str = (b, k) => typeof b[k] === "string" && b[k] !== "" ? String(b[k]) : null;
 function under(b, drawn) {
-  if (drawn === "fallback") return Array.isArray(b.blocks) ? b.blocks : [];
+  if (drawn === "fallback") return Array.isArray(b["blocks"]) ? b["blocks"] : [];
   if (drawn === "hidden") return [];
-  const lists = ["blocks", b.type === "table" ? "" : "rows", "buttons"].flatMap((k) => Array.isArray(b[k]) ? b[k] : []);
-  return lists.concat(blks(b.rounds).flatMap((r) => Array.isArray(r.blocks) ? r.blocks : []));
+  const lists = ["blocks", b["type"] === "table" ? "" : "rows", "buttons"].flatMap((k) => Array.isArray(b[k]) ? b[k] : []);
+  return lists.concat(blks(b["rounds"]).flatMap((r) => Array.isArray(r["blocks"]) ? r["blocks"] : []));
 }
 function role(b, kind) {
-  const tap = isBlk(b.tap) ? b.tap : null;
+  const tap = isBlk(b["tap"]) ? b["tap"] : null;
   const wrapped = ["rounds", "swipe"].some((k) => Array.isArray(b[k]) && b[k].length > 0);
-  if ((kind === "button" || kind === "row") && tap?.url != null && !wrapped) return "link";
+  if ((kind === "button" || kind === "row") && tap?.["url"] != null && !wrapped) return "link";
   if (kind === "row" && tap && !wrapped || kind === "button" || kind === "editor") return "button";
   return roles[kind] ?? "group";
 }
@@ -312,7 +313,7 @@ function node(v, kinds3, state) {
   const kind = str(b, "type") ?? "";
   const field = Object.entries(hooks).find(([k]) => k === kind)?.[1].variant;
   const variant = field ? str(b, field) : null;
-  const shown = "show" in b && isExpr(b.show) ? evaluate(b.show, state) : true;
+  const shown = "show" in b && isExpr(b["show"]) ? evaluate(b["show"], state) : true;
   const off = shown === null || shown === false;
   const drawn = off ? "hidden" : kinds3.includes(kind) ? "native" : "fallback";
   return { kind, id: str(b, "id"), variant, drawn, role: role(b, kind), name: named2(b, kind), children: under(b, drawn).map((c) => node(c, kinds3, state)) };
@@ -320,7 +321,7 @@ function node(v, kinds3, state) {
 function tree(screen2, kinds3, state) {
   const b = screen2;
   const own2 = {};
-  for (const [k, v] of Object.entries(isBlk(b.state) ? b.state : {})) if (isLit(v)) own2[k] = v;
+  for (const [k, v] of Object.entries(isBlk(b["state"]) ? b["state"] : {})) if (isLit(v)) own2[k] = v;
   return node(b, kinds3, state ?? own2);
 }
 var who = (n) => `${n.kind}${n.id ? `#${n.id}` : ""}`;
@@ -342,10 +343,10 @@ var WORD = { working: "working", needs: "needs you", fail: "failed", done: "done
 var TONE = { working: "g", needs: "r", fail: "r", done: "mute", idle: "mute", merged: "g" };
 var figured = (s) => ({ glyph: GLYPH[s] ?? "\xB7", word: WORD[s] ?? s, tone: TONE[s] ?? "mute" });
 function value(v) {
-  if (isBlk(v) && "until" in v) return String(v.label ?? "").replace("{rel}", `${Math.max(0, Math.round((Date.parse(String(v.until)) - Date.now()) / 6e4))}m`);
+  if (isBlk(v) && "until" in v) return String(v["label"] ?? "").replace("{rel}", `${Math.max(0, Math.round((Date.parse(String(v["until"])) - Date.now()) / 6e4))}m`);
   if (isBlk(v) && "since" in v) {
-    const s = Math.max(0, (Date.now() - Date.parse(String(v.since))) / 1e3);
-    if (v.label != null) return String(v.label).replace("{}", s < 120 ? `${Math.floor(s)}s` : s < 7200 ? `${Math.floor(s / 60)}m` : s < 172800 ? `${Math.floor(s / 3600)}h` : `${Math.floor(s / 86400)}d`);
+    const s = Math.max(0, (Date.now() - Date.parse(String(v["since"]))) / 1e3);
+    if (v["label"] != null) return String(v["label"]).replace("{}", s < 120 ? `${Math.floor(s)}s` : s < 7200 ? `${Math.floor(s / 60)}m` : s < 172800 ? `${Math.floor(s / 3600)}h` : `${Math.floor(s / 86400)}d`);
     return s < 60 ? "now" : s < 3600 ? `${Math.floor(s / 60)}m` : s < 86400 ? `${Math.floor(s / 3600)}h ${Math.floor(s / 60) % 60}m` : `${Math.floor(s / 86400)}d`;
   }
   return String(v ?? "");
@@ -372,12 +373,9 @@ var rgb = (hex) => {
   return [n >> 16, n >> 8 & 255, n & 255];
 };
 function lab(c) {
-  const [r, g, b] = c.map(lin);
-  const [cx, cy, cz] = [
-    [0.4124, 0.3576, 0.1805],
-    [0.2126, 0.7152, 0.0722],
-    [0.0193, 0.1192, 0.9505]
-  ].map(([x, y, z]) => x * r + y * g + z * b);
+  const [r, g, b] = [lin(c[0]), lin(c[1]), lin(c[2])];
+  const dot = ([x, y, z]) => x * r + y * g + z * b;
+  const [cx, cy, cz] = [dot([0.4124, 0.3576, 0.1805]), dot([0.2126, 0.7152, 0.0722]), dot([0.0193, 0.1192, 0.9505])];
   const curve = (t) => t > 216 / 24389 ? Math.cbrt(t) : (24389 / 27 * t + 16) / 116;
   const [fx, fy, fz] = [curve(cx / 0.95047), curve(cy), curve(cz / 1.08883)];
   return [116 * fy - 16, 500 * (fx - fy), 200 * (fy - fz)];
@@ -408,7 +406,7 @@ function gate(s, fills) {
   const checks = [];
   const [bg, r, a] = [c("--bg"), c("--r"), c("--a")];
   const needs = ["the needs-you card", over(r, bg, 0.15)];
-  const tints = [needs, ["a red group header", over(r, bg, 0.12)], ["an amber group header", over(a, bg, 0.12)]];
+  const tints = [["--r", ...needs], ["--r", "a red group header", over(r, bg, 0.12)], ["--a", "an amber group header", over(a, bg, 0.12)]];
   const text4 = ["--fg", "--mute", "--l", "--link", "--fk-l", "--fk-p", "--fk-c", "--fk-g", "--fk-a"];
   const states = ["--g", "--a", "--r"];
   for (const b of ["--bg", "--card"]) {
@@ -420,10 +418,7 @@ function gate(s, fills) {
     for (const k of ["--link", "--g", "--a", "--r", "--p", "--c"]) checks.push({ what: `--bg on ${k}`, got: ratio(bg, c(k)), min: 4.5 });
   }
   for (const k of ["--fg", "--mute", "--l"]) checks.push({ what: `${k} on ${needs[0]}`, got: ratio(c(k), needs[1]), min: 4.5 });
-  ["--r", "--r", "--a"].forEach((k, i) => {
-    const [on, tint] = tints[i];
-    checks.push({ what: `${k} on ${on}`, got: ratio(c(k), tint), min: 3 });
-  });
+  for (const [k, on, tint] of tints) checks.push({ what: `${k} on ${on}`, got: ratio(c(k), tint), min: 3 });
   const pairs = [["--g", "--a"], ["--a", "--r"], ["--g", "--r"]];
   for (const x of ["--l", "--link"]) pairs.push(...states.map((y) => [x, y]));
   for (const [x, y] of pairs) checks.push({ what: `\u0394E2000 ${x} \u2194 ${y}`, got: de(c(x), c(y)), min: 20 });
@@ -511,6 +506,7 @@ var table = (fields) => ({ type: "table", ...fields });
 var steps = (fields) => ({ type: "steps", ...fields });
 var chart = (fields) => ({ type: "chart", ...fields });
 var toast = (fields) => ({ type: "toast", ...fields });
+var pages = (fields) => ({ type: "pages", ...fields });
 var timeline = (fields) => ({ type: "timeline", ...fields });
 var expr = {
   get: (v) => ({ get: v }),
@@ -570,7 +566,7 @@ var LISTS = ["blocks", "rows", "buttons"];
 var DRAWN2 = ["row", "text", "island"];
 var NAMED = ["title", "label", "header", "question", "name", "file", "command", "source", "src"];
 var isObj = (v) => typeof v === "object" && v !== null && !Array.isArray(v);
-var isTable = (o) => o.type === "table" && Array.isArray(o.columns) && Array.isArray(o.rows);
+var isTable = (o) => o["type"] === "table" && Array.isArray(o["columns"]) && Array.isArray(o["rows"]);
 var text3 = (o, k) => typeof o[k] === "string" && o[k] !== "" ? o[k] : void 0;
 function tabled(t) {
   const rows = t.rows.filter((r) => !r.group).map((r) => worked(t, r));
@@ -586,16 +582,16 @@ function plain2(o, kind) {
   const subtitle = text3(o, "subtitle");
   const f = { title: NAMED.map((k) => text3(o, k)).find((t) => t !== void 0) ?? kind };
   if (subtitle !== void 0) f.subtitle = subtitle;
-  if (isObj(o.tap)) f.tap = o.tap;
+  if (isObj(o["tap"])) f.tap = o["tap"];
   return f;
 }
 var copy = (v) => isObj(v) ? fill({ ...v }) : v;
 var each = (l) => Array.isArray(l) ? l.map(copy) : l;
 function fill(o) {
-  const kind = typeof o.type === "string" ? o.type : "";
-  if (KINDS.includes(kind) && !DRAWN2.includes(kind) && o.fallback === void 0) o.fallback = plain2(o, kind);
+  const kind = typeof o["type"] === "string" ? o["type"] : "";
+  if (KINDS.includes(kind) && !DRAWN2.includes(kind) && o["fallback"] === void 0) o["fallback"] = plain2(o, kind);
   for (const k of LISTS) if (k in o) o[k] = each(o[k]);
-  if (Array.isArray(o.rounds)) o.rounds = o.rounds.map((r) => isObj(r) && "blocks" in r ? { ...r, blocks: each(r.blocks) } : r);
+  if (Array.isArray(o["rounds"])) o["rounds"] = o["rounds"].map((r) => isObj(r) && "blocks" in r ? { ...r, blocks: each(r["blocks"]) } : r);
   return o;
 }
 function built(screen2) {
@@ -639,6 +635,7 @@ var kinds = {
   "list": "List",
   "media": "Media",
   "nav": "Nav",
+  "pages": "Pages",
   "prose": "Prose",
   "row": "Row",
   "run": "Run",
@@ -832,6 +829,7 @@ var defs = {
             "steps",
             "chart",
             "toast",
+            "pages",
             "timeline"
           ]
         },
@@ -1325,6 +1323,19 @@ var defs = {
         "properties": {
           "type": {
             "const": "toast",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      {
+        "$ref": "#/$defs/Pages",
+        "properties": {
+          "type": {
+            "const": "pages",
             "type": "string"
           }
         },
@@ -4103,6 +4114,90 @@ var defs = {
     "required": [
       "action",
       "cursor"
+    ],
+    "type": "object"
+  },
+  "PageImage": {
+    "properties": {
+      "alt": {
+        "type": "string"
+      },
+      "height": {
+        "minimum": 0,
+        "type": "integer"
+      },
+      "src": {
+        "type": "string"
+      },
+      "width": {
+        "minimum": 0,
+        "type": "integer"
+      }
+    },
+    "required": [
+      "src",
+      "alt",
+      "width",
+      "height"
+    ],
+    "type": "object"
+  },
+  "Pages": {
+    "additionalProperties": true,
+    "properties": {
+      "fallback": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Fallback"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "file": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "id": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "note": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "pages": {
+        "items": {
+          "$ref": "#/$defs/PageImage"
+        },
+        "type": "array"
+      },
+      "show": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "title": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "required": [
+      "pages"
     ],
     "type": "object"
   },
@@ -6889,12 +6984,12 @@ function fits(s, v) {
 function shallow(o) {
   const top = { ...o };
   for (const k of LISTS2) if (k in top) top[k] = [];
-  if (Array.isArray(top.rounds)) top.rounds = top.rounds.map((r) => isObj3(r) && "blocks" in r ? { ...r, blocks: [] } : r);
+  if (Array.isArray(top["rounds"])) top["rounds"] = top["rounds"].map((r) => isObj3(r) && "blocks" in r ? { ...r, blocks: [] } : r);
   return top;
 }
 function sentOnce(top) {
   const seen = /* @__PURE__ */ new Set();
-  const action = (w) => isObj3(top[w]) ? str2(top[w].action) : void 0;
+  const action = (w) => isObj3(top[w]) ? str2(top[w]["action"]) : void 0;
   const twice = WORDS.filter((w) => {
     const a = action(w);
     return a !== void 0 && (seen.has(a) || !seen.add(a));
@@ -6904,17 +6999,17 @@ function sentOnce(top) {
   return v;
 }
 function placed(o) {
-  const lists = LISTS2.filter((k) => (o.type !== "table" || k !== "rows") && k in o).map((k) => [k, o[k]]);
-  const rounds = Array.isArray(o.rounds) ? o.rounds : [];
-  rounds.forEach((r, i) => isObj3(r) && "blocks" in r && lists.push([`rounds/${i}/blocks`, r.blocks]));
+  const lists = LISTS2.filter((k) => (o["type"] !== "table" || k !== "rows") && k in o).map((k) => [k, o[k]]);
+  const rounds = Array.isArray(o["rounds"]) ? o["rounds"] : [];
+  rounds.forEach((r, i) => isObj3(r) && "blocks" in r && lists.push([`rounds/${i}/blocks`, r["blocks"]]));
   return lists.flatMap(([at2, l]) => Array.isArray(l) ? l.map((v, i) => [`${at2}/${i}`, v]) : []);
 }
 function unplaced(s) {
-  const steps2 = Array.isArray(s.steps) ? s.steps : [];
+  const steps2 = Array.isArray(s["steps"]) ? s["steps"] : [];
   if (steps2.length === 0) return void 0;
-  const at2 = s.current == null ? void 0 : steps2.some((x) => isObj3(x) && x.id === s.current);
-  const done = s.done === true;
-  if (s.bars != null) return "a steps block with both steps and bars";
+  const at2 = s["current"] == null ? void 0 : steps2.some((x) => isObj3(x) && x["id"] === s["current"]);
+  const done = s["done"] === true;
+  if (s["bars"] != null) return "a steps block with both steps and bars";
   if (at2 === false) return "a stepper whose current names no step";
   if (at2 === true && done) return "a stepper both done and at a current step";
   if (at2 === void 0 && !done) return "a stepper with neither a current step nor done";
@@ -6933,8 +7028,8 @@ var Walk = class {
       this.out.push({ fault: "shape", kind: "", why: "a block that is no object" });
       return;
     }
-    const kind = str2(v.type) ?? "";
-    const id = str2(v.id);
+    const kind = str2(v["type"]) ?? "";
+    const id = str2(v["id"]);
     if (id === "") this.out.push({ fault: "unnamed", kind });
     else if (id !== void 0) {
       const first = this.ids.get(id);
@@ -6942,7 +7037,7 @@ var Walk = class {
       if (first !== void 0) this.out.push({ fault: "twice", id, at: [first, at2] });
     } else if (kind === "island" || WORDS.some((w) => isObj3(v[w]))) this.out.push({ fault: "unnamed", kind });
     const core = KINDS2.includes(kind);
-    const fallback = isObj3(v.fallback) ? str2(v.fallback.title) : void 0;
+    const fallback = isObj3(v["fallback"]) ? str2(v["fallback"]["title"]) : void 0;
     if ((kind === "island" || this.app.includes(kind) && !core) && !fallback) this.out.push({ fault: "bare", kind, id: id ?? "" });
     if (core) {
       const inner = id || scope;
@@ -6959,7 +7054,7 @@ var Walk = class {
       const url2 = str2(v[k]);
       if (url2 !== void 0 && !linkable(url2)) this.out.push({ fault: "link", at: at2, url: url2 });
     }
-    const action = str2(v.action);
+    const action = str2(v["action"]);
     if (action !== void 0) {
       const key = JSON.stringify([scope, action]);
       const first = this.acts.get(key);
@@ -6978,8 +7073,8 @@ var Walk = class {
       const why = kind === "steps" ? unplaced(top) : void 0;
       if (why !== void 0) this.out.push({ fault: "shape", kind, why });
     }
-    const fields = kind === "form" || kind === "config" ? Array.isArray(o.fields) ? o.fields : [] : [];
-    const names2 = kind === "chips" ? [o.name] : fields.map((f) => isObj3(f) ? f.name : void 0);
+    const fields = kind === "form" || kind === "config" ? Array.isArray(o["fields"]) ? o["fields"] : [] : [];
+    const names2 = kind === "chips" ? [o["name"]] : fields.map((f) => isObj3(f) ? f["name"] : void 0);
     for (const n of names2) if (typeof n === "string") this.keys.push(n);
   }
 };
@@ -6987,14 +7082,14 @@ function gets(v, out) {
   if (Array.isArray(v)) return v.forEach((x) => gets(x, out));
   if (!isObj3(v)) return;
   const keys = Object.keys(v);
-  const get = str2(v.get);
+  const get = str2(v["get"]);
   if (keys.length === 1 && get !== void 0) return out.push(get);
   for (const k of keys) if (k !== "calc") gets(v[k], out);
 }
 function check(screen2, app = []) {
   const w = new Walk(app);
   for (const kind of app) if (KINDS2.includes(kind)) w.out.push({ fault: "clash", kind });
-  if (isObj3(screen2) && isObj3(screen2.state)) w.keys.push(...sorted(screen2.state));
+  if (isObj3(screen2) && isObj3(screen2["state"])) w.keys.push(...sorted(screen2["state"]));
   w.block(screen2, "", "");
   const declared = /* @__PURE__ */ new Set();
   const twice = w.keys.filter((k) => declared.has(k) || !declared.add(k));
@@ -7007,7 +7102,7 @@ function check(screen2, app = []) {
 function named3(v, out) {
   if (Array.isArray(v)) return v.forEach((x) => named3(x, out));
   if (!isObj3(v)) return;
-  const action = str2(v.action);
+  const action = str2(v["action"]);
   if (action !== void 0) out.add(action);
   for (const x of Object.values(v)) named3(x, out);
 }
@@ -7114,6 +7209,7 @@ export {
   named2 as named,
   names,
   nav,
+  pages,
   pick,
   picked,
   prose,

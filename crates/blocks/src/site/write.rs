@@ -229,7 +229,7 @@ impl<'a> W<'a> {
             }
         };
         let (tag, cls) = if a {
-            ("a", format!("btn {cls}"))
+            ("a", format!("btn {cls}").trim_end().to_string())
         } else {
             ("button", cls.to_string())
         };

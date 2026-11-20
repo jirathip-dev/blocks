@@ -73,7 +73,7 @@ function bar(b: Timeline, x: TimeBar, y: number, gap: number, ax: Axis, wires: W
     const tap = x.tap;
     if (tap) {
       bd.addEventListener("click", () => c.tap(tap));
-      bd.addEventListener("keydown", (k) => k.key === "Enter" && !k.defaultPrevented && bd.dataset.phase !== "previewing" && c.tap(tap));
+      bd.addEventListener("keydown", (k) => k.key === "Enter" && !k.defaultPrevented && bd.dataset["phase"] !== "previewing" && c.tap(tap));
     }
     for (const [r, part, gesture] of all) {
       const g = r?.current;
@@ -83,7 +83,7 @@ function bar(b: Timeline, x: TimeBar, y: number, gap: number, ax: Axis, wires: W
       const show = (span: DaySpan | null) => {
         const [a, z] = span ? [day(span.start) ?? s, day(span.end) ?? e] : [s, e];
         const px = ax.lane() / ax.n;
-        const text = span ? words(span.start, span.end) : g.dataset.phase === "dragging" ? "no drop here" : "";
+        const text = span ? words(span.start, span.end) : g.dataset["phase"] === "dragging" ? "no drop here" : "";
         if (part !== "body") return shown(gh, tg, home, span ? clip(a, z, ax) : null, px, text);
         we.style.transform = span ? `translate(${(a - s) * px}px, -3px)` : "";
         shown(gh, tg, home, null, px, text);
@@ -148,7 +148,7 @@ function track(b: Timeline, r: TimeRow, ax: Axis, off: Set<number>, wires: Wire[
 function rove(root: HTMLElement) {
   const stops = () => Array.from(root.querySelectorAll<HTMLElement>("[data-grab]"));
   const focus = (e: FocusEvent) => {
-    if (!(e.target instanceof HTMLElement) || !e.target.dataset.grab) return;
+    if (!(e.target instanceof HTMLElement) || !e.target.dataset["grab"]) return;
     const at = e.target;
     for (const s of stops()) s.tabIndex = s === at || (at.classList.contains("tmbb") && s.parentElement === at.parentElement) ? 0 : -1;
   };

@@ -110,7 +110,7 @@ export function media(b: Media, c: Ctx): HTMLElement {
   const v = c.view?.get(b.id) ?? {};
   c.view?.set(b.id, v);
   const draw = () => {
-    const at = document.activeElement instanceof HTMLElement && f.contains(document.activeElement) ? document.activeElement.dataset.key : undefined;
+    const at = document.activeElement instanceof HTMLElement && f.contains(document.activeElement) ? document.activeElement.dataset["key"] : undefined;
     f.replaceChildren(...marked(b, c, v, { redraw: draw, press: (k) => f.querySelector<HTMLElement>(`[data-key="${k}"]`)?.click() }));
     if (at) f.querySelector<HTMLElement>(`[data-key="${CSS.escape(at)}"]`)?.focus();
   };
@@ -121,7 +121,7 @@ export function media(b: Media, c: Ctx): HTMLElement {
 type Again = { redraw: () => void; press: (key: string) => void };
 type Painter = (m: Mark, d: MarkChange | null) => void;
 type Reach = (dx: number, dy: number, x: number, y: number) => MarkReach;
-const mirror = (from: HTMLElement, g: SVGGElement) => new MutationObserver(() => set(g, { "data-phase": from.dataset.phase })).observe(from, { attributeFilter: ["data-phase"] });
+const mirror = (from: HTMLElement, g: SVGGElement) => new MutationObserver(() => set(g, { "data-phase": from.dataset["phase"] })).observe(from, { attributeFilter: ["data-phase"] });
 
 function marked(b: Media, c: Ctx, v: Record<string, unknown>, again: Again): HTMLElement[] {
   const { redraw } = again;
@@ -129,10 +129,10 @@ function marked(b: Media, c: Ctx, v: Record<string, unknown>, again: Again): HTM
   const img = el("img");
   set(img, { src: b.src, alt: b.alt, width: b.width, height: b.height });
   const { w, z, art, top } = frame(b, img);
-  const tool = (b.tools ?? []).find((t) => t === str(v.tool)) ?? (b.tools?.length === 1 ? b.tools[0] : undefined);
+  const tool = (b.tools ?? []).find((t) => t === str(v["tool"])) ?? (b.tools?.length === 1 ? b.tools[0] : undefined);
   const groups = [...new Set(marks.filter((m) => !m.fixed && m.group != null).map((m) => m.group ?? ""))];
-  const into = groups.find((g) => g === str(v.into)) ?? groups[groups.length - 1];
-  const sel = marks.find((m) => m.id === str(v.sel) && !m.fixed);
+  const into = groups.find((g) => g === str(v["into"])) ?? groups[groups.length - 1];
+  const sel = marks.find((m) => m.id === str(v["sel"]) && !m.fixed);
   const reach: Reach = (dx, dy, x, y) => {
     const r = z.getBoundingClientRect();
     const at = (px: number, py: number): Spot => [(px - r.left) / (r.width || 1), (py - r.top) / (r.height || 1)];
@@ -155,12 +155,12 @@ function marked(b: Media, c: Ctx, v: Record<string, unknown>, again: Again): HTM
     const p = painted(art, top, b, merged(m, isChange(h0) ? h0 : null), isChange(h0) ? " sent" : "");
     if (!m.fixed) stops(b, c, { m, p, sel: m.id === sel?.id, top, reach, faint: faint(), again, v });
   }
-  if (isChange(out) && out.kind) painted(art, top, b, { id: "", kind: out.kind, at: out.at ?? [], to: out.to, text: out.text }, " sent");
+  if (isChange(out) && out.kind) painted(art, top, b, { id: "", kind: out.kind, at: out.at ?? [], to: out.to ?? null, text: out.text ?? null }, " sent");
   const parts: HTMLElement[] = [];
   const tools = b.draw && b.tools?.length ? bar(b, c, { tool, groups, into, sel, v, redraw, reach, draft, pen }) : null;
   if (tools) parts.push(tools);
   if (b.draw && tool) surface(b, c, { z, tool, pen: pen(tool), reach, show: draft, v, redraw });
-  if (b.draw && tool === "text" && Array.isArray(v.typing)) typing(b, c, { top, at: v.typing, pen: pen("text"), v, redraw });
+  if (b.draw && tool === "text" && Array.isArray(v["typing"])) typing(b, c, { top, at: v["typing"], pen: pen("text"), v, redraw });
   if (tool === "pin" && b.tools?.length === 1) tools?.querySelector(".mkr")?.append(...zoom(w, z, v));
   parts.push(w);
   if (!marks.length && b.draw) parts.push(h("p", "mkhint", HINT));
@@ -183,7 +183,7 @@ function stops(b: Media, c: Ctx, o: Stop) {
   const name = named(b, o.m.id) ?? o.m.id;
   const stop = el("span", `mk${o.sel ? " sel" : ""}`);
   set(stop, { role: "button", tabindex: 0, "aria-roledescription": "mark", "aria-label": name });
-  stop.dataset.key = o.m.id;
+  stop.dataset["key"] = o.m.id;
   over(stop, o.m);
   o.top.append(stop);
   const follow = (d: MarkChange | null) => {
@@ -194,15 +194,15 @@ function stops(b: Media, c: Ctx, o: Stop) {
   mirror(stop, o.p.g);
   if (b.move) gestured(stop, c, { block: b, gesture: b.move, rules, grab: { body: o.m.id }, item: o.m.id, reach: o.reach, show: follow });
   const pick = () => {
-    if (stop.dataset.phase && stop.dataset.phase !== "idle") return;
-    o.v.sel = o.sel ? undefined : o.m.id;
+    if (stop.dataset["phase"] && stop.dataset["phase"] !== "idle") return;
+    o.v["sel"] = o.sel ? undefined : o.m.id;
     o.again.redraw();
   };
   stop.addEventListener("click", pick);
   stop.addEventListener("keydown", (e) => {
-    if (e.key === "Enter" && (stop.dataset.phase ?? "idle") === "idle") pick();
+    if (e.key === "Enter" && (stop.dataset["phase"] ?? "idle") === "idle") pick();
     else if ((e.key === "Delete" || e.key === "Backspace") && b.remove) {
-      o.v.sel = o.m.id;
+      o.v["sel"] = o.m.id;
       o.again.redraw();
       o.again.press("rm");
     } else return;
@@ -214,7 +214,7 @@ function stops(b: Media, c: Ctx, o: Stop) {
     const at = end === "start" ? o.m.at : o.m.to;
     set(grip, { role: "button", tabindex: 0, "aria-label": `${end === "start" ? "Start" : "End"} of ${name}` });
     Object.assign(grip.style, { left: pc(at[0]), top: pc(at[1]) });
-    grip.dataset.key = `${o.m.id}:${end}`;
+    grip.dataset["key"] = `${o.m.id}:${end}`;
     o.top.append(grip);
     mirror(grip, o.p.g);
     const pull = (d: MarkChange | null) => {
@@ -228,10 +228,10 @@ function stops(b: Media, c: Ctx, o: Stop) {
 }
 
 type Bar = {
-  tool?: MarkKind;
+  tool?: MarkKind | undefined;
   groups: string[];
-  into?: string;
-  sel?: Mark;
+  into?: string | undefined;
+  sel?: Mark | undefined;
   v: Record<string, unknown>;
   redraw: () => void;
   reach: Reach;
@@ -248,10 +248,10 @@ function bar(b: Media, c: Ctx, o: Bar): HTMLElement {
   for (const k of b.tools ?? []) {
     const t = btn(k, o.tool === k ? "on" : "");
     set(t, { "aria-label": `${said(k)} tool`, "aria-current": o.tool === k ? "true" : null });
-    t.dataset.key = `tool:${k}`;
+    t.dataset["key"] = `tool:${k}`;
     t.addEventListener("click", () => {
-      if ((t.dataset.phase ?? "idle") !== "idle") return;
-      [o.v.tool, o.v.typing] = [o.tool === k ? "" : k, undefined];
+      if ((t.dataset["phase"] ?? "idle") !== "idle") return;
+      [o.v["tool"], o.v["typing"]] = [o.tool === k ? "" : k, undefined];
       o.redraw();
     });
     tl.append(t);
@@ -262,7 +262,7 @@ function bar(b: Media, c: Ctx, o: Bar): HTMLElement {
     const s = el("select");
     s.setAttribute("aria-label", "Into group");
     s.append(...o.groups.map((g) => Object.assign(el("option"), { value: g, textContent: g, selected: g === o.into })));
-    s.addEventListener("change", () => ((o.v.into = s.value), o.redraw()));
+    s.addEventListener("change", () => ((o.v["into"] = s.value), o.redraw()));
     box.append(h("label", "mkgp", h("span", "m", "into"), s));
   }
   const right = el("div", "mkr");
@@ -270,7 +270,7 @@ function bar(b: Media, c: Ctx, o: Bar): HTMLElement {
   if (!b.remove) return box;
   const d = Object.assign(el("button", "bad"), { type: "button" });
   d.append(h("span", "", "delete"));
-  d.dataset.key = "rm";
+  d.dataset["key"] = "rm";
   right.append(d);
   const id = o.sel && rules.word(b, { remove: o.sel.id }) ? o.sel.id : null;
   d.disabled = id === null;
@@ -297,10 +297,10 @@ function surface(b: Media, c: Ctx, o: Surface) {
   const show = (d: MarkChange | null) => o.show({ id: "", kind: o.tool, at: [] }, d);
   const run = gestured(s, c, { block: b, gesture: b.draw, rules, grab: { draw: o.pen }, item: "draw", reach: o.reach, show });
   s.addEventListener("click", (e) => {
-    if ((s.dataset.phase ?? "idle") !== "idle") return;
+    if ((s.dataset["phase"] ?? "idle") !== "idle") return;
     const { to } = o.reach(0, 0, e.clientX, e.clientY);
     if (o.tool === "text") {
-      o.v.typing = to;
+      o.v["typing"] = to;
       o.redraw();
     } else if (o.tool === "pin") {
       o.pen.at = to;
@@ -314,26 +314,26 @@ type Typing = { top: HTMLElement; at: unknown[]; pen: { tool: MarkKind; group?: 
 function typing(b: Media, c: Ctx, o: Typing) {
   if (!b.draw) return;
   const at: Spot = [Number(o.at[0]) || 0, Number(o.at[1]) || 0];
-  const pen = { ...o.pen, at, text: str(o.v.words) ?? "" };
+  const pen = { ...o.pen, at, text: str(o.v["words"]) ?? "" };
   const box = el("span", "mkin");
   Object.assign(box.style, { left: pc(at[0]), top: pc(at[1]) });
   const i = Object.assign(el("input"), { value: pen.text });
   i.setAttribute("aria-label", "Text of the new mark");
   const add = btn("add");
-  add.dataset.key = "add";
+  add.dataset["key"] = "add";
   box.append(i, add);
   o.top.append(box);
-  i.addEventListener("input", () => (pen.text = o.v.words = i.value));
+  i.addEventListener("input", () => (pen.text = o.v["words"] = i.value));
   const run = gestured(add, c, { block: b, gesture: b.draw, rules, grab: { draw: pen }, item: "draw", reach: () => ({ from: [-1, -1], to: [-1, -1] }), show: () => {} });
   const done = () => {
     run({ dir: "right" });
-    [o.v.typing, o.v.words] = [undefined, undefined];
+    [o.v["typing"], o.v["words"]] = [undefined, undefined];
   };
   add.addEventListener("click", done);
   i.addEventListener("keydown", (e) => {
     if (e.key === "Enter") done();
     if (e.key !== "Escape") return;
-    o.v.typing = undefined;
+    o.v["typing"] = undefined;
     o.redraw();
   });
   queueMicrotask(() => i.isConnected && i.focus());
@@ -347,8 +347,8 @@ function zoom(w: HTMLElement, z: HTMLElement, v: Record<string, unknown>): HTMLE
   };
   w.classList.add("zoom");
   zoomed(w, v, { min: 1, max: 3, apply });
-  const to = (k: number) => apply((v.zoom = Math.min(3, Math.max(1, k))));
-  const now = () => (typeof v.zoom === "number" ? v.zoom : 1);
+  const to = (k: number) => apply((v["zoom"] = Math.min(3, Math.max(1, k))));
+  const now = () => (typeof v["zoom"] === "number" ? v["zoom"] : 1);
   const ways: [string, string, () => void][] = [
     ["−", "Zoom out", () => to(now() / 1.25)],
     ["", "Fit", () => to(1)],

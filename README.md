@@ -2,7 +2,7 @@
 
 blocks is an opinionated UI framework whose screens are data: typed blocks, checked, then drawn by a renderer. It has
 two modes. Mode A, server-driven (drover, cooee): a Rust server builds screens and sends row ops over the device
-stream. Mode B, client-built (synergy): TS builders in a route loader build the screen and the React adapter draws it,
+stream. Mode B, client-built (a client-built app): TS builders in a route loader build the screen and the React adapter draws it,
 with no server and no stream; it uses the kinds, the generated types, the builders, check, `blocks.css` and the guard
 kit, and not shelf, mirror, the stream, wire versioning or site.
 

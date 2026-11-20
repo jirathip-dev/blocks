@@ -20,17 +20,17 @@ function chart(source: string) {
   const names = new Map<string, string>(), row = new Map<string, number>(), side = new Map<string, number>(), optional = new Set<string>();
   const add = (id: string) => void (id !== "[*]" && !order.includes(id) && order.push(id));
   for (const line of source.split("\n").map((l) => l.trim())) {
-    const named = /^state\s+"([^"]+)"\s+as\s+(\w+)$/.exec(line);
-    const plain = /^state\s+(\w+)$/.exec(line);
-    const edge = /^(\[\*\]|\w+)\s*-->\s*(\[\*\]|\w+)/.exec(line);
-    if (named) {
-      names.set(named[2], named[1]);
-      add(named[2]);
-    } else if (plain) add(plain[1]);
-    else if (edge) {
-      add(edge[1]);
-      add(edge[2]);
-      parsed.push({ from: edge[1], into: edge[2], both: false });
+    const [, label, id] = /^state\s+"([^"]+)"\s+as\s+(\w+)$/.exec(line) ?? [];
+    const [, alone] = /^state\s+(\w+)$/.exec(line) ?? [];
+    const [, from, into] = /^(\[\*\]|\w+)\s*-->\s*(\[\*\]|\w+)/.exec(line) ?? [];
+    if (label && id) {
+      names.set(id, label);
+      add(id);
+    } else if (alone) add(alone);
+    else if (from && into) {
+      add(from);
+      add(into);
+      parsed.push({ from, into, both: false });
     }
   }
   const at = (id: string) => order.indexOf(id);
@@ -89,11 +89,12 @@ function map(g: ReturnType<typeof chart>, b: Blk, c: Ctx, m: Metrics, counts: Co
   const centre = new Map<number, number>(), used = new Set(g.side.values());
   let left = m.gutter;
   for (const s of [-1, 0, 1].filter((s) => used.has(s))) {
-    centre.set(s, left + m.widths[s + 1] / 2);
-    left += m.widths[s + 1] + m.gap;
+    const w = m.widths[s + 1] ?? 0;
+    centre.set(s, left + w / 2);
+    left += w + m.gap;
   }
   const box = (id: string): Box => {
-    const s = g.side.get(id) ?? 0, w = m.widths[s + 1], y = TOP + (g.row.get(id) ?? 0) * (m.height + m.rowGap), mx = centre.get(s) ?? 0;
+    const s = g.side.get(id) ?? 0, w = m.widths[s + 1] ?? 0, y = TOP + (g.row.get(id) ?? 0) * (m.height + m.rowGap), mx = centre.get(s) ?? 0;
     return { x: mx - w / 2, y, w, h: m.height, mx, my: y + m.height / 2 };
   };
   const width = left - m.gap + m.gutter, height = TOP + g.rows * (m.height + m.rowGap) - m.rowGap + 12;
@@ -116,39 +117,41 @@ function map(g: ReturnType<typeof chart>, b: Blk, c: Ctx, m: Metrics, counts: Co
     if (s === 0) return [[t.mx > f.mx ? f.x + f.w : f.x, f.my], [t.mx, f.my], [t.mx, down ? t.y : t.y + t.h]];
     return [[f.mx, down ? f.y + f.h : f.y], [f.mx, t.my], [t.mx > f.mx ? t.x : t.x + t.w, t.my]];
   };
-  const nodes = b.nodes, node = (id: string) => obj(Array.isArray(nodes) ? nodes.find((n) => obj(n).id === id) : obj(nodes)[id]);
+  const nodes = b["nodes"], node = (id: string) => obj(Array.isArray(nodes) ? nodes.find((n) => obj(n)["id"] === id) : obj(nodes)[id]);
   const first = g.spine[0] === undefined ? null : box(g.spine[0]);
   if (first) svg.append(svgEl("circle", { cx: first.mx, cy: 10, r: 6, class: "dgs" }), svgEl("path", { d: d([[first.mx, 16], [first.mx, first.y]]), class: "dge" }));
   for (const e of g.edges) {
     const pts = route(box(e.from), box(e.into), g.side.get(e.from) ?? 0);
-    const timer = node(e.from).limit != null || node(e.into).limit != null;
+    const timer = node(e.from)["limit"] != null || node(e.into)["limit"] != null;
     svg.append(svgEl("path", { d: d(pts), class: timer ? "dge timer" : "dge" }));
-    head(pts[pts.length - 1], pts[pts.length - 2]);
-    if (e.both) head(pts[0], pts[1]);
+    const [tip, back] = [pts[pts.length - 1], pts[pts.length - 2]];
+    if (tip && back) head(tip, back);
+    const [start, after] = pts;
+    if (e.both && start && after) head(start, after);
   }
   out.append(svg);
   for (const id of g.order) {
-    const n = node(id), at = box(id), name = g.names.get(id) ?? id, label = String(n.label ?? name);
+    const n = node(id), at = box(id), name = g.names.get(id) ?? id, label = String(n["label"] ?? name);
     let e: HTMLElement;
-    if (n.limit != null) {
+    if (n["limit"] != null) {
       const mark = h("span", "", "⧗");
       mark.setAttribute("aria-hidden", "true");
-      e = h("div", "dgn timer", mark, h("span", "", h("span", "dgl", label), h("span", "dgv", String(n.value ?? ""))));
-      e.setAttribute("aria-label", `${label} ${n.value ?? ""}, opens its setting`);
+      e = h("div", "dgn timer", mark, h("span", "", h("span", "dgl", label), h("span", "dgv", String(n["value"] ?? ""))));
+      e.setAttribute("aria-label", `${label} ${n["value"] ?? ""}, opens its setting`);
     } else {
       const count = counts[id] ?? 0, before = was[id], moved = before !== undefined && before !== count, opt = g.optional.has(id);
-      const cls = `dgn ${n.state ?? "idle"}${count === 0 ? " zero" : ""}${moved ? " moved" : ""}${b.selected === id ? " picked" : ""}`;
+      const cls = `dgn ${n["state"] ?? "idle"}${count === 0 ? " zero" : ""}${moved ? " moved" : ""}${b["selected"] === id ? " picked" : ""}`;
       const extra = moved ? [h("small", "", `was ${before}`)] : opt ? [h("small", "opt", "optional")] : [];
       e = h("div", cls, h("span", "dgl", name), h("span", "dgc", String(count), ...extra));
       e.setAttribute("aria-label", `${name}, ${count} issue${count === 1 ? "" : "s"}${opt ? ", optional" : ""}`);
     }
     e.style.cssText = `left:${at.x}px;top:${at.y}px;width:${at.w}px;height:${at.h}px`;
     e.title = label;
-    if (n.tap) {
+    if (n["tap"]) {
       e.classList.add("tap");
       e.tabIndex = 0;
       e.setAttribute("role", "button");
-      e.onclick = () => c.tap(n.tap);
+      e.onclick = () => c.tap(n["tap"]);
     }
     out.append(e);
   }
@@ -156,10 +159,10 @@ function map(g: ReturnType<typeof chart>, b: Blk, c: Ctx, m: Metrics, counts: Co
 }
 
 export function diagram(b: Blk, c: Ctx): HTMLElement {
-  const g = chart(String(b.source ?? ""));
+  const g = chart(String(b["source"] ?? ""));
   if (!g.order.length) return fallback(b, c);
-  const counts: Counts = Object.fromEntries(Object.entries(obj(b.counts)).map(([k, v]) => [k, Number(v)]));
-  const key = String(b.id ?? ""), prev = seen.get(key);
+  const counts: Counts = Object.fromEntries(Object.entries(obj(b["counts"])).map(([k, v]) => [k, Number(v)]));
+  const key = String(b["id"] ?? ""), prev = seen.get(key);
   const was = !prev ? {} : same(prev.counts, counts) ? prev.was : prev.counts;
   seen.set(key, { counts, was });
   const box = h("div", "dg", map(g, b, c, WIDE, counts, was), map(g, b, c, PHONE, counts, was));

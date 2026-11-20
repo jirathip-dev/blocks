@@ -2,7 +2,7 @@ import type { Page } from "../gen/types.ts";
 import type { Ctx } from "./ctx.ts";
 export type Paged = {
     id: string;
-    page?: Page | null;
+    page?: Page | null | undefined;
     n: number;
     root: HTMLElement;
     held?: () => boolean;

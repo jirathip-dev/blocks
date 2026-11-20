@@ -115,6 +115,8 @@ export type Block = ({
 } & Chart) | ({
     type: "toast";
 } & Toast) | ({
+    type: "pages";
+} & Pages) | ({
     type: "timeline";
 } & Timeline) | (AppBlock & {
     [key: string]: unknown;
@@ -624,6 +626,21 @@ export type OtherField = {
 export type Page = {
     action: string;
     cursor: string;
+};
+export type PageImage = {
+    alt: string;
+    height: number;
+    src: string;
+    width: number;
+};
+export type Pages = {
+    fallback?: Fallback | null;
+    file?: string | null;
+    id?: string | null;
+    note?: string | null;
+    pages: PageImage[];
+    show?: Expr | null;
+    title?: string | null;
 };
 export type Part = {
     part: "heading";
@@ -1152,4 +1169,4 @@ export type Why = "evicted" | "unpaired" | "handover";
 export type Working = {
     since: string;
 };
-export type Kind = "screen" | "sheet" | "section" | "list" | "row" | "card" | "choice" | "form" | "config" | "secret" | "run" | "button" | "chips" | "stat" | "text" | "images" | "web" | "diff" | "editor" | "scene" | "diagram" | "composer" | "lines" | "prose" | "hero" | "media" | "nav" | "island" | "table" | "steps" | "chart" | "toast" | "timeline";
+export type Kind = "screen" | "sheet" | "section" | "list" | "row" | "card" | "choice" | "form" | "config" | "secret" | "run" | "button" | "chips" | "stat" | "text" | "images" | "web" | "diff" | "editor" | "scene" | "diagram" | "composer" | "lines" | "prose" | "hero" | "media" | "nav" | "island" | "table" | "steps" | "chart" | "toast" | "pages" | "timeline";

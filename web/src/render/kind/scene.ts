@@ -8,7 +8,7 @@ function lane(l: Lane, c: Ctx): HTMLElement {
   const url = urlOf(l.tap);
   const cls = `ln ${l.state}${l.tap ? " tap" : ""}`;
   const x: HTMLElement = url ? href(el("a", cls), url) : el("div", cls);
-  x.dataset.id = l.id;
+  x.dataset["id"] = l.id;
   x.setAttribute("aria-label", `${l.title}, ${l.state}`);
   const tap = l.tap;
   if (tap && !url) {

@@ -2,7 +2,7 @@
 
 Decision: one chart kind draws bar, stacked, line, bar+line combo and donut on blocks' default look (square tiles, ink first, the muted tones). The legend doubles as the readout: it names each series and shows its value for the chosen month, so a phone needs no floating tooltip. Tapping a month (or a donut slice) picks it and sends the block's action. One value format per chart (THB, ฿M, %, count), so a combo always has one shared axis. Months can read in the Buddhist Era and in Thai. Every chart carries its numbers as a table.
 Screens: a sales dashboard with all five chart types, and a sheet of every state (tap, hover, eras, many months, long names, empty, table, formats, fallback). Each light and dark, at 1440 and 390.
-Open questions: (1) The muted tones are close: series colours pass the colour-blind check but sit just under the "easy to tell apart" bar for normal vision, so I lean on the legend, gaps and the table. Keep them, or allow stronger chart-only colours? (2) A chart allows at most 5 series, and a donut folds the rest into "Other". Is 5 right for synergy's screens? (3) Should a combo whose line needs a different unit (say % on ฿ bars) be refused, as drawn here, or split into two charts by the renderer?
+Open questions: (1) The muted tones are close: series colours pass the colour-blind check but sit just under the "easy to tell apart" bar for normal vision, so I lean on the legend, gaps and the table. Keep them, or allow stronger chart-only colours? (2) A chart allows at most 5 series, and a donut folds the rest into "Other". Is 5 right for the client app's screens? (3) Should a combo whose line needs a different unit (say % on ฿ bars) be refused, as drawn here, or split into two charts by the renderer?
 
 ## Images
 

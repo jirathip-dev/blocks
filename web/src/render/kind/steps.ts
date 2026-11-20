@@ -30,7 +30,7 @@ function stage(s: Stage, i: number, n: number, at: number, c: Ctx): HTMLElement 
 function bar(r: Bar): HTMLElement {
   const v = Math.max(0, Math.min(100, Math.round(r.value)));
   const row = h("div", `pgr${r.tone ? ` ${r.tone}` : ""}${v === 0 ? " zero" : ""}`, h("span", "pgn", r.label), h("span", "pgv", `${v}%`));
-  for (const [k, x] of [["role", "progressbar"], ["aria-valuemin", "0"], ["aria-valuemax", "100"], ["aria-valuenow", String(v)], ["aria-label", r.label]]) row.setAttribute(k, x);
+  for (const [k, x] of [["role", "progressbar"], ["aria-valuemin", "0"], ["aria-valuemax", "100"], ["aria-valuenow", String(v)], ["aria-label", r.label]] satisfies [string, string][]) row.setAttribute(k, x);
   if (r.sub) row.setAttribute("aria-valuetext", `${v}%, ${r.sub}`);
   const t = h("span", "pgt", el("b"));
   t.setAttribute("style", `--v:${v}`);
