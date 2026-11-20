@@ -34,7 +34,7 @@ public struct BlocksView: View {
         }
         .environment(\.act, act).environment(\.acted, acted).environment(\.open, open).environment(\.refresh, refresh)
         .environment(\.openThread, openThread).environment(\.focus, focus).environment(\.picked, picked)
-        .environment(\.card, CardContext(poster: source))
+        .environment(\.card, CardContext(poster: source)).environment(\.screenId, block.id)
         .environment(\.behaved, Behaved(view: Behaviour(json, state: state), state: state, edited: Set(edited.keys)))
         .environment(\.edit) { own.merge($0) { $1 } }
     }

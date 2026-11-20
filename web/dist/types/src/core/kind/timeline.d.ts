@@ -1,4 +1,4 @@
-import type { DaySpan, Timeline, TimeRow } from "../../gen/types.ts";
+import type { DaySpan, TimeBar, Timeline, TimeRow } from "../../gen/types.ts";
 import type { Rules } from "../gesture.ts";
 export type BarGrab = {
     bar: string;
@@ -21,3 +21,8 @@ export declare const parts: (n: number) => {
 export declare function words(start: string, end: string): string;
 export declare function firstFree(t: Timeline, r: TimeRow): number | null;
 export declare const timeline: Rules<Timeline, BarGrab, Days, DaySpan>;
+export declare function lanes(bars: TimeBar[]): {
+    of: Map<string, number>;
+    n: number;
+};
+export declare const barName: (x: TimeBar) => string;
