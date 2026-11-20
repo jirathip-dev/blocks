@@ -2,7 +2,7 @@
   "kind": "run",
   "id": "run",
   "variant": null,
-  "drawn": "fallback",
+  "drawn": "native",
   "role": "group",
   "name": "cargo test",
   "children": []
