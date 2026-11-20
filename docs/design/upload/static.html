@@ -4,9 +4,9 @@
 <body><main class="scr">
 <div class="top"><div class="tabh"><span class="tw">Marlow Bakery · report a problem</span></div></div>
 <h2>The static page with JS off <small>· the browser's own file input inside the page's own form</small></h2>
-<p class="note">site writes &lt;form method="post" enctype="multipart/form-data"&gt; with &lt;input type="file" name accept capture multiple&gt;, so the browser posts the bytes to the page's own URL. No thumbnails, progress or refusals here: the server checks. The button is the browser's, drawn on the look's tokens; the hint is the same words as the live field.</p>
+<p class="note">site writes &lt;form method="post" enctype="multipart/form-data"&gt; with &lt;input type="file" name accept capture multiple&gt;, so the browser posts the bytes to the page's own URL. No thumbnails, progress or refusals here: the server checks. The button is the browser's, drawn on the look's tokens at the live button's height, with the same hint beside it, so the row keeps its height when the live field takes over.</p>
 <form class="form" method="post" enctype="multipart/form-data" action="#">
-<label class="fd"><span class="fl"><span class="fk">Photos of the problem</span><span class="fn">images · up to 10 MB each</span></span><input class="sf" type="file" name="photos" accept="image/*" capture="environment" multiple></label>
+<div class="fd up"><label class="fl" for="photos"><span class="fk">Photos of the problem</span></label><div class="fu"><div class="fub"><input class="sf" id="photos" type="file" name="photos" accept="image/*" capture="environment" multiple><span class="fuh">images · up to 10 MB each</span></div></div></div>
 <label class="fd"><span class="fl"><span class="fk">What happened</span><span class="fn"></span></span><input name="what" placeholder="two crates short"></label>
 <div class="acts"><button type="submit"><span>send report</span></button></div>
 </form>

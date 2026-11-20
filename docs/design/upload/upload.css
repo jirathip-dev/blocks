@@ -1,30 +1,32 @@
 /* The upload field: goes into web/src/css/kind/field-upload.css. Tokens only. */
 .fd.up{align-items:start;padding:var(--s2) 0}
 .fd.up>.fu{flex:2}
-.fu{display:flex;flex-direction:column;gap:var(--s2);min-width:0}
+.fu{display:flex;flex-direction:column;gap:var(--s2);min-width:0;container-type:inline-size}
+.fu>.fe{white-space:normal}
 .fuf{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:var(--s1)}
 .fui{display:grid;grid-template-columns:calc(var(--hit) + var(--s3)) minmax(0,1fr) auto;column-gap:var(--s3);align-items:center;padding:var(--s1);background:var(--bg);border:1px solid var(--line);border-radius:var(--radius)}
 .fut{display:block;width:calc(var(--hit) + var(--s3));aspect-ratio:1;object-fit:cover;background:var(--line);border-radius:var(--radius)}
 .fux{display:grid;place-items:center;width:calc(var(--hit) + var(--s3));aspect-ratio:1;border:1px solid var(--edge);color:var(--mute);font-size:var(--fs-meta);font-weight:700;text-transform:uppercase}
 .fum{display:flex;flex-direction:column;gap:var(--s1);min-width:0}
-.fun{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fun,.fus{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .fus{color:var(--mute);font-size:var(--fs-meta);font-variant-numeric:tabular-nums}
 .fui .pgt{height:var(--s1)}
 .fui.uploading .fut{opacity:.6}
 .fui.failed,.fui.refused{box-shadow:inset 3px 0 0 var(--r)}
-.fui.failed .fus,.fui.refused .fus{color:var(--r);white-space:normal}
+.fui.failed .fus,.fui.refused .fus{color:var(--r)}
 .fui.refused .fux{border-color:var(--r);color:var(--r)}
 .fua{display:flex;gap:var(--s1)}
-.fub{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s1) var(--s3)}
+.fub{display:flex;flex-wrap:wrap;align-items:center;min-height:var(--ctl);gap:var(--s1) var(--s3)}
 .fuh{color:var(--mute);font-size:var(--fs-meta)}
 .fu input[type=file]{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
 .fuc{display:none}
 @media (pointer:coarse){.fuc{display:inline-flex}}
-@media (max-width:600px){.fd.up{flex-direction:column;align-items:stretch}.fui>:first-child{grid-row:span 2}.fui{grid-template-columns:calc(var(--hit) + var(--s3)) minmax(0,1fr)}.fua{grid-column:2;justify-content:flex-start;margin-left:-1ch}}
+@container (max-width:440px){.fui{grid-template-columns:calc(var(--hit) + var(--s3)) minmax(0,1fr)}.fui>:first-child{grid-row:span 2}.fua{grid-column:2;justify-content:flex-start;gap:var(--s4);margin-left:-1ch}}
+@media (max-width:600px){.fd.up{flex-direction:column;align-items:stretch}}
+.fd.up.err .fu{box-shadow:inset 3px 0 0 var(--r);padding-left:var(--s3)}
 .say-busy{color:var(--mute);font-size:var(--fs-meta)}
 .say-busy.bad{color:var(--r)}
-/* The static page, JS off: the browser's own file input on the same tokens. */
-.fd input[type=file].sf{font:inherit;font-size:var(--fs);color:var(--mute);background:none;border:0;padding:0;letter-spacing:0}
-.fd input[type=file].sf::file-selector-button{font:inherit;font-size:var(--fs);color:var(--l);background:var(--card);border:1px solid var(--edge);border-radius:var(--radius);height:var(--hit);padding:0 var(--s3);margin-right:var(--s3);text-transform:lowercase}
-.fd.up .fn.err{display:block;color:var(--r);font-size:var(--fs-meta);margin-top:var(--s1)}
-.fd.up.err .fu{box-shadow:inset 3px 0 0 var(--r);padding-left:var(--s3)}
+/* The static page, JS off: the browser's own file input in the same row, at the live button's height, beside the same hint. */
+.fub:has(.sf){flex-wrap:nowrap}.fub:has(.sf) .fuh{flex:none}
+.fu input[type=file].sf{margin:0;position:static;flex:0 1 auto;min-width:0;width:auto;height:var(--ctl);opacity:1;pointer-events:auto;font:inherit;font-size:var(--fs-meta);color:var(--mute);background:none;border:0;padding:0;max-width:100%}
+.fu input[type=file].sf::file-selector-button{font:inherit;font-size:var(--fs);color:var(--l);background:none;border:1px solid var(--edge);border-radius:var(--radius);height:var(--ctl);padding:0 1ch;margin-right:var(--s2);text-transform:lowercase}

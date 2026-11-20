@@ -48,6 +48,7 @@ function item(f, x, w) {
 function upload(x, w) {
   const box = el("div", "fu"); box.setAttribute("role", "group");
   const files = x.files || [];
+  if (x.error) box.append(el("span", "fe", x.error));
   box.setAttribute("aria-label", say(w, "group", { label: x.label, n: files.filter(f => f.state !== "refused").length }));
   if (files.length) { const ul = el("ul", "fuf"); files.forEach(f => ul.append(item(f, x, w))); box.append(ul); }
   const image = (x.accept || []).every(a => a === "image") && (x.accept || []).length;
@@ -65,7 +66,7 @@ function upload(x, w) {
 }
 function row(x, w) {
   const l = el(x.type === "upload" ? "div" : "label", "fd" + (x.type === "upload" ? " up" : x.type === "toggle" ? " tg" : "") + (x.error ? " err" : ""));
-  const fl = el("span", "fl"); fl.append(el("span", "fk", x.label), el("span", x.error ? "fn err" : "fn", x.error || x.doc || ""));
+  const fl = el("span", "fl"); fl.append(el("span", "fk", x.label), el("span", "fn", x.doc || ""));
   l.append(fl);
   if (x.type === "upload") l.append(upload(x, w));
   else if (x.type === "toggle") { const i = el("input"); i.type = "checkbox"; i.checked = !!x.value; i.setAttribute("role", "switch"); l.append(i); }
