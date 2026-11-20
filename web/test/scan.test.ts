@@ -156,7 +156,7 @@ test("the scan field in WebKit, HTML and React: no camera, pick a skewed photo, 
   }
 });
 
-test("one page, shutter to corrected image (corners on 640 px, then the warp and JPEG of a 1920 × 2560 camera JPEG), stays within 400 ms at p95 in WebKit's worker; a larger photo is scaled to 2560 px long once", { timeout: 60000 }, async () => {
+test("one page, shutter to corrected image (corners on 640 px, then the warp and JPEG of a 1920 × 2560 camera JPEG), stays within the budget at p95 in WebKit's worker (400 ms in the release perf job, 1200 ms per PR); a larger photo is scaled to 2560 px long once", { timeout: 60000 }, async () => {
   const { browser, page, errors } = await scanner("html");
   try {
     const { scaled, runs } = await page.evaluate(async (png) => {
@@ -179,7 +179,9 @@ test("one page, shutter to corrected image (corners on 640 px, then the warp and
     deepStrictEqual(scaled, [1920, 2560, true, true], "a 3024 × 4032 photo is 1920 × 2560 on the page and in the worker, whose corners are in that size");
     for (const r of runs) deepStrictEqual([r.found, r.jpeg], [true, [0xff, 0xd8]], "the corners are the page's, not the inset, and the page is a JPEG");
     const p95 = runs.map((r) => r.ms).sort((a, b) => a - b)[Math.ceil(runs.length * 0.95) - 1];
-    ok(p95 <= 400, `p95 ${p95.toFixed(0)} ms over the 400 ms budget: ${runs.map((r) => r.ms.toFixed(0))}`);
+    const budget = Number(process.env.BLOCKS_SCAN_BUDGET_MS ?? 1200);
+    process.stdout.write(`scan page p95 ${p95.toFixed(0)} ms, budget ${budget} ms: ${runs.map((r) => r.ms.toFixed(0))}\n`);
+    ok(p95 <= budget, `p95 ${p95.toFixed(0)} ms over the ${budget} ms budget: ${runs.map((r) => r.ms.toFixed(0))}`);
     deepStrictEqual(errors, []);
   } finally {
     await browser.close();
