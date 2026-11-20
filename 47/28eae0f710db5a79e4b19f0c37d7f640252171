@@ -1,0 +1,8 @@
+Decided: staging's chart, diff, timeline and toast site views move to site/kind/<kind>.rs as draw, their tests to site_<kind>.rs
+Because: "each kind's view is `site/kind/<kind>.rs`"
+Decided: fallback_as moves to kind/fallback.rs, since four more kinds put kind/mod.rs at 84 of its 80 lines
+Because: crates/blocks/src/site/kind/mod.rs:5
+Decided: staging's Look/Live change goes to page.rs and its badge change to write.rs; views.rs stays deleted and frozen
+Because: crates/blocks/src/site/page.rs:27
+Rejected: none
+Owner: The merge brings in staging's four new block kinds, each in its own file like the rest.
