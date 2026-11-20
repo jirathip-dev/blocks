@@ -1,4 +1,4 @@
-use crate::kind::{Block, Fallback, Page};
+use crate::kind::{Block, Fallback, PageImage};
 
 listed! { 32: Pages(Pages) = "pages" }
 
@@ -7,7 +7,7 @@ kind! {
     pub struct Pages {
         id: Option<String>,
         title: Option<String>,
-        pages: Vec<Page>,
+        pages: Vec<PageImage>,
         file: Option<String>,
         note: Option<String>,
         fallback: Option<Fallback>,
@@ -15,7 +15,7 @@ kind! {
 }
 
 pub(super) fn sample() -> Vec<Block> {
-    let page = |n: u32, alt: &str| Page {
+    let page = |n: u32, alt: &str| PageImage {
         src: format!("/q/0418/{n}.png"),
         alt: alt.into(),
         width: 1240,

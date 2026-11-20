@@ -2928,9 +2928,13 @@ export const defs: Record<string, Shape> = {
         ]
       },
       "more": {
-        "type": [
-          "string",
-          "null"
+        "anyOf": [
+          {
+            "$ref": "#/$defs/More"
+          },
+          {
+            "type": "null"
+          }
         ]
       },
       "reorder": {
@@ -3250,6 +3254,16 @@ export const defs: Record<string, Shape> = {
     ],
     "type": "object"
   },
+  "More": {
+    "anyOf": [
+      {
+        "type": "string"
+      },
+      {
+        "$ref": "#/$defs/Page"
+      }
+    ]
+  },
   "Nav": {
     "additionalProperties": true,
     "properties": {
@@ -3477,6 +3491,21 @@ export const defs: Record<string, Shape> = {
   },
   "Page": {
     "properties": {
+      "action": {
+        "type": "string"
+      },
+      "cursor": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "action",
+      "cursor"
+    ],
+    "type": "object"
+  },
+  "PageImage": {
+    "properties": {
       "alt": {
         "type": "string"
       },
@@ -3533,7 +3562,7 @@ export const defs: Record<string, Shape> = {
       },
       "pages": {
         "items": {
-          "$ref": "#/$defs/Page"
+          "$ref": "#/$defs/PageImage"
         },
         "type": "array"
       },
@@ -5232,6 +5261,16 @@ export const defs: Record<string, Shape> = {
         "type": [
           "string",
           "null"
+        ]
+      },
+      "more": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Page"
+          },
+          {
+            "type": "null"
+          }
         ]
       },
       "reorder": {

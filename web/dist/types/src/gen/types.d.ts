@@ -504,7 +504,7 @@ export type Link = {
 };
 export type List = {
     id?: string | null;
-    more?: string | null;
+    more?: More | null;
     reorder?: Gesture | null;
     rows: Block[];
     show?: Expr | null;
@@ -549,6 +549,7 @@ export type Media = {
     video?: boolean | null;
     width: number;
 };
+export type More = string | Page;
 export type Nav = {
     brand?: NavLink | null;
     id?: string | null;
@@ -623,6 +624,10 @@ export type OtherField = {
     was?: string | null;
 };
 export type Page = {
+    action: string;
+    cursor: string;
+};
+export type PageImage = {
     alt: string;
     height: number;
     src: string;
@@ -633,7 +638,7 @@ export type Pages = {
     file?: string | null;
     id?: string | null;
     note?: string | null;
-    pages: Page[];
+    pages: PageImage[];
     show?: Expr | null;
     title?: string | null;
 };
@@ -976,6 +981,7 @@ export type Table = {
     export?: ExportFormat[] | null;
     filter?: boolean | null;
     id?: string | null;
+    more?: Page | null;
     reorder?: Gesture | null;
     rows: TableRow[];
     select?: TableSelect | null;

@@ -111,6 +111,25 @@ final class RenderTests: XCTestCase {
         XCTAssertGreaterThan(phone, wide, "each item is a title line and a meta line")
     }
 
+    func testATableWithMoreAsksForItsNextPageOnceAndARefusalLeavesARetry() async throws {
+        var sent: [BlockAction] = []
+        let view = BlocksView(try fixture("table-ot"), source: .core, acted: { sent.append($0); return false })
+        let host = NSHostingView(rootView: view.frame(width: 1440).environment(\.look, Look(still: true)))
+        let window = NSWindow(contentRect: CGRect(x: 0, y: 0, width: 1440, height: 900), styleMask: [], backing: .buffered, defer: false)
+        window.contentView = host
+        host.layout()
+        for _ in 0..<20 where sent.isEmpty { await Task.yield() }
+        XCTAssertEqual(sent, [BlockAction(action: "ot-more", values: ["cursor": .string("c:2397")])])
+        host.layout()
+        for _ in 0..<20 { await Task.yield() }
+        XCTAssertEqual(sent.count, 1, "a refusal does not send again by itself")
+        let done = try fixture("table-ot")
+        guard case .table(var t) = done else { return XCTFail("table-ot is a table") }
+        t.more = nil
+        let plain = NSHostingView(rootView: BlocksView(.table(t), source: .core).frame(width: 1440).environment(\.look, Look(still: true)))
+        XCTAssertGreaterThan(host.fittingSize.height, plain.fittingSize.height + 40, "the retry row sits under the last row")
+    }
+
     func testMediaAndHeroKeepTheMediaBoxBeforeThePictureLoads() throws {
         XCTAssertGreaterThanOrEqual(height(BlocksView(try fixture("media"), source: .core)), 390 * 360 / 640)
         XCTAssertGreaterThan(height(BlocksView(try fixture("hero"), source: .core)), 390 * 360 / 640 + 60)

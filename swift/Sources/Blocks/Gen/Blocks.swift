@@ -855,7 +855,7 @@ public struct Link: Codable, Equatable, Sendable {
 
 public struct List: Codable, Equatable, Sendable {
     public var id: String?
-    public var more: String?
+    public var more: More?
     public var reorder: Gesture?
     public var rows: [Block]
     public var show: Expr?
@@ -942,6 +942,22 @@ public struct Media: Codable, Equatable, Sendable {
     public var tools: [MarkKind]?
     public var video: Bool?
     public var width: UInt32
+}
+
+public enum More: Codable, Equatable, Sendable {
+    case string(String)
+    case page(Page)
+
+    public init(from decoder: any Decoder) throws {
+        if let v = try? String(from: decoder) { self = .string(v) } else if let v = try? Page(from: decoder) { self = .page(v) } else { throw DecodingError.dataCorrupted(.init(codingPath: decoder.codingPath, debugDescription: "no More")) }
+    }
+
+    public func encode(to encoder: any Encoder) throws {
+        switch self {
+        case .string(let v): try v.encode(to: encoder)
+        case .page(let v): try v.encode(to: encoder)
+        }
+    }
 }
 
 public struct Nav: Codable, Equatable, Sendable {
@@ -1088,6 +1104,11 @@ public struct OtherField: Codable, Equatable, Sendable {
 }
 
 public struct Page: Codable, Equatable, Sendable {
+    public var action: String
+    public var cursor: String
+}
+
+public struct PageImage: Codable, Equatable, Sendable {
     public var alt: String
     public var height: UInt32
     public var src: String
@@ -1099,7 +1120,7 @@ public struct Pages: Codable, Equatable, Sendable {
     public var file: String?
     public var id: String?
     public var note: String?
-    public var pages: [Page]
+    public var pages: [PageImage]
     public var show: Expr?
     public var title: String?
 }
@@ -1631,6 +1652,7 @@ public struct Table: Codable, Equatable, Sendable {
     public var export: [ExportFormat]?
     public var filter: Bool?
     public var id: String?
+    public var more: Page?
     public var reorder: Gesture?
     public var rows: [TableRow]
     public var select: TableSelect?

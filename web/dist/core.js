@@ -3547,9 +3547,13 @@ var defs = {
         ]
       },
       "more": {
-        "type": [
-          "string",
-          "null"
+        "anyOf": [
+          {
+            "$ref": "#/$defs/More"
+          },
+          {
+            "type": "null"
+          }
         ]
       },
       "reorder": {
@@ -3869,6 +3873,16 @@ var defs = {
     ],
     "type": "object"
   },
+  "More": {
+    "anyOf": [
+      {
+        "type": "string"
+      },
+      {
+        "$ref": "#/$defs/Page"
+      }
+    ]
+  },
   "Nav": {
     "additionalProperties": true,
     "properties": {
@@ -4096,6 +4110,21 @@ var defs = {
   },
   "Page": {
     "properties": {
+      "action": {
+        "type": "string"
+      },
+      "cursor": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "action",
+      "cursor"
+    ],
+    "type": "object"
+  },
+  "PageImage": {
+    "properties": {
       "alt": {
         "type": "string"
       },
@@ -4152,7 +4181,7 @@ var defs = {
       },
       "pages": {
         "items": {
-          "$ref": "#/$defs/Page"
+          "$ref": "#/$defs/PageImage"
         },
         "type": "array"
       },
@@ -5851,6 +5880,16 @@ var defs = {
         "type": [
           "string",
           "null"
+        ]
+      },
+      "more": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Page"
+          },
+          {
+            "type": "null"
+          }
         ]
       },
       "reorder": {

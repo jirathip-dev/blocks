@@ -1788,6 +1788,93 @@
   {
     "app": [],
     "faults": [],
+    "name": "fixtures/blocks/table-ot.json",
+    "screen": {
+      "columns": [
+        {
+          "id": "req",
+          "kind": "text",
+          "label": "Request"
+        },
+        {
+          "id": "who",
+          "kind": "text",
+          "label": "Employee"
+        },
+        {
+          "id": "status",
+          "kind": "tone",
+          "label": "Status"
+        },
+        {
+          "id": "hours",
+          "kind": "number",
+          "label": "Hours",
+          "total": "sum"
+        }
+      ],
+      "id": "ot",
+      "more": {
+        "action": "ot-more",
+        "cursor": "c:2397"
+      },
+      "rows": [
+        {
+          "cells": {
+            "hours": 2,
+            "req": "OT-2400",
+            "status": {
+              "text": "pending",
+              "tone": "warn"
+            },
+            "who": "Somchai P."
+          },
+          "id": "OT-2400"
+        },
+        {
+          "cells": {
+            "hours": 3,
+            "req": "OT-2399",
+            "status": {
+              "text": "pending",
+              "tone": "warn"
+            },
+            "who": "Nattaya K."
+          },
+          "id": "OT-2399"
+        },
+        {
+          "cells": {
+            "hours": 4,
+            "req": "OT-2398",
+            "status": {
+              "text": "approved",
+              "tone": "ok"
+            },
+            "who": "Arthit W."
+          },
+          "id": "OT-2398"
+        },
+        {
+          "cells": {
+            "hours": 2,
+            "req": "OT-2397",
+            "status": {
+              "text": "rejected",
+              "tone": "bad"
+            },
+            "who": "Wanida T."
+          },
+          "id": "OT-2397"
+        }
+      ],
+      "title": "OT requests",
+      "type": "table"
+    }
+  },
+  {
+    "app": [],
+    "faults": [],
     "name": "fixtures/blocks/table.json",
     "screen": {
       "columns": [
@@ -3156,6 +3243,92 @@
             }
           ],
           "title": "Mark-up · K-12 tower",
+          "type": "table"
+        },
+        {
+          "columns": [
+            {
+              "id": "req",
+              "kind": "text",
+              "label": "Request"
+            },
+            {
+              "id": "who",
+              "kind": "text",
+              "label": "Employee"
+            },
+            {
+              "id": "status",
+              "kind": "tone",
+              "label": "Status"
+            },
+            {
+              "id": "hours",
+              "kind": "number",
+              "label": "Hours",
+              "total": "sum"
+            }
+          ],
+          "fallback": {
+            "subtitle": "4 rows · total hours 11",
+            "title": "OT requests"
+          },
+          "id": "ot",
+          "more": {
+            "action": "ot-more",
+            "cursor": "c:2397"
+          },
+          "rows": [
+            {
+              "cells": {
+                "hours": 2,
+                "req": "OT-2400",
+                "status": {
+                  "text": "pending",
+                  "tone": "warn"
+                },
+                "who": "Somchai P."
+              },
+              "id": "OT-2400"
+            },
+            {
+              "cells": {
+                "hours": 3,
+                "req": "OT-2399",
+                "status": {
+                  "text": "pending",
+                  "tone": "warn"
+                },
+                "who": "Nattaya K."
+              },
+              "id": "OT-2399"
+            },
+            {
+              "cells": {
+                "hours": 4,
+                "req": "OT-2398",
+                "status": {
+                  "text": "approved",
+                  "tone": "ok"
+                },
+                "who": "Arthit W."
+              },
+              "id": "OT-2398"
+            },
+            {
+              "cells": {
+                "hours": 2,
+                "req": "OT-2397",
+                "status": {
+                  "text": "rejected",
+                  "tone": "bad"
+                },
+                "who": "Wanida T."
+              },
+              "id": "OT-2397"
+            }
+          ],
+          "title": "OT requests",
           "type": "table"
         },
         {

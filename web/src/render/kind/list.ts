@@ -3,7 +3,8 @@ import type { List } from "../../gen/types.ts";
 import { gestured, held } from "../../gesture.ts";
 import { kids } from "../block.ts";
 import type { Ctx } from "../ctx.ts";
-import { el } from "../dom.ts";
+import { el, h } from "../dom.ts";
+import { paged } from "../more.ts";
 
 const ids = (v: unknown): v is string[] => Array.isArray(v) && v.every((x) => typeof x === "string");
 
@@ -13,6 +14,10 @@ export function list(b: List, c: Ctx): HTMLElement {
   const at = (id: string) => rows.find((e) => e.dataset.id === id);
   const out = b.rows.map((r) => r.id && held(c, { block: b, rules, grab: r.id, item: r.id })).find(ids);
   l.append(...(out ? out.flatMap((id) => at(id) ?? []) : rows));
+  const page = typeof b.more === "object" ? b.more : null;
+  const lifted = () => !!l.querySelector(".b-hd:is([data-phase=pressed],[data-phase=previewing],[data-phase=dragging])");
+  const mo = paged(c, { id: String(b.id ?? ""), page, n: b.rows.length, root: l, held: lifted, wrap: (k, no) => h("div", no ? "lsm no" : "lsm", ...k) });
+  if (mo) l.append(mo);
   const g = b.reorder;
   if (!g) return l;
   const show = (order: string[] | null) => {

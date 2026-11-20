@@ -3293,9 +3293,13 @@
           ]
         },
         "more": {
-          "type": [
-            "string",
-            "null"
+          "anyOf": [
+            {
+              "$ref": "#/$defs/More"
+            },
+            {
+              "type": "null"
+            }
           ]
         },
         "reorder": {
@@ -3621,6 +3625,17 @@
         "height"
       ],
       "type": "object"
+    },
+    "More": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "$ref": "#/$defs/Page"
+        }
+      ],
+      "description": "A list's next page: a link to it, or an action that loads it in place."
     },
     "Nav": {
       "additionalProperties": true,
@@ -4045,6 +4060,22 @@
       "type": "object"
     },
     "Page": {
+      "description": "A table's or list's next page: the action to send and the app's opaque cursor.",
+      "properties": {
+        "action": {
+          "type": "string"
+        },
+        "cursor": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "action",
+        "cursor"
+      ],
+      "type": "object"
+    },
+    "PageImage": {
       "description": "One page of a `pages` block: its picture, what it shows, and its size in pixels.",
       "properties": {
         "alt": {
@@ -4106,7 +4137,7 @@
         },
         "pages": {
           "items": {
-            "$ref": "#/$defs/Page"
+            "$ref": "#/$defs/PageImage"
           },
           "type": "array"
         },
@@ -6253,6 +6284,16 @@
           "type": [
             "string",
             "null"
+          ]
+        },
+        "more": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Page"
+            },
+            {
+              "type": "null"
+            }
           ]
         },
         "reorder": {

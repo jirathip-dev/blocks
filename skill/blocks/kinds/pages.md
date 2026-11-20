@@ -12,7 +12,7 @@ The Rust type `Pages`; in TS, `pages(fields: Pages)` from `web/src/gen/builders.
 | `file` | `string` | optional |
 | `id` | `string` | optional |
 | `note` | `string` | optional |
-| `pages` | `Page[]` | required |
+| `pages` | `PageImage[]` | required |
 | `show` | `Expr` | optional |
 | `title` | `string` | optional |
 

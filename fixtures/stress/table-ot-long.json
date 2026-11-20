@@ -1,0 +1,82 @@
+{
+  "columns": [
+    {
+      "id": "req",
+      "kind": "text",
+      "label": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it"
+    },
+    {
+      "id": "who",
+      "kind": "text",
+      "label": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it"
+    },
+    {
+      "id": "status",
+      "kind": "tone",
+      "label": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it"
+    },
+    {
+      "id": "hours",
+      "kind": "number",
+      "label": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+      "total": "sum"
+    }
+  ],
+  "id": "ot",
+  "more": {
+    "action": "ot-more",
+    "cursor": "c:2397"
+  },
+  "rows": [
+    {
+      "cells": {
+        "hours": 2,
+        "req": "OT-2400",
+        "status": {
+          "text": "pending",
+          "tone": "warn"
+        },
+        "who": "Somchai P."
+      },
+      "id": "OT-2400"
+    },
+    {
+      "cells": {
+        "hours": 3,
+        "req": "OT-2399",
+        "status": {
+          "text": "pending",
+          "tone": "warn"
+        },
+        "who": "Nattaya K."
+      },
+      "id": "OT-2399"
+    },
+    {
+      "cells": {
+        "hours": 4,
+        "req": "OT-2398",
+        "status": {
+          "text": "approved",
+          "tone": "ok"
+        },
+        "who": "Arthit W."
+      },
+      "id": "OT-2398"
+    },
+    {
+      "cells": {
+        "hours": 2,
+        "req": "OT-2397",
+        "status": {
+          "text": "rejected",
+          "tone": "bad"
+        },
+        "who": "Wanida T."
+      },
+      "id": "OT-2397"
+    }
+  ],
+  "title": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+  "type": "table"
+}

@@ -45,6 +45,12 @@ const tree = (page) =>
     return B.dump(document.querySelector("main"));
   });
 
+test("the static page draws a table with more as the rows it has: no loading row, its count and total as for a whole table", () => {
+  const html = read("../../fixtures/html/table-ot.html");
+  ok(html.includes(">4 rows<") && html.includes(">Total<"), html);
+  ok(!html.includes("tbmo") && !html.includes("loaded"), html);
+});
+
 test("site and render give the same element per kind: tag, classes, hooks, role, name and text", async () => {
   const { page, close } = await open({ page: "<!doctype html><body>" });
   const kinds = readdirSync(at("../../fixtures/blocks/")).map((f) => f.replace(/\.json$/, ""));
@@ -75,7 +81,7 @@ test("site and render give the same element per kind: tag, classes, hooks, role,
         const still = (e) => (e.querySelectorAll("[data-tick]").forEach((x) => (x.textContent = JSON.stringify(Object.entries(JSON.parse(x.dataset.tick)).sort()))), e);
         return [sig(still(t.content.querySelector("[data-block]"))), sig(still(B.render(b, ctx)))];
       },
-      [read(`../../fixtures/html/${k}.html`), JSON.parse(read(`../../fixtures/blocks/${k}.json`))],
+      [read(`../../fixtures/html/${k}.html`), { ...JSON.parse(read(`../../fixtures/blocks/${k}.json`)), more: undefined }],
     );
     ok(written.length > 0, k);
     deepStrictEqual(written, drawn, k);

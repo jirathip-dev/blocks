@@ -1,0 +1,256 @@
+{
+  "why": "a table's and a list's more: the page waits with its cursor, the answer's rows land with a new cursor, a merge of none ends it; a list's link more stays as sent",
+  "v": 1,
+  "steps": [
+    {
+      "hello": {
+        "v": 1,
+        "sid": "s1",
+        "epoch": "e1",
+        "keys": 16
+      },
+      "outdated": null
+    },
+    {
+      "open": "/screens/ot"
+    },
+    {
+      "sent": [
+        {
+          "k": "/screens/ot"
+        }
+      ],
+      "synced": {
+        "keys": [
+          {
+            "k": "/screens/ot",
+            "rev": 1,
+            "screen": {
+              "type": "screen",
+              "id": "s",
+              "title": "Requests",
+              "blocks": [
+                {
+                  "type": "table",
+                  "id": "ot",
+                  "columns": [
+                    {
+                      "id": "req",
+                      "label": "Request",
+                      "kind": "text"
+                    },
+                    {
+                      "id": "hours",
+                      "label": "Hours",
+                      "kind": "number",
+                      "total": "sum"
+                    }
+                  ],
+                  "rows": [
+                    {
+                      "id": "OT-2400",
+                      "cells": {
+                        "req": "OT-2400",
+                        "hours": 2
+                      }
+                    },
+                    {
+                      "id": "OT-2399",
+                      "cells": {
+                        "req": "OT-2399",
+                        "hours": 2
+                      }
+                    }
+                  ],
+                  "more": {
+                    "action": "ot-more",
+                    "cursor": "c:2399"
+                  }
+                },
+                {
+                  "type": "list",
+                  "id": "notes",
+                  "rows": [
+                    {
+                      "type": "row",
+                      "id": "n1",
+                      "title": "N1"
+                    }
+                  ],
+                  "more": {
+                    "action": "notes-more",
+                    "cursor": "n:1"
+                  }
+                },
+                {
+                  "type": "list",
+                  "id": "older",
+                  "rows": [
+                    {
+                      "type": "row",
+                      "id": "o1",
+                      "title": "Older"
+                    }
+                  ],
+                  "more": "/screens/notes?after=o1"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "took": [
+        "replaced"
+      ]
+    },
+    {
+      "frame": {
+        "k": "/screens/ot",
+        "from": 1,
+        "rev": 2,
+        "ops": [
+          {
+            "op": "insert",
+            "into": "ot",
+            "block": {
+              "id": "OT-2398",
+              "cells": {
+                "req": "OT-2398",
+                "hours": 2
+              }
+            }
+          },
+          {
+            "op": "merge",
+            "id": "ot",
+            "fields": {
+              "more": {
+                "action": "ot-more",
+                "cursor": "c:2398"
+              }
+            }
+          },
+          {
+            "op": "insert",
+            "into": "notes",
+            "block": {
+              "type": "row",
+              "id": "n2",
+              "title": "N2"
+            }
+          },
+          {
+            "op": "merge",
+            "id": "notes",
+            "fields": {
+              "more": null
+            }
+          }
+        ]
+      },
+      "took": "patched"
+    },
+    {
+      "frame": {
+        "k": "/screens/ot",
+        "from": 2,
+        "rev": 3,
+        "ops": [
+          {
+            "op": "merge",
+            "id": "ot",
+            "fields": {
+              "more": null
+            }
+          }
+        ]
+      },
+      "took": "patched"
+    },
+    {
+      "have": [
+        {
+          "k": "/screens/ot",
+          "rev": 3
+        }
+      ]
+    }
+  ],
+  "screens": {
+    "/screens/ot": {
+      "type": "screen",
+      "id": "s",
+      "title": "Requests",
+      "blocks": [
+        {
+          "type": "table",
+          "id": "ot",
+          "columns": [
+            {
+              "id": "req",
+              "label": "Request",
+              "kind": "text"
+            },
+            {
+              "id": "hours",
+              "label": "Hours",
+              "kind": "number",
+              "total": "sum"
+            }
+          ],
+          "rows": [
+            {
+              "id": "OT-2400",
+              "cells": {
+                "req": "OT-2400",
+                "hours": 2
+              }
+            },
+            {
+              "id": "OT-2399",
+              "cells": {
+                "req": "OT-2399",
+                "hours": 2
+              }
+            },
+            {
+              "id": "OT-2398",
+              "cells": {
+                "req": "OT-2398",
+                "hours": 2
+              }
+            }
+          ]
+        },
+        {
+          "type": "list",
+          "id": "notes",
+          "rows": [
+            {
+              "type": "row",
+              "id": "n1",
+              "title": "N1"
+            },
+            {
+              "type": "row",
+              "id": "n2",
+              "title": "N2"
+            }
+          ]
+        },
+        {
+          "type": "list",
+          "id": "older",
+          "rows": [
+            {
+              "type": "row",
+              "id": "o1",
+              "title": "Older"
+            }
+          ],
+          "more": "/screens/notes?after=o1"
+        }
+      ]
+    }
+  }
+}
