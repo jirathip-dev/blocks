@@ -146,7 +146,7 @@ export type Lines = { action?: string | null; add?: string | null; balance?: str
 
 export type Link = { label: string; tap: Tap };
 
-export type List = { id?: string | null; more?: string | null; reorder?: Gesture | null; rows: Block[]; show?: Expr | null };
+export type List = { id?: string | null; more?: More | null; reorder?: Gesture | null; rows: Block[]; show?: Expr | null };
 
 export type Lit = null | boolean | number | string;
 
@@ -161,6 +161,8 @@ export type MarkKind = "arrow" | "box" | "ellipse" | "text" | "pin" | "highlight
 export type Match = { pattern: Pattern; value: Expr };
 
 export type Media = { alt: string; caption?: string | null; draw?: Gesture | null; height: number; id?: string | null; marks?: Mark[] | null; move?: Gesture | null; poster?: string | null; remove?: Gesture | null; show?: Expr | null; src: string; stretch?: Gesture | null; tools?: MarkKind[] | null; video?: boolean | null; width: number };
+
+export type More = string | Page;
 
 export type Nav = { brand?: NavLink | null; id?: string | null; links: NavLink[]; show?: Expr | null };
 
@@ -177,6 +179,8 @@ export type Op = { op: "merge"; fields: Record<string, unknown>; id: string } | 
 export type Other = { for?: string | null; placeholder?: string | null };
 
 export type OtherField = { checks?: Check[] | null; doc?: string | null; enabled?: Expr | null; error?: string | null; label?: string | null; name: string; open?: boolean | null; show?: Expr | null; type: string; was?: string | null };
+
+export type Page = { action: string; cursor: string };
 
 export type Part = { part: "heading"; level: number; spans: Span[] } | { part: "para"; spans: Span[] } | { part: "list"; items: Span[][]; ordered: boolean } | { part: "quote"; spans: Span[] } | { part: "code"; lang?: string | null; text: string } | { part: "rule" };
 
@@ -270,7 +274,7 @@ export type Sync = { close?: string[] | null; open: Have[] };
 
 export type Synced = { keys: KeyState[] };
 
-export type Table = { calc?: Record<string, Expr> | null; columns: Column[]; edit?: Gesture | null; empty?: string | null; export?: ExportFormat[] | null; filter?: boolean | null; id?: string | null; reorder?: Gesture | null; rows: TableRow[]; select?: TableSelect | null; show?: Expr | null; sort?: TableSort | null; title?: string | null };
+export type Table = { calc?: Record<string, Expr> | null; columns: Column[]; edit?: Gesture | null; empty?: string | null; export?: ExportFormat[] | null; filter?: boolean | null; id?: string | null; more?: Page | null; reorder?: Gesture | null; rows: TableRow[]; select?: TableSelect | null; show?: Expr | null; sort?: TableSort | null; title?: string | null };
 
 export type TableRow = { cells: Record<string, Cell>; fixed?: boolean | null; group?: boolean | null; id: string; tap?: Tap | null };
 

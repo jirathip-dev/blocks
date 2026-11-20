@@ -1,0 +1,33 @@
+{
+  "columns": [
+    {
+      "id": "req",
+      "kind": "text",
+      "label": "Request"
+    },
+    {
+      "id": "who",
+      "kind": "text",
+      "label": "Employee"
+    },
+    {
+      "id": "status",
+      "kind": "tone",
+      "label": "Status"
+    },
+    {
+      "id": "hours",
+      "kind": "number",
+      "label": "Hours",
+      "total": "sum"
+    }
+  ],
+  "id": "ot",
+  "more": {
+    "action": "ot-more",
+    "cursor": "c:2397"
+  },
+  "rows": [],
+  "title": "OT requests",
+  "type": "table"
+}

@@ -6,3 +6,5 @@
 .list>:has(.b-hd[data-phase=dragging]){opacity:.6}
 .list>:has(.b-hd[data-phase=sent]){opacity:.5}
 .b-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.list>.lsm{display:flex;align-items:center;min-height:var(--hit);box-sizing:border-box;padding:var(--s1) var(--s3);color:var(--mute);font-size:var(--fs-meta)}
+.list>.lsm.no{background:var(--card);border:1px solid var(--edge);border-radius:var(--radius);box-shadow:inset var(--mark) 0 0 var(--r)}
