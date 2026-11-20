@@ -35,5 +35,4 @@ kinds! {
     chart { Chart(Chart) = "chart" }
     toast { Toast(Toast) = "toast" }
     timeline { Timeline(Timeline) = "timeline" }
-    import { Import(Import) = "import" }
 }

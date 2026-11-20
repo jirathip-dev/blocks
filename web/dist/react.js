@@ -1,5 +1,5 @@
 // react/src/view.ts
-import { createElement as createElement9, useMemo as useMemo2, useRef as useRef10, useSyncExternalStore } from "react";
+import { createElement as createElement9, useMemo as useMemo2, useRef as useRef9, useSyncExternalStore } from "react";
 import { hooks as hooks3, share } from "./core.js";
 
 // react/src/act.ts
@@ -45,7 +45,7 @@ function useCx(p, screen2) {
       const k = a.block ?? a.action;
       if (live3.current.busy.has(k) || a.block != null && live3.current.v.disabled.has(a.block)) return false;
       const c = a.confirm;
-      if (c && !await new Promise((done2) => setAsking({ c, done: done2 }))) return false;
+      if (c && !await new Promise((done) => setAsking({ c, done }))) return false;
       mark(k, true);
       try {
         const sent2 = { screen: String(live3.current.screen.id ?? ""), action: a.action, block: a.block ?? null, values: a.values ?? null };
@@ -80,7 +80,7 @@ function useCx(p, screen2) {
 }
 
 // react/src/block.ts
-import { Component, createElement as createElement8, memo, useContext as useContext15 } from "react";
+import { Component, createElement as createElement8, memo, useContext as useContext14 } from "react";
 import { hooks as hooks2, named as named3, role } from "./core.js";
 
 // react/src/draw.ts
@@ -174,11 +174,11 @@ import { useContext as useContext3 } from "react";
 function chips({ b, hooks: hooks4 }) {
   const cx = useContext3(Cx);
   const sel = b.selected ?? [];
-  const pick3 = (v) => {
+  const pick2 = (v) => {
     const next = !b.multi || v === "all" ? [v] : sel.includes(v) ? sel.filter((x) => x !== v) : [...sel.filter((x) => x !== "all"), v];
     void cx.act({ action: b.action ?? "", block: b.id, values: { [b.name]: next.length ? next : ["all"] } });
   };
-  const chip = (o) => btn(o.label, sel.includes(o.value) ? "on" : "", void 0, b.action, { key: o.value, "aria-pressed": String(sel.includes(o.value)), onClick: () => pick3(o.value) });
+  const chip = (o) => btn(o.label, sel.includes(o.value) ? "on" : "", void 0, b.action, { key: o.value, "aria-pressed": String(sel.includes(o.value)), onClick: () => pick2(o.value) });
   return h("div", "chips", hooks4, ...b.options.map(chip));
 }
 
@@ -214,52 +214,7 @@ var words = {
   wait1: ["waiting for {n} upload", "\u0E23\u0E2D\u0E2D\u0E31\u0E1B\u0E42\u0E2B\u0E25\u0E14 {n} \u0E44\u0E1F\u0E25\u0E4C"],
   waitN: ["waiting for {n} uploads", "\u0E23\u0E2D\u0E2D\u0E31\u0E1B\u0E42\u0E2B\u0E25\u0E14 {n} \u0E44\u0E1F\u0E25\u0E4C"],
   stuck: ["an upload failed: retry or remove it", "\u0E2D\u0E31\u0E1B\u0E42\u0E2B\u0E25\u0E14\u0E44\u0E21\u0E48\u0E2A\u0E33\u0E40\u0E23\u0E47\u0E08: \u0E25\u0E2D\u0E07\u0E2D\u0E35\u0E01\u0E04\u0E23\u0E31\u0E49\u0E07\u0E2B\u0E23\u0E37\u0E2D\u0E25\u0E1A"],
-  files: ["{label}, {n} files", "{label}, {n} \u0E44\u0E1F\u0E25\u0E4C"],
-  imTemplate: ["download template", "\u0E14\u0E32\u0E27\u0E19\u0E4C\u0E42\u0E2B\u0E25\u0E14\u0E41\u0E21\u0E48\u0E41\u0E1A\u0E1A"],
-  imDrop: ["Drop a spreadsheet here", "\u0E27\u0E32\u0E07\u0E44\u0E1F\u0E25\u0E4C\u0E2A\u0E40\u0E1B\u0E23\u0E14\u0E0A\u0E35\u0E15\u0E17\u0E35\u0E48\u0E19\u0E35\u0E48"],
-  imOr: ["or", "\u0E2B\u0E23\u0E37\u0E2D"],
-  imHint: [".xlsx or .csv \xB7 up to {max} rows", ".xlsx \u0E2B\u0E23\u0E37\u0E2D .csv \xB7 \u0E44\u0E21\u0E48\u0E40\u0E01\u0E34\u0E19 {max} \u0E41\u0E16\u0E27"],
-  imNeeds: ["The file needs", "\u0E44\u0E1F\u0E25\u0E4C\u0E15\u0E49\u0E2D\u0E07\u0E21\u0E35"],
-  imMay: ["and may have", "\u0E41\u0E25\u0E30\u0E2D\u0E32\u0E08\u0E21\u0E35"],
-  imReq: ["required", "\u0E15\u0E49\u0E2D\u0E07\u0E21\u0E35"],
-  imAnother: ["choose another file", "\u0E40\u0E25\u0E37\u0E2D\u0E01\u0E44\u0E1F\u0E25\u0E4C\u0E2D\u0E37\u0E48\u0E19"],
-  imRows: ["{n} rows", "{n} \u0E41\u0E16\u0E27"],
-  imSheet: ["sheet", "\u0E0A\u0E35\u0E15"],
-  imCols: ["Columns", "\u0E04\u0E2D\u0E25\u0E31\u0E21\u0E19\u0E4C"],
-  imNone: ["\u2014 not in the file", "\u2014 \u0E44\u0E21\u0E48\u0E21\u0E35\u0E43\u0E19\u0E44\u0E1F\u0E25\u0E4C"],
-  imSkip: ["Not imported: {list}", "\u0E44\u0E21\u0E48\u0E19\u0E33\u0E40\u0E02\u0E49\u0E32: {list}"],
-  imEg: ["e.g. {s}", "\u0E40\u0E0A\u0E48\u0E19 {s}"],
-  imPickFor: ["required: pick a column", "\u0E15\u0E49\u0E2D\u0E07\u0E21\u0E35: \u0E40\u0E25\u0E37\u0E2D\u0E01\u0E04\u0E2D\u0E25\u0E31\u0E21\u0E19\u0E4C"],
-  imPreview: ["Rows", "\u0E41\u0E16\u0E27"],
-  imSum: ["Columns: {n} of {m} matched", "\u0E04\u0E2D\u0E25\u0E31\u0E21\u0E19\u0E4C: \u0E15\u0E23\u0E07\u0E01\u0E31\u0E19 {n} \u0E08\u0E32\u0E01 {m}"],
-  imChange: ["change", "\u0E40\u0E1B\u0E25\u0E35\u0E48\u0E22\u0E19"],
-  imAll: ["all {n}", "\u0E17\u0E31\u0E49\u0E07\u0E2B\u0E21\u0E14 {n}"],
-  imErrs: ["{n} with errors", "\u0E21\u0E35\u0E02\u0E49\u0E2D\u0E1C\u0E34\u0E14\u0E1E\u0E25\u0E32\u0E14 {n}"],
-  imMore: ["{n} more rows, all checked", "\u0E2D\u0E35\u0E01 {n} \u0E41\u0E16\u0E27 \u0E15\u0E23\u0E27\u0E08\u0E41\u0E25\u0E49\u0E27\u0E17\u0E31\u0E49\u0E07\u0E2B\u0E21\u0E14"],
-  imGo: ["import {n} rows", "\u0E19\u0E33\u0E40\u0E02\u0E49\u0E32 {n} \u0E41\u0E16\u0E27"],
-  imNothing: ["nothing to import", "\u0E44\u0E21\u0E48\u0E21\u0E35\u0E41\u0E16\u0E27\u0E43\u0E2B\u0E49\u0E19\u0E33\u0E40\u0E02\u0E49\u0E32"],
-  imLeft: ["{n} rows with errors are left out", "\u0E44\u0E21\u0E48\u0E19\u0E33\u0E40\u0E02\u0E49\u0E32 {n} \u0E41\u0E16\u0E27\u0E17\u0E35\u0E48\u0E21\u0E35\u0E02\u0E49\u0E2D\u0E1C\u0E34\u0E14\u0E1E\u0E25\u0E32\u0E14"],
-  imFix: ["pick a column for {c}", "\u0E40\u0E25\u0E37\u0E2D\u0E01\u0E04\u0E2D\u0E25\u0E31\u0E21\u0E19\u0E4C\u0E2A\u0E33\u0E2B\u0E23\u0E31\u0E1A {c}"],
-  imAsk: ["Import {n} rows into {t}?", "\u0E19\u0E33\u0E40\u0E02\u0E49\u0E32 {n} \u0E41\u0E16\u0E27\u0E44\u0E1B\u0E17\u0E35\u0E48 {t}?"],
-  imSafe: ["Your file is not changed.", "\u0E44\u0E1F\u0E25\u0E4C\u0E02\u0E2D\u0E07\u0E04\u0E38\u0E13\u0E44\u0E21\u0E48\u0E40\u0E1B\u0E25\u0E35\u0E48\u0E22\u0E19"],
-  imBack: ["back", "\u0E22\u0E49\u0E2D\u0E19\u0E01\u0E25\u0E31\u0E1A"],
-  imSending: ["importing", "\u0E01\u0E33\u0E25\u0E31\u0E07\u0E19\u0E33\u0E40\u0E02\u0E49\u0E32"],
-  imDone: ["rows imported into {t}", "\u0E41\u0E16\u0E27\u0E19\u0E33\u0E40\u0E02\u0E49\u0E32\u0E44\u0E1B\u0E17\u0E35\u0E48 {t} \u0E41\u0E25\u0E49\u0E27"],
-  imLeftOut: ["{n} rows were left out", "\u0E44\u0E21\u0E48\u0E44\u0E14\u0E49\u0E19\u0E33\u0E40\u0E02\u0E49\u0E32 {n} \u0E41\u0E16\u0E27"],
-  imLeftDl: ["download left-out rows", "\u0E14\u0E32\u0E27\u0E19\u0E4C\u0E42\u0E2B\u0E25\u0E14\u0E41\u0E16\u0E27\u0E17\u0E35\u0E48\u0E44\u0E21\u0E48\u0E44\u0E14\u0E49\u0E19\u0E33\u0E40\u0E02\u0E49\u0E32"],
-  imAgain: ["import another file", "\u0E19\u0E33\u0E40\u0E02\u0E49\u0E32\u0E44\u0E1F\u0E25\u0E4C\u0E2D\u0E37\u0E48\u0E19"],
-  imRow: ["row", "\u0E41\u0E16\u0E27"],
-  imOff: ["import is off here", "\u0E19\u0E33\u0E40\u0E02\u0E49\u0E32\u0E44\u0E21\u0E48\u0E44\u0E14\u0E49\u0E17\u0E35\u0E48\u0E19\u0E35\u0E48"],
-  imNotNum: ["\u201C{v}\u201D is not a number", "\u201C{v}\u201D \u0E44\u0E21\u0E48\u0E43\u0E0A\u0E48\u0E15\u0E31\u0E27\u0E40\u0E25\u0E02"],
-  imNotDate: ["\u201C{v}\u201D is not a date", "\u201C{v}\u201D \u0E44\u0E21\u0E48\u0E43\u0E0A\u0E48\u0E27\u0E31\u0E19\u0E17\u0E35\u0E48"],
-  imNotOne: ["\u201C{v}\u201D is not one of {list}", "\u201C{v}\u201D \u0E44\u0E21\u0E48\u0E2D\u0E22\u0E39\u0E48\u0E43\u0E19\u0E23\u0E32\u0E22\u0E01\u0E32\u0E23 {list}"],
-  imTwice: ["{v} is also on row {n}", "{v} \u0E0B\u0E49\u0E33\u0E01\u0E31\u0E1A\u0E41\u0E16\u0E27 {n}"],
-  imOld: ["An old .xls file: save it as .xlsx or .csv", "\u0E44\u0E1F\u0E25\u0E4C .xls \u0E41\u0E1A\u0E1A\u0E40\u0E01\u0E48\u0E32: \u0E1A\u0E31\u0E19\u0E17\u0E36\u0E01\u0E40\u0E1B\u0E47\u0E19 .xlsx \u0E2B\u0E23\u0E37\u0E2D .csv"],
-  imNotSheet: ["Not an .xlsx or .csv file", "\u0E44\u0E21\u0E48\u0E43\u0E0A\u0E48\u0E44\u0E1F\u0E25\u0E4C .xlsx \u0E2B\u0E23\u0E37\u0E2D .csv"],
-  imTooMany: ["{n} rows: more than the {max} allowed", "{n} \u0E41\u0E16\u0E27: \u0E40\u0E01\u0E34\u0E19 {max} \u0E41\u0E16\u0E27\u0E17\u0E35\u0E48\u0E23\u0E31\u0E1A\u0E44\u0E14\u0E49"],
-  imNoRows: ["No rows in the file", "\u0E44\u0E21\u0E48\u0E21\u0E35\u0E41\u0E16\u0E27\u0E43\u0E19\u0E44\u0E1F\u0E25\u0E4C"],
-  imError: ["error", "\u0E02\u0E49\u0E2D\u0E1C\u0E34\u0E14\u0E1E\u0E25\u0E32\u0E14"],
-  imValues: ["Allowed values", "\u0E04\u0E48\u0E32\u0E17\u0E35\u0E48\u0E43\u0E0A\u0E49\u0E44\u0E14\u0E49"]
+  files: ["{label}, {n} files", "{label}, {n} \u0E44\u0E1F\u0E25\u0E4C"]
 };
 
 // react/src/fields/_view.ts
@@ -317,8 +272,8 @@ function item(x, r, w, drop, again) {
 }
 function Upload({ x, c, attrs }) {
   const w = (k) => word(c, k);
-  const [rows2, setRows] = useState3(() => held(x));
-  const live3 = useRef2(rows2);
+  const [rows, setRows] = useState3(() => held(x));
+  const live3 = useRef2(rows);
   const input3 = useRef2(null);
   const changed = (next) => {
     live3.current = next;
@@ -344,7 +299,7 @@ function Upload({ x, c, attrs }) {
     next.send.forEach(go2);
   };
   const label2 = x.label ?? x.name;
-  const choice = pick(x, rows2, w);
+  const choice = pick(x, rows, w);
   const tip = hint(x, w, !!c.file);
   const off = !c.file;
   const fub = h(
@@ -356,8 +311,8 @@ function Upload({ x, c, attrs }) {
     tip ? h("span", "fuh", null, tip) : null,
     h("input", "", { ref: input3, type: "file", tabIndex: -1, multiple: !!x.many, accept: accepts(x.accept ?? []), "aria-hidden": "true", onChange: take })
   );
-  const named4 = { role: "group", "data-field": x.name, "aria-label": fill(w("files"), { label: label2, n: rows2.filter((r) => r.state !== "refused").length }), "aria-invalid": attrs["aria-invalid"] };
-  return h("div", "fu", named4, x.error ? h("span", "fe", null, x.error) : null, rows2.length ? h("ul", "fuf", null, ...rows2.map((r) => item(x, r, w, drop, go2))) : null, fub);
+  const named4 = { role: "group", "data-field": x.name, "aria-label": fill(w("files"), { label: label2, n: rows.filter((r) => r.state !== "refused").length }), "aria-invalid": attrs["aria-invalid"] };
+  return h("div", "fu", named4, x.error ? h("span", "fe", null, x.error) : null, rows.length ? h("ul", "fuf", null, ...rows.map((r) => item(x, r, w, drop, go2))) : null, fub);
 }
 var upload = {
   row: " up",
@@ -374,7 +329,7 @@ var viewOf = (x) => views[x.type] ?? text;
 var note = (x, was) => x.error ? ["fn err", x.error] : x.was != null ? ["fn was", `${was} ${x.was}`] : ["fn", x.doc ?? ""];
 function field(x, key2, cx, held3) {
   const v = viewOf(x);
-  const [cls, say3] = note(v.group ? { ...x, error: null } : x, word(cx, "was"));
+  const [cls, say2] = note(v.group ? { ...x, error: null } : x, word(cx, "was"));
   const said2 = Object.prototype.hasOwnProperty.call(cx.edits, x.name) ? cx.v.says[x.name] : void 0;
   const attrs = { name: x.name, disabled: cx.v.disabled.has(x.name) || void 0, "aria-invalid": x.error ? "true" : void 0 };
   const hold = (sent2, w) => {
@@ -385,7 +340,7 @@ function field(x, key2, cx, held3) {
   const c = { locale: cx.locale, key: key2, value: cx.state[x.name] ?? null, put: (to) => cx.put(x.name, to), screen: cx.screen, block: held3.block, file: cx.file, hold };
   const control = v.draw(x, c, attrs);
   const l = `fd${v.row ?? ""}${x.error ? " err" : ""}${x.open ? " open" : ""}`;
-  return h(v.group ? "div" : "label", l, { key: x.name, hidden: cx.v.hidden.has(x.name) || void 0 }, h("span", "fl", null, h("span", "fk", null, x.label ?? x.name), h("span", cls, null, say3)), control, said2 ? h("span", "fe", null, said2) : null);
+  return h(v.group ? "div" : "label", l, { key: x.name, hidden: cx.v.hidden.has(x.name) || void 0 }, h("span", "fl", null, h("span", "fk", null, x.label ?? x.name), h("span", cls, null, say2)), control, said2 ? h("span", "fe", null, said2) : null);
 }
 function form({ b, hooks: hooks4 }) {
   const cx = useContext4(Cx);
@@ -393,9 +348,9 @@ function form({ b, hooks: hooks4 }) {
   const sent2 = useRef3({});
   const [waits3, setWaits] = useState4({});
   const held3 = { sent: sent2.current, wait: (n, w) => setWaits((o) => ({ ...o, [n]: w })), block: b.id ?? void 0 };
-  const rows2 = b.fields.map((x) => field(x, `draft:${cx.screen}:${String(b.id)}:`, cx, held3));
-  if (!s) return h("div", "form", { ...hooks4, "data-id": b.id ?? "" }, ...rows2);
-  const values2 = () => {
+  const rows = b.fields.map((x) => field(x, `draft:${cx.screen}:${String(b.id)}:`, cx, held3));
+  if (!s) return h("div", "form", { ...hooks4, "data-id": b.id ?? "" }, ...rows);
+  const values = () => {
     const v = {};
     for (const x of b.fields) {
       const own3 = viewOf(x).sent;
@@ -405,7 +360,7 @@ function form({ b, hooks: hooks4 }) {
     return v;
   };
   const send3 = () => {
-    const v = values2();
+    const v = values();
     if (Object.values(v).every((x) => !String(x || "").trim())) return;
     void cx.act({ action: s.action, block: b.id, values: { ...s.values, ...v } }).then((ok) => ok && b.fields.forEach((x) => cx.put(x.name, void 0)));
   };
@@ -420,7 +375,7 @@ function form({ b, hooks: hooks4 }) {
   const go2 = btn(busy ? "sending\u2026" : s.label, "", void 0, s.action, { "data-submit": "", onClick: send3 }, off);
   const line = bad ? word(cx, "stuck") : up ? fill2(word(cx, up > 1 ? "waitN" : "wait1"), { n: up }) : "";
   const wait = b.fields.some((x) => viewOf(x).group) ? h("span", `say-busy${bad ? " bad" : ""}`, null, line) : null;
-  return h("div", "form say", { ...hooks4, "data-id": b.id ?? "", onKeyDown: enter }, ...rows2, wait, go2);
+  return h("div", "form say", { ...hooks4, "data-id": b.id ?? "", onKeyDown: enter }, ...rows, wait, go2);
 }
 
 // react/src/kinds/images.ts
@@ -434,8 +389,45 @@ function images({ b, hooks: hooks4 }) {
   return h("div", "imgs", hooks4, ...b.items.map(item3));
 }
 
-// react/src/kinds/import.ts
-import { useContext as useContext5, useReducer, useRef as useRef4 } from "react";
+// react/src/kinds/list.ts
+import { useContext as useContext5, useLayoutEffect, useRef as useRef4 } from "react";
+
+// src/core/kind/list.ts
+var STEPS = [
+  ["Move up", { dir: "up" }],
+  ["Move down", { dir: "down" }],
+  ["Move to top", { dir: "up", big: true }],
+  ["Move to bottom", { dir: "down", big: true }]
+];
+var order = (b) => b.rows.flatMap((r) => typeof r.id === "string" ? [r.id] : []);
+var row = (b, id) => b.rows.find((r) => r.type === "row" && r.id === id);
+var moved = (ids2, id, to) => {
+  const from = ids2.indexOf(id);
+  if (from < 0) return null;
+  const out2 = ids2.filter((i) => i !== id);
+  out2.splice(Math.min(Math.max(to, 0), out2.length), 0, id);
+  return out2;
+};
+var list = {
+  word: (b, g) => b.reorder != null && row(b, g)?.handle === true ? "reorder" : null,
+  start: (b, g) => list.word(b, g) ? order(b) : null,
+  candidate: (b, g, r) => {
+    const ids2 = list.start(b, g);
+    return ids2 && moved(ids2, g, ids2.indexOf(g) + r);
+  },
+  nudge: (b, g, from, by) => {
+    const at2 = from.indexOf(g);
+    const last = from.length - 1;
+    if (!list.word(b, g) || at2 < 0 || by.dir === "left" || by.dir === "right") return null;
+    if (by.dir === "up") return at2 === 0 ? null : moved(from, g, by.big ? 0 : at2 - 1);
+    return at2 === last ? null : moved(from, g, by.big ? last : at2 + 1);
+  },
+  steps: (b, g) => {
+    const s = list.start(b, g);
+    return s ? STEPS.filter(([, n]) => list.nudge(b, g, s, n) !== null) : [];
+  },
+  says: (b, g, c) => `${row(b, g)?.title ?? g}, ${c.indexOf(g) + 1} of ${c.length}`
+};
 
 // src/core/gesture.ts
 var same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
@@ -451,515 +443,12 @@ function step(p, e, start2) {
   return [p, null];
 }
 
-// src/core/eval.ts
-var own = (o, k) => Object.prototype.hasOwnProperty.call(o, k);
-var rec2 = (v) => typeof v === "object" && v !== null && !Array.isArray(v);
-var UNKNOWN = { "?": null };
-var PAIRS = { eq: 2, lt: 2, has: 2, add: 2, sub: 2, mul: 2, div: 2, pick: 3 };
-function read(v) {
-  if (Array.isArray(v)) return void 0;
-  if (!rec2(v)) return v;
-  const keys2 = Object.keys(v);
-  const k = keys2[0] ?? "";
-  const a = v[k];
-  const one = (x) => x === void 0 ? UNKNOWN : { [k]: x };
-  const list3 = (n) => {
-    if (!Array.isArray(a) || n !== void 0 && a.length !== n) return UNKNOWN;
-    const xs = a.map(read);
-    return xs.includes(void 0) ? UNKNOWN : { [k]: xs };
-  };
-  if (keys2.length !== 1) return UNKNOWN;
-  if (k === "get") return typeof a === "string" ? v : UNKNOWN;
-  if (k === "not" || k === "len") return one(read(a));
-  if (k === "all" || k === "any" || k === "cat") return list3();
-  if (own(PAIRS, k)) return list3(PAIRS[k]);
-  if (k === "is" && rec2(a) && typeof a.pattern === "string" && "value" in a) {
-    const x = read(a.value);
-    return x === void 0 ? UNKNOWN : { is: { value: x, pattern: a.pattern } };
-  }
-  return UNKNOWN;
-}
-var flag = (l) => l === null ? false : typeof l === "boolean" ? l : void 0;
-var or = (b) => b ?? null;
-var num = (f) => Number.isFinite(f) ? f : null;
-var text2 = (l) => l === null ? "" : String(l);
-var blank = /\p{White_Space}/u;
-var trim = (s) => s.replace(/^\p{White_Space}+|\p{White_Space}+$/gu, "");
-var points = (s) => Array.from(s, (c) => c.codePointAt(0) ?? 0);
-function before(a, b) {
-  const [x, y] = [points(a), points(b)];
-  const i = x.findIndex((c, j) => c !== y[j]);
-  return i < 0 ? x.length < y.length : i < y.length && (x[i] ?? 0) < (y[i] ?? 0);
-}
-function email(s) {
-  const at2 = s.indexOf("@");
-  if (at2 < 0) return false;
-  const [user, host] = [s.slice(0, at2), s.slice(at2 + 1)];
-  const dot = host.indexOf(".");
-  return user !== "" && dot > 0 && dot + 1 < host.length && !host.endsWith(".") && !host.includes("@") && !blank.test(s);
-}
-function url(s) {
-  const rest = s.startsWith("https://") ? s.slice(8) : s.startsWith("http://") ? s.slice(7) : void 0;
-  return rest !== void 0 && rest !== "" && !rest.startsWith("/") && !blank.test(s);
-}
-function is(l, p) {
-  if (p === "filled") return typeof l === "string" ? trim(l) !== "" : l !== null;
-  if (p === "number" && typeof l === "number") return true;
-  if (typeof l !== "string") return null;
-  const t = trim(l);
-  if (p === "number") return /^[+-]?([0-9]+\.?[0-9]*|\.[0-9]+)([eE][+-]?[0-9]+)?$/.test(t) && Number.isFinite(Number(t));
-  return p === "email" ? email(l) : p === "url" ? url(l) : null;
-}
-function ev(e, s) {
-  if (!rec2(e)) return e === null || typeof e === "boolean" || typeof e === "number" || typeof e === "string" ? e : null;
-  const [k = "", a] = Object.entries(e)[0] ?? [];
-  const xs = (Array.isArray(a) ? a : [a]).map((x2) => k === "is" ? null : ev(x2, s));
-  const [x = null, y = null] = xs;
-  const n = typeof x === "number" && typeof y === "number" ? { x, y } : void 0;
-  const flags = xs.map(flag);
-  switch (k) {
-    case "get":
-      return typeof a === "string" && own(s, a) ? s[a] ?? null : null;
-    case "not":
-      return or(flag(x) === void 0 ? void 0 : !flag(x));
-    case "all":
-      return or(flags.includes(void 0) ? void 0 : flags.every(Boolean));
-    case "any":
-      return or(flags.includes(void 0) ? void 0 : flags.some(Boolean));
-    case "eq":
-      return x === y;
-    case "lt":
-      return n ? n.x < n.y : typeof x === "string" && typeof y === "string" ? before(x, y) : null;
-    case "len":
-      return typeof x === "string" ? points(x).length : null;
-    case "has":
-      return typeof x === "string" && typeof y === "string" ? x.includes(y) : null;
-    case "is":
-      return rec2(a) ? is(ev(a.value, s), a.pattern) : null;
-    case "add":
-      return n ? num(n.x + n.y) : null;
-    case "sub":
-      return n ? num(n.x - n.y) : null;
-    case "mul":
-      return n ? num(n.x * n.y) : null;
-    case "div":
-      return n ? num(n.x / n.y) : null;
-    case "cat":
-      return xs.map(text2).join("");
-    case "pick":
-      return flags[0] === void 0 ? null : xs[flags[0] ? 1 : 2] ?? null;
-  }
-  return null;
-}
-function evaluate2(e, s) {
-  const x = read(e);
-  return x === void 0 ? null : ev(x, s);
-}
-
-// src/core/table.ts
-var SIGN = { THB: "\u0E3F", USD: "$", EUR: "\u20AC" };
-var at = (r, id) => r.cells[id];
-var unit = (c) => c.kind === "money" ? c.currency ? SIGN[c.currency] ?? c.currency : null : c.unit;
-var grouped = (v, d, fixed) => v.toLocaleString("en-US", { minimumFractionDigits: fixed ? d : 0, maximumFractionDigits: d });
-var number = (c, v) => c.kind === "money" ? grouped(v, 2, true) : grouped(v, c.digits ?? 2, false);
-function total(c, rows2) {
-  const cells = rows2.map((r) => at(r, c.id)).filter((v) => v !== void 0);
-  const vs = cells.filter((v) => typeof v === "number");
-  const sum = vs.reduce((a, v) => a + v, 0);
-  if (!c.total) return null;
-  if (c.total === "count") return ["count", String(cells.length)];
-  if (!vs.length) return ["", "\u2014"];
-  return c.total === "avg" ? ["avg", grouped(sum / vs.length, 1, false)] : ["", number(c, sum)];
-}
-
-// src/core/tree.ts
-var isBlk = (v) => typeof v === "object" && v !== null;
-
-// src/core/text.ts
-function value2(v) {
-  if (isBlk(v) && "until" in v) return String(v.label ?? "").replace("{rel}", `${Math.max(0, Math.round((Date.parse(String(v.until)) - Date.now()) / 6e4))}m`);
-  if (isBlk(v) && "since" in v) {
-    const s = Math.max(0, (Date.now() - Date.parse(String(v.since))) / 1e3);
-    if (v.label != null) return String(v.label).replace("{}", s < 120 ? `${Math.floor(s)}s` : s < 7200 ? `${Math.floor(s / 60)}m` : s < 172800 ? `${Math.floor(s / 3600)}h` : `${Math.floor(s / 86400)}d`);
-    return s < 60 ? "now" : s < 3600 ? `${Math.floor(s / 60)}m` : s < 86400 ? `${Math.floor(s / 3600)}h ${Math.floor(s / 60) % 60}m` : `${Math.floor(s / 86400)}d`;
-  }
-  return String(v ?? "");
-}
-
-// src/core/kind/table.ts
-var STEPS = [
-  ["Move up", { dir: "up" }],
-  ["Move down", { dir: "down" }],
-  ["Move to top", { dir: "up", big: true }],
-  ["Move to bottom", { dir: "down", big: true }]
-];
-var MON = "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec".split(" ");
-var THAI = "\u0E21.\u0E04. \u0E01.\u0E1E. \u0E21\u0E35.\u0E04. \u0E40\u0E21.\u0E22. \u0E1E.\u0E04. \u0E21\u0E34.\u0E22. \u0E01.\u0E04. \u0E2A.\u0E04. \u0E01.\u0E22. \u0E15.\u0E04. \u0E1E.\u0E22. \u0E18.\u0E04.".split(" ");
-function shown(c, v, thai2 = false) {
-  if (v === void 0) return "";
-  if (typeof v === "object") return typeof v.text === "string" ? v.text : typeof v.text === "number" ? String(v.text) : "";
-  if (typeof v === "number") return number(c, v);
-  const d = /^(\d+)-(\d+)-(\d+)$/.exec(v);
-  if (c.kind !== "date" || !d) return v;
-  const be = c.era === "be";
-  const month = (be && thai2 ? THAI : MON)[Number(d[2]) - 1];
-  return month ? `${Number(d[3])} ${month} ${Number(d[1]) + (be ? 543 : 0)}` : v;
-}
-function parse(c, text4) {
-  if (c.kind === "number" || c.kind === "money") {
-    const t = text4.replace(/[,\s]/g, "");
-    return /^[+-]?([0-9]+\.?[0-9]*|\.[0-9]+)$/.test(t) ? Number(t) : null;
-  }
-  if (c.kind === "date") return /^\d{4}-\d{2}-\d{2}$/.test(text4.trim()) ? text4.trim() : null;
-  return c.kind === "text" ? text4 : null;
-}
-var editable = (b, c) => c.edit === true && b.calc?.[c.id] == null && ["text", "number", "money", "date"].includes(c.kind);
-var named = (b, r) => {
-  const c = b.columns[0];
-  return c && shown(c, r.cells[c.id]) || r.id;
-};
-function worked(b, r) {
-  if (!b.calc || r.group) return r;
-  const cells = { ...r.cells };
-  for (const c of b.columns) {
-    const e = b.calc[c.id];
-    if (e == null) continue;
-    const s = Object.fromEntries(Object.entries(cells).map(([k, v2]) => [k, typeof v2 !== "object" ? v2 : typeof v2.text === "string" || typeof v2.text === "number" ? v2.text : null]));
-    const v = evaluate2(e, s);
-    if (typeof v === "number" || typeof v === "string") cells[c.id] = v;
-    else delete cells[c.id];
-  }
-  return { ...r, cells };
-}
-var head = (b, id) => b.rows.some((r) => r.id === id && r.group === true);
-var row = (b, id) => b.rows.find((r) => r.id === id);
-var column = (b, id) => b.columns.find((c) => c.id === id);
-function chunks(order2, isHead) {
-  const prefix = [];
-  const out2 = [];
-  for (const id of order2) {
-    const last = out2[out2.length - 1];
-    if (isHead(id)) out2.push([id]);
-    else if (last) last.push(id);
-    else prefix.push(id);
-  }
-  return [prefix, out2];
-}
-function itemTo(b, from, g, to) {
-  const rest = from.filter((i) => i !== g);
-  const at2 = Math.min(to, rest.length);
-  const first = rest.findIndex((i) => head(b, i));
-  if (first >= 0 && at2 <= first) return null;
-  rest.splice(at2, 0, g);
-  return rest;
-}
-function groupTo(b, from, g, to) {
-  const [prefix, all] = chunks(from, (i) => head(b, i));
-  const at2 = all.findIndex((c) => c[0] === g);
-  if (at2 < 0) return null;
-  const [it = []] = all.splice(at2, 1);
-  all.splice(Math.min(to, all.length), 0, it);
-  return [...prefix, ...all.flat()];
-}
-function rowsTo(b, from, g, n) {
-  const at2 = from.indexOf(g);
-  if (at2 < 0) return null;
-  const t = Math.max(0, at2 + n);
-  if (!head(b, g)) return itemTo(b, from, g, t);
-  const [prefix, all] = chunks(from, (i) => head(b, i));
-  let start2 = prefix.length;
-  let best = [Infinity, 0];
-  const pick3 = (d, j) => d < best[0] || d === best[0] && j < best[1] ? [d, j] : best;
-  all.filter((c) => c[0] !== g).forEach((c, j) => {
-    best = pick3(Math.abs(start2 - t), j);
-    start2 += c.length;
-  });
-  best = pick3(Math.abs(start2 - t), Math.max(0, all.length - 1));
-  return groupTo(b, from, g, best[1]);
-}
-function nudged(b, from, g, by) {
-  if (by.dir === "left" || by.dir === "right") return null;
-  const up = by.dir === "up";
-  let out2;
-  if (head(b, g)) {
-    const [, all] = chunks(from, (i) => head(b, i));
-    const at2 = all.findIndex((c) => c[0] === g);
-    if (at2 < 0 || up && !by.big && at2 === 0) return null;
-    out2 = groupTo(b, from, g, up ? by.big ? 0 : at2 - 1 : by.big ? all.length - 1 : at2 + 1);
-  } else {
-    const at2 = from.indexOf(g);
-    if (at2 < 0 || up && !by.big && at2 === 0) return null;
-    out2 = itemTo(b, from, g, up ? by.big ? from.findIndex((i) => head(b, i)) + 1 : at2 - 1 : by.big ? from.length : at2 + 1);
-  }
-  return out2 && out2.join("\n") !== from.join("\n") ? out2 : null;
-}
-function place(b, g, order2) {
-  const r = row(b, g);
-  const name = r ? named(b, r) : g;
-  const [, all] = chunks(order2, (i) => head(b, i));
-  if (head(b, g)) return `${name}, ${all.findIndex((c) => c[0] === g) + 1} of ${all.length}`;
-  const mine = all.find((c) => c.includes(g));
-  const hr = mine?.[0] === void 0 ? void 0 : row(b, mine[0]);
-  return mine && hr ? `${name}, ${mine.indexOf(g)} of ${mine.length - 1} in ${named(b, hr)}` : `${name}, ${order2.indexOf(g) + 1} of ${order2.length}`;
-}
-var free = (b, id) => {
-  const r = row(b, id);
-  return r && r.fixed !== true ? r : void 0;
-};
-var grid = {
-  word: (b, g) => {
-    if (typeof g === "string") return b.reorder != null && free(b, g) ? "reorder" : null;
-    const c = column(b, g.column);
-    const r = free(b, g.row);
-    return b.edit != null && r && !r.group && c && editable(b, c) ? "edit" : null;
-  },
-  start: (b, g) => {
-    if (!grid.word(b, g)) return null;
-    if (typeof g === "string") return b.rows.map((r) => r.id);
-    return { row: g.row, column: g.column, value: row(b, g.row)?.cells[g.column] ?? "" };
-  },
-  candidate: (b, g, reach) => {
-    const s = grid.start(b, g);
-    if (s === null) return null;
-    if (typeof g === "string") return Array.isArray(s) && typeof reach === "number" ? rowsTo(b, s, g, reach) : null;
-    const c = column(b, g.column);
-    const value3 = c && typeof reach === "string" ? parse(c, reach) : null;
-    return value3 === null ? null : { row: g.row, column: g.column, value: value3 };
-  },
-  nudge: (b, g, from, by) => grid.word(b, g) && typeof g === "string" && Array.isArray(from) ? nudged(b, from, g, by) : null,
-  steps: (b, g) => {
-    const s = grid.start(b, g);
-    return s ? STEPS.filter(([, n]) => grid.nudge(b, g, s, n) !== null) : [];
-  },
-  says: (b, g, ch) => {
-    if (Array.isArray(ch)) return typeof g === "string" ? place(b, g, ch) : "";
-    const r = row(b, ch.row);
-    const c = column(b, ch.column);
-    return `${c?.label ?? ch.column}, ${r ? named(b, r) : ch.row}, ${c ? shown(c, ch.value) : ""}`;
-  }
-};
-var numeric = (c) => c.kind === "number" || c.kind === "money" || c.kind === "bar";
-var atEnd = (c) => (c.align ?? (numeric(c) ? "end" : "start")) === "end";
-var cellText = (c, v, thai2) => typeof v === "object" ? value2(v.text) : shown(c, v, thai2);
-var sortKey = (c, v) => c.kind === "date" && typeof v === "string" ? v : cellText(c, v, false).toLowerCase();
-var cmp = (c, a, b) => numeric(c) && typeof a === "number" && typeof b === "number" ? a - b : sortKey(c, a) < sortKey(c, b) ? -1 : sortKey(c, a) > sortKey(c, b) ? 1 : 0;
-function sorted(rows2, c, dir) {
-  if (!c) return rows2;
-  const by = (r, s) => {
-    const a = at(r, c.id), b = at(s, c.id);
-    if (a === void 0 || b === void 0) return Number(a === void 0) - Number(b === void 0);
-    return dir === "desc" ? cmp(c, b, a) : cmp(c, a, b);
-  };
-  const out2 = [];
-  let run = [];
-  for (const r of rows2) {
-    if (!r.group) run.push(r);
-    else out2.push(...run.sort(by), r), run = [];
-  }
-  return [...out2, ...run.sort(by)];
-}
-var itemsOf = (rows2, i) => {
-  const n = rows2.slice(i + 1).findIndex((r) => r.group);
-  return rows2.slice(i + 1, n < 0 ? void 0 : i + 1 + n);
-};
-function roles2(cols) {
-  const r = cols.map((c) => c.phone ?? void 0);
-  const claim = (part, ok, pick3) => {
-    const i = r.includes(part) ? void 0 : pick3(cols.flatMap((c, i2) => r[i2] === void 0 && ok(c) ? [i2] : []));
-    if (i !== void 0) r[i] = part;
-  };
-  claim("title", (c) => c.kind === "text", (f) => f[0]);
-  claim("tag", (c) => c.kind === "tone", (f) => f[0]);
-  claim("value", (c) => c.kind === "number" || c.kind === "money", (f) => f.filter((i) => cols[i]?.total).pop() ?? f.pop());
-  return r.map((x) => x ?? "meta");
-}
-var cellRole = (b, x) => b.edit && editable(b, x) ? "ed" : b.calc?.[x.id] != null ? "fx" : x.kind === "number" || x.kind === "money" ? "app" : "";
-
-// src/core/kind/import.ts
-var sheet = null;
-var S = null;
-var load = () => sheet ??= import("./sheet.js").then((m) => S = m);
-var fresh = () => ({ file: null, error: "", show: "all", step: "pick", open: false, sent: false, again: false });
-var say = (lang, key2, v = {}) => (words[key2]?.[lang === "th" ? 1 : 0] ?? key2).replace(/\{(\w+)\}/g, (_, k) => {
-  const x = v[k];
-  return typeof x === "number" ? x.toLocaleString("en-US") : x ?? "";
-});
-var column2 = (c) => ({ id: c.key, label: c.label, kind: c.type === "money" || c.type === "number" || c.type === "date" ? c.type : "text" });
-var cell = (c, r) => c.key in r.values ? shown(column2(c), r.values[c.key]) : r.cells[c.key];
-async function pick2(b, st, name, bytes, lang, at2 = 0) {
-  const M = await load(), book = await M.read(name, bytes, at2), max = b.max ?? 5e3;
-  const why = book === "old" ? say(lang, "imOld") : book === "not" ? say(lang, "imNotSheet") : !book.rows.length ? say(lang, "imNoRows") : book.rows.length > max ? say(lang, "imTooMany", { n: book.rows.length, max }) : "";
-  if (why || typeof book === "string") return Object.assign(st, { error: why, file: null, step: "pick" });
-  Object.assign(st, { error: "", file: { name, bytes, book, map: M.match(b.columns, book.head) }, step: "review", show: "all", open: false, sent: false });
-}
-function view2(b, st, lang) {
-  const f = st.file;
-  const rows2 = f && S ? S.check(b.columns, f.map, f.book.rows, (k, v) => say(lang, k, v), b.refused ?? []) : [];
-  const bad = rows2.filter((r) => Object.keys(r.bad).length), good = rows2.filter((r) => !Object.keys(r.bad).length);
-  const shown4 = st.show === "errors" ? bad.slice(0, 100) : rows2.filter((r, i) => i < 5 || bad.includes(r)).slice(0, 60);
-  const used = new Set(Object.values(f?.map ?? {}));
-  const step2 = !b.action ? "off" : b.done != null && !st.again && (!f || st.sent) ? "done" : st.step;
-  return {
-    step: step2,
-    rows: rows2,
-    good,
-    bad,
-    shown: shown4,
-    hidden: rows2.length - shown4.length,
-    missing: f ? b.columns.find((c) => c.required && f.map[c.key] < 0) : void 0,
-    extra: (f?.book.head ?? []).filter((h2, i) => h2 && !used.has(i)),
-    got: b.columns.filter((c) => (f?.map[c.key] ?? -1) >= 0).length
-  };
-}
-var values = (st, v) => ({ rows: v.good.map((r) => r.values), file: st.file?.name ?? "", left: v.bad.length });
-async function template(b, lang) {
-  const M = await load();
-  M.save(`${b.title}.xlsx`, M.template(b.title, b.columns, (k, v) => say(lang, k, v)));
-}
-async function leftOut(b, v, lang) {
-  const M = await load(), head3 = [say(lang, "imRow"), ...b.columns.map((c) => c.label), say(lang, "imError")];
-  const rows2 = v.bad.map((r) => [r.n, ...b.columns.map((c) => r.cells[c.key]), Object.entries(r.bad).map(([k, m]) => `${b.columns.find((c) => c.key === k)?.label ?? k}: ${m}`).join(" \xB7 ")]);
-  M.save(`${b.title} \u2013 ${say(lang, "imError")}.xlsx`, M.book([{ name: b.title, rows: [head3, ...rows2] }]));
-}
-async function exported(title, cols, rows2, ticked2) {
-  const M = await load(), cell3 = (c, v) => typeof v === "number" ? v : shown(c, v);
-  const picked2 = rows2.filter((r) => !r.group && (!ticked2.size || ticked2.has(r.id))).map((r) => cols.map((c) => cell3(c, r.cells[c.id])));
-  M.save(`${title}.xlsx`, M.book([{ name: title, rows: [cols.map((c) => c.label), ...picked2], bold: cols.map(() => true) }]));
-}
-
-// react/src/kinds/import.ts
-var num2 = (c) => c.type === "money" || c.type === "number";
-var press2 = (label2, go2, off = false, cls = "", more = {}) => h("button", cls, { type: "button", disabled: off || void 0, onClick: () => void go2(), ...more }, h("span", "", null, label2));
-var opened = async (x, f) => {
-  if (f) await pick2(x.b, x.st, f.name, new Uint8Array(await f.arrayBuffer()), x.lang);
-  x.draw();
-};
-function empty(x, input3) {
-  const off = x.v.step === "off", { b, w } = x;
-  const req = b.columns.filter((c) => c.required), opt = b.columns.filter((c) => !c.required);
-  const drop = off ? {} : { onDragOver: (e) => e.preventDefault(), onDrop: (e) => (e.preventDefault(), void opened(x, e.dataTransfer.files[0])) };
-  const file = h("input", "", { ref: input3, type: "file", hidden: true, accept: ".xlsx,.csv", onChange: () => void opened(x, input3.current?.files?.[0]) });
-  const d = h("div", "imd", drop, h("span", "", null, w("imDrop")), h("span", "m", null, w("imOr")), press2(w("file1"), () => input3.current?.click(), off), h("span", "m", null, off ? w("imOff") : w("imHint", { max: b.max ?? 5e3 })), file);
-  const may = opt.map((c) => c.values?.length ? `${c.label} (${c.values.join(", ")})` : c.label).join(", ");
-  return [d, h("p", "imn", null, `${w("imNeeds")} `, ...req.flatMap((c, i) => [i ? ", " : "", h("b", "", { key: c.key }, c.label)]), opt.length ? ` ${w("imMay")} ${may}` : "")];
-}
-function fileLine(x, f) {
-  const { book } = f, w = x.w;
-  const sheets = book.sheets.length > 1 ? h("select", "", { "aria-label": w("imSheet"), value: String(book.sheet), onChange: (e) => void pick2(x.b, x.st, f.name, f.bytes, x.lang, Number(e.target.value)).then(x.draw) }, ...book.sheets.map((t, i) => h("option", "", { key: t, value: String(i) }, `${w("imSheet")}: ${t}`))) : null;
-  const more = book.enc ? ` \xB7 ${book.enc}` : book.sheets.length === 1 ? ` \xB7 ${w("imSheet")} ${book.sheets[0]}` : "";
-  const m = h("span", "fum", null, h("span", "fun", null, f.name), sheets, h("span", "fus", null, w("imRows", { n: book.rows.length }) + more));
-  return h("div", "imf", null, h("span", "fux", { "aria-hidden": "true" }, f.name.split(".").pop() ?? ""), m, press2(w("imAnother"), () => (Object.assign(x.st, fresh()), x.draw()), x.v.step !== "review"));
-}
-function mapping(x, f) {
-  const { b, v, w } = x, live3 = v.step === "review";
-  const li = (c) => {
-    const at2 = f.map[c.key], eg = v.rows.slice(0, 2).map((r) => cell(c, r)).filter(Boolean).join(", ");
-    const opts2 = [w("imNone"), ...f.book.head].map((t, i) => h("option", "", { key: i, value: String(i - 1) }, t));
-    const s = h("select", "", { "aria-label": `${c.label}: ${w("imCols")}`, disabled: !live3 || void 0, value: String(at2), onChange: (e) => (f.map[c.key] = Number(e.target.value), x.draw()) }, ...opts2);
-    const k = h("span", "imk", null, `${c.label} `, c.required ? h("i", "", null, w("imReq")) : null);
-    return h("li", at2 < 0 && c.required ? "imr no" : "imr", { key: c.key }, k, s, h("span", "ims", null, at2 >= 0 ? w("imEg", { s: eg }) : c.required ? w("imPickFor") : ""));
-  };
-  const skip = v.extra.length ? w("imSkip", { list: v.extra.join(", ") }) : "";
-  const sum = h("p", "imc", null, w("imSum", { n: v.got, m: b.columns.length }) + (skip ? ` \xB7 ${skip}` : ""), press2(w("imChange"), () => (x.st.open = true, x.draw()), !live3));
-  return h("div", `imm${v.missing ? "" : " ok"}${x.st.open ? " open" : ""}`, null, h("h4", "sh", null, w("imCols")), sum, h("ul", "iml", null, ...b.columns.map(li)), skip ? h("span", "m", null, skip) : null);
-}
-function rows(x, f) {
-  const { b, v, w, st } = x, cols = b.columns, live3 = v.step === "review", span2 = cols.length + 1;
-  const tabs = v.bad.length ? [press2(w("imAll", { n: v.rows.length }), () => (st.show = "all", x.draw()), !live3, "", { "aria-pressed": String(st.show === "all") }), press2(w("imErrs", { n: v.bad.length }), () => (st.show = "errors", x.draw()), !live3, "bad", { "aria-pressed": String(st.show === "errors") })] : [];
-  const title = cols.find((c, i) => i > 0 && (c.type ?? "text") === "text") ?? cols[0];
-  const role2 = (c) => c === title ? "title" : c.type === "money" ? "value" : c.type === "choice" ? "tag" : "meta";
-  const body2 = v.shown.flatMap((r) => {
-    const tds = cols.map((c) => {
-      const s = f.map[c.key] >= 0 ? cell(c, r) : "";
-      return h("td", [`p-${role2(c)}`, num2(c) ? "end" : "", c.key in r.bad ? "bad" : "", s ? "" : "nil"].filter(Boolean).join(" "), { key: c.key, "data-l": c.label }, s || "\u2014");
-    });
-    const why = Object.entries(r.bad).map(([k, m]) => `${cols.find((c) => c.key === k)?.label ?? k}: ${m}`).join(" \xB7 ");
-    const tr = h("tr", why ? "imo" : "", { key: r.n }, h("td", "imn0 p-meta", { "data-l": w("imRow") }, String(r.n)), ...tds);
-    return why ? [tr, h("tr", "imx", { key: `${r.n}x` }, h("td", "", { colSpan: span2 }, why))] : [tr];
-  });
-  const more = v.hidden > 0 && st.show === "all" ? h("tr", "imq", null, h("td", "", { colSpan: span2 }, w("imMore", { n: v.hidden }))) : null;
-  const head3 = h("tr", "", null, h("th", "imn0", null, "#"), ...cols.map((c) => h("th", num2(c) ? "end" : "", { key: c.key }, c.label)));
-  const table2 = h("table", "", null, h("caption", "", null, `${b.title}: ${w("imPreview")}`), h("thead", "", null, head3), h("tbody", "", null, ...body2, more));
-  return h("div", "imp", null, h("div", "imt", null, h("h4", "sh", null, w("imPreview")), ...tabs), h("div", "tbl", null, h("div", "tbw", null, table2)));
-}
-function actions(x, act2) {
-  const { v, w, st } = x, n = v.good.length, into = x.b.into ?? x.b.title;
-  const go2 = () => {
-    st.step = "sending";
-    x.draw();
-    void act2(values(st, v)).then((ok) => (Object.assign(st, { step: "review", sent: ok, again: false }), x.draw()));
-  };
-  if (v.step === "ask") {
-    const p = h("p", "", null, w("imAsk", { n, t: into }), h("span", "m", null, (v.bad.length ? `${w("imLeft", { n: v.bad.length })}. ` : "") + w("imSafe")));
-    return h("div", "ima ask", null, p, press2(w("imBack"), () => (st.step = "review", x.draw())), press2(w("imGo", { n }), go2));
-  }
-  const note2 = v.missing ? h("span", "say-busy bad", null, w("imFix", { c: v.missing.label })) : v.bad.length ? h("span", "say-busy", null, w("imLeft", { n: v.bad.length })) : null;
-  const b = v.step === "sending" ? press2(w("imSending"), () => 0, true, "", { "aria-busy": "true" }) : press2(n ? w("imGo", { n }) : w("imNothing"), () => (st.step = "ask", x.draw()), !!v.missing || !n);
-  return h("div", "ima", null, note2, b);
-}
-function done(x) {
-  const left = x.v.bad.length, again = press2(x.w("imAgain"), () => (Object.assign(x.st, fresh(), { again: true }), x.draw()));
-  const dl = left ? press2(x.w("imLeftDl"), () => leftOut(x.b, x.v, x.lang)) : null;
-  return h("div", "imz", null, h("b", "ok", null, (x.b.done ?? 0).toLocaleString("en-US")), h("span", "", null, x.w("imDone", { t: x.b.into ?? x.b.title })), left ? h("span", "m", null, x.w("imLeftOut", { n: left })) : null, h("div", "bar", null, dl, again));
-}
-function import_({ b, hooks: hooks4 }) {
-  const cx = useContext5(Cx), st = useRef4(fresh()).current, input3 = useRef4(null);
-  const [, draw2] = useReducer((n) => n + 1, 0), lang = cx.locale.lang ?? void 0;
-  const x = { b, st, v: view2(b, st, lang), lang, w: (k, v) => say(lang, k, v), draw: draw2 };
-  const { step: step2 } = x.v, f = st.file;
-  const head3 = h("div", "imh", null, h("h3", "sh", null, b.title), b.template !== false && step2 !== "done" ? press2(x.w("imTemplate"), () => template(b, lang), step2 === "off") : null);
-  const errs = [b.error, st.error].filter((e) => !!e).map((e) => h("p", "fe", { key: e }, e));
-  const act2 = (values2) => cx.act({ action: b.action ?? "", block: b.id, values: values2 });
-  const kids2 = step2 === "done" ? [f ? fileLine(x, f) : null, done(x)] : !f || step2 === "off" || step2 === "pick" ? [...errs, ...empty(x, input3)] : [...errs, fileLine(x, f), h("div", "imb", null, mapping(x, f), rows(x, f)), actions(x, act2)];
-  return h("section", `im${step2 === "sending" ? " busy" : ""}`, hooks4, head3, ...kids2);
-}
-
-// react/src/kinds/list.ts
-import { useContext as useContext6, useLayoutEffect, useRef as useRef5 } from "react";
-
-// src/core/kind/list.ts
-var STEPS2 = [
-  ["Move up", { dir: "up" }],
-  ["Move down", { dir: "down" }],
-  ["Move to top", { dir: "up", big: true }],
-  ["Move to bottom", { dir: "down", big: true }]
-];
-var order = (b) => b.rows.flatMap((r) => typeof r.id === "string" ? [r.id] : []);
-var row2 = (b, id) => b.rows.find((r) => r.type === "row" && r.id === id);
-var moved = (ids2, id, to) => {
-  const from = ids2.indexOf(id);
-  if (from < 0) return null;
-  const out2 = ids2.filter((i) => i !== id);
-  out2.splice(Math.min(Math.max(to, 0), out2.length), 0, id);
-  return out2;
-};
-var list = {
-  word: (b, g) => b.reorder != null && row2(b, g)?.handle === true ? "reorder" : null,
-  start: (b, g) => list.word(b, g) ? order(b) : null,
-  candidate: (b, g, r) => {
-    const ids2 = list.start(b, g);
-    return ids2 && moved(ids2, g, ids2.indexOf(g) + r);
-  },
-  nudge: (b, g, from, by) => {
-    const at2 = from.indexOf(g);
-    const last = from.length - 1;
-    if (!list.word(b, g) || at2 < 0 || by.dir === "left" || by.dir === "right") return null;
-    if (by.dir === "up") return at2 === 0 ? null : moved(from, g, by.big ? 0 : at2 - 1);
-    return at2 === last ? null : moved(from, g, by.big ? last : at2 + 1);
-  },
-  steps: (b, g) => {
-    const s = list.start(b, g);
-    return s ? STEPS2.filter(([, n]) => list.nudge(b, g, s, n) !== null) : [];
-  },
-  says: (b, g, c) => `${row2(b, g)?.title ?? g}, ${c.indexOf(g) + 1} of ${c.length}`
-};
-
 // src/gesture.ts
 var ARROWS = { ArrowLeft: "left", ArrowRight: "right", ArrowUp: "up", ArrowDown: "down" };
 var key = (b, item3) => `${b.id ?? ""}
 ${item3}`;
 var speaker;
-function say2(text4) {
+function say(text4) {
   if (!speaker?.isConnected) {
     speaker = Object.assign(document.createElement("div"), { className: "b-sr" });
     speaker.setAttribute("aria-live", "polite");
@@ -1000,11 +489,11 @@ function gestured(el, c, o) {
   const send3 = async (cand) => {
     const h2 = { start: start2, c: cand, back };
     c.held?.set(k, h2);
-    say2("sending");
+    say("sending");
     const ok = await c.act({ action: o.gesture.action, block: o.block.id, values: { [o.gesture.name]: cand } }, el).catch(() => false);
     c.held?.delete(k);
     h2.back(ok);
-    say2(ok ? o.rules.says(o.block, o.grab, cand) : "not changed");
+    say(ok ? o.rules.says(o.block, o.grab, cand) : "not changed");
   };
   const go2 = (e) => {
     const [next, fx] = step(p, e, start2);
@@ -1013,9 +502,9 @@ function gestured(el, c, o) {
     mark();
     if (p.at === "previewing") o.show(p.c);
     if (p.at === "idle" || p.at === "dragging") o.show(null);
-    if (p.at === "pressed") say2(`${el.getAttribute("aria-label") ?? ""}, grabbed, ${o.rules.says(o.block, o.grab, start2)}. Arrows move, Enter drops, Escape cancels`);
-    if (p.at === "dragging") say2("no drop here");
-    if (p.at === "previewing") say2(o.rules.says(o.block, o.grab, p.c));
+    if (p.at === "pressed") say(`${el.getAttribute("aria-label") ?? ""}, grabbed, ${o.rules.says(o.block, o.grab, start2)}. Arrows move, Enter drops, Escape cancels`);
+    if (p.at === "dragging") say("no drop here");
+    if (p.at === "previewing") say(o.rules.says(o.block, o.grab, p.c));
     if (fx && fx !== "tap") void send3(fx.send);
   };
   const phase = () => p.at;
@@ -1108,11 +597,11 @@ function edited(input3, c, o) {
     const back = (ok) => (go2({ on: "answer", ok }), go2({ on: "settled" }));
     const h2 = { start: start2, c: fx.send, back };
     c.held?.set(k, h2);
-    say2("sending");
+    say("sending");
     void c.act({ action: o.gesture.action, block: o.block.id, values: { [o.gesture.name]: fx.send } }, input3).catch(() => false).then((ok) => {
       c.held?.delete(k);
       h2.back(ok);
-      say2(ok ? o.rules.says(o.block, o.grab, fx.send) : "not changed");
+      say(ok ? o.rules.says(o.block, o.grab, fx.send) : "not changed");
     });
   };
   const leave = (e, how) => {
@@ -1133,11 +622,11 @@ function edited(input3, c, o) {
 }
 
 // react/src/kinds/list.ts
-var rec3 = (v) => typeof v === "object" && v !== null;
+var rec2 = (v) => typeof v === "object" && v !== null;
 function list2({ b, hooks: hooks4 }) {
-  const cx = useContext6(Cx);
-  const ref3 = useRef5(null);
-  const act2 = useRef5(cx.act);
+  const cx = useContext5(Cx);
+  const ref3 = useRef4(null);
+  const act2 = useRef4(cx.act);
   act2.current = cx.act;
   useLayoutEffect(() => {
     const l = ref3.current;
@@ -1155,7 +644,7 @@ function list2({ b, hooks: hooks4 }) {
       }
       if (!order2) d.forEach((e) => e.style.transform = "");
     };
-    const c = { act: (a) => act2.current({ action: g.action, block: b.id, values: rec3(a.values) ? a.values : null }) };
+    const c = { act: (a) => act2.current({ action: g.action, block: b.id, values: rec2(a.values) ? a.values : null }) };
     const added = [];
     for (const r of b.rows) {
       const e = r.id ? at2(r.id) : void 0;
@@ -1176,13 +665,13 @@ function list2({ b, hooks: hooks4 }) {
 }
 
 // react/src/kinds/media.ts
-import { createElement as createElement6, Fragment, useContext as useContext7, useLayoutEffect as useLayoutEffect2, useReducer as useReducer2, useRef as useRef6, useState as useState5 } from "react";
+import { createElement as createElement6, Fragment, useContext as useContext6, useLayoutEffect as useLayoutEffect2, useReducer, useRef as useRef5, useState as useState5 } from "react";
 
 // src/core/kind/media.ts
 var SMALL = 0.02;
 var SIDE = 0.05;
 var MIDDLE = [0.5, 0.5];
-var WORDS2 = { arrow: "Arrow", box: "Box", ellipse: "Ellipse", text: "Text", pin: "Pin", highlight: "Highlight", line: "Line" };
+var WORDS = { arrow: "Arrow", box: "Box", ellipse: "Ellipse", text: "Text", pin: "Pin", highlight: "Highlight", line: "Line" };
 var TWO = /* @__PURE__ */ new Set(["arrow", "box", "ellipse", "highlight", "line"]);
 var round = (x) => Math.round(Math.min(1, Math.max(0, x)) * 1e4) / 1e4 + 0;
 var snap = ([x, y]) => [round(x), round(y)];
@@ -1237,13 +726,13 @@ var BACK = { left: "right", right: "left", up: "down", down: "up" };
 var idOf = (g) => "body" in g ? g.body : "start" in g ? g.start : "end" in g ? g.end : "remove" in g ? g.remove : null;
 var of = (b, id) => b.marks?.find((m) => m.id === id);
 var live = (b, id, g) => g ? of(b, id) : void 0;
-var said = (k) => WORDS2[k] ?? k;
+var said = (k) => WORDS[k] ?? k;
 var ninth = ([x, y]) => {
   const row5 = y < 1 / 3 ? "upper" : y < 2 / 3 ? "middle" : "lower";
   const col = x < 1 / 3 ? "left" : x < 2 / 3 ? "centre" : "right";
   return row5 === "middle" && col === "centre" ? "centre" : `${row5} ${col}`;
 };
-var named2 = (b, id) => {
+var named = (b, id) => {
   const m = of(b, id);
   if (!m) return null;
   const n = (b.marks ?? []).filter((o) => o.kind === m.kind).findIndex((o) => o.id === id) + 1;
@@ -1258,7 +747,7 @@ var media = {
   word: (b, g) => {
     const id = idOf(g);
     const m = id === null ? null : live(b, id, "body" in g ? b.move : "remove" in g ? b.remove : b.stretch);
-    if ("draw" in g) return b.draw != null && b.tools?.includes(g.draw.tool) && g.draw.tool in WORDS2 ? "draw" : null;
+    if ("draw" in g) return b.draw != null && b.tools?.includes(g.draw.tool) && g.draw.tool in WORDS ? "draw" : null;
     if (!m || m.fixed === true) return null;
     if ("body" in g) return "move";
     if ("remove" in g) return "remove";
@@ -1309,7 +798,7 @@ var media = {
   says: (b, g, c) => {
     const id = idOf(g);
     const m = id === null ? void 0 : of(b, id);
-    if ("remove" in g && c.at === void 0) return `Delete ${named2(b, g.remove) ?? ""}`;
+    if ("remove" in g && c.at === void 0) return `Delete ${named(b, g.remove) ?? ""}`;
     const kind = c.kind ?? m?.kind ?? "arrow";
     const text4 = c.text ?? m?.text;
     const what = kind === "text" && text4 != null ? `Text \u201C${text4}\u201D` : said(kind);
@@ -1360,7 +849,7 @@ function frame(b, img, art, top, o = {}) {
 }
 function still(b, hooks4) {
   const marks = b.marks ?? [];
-  const alt = marks.length ? `${b.alt}. ${marks.length} marks: ${marks.map((x) => named2(b, x.id)).join("; ")}` : b.alt;
+  const alt = marks.length ? `${b.alt}. ${marks.length} marks: ${marks.map((x) => named(b, x.id)).join("; ")}` : b.alt;
   const size = { width: b.width, height: b.height };
   const v = b.video ? h("video", "", { src: b.src, "aria-label": b.alt, controls: true, preload: "metadata", ...size, poster: b.poster ?? void 0 }) : h("img", "", { src: b.src, alt, loading: "lazy", ...size });
   const drawn2 = marks.map((m) => painted(b, m));
@@ -1368,15 +857,15 @@ function still(b, hooks4) {
   return h("figure", "media", hooks4, body2, b.caption ? h("figcaption", "", null, b.caption) : null);
 }
 function media2({ b, hooks: hooks4 }) {
-  const cx = useContext7(Cx);
-  const live3 = useRef6(cx);
+  const cx = useContext6(Cx);
+  const live3 = useRef5(cx);
   live3.current = cx;
-  const keep = useRef6(/* @__PURE__ */ new Map());
-  const v = useRef6({}).current;
-  const [, redraw] = useReducer2((n) => n + 1, 0);
+  const keep = useRef5(/* @__PURE__ */ new Map());
+  const v = useRef5({}).current;
+  const [, redraw] = useReducer((n) => n + 1, 0);
   const [now, show] = useState5(null);
-  const [root, z] = [useRef6(null), useRef6(null)];
-  const after = useRef6({});
+  const [root, z] = [useRef5(null), useRef5(null)];
+  const after = useRef5({});
   const k = JSON.stringify([b, v.tool, v.into, v.sel, v.typing]);
   const c = { act: (a) => live3.current.act(a), held: keep.current };
   const wires = [];
@@ -1384,16 +873,16 @@ function media2({ b, hooks: hooks4 }) {
     for (const w of wires) w(c);
   }, [k]);
   useLayoutEffect2(() => {
-    const { focus, press: press3 } = after.current;
+    const { focus, press: press2 } = after.current;
     after.current = {};
     const at2 = (key2) => key2 ? root.current?.querySelector(`[data-key="${CSS.escape(key2)}"]`) : null;
     at2(focus)?.focus();
-    at2(press3)?.click();
+    at2(press2)?.click();
   });
   if (b.video || b.id == null || !(b.draw ?? b.move ?? b.stretch ?? b.remove)) return still(b, hooks4);
-  const again = (press3) => {
+  const again = (press2) => {
     const a = document.activeElement;
-    after.current = { focus: a instanceof HTMLElement && root.current?.contains(a) ? a.dataset.key : void 0, press: press3 };
+    after.current = { focus: a instanceof HTMLElement && root.current?.contains(a) ? a.dataset.key : void 0, press: press2 };
     redraw();
   };
   const reach = (dx, dy, x, y) => {
@@ -1451,17 +940,17 @@ function over(m) {
 function stops(o, s) {
   const { b, k, v } = o;
   const { m } = s;
-  const name = named2(b, m.id) ?? m.id;
+  const name = named(b, m.id) ?? m.id;
   const at2 = merged(m, s.d);
   const follow = (d) => o.show(d && { k, item: m.id, c: d });
   const stop = ref();
-  const pick3 = (e) => {
+  const pick2 = (e) => {
     if (!idle(e)) return;
     v.sel = s.sel ? void 0 : m.id;
     o.again();
   };
   const key2 = (e) => {
-    if (e.key === "Enter" && idle(e.currentTarget)) pick3(e.currentTarget);
+    if (e.key === "Enter" && idle(e.currentTarget)) pick2(e.currentTarget);
     else if ((e.key === "Delete" || e.key === "Backspace") && b.remove) {
       v.sel = m.id;
       o.again("rm");
@@ -1469,7 +958,7 @@ function stops(o, s) {
     e.preventDefault();
   };
   const own3 = { ref: stop, role: "button", tabIndex: 0, "aria-roledescription": "mark", "aria-label": name, "data-key": m.id, style: over(at2) };
-  s.top.push(h("span", `mk${s.sel ? " sel" : ""}`, { ...own3, onClick: (e) => pick3(e.currentTarget), onKeyDown: key2 }));
+  s.top.push(h("span", `mk${s.sel ? " sel" : ""}`, { ...own3, onClick: (e) => pick2(e.currentTarget), onKeyDown: key2 }));
   o.wires.push((c) => {
     const [el, g] = [stop.current, s.gr.current];
     if (!el || !g) return;
@@ -1498,7 +987,7 @@ function bar(o, t) {
   const draw2 = b.draw;
   const tools = (b.tools ?? []).map((kind) => {
     const r = ref();
-    const pick3 = (e) => {
+    const pick2 = (e) => {
       if (!idle(e.currentTarget)) return;
       [v.tool, v.typing] = [t.tool === kind ? "" : kind, void 0];
       o.again();
@@ -1511,7 +1000,7 @@ function bar(o, t) {
         if (el) beside2(el, () => gestured(el, c, { block: b, gesture: draw2, rules: media, grab, item: "draw", reach: o.reach, show }));
       });
     }
-    const own3 = { ref: r, type: "button", "aria-label": `${said(kind)} tool`, "aria-current": t.tool === kind ? "true" : void 0, "data-key": `tool:${kind}`, onClick: pick3 };
+    const own3 = { ref: r, type: "button", "aria-label": `${said(kind)} tool`, "aria-current": t.tool === kind ? "true" : void 0, "data-key": `tool:${kind}`, onClick: pick2 };
     return h("button", t.tool === kind ? "on" : "", own3, h("span", "", null, kind));
   });
   const into = (e) => {
@@ -1577,13 +1066,13 @@ function typing(o, t) {
       input3.addEventListener("input", () => pen.text = v.words = input3.value);
       const run = gestured(el, c, { block: b, gesture: draw2, rules: media, grab: { draw: pen }, item: "draw", reach: () => ({ from: [-1, -1], to: [-1, -1] }), show: () => {
       } });
-      const done2 = () => {
+      const done = () => {
         run({ dir: "right" });
         [v.typing, v.words] = [void 0, void 0];
       };
-      el.addEventListener("click", done2);
+      el.addEventListener("click", done);
       input3.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") done2();
+        if (e.key === "Enter") done();
         if (e.key !== "Escape") return;
         v.typing = void 0;
         o.again();
@@ -1617,7 +1106,7 @@ function zoom(o, at2) {
 }
 
 // react/src/kinds/row.ts
-import { useContext as useContext8, useRef as useRef7, useState as useState6 } from "react";
+import { useContext as useContext7, useRef as useRef6, useState as useState6 } from "react";
 function round2(d, now, cx) {
   const tap = now ? null : d.tap ?? null;
   const url2 = urlOf(tap);
@@ -1632,10 +1121,10 @@ function round2(d, now, cx) {
   const body2 = now && (d.lane || d.blocks?.length || links.length) ? h("div", "rdb", null, ...lane, ...kids(d.blocks), links.length ? h("div", "rdk", null, ...link) : null) : null;
   return h("li", `rd ${d.state}${now ? " now" : ""}`, null, h("i", "rdm", { "aria-label": d.state }), h("div", "rdx", null, l, body2));
 }
-function row3({ b, hooks: hooks4 }) {
-  const cx = useContext8(Cx);
+function row2({ b, hooks: hooks4 }) {
+  const cx = useContext7(Cx);
   const [flip, setFlip] = useState6(false);
-  const x0 = useRef7(0);
+  const x0 = useRef6(0);
   const toggle2 = () => setFlip((f) => !f);
   const cls = `row${b.style === "link" ? " link" : ""}${b.sticky ? " sticky" : ""}${b.indent ? " in" + Math.min(b.indent, 3) : ""}`;
   const rounds = b.rounds ?? [];
@@ -1663,10 +1152,10 @@ function row3({ b, hooks: hooks4 }) {
 }
 
 // react/src/kinds/screen.ts
-import { useContext as useContext9 } from "react";
+import { useContext as useContext8 } from "react";
 var stays = (x) => x.type === "row" && x.sticky === true || x.type === "composer";
 function screen({ b, hooks: hooks4 }) {
-  const cx = useContext9(Cx);
+  const cx = useContext8(Cx);
   const go2 = (m) => () => m.tap ? cx.tap(m.tap) : void cx.act({ action: m.action ?? "", values: m.values, confirm: m.confirm });
   const acts = (b.actions ?? []).flatMap((a) => a.menu ?? [a]).map((m) => act(m, "b-screen__actions", cx, urlOf(m.tap), urlOf(m.tap) ? void 0 : go2(m)));
   const head3 = h("p", "tabh", null, h("span", "tw b-screen__title", null, (b.title ?? "").toLowerCase()), ...acts);
@@ -1689,12 +1178,12 @@ function section({ b, hooks: hooks4 }) {
 }
 
 // react/src/kinds/sheet.ts
-var sheet2 = ({ b, hooks: hooks4 }) => h("div", "shb", hooks4, ...kids(b.blocks));
+var sheet = ({ b, hooks: hooks4 }) => h("div", "shb", hooks4, ...kids(b.blocks));
 
 // react/src/kinds/stat.ts
-import { useContext as useContext10 } from "react";
+import { useContext as useContext9 } from "react";
 function stat({ b, hooks: hooks4 }) {
-  const cx = useContext10(Cx);
+  const cx = useContext9(Cx);
   const tile = (i) => {
     const sp = i.spark ?? [];
     const hi = Math.max(1, ...sp);
@@ -1707,7 +1196,333 @@ function stat({ b, hooks: hooks4 }) {
 }
 
 // react/src/kinds/table.ts
-import { useContext as useContext11, useLayoutEffect as useLayoutEffect3, useReducer as useReducer3, useRef as useRef8 } from "react";
+import { useContext as useContext10, useLayoutEffect as useLayoutEffect3, useReducer as useReducer2, useRef as useRef7 } from "react";
+
+// src/core/eval.ts
+var own = (o, k) => Object.prototype.hasOwnProperty.call(o, k);
+var rec3 = (v) => typeof v === "object" && v !== null && !Array.isArray(v);
+var UNKNOWN = { "?": null };
+var PAIRS = { eq: 2, lt: 2, has: 2, add: 2, sub: 2, mul: 2, div: 2, pick: 3 };
+function read(v) {
+  if (Array.isArray(v)) return void 0;
+  if (!rec3(v)) return v;
+  const keys2 = Object.keys(v);
+  const k = keys2[0] ?? "";
+  const a = v[k];
+  const one = (x) => x === void 0 ? UNKNOWN : { [k]: x };
+  const list3 = (n) => {
+    if (!Array.isArray(a) || n !== void 0 && a.length !== n) return UNKNOWN;
+    const xs = a.map(read);
+    return xs.includes(void 0) ? UNKNOWN : { [k]: xs };
+  };
+  if (keys2.length !== 1) return UNKNOWN;
+  if (k === "get") return typeof a === "string" ? v : UNKNOWN;
+  if (k === "not" || k === "len") return one(read(a));
+  if (k === "all" || k === "any" || k === "cat") return list3();
+  if (own(PAIRS, k)) return list3(PAIRS[k]);
+  if (k === "is" && rec3(a) && typeof a.pattern === "string" && "value" in a) {
+    const x = read(a.value);
+    return x === void 0 ? UNKNOWN : { is: { value: x, pattern: a.pattern } };
+  }
+  return UNKNOWN;
+}
+var flag = (l) => l === null ? false : typeof l === "boolean" ? l : void 0;
+var or = (b) => b ?? null;
+var num = (f) => Number.isFinite(f) ? f : null;
+var text2 = (l) => l === null ? "" : String(l);
+var blank = /\p{White_Space}/u;
+var trim = (s) => s.replace(/^\p{White_Space}+|\p{White_Space}+$/gu, "");
+var points = (s) => Array.from(s, (c) => c.codePointAt(0) ?? 0);
+function before(a, b) {
+  const [x, y] = [points(a), points(b)];
+  const i = x.findIndex((c, j) => c !== y[j]);
+  return i < 0 ? x.length < y.length : i < y.length && (x[i] ?? 0) < (y[i] ?? 0);
+}
+function email(s) {
+  const at2 = s.indexOf("@");
+  if (at2 < 0) return false;
+  const [user, host] = [s.slice(0, at2), s.slice(at2 + 1)];
+  const dot = host.indexOf(".");
+  return user !== "" && dot > 0 && dot + 1 < host.length && !host.endsWith(".") && !host.includes("@") && !blank.test(s);
+}
+function url(s) {
+  const rest = s.startsWith("https://") ? s.slice(8) : s.startsWith("http://") ? s.slice(7) : void 0;
+  return rest !== void 0 && rest !== "" && !rest.startsWith("/") && !blank.test(s);
+}
+function is(l, p) {
+  if (p === "filled") return typeof l === "string" ? trim(l) !== "" : l !== null;
+  if (p === "number" && typeof l === "number") return true;
+  if (typeof l !== "string") return null;
+  const t = trim(l);
+  if (p === "number") return /^[+-]?([0-9]+\.?[0-9]*|\.[0-9]+)([eE][+-]?[0-9]+)?$/.test(t) && Number.isFinite(Number(t));
+  return p === "email" ? email(l) : p === "url" ? url(l) : null;
+}
+function ev(e, s) {
+  if (!rec3(e)) return e === null || typeof e === "boolean" || typeof e === "number" || typeof e === "string" ? e : null;
+  const [k = "", a] = Object.entries(e)[0] ?? [];
+  const xs = (Array.isArray(a) ? a : [a]).map((x2) => k === "is" ? null : ev(x2, s));
+  const [x = null, y = null] = xs;
+  const n = typeof x === "number" && typeof y === "number" ? { x, y } : void 0;
+  const flags = xs.map(flag);
+  switch (k) {
+    case "get":
+      return typeof a === "string" && own(s, a) ? s[a] ?? null : null;
+    case "not":
+      return or(flag(x) === void 0 ? void 0 : !flag(x));
+    case "all":
+      return or(flags.includes(void 0) ? void 0 : flags.every(Boolean));
+    case "any":
+      return or(flags.includes(void 0) ? void 0 : flags.some(Boolean));
+    case "eq":
+      return x === y;
+    case "lt":
+      return n ? n.x < n.y : typeof x === "string" && typeof y === "string" ? before(x, y) : null;
+    case "len":
+      return typeof x === "string" ? points(x).length : null;
+    case "has":
+      return typeof x === "string" && typeof y === "string" ? x.includes(y) : null;
+    case "is":
+      return rec3(a) ? is(ev(a.value, s), a.pattern) : null;
+    case "add":
+      return n ? num(n.x + n.y) : null;
+    case "sub":
+      return n ? num(n.x - n.y) : null;
+    case "mul":
+      return n ? num(n.x * n.y) : null;
+    case "div":
+      return n ? num(n.x / n.y) : null;
+    case "cat":
+      return xs.map(text2).join("");
+    case "pick":
+      return flags[0] === void 0 ? null : xs[flags[0] ? 1 : 2] ?? null;
+  }
+  return null;
+}
+function evaluate2(e, s) {
+  const x = read(e);
+  return x === void 0 ? null : ev(x, s);
+}
+
+// src/core/table.ts
+var SIGN = { THB: "\u0E3F", USD: "$", EUR: "\u20AC" };
+var at = (r, id) => r.cells[id];
+var unit = (c) => c.kind === "money" ? c.currency ? SIGN[c.currency] ?? c.currency : null : c.unit;
+var grouped = (v, d, fixed) => v.toLocaleString("en-US", { minimumFractionDigits: fixed ? d : 0, maximumFractionDigits: d });
+var number = (c, v) => c.kind === "money" ? grouped(v, 2, true) : grouped(v, c.digits ?? 2, false);
+function total(c, rows) {
+  const cells = rows.map((r) => at(r, c.id)).filter((v) => v !== void 0);
+  const vs = cells.filter((v) => typeof v === "number");
+  const sum = vs.reduce((a, v) => a + v, 0);
+  if (!c.total) return null;
+  if (c.total === "count") return ["count", String(cells.length)];
+  if (!vs.length) return ["", "\u2014"];
+  return c.total === "avg" ? ["avg", grouped(sum / vs.length, 1, false)] : ["", number(c, sum)];
+}
+
+// src/core/tree.ts
+var isBlk = (v) => typeof v === "object" && v !== null;
+
+// src/core/text.ts
+function value2(v) {
+  if (isBlk(v) && "until" in v) return String(v.label ?? "").replace("{rel}", `${Math.max(0, Math.round((Date.parse(String(v.until)) - Date.now()) / 6e4))}m`);
+  if (isBlk(v) && "since" in v) {
+    const s = Math.max(0, (Date.now() - Date.parse(String(v.since))) / 1e3);
+    if (v.label != null) return String(v.label).replace("{}", s < 120 ? `${Math.floor(s)}s` : s < 7200 ? `${Math.floor(s / 60)}m` : s < 172800 ? `${Math.floor(s / 3600)}h` : `${Math.floor(s / 86400)}d`);
+    return s < 60 ? "now" : s < 3600 ? `${Math.floor(s / 60)}m` : s < 86400 ? `${Math.floor(s / 3600)}h ${Math.floor(s / 60) % 60}m` : `${Math.floor(s / 86400)}d`;
+  }
+  return String(v ?? "");
+}
+
+// src/core/kind/table.ts
+var STEPS2 = [
+  ["Move up", { dir: "up" }],
+  ["Move down", { dir: "down" }],
+  ["Move to top", { dir: "up", big: true }],
+  ["Move to bottom", { dir: "down", big: true }]
+];
+var MON = "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec".split(" ");
+var THAI = "\u0E21.\u0E04. \u0E01.\u0E1E. \u0E21\u0E35.\u0E04. \u0E40\u0E21.\u0E22. \u0E1E.\u0E04. \u0E21\u0E34.\u0E22. \u0E01.\u0E04. \u0E2A.\u0E04. \u0E01.\u0E22. \u0E15.\u0E04. \u0E1E.\u0E22. \u0E18.\u0E04.".split(" ");
+function shown(c, v, thai2 = false) {
+  if (v === void 0) return "";
+  if (typeof v === "object") return typeof v.text === "string" ? v.text : typeof v.text === "number" ? String(v.text) : "";
+  if (typeof v === "number") return number(c, v);
+  const d = /^(\d+)-(\d+)-(\d+)$/.exec(v);
+  if (c.kind !== "date" || !d) return v;
+  const be = c.era === "be";
+  const month = (be && thai2 ? THAI : MON)[Number(d[2]) - 1];
+  return month ? `${Number(d[3])} ${month} ${Number(d[1]) + (be ? 543 : 0)}` : v;
+}
+function parse(c, text4) {
+  if (c.kind === "number" || c.kind === "money") {
+    const t = text4.replace(/[,\s]/g, "");
+    return /^[+-]?([0-9]+\.?[0-9]*|\.[0-9]+)$/.test(t) ? Number(t) : null;
+  }
+  if (c.kind === "date") return /^\d{4}-\d{2}-\d{2}$/.test(text4.trim()) ? text4.trim() : null;
+  return c.kind === "text" ? text4 : null;
+}
+var editable = (b, c) => c.edit === true && b.calc?.[c.id] == null && ["text", "number", "money", "date"].includes(c.kind);
+var named2 = (b, r) => {
+  const c = b.columns[0];
+  return c && shown(c, r.cells[c.id]) || r.id;
+};
+function worked(b, r) {
+  if (!b.calc || r.group) return r;
+  const cells = { ...r.cells };
+  for (const c of b.columns) {
+    const e = b.calc[c.id];
+    if (e == null) continue;
+    const s = Object.fromEntries(Object.entries(cells).map(([k, v2]) => [k, typeof v2 !== "object" ? v2 : typeof v2.text === "string" || typeof v2.text === "number" ? v2.text : null]));
+    const v = evaluate2(e, s);
+    if (typeof v === "number" || typeof v === "string") cells[c.id] = v;
+    else delete cells[c.id];
+  }
+  return { ...r, cells };
+}
+var head = (b, id) => b.rows.some((r) => r.id === id && r.group === true);
+var row3 = (b, id) => b.rows.find((r) => r.id === id);
+var column = (b, id) => b.columns.find((c) => c.id === id);
+function chunks(order2, isHead) {
+  const prefix = [];
+  const out2 = [];
+  for (const id of order2) {
+    const last = out2[out2.length - 1];
+    if (isHead(id)) out2.push([id]);
+    else if (last) last.push(id);
+    else prefix.push(id);
+  }
+  return [prefix, out2];
+}
+function itemTo(b, from, g, to) {
+  const rest = from.filter((i) => i !== g);
+  const at2 = Math.min(to, rest.length);
+  const first = rest.findIndex((i) => head(b, i));
+  if (first >= 0 && at2 <= first) return null;
+  rest.splice(at2, 0, g);
+  return rest;
+}
+function groupTo(b, from, g, to) {
+  const [prefix, all] = chunks(from, (i) => head(b, i));
+  const at2 = all.findIndex((c) => c[0] === g);
+  if (at2 < 0) return null;
+  const [it = []] = all.splice(at2, 1);
+  all.splice(Math.min(to, all.length), 0, it);
+  return [...prefix, ...all.flat()];
+}
+function rowsTo(b, from, g, n) {
+  const at2 = from.indexOf(g);
+  if (at2 < 0) return null;
+  const t = Math.max(0, at2 + n);
+  if (!head(b, g)) return itemTo(b, from, g, t);
+  const [prefix, all] = chunks(from, (i) => head(b, i));
+  let start2 = prefix.length;
+  let best = [Infinity, 0];
+  const pick2 = (d, j) => d < best[0] || d === best[0] && j < best[1] ? [d, j] : best;
+  all.filter((c) => c[0] !== g).forEach((c, j) => {
+    best = pick2(Math.abs(start2 - t), j);
+    start2 += c.length;
+  });
+  best = pick2(Math.abs(start2 - t), Math.max(0, all.length - 1));
+  return groupTo(b, from, g, best[1]);
+}
+function nudged(b, from, g, by) {
+  if (by.dir === "left" || by.dir === "right") return null;
+  const up = by.dir === "up";
+  let out2;
+  if (head(b, g)) {
+    const [, all] = chunks(from, (i) => head(b, i));
+    const at2 = all.findIndex((c) => c[0] === g);
+    if (at2 < 0 || up && !by.big && at2 === 0) return null;
+    out2 = groupTo(b, from, g, up ? by.big ? 0 : at2 - 1 : by.big ? all.length - 1 : at2 + 1);
+  } else {
+    const at2 = from.indexOf(g);
+    if (at2 < 0 || up && !by.big && at2 === 0) return null;
+    out2 = itemTo(b, from, g, up ? by.big ? from.findIndex((i) => head(b, i)) + 1 : at2 - 1 : by.big ? from.length : at2 + 1);
+  }
+  return out2 && out2.join("\n") !== from.join("\n") ? out2 : null;
+}
+function place(b, g, order2) {
+  const r = row3(b, g);
+  const name = r ? named2(b, r) : g;
+  const [, all] = chunks(order2, (i) => head(b, i));
+  if (head(b, g)) return `${name}, ${all.findIndex((c) => c[0] === g) + 1} of ${all.length}`;
+  const mine = all.find((c) => c.includes(g));
+  const hr = mine?.[0] === void 0 ? void 0 : row3(b, mine[0]);
+  return mine && hr ? `${name}, ${mine.indexOf(g)} of ${mine.length - 1} in ${named2(b, hr)}` : `${name}, ${order2.indexOf(g) + 1} of ${order2.length}`;
+}
+var free = (b, id) => {
+  const r = row3(b, id);
+  return r && r.fixed !== true ? r : void 0;
+};
+var grid = {
+  word: (b, g) => {
+    if (typeof g === "string") return b.reorder != null && free(b, g) ? "reorder" : null;
+    const c = column(b, g.column);
+    const r = free(b, g.row);
+    return b.edit != null && r && !r.group && c && editable(b, c) ? "edit" : null;
+  },
+  start: (b, g) => {
+    if (!grid.word(b, g)) return null;
+    if (typeof g === "string") return b.rows.map((r) => r.id);
+    return { row: g.row, column: g.column, value: row3(b, g.row)?.cells[g.column] ?? "" };
+  },
+  candidate: (b, g, reach) => {
+    const s = grid.start(b, g);
+    if (s === null) return null;
+    if (typeof g === "string") return Array.isArray(s) && typeof reach === "number" ? rowsTo(b, s, g, reach) : null;
+    const c = column(b, g.column);
+    const value3 = c && typeof reach === "string" ? parse(c, reach) : null;
+    return value3 === null ? null : { row: g.row, column: g.column, value: value3 };
+  },
+  nudge: (b, g, from, by) => grid.word(b, g) && typeof g === "string" && Array.isArray(from) ? nudged(b, from, g, by) : null,
+  steps: (b, g) => {
+    const s = grid.start(b, g);
+    return s ? STEPS2.filter(([, n]) => grid.nudge(b, g, s, n) !== null) : [];
+  },
+  says: (b, g, ch) => {
+    if (Array.isArray(ch)) return typeof g === "string" ? place(b, g, ch) : "";
+    const r = row3(b, ch.row);
+    const c = column(b, ch.column);
+    return `${c?.label ?? ch.column}, ${r ? named2(b, r) : ch.row}, ${c ? shown(c, ch.value) : ""}`;
+  }
+};
+var numeric = (c) => c.kind === "number" || c.kind === "money" || c.kind === "bar";
+var atEnd = (c) => (c.align ?? (numeric(c) ? "end" : "start")) === "end";
+var cellText = (c, v, thai2) => typeof v === "object" ? value2(v.text) : shown(c, v, thai2);
+var sortKey = (c, v) => c.kind === "date" && typeof v === "string" ? v : cellText(c, v, false).toLowerCase();
+var cmp = (c, a, b) => numeric(c) && typeof a === "number" && typeof b === "number" ? a - b : sortKey(c, a) < sortKey(c, b) ? -1 : sortKey(c, a) > sortKey(c, b) ? 1 : 0;
+function sorted(rows, c, dir) {
+  if (!c) return rows;
+  const by = (r, s) => {
+    const a = at(r, c.id), b = at(s, c.id);
+    if (a === void 0 || b === void 0) return Number(a === void 0) - Number(b === void 0);
+    return dir === "desc" ? cmp(c, b, a) : cmp(c, a, b);
+  };
+  const out2 = [];
+  let run = [];
+  for (const r of rows) {
+    if (!r.group) run.push(r);
+    else out2.push(...run.sort(by), r), run = [];
+  }
+  return [...out2, ...run.sort(by)];
+}
+var itemsOf = (rows, i) => {
+  const n = rows.slice(i + 1).findIndex((r) => r.group);
+  return rows.slice(i + 1, n < 0 ? void 0 : i + 1 + n);
+};
+function roles2(cols) {
+  const r = cols.map((c) => c.phone ?? void 0);
+  const claim = (part, ok, pick2) => {
+    const i = r.includes(part) ? void 0 : pick2(cols.flatMap((c, i2) => r[i2] === void 0 && ok(c) ? [i2] : []));
+    if (i !== void 0) r[i] = part;
+  };
+  claim("title", (c) => c.kind === "text", (f) => f[0]);
+  claim("tag", (c) => c.kind === "tone", (f) => f[0]);
+  claim("value", (c) => c.kind === "number" || c.kind === "money", (f) => f.filter((i) => cols[i]?.total).pop() ?? f.pop());
+  return r.map((x) => x ?? "meta");
+}
+var cellRole = (b, x) => b.edit && editable(b, x) ? "ed" : b.calc?.[x.id] != null ? "fx" : x.kind === "number" || x.kind === "money" ? "app" : "";
+
+// react/src/kinds/table.ts
 var FORMAT = { csv: "CSV", xlsx: "Excel" };
 var thai = () => document.documentElement.lang.startsWith("th");
 var shown2 = (c, v) => cellText(c, v, thai());
@@ -1715,11 +1530,11 @@ var pk = (p) => `${p.row}
 ${p.col}`;
 var isIds = (v) => Array.isArray(v) && v.every((x) => typeof x === "string");
 var isEdit = (v) => typeof v === "object" && v !== null && !Array.isArray(v) && "value" in v;
-function cell2(tag, c, part, kids2, blank2, attrs = {}) {
+function cell(tag, c, part, kids2, blank2, attrs = {}) {
   const cls = `${atEnd(c) ? "end" : "start"} k-${c.kind} p-${part}${c.width ? " w" : ""}${blank2 ? " nil" : ""}`;
   return h(tag, cls, { "data-l": c.label, ...attrs, style: c.width ? { "--w": `${c.width}ch` } : void 0 }, ...kids2);
 }
-var send2 = (v, action, values2) => void v.c.act({ action, block: v.b.id, values: values2 });
+var send2 = (v, action, values) => void v.c.act({ action, block: v.b.id, values });
 var go = (v, f) => ({ onClick: () => (f(), v.draw()) });
 var sent = (v, row5, col) => {
   const c = held2(v.c, { block: v.b, rules: grid, grab: { row: row5, column: col }, item: pk({ row: row5, col }) });
@@ -1740,8 +1555,8 @@ var every = (v, d, cls = "") => tick(v, d.all, "Select all shown rows", (on) => 
 var menu = (v, name, label2) => btn(label2, "", void 0, void 0, { "aria-expanded": String(v.st.menu === name), ...go(v, () => v.st.menu = v.st.menu === name ? "" : name) });
 function exporter(v, d, f) {
   const label2 = v.b.export?.length === 1 ? `export ${(FORMAT[f] ?? f).toLowerCase()}` : FORMAT[f] ?? f;
-  const values2 = () => ({ format: f, columns: d.cols.map((x) => x.id), sort: v.st.sort, q: v.st.q, rows: [...v.st.sel] });
-  return btn(label2, "", void 0, "export", { onClick: () => f === "xlsx" && !v.b.more ? void exported(v.b.title ?? "Table", d.cols, d.items, v.st.sel) : send2(v, "export", values2()) });
+  const values = () => ({ format: f, columns: d.cols.map((x) => x.id), sort: v.st.sort, q: v.st.q, rows: [...v.st.sel] });
+  return btn(label2, "", void 0, "export", { onClick: () => send2(v, "export", values()) });
 }
 function sorter(v, d) {
   const opts2 = [h("option", "", { value: "" }, "sort: as sent")];
@@ -1792,7 +1607,7 @@ function head2(v, d) {
     const label2 = [h("span", "", null, x.label), u ? h("span", "tbu", null, u) : null, h("i", "", null, on === "asc" ? "\u2191" : on === "desc" ? "\u2193" : "")];
     const cycle = () => v.st.sort = on === "desc" ? null : { by: x.id, dir: on === "asc" ? "desc" : "asc" };
     const kids2 = x.sort === false ? label2 : [h("button", "tsh", { type: "button", ...go(v, cycle) }, ...label2)];
-    return cell2("th", x, "meta", kids2, false, { scope: "col", "aria-sort": on === "asc" ? "ascending" : on === "desc" ? "descending" : void 0 });
+    return cell("th", x, "meta", kids2, false, { scope: "col", "aria-sort": on === "asc" ? "ascending" : on === "desc" ? "descending" : void 0 });
   });
   return h("thead", "", null, h("tr", "", null, d.handles ? h("th", "tbg", null) : null, d.pick ? h("th", "tbc", null, every(v, d)) : null, ...ths));
 }
@@ -1820,7 +1635,7 @@ function grip(v, r) {
     const reach = (_, dy) => Math.round(dy / (td.offsetHeight || 1));
     gestured(hd, v.c, { block: v.b, gesture: g, rules: grid, grab: r.id, item: r.id, reach, show: (o) => slide(v, isIds(o) ? o : null, r.id) });
   };
-  return h("td", "tbg", null, h("button", "b-hd", { type: "button", "aria-label": `Move ${named(v.b, r)}`, "data-act": g.action, ref: wire }, "\u2261"));
+  return h("td", "tbg", null, h("button", "b-hd", { type: "button", "aria-label": `Move ${named2(v.b, r)}`, "data-act": g.action, ref: wire }, "\u2261"));
 }
 function input2(v, r, x, field2) {
   const { b, st } = v;
@@ -1856,7 +1671,7 @@ ${pk(p)}`;
   };
   const value3 = typed ?? (typeof was === "number" ? String(was) : typeof was === "string" ? was : "");
   const box = h("input", "tbi", { key: `${ik}
-${st.fields.get(x.id) ?? 0}`, defaultValue: value3, "aria-label": `${x.label}, ${named(b, r)}`, "aria-invalid": st.bad.has(ik) ? "true" : void 0, ref: wire });
+${st.fields.get(x.id) ?? 0}`, defaultValue: value3, "aria-label": `${x.label}, ${named2(b, r)}`, "aria-invalid": st.bad.has(ik) ? "true" : void 0, ref: wire });
   return [box, st.bad.has(ik) ? h("span", "tbx", null, x.kind === "date" ? "not a date (2026-01-31)" : "not a number") : null];
 }
 function group(v, d, i) {
@@ -1865,7 +1680,7 @@ function group(v, d, i) {
   const tds = d.cols.map((x, j) => {
     const sub = j > 0 && x.total && x.total !== "count" ? total(x, items) : null;
     const wait = sub && cellRole(v.b, x) === "app" && items.some((it) => waits2(v, it));
-    return cell2("td", x, d.role[j] ?? "meta", j === 0 ? [shown2(x, r.cells[x.id]), h("span", "tbgn", null, String(items.length))] : sub ? [sub[1]] : [], j > 0 && !sub, { className: wait ? "wait" : void 0 });
+    return cell("td", x, d.role[j] ?? "meta", j === 0 ? [shown2(x, r.cells[x.id]), h("span", "tbgn", null, String(items.length))] : sub ? [sub[1]] : [], j > 0 && !sub, { className: wait ? "wait" : void 0 });
   });
   return h("tr", "grp", { key: r.id, "data-id": r.id }, d.handles ? grip(v, r) : null, d.pick ? h("td", "tbc", null) : null, ...tds);
 }
@@ -1889,27 +1704,27 @@ ${pk(p)}`) ? "bad" : ""].filter(Boolean).join(" ");
       title: x.width && c !== void 0 ? t : void 0,
       "data-c": d.ed ? x.id : void 0,
       tabIndex: d.ed ? d.tab === pk(p) ? 0 : -1 : void 0,
-      "aria-label": d.ed ? [x.label, named(b, r), ...t ? [t] : []].join(", ") : void 0,
+      "aria-label": d.ed ? [x.label, named2(b, r), ...t ? [t] : []].join(", ") : void 0,
       "data-act": typed && b.edit ? b.edit.action : void 0,
       "aria-readonly": k === "fx" ? "true" : void 0,
       "aria-description": k === "fx" ? "worked out" : void 0,
       "aria-busy": out2 ? "true" : void 0
     };
-    return cell2("td", x, d.role[i] ?? "meta", [...typed ? [h("span", "tbf", null, ...kids2)] : kids2, ...ing ? input2(v, r, x, false) : []], c === void 0, attrs);
+    return cell("td", x, d.role[i] ?? "meta", [...typed ? [h("span", "tbf", null, ...kids2)] : kids2, ...ing ? input2(v, r, x, false) : []], c === void 0, attrs);
   });
-  const edit2 = d.ed ? h("td", "tbo", null, h("button", "", { type: "button", "aria-label": `Edit ${named(b, r)}`, ...go(v, () => st.sheet = r.id) }, "\u203A")) : null;
-  const pick3 = d.pick ? h("td", "tbc", null, tick(v, st.sel.has(r.id), `Select ${r.id}`, (on) => on ? st.sel.add(r.id) : st.sel.delete(r.id))) : null;
-  return h("tr", cls, { key: r.id, "data-id": r.id, onClick: tap && !d.ed ? () => v.tap(tap) : void 0 }, d.handles ? grip(v, r) : null, pick3, ...tds, edit2);
+  const edit2 = d.ed ? h("td", "tbo", null, h("button", "", { type: "button", "aria-label": `Edit ${named2(b, r)}`, ...go(v, () => st.sheet = r.id) }, "\u203A")) : null;
+  const pick2 = d.pick ? h("td", "tbc", null, tick(v, st.sel.has(r.id), `Select ${r.id}`, (on) => on ? st.sel.add(r.id) : st.sel.delete(r.id))) : null;
+  return h("tr", cls, { key: r.id, "data-id": r.id, onClick: tap && !d.ed ? () => v.tap(tap) : void 0 }, d.handles ? grip(v, r) : null, pick2, ...tds, edit2);
 }
 function body(v, d) {
   const { b, st } = v;
-  const rows2 = d.rows.map((r, i) => r.group ? group(v, d, i) : item2(v, d, r));
+  const rows = d.rows.map((r, i) => r.group ? group(v, d, i) : item2(v, d, r));
   if (!d.items.length) {
     const clear = b.rows.length ? btn("clear", "", void 0, void 0, go(v, () => st.q = "")) : null;
     const td = h("td", "", { colSpan: d.cols.length + (d.pick ? 1 : 0) + (d.handles ? 1 : 0) }, b.rows.length ? `No rows match \u201C${st.q}\u201D. ` : b.empty ?? "No rows yet.", clear);
-    rows2.push(h("tr", "tbe", { key: "~" }, td));
+    rows.push(h("tr", "tbe", { key: "~" }, td));
   }
-  return h("tbody", "", d.ed ? keys(v) : null, ...rows2);
+  return h("tbody", "", d.ed ? keys(v) : null, ...rows);
 }
 function foot(v, d) {
   if (!d.items.length || !d.cols.some((x) => x.total)) return null;
@@ -1918,7 +1733,7 @@ function foot(v, d) {
     const i = j + 1;
     const t = total(x, d.items);
     const part = d.role[i] === "title" ? "meta" : d.role[i] ?? "meta";
-    return cell2("td", x, part, t ? [...t[0] ? [h("span", "agg", null, t[0]), " "] : [], t[1]] : [], !t, { className: t && wait && cellRole(v.b, x) === "app" ? "wait" : void 0 });
+    return cell("td", x, part, t ? [...t[0] ? [h("span", "agg", null, t[0]), " "] : [], t[1]] : [], !t, { className: t && wait && cellRole(v.b, x) === "app" ? "wait" : void 0 });
   });
   return h("tfoot", "", null, h("tr", "", null, d.handles ? h("td", "tbg", null) : null, d.pick ? h("td", "tbc", null) : null, h("th", "p-title", { scope: "row" }, "Total"), ...tds));
 }
@@ -1941,14 +1756,14 @@ function shows(v) {
   const all = (out2 ? out2.flatMap((id) => b.rows.find((r) => r.id === id) ?? []) : b.rows).map((r) => live2(v, r));
   const hit = (r) => words3.every((w) => cols.some((x) => shown2(x, at(r, x.id)).toLowerCase().includes(w)));
   const kept = all.filter((r, i) => r.group ? itemsOf(all, i).some(hit) : hit(r));
-  const rows2 = sorted(kept, sort(v), st.sort?.dir);
-  const items = rows2.filter((r) => !r.group);
+  const rows = sorted(kept, sort(v), st.sort?.dir);
+  const items = rows.filter((r) => !r.group);
   for (const s of st.sel) if (!items.some((r) => r.id === s)) st.sel.delete(s);
   const sel = st.sel.size;
   const handles = !!b.reorder && !st.sort && !st.q;
   const cur = st.cur && items.some((r) => r.id === st.cur?.row) && cols.some((x) => x.id === st.cur?.col) ? pk(st.cur) : null;
   const first = items[0] && cols[0] ? pk({ row: items[0].id, col: cols[0].id }) : "";
-  return { cols, role: roles2(cols), rows: rows2, items, pick: !!b.select && b.rows.length > 0, sel, all: sel > 0 && sel === items.length, handles, ed: !!b.edit, tab: cur ?? first };
+  return { cols, role: roles2(cols), rows, items, pick: !!b.select && b.rows.length > 0, sel, all: sel > 0 && sel === items.length, handles, ed: !!b.edit, tab: cur ?? first };
 }
 function open(v, p, typed = null) {
   const td = cellAt(v, p);
@@ -1982,15 +1797,15 @@ function keys(v) {
   };
   return { onKeyDown, onClick };
 }
-function sheet3(v, d) {
+function sheet2(v, d) {
   const { b, st } = v;
   const r = d.items.find((i) => i.id === st.sheet);
   if (!r) return null;
   const g = [...d.rows].reverse().find((x, i, all) => x.group && all.indexOf(r) < i);
   const mine = g ? itemsOf(d.rows, d.rows.indexOf(g)) : [];
-  const where = g ? h("span", "shp", null, `${named(b, g)} \xB7 ${mine.indexOf(r) + 1} of ${mine.length}`) : null;
+  const where = g ? h("span", "shp", null, `${named2(b, g)} \xB7 ${mine.indexOf(r) + 1} of ${mine.length}`) : null;
   const tap = r.tap;
-  const top = h("div", "b-sheet__head", null, h("b", "b-sheet__title", null, named(b, r), where), tap ? btn("open", "", void 0, void 0, { onClick: () => v.tap(tap) }) : null, btn("done", "", void 0, void 0, go(v, () => st.sheet = "")));
+  const top = h("div", "b-sheet__head", null, h("b", "b-sheet__title", null, named2(b, r), where), tap ? btn("open", "", void 0, void 0, { onClick: () => v.tap(tap) }) : null, btn("done", "", void 0, void 0, go(v, () => st.sheet = "")));
   const fields = b.columns.map((x) => {
     const k = cellRole(b, x), u = unit(x);
     const typed = k === "ed" && !r.fixed;
@@ -2002,7 +1817,7 @@ ${pk({ row: r.id, col: x.id })}`);
     const cls = [out2 ? "sent" : "", k === "app" && waits2(v, r) ? "wait" : ""].filter(Boolean).join(" ");
     return h("label", `fd shf ${atEnd(x) ? "end" : "start"}`, { className: cls || void 0 }, h("span", "fk", null, x.label, u ? h("span", "tbu", null, u) : null), box);
   });
-  return h("div", "tbsh", { key: `sheet${st.gen}` }, h("div", "b-sheet__card", { role: "dialog", "aria-label": `Edit ${named(b, r)}` }, top, ...fields));
+  return h("div", "tbsh", { key: `sheet${st.gen}` }, h("div", "b-sheet__card", { role: "dialog", "aria-label": `Edit ${named2(b, r)}` }, top, ...fields));
 }
 function state(b, st) {
   if (st.b === b) return st;
@@ -2035,14 +1850,14 @@ var init = (b) => ({
   fields: /* @__PURE__ */ new Map()
 });
 function table({ b, hooks: hooks4 }) {
-  const cx = useContext11(Cx);
-  const live3 = useRef8(cx);
+  const cx = useContext10(Cx);
+  const live3 = useRef7(cx);
   live3.current = cx;
-  const keep = useRef8(/* @__PURE__ */ new Map());
-  const wired = useRef8(/* @__PURE__ */ new WeakSet());
-  const box = useRef8(null);
-  const kept = useRef8(null);
-  const [, draw2] = useReducer3((n) => n + 1, 0);
+  const keep = useRef7(/* @__PURE__ */ new Map());
+  const wired = useRef7(/* @__PURE__ */ new WeakSet());
+  const box = useRef7(null);
+  const kept = useRef7(null);
+  const [, draw2] = useReducer2((n) => n + 1, 0);
   const st = state(b, kept.current ??= init(b));
   const v = { b, c: { act: (a) => live3.current.act(a), held: keep.current }, tap: (t2) => live3.current.tap(t2), st, box, wired: wired.current, draw: draw2 };
   useLayoutEffect3(() => {
@@ -2053,18 +1868,18 @@ function table({ b, hooks: hooks4 }) {
   const d = shows(v);
   const t = h("table", "", d.ed ? { role: "grid" } : null, h("caption", "", null, b.title ?? "Table"), head2(v, d), body(v, d), foot(v, d));
   const cls = ["tbl", d.sel > 0 ? "bulk" : "", b.edit || b.reorder ? "ed" : ""].filter(Boolean).join(" ");
-  return h("div", cls, { ...hooks4, ref: box }, ...bar2(v, d), h("div", "tbw", { key: `w${st.gen}` }, t), sheet3(v, d));
+  return h("div", cls, { ...hooks4, ref: box }, ...bar2(v, d), h("div", "tbw", { key: `w${st.gen}` }, t), sheet2(v, d));
 }
 
 // react/src/kinds/text.ts
-import { useContext as useContext12 } from "react";
+import { useContext as useContext11 } from "react";
 function text3({ b, hooks: hooks4 }) {
-  const cx = useContext12(Cx);
+  const cx = useContext11(Cx);
   return h("div", "txt", { ...hooks4, "data-md": b.markdown ?? "" }, ...md(b.markdown, cx.screen.startsWith("thread-")));
 }
 
 // react/src/kinds/timeline.ts
-import { useContext as useContext13, useLayoutEffect as useLayoutEffect4, useRef as useRef9, useState as useState7 } from "react";
+import { useContext as useContext12, useLayoutEffect as useLayoutEffect4, useRef as useRef8, useState as useState7 } from "react";
 
 // src/core/kind/timeline.ts
 var MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -2345,12 +2160,12 @@ function rove(root) {
   };
 }
 function timeline2({ b, hooks: hooks4 }) {
-  const cx = useContext13(Cx);
-  const live3 = useRef9(cx);
+  const cx = useContext12(Cx);
+  const live3 = useRef8(cx);
   live3.current = cx;
-  const keep = useRef9(/* @__PURE__ */ new Map());
-  const done2 = useRef9(/* @__PURE__ */ new WeakSet());
-  const [root, wrap, grid2] = [useRef9(null), useRef9(null), useRef9(null)];
+  const keep = useRef8(/* @__PURE__ */ new Map());
+  const done = useRef8(/* @__PURE__ */ new WeakSet());
+  const [root, wrap, grid2] = [useRef8(null), useRef8(null), useRef8(null)];
   const [px, setPx] = useState7(null);
   const [f, t] = [day(b.from), day(b.to)];
   const on = b.move != null || b.stretch != null || b.draw != null;
@@ -2360,8 +2175,8 @@ function timeline2({ b, hooks: hooks4 }) {
   const wires = [];
   useLayoutEffect4(() => root.current ? rove(root.current) : void 0, []);
   useLayoutEffect4(() => {
-    if (done2.current.has(wires)) return;
-    done2.current.add(wires);
+    if (done.current.has(wires)) return;
+    done.current.add(wires);
     const c = { act: (a) => live3.current.act(a), tap: (x) => live3.current.tap(x), held: keep.current };
     for (const w of wires) w(c);
     const first = root.current?.querySelector("[data-grab]");
@@ -2388,10 +2203,10 @@ function zooms(ax, px, set, wrap, grid2) {
 }
 
 // react/src/gen/views.ts
-var views2 = { button, card, chips, form, images, import: import_, list: list2, media: media2, row: row3, screen, section, sheet: sheet2, stat, table, text: text3, timeline: timeline2 };
+var views2 = { button, card, chips, form, images, list: list2, media: media2, row: row2, screen, section, sheet, stat, table, text: text3, timeline: timeline2 };
 
 // react/src/island.ts
-import { createElement as createElement7, Suspense, useContext as useContext14, useLayoutEffect as useLayoutEffect5, useState as useState8 } from "react";
+import { createElement as createElement7, Suspense, useContext as useContext13, useLayoutEffect as useLayoutEffect5, useState as useState8 } from "react";
 function Mark({ on }) {
   useLayoutEffect5(() => {
     on(true);
@@ -2400,12 +2215,12 @@ function Mark({ on }) {
   return null;
 }
 function Isle({ b, attrs }) {
-  const cx = useContext14(Cx);
+  const cx = useContext13(Cx);
   const [live3, setLive] = useState8(false);
   const C = Object.prototype.hasOwnProperty.call(cx.islands, b.name) ? cx.islands[b.name] : void 0;
   const fallback = row4(b.fallback, cx);
   const id = b.id ?? "";
-  const emit = (name, values2) => b.events?.includes(name) ? void cx.act({ action: name, block: id, values: values2 ?? {} }) : cx.report({ what: "dropped", block: id, event: name });
+  const emit = (name, values) => b.events?.includes(name) ? void cx.act({ action: name, block: id, values: values ?? {} }) : cx.report({ what: "dropped", block: id, event: name });
   const style = { overflow: "hidden", aspectRatio: b.size?.aspect ?? void 0, width: b.size?.width ?? void 0, height: b.size?.height ?? void 0 };
   const inner = C && createElement7(Boundary, { b, report: cx.report, fallback }, createElement7(Suspense, { fallback }, createElement7(Mark, { on: setLive }), createElement7(C, { props: b.props ?? {}, emit })));
   return h("div", "", { ...attrs, "data-fallback": C && live3 ? void 0 : "", style }, inner || fallback);
@@ -2441,7 +2256,7 @@ function row4(f, cx) {
 }
 var kids = (bs) => (Array.isArray(bs) ? bs.filter(isBlk2) : []).map((b, i) => createElement8(Block, { key: typeof b.id === "string" ? b.id : `~${i}`, b }));
 function Fallen({ b }) {
-  const cx = useContext15(Cx);
+  const cx = useContext14(Cx);
   const f = b.fallback ?? { title: String(b.type) };
   return h("div", "", hooksOf(b, cx, true), isFallback(f) ? row4(f, cx) : null, ...kids(b.blocks));
 }
@@ -2468,7 +2283,7 @@ var own2 = (t, b, attrs) => {
   return V ? createElement8(V, { b, hooks: attrs }) : void 0;
 };
 function Draw({ b }) {
-  const cx = useContext15(Cx);
+  const cx = useContext14(Cx);
   if (isIsland(b)) return createElement8(Isle, { b, attrs: hooksOf(b, cx, false) });
   if (core(b)) return own2(b.type, b, hooksOf(b, cx, false)) ?? createElement8(Fallen, { b });
   const K = cx.kinds[String(b.type)];
@@ -2476,7 +2291,7 @@ function Draw({ b }) {
   return K ? h("div", "", hooksOf(b, cx, false), createElement8(K, { block: { ...b, type: String(b.type) }, act: act2 })) : createElement8(Fallen, { b });
 }
 var Block = memo(function Block2({ b }) {
-  const cx = useContext15(Cx);
+  const cx = useContext14(Cx);
   return createElement8(Boundary, { b, report: cx.report, fallback: createElement8(Fallen, { b }) }, createElement8(Draw, { b }));
 });
 
@@ -2489,7 +2304,7 @@ var watch = (on) => {
   return () => m.removeEventListener("change", on);
 };
 function BlocksView(p) {
-  const last = useRef10(void 0);
+  const last = useRef9(void 0);
   const screen2 = useMemo2(() => last.current = share(last.current, p.screen), [p.screen]);
   const { cx, ask } = useCx(p, screen2);
   const dark = useSyncExternalStore(watch, () => matchMedia(DARK).matches, () => false);

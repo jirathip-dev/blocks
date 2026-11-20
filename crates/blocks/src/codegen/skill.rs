@@ -3,7 +3,7 @@ use std::path::Path;
 use serde_json::Value;
 
 use super::fixtures::tree_of;
-use super::model::{defs, js, Case, Def};
+use super::model::{camel, defs, Case, Def};
 use super::Files;
 use crate::{guard, Block, Built};
 
@@ -53,7 +53,7 @@ fn kinds(s: &Value) -> std::io::Result<Files> {
         let mut page = format!(
             "# `{kind}`\n\n{about}\n\nThe Rust type `{n}`; in TS, `{}(fields: {n})` from `web/src/gen/builders.ts`.\n\n\
              ## Fields\n\n| field | type | |\n|---|---|---|\n",
-            js(kind)
+            camel(kind, false)
         );
         if let Some((_, Def::Struct(ps))) = all.iter().find(|(k, _)| k == n) {
             for p in ps {

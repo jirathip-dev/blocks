@@ -5,7 +5,6 @@ import { at, total, unit } from "../../core/table.ts";
 import { atEnd as end, type CellEdit, cellRole as role, cellText, chunks, grid as rules, itemsOf, named, roles, sorted, worked } from "../../core/kind/table.ts";
 import { edited, gestured, held } from "../../gesture.ts";
 import { paged } from "../more.ts";
-import { exported } from "../../core/kind/import.ts";
 
 type Pos = { row: string; col: string };
 type St = { sort: TableSort | null; q: string; hidden: Set<string>; sel: Set<string>; menu: string; seen: Map<string, string>; changed: Set<string>; fresh: Set<string>; cur: Pos | null; typed: (Pos & { value: Cell }) | null; no: string; sheet: string };
@@ -61,7 +60,7 @@ function menu(v: View, name: string, label: string) {
 function exporter(v: View, d: Shown, f: string) {
   const label = v.b.export?.length === 1 ? `export ${(FORMAT[f] ?? f).toLowerCase()}` : (FORMAT[f] ?? f);
   const values = () => ({ format: f, columns: d.cols.map((x) => x.id), sort: v.st.sort, q: v.st.q, rows: [...v.st.sel] });
-  return press(btn(label, "", undefined, "export"), () => (f === "xlsx" && !v.b.more ? void exported(v.b.title ?? "Table", d.cols, d.items, v.st.sel) : send(v, "export", values())));
+  return press(btn(label, "", undefined, "export"), () => send(v, "export", values()));
 }
 
 function sorter(v: View, d: Shown) {

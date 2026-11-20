@@ -235,8 +235,7 @@
               "steps",
               "chart",
               "toast",
-              "timeline",
-              "import"
+              "timeline"
             ]
           },
           "type": "string"
@@ -745,19 +744,6 @@
           "properties": {
             "type": {
               "const": "timeline",
-              "type": "string"
-            }
-          },
-          "required": [
-            "type"
-          ],
-          "type": "object"
-        },
-        {
-          "$ref": "#/$defs/Import",
-          "properties": {
-            "type": {
-              "const": "import",
               "type": "string"
             }
           },
@@ -2840,164 +2826,6 @@
       ],
       "type": "object"
     },
-    "Import": {
-      "additionalProperties": true,
-      "description": "A spreadsheet import: pick an .xlsx or .csv, map its columns, see row errors, send the good rows as one action.",
-      "properties": {
-        "action": {
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "columns": {
-          "items": {
-            "$ref": "#/$defs/ImportColumn"
-          },
-          "type": "array"
-        },
-        "done": {
-          "format": "uint32",
-          "minimum": 0,
-          "type": [
-            "integer",
-            "null"
-          ]
-        },
-        "error": {
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "id": {
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "into": {
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "max": {
-          "format": "uint32",
-          "minimum": 0,
-          "type": [
-            "integer",
-            "null"
-          ]
-        },
-        "refused": {
-          "items": {
-            "$ref": "#/$defs/Refused"
-          },
-          "type": [
-            "array",
-            "null"
-          ]
-        },
-        "show": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/Expr"
-            },
-            {
-              "type": "null"
-            }
-          ]
-        },
-        "template": {
-          "type": [
-            "boolean",
-            "null"
-          ]
-        },
-        "title": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "title",
-        "columns"
-      ],
-      "type": "object"
-    },
-    "ImportColumn": {
-      "description": "A column the file brings: its key in the rows sent, its header, type, checks and other header names it matches.",
-      "properties": {
-        "also": {
-          "items": {
-            "type": "string"
-          },
-          "type": [
-            "array",
-            "null"
-          ]
-        },
-        "key": {
-          "type": "string"
-        },
-        "label": {
-          "type": "string"
-        },
-        "required": {
-          "type": [
-            "boolean",
-            "null"
-          ]
-        },
-        "type": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/ImportType"
-            },
-            {
-              "type": "null"
-            }
-          ]
-        },
-        "unique": {
-          "type": [
-            "boolean",
-            "null"
-          ]
-        },
-        "values": {
-          "items": {
-            "type": "string"
-          },
-          "type": [
-            "array",
-            "null"
-          ]
-        }
-      },
-      "required": [
-        "key",
-        "label"
-      ],
-      "type": "object"
-    },
-    "ImportType": {
-      "anyOf": [
-        {
-          "enum": [
-            "text",
-            "number",
-            "money",
-            "date",
-            "choice"
-          ],
-          "type": "string"
-        },
-        {
-          "type": "string"
-        }
-      ]
-    },
     "Island": {
       "additionalProperties": true,
       "description": "A client component the app hosts: its props in, its named events out.",
@@ -4628,28 +4456,6 @@
       },
       "required": [
         "q",
-        "text"
-      ],
-      "type": "object"
-    },
-    "Refused": {
-      "description": "A row the app refused: its spreadsheet row, the column's key and why.",
-      "properties": {
-        "key": {
-          "type": "string"
-        },
-        "row": {
-          "format": "uint32",
-          "minimum": 0,
-          "type": "integer"
-        },
-        "text": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "row",
-        "key",
         "text"
       ],
       "type": "object"

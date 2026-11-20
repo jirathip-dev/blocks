@@ -1,9 +1,0 @@
-{
-  "kind": "import",
-  "id": "products",
-  "variant": null,
-  "drawn": "native",
-  "role": "group",
-  "name": "Import products",
-  "children": []
-}

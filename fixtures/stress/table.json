@@ -12,7 +12,6 @@
   "form": { "long": ["label"], "empty": "fields", "many": "fields" },
   "hero": { "long": ["title", "subtitle", "caption", "label"], "empty": "actions", "why": "a hero has a few calls to action, never hundreds" },
   "images": { "empty": "items", "many": "items", "why": "an image's alt is not drawn as text" },
-  "import": { "long": ["title", "into", "label"], "empty": "columns", "many": "columns" },
   "island": { "long": ["title"], "why": "its props belong to the app's component: no rows the kind draws" },
   "lines": { "long": ["label", "memo", "message"], "empty": "items", "many": "items" },
   "list": { "long": ["title", "subtitle", "value", "summary", "name", "markdown", "label"], "empty": "rows", "many": "rows" },
