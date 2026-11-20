@@ -1,0 +1,9 @@
+Decided: merged origin/staging; its chart, diff, timeline and toast renderers move to web/src/render/kind/ and gen/kinds.ts lists them
+Because: "each kind is `web/src/render/kind/<kind>.ts`, `just gen` writes the table"
+Decided: staging's new render.test.ts tests move verbatim to test/kind/diff.test.ts, test/kind/toast.test.ts and hooks.test.ts
+Because: "Tests only move or are renamed; no test body changes."
+Decided: ts::files appends kinds::files so codegen/mod.rs stays within its 80-line size rule
+Because: crates/blocks/src/codegen/ts.rs:17
+Rejected: none
+Check: test names equal origin/staging's; fixtures/ and blocks.css byte-identical; arch-check 0 violations
+Owner: Merged the latest staging; the four kinds it added now live in their own files like the rest.
