@@ -1,7 +1,7 @@
 const b64 = (bytes: Uint8Array) =>
   btoa(Array.from(bytes, (b) => String.fromCharCode(b)).join(""))
     .replace(/\+/g, "-")
-    .replace(/\//g, "_")
+    .replace(/[/]/g, "_")
     .replace(/=+$/, "");
 const unb64 = (s: string) => Uint8Array.from(atob(s.replace(/-/g, "+").replace(/_/g, "/")), (c) => c.charCodeAt(0));
 const through = (body: Blob, t: CompressionStream | DecompressionStream) => new Response(body.stream().pipeThrough(t));
