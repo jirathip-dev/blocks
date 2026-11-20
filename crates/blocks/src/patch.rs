@@ -82,6 +82,19 @@ impl Block {
         }
     }
 
+    pub(crate) fn bare(&self) -> Self {
+        let mut b = self.clone();
+        match &mut b {
+            Self::Screen(s) => s.blocks = None,
+            Self::Card(c) => c.blocks = None,
+            Self::Sheet(s) => s.blocks.clear(),
+            Self::Section(s) => s.blocks.clear(),
+            Self::List(l) => l.rows.clear(),
+            _ => {}
+        }
+        b
+    }
+
     fn list(&mut self) -> Option<Kids<'_>> {
         Some(match self {
             Self::Screen(b) => Kids::Blocks(b.blocks.get_or_insert_with(Vec::new)),

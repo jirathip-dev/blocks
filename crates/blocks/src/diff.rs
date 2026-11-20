@@ -32,7 +32,8 @@ fn root_ops(old: &Block, new: &Block) -> Option<Vec<Op>> {
 }
 
 fn own_fields(old: &Block, new: &Block) -> Option<Fields> {
-    let (Ok(Value::Object(mut a)), Ok(Value::Object(mut b))) = (serde_json::to_value(old), serde_json::to_value(new))
+    let (Ok(Value::Object(mut a)), Ok(Value::Object(mut b))) =
+        (serde_json::to_value(old.bare()), serde_json::to_value(new.bare()))
     else {
         return None;
     };
