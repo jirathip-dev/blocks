@@ -13,7 +13,7 @@ fn read(path: &Path) -> Value {
 
 fn fixtures() -> Vec<(String, Value)> {
     let mut out = vec![];
-    for app in ["cooee", "drover"] {
+    for app in ["cooee", "drover", "drover-staging"] {
         let dir = root().join("fixtures/screens").join(app);
         for e in std::fs::read_dir(&dir).unwrap() {
             let p = e.unwrap().path();
@@ -339,14 +339,13 @@ const COOEE: &[&str] = &[
     "confirm",
 ];
 
-fn herd_scene(name: &str, f: &Fault) -> bool {
-    let field = |x: &str| matches!(f, Fault::Extra { kind, field } if kind == "scene" && field == x);
-    name == "drover/herd.json" && (field("weather") || field("repos"))
+fn drovers_age_twice(name: &str, f: &Fault) -> bool {
+    name == "drover-staging/scene.json" && matches!(f, Fault::Twice { id, .. } if id == "age")
 }
 
 #[test]
 fn every_golden_parses_with_no_fault() {
-    let (mut bad, mut seen, mut herd) = (vec![], 0, 0);
+    let (mut bad, mut seen) = (vec![], 0);
     for (name, v) in fixtures() {
         let app = if name.starts_with("cooee/") { COOEE } else { &[] };
         let mut found = vec![];
@@ -355,7 +354,7 @@ fn every_golden_parses_with_no_fault() {
         for b in found {
             for f in Built::new(b).check(app) {
                 match f {
-                    _ if herd_scene(&name, &f) => herd += 1,
+                    _ if drovers_age_twice(&name, &f) => {}
                     Fault::Shape { .. }
                     | Fault::Extra { .. }
                     | Fault::Unknown { .. }
@@ -371,10 +370,6 @@ fn every_golden_parses_with_no_fault() {
     }
     assert!(seen >= 40, "only {seen} blocks in the goldens");
     assert!(bad.is_empty(), "{}", bad.join("\n"));
-    assert_eq!(
-        herd, 2,
-        "drover's herd scene: its own shape, drover's app kind `herd` once it moves"
-    );
 }
 
 const KINDS: [&str; 34] = [

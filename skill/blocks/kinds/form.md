@@ -11,6 +11,7 @@ The Rust type `Form`; in TS, `form(fields: Form)` from `web/src/gen/builders.ts`
 | `action` | `string` | optional |
 | `fields` | `Field[]` | required |
 | `id` | `string` | optional |
+| `more` | `string` | optional |
 | `show` | `Expr` | optional |
 | `submit` | `Submit` | optional |
 

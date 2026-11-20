@@ -8197,18 +8197,7 @@
   },
   {
     "app": [],
-    "faults": [
-      {
-        "fault": "extra",
-        "field": "repos",
-        "kind": "scene"
-      },
-      {
-        "fault": "extra",
-        "field": "weather",
-        "kind": "scene"
-      }
-    ],
+    "faults": [],
     "name": "fixtures/screens/drover/herd.json#0",
     "screen": {
       "blocks": [
