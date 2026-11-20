@@ -1,0 +1,7 @@
+Decided: merged origin/staging (#233 media marks); kind/mod.rs keeps field, locale and media; the import lists keep the field types and add Mark and MarkKind.
+Because: crates/blocks/src/kind/mod.rs:12
+Decided: generated files were taken from staging, then rewritten by the just gen commands.
+Because: "Generated files come from `just gen`"
+Rejected: none
+Check: no conflict markers; gen, fmt, clippy, test, web, perf and swift all exit 0 at 9ce84b5.
+Owner: Brought the forms work up to date with the new picture marks; nothing else changes.
