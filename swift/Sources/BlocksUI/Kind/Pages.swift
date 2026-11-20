@@ -17,11 +17,11 @@ internal struct PagesBlock: View {
             VStack(alignment: .leading, spacing: 0) {
                 head(count, proxy)
                 if let note = block.note, !note.isEmpty {
-                    Text(note).ui(13, .regular, look).foregroundStyle(palette.foreground).padding(8).frame(maxWidth: .infinity, alignment: .leading)
-                        .overlay(alignment: .leading) { Rectangle().fill(palette.lead).frame(width: 3) }
+                    Text(note).ui(Token.fs, .regular, look).foregroundStyle(palette.foreground).padding(Token.s2).frame(maxWidth: .infinity, alignment: .leading)
+                        .overlay(alignment: .leading) { Rectangle().fill(palette.lead).frame(width: Token.rule) }
                 }
                 if count == 0 {
-                    Text("No pages yet").ui(13, .regular, look).foregroundStyle(palette.mute).padding(32).frame(maxWidth: .infinity).background(palette.line)
+                    Text("No pages yet").ui(Token.fs, .regular, look).foregroundStyle(palette.mute).padding(Token.s4 * 2).frame(maxWidth: .infinity).background(palette.line)
                 } else {
                     sheets(count, proxy)
                 }
@@ -31,10 +31,10 @@ internal struct PagesBlock: View {
     }
 
     private func head(_ count: Int, _ proxy: ScrollViewProxy) -> some View {
-        HStack(spacing: 8) {
-            Text(title).ui(13, .semibold, look).foregroundStyle(look.palette.foreground).lineLimit(1)
+        HStack(spacing: Token.s2) {
+            Text(title).ui(Token.fs, .semibold, look).foregroundStyle(look.palette.foreground).lineLimit(1)
                 .frame(maxWidth: .infinity, alignment: .leading)
-            Text(count == 0 ? "no pages" : "page \(at + 1) of \(count)").ui(12, .regular, look).foregroundStyle(look.palette.mute).monospacedDigit()
+            Text(count == 0 ? "no pages" : "page \(at + 1) of \(count)").ui(Token.meta, .regular, look).foregroundStyle(look.palette.mute).monospacedDigit()
             if count > 0 {
                 key("‹", "previous page", at == 0) { go(at - 1, count, proxy) }
                 key("›", "next page", at == count - 1) { go(at + 1, count, proxy) }
@@ -43,36 +43,36 @@ internal struct PagesBlock: View {
                 key("+", "zoom in", zoom >= 4) { zoom = min(4, zoom * 1.25) }
             }
             if let file = block.file, let url = URL(string: file) {
-                Link(destination: url) { Text("[pdf]").ui(13, .regular, look) }.accessibilityLabel("download \(title) as PDF")
+                Link(destination: url) { Text("[pdf]").ui(Token.fs, .regular, look) }.accessibilityLabel("download \(title) as PDF")
             }
         }
-        .padding(.horizontal, 8).frame(minHeight: 44)
+        .padding(.horizontal, Token.s2).frame(minHeight: 44)
         .overlay(alignment: .bottom) { Rectangle().fill(look.palette.edge).frame(height: 1) }
     }
 
     private func key(_ label: String, _ name: String, _ off: Bool, _ run: @escaping () -> Void) -> some View {
-        Button(action: run) { Text("[\(label)]").ui(13, .regular, look).monospacedDigit() }
+        Button(action: run) { Text("[\(label)]").ui(Token.fs, .regular, look).monospacedDigit() }
             .buttonStyle(.plain).foregroundStyle(off ? look.palette.mute : look.palette.foreground).disabled(off).accessibilityLabel(name)
     }
 
     private func sheets(_ count: Int, _ proxy: ScrollViewProxy) -> some View {
         let widest = max(CGFloat(block.pages.map(\.width).max() ?? 1), 1)
         let tall = block.pages.reduce(0) { $0 + CGFloat($1.height) / widest }
-        let gaps = 16 * CGFloat(count + 1), scale = zoom * tall
-        return Fitted(height: { gaps + max(0, $0 - 32) * scale }) {
+        let gaps = Token.s4 * CGFloat(count + 1), scale = zoom * tall
+        return Fitted(height: { gaps + max(0, $0 - Token.s4 * 2) * scale }) {
             ScrollView(.horizontal) {
-                VStack(spacing: 16) {
+                VStack(spacing: Token.s4) {
                     ForEach(Array(block.pages.enumerated()), id: \.offset) { index, page in
                         let share: CGFloat = zoom * CGFloat(page.width) / widest
                         let ratio: CGFloat = CGFloat(page.width) / max(CGFloat(page.height), 1)
                         Picture(src: page.src, alt: page.alt, fit: true).aspectRatio(ratio, contentMode: .fit)
-                            .containerRelativeFrame(.horizontal) { length, _ in max(0, length - 32) * share }
-                            .background(Color.white).overlay(Rectangle().strokeBorder(look.palette.edge, lineWidth: 1))
+                            .containerRelativeFrame(.horizontal) { length, _ in max(0, length - Token.s4 * 2) * share }
+                            .background(Token.paper).overlay(Rectangle().strokeBorder(look.palette.edge, lineWidth: 1))
                             .accessibilityElement(children: .ignore).accessibilityAddTraits(.isImage)
                             .accessibilityLabel("Page \(index + 1) of \(count). \(page.alt)").id(index)
                     }
                 }
-                .padding(16).modifier(Zoomed(scale: $zoom, most: 4))
+                .padding(Token.s4).modifier(Zoomed(scale: $zoom, most: 4))
             }
         }
         .background(look.palette.line)

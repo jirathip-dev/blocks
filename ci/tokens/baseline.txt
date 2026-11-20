@@ -338,20 +338,6 @@ swift/Sources/BlocksUI/Kind/Choice.swift spacing: 8
 swift/Sources/BlocksUI/Kind/List.swift .padding(.leading, 12
 swift/Sources/BlocksUI/Kind/List.swift height: 0.5
 swift/Sources/BlocksUI/Kind/List.swift radius: 16
-swift/Sources/BlocksUI/Kind/Pages.swift .padding(.horizontal, 8
-swift/Sources/BlocksUI/Kind/Pages.swift .padding(16
-swift/Sources/BlocksUI/Kind/Pages.swift .padding(32
-swift/Sources/BlocksUI/Kind/Pages.swift .padding(8
-swift/Sources/BlocksUI/Kind/Pages.swift .ui(12
-swift/Sources/BlocksUI/Kind/Pages.swift .ui(13
-swift/Sources/BlocksUI/Kind/Pages.swift .ui(13
-swift/Sources/BlocksUI/Kind/Pages.swift .ui(13
-swift/Sources/BlocksUI/Kind/Pages.swift .ui(13
-swift/Sources/BlocksUI/Kind/Pages.swift .ui(13
-swift/Sources/BlocksUI/Kind/Pages.swift Color.white
-swift/Sources/BlocksUI/Kind/Pages.swift spacing: 16
-swift/Sources/BlocksUI/Kind/Pages.swift spacing: 8
-swift/Sources/BlocksUI/Kind/Pages.swift width: 3
 swift/Sources/BlocksUI/Kind/Screen.swift minLength: 4
 swift/Sources/BlocksUI/Kind/Screen.swift size: 36
 swift/Sources/BlocksUI/Kind/Screen.swift size: 36
@@ -531,13 +517,6 @@ web/src/css/kind/list.css box-shadow 12px
 web/src/css/kind/list.css box-shadow 4px
 web/src/css/kind/list.css box-shadow rgb(0 0 0 / .18)
 web/src/css/kind/list.css clip-path 50%
-web/src/css/kind/pages.css background #fff
-web/src/css/kind/pages.css box-shadow 3px
-web/src/css/kind/pages.css box-shadow 3px
-web/src/css/kind/pages.css flex-basis 60%
-web/src/css/kind/pages.css min-width 4ch
-web/src/css/kind/pages.css outline 2px
-web/src/css/kind/pages.css outline-offset -2px
 web/src/css/kind/prose.css border-left 2px
 web/src/css/kind/row.css box-shadow 3px
 web/src/css/kind/row.css height 12px

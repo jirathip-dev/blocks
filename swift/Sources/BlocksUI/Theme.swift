@@ -100,3 +100,12 @@ extension Palette {
         }
     }
 }
+
+internal enum Token {
+    internal static let s2: CGFloat = 8
+    internal static let s4: CGFloat = 16
+    internal static let fs: CGFloat = 13
+    internal static let meta: CGFloat = 12
+    internal static let rule: CGFloat = 3
+    internal static let paper = Color.white
+}
