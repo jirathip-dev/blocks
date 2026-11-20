@@ -10,7 +10,7 @@ cat > "$t/bin/gh" <<'GH'
 case "$*" in
 *actions/runs*) cat "$FAKE/runs" ;;
 *matching-refs*) cat "$FAKE/refs" ;;
-*releases/latest*) cat "$FAKE/latest" 2>/dev/null || exit 1 ;;
+*releases/latest*) cat "$FAKE/latest" 2>/dev/null || { echo '{"message":"Not Found","status":"404"}'; echo 'gh: Not Found (HTTP 404)' >&2; exit 1; } ;;
 *compare/v3.1...abc*) cat "$FAKE/subjects" ;;
 *commits\?sha=abc*) cat "$FAKE/subjects" 2>/dev/null || true ;;
 "pr view "*) cat "$FAKE/pr-$3" ;;
@@ -62,4 +62,19 @@ For apps: nothing to do, the field is optional.
 
 A typo is fixed.'
 test "$got" = "$want" || { printf 'notes: got:\n%s\n' "$got" >&2; exit 1; }
+got=$(run "$green" '' '' 'schema: a new field (#7)\nMerge branch staging\n')
+want='release create v3.0 -R o/blocks --target abc --title v3.0 --notes blocks v3.0 @ abc
+
+## For apps
+
+- #7 schema: a new field (#7): nothing to do, the field is optional.
+
+## Pull requests since the start
+
+### #7 schema: a new field (#7)
+
+Screens may carry a badge.
+
+For apps: nothing to do, the field is optional.'
+test "$got" = "$want" || { printf 'no latest release: got:\n%s\n' "$got" >&2; exit 1; }
 echo "release tests pass"
