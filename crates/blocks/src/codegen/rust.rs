@@ -14,3 +14,7 @@ pub(super) fn files(root: &Path, s: &Value) -> std::io::Result<Files> {
     out.extend(site::files(root)?);
     Ok(out)
 }
+
+pub(super) fn kinds(root: &Path) -> std::io::Result<Files> {
+    kinds::files(root, &Value::Null)
+}
