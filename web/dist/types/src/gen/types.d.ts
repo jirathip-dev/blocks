@@ -280,7 +280,7 @@ export type Editor = {
     show?: Expr | null;
     text: string;
 };
-export type Era = "be";
+export type Era = "ce" | "be";
 export type ExportFormat = "csv" | "xlsx";
 export type Expr = {
     get: string;
@@ -318,24 +318,25 @@ export type Fallback = {
     tap?: Tap | null;
     title: string;
 };
-export type Field = {
-    checks?: Check[] | null;
-    doc?: string | null;
-    enabled?: Expr | null;
-    error?: string | null;
-    keyboard?: Keyboard | null;
-    label?: string | null;
+export type Field = ({
+    type: "text";
+} & TextField) | ({
+    type: "toggle";
+} & ToggleField) | ({
+    type: "picker";
+} & PickerField) | ({
+    type: "secret";
+} & SecretField) | (OtherField & {
+    [key: string]: unknown;
+});
+export type FieldDrawn = "native" | "plain" | "hidden";
+export type FieldNode = {
+    drawn: FieldDrawn;
+    label: string;
     name: string;
-    open?: boolean | null;
-    options?: string[] | null;
-    placeholder?: string | null;
-    set?: boolean | null;
-    show?: Expr | null;
-    type: FieldKind;
-    value?: FieldValue | null;
-    was?: string | null;
+    role: string;
+    type: string;
 };
-export type FieldKind = "text" | "toggle" | "picker" | "secret";
 export type FieldValue = string | number | boolean;
 export type Figure = {
     avatar?: string | null;
@@ -448,6 +449,7 @@ export type Lane = {
     tool?: string | null;
 };
 export type LaneState = "working" | "needs" | "done" | "idle" | "fail" | "merged";
+export type Lang = "en" | "th";
 export type LineError = {
     line: number;
     message: string;
@@ -486,6 +488,11 @@ export type List = {
     show?: Expr | null;
 };
 export type Lit = null | boolean | number | string;
+export type Locale = {
+    era?: Era | null;
+    lang?: Lang | null;
+    today?: string | null;
+};
 export type Mark = {
     at: number[];
     fixed?: boolean | null;
@@ -578,6 +585,18 @@ export type Other = {
     for?: string | null;
     placeholder?: string | null;
 };
+export type OtherField = {
+    checks?: Check[] | null;
+    doc?: string | null;
+    enabled?: Expr | null;
+    error?: string | null;
+    label?: string | null;
+    name: string;
+    open?: boolean | null;
+    show?: Expr | null;
+    type: string;
+    was?: string | null;
+};
 export type Part = {
     part: "heading";
     level: number;
@@ -607,6 +626,19 @@ export type Pending = {
     text: string;
 };
 export type PhonePart = "title" | "tag" | "value" | "meta" | "hide";
+export type PickerField = {
+    checks?: Check[] | null;
+    doc?: string | null;
+    enabled?: Expr | null;
+    error?: string | null;
+    label?: string | null;
+    name: string;
+    open?: boolean | null;
+    options?: string[] | null;
+    show?: Expr | null;
+    value?: FieldValue | null;
+    was?: string | null;
+};
 export type Plan = {
     out: string;
     runs: PlanRun[];
@@ -706,6 +738,7 @@ export type Screen = {
     focus?: boolean | null;
     id?: string | null;
     large?: boolean | null;
+    locale?: Locale | null;
     pending?: Pending | null;
     personas?: Record<string, unknown>[] | null;
     refresh?: boolean | null;
@@ -727,6 +760,19 @@ export type Secret = {
     set?: boolean | null;
     show?: Expr | null;
     values?: Record<string, unknown> | null;
+};
+export type SecretField = {
+    checks?: Check[] | null;
+    doc?: string | null;
+    enabled?: Expr | null;
+    error?: string | null;
+    label?: string | null;
+    name: string;
+    open?: boolean | null;
+    placeholder?: string | null;
+    set?: boolean | null;
+    show?: Expr | null;
+    was?: string | null;
 };
 export type Section = {
     blocks: Block[];
@@ -762,6 +808,7 @@ export type Sheet = {
     cancel?: string | null;
     done?: Submit | null;
     id?: string | null;
+    locale?: Locale | null;
     show?: Expr | null;
     title: string;
 };
@@ -898,6 +945,20 @@ export type Text = {
     until?: string | null;
     weight?: string | null;
 };
+export type TextField = {
+    checks?: Check[] | null;
+    doc?: string | null;
+    enabled?: Expr | null;
+    error?: string | null;
+    keyboard?: Keyboard | null;
+    label?: string | null;
+    name: string;
+    open?: boolean | null;
+    placeholder?: string | null;
+    show?: Expr | null;
+    value?: FieldValue | null;
+    was?: string | null;
+};
 export type TextStyle = "body" | "footnote";
 export type Tile = {
     label: string;
@@ -956,6 +1017,18 @@ export type Toast = {
     tone?: Tone | null;
     undo?: Undo | null;
 };
+export type ToggleField = {
+    checks?: Check[] | null;
+    doc?: string | null;
+    enabled?: Expr | null;
+    error?: string | null;
+    label?: string | null;
+    name: string;
+    open?: boolean | null;
+    show?: Expr | null;
+    value?: FieldValue | null;
+    was?: string | null;
+};
 export type Tone = "ok" | "warn" | "bad" | "info" | "mute" | "accent" | "working" | "needs" | "done" | "fail" | "idle";
 export type Toned = string | Label;
 export type Total = "sum" | "avg" | "count";
@@ -963,6 +1036,7 @@ export type TreeDrawn = "native" | "fallback" | "hidden";
 export type TreeNode = {
     children: TreeNode[];
     drawn: TreeDrawn;
+    fields?: FieldNode[] | null;
     id?: string | null;
     kind: string;
     name: string;

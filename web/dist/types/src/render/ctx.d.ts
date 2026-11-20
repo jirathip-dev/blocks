@@ -1,5 +1,6 @@
 import { type Blk } from "../core/tree.ts";
 import type { Held } from "../gesture.ts";
+import type { Locale } from "../gen/types.ts";
 import type { Theme } from "../theme.ts";
 export type Post = {
     action: unknown;
@@ -14,6 +15,7 @@ export type Store = {
 export type Renderer = (b: Blk, c: Ctx) => HTMLElement | null;
 export type Ctx = {
     screen: string;
+    locale?: Locale;
     act: (a: Post, el?: HTMLElement) => Promise<boolean>;
     tap: (t: unknown) => void;
     open: Set<string>;

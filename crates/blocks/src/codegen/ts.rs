@@ -2,6 +2,8 @@ use std::path::Path;
 
 use serde_json::Value;
 
+pub(super) mod kinds;
+
 use super::model::{defs, Case, Def, Out, Prop, Ty};
 use super::Files;
 use crate::{layout, Block, SCHEMA_VERSION};
@@ -14,7 +16,7 @@ pub(super) fn files(root: &Path, s: &Value) -> std::io::Result<Files> {
             layout_ts().map_err(std::io::Error::other)?,
         ),
     ];
-    out.extend(super::kinds::files(root, s)?);
+    out.extend(kinds::files(root, s)?);
     Ok(out)
 }
 

@@ -195,6 +195,7 @@ function draw(o: Mount, store: Store, theme: Theme, wear: (name: string | null, 
 
   const ctx = (v: View): Ctx => ({
     screen: String(v.model?.id ?? v.path),
+    locale: v.model && (v.model.type === "screen" || v.model.type === "sheet") ? (v.model.locale ?? undefined) : undefined,
     act: (a, b) => act(v, a, b),
     tap: (t) => tap(v, t),
     open: v.open,

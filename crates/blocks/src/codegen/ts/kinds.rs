@@ -2,7 +2,7 @@ use std::path::Path;
 
 use serde_json::Value;
 
-use super::Files;
+use super::super::Files;
 use crate::Block;
 
 pub(super) fn files(root: &Path, _: &Value) -> std::io::Result<Files> {
@@ -34,7 +34,7 @@ pub(super) fn files(root: &Path, _: &Value) -> std::io::Result<Files> {
     Ok(vec![("web/src/gen/kinds.ts".into(), out)])
 }
 
-pub(super) fn native(root: &Path) -> std::io::Result<Vec<&'static str>> {
+pub(in crate::codegen) fn native(root: &Path) -> std::io::Result<Vec<&'static str>> {
     let drawn = drawn(root)?;
     Ok(Block::KINDS
         .iter()

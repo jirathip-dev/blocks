@@ -234,16 +234,17 @@ var acts = (b) => {
   const all = [...list(b.actions), ...list(b.swipe), ...list(b.menu), ...[b.button, ...WORDS.map((w) => b[w])].filter(rec)];
   return [...all, ...all.flatMap((a) => list(a.menu))];
 };
-var lit = (v) => v === null || typeof v === "boolean" || typeof v === "number" || typeof v === "string" ? v : null;
+var plain = (v) => v === null || typeof v === "boolean" || typeof v === "number" || typeof v === "string" ? v : null;
+var lit = (_field, held) => plain(held);
 function start(screen2) {
   const s = {};
   const seed = (b) => {
-    for (const f of named(b)) s[String(f.name)] = lit(f.value);
-    if (b.type === "chips" && typeof b.name === "string") s[b.name] = lit(Array.isArray(b.selected) ? b.selected[0] : null);
+    for (const f of named(b)) s[String(f.name)] = lit(f, f.value);
+    if (b.type === "chips" && typeof b.name === "string") s[b.name] = plain(Array.isArray(b.selected) ? b.selected[0] : null);
     kids(b).forEach(seed);
   };
   if (rec(screen2)) {
-    for (const [k, v] of Object.entries(rec(screen2.state) ? screen2.state : {})) s[k] = lit(v);
+    for (const [k, v] of Object.entries(rec(screen2.state) ? screen2.state : {})) s[k] = plain(v);
     seed(screen2);
   }
   return s;
@@ -562,7 +563,7 @@ function tabled(t) {
   const sub = sum && v ? `${count} \xB7 total ${sum.label.toLowerCase()} ${unit(sum) ?? ""}${v[1]}` : count;
   return { title: t.title ?? "Table", subtitle: sub };
 }
-function plain(o, kind) {
+function plain2(o, kind) {
   if (isTable(o)) return tabled(o);
   const subtitle = text3(o, "subtitle");
   const f = { title: NAMED.map((k) => text3(o, k)).find((t) => t !== void 0) ?? kind };
@@ -574,7 +575,7 @@ var copy = (v) => isObj(v) ? fill({ ...v }) : v;
 var each = (l) => Array.isArray(l) ? l.map(copy) : l;
 function fill(o) {
   const kind = typeof o.type === "string" ? o.type : "";
-  if (KINDS.includes(kind) && !DRAWN2.includes(kind) && o.fallback === void 0) o.fallback = plain(o, kind);
+  if (KINDS.includes(kind) && !DRAWN2.includes(kind) && o.fallback === void 0) o.fallback = plain2(o, kind);
   for (const k of LISTS) if (k in o) o[k] = each(o[k]);
   if (Array.isArray(o.rounds)) o.rounds = o.rounds.map((r) => isObj(r) && "blocks" in r ? { ...r, blocks: each(r.blocks) } : r);
   return o;
@@ -2328,6 +2329,7 @@ var defs = {
     "anyOf": [
       {
         "enum": [
+          "ce",
           "be"
         ],
         "type": "string"
@@ -2615,133 +2617,61 @@ var defs = {
     "type": "object"
   },
   "Field": {
-    "properties": {
-      "checks": {
-        "items": {
-          "$ref": "#/$defs/Check"
-        },
-        "type": [
-          "array",
-          "null"
-        ]
-      },
-      "doc": {
-        "type": [
-          "string",
-          "null"
-        ]
-      },
-      "enabled": {
-        "anyOf": [
-          {
-            "$ref": "#/$defs/Expr"
-          },
-          {
-            "type": "null"
-          }
-        ]
-      },
-      "error": {
-        "type": [
-          "string",
-          "null"
-        ]
-      },
-      "keyboard": {
-        "anyOf": [
-          {
-            "$ref": "#/$defs/Keyboard"
-          },
-          {
-            "type": "null"
-          }
-        ]
-      },
-      "label": {
-        "type": [
-          "string",
-          "null"
-        ]
-      },
-      "name": {
-        "type": "string"
-      },
-      "open": {
-        "type": [
-          "boolean",
-          "null"
-        ]
-      },
-      "options": {
-        "items": {
-          "type": "string"
-        },
-        "type": [
-          "array",
-          "null"
-        ]
-      },
-      "placeholder": {
-        "type": [
-          "string",
-          "null"
-        ]
-      },
-      "set": {
-        "type": [
-          "boolean",
-          "null"
-        ]
-      },
-      "show": {
-        "anyOf": [
-          {
-            "$ref": "#/$defs/Expr"
-          },
-          {
-            "type": "null"
-          }
-        ]
-      },
-      "type": {
-        "$ref": "#/$defs/FieldKind"
-      },
-      "value": {
-        "anyOf": [
-          {
-            "$ref": "#/$defs/FieldValue"
-          },
-          {
-            "type": "null"
-          }
-        ]
-      },
-      "was": {
-        "type": [
-          "string",
-          "null"
-        ]
-      }
-    },
-    "required": [
-      "type",
-      "name"
-    ],
-    "type": "object"
-  },
-  "FieldKind": {
     "anyOf": [
       {
-        "enum": [
-          "text",
-          "toggle",
-          "picker",
-          "secret"
+        "$ref": "#/$defs/TextField",
+        "properties": {
+          "type": {
+            "const": "text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
         ],
-        "type": "string"
+        "type": "object"
       },
       {
-        "type": "string"
+        "$ref": "#/$defs/ToggleField",
+        "properties": {
+          "type": {
+            "const": "toggle",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      {
+        "$ref": "#/$defs/PickerField",
+        "properties": {
+          "type": {
+            "const": "picker",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      {
+        "$ref": "#/$defs/SecretField",
+        "properties": {
+          "type": {
+            "const": "secret",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      {
+        "$ref": "#/$defs/OtherField"
       }
     ]
   },
@@ -3263,6 +3193,20 @@ var defs = {
       }
     ]
   },
+  "Lang": {
+    "anyOf": [
+      {
+        "enum": [
+          "en",
+          "th"
+        ],
+        "type": "string"
+      },
+      {
+        "type": "string"
+      }
+    ]
+  },
   "LineError": {
     "properties": {
       "line": {
@@ -3501,6 +3445,37 @@ var defs = {
         "type": "string"
       }
     ]
+  },
+  "Locale": {
+    "properties": {
+      "era": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Era"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "lang": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Lang"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "today": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "type": "object"
   },
   "Mark": {
     "properties": {
@@ -3853,6 +3828,81 @@ var defs = {
     },
     "type": "object"
   },
+  "OtherField": {
+    "additionalProperties": true,
+    "properties": {
+      "checks": {
+        "items": {
+          "$ref": "#/$defs/Check"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "doc": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "enabled": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "error": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "label": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "name": {
+        "type": "string"
+      },
+      "open": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "show": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "type": {
+        "type": "string"
+      },
+      "was": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "required": [
+      "name",
+      "type"
+    ],
+    "type": "object"
+  },
   "Part": {
     "oneOf": [
       {
@@ -4035,6 +4085,96 @@ var defs = {
         "type": "string"
       }
     ]
+  },
+  "PickerField": {
+    "additionalProperties": true,
+    "properties": {
+      "checks": {
+        "items": {
+          "$ref": "#/$defs/Check"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "doc": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "enabled": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "error": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "label": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "name": {
+        "type": "string"
+      },
+      "open": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "options": {
+        "items": {
+          "type": "string"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "show": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "value": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/FieldValue"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "was": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "required": [
+      "name"
+    ],
+    "type": "object"
   },
   "Prose": {
     "additionalProperties": true,
@@ -4547,6 +4687,16 @@ var defs = {
           "null"
         ]
       },
+      "locale": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Locale"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
       "pending": {
         "anyOf": [
           {
@@ -4690,6 +4840,89 @@ var defs = {
     "required": [
       "name",
       "action"
+    ],
+    "type": "object"
+  },
+  "SecretField": {
+    "additionalProperties": true,
+    "properties": {
+      "checks": {
+        "items": {
+          "$ref": "#/$defs/Check"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "doc": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "enabled": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "error": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "label": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "name": {
+        "type": "string"
+      },
+      "open": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "placeholder": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "set": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "show": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "was": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "required": [
+      "name"
     ],
     "type": "object"
   },
@@ -4838,6 +5071,16 @@ var defs = {
         "type": [
           "string",
           "null"
+        ]
+      },
+      "locale": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Locale"
+          },
+          {
+            "type": "null"
+          }
         ]
       },
       "show": {
@@ -5419,6 +5662,103 @@ var defs = {
     },
     "type": "object"
   },
+  "TextField": {
+    "additionalProperties": true,
+    "properties": {
+      "checks": {
+        "items": {
+          "$ref": "#/$defs/Check"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "doc": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "enabled": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "error": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "keyboard": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Keyboard"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "label": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "name": {
+        "type": "string"
+      },
+      "open": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "placeholder": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "show": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "value": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/FieldValue"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "was": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "required": [
+      "name"
+    ],
+    "type": "object"
+  },
   "TextStyle": {
     "anyOf": [
       {
@@ -5738,6 +6078,87 @@ var defs = {
     },
     "required": [
       "title"
+    ],
+    "type": "object"
+  },
+  "ToggleField": {
+    "additionalProperties": true,
+    "properties": {
+      "checks": {
+        "items": {
+          "$ref": "#/$defs/Check"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "doc": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "enabled": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "error": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "label": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "name": {
+        "type": "string"
+      },
+      "open": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "show": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "value": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/FieldValue"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "was": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "required": [
+      "name"
     ],
     "type": "object"
   },
@@ -6067,6 +6488,7 @@ export {
   lines,
   linkable,
   list2 as list,
+  lit,
   media,
   named2 as named,
   names,

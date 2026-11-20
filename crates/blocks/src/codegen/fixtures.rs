@@ -29,6 +29,7 @@ pub(super) fn files(root: &Path, _: &Value) -> std::io::Result<Files> {
     out.push(("fixtures/built/every.json".into(), every));
     out.extend(trees(root)?);
     out.extend(html(root)?);
+    out.extend(super::fields::files(root)?);
     Ok(out)
 }
 
@@ -127,7 +128,7 @@ fn workflow() -> Diagram {
 const SWIFT_FALLBACKS: [&str; 6] = ["composer", "prose", "hero", "media", "nav", "island"];
 
 fn trees(root: &Path) -> std::io::Result<Files> {
-    let web = super::kinds::native(root)?;
+    let web = super::ts::kinds::native(root)?;
     let swift: Vec<&str> = Block::KINDS
         .iter()
         .copied()

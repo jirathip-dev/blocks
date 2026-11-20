@@ -12,6 +12,7 @@ The Rust type `Sheet`; in TS, `sheet(fields: Sheet)` from `web/src/gen/builders.
 | `cancel` | `string` | optional |
 | `done` | `Submit` | optional |
 | `id` | `string` | optional |
+| `locale` | `Locale` | optional |
 | `show` | `Expr` | optional |
 | `title` | `string` | required |
 

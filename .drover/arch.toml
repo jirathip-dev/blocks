@@ -47,6 +47,11 @@ generated = [
     "crates/blocks/src/guard/rules/mod.rs",
     "skill/blocks/**",
     "crates/blocks-cli/src/gen/skill.rs",
+    "web/src/gen/fields.ts",
+    "web/src/gen/words.ts",
+    "swift/Sources/Blocks/Gen/Words.swift",
+    "fixtures/fields/*.json",
+    "fixtures/fields/trees/*.json",
 ]
 generate = "just gen"
 shared = [
@@ -61,6 +66,9 @@ shared = [
     ".drover/arch.toml",
     "justfile",
     "README.md",
+    "crates/blocks/src/kind/field/mod.rs",
+    "crates/blocks/src/site/field/mod.rs",
+    "swift/Sources/BlocksUI/Field/FieldRow.swift",
     "crates/blocks/src/site/mod.rs",
     "crates/blocks/src/site/kind/mod.rs",
     "crates/blocks/tests/site.rs",
@@ -101,6 +109,22 @@ glob = "*.swift"
 [[collect]]
 dir = "web/src/css"
 glob = "**/*.css"
+
+[[collect]]
+dir = "crates/blocks/src/kind/field"
+glob = "*.rs"
+
+[[collect]]
+dir = "crates/blocks/src/site/field"
+glob = "*.rs"
+
+[[collect]]
+dir = "web/src/render/field"
+glob = "*.ts"
+
+[[collect]]
+dir = "swift/Sources/BlocksUI/Field"
+glob = "*.swift"
 
 [[collect]]
 dir = "crates/blocks/src/site/kind"
@@ -470,3 +494,32 @@ max_file_lines = 70
 [[size]]
 paths = ["crates/blocks/src/codegen/mod.rs", "crates/blocks/src/site/mod.rs", "crates/blocks/src/site/kind/mod.rs"]
 max_file_lines = 80
+
+[[size]]
+paths = ["crates/blocks/src/kind/field/mod.rs", "crates/blocks/src/site/field/mod.rs", "swift/Sources/BlocksUI/Field/FieldRow.swift"]
+max_file_lines = 80
+
+[[ban]]
+pattern = "new Date("
+paths = ["web/src/core/field/**", "web/src/render/field/**", "web/react/src/fields/**"]
+reason = "a field takes today from the screen's locale; it never asks the device for the date"
+
+[[ban]]
+pattern = "Date.now"
+paths = ["web/src/core/field/**", "web/src/render/field/**", "web/react/src/fields/**"]
+reason = "a field takes today from the screen's locale; it never asks the device for the date"
+
+[[ban]]
+pattern = "Intl."
+paths = ["web/src/core/field/**", "web/src/render/field/**", "web/react/src/fields/**"]
+reason = "days and numbers are drawn by the rules every renderer shares, not by the device's locale"
+
+[[ban]]
+pattern = "Date()"
+paths = ["swift/Sources/BlocksUI/Field/**"]
+reason = "a field takes today from the screen's locale; it never asks the device for the date"
+
+[[ban]]
+pattern = "Locale.current"
+paths = ["swift/Sources/BlocksUI/Field/**"]
+reason = "days and numbers are drawn by the rules every renderer shares, not by the device's locale"

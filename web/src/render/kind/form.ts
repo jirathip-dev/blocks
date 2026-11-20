@@ -1,19 +1,26 @@
 import { type State, view } from "../../core/eval.ts";
+import { views } from "../../gen/fields.ts";
 import type { Field, Form } from "../../gen/types.ts";
-import { type Ctx, draft, sent, type Store } from "../ctx.ts";
+import { type FieldView, word } from "../field/_view.ts";
+import { text } from "../field/text.ts";
+import { type Ctx, sent } from "../ctx.ts";
 import { btn, el, h } from "../dom.ts";
+
+/// A drawn field: its `.fd` row, its name, and the value it sends.
+export type Drawn = { row: HTMLElement; name: string; sent(): unknown };
 
 export function form(b: Form, c: Ctx): HTMLElement {
   const f = el("div", `form${b.submit ? " say" : ""}`);
   f.dataset.id = b.id ?? "";
-  for (const x of b.fields) f.append(field(x, `draft:${c.screen}:${String(b.id)}:`, c.store));
+  const all = b.fields.map((x) => field(x, `draft:${c.screen}:${String(b.id)}:`, c));
+  f.append(...all.map((d) => d.row));
   const s = b.submit;
   if (!s) return f;
   const go = btn(s.label, "", undefined, s.action);
   go.dataset.submit = "";
   const word = go.firstElementChild ?? go;
   const send = () => {
-    const v = values(f);
+    const v = values(all);
     if (Object.values(v).every((x) => !String(x || "").trim()) || Object.keys(view(b, v).says).length) return;
     word.textContent = "sending…";
     c.act({ action: s.action, block: b.id, values: { ...s.values, ...v } }, go)
@@ -30,47 +37,27 @@ export function form(b: Form, c: Ctx): HTMLElement {
   return f;
 }
 
-const note = (x: Field): [string, string] => (x.error ? ["fn err", x.error] : x.was != null ? ["fn was", `was ${x.was}`] : ["fn", x.doc ?? ""]);
+const note = (x: Field, was: string): [string, string] => (x.error ? ["fn err", x.error] : x.was != null ? ["fn was", `${was} ${x.was}`] : ["fn", x.doc ?? ""]);
 
-/// A field as a `.fd` label: its name and note, then its control.
-export function field(x: Field, key: string, store: Store): HTMLElement {
-  const [cls, text] = note(x);
-  const l = h("label", `fd${x.type === "toggle" ? " tg" : ""}${x.error ? " err" : ""}${x.open ? " open" : ""}`, h("span", "fl", h("span", "fk", x.label ?? x.name), h("span", cls, text)));
-  let i: HTMLInputElement | HTMLSelectElement;
-  if (x.type === "toggle") {
-    i = Object.assign(el("input"), { type: "checkbox", checked: !!x.value });
-    i.setAttribute("role", "switch");
-  } else if (x.type === "picker") {
-    const s = el("select");
-    const opts = [...new Set([x.value, ...(x.options ?? [])].filter((o) => o != null && o !== "").map(String))];
-    for (const o of opts) s.append(Object.assign(el("option"), { value: o, textContent: o, selected: o === String(x.value) }));
-    i = s;
-  } else {
-    const kb = x.keyboard ?? "default";
-    const secret = x.type === "secret";
-    const t = Object.assign(el("input"), {
-      type: secret ? "password" : kb === "url" ? "url" : "text",
-      value: secret ? "" : String(x.value ?? ""),
-      placeholder: secret && x.set ? "set ✓ · type to replace" : (x.placeholder ?? (secret ? "not set" : "")),
-      autocomplete: "off",
-    });
-    if (kb !== "default") t.inputMode = kb === "number" ? "decimal" : "url";
-    t.dataset.was = t.value;
-    if (!secret) draft(t, key + x.name, store);
-    i = t;
-  }
-  i.name = x.name;
-  if (x.error) i.setAttribute("aria-invalid", "true");
-  l.append(i);
-  return l;
+/// A field as a `.fd` label: its name and note, then the control its type's view draws; `set` hears each committed value.
+export function field(x: Field, key: string, c: Ctx, set?: (v: unknown) => void): Drawn {
+  const fc = { locale: c.locale ?? {}, store: c.store, key, set };
+  const v: FieldView = views[x.type] ?? text;
+  const [cls, say] = note(x, word(fc, "was"));
+  const l = h("label", `fd${v.row ?? ""}${x.error ? " err" : ""}${x.open ? " open" : ""}`, h("span", "fl", h("span", "fk", x.label ?? x.name), h("span", cls, say)));
+  const out = v.draw(x, fc);
+  out.el.name = x.name;
+  if (x.error) out.el.setAttribute("aria-invalid", "true");
+  l.append(out.el);
+  return { row: l, name: x.name, sent: out.sent };
 }
 
-/// The values of every field under `root`, as an action's `values` (a toggle is a bool, an empty secret is left out).
-export function values(root: HTMLElement): State {
+/// The values the fields send, as an action's `values` (a toggle is a bool, an empty secret is left out).
+export function values(all: Drawn[]): State {
   const v: State = {};
-  root.querySelectorAll<HTMLInputElement | HTMLSelectElement>(".fd input, .fd select").forEach((i) => {
-    if (i.type === "password" && !i.value) return;
-    v[i.name] = i instanceof HTMLInputElement && i.type === "checkbox" ? i.checked : i.value;
-  });
+  for (const d of all) {
+    const s = d.sent();
+    if (typeof s === "string" || typeof s === "boolean" || typeof s === "number") v[d.name] = s;
+  }
   return v;
 }

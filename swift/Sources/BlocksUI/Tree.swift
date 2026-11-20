@@ -199,7 +199,7 @@ extension [Block] {
 extension Blocks.Form {
     internal var fieldValues: [String: JSONValue] {
         fields.reduce(into: [:]) { values, field in
-            if let value = field.value { values[field.name] = value.json }
+            if let value = field.kind.start { values[field.kind.name] = value }
         }
     }
 }

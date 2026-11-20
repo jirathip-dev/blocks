@@ -164,6 +164,8 @@ export async function shot({ screen, steps = [], name = "shot", size = "390x844"
         pngs[n] = await page.screenshot();
         trees[n] = await page.evaluate(() => window.h.dump());
         report.shots.push(n);
+        const f = await page.evaluate(() => (document.activeElement instanceof HTMLInputElement ? `${document.activeElement.name}@${document.activeElement.selectionStart}` : ""));
+        if (f) (report.focus ??= {})[n] = f;
         const want = expect ?? (probes ? tree(await page.evaluate(() => window.h.model), [...(adapter === "react" ? drawn : native), ...kinds]) : undefined);
         const cx = { page, width, logged, tree: trees[n], want, blocks: trees[n] ? blocks(trees[n]) : [] };
         for (const p of PROBES.filter((p) => p.shot && (probes || (check && CHECKED.includes(p.rule))))) seen.push(...(await p.shot(cx)).map((s) => ({ rule: p.rule, shot: n, ...s })));
