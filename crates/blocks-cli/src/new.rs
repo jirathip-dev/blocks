@@ -24,6 +24,7 @@ const TEMPLATES: [(&str, &str); 5] = [
         include_str!("../templates/kind/Kind.swift"),
     ),
 ];
+const STRESS: &str = "fixtures/stress/table.json";
 
 pub(crate) fn run(args: &[String]) -> Result<bool, String> {
     let [what, name] = args else {
@@ -57,9 +58,32 @@ pub(crate) fn run(args: &[String]) -> Result<bool, String> {
             return Err(format!("{path}: exists already"));
         }
     }
+    let table = std::fs::read_to_string(STRESS).map_err(|e| format!("{STRESS}: {e}"))?;
+    let table = stressed(&table, name, &fill(include_str!("../templates/kind/stress.json")))
+        .ok_or_else(|| format!("{STRESS}: not one row a line, or a row for {name} already"))?;
     for (path, text) in &files {
         std::fs::write(path, text).map_err(|e| format!("{path}: {e}"))?;
         writeln!(std::io::stdout(), "{path}").map_err(|e| e.to_string())?;
     }
+    std::fs::write(STRESS, table).map_err(|e| format!("{STRESS}: {e}"))?;
+    writeln!(std::io::stdout(), "{STRESS}").map_err(|e| e.to_string())?;
     Ok(true)
+}
+
+fn stressed(table: &str, name: &str, row: &str) -> Option<String> {
+    let mut lines: Vec<String> = table.lines().map(str::to_string).collect();
+    let rows = lines.len().checked_sub(1)?;
+    let key = |l: &String| l.strip_prefix("  \"")?.split_once('"').map(|(k, _)| k.to_string());
+    let keys: Vec<String> = lines.get(1..rows)?.iter().map(key).collect::<Option<_>>()?;
+    if keys.iter().any(|k| k == name) {
+        return None;
+    }
+    let row = row.trim_end();
+    if let Some(at) = keys.iter().position(|k| k.as_str() > name) {
+        lines.insert(at + 1, format!("{row},"));
+    } else {
+        lines.get_mut(rows - 1)?.push(',');
+        lines.insert(rows, row.into());
+    }
+    Some(lines.join("\n") + "\n")
 }
