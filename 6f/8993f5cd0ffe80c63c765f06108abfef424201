@@ -1,0 +1,6 @@
+Decided: merged origin/staging (#187 form v2 F1), keeping both import lists in kind/sample.rs and kind/table.rs and rebuilding web/dist.
+Because: crates/blocks/src/kind/table.rs:7
+Decided: staging build fix: the grid's Swift rules name Foundation.Locale, since #187 added a Blocks.Locale that hides it.
+Because: swift/Sources/Blocks/Kind/Table+Rules.swift:67
+Rejected: none
+Owner: brings the editable grid up to date with the new form fields; nothing new for users.
