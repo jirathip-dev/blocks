@@ -80,10 +80,10 @@ export function apply(screen: Block, ops: Op[]): Block | undefined {
         out = structuredClone(op.screen);
         break;
       case "badge":
-      case "dot":
+        if (root.type === "screen") root.badge = op.count;
         break;
       default:
-        return undefined;
+        if (op.op !== "dot") return undefined;
     }
   }
   return out;

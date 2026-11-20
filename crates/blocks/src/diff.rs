@@ -1,67 +1,84 @@
 use std::collections::HashMap;
 
-use crate::kind::{Block, Screen, Table, TableRow};
+use serde_json::Value;
+
+use crate::kind::{Block, Fields, Table, TableRow};
 use crate::patch::apply;
 use crate::wire::{Child, Op};
 
-/// The ops that turn `old` into `new` in the root's own list, else one `screen` op.
+/// The smallest ops that turn `old` into `new`, recursing into nested lists by id, else one `screen` op.
 pub fn diff(old: &Block, new: &Block) -> Vec<Op> {
-    Some(())
-        .filter(|()| same_frame(old, new))
-        .and_then(|()| list_ops(old, new))
-        .filter(|ops| {
-            let mut s = old.clone();
-            apply(&mut s, ops).is_ok() && &s == new
-        })
+    root_ops(old, new)
+        .filter(|ops| applies(old, ops, new))
         .unwrap_or_else(|| vec![Op::Screen { screen: new.clone() }])
 }
 
-fn same_frame(old: &Block, new: &Block) -> bool {
-    let (Block::Screen(a), Block::Screen(b)) = (old, new) else {
-        return true;
+fn applies(old: &Block, ops: &[Op], new: &Block) -> bool {
+    let mut s = old.clone();
+    apply(&mut s, ops).is_ok() && &s == new
+}
+
+fn root_ops(old: &Block, new: &Block) -> Option<Vec<Op>> {
+    let mut fields = own_fields(old, new)?;
+    let badge = match (new, fields.remove("badge")) {
+        (Block::Screen(_), Some(v)) => Some(Op::Badge { count: v.as_u64()? }),
+        (_, Some(_)) => return None,
+        (_, None) => None,
     };
-    let Screen {
-        id,
-        title,
-        large,
-        state,
-        stream,
-        actions,
-        blocks: _,
-        back,
-        done,
-        refresh,
-        pending,
-        focus,
-        badge,
-        source,
-        url,
-        sites,
-        personas,
-        threads,
-        locale,
-        show,
-        more,
-    } = &**a;
-    (id, title, large, state, stream, actions, back, done, refresh)
-        == (
-            &b.id, &b.title, &b.large, &b.state, &b.stream, &b.actions, &b.back, &b.done, &b.refresh,
-        )
-        && (
-            pending, focus, badge, source, url, sites, personas, threads, locale, show, more,
-        ) == (
-            &b.pending,
-            &b.focus,
-            &b.badge,
-            &b.source,
-            &b.url,
-            &b.sites,
-            &b.personas,
-            &b.threads,
-            &b.locale,
-            &b.show,
-            &b.more,
-        )
+    if !fields.is_empty() {
+        return None;
+    }
+    Some(badge.into_iter().chain(kid_ops(old, new)?).collect())
+}
+
+fn own_fields(old: &Block, new: &Block) -> Option<Fields> {
+    let (Ok(Value::Object(mut a)), Ok(Value::Object(mut b))) = (serde_json::to_value(old), serde_json::to_value(new))
+    else {
+        return None;
+    };
+    if old.kids().or(new.kids()).is_some() {
+        let key = if matches!(new, Block::List(_)) {
+            "rows"
+        } else {
+            "blocks"
+        };
+        a.remove(key);
+        b.remove(key);
+    }
+    if a.get("type") != b.get("type") {
+        return None;
+    }
+    let gone: Vec<String> = a.keys().filter(|k| !b.contains_key(*k)).cloned().collect();
+    let mut out: Fields = b.into_iter().filter(|(k, v)| a.get(k) != Some(v)).collect();
+    out.extend(gone.into_iter().map(|k| (k, Value::Null)));
+    Some(out)
+}
+
+fn kid_ops(old: &Block, new: &Block) -> Option<Vec<Op>> {
+    if old.kids() == new.kids() {
+        return Some(vec![]);
+    }
+    list_ops(old, new)
+}
+
+fn changed(old: &Block, new: &Block, id: &str) -> Vec<Op> {
+    match (old, new) {
+        (Block::Table(_), Block::Table(_)) => row_ops(old, new),
+        _ => block_ops(old, new, id),
+    }
+    .filter(|ops| applies(old, ops, new))
+    .unwrap_or_else(|| {
+        vec![Op::Replace {
+            id: id.into(),
+            block: new.clone(),
+        }]
+    })
+}
+
+fn block_ops(old: &Block, new: &Block, id: &str) -> Option<Vec<Op>> {
+    let fields = own_fields(old, new)?;
+    let merge = (!fields.is_empty()).then(|| Op::Merge { id: id.into(), fields });
+    Some(merge.into_iter().chain(kid_ops(old, new)?).collect())
 }
 
 fn ids(list: &[Block]) -> Option<HashMap<&str, (usize, &Block)>> {
@@ -88,12 +105,7 @@ fn list_ops(old: &Block, new: &Block) -> Option<Vec<Op>> {
         match by_id.get(id) {
             Some((i, o)) => {
                 if *o != b {
-                    ops.extend(row_ops(o, b).unwrap_or_else(|| {
-                        vec![Op::Replace {
-                            id: id.into(),
-                            block: b.clone(),
-                        }]
-                    }));
+                    ops.extend(changed(o, b, id));
                 }
                 if stay.get(*i) != Some(&true) {
                     ops.push(Op::Move {
