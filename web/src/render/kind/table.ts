@@ -1,7 +1,7 @@
 import type { Cell, Column, SortDir, Table, TableRow, TableSort } from "../../gen/types.ts";
 import type { Ctx } from "../ctx.ts";
 import { btn, el, h } from "../dom.ts";
-import { value } from "../text.ts";
+import { value } from "../../core/text.ts";
 import { at, number, total, unit } from "../../core/table.ts";
 
 type St = { sort: TableSort | null; q: string; hidden: Set<string>; sel: Set<string>; menu: string; seen: Map<string, string>; changed: Set<string>; fresh: Set<string> };

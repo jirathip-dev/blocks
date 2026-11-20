@@ -197,3 +197,102 @@ fn the_binary_writes_the_tree_and_the_report_and_exits_1_on_a_fault_or_bad_flags
         );
     }
 }
+
+fn fixture(path: &str) -> serde_json::Value {
+    serde_json::from_str(&std::fs::read_to_string(root().join("fixtures").join(path)).unwrap()).unwrap()
+}
+
+fn sent(screen: serde_json::Value, script: serde_json::Value) -> (Vec<serde_json::Value>, Vec<String>) {
+    let mut run = Desk::new(serde_json::from_value(screen).unwrap()).run(&steps(script));
+    run.check(&Want::default());
+    assert!(run.faults.is_empty(), "{:?}", run.faults);
+    let sent = run
+        .report
+        .sent
+        .iter()
+        .map(|a| serde_json::to_value(a).unwrap())
+        .collect();
+    (sent, run.report.dropped)
+}
+
+#[test]
+fn a_scripted_tap_on_each_control_sends_the_action_its_fixture_names() {
+    let tap = |id: &str| json!([{"tap": {"id": id}}, {"shot": {"name": "s"}}]);
+    let cases = [
+        (
+            fixture("blocks/button.json"),
+            "save",
+            json!({"screen": "save", "block": "save", "action": "save"}),
+        ),
+        (
+            fixture("blocks/choice.json"),
+            "ask",
+            json!({"screen": "ask", "block": "ask", "action": "answer", "values": {"choice": "yes"}}),
+        ),
+        (
+            fixture("blocks/run.json"),
+            "run",
+            json!({"screen": "run", "block": "run", "action": "approve", "values": {"choice": "approve", "sha": "4f2a9c1"}}),
+        ),
+        (
+            json!({"type": "chips", "id": "effort", "name": "effort", "action": "pick", "options": [{"value": "low", "label": "low"}]}),
+            "effort",
+            json!({"screen": "effort", "block": "effort", "action": "pick", "values": {"effort": ["low"]}}),
+        ),
+        (
+            json!({"type": "card", "id": "c", "title": "Open", "tap": {"action": "open", "values": {"n": 1}}}),
+            "c",
+            json!({"screen": "c", "block": "c", "action": "open", "values": {"n": 1}}),
+        ),
+    ];
+    for (screen, id, want) in cases {
+        assert_eq!(sent(screen, tap(id)), (vec![want], vec![]), "{id}");
+    }
+    let (none, dropped) = sent(fixture("blocks/stat.json"), tap("open"));
+    assert_eq!((none, dropped), (vec![], vec!["tap open".to_owned()]));
+    let ids = Ids {
+        blocks: vec!["save".into()],
+        actions: vec!["save".into()],
+    };
+    let mut run = Desk::new(serde_json::from_value(fixture("blocks/button.json")).unwrap()).run(&[]);
+    run.check(&Want {
+        tree: None,
+        ids: Some(ids),
+    });
+    assert!(run.faults.is_empty(), "{:?}", run.faults);
+}
+
+#[test]
+fn the_behave_screen_through_the_stage_hides_disables_and_sets_as_the_crate_says() {
+    let screen = fixture("behave/view.json")["screen"].clone();
+    let mut run = Desk::new(serde_json::from_value(screen).unwrap()).run(&steps(json!([
+        {"shot": {"name": "start"}},
+        {"tap": {"id": "save"}},
+        {"tap": {"id": "more"}},
+        {"shot": {"name": "more"}},
+        {"tap": {"id": "more"}},
+        {"tap": {"id": "save"}}
+    ])));
+    run.check(&Want::default());
+    assert!(run.faults.is_empty(), "{:?}", run.faults);
+    let drawn = |i: usize| -> Vec<(String, Drawn)> {
+        run.shots[i]
+            .tree
+            .children
+            .iter()
+            .map(|c| (c.id.clone().unwrap(), c.drawn))
+            .collect()
+    };
+    let hidden = |i: usize| -> Vec<String> {
+        drawn(i)
+            .into_iter()
+            .filter(|(_, d)| *d == Drawn::Hidden)
+            .map(|(id, _)| id)
+            .collect()
+    };
+    assert_eq!(hidden(0), ["plans", "box"]);
+    assert_eq!(hidden(1), Vec::<String>::new());
+    assert_eq!(run.report.dropped, ["tap save", "tap more"]);
+    let sent: Vec<_> = run.report.sent.iter().map(|a| a.action.as_str()).collect();
+    assert_eq!(sent, ["save"]);
+}

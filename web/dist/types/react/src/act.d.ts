@@ -41,6 +41,7 @@ export type IslandProps = {
 };
 export type Islands = Record<string, (p: IslandProps) => ReactNode>;
 export type Ctx = {
+    screen: string;
     v: View;
     busy: ReadonlySet<string>;
     act: (a: Post) => Promise<boolean>;
