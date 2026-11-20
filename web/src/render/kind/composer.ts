@@ -1,19 +1,12 @@
 import type { Composer, Queued } from "../../gen/types.ts";
 import type { Blk } from "../../core/tree.ts";
+import { type FileRow, send as upload } from "../../core/field/files.ts";
 import { type Ctx, obj } from "../ctx.ts";
-import { btn, el, esc, h } from "../dom.ts";
+import { btn, el, h } from "../dom.ts";
 
-type Att = { name: string; type: string; data: string };
-type Draft = { files: Att[]; picks: Blk; q?: number; st?: string | undefined; steer?: boolean; stopping?: boolean };
+type Draft = { files: FileRow[]; picks: Blk; q?: number; st?: string | undefined; steer?: boolean; stopping?: boolean };
 const drafts = new Map<string, Draft>();
 const SAID: Record<string, string> = { sending: "sending…", sent: "✓ sent", failed: "not sent" };
-
-const read = (f: File) =>
-  new Promise<Att>((ok) => {
-    const r = new FileReader();
-    r.onload = () => ok({ name: f.name, type: f.type, data: String(r.result).split(",")[1] ?? "" });
-    r.readAsDataURL(f);
-  });
 
 export function composer(b: Composer, c: Ctx): HTMLElement {
   const key = `draft:${c.screen}:${String(b.id)}:text`;
@@ -32,14 +25,15 @@ export function composer(b: Composer, c: Ctx): HTMLElement {
   Object.assign(pick, { type: "file", multiple: true, hidden: true });
   const post = async (action: string, values: Blk, x?: HTMLElement) => c.act({ action, block: b.id, values: { ...b.values, ...values } }, x);
   const row = el("div", "cr");
-  const add = btn("+");
+  const add = Object.assign(btn("+"), { disabled: !c.file });
   const go = btn("", "primary", undefined, b.action);
   const st = btn("steer");
   const send = async (steer = false) => {
-    if (!ta.value.trim() && !d.files.length) return;
+    const done = d.files.filter((r) => r.state === "done");
+    if ((!ta.value.trim() && !done.length) || d.files.some((r) => r.state === "uploading")) return;
     const queue = !steer && (b.working || d.q != null) ? act("queue") : "";
     const action = steer ? act("steer") : queue || b.action;
-    const v: Blk = { ...d.picks, text: ta.value, name: d.files.map((x) => x.name).join("/"), data: d.files.map((x) => x.data).join(",") };
+    const v: Blk = { ...d.picks, text: ta.value, files: done.map(({ id, name, src }) => ({ id, name, src: src ?? null })) };
     if (queue && d.q != null) v["q"] = d.q;
     [d.st, d.steer] = ["sending", false];
     draw();
@@ -61,10 +55,11 @@ export function composer(b: Composer, c: Ctx): HTMLElement {
     e.preventDefault();
     send();
   };
-  pick.onchange = async () => {
-    d.files = [...d.files, ...(await Promise.all(Array.from(pick.files ?? []).map(read)))].slice(0, 10);
-    pick.value = "";
-    d.st = "";
+  pick.onchange = () => {
+    const fresh = Array.from(pick.files ?? [], (blob): FileRow => ({ name: blob.name, size: blob.size, mime: blob.type, state: "uploading", part: 0, blob })).slice(0, 10 - d.files.length);
+    d.files = [...d.files, ...fresh];
+    [pick.value, d.st] = ["", ""];
+    for (const r of fresh) if (c.file) upload(r, c.file, { screen: c.screen, block: b.id ?? undefined, field: "files" }, draw);
     draw();
   };
   add.setAttribute("aria-label", "attach");
@@ -131,11 +126,11 @@ export function composer(b: Composer, c: Ctx): HTMLElement {
   function attached(): HTMLElement {
     const th = el("div", "th");
     d.files.forEach((a, i) => {
-      const t = el("span", "tb", a.type.startsWith("image/") ? `<img alt="${esc(a.name)}" src="data:${esc(a.type)};base64,${esc(a.data)}">` : `<span>${esc(a.name)}</span>`);
+      const t = h("span", `tb ${a.state}`, a.src ? Object.assign(el("img"), { alt: a.name, src: a.src }) : h("span", "", a.name));
       const x = btn("×");
       x.setAttribute("aria-label", `remove ${a.name}`);
       x.onclick = () => {
-        d.files.splice(i, 1);
+        d.files.splice(i, 1)[0]?.stop?.abort();
         draw();
       };
       t.append(x);
