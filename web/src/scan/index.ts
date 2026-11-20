@@ -9,8 +9,10 @@ export type Scanned = { pdf: Blob; pages: Page[] };
 /// What the scanner is opened with: the field's label, its page limit, its words, and the pages of an earlier scan.
 export type Opts = { label: string; max: number; w(key: string): string; pages?: Page[] | undefined };
 
-type Ask = { op: "find"; frame: ImageBitmap } | { op: "page"; photo: ImageBitmap; quad: Quad } | { op: "pdf"; pages: Uint8Array[] };
-type Reply = { id: number; quad?: Quad | null; jpeg?: Blob; pdf?: Blob; made?: number };
+type Pic = { op: "find" } | { op: "page"; quad: Quad };
+type Ask = (Pic & { photo: ImageBitmap }) | { op: "pdf"; pages: Uint8Array[] };
+type Sent = { id: number } & (Ask | (Pic & { photo?: undefined }));
+type Reply = { id: number; quad?: Quad | null; jpeg?: Blob; pdf?: Blob; made?: number; T?: number[] };
 type Edit = { photo: ImageBitmap; quad: Quad; auto: Quad; at: number };
 type S = {
   o: Opts;
@@ -44,19 +46,24 @@ const pixels = (b: ImageBitmap, long = Infinity) => {
 
 async function work(a: Ask, made: (n: number) => void): Promise<Omit<Reply, "id">> {
   if (a.op === "find") {
-    const { k, img } = pixels(a.frame, 640), q = corners(img);
-    return { quad: q ? scaled(q, k) : null };
+    const T = [performance.now()];
+    const { k, img } = pixels(a.photo, 640); T.push(performance.now());
+    const q = corners(img); T.push(performance.now());
+    return { quad: q ? scaled(q, k) : null, T: T.slice(1).map((v, j) => Math.round(v - (T[j] ?? 0))) };
   }
   if (a.op === "page") {
+    const T = [performance.now()];
     const xs = a.quad.map(([x]) => x), ys = a.quad.map(([, y]) => y), x0 = Math.max(0, Math.floor(Math.min(...xs))), y0 = Math.max(0, Math.floor(Math.min(...ys)));
     const sw = Math.min(a.photo.width, Math.ceil(Math.max(...xs))) - x0, sh = Math.min(a.photo.height, Math.ceil(Math.max(...ys))) - y0;
     const k = Math.min(1, Math.max(...A4) / Math.max(sw, sh, 1)), crop = new OffscreenCanvas(Math.max(1, Math.round(sw * k)), Math.max(1, Math.round(sh * k)));
     const cx = crop.getContext("2d", { willReadFrequently: true });
-    cx?.drawImage(a.photo, x0, y0, sw, sh, 0, 0, crop.width, crop.height);
+    cx?.drawImage(a.photo, x0, y0, sw, sh, 0, 0, crop.width, crop.height); T.push(performance.now());
+    const id0 = cx?.getImageData(0, 0, crop.width, crop.height) ?? new ImageData(1, 1); T.push(performance.now());
     const f = ([x, y]: Pt): Pt => [(x - x0) * k, (y - y0) * k], [p, q, r, t] = a.quad;
-    const c = new OffscreenCanvas(A4[0], A4[1]), page = warp(cx?.getImageData(0, 0, crop.width, crop.height) ?? new ImageData(1, 1), [f(p), f(q), f(r), f(t)]);
-    c.getContext("2d")?.putImageData(new ImageData(page.data, A4[0], A4[1]), 0, 0);
-    return { jpeg: await c.convertToBlob({ type: "image/jpeg", quality: 0.8 }) };
+    const c = new OffscreenCanvas(A4[0], A4[1]), page = warp(id0, [f(p), f(q), f(r), f(t)]); T.push(performance.now());
+    c.getContext("2d")?.putImageData(new ImageData(page.data, A4[0], A4[1]), 0, 0); T.push(performance.now());
+    const jpeg = await c.convertToBlob({ type: "image/jpeg", quality: 0.8 }); T.push(performance.now());
+    return { jpeg, T: T.slice(1).map((v, j) => Math.round(v - (T[j] ?? 0))) };
   }
   const jpegs = [];
   for (const bytes of a.pages) made(jpegs.push({ bytes, width: A4[0], height: A4[1] }));
@@ -64,12 +71,14 @@ async function work(a: Ask, made: (n: number) => void): Promise<Omit<Reply, "id"
 }
 
 if (typeof document === "undefined")
-  addEventListener("message", (e: MessageEvent<Ask & { id: number }>) => {
-    const id = e.data.id;
-    work(e.data, (made) => postMessage({ id, made })).then((out) => postMessage({ id, ...out }));
+  addEventListener("message", (e: MessageEvent<Sent>) => {
+    const s = e.data, id = s.id;
+    if (s.op !== "pdf") kept = s.photo ?? kept;
+    const a: Ask | undefined = s.op === "pdf" ? s : kept && { ...s, photo: kept };
+    if (a) work(a, (made) => postMessage({ id, made })).then((out) => postMessage({ id, ...out }));
   });
 
-let worker: Worker | undefined, seq = 0;
+let worker: Worker | undefined, seq = 0, kept: ImageBitmap | undefined;
 const waiting = new Map<number, { done(r: Reply): void; made?: ((n: number) => void) | undefined }>();
 function ask(a: Ask, made?: (n: number) => void): Promise<Reply> {
   if (!worker) {
@@ -81,15 +90,19 @@ function ask(a: Ask, made?: (n: number) => void): Promise<Reply> {
       w?.done(e.data);
     };
   }
-  const id = ++seq;
-  worker.postMessage({ ...a, id });
+  const id = ++seq, same = a.op !== "pdf" && a.photo === kept;
+  if (a.op !== "pdf") kept = a.photo;
+  const sent: Sent = same ? { ...a, photo: undefined, id } : { ...a, id };
+  worker.postMessage(sent);
   return new Promise((done) => waiting.set(id, { done, made }));
 }
 /// The corners found in `photo`, or the frame's inset when none are.
-export const quadOf = async (photo: ImageBitmap): Promise<Quad> => (await ask({ op: "find", frame: photo })).quad ?? inset(photo.width, photo.height);
+export const PROF: unknown[] = [];
+export const quadOf = async (photo: ImageBitmap): Promise<Quad> => { const t = performance.now(), r = await ask({ op: "find", photo }); PROF.push(["find", Math.round(performance.now() - t), r.T]); return r.quad ?? inset(photo.width, photo.height); };
 /// The page inside `quad` in `photo`, corrected to A4 and drawn to a JPEG in the worker.
 export const pageOf = async (photo: ImageBitmap, quad: Quad, auto: Quad): Promise<Page> => {
-  const jpeg = new Uint8Array((await (await ask({ op: "page", photo, quad })).jpeg?.arrayBuffer()) ?? new ArrayBuffer(0));
+  const t = performance.now(), r = await ask({ op: "page", photo, quad }); PROF.push(["page", Math.round(performance.now() - t), r.T]);
+  const jpeg = new Uint8Array((await r.jpeg?.arrayBuffer()) ?? new ArrayBuffer(0));
   return { photo, quad, auto, jpeg, url: URL.createObjectURL(new Blob([jpeg], { type: "image/jpeg" })) };
 };
 
@@ -329,7 +342,7 @@ async function look(s: S) {
     const t = performance.now(), [vw, vh] = [s.video.videoWidth, s.video.videoHeight];
     if (s.step === "capture" && vw) {
       const k = 640 / Math.max(vw, vh), frame = await createImageBitmap(s.video, { resizeWidth: Math.round(vw * k), resizeHeight: Math.round(vh * k) });
-      const q = (await ask({ op: "find", frame })).quad, was = !!s.live;
+      const q = (await ask({ op: "find", photo: frame })).quad, was = !!s.live;
       s.live = q ? scaled(q, k) : null;
       const shape = s.box.querySelector(".snv.found .snq, .snv.seek .snq");
       if (was !== !!s.live) paint(s);
