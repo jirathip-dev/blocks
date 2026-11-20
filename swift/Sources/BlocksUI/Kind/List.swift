@@ -13,6 +13,8 @@ internal struct ListBlock: View {
         return held.compactMap { id in all.first { $0.key == id } } + all.filter { !held.contains($0.key) }
     }
 
+    private var page: Page? { if case .page(let p) = block.more { p } else { nil } }
+
     internal var body: some View {
         Group {
             if let tiles = look.tiles {
@@ -25,12 +27,14 @@ internal struct ListBlock: View {
                             BlockNode(block: item.row)
                         }
                     }
+                    if let page { MoreRow(page: page, held: held != nil) }
                 }
             } else {
                 lines(rows)
             }
         }
         .animation(still ? nil : .snappy, value: held)
+        .modifier(PageSaid(count: block.rows.count, paging: page != nil))
     }
 
     @ViewBuilder
@@ -55,10 +59,11 @@ internal struct ListBlock: View {
                 } else {
                     BlockNode(block: item.row)
                 }
-                if index < rows.count - 1 {
+                if index < rows.count - 1 || page != nil {
                     Rectangle().fill(look.palette.line).frame(height: 0.5).padding(.leading, 12)
                 }
             }
+            if let page { MoreRow(page: page, held: held != nil) }
         }
         .surface(look, radius: 16)
     }

@@ -1,6 +1,6 @@
 use crate::gesture::{Dir, Nudge, Rules, Word};
 use crate::kind::sample::text;
-use crate::kind::{Block, Gesture, LaneState, Link, Round, RoundLane, Tap};
+use crate::kind::{Block, Gesture, LaneState, Link, More, Round, RoundLane, Tap};
 
 listed! { 3: List(List) = "list" }
 
@@ -11,7 +11,7 @@ kind! {
         rows: Vec<Block>,
         reorder: Option<Gesture>,
         #[serde(rename = "more")]
-        next: Option<String>,
+        next: Option<More>,
     }
 }
 

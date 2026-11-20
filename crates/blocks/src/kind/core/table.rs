@@ -6,7 +6,7 @@ use serde_json::Number;
 
 use crate::expr::{eval, Expr, Lit};
 use crate::gesture::{Dir, Nudge, Rules, Word};
-use crate::kind::{Block, Era, Fallback, Gesture, Label, Shown, Tap, Tone};
+use crate::kind::{Block, Era, Fallback, Gesture, Label, Page, Shown, Tap, Tone};
 
 listed! { 28: Table(Table) = "table" }
 
@@ -112,6 +112,8 @@ kind! {
         edit: Option<Gesture>,
         reorder: Option<Gesture>,
         calc: Option<BTreeMap<String, Expr>>,
+        #[serde(rename = "more")]
+        next: Option<Page>,
     }
 }
 
@@ -833,6 +835,53 @@ fn grid() -> Block {
     Block::Table(Box::new(table))
 }
 
+fn paged() -> Block {
+    let col = |id: &str, label: &str, kind: ColumnKind| Column {
+        id: id.into(),
+        label: label.into(),
+        kind,
+        ..Column::default()
+    };
+    let hours = Column {
+        total: Some(Total::Sum),
+        ..col("hours", "Hours", ColumnKind::Number)
+    };
+    let columns = vec![
+        col("req", "Request", ColumnKind::Text),
+        col("who", "Employee", ColumnKind::Text),
+        col("status", "Status", ColumnKind::Tone),
+        hours,
+    ];
+    let row = |id: &str, who: &str, status: &str, tone: Tone, hours: u32| TableRow {
+        id: id.into(),
+        cells: BTreeMap::from([
+            ("req".to_string(), Cell::Text(id.into())),
+            ("who".into(), Cell::Text(who.into())),
+            (
+                "status".into(),
+                Cell::Label(Label {
+                    text: status.into(),
+                    tone: Some(tone),
+                }),
+            ),
+            ("hours".into(), Cell::Number(hours.into())),
+        ]),
+        ..TableRow::default()
+    };
+    let rows = vec![
+        row("OT-2400", "Somchai P.", "pending", Tone::Warn, 2),
+        row("OT-2399", "Nattaya K.", "pending", Tone::Warn, 3),
+        row("OT-2398", "Arthit W.", "approved", Tone::Ok, 4),
+        row("OT-2397", "Wanida T.", "rejected", Tone::Bad, 2),
+    ];
+    let more = Page {
+        action: "ot-more".into(),
+        cursor: "c:2397".into(),
+    };
+    let table = Table::new(columns, rows).id("ot").title("OT requests").next(more);
+    Block::Table(Box::new(table))
+}
+
 fn table() -> Block {
     let label = |text: &str, tone: Tone| {
         Cell::Label(Label {
@@ -904,5 +953,5 @@ fn table() -> Block {
 }
 
 pub(super) fn sample() -> Vec<Block> {
-    vec![table(), grid()]
+    vec![table(), grid(), paged()]
 }
