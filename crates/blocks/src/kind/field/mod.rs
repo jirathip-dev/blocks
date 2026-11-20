@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::{Check, Fields};
+use super::Check;
 use crate::expr::Expr;
 
 mod picker;
