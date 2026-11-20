@@ -1,0 +1,55 @@
+/* The playground's own rules: tokens only, no raw colour. Impl moves them into site/site.css. */
+.pg-head,.pg-tools{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px}
+.pg-gap{flex:1}
+.pg-seg{display:flex;align-items:center;gap:0}
+.pg-seg>button{margin:0;font-size:13px;padding:5px 12px;min-height:0;line-height:20px}
+.pg-seg>button+button{margin-left:-1px}
+.pg-seg__label{font-size:12px;font-weight:650;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);margin-right:10px}
+.pg-seg>button[aria-pressed=true]{background:var(--l);border-color:var(--l);color:var(--bg)}
+.pg-from,.pg-cap,.pg-empty{margin:0;font-size:13px;color:var(--mute)}
+.pg-edit,.pg-prev{display:flex;flex-direction:column;gap:12px;min-width:0}
+.pg-ed{--lh:20px;--rows:28;display:grid;grid-template-columns:auto 1fr;font:13px/var(--lh) ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--bg);border:1px solid var(--edge);border-radius:var(--radius);overflow:hidden;height:calc(var(--rows) * var(--lh) + 20px)}
+.pg-ed:focus-within{outline:2px solid var(--l);outline-offset:-1px}
+.pg-ed.ro{height:auto;max-height:calc(var(--rows) * var(--lh) + 20px)}
+.pg-gut{padding:10px 0;min-width:4ch;text-align:right;color:var(--mute);border-right:1px solid var(--line);user-select:none}
+.pg-gut>i{display:block;font-style:normal;padding:0 10px 0 13px;font-variant-numeric:tabular-nums}
+.pg-gut>i.err{color:var(--r);font-weight:650;box-shadow:inset 3px 0 0 var(--r)}
+.pg-text{position:relative;overflow:hidden}
+.pg-code,.pg-area{margin:0;padding:10px 12px;font:inherit;white-space:pre;tab-size:2}
+.pg-code{position:absolute;inset:0;pointer-events:none;color:var(--fg);overflow:visible}
+.pg-area{position:relative;display:block;width:100%;height:100%;box-sizing:border-box;border:0;outline:0;resize:none;background:none;color:transparent;caret-color:var(--fg);overflow:auto}
+.pg-ed.ro .pg-area{display:none}
+.pg-ed.ro .pg-code{position:static;overflow:auto}
+.pg-code .k{color:var(--fk-c)}
+.pg-code .s{color:var(--fk-g)}
+.pg-code .n{color:var(--fk-a)}
+.pg-code .l,.pg-code .kw{color:var(--fk-p)}
+.pg-code .ty{color:var(--fk-c)}
+.pg-code .mc{color:var(--fk-l);font-weight:650}
+.pg-code .p{color:var(--mute)}
+.pg-mark{position:absolute;left:12px;top:calc(10px + var(--line) * var(--lh));white-space:pre;color:transparent}
+.pg-bad{text-decoration:underline wavy var(--r) 1.5px;text-underline-offset:4px;text-decoration-skip-ink:none}
+.pg-status{margin:0;font-size:13px;color:var(--mute);min-height:20px}
+.pg-status.bad{color:var(--r);font-weight:600;box-shadow:inset 3px 0 0 var(--r);padding-left:10px}
+.pg-note{margin:0;font-size:13px;color:var(--mute);border:1px dashed var(--edge);padding:6px 10px}
+.pg-link{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px}
+.pg-url{flex:1 1 240px;min-width:0;font:12px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--fg);background:var(--bg);border:1px solid var(--edge);border-radius:var(--radius);padding:6px 8px}
+.pg-ok{font-size:13px;color:var(--g)}
+.pg-rust{display:flex;flex-direction:column;gap:12px}
+.pg-path{margin:0 0 6px;font:12px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace}
+.pg-path a{color:var(--link)}
+.pg-stage{position:relative;overflow:hidden;border:1px solid var(--edge);background:var(--bg)}
+.pg-frame{display:block;border:0;transform-origin:0 0}
+.pg-pick{gap:6px}
+.pg-pick>button{font:13px/1 ui-monospace,SFMono-Regular,Menlo,monospace}
+.pg-head>button{margin:0;font-size:13px;padding:5px 12px;line-height:20px}
+.pg-head>button:disabled{opacity:.5}
+.pg-share>span::before{content:"↗ ";color:var(--mute)}
+[data-id=pair-play]{grid-template-columns:minmax(0,5fr) minmax(0,7fr)}
+.pg-tabbed{display:flex;flex-direction:column;gap:12px}
+.pg-sheet{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--seam)}
+.pg-state{background:var(--card);border:1px solid var(--edge);padding:var(--sp);display:flex;flex-direction:column;gap:12px;min-width:0}
+.pg-state>h3{margin:0}
+.pg-state .pg-edit,.pg-state .pg-prev{padding:0;border:0;background:none}
+@media (max-width:760px){[data-id=pair-play],.pg-sheet{grid-template-columns:minmax(0,1fr)}.pg-tools{gap:8px}.pg-seg__label{display:none}}
+.pg-open{font-size:14px;color:var(--link)}
