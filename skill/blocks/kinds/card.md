@@ -18,7 +18,7 @@ The Rust type `Card`; in TS, `card(fields: Card)` from `web/src/gen/builders.ts`
 | `meta` | `Shown` | optional |
 | `push` | `boolean` | optional |
 | `show` | `Expr` | optional |
-| `subtitle` | `string` | optional |
+| `subtitle` | `Toned` | optional |
 | `tap` | `Tap` | optional |
 | `title` | `string` | optional |
 | `tone` | `Tone` | optional |

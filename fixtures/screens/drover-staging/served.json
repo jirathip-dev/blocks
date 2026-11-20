@@ -1,0 +1,56 @@
+{
+  "type": "screen",
+  "id": "served",
+  "title": "Served",
+  "blocks": [
+    {
+      "type": "card",
+      "id": "fleet-acme-api",
+      "tone": "warn",
+      "title": "acme-api",
+      "subtitle": { "text": "drive late: last pass 12m ago", "tone": "warn" },
+      "buttons": [
+        { "type": "button", "id": "drive-acme-api", "label": "Drive now", "style": "primary", "action": "drive", "values": { "fleet": "acme-api" } }
+      ]
+    },
+    {
+      "type": "card",
+      "id": "fleet-docs",
+      "tone": "accent",
+      "title": "docs",
+      "subtitle": "drive: every 5 minutes"
+    },
+    {
+      "type": "diagram",
+      "id": "states",
+      "source": "stateDiagram-v2\n  queued --> impl\n  impl --> review\n  review --> k_review_rounds\n  k_review_rounds: review_rounds",
+      "counts": { "impl": 2, "queued": 5 },
+      "nodes": [{ "id": "k_review_rounds", "limit": "review_rounds" }]
+    },
+    {
+      "type": "button",
+      "id": "older",
+      "label": "↑ older messages",
+      "tap": { "open": "/screens/threads/t135?before=40", "keep": true }
+    },
+    {
+      "type": "section",
+      "id": "today",
+      "header": "today",
+      "blocks": [
+        {
+          "type": "list",
+          "id": "ev",
+          "rows": [{ "type": "row", "id": "ev-1", "title": "merged #21" }],
+          "more": "/screens/events?after=1763600000.3"
+        }
+      ]
+    },
+    {
+      "type": "form",
+      "id": "bl-acme-api",
+      "fields": [{ "type": "toggle", "name": "acme-api.pick.31", "label": "#31 Cache the search index", "value": false }],
+      "more": "/screens/backlog?after=31.0&repo=acme-api"
+    }
+  ]
+}
