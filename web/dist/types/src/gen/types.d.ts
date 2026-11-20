@@ -502,7 +502,7 @@ export type Link = {
 };
 export type List = {
     id?: string | null;
-    more?: string | null;
+    more?: More | null;
     reorder?: Gesture | null;
     rows: Block[];
     show?: Expr | null;
@@ -547,6 +547,7 @@ export type Media = {
     video?: boolean | null;
     width: number;
 };
+export type More = string | Page;
 export type Nav = {
     brand?: NavLink | null;
     id?: string | null;
@@ -619,6 +620,10 @@ export type OtherField = {
     show?: Expr | null;
     type: string;
     was?: string | null;
+};
+export type Page = {
+    action: string;
+    cursor: string;
 };
 export type Part = {
     part: "heading";
@@ -959,6 +964,7 @@ export type Table = {
     export?: ExportFormat[] | null;
     filter?: boolean | null;
     id?: string | null;
+    more?: Page | null;
     reorder?: Gesture | null;
     rows: TableRow[];
     select?: TableSelect | null;

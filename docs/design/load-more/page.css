@@ -1,0 +1,26 @@
+/* The host page for these previews only: the default pair (../neutral-default/tokens.css) under web/dist/blocks.css, a system font. */
+body{margin:0;color:var(--fg);font:13px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+.vp{overflow:hidden}
+main{max-width:1120px;margin:0 auto;padding:var(--s4);display:flex;flex-direction:column;gap:var(--seam)}
+main>*{min-width:0}
+.tile{background:var(--card);border:1px solid var(--edge);padding:var(--s2) var(--s3)}
+.tile>.tabh{margin:0}.tw{font-weight:700}
+@container (width >= 600px){.tbw{max-height:520px}}
+main>.tbl,.case>.tbl,.case>.list{margin:0}
+.case{display:flex;flex-direction:column;gap:var(--s1);margin-top:var(--s3)}
+.case>.sh{margin:0 0 var(--s1)}.case>.sh b{color:var(--fg)}
+.duo{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s4);align-items:start}
+.duo>*{margin:0;min-width:0;display:flex;flex-direction:column;gap:var(--s1)}
+.note{color:var(--mute);font-size:var(--fs-meta);margin:0}
+.said{margin:0;font-size:var(--fs-meta);color:var(--fg)}.said>span{color:var(--mute)}
+@container (width >= 600px){.tbl tr.fx>td{box-shadow:inset 0 var(--ring) var(--l),inset 0 calc(var(--ring) * -1) var(--l)}.tbl tr.fx>td:first-child{box-shadow:inset var(--ring) var(--ring) var(--l),inset 0 calc(var(--ring) * -1) var(--l)}.tbl tr.fx>td:last-child{box-shadow:inset calc(var(--ring) * -1) var(--ring) var(--l),inset 0 calc(var(--ring) * -1) var(--l)}}
+.list>.chg{box-shadow:inset 3px 0 0 var(--l)}
+.list>.fx{outline:var(--ring) solid var(--l);outline-offset:calc(var(--ring) * -1)}
+.phone{max-width:390px}
+.case>.tst{margin:var(--s1) 0 0;max-width:520px}
+@media (max-width:600px){main{padding:var(--s2)}.duo{grid-template-columns:minmax(0,1fr)}}
+@container (width < 600px){.tbl tr.fx{outline:var(--ring) solid var(--l);outline-offset:calc(var(--ring) * -1)}}
+/* Preview-only: undo two clashes in today's product CSS (chart's global .chg and editor's global .ed also hit .tbl rows and .tbl.ed); see the README. */
+@container (width >= 600px){.tbl tr.chg{display:table-row}}
+.tbl.ed{margin:0;padding:0;font:inherit;background:var(--card);cursor:auto}
+.room{padding-bottom:calc(var(--hit) * 4)}

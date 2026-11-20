@@ -68,6 +68,12 @@ extension Blocks.Table {
         return out + by(run)
     }
 
+    internal func totalWord(_ shown: Int) -> String {
+        guard more != nil else { return "Total" }
+        let n = rows.filter { $0.group != true }.count
+        return shown < n ? "Total of \(shown) shown" : "Total of \(n) loaded"
+    }
+
     internal func barMax(_ c: Column) -> Double {
         c.max ?? rows.compactMap { if case .number(let n) = $0.cells[c.id] { n } else { nil } }.reduce(1, Swift.max)
     }
@@ -128,6 +134,7 @@ internal struct TableBlock: View {
         .surface(look, radius: 0)
         .onChange(of: q) { ticked.formIntersection(kept.map(\.id)) }
         .onChange(of: block.rows) { grid.refused = nil }
+        .modifier(PageSaid(count: block.rows.count, paging: block.more != nil))
         .sheet(isPresented: Binding { grid.sheet != nil } set: { if !$0 { grid.sheet = nil } }) {
             if let r = rows.first(where: { $0.id == grid.sheet }) { TableSheet(block: block, row: r, thai: thai, grid: $grid) }
         }
@@ -155,7 +162,7 @@ internal struct TableBar: View {
         HStack(spacing: 10) {
             if ticks.isEmpty {
                 Text(block.title ?? "").ui(15, .bold, look)
-                Text(q.isEmpty ? "\(n) row\(n == 1 ? "" : "s")" : "\(shown) of \(n) rows").ui(12, .regular, look).foregroundStyle(look.palette.mute)
+                Text(count(n)).ui(12, .regular, look).foregroundStyle(look.palette.mute)
                 if block.reorder != nil, sort != nil || !q.isEmpty {
                     Text("\(sort != nil ? "sorted" : "filtered"), so rows stay put").ui(Scale.meta, .regular, look).foregroundStyle(look.palette.mute)
                     Button("as sent") { (sort, q) = (nil, "") }
@@ -164,6 +171,7 @@ internal struct TableBar: View {
                 if n > 0 { controls }
             } else {
                 Text("\(ticks.count) selected").ui(15, .bold, look)
+                if block.more != nil { Text("of \(n) loaded").foregroundStyle(look.palette.mute) }
                 ForEach(block.select?.actions ?? [], id: \.action) { a in
                     Button(a.label) { send(a.action, ["rows": .array(ticks.map(JSONValue.string))]) }
                         .foregroundStyle(a.bad == true ? look.palette.red : look.palette.foreground)
@@ -174,6 +182,11 @@ internal struct TableBar: View {
             if !ticks.isEmpty { Button("clear") { ticked = [] } }
         }
         .buttonStyle(.plain).ui(13, .regular, look).padding(12)
+    }
+
+    private func count(_ n: Int) -> String {
+        guard block.more != nil else { return q.isEmpty ? "\(n) row\(n == 1 ? "" : "s")" : "\(shown) of \(n) rows" }
+        return q.isEmpty ? "\(n) loaded, more below\(sort != nil ? " · sorted among these" : "")" : "\(shown) of \(n) loaded"
     }
 
     @ViewBuilder private var controls: some View {
@@ -297,13 +310,16 @@ internal struct TableGrid: View {
                 }
                 .fontWeight(r.group == true ? .semibold : nil)
             }
+            if let page = block.more {
+                GridRow { MoreRow(page: page, held: grid.busy).gridCellColumns(cols.count + (handles ? 1 : 0) + (block.select != nil ? 1 : 0)) }
+            }
             if cols.contains(where: { $0.total != nil }) {
                 GridRow {
                     if handles { Color.clear.gridCellUnsizedAxes([.horizontal, .vertical]) }
                     if block.select != nil { Color.clear.gridCellUnsizedAxes([.horizontal, .vertical]) }
                     ForEach(Array(cols.enumerated()), id: \.element.id) { i, c in
                         let t = c.total(items)
-                        Text(i == 0 ? "Total" : [t?.word, t?.value].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: " "))
+                        Text(i == 0 ? block.totalWord(items.count) : [t?.word, t?.value].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: " "))
                             .ui(14, .semibold, look).opacity(grid.waits(block, c, items) ? 0.5 : 1)
                     }
                 }
@@ -371,9 +387,13 @@ internal struct TablePhone: View {
                 .background(r.group == true ? look.palette.background : .clear)
                 Rectangle().fill(look.palette.line).frame(height: 1)
             }
+            if let page = block.more {
+                MoreRow(page: page, held: grid.busy)
+                Rectangle().fill(look.palette.line).frame(height: 1)
+            }
             if let c = part(.value).first, let t = c.total(items) {
                 HStack {
-                    Text("Total").ui(15, .semibold, look)
+                    Text(block.totalWord(items.count)).ui(15, .semibold, look)
                     Spacer()
                     Text(t.value).ui(Scale.title, .semibold, look).opacity(grid.waits(block, c, items) ? 0.5 : 1)
                 }

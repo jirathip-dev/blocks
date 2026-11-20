@@ -126,6 +126,23 @@ pub enum Toned {
     Label(Label),
 }
 
+wire! {
+    /// A table's or list's next page: the action to send and the app's opaque cursor.
+    pub struct Page {
+        action: String,
+        cursor: String,
+    }
+}
+
+/// A list's next page: a link to it, or an action that loads it in place.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
+#[serde(untagged)]
+pub enum More {
+    Link(String),
+    Page(Page),
+}
+
 impl From<&str> for Toned {
     fn from(s: &str) -> Self {
         Self::Text(s.into())
