@@ -11,6 +11,7 @@ import { render } from "./render/block.ts";
 import { type Ctx, obj, type Post, type Renderer, type Store } from "./render/ctx.ts";
 import { btn, el, h } from "./render/dom.ts";
 import { tick } from "./render/text.ts";
+import type { OnFile } from "./core/field/files.ts";
 import { settle } from "./motion.ts";
 import { stream } from "./stream.ts";
 import { toasts } from "./toasts.ts";
@@ -23,6 +24,7 @@ export { settle } from "./motion.ts";
 export { apply, patcher } from "./patch.ts";
 export { kids, render } from "./render/block.ts";
 export { el, h } from "./render/dom.ts";
+export type { OnFile, Picked } from "./core/field/files.ts";
 export { packs, plain, tiles } from "./theme.ts";
 
 /// A layout node as the server's checked `layout.json` writes it; `P` is its place, per size class or resolved.
@@ -54,6 +56,7 @@ export type Mount = {
   theme?: Theme;
   schemes?: Record<string, Scheme>;
   store?: Store;
+  file?: OnFile;
 };
 
 type View = { source: string; path: string; back: string[]; open: Set<string>; box: HTMLElement; body: HTMLElement; model?: Block; built: Set<string>; held: Map<string, Held>; view: Map<string, Record<string, unknown>>; stop?: () => void; sync: () => void };
@@ -204,6 +207,7 @@ function draw(o: Mount, store: Store, theme: Theme, wear: (name: string | null, 
     apps: o.blocks,
     held: v.held,
     view: v.view,
+    file: o.file,
   });
 
   const paint = (v: View) => {

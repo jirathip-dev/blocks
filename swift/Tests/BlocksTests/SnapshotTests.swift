@@ -41,7 +41,7 @@ final class SnapshotTests: XCTestCase {
     func testEveryFixtureBlockPassesCheckAndItsTreeHasTheHTMLTreesShape() throws {
         let kinds = try FileManager.default.contentsOfDirectory(atPath: fixtures.appendingPathComponent("blocks").path)
             .map { String($0.dropLast(5)) }.sorted()
-        XCTAssertEqual(kinds.count, 33)
+        XCTAssertEqual(kinds.count, 34)
         for kind in kinds {
             let expect = try load(TreeNode.self, "trees/swift/\(kind).json")
             let run = try Snapshot(try load(Block.self, "blocks/\(kind).json")).run(
@@ -51,6 +51,19 @@ final class SnapshotTests: XCTestCase {
             XCTAssertGreaterThan(run.pngs[kind]?.count ?? 0, 0, kind)
             let tree = try XCTUnwrap(run.trees[kind])
             XCTAssertEqual(shape(tree), shape(try load(TreeNode.self, "trees/\(kind).json")), kind)
+        }
+    }
+
+    func testEachFieldsFixtureDrawsAndAnUploadIsRecordedAsAPlainTextInputUntilItsSwiftView() throws {
+        let names = try FileManager.default.contentsOfDirectory(atPath: fixtures.appendingPathComponent("fields").path)
+            .filter { $0.hasSuffix(".json") }.map { String($0.dropLast(5)) }.sorted()
+        XCTAssertTrue(names.contains("upload"))
+        for name in names {
+            let run = try Snapshot(try load(Block.self, "fields/\(name).json")).run([], name: name, check: true)
+            XCTAssertEqual(run.faults, [], name)
+            let form = try XCTUnwrap(try load(TreeNode.self, "trees/swift/fields/\(name).json").children.first)
+            let drawn = Set(form.fields?.map { "\($0.type) \($0.drawn.rawValue)\(name == "upload" ? " \($0.role)" : "")" } ?? [])
+            XCTAssertEqual(drawn, [name == "upload" ? "upload plain textbox" : "\(name) native"], name)
         }
     }
 

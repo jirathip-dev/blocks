@@ -38,7 +38,9 @@ generated = [
     "fixtures/blocks/*.json",
     "fixtures/trees/*.json",
     "fixtures/trees/swift/*.json",
+    "fixtures/trees/swift/fields/*.json",
     "fixtures/html/*.html",
+    "fixtures/fields/html/*.html",
     "fixtures/site/*.html",
     "fixtures/protocol/sim-*.json",
     "fixtures/behave/sim.json",
@@ -528,3 +530,24 @@ reason = "a field takes today from the screen's locale; it never asks the device
 pattern = "Locale.current"
 paths = ["swift/Sources/BlocksUI/Field/**"]
 reason = "days and numbers are drawn by the rules every renderer shares, not by the device's locale"
+
+[[ban]]
+pattern = "readAsDataURL"
+paths = ["web/src/**", "web/react/**"]
+except = ["web/src/render/composer.ts"]
+reason = "a file leaves as bytes through the file handler, never as base64 inside an action"
+
+[[ban]]
+pattern = "toDataURL"
+paths = ["web/src/**", "web/react/**"]
+reason = "a signature leaves as a PNG blob through the file handler, never as base64 inside an action"
+
+[[ban]]
+pattern = "fetch("
+paths = ["web/react/src/**"]
+reason = "the adapter sends nothing itself: bytes go to the app's file handler, actions to onAction"
+
+[[ban]]
+pattern = "URLSession"
+paths = ["swift/Sources/BlocksUI/**"]
+reason = "a view sends nothing itself: bytes go to the app's file handler, actions to act"

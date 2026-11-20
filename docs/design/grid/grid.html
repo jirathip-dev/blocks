@@ -1,0 +1,23 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>table: editable grid (mark-up)</title>
+<link rel="stylesheet" href="../neutral-default/tokens.css"><link rel="stylesheet" href="../../../web/dist/blocks.css"><link rel="stylesheet" href="grid.css"><link rel="stylesheet" href="page.css">
+<script src="../table/table.js"></script><script src="grid.js"></script><script src="data.js"></script>
+<style>.only-phone{display:none}@media (max-width:600px){.only-phone{display:block}}</style></head>
+<body><main class="scr" id="page">
+<div class="tile"><div class="tabh"><span class="tw">K-12 tower · quote Q-2207</span><button type="button"><span>send quote</span></button></div></div>
+<div class="st"><b id="c"></b><span class="m">cost · ฿</span></div><div class="st"><b id="p"></b><span class="m">price · ฿</span></div><div class="st"><b id="f"></b><span class="m">final · ฿ · waiting</span></div>
+<div id="t"></div>
+<div id="s" class="only-phone"></div>
+</main>
+<script>
+const st = { edit: { row: "p1", col: "qty", text: "48" }, sent: { "v1:price": 4450 }, chg: ["v2"] };
+const g = grid(markup, st);
+document.getElementById("t").replaceWith(g);
+const foot = [...g.querySelectorAll("tfoot td")];
+const at = (id) => foot[markup.columns.findIndex((c) => c.id === id) - 1 + (g.querySelector("tfoot .tbg") ? 1 : 0)].textContent.replace(" ↻", "");
+document.getElementById("c").textContent = at("cost").split(".")[0];
+document.getElementById("p").textContent = at("sell").split(".")[0];
+document.getElementById("f").textContent = at("final").split(".")[0];
+document.getElementById("s").replaceWith(Object.assign(sheet(markup, "p1", { edit: st.edit }), { className: "b-sheet shb inl only-phone" }));
+settle();
+</script></body></html>

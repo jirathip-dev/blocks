@@ -1,3 +1,4 @@
+import type { OnFile } from "../core/field/files.ts";
 import { type Blk, isBlk } from "../core/tree.ts";
 import type { Held } from "../gesture.ts";
 import type { Locale } from "../gen/types.ts";
@@ -18,6 +19,7 @@ export type Ctx = {
   drop?: (what: string) => void;
   held?: Map<string, Held>;
   view?: Map<string, Record<string, unknown>>;
+  file?: OnFile;
 };
 
 export const obj = (v: unknown): Blk => (isBlk(v) ? v : {});

@@ -8,11 +8,14 @@ The Rust type `Table`; in TS, `table(fields: Table)` from `web/src/gen/builders.
 
 | field | type | |
 |---|---|---|
+| `calc` | `Record<string, Expr>` | optional |
 | `columns` | `Column[]` | required |
+| `edit` | `Gesture` | optional |
 | `empty` | `string` | optional |
 | `export` | `ExportFormat[]` | optional |
 | `filter` | `boolean` | optional |
 | `id` | `string` | optional |
+| `reorder` | `Gesture` | optional |
 | `rows` | `TableRow[]` | required |
 | `select` | `TableSelect` | optional |
 | `show` | `Expr` | optional |

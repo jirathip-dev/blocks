@@ -10,15 +10,15 @@ const gaps = ["island"];
 
 test("every fixture is drawn with its hooks, natively or as its fallback", () => {
   const kinds = readdirSync(dir).map((f) => f.replace(/\.json$/, ""));
-  strictEqual(kinds.length, 33);
+  strictEqual(kinds.length, 34);
   for (const kind of kinds) {
     const b = fixture(kind);
     const e = render(b, ctx());
     ok(e, kind);
-    ok(e.classList.contains("b") && e.classList.contains(`b-${kind}`), `${kind}: ${e.className}`);
-    strictEqual(e.dataset.block, kind);
+    ok(e.classList.contains("b") && e.classList.contains(`b-${b.type}`), `${kind}: ${e.className}`);
+    strictEqual(e.dataset.block, b.type);
     strictEqual(e.dataset.id, b.id);
-    strictEqual(e.hasAttribute("data-fallback"), gaps.includes(kind), kind);
+    strictEqual(e.hasAttribute("data-fallback"), gaps.includes(b.type), kind);
   }
 });
 

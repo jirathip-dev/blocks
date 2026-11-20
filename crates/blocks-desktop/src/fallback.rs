@@ -1,5 +1,3 @@
-use std::borrow::Cow;
-
 use blocks::{Block, Fields};
 use egui::{RichText, Ui};
 
@@ -11,20 +9,12 @@ fn loose(f: &Fields) -> Vec<Block> {
         .unwrap_or_default()
 }
 
-fn under(b: &Block) -> Cow<'_, [Block]> {
-    let typed = match b {
-        Block::Screen(s) => s.blocks.as_ref(),
-        Block::Sheet(s) => Some(&s.blocks),
-        Block::Section(s) => Some(&s.blocks),
-        Block::Card(c) => c.blocks.as_ref(),
-        Block::App(a) => return loose(&a.more).into(),
-        _ => None,
+fn under(b: &Block) -> Vec<Block> {
+    let more = match b {
+        Block::App(a) => Some(&a.more),
+        _ => b.more(),
     };
-    match (typed, b.more()) {
-        (Some(t), _) => t.as_slice().into(),
-        (None, Some(m)) => loose(m).into(),
-        (None, None) => Cow::Borrowed(&[]),
-    }
+    more.map(loose).unwrap_or_default()
 }
 
 pub(crate) fn draw(b: &Block, name: &str, ui: &mut Ui, cx: &mut Cx<'_>) {

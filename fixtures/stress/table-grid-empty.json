@@ -1,0 +1,112 @@
+{
+  "calc": {
+    "cost": {
+      "mul": [
+        {
+          "mul": [
+            {
+              "get": "qty"
+            },
+            {
+              "get": "price"
+            }
+          ]
+        },
+        {
+          "get": "mult"
+        }
+      ]
+    },
+    "sell": {
+      "div": [
+        {
+          "get": "cost"
+        },
+        {
+          "sub": [
+            1,
+            {
+              "div": [
+                {
+                  "get": "margin"
+                },
+                100
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "columns": [
+    {
+      "edit": true,
+      "id": "name",
+      "kind": "text",
+      "label": "Item",
+      "width": 22
+    },
+    {
+      "digits": 0,
+      "edit": true,
+      "id": "qty",
+      "kind": "number",
+      "label": "Qty"
+    },
+    {
+      "currency": "THB",
+      "edit": true,
+      "id": "price",
+      "kind": "money",
+      "label": "Unit cost",
+      "phone": "meta"
+    },
+    {
+      "edit": true,
+      "id": "mult",
+      "kind": "number",
+      "label": "Mult"
+    },
+    {
+      "currency": "THB",
+      "id": "cost",
+      "kind": "money",
+      "label": "Cost",
+      "total": "sum"
+    },
+    {
+      "digits": 1,
+      "edit": true,
+      "id": "margin",
+      "kind": "number",
+      "label": "Margin",
+      "unit": "%"
+    },
+    {
+      "currency": "THB",
+      "id": "sell",
+      "kind": "money",
+      "label": "Price",
+      "total": "sum"
+    },
+    {
+      "currency": "THB",
+      "id": "final",
+      "kind": "money",
+      "label": "Final",
+      "total": "sum"
+    }
+  ],
+  "edit": {
+    "action": "set-cell",
+    "name": "cell"
+  },
+  "id": "grid",
+  "reorder": {
+    "action": "order",
+    "name": "rows"
+  },
+  "rows": [],
+  "title": "Mark-up · K-12 tower",
+  "type": "table"
+}

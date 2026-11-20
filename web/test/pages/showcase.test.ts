@@ -83,7 +83,7 @@ const bg = (page, sel = ":root") => page.evaluate((s) => getComputedStyle(docume
 
 test("JS off: Styles pins each look's colours side by side; JS on: the nav's switcher restyles in place, follows the device and holds across pages", async () => {
   const off = await open("styles.html", { js: false });
-  deepStrictEqual(await Promise.all(["default", "paper", "console", "playful"].map((s) => bg(off.page, `[data-id="s-${s}"]`))), ["#f6f6f6", "#f3eee4", "#eef1ee", "#ffffff"]);
+  deepStrictEqual(await Promise.all(["default", "paper", "console", "playful"].map((s) => bg(off.page, `[data-id="s-${s}"]`))), ["#f6f6f6", "#f4ecdc", "#fbfaf6", "#ffffff"]);
   await off.close();
   const on = await open("index.html", { width: 1440 });
   const root = (k) => on.page.evaluate((p) => getComputedStyle(document.documentElement).getPropertyValue(p).trim(), k);
@@ -98,16 +98,16 @@ test("JS off: Styles pins each look's colours side by side; JS on: the nav's swi
   strictEqual(await bg(on.page), "#f6f6f6");
   await on.page.evaluate(() => (window.kept = true));
   await on.page.click('[data-id="look-console"]');
-  deepStrictEqual([await bg(on.page), await root("--motion"), await root("--radius")], ["#eef1ee", "0", "0px"]);
+  deepStrictEqual([await bg(on.page), await root("--motion"), await root("--radius")], ["#fbfaf6", "0", "0px"]);
   await on.page.click('[data-id="look-paper"]');
-  deepStrictEqual([await bg(on.page), await root("--motion"), await root("--radius")], ["#f3eee4", "1.75", "6px"]);
+  deepStrictEqual([await bg(on.page), await root("--motion"), await root("--radius")], ["#f4ecdc", "1.75", "0px"]);
   ok(/serif/.test(await on.page.evaluate(() => getComputedStyle(document.body).fontFamily)), "Paper sets serif type");
   ok(await on.page.evaluate(() => window.kept === true), "no reload");
   const rise = (page) => page.evaluate(() => getComputedStyle(document.querySelector('[data-id="hero"]')).animationDuration);
   strictEqual(await rise(on.page), "0s", "none under reduced motion");
   deepStrictEqual(await pressed(), ["look-paper"]);
   await on.page.goto(`${BASE}gallery.html`);
-  strictEqual(await bg(on.page), "#f3eee4");
+  strictEqual(await bg(on.page), "#f4ecdc");
   deepStrictEqual(await pressed(), ["look-paper"]);
   await on.close();
   const ctx = await browser.newContext({ colorScheme: "dark", reducedMotion: "no-preference" });
@@ -119,7 +119,7 @@ test("JS off: Styles pins each look's colours side by side; JS on: the nav's swi
   await dark.goto(BASE + "index.html");
   strictEqual(await bg(dark), "#161616");
   await dark.click('[data-id="look-playful"]');
-  strictEqual(await bg(dark), "#0f0f12");
+  strictEqual(await bg(dark), "#0e0e11");
   strictEqual(await rise(dark), "0.65s", "Playful's motion 1.25 scales the 520 ms rise");
   await ctx.close();
 });

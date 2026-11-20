@@ -1,3 +1,4 @@
+import type { OnFile } from "../core/field/files.ts";
 import { type Blk } from "../core/tree.ts";
 import type { Held } from "../gesture.ts";
 import type { Locale } from "../gen/types.ts";
@@ -25,6 +26,7 @@ export type Ctx = {
     drop?: (what: string) => void;
     held?: Map<string, Held>;
     view?: Map<string, Record<string, unknown>>;
+    file?: OnFile;
 };
 export declare const obj: (v: unknown) => Blk;
 export declare const draft: (i: HTMLInputElement, key: string, store: Store) => void;
