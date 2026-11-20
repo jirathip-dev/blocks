@@ -18,41 +18,7 @@ macro_rules! kinds {
     };
 }
 
-kinds! {
-    "screen" => screen,
-    "sheet" => sheet,
-    "list" => list,
-    "section" => section,
-    "row" => row,
-    "card" => card,
-    "choice" => choice,
-    "form" => form,
-    "config" => config,
-    "secret" => secret,
-    "run" => run,
-    "button" => button,
-    "chips" => chips,
-    "stat" => stat,
-    "text" => text,
-    "images" => images,
-    "web" => web,
-    "composer" => composer,
-    "prose" => prose,
-    "hero" => hero,
-    "media" => media,
-    "nav" => nav,
-    "diagram" => diagram,
-    "chart" => chart,
-    "diff" => diff,
-    "editor" => editor,
-    "lines" => lines,
-    "scene" => scene,
-    "island" => island,
-    "table" => table,
-    "steps" => steps,
-    "toast" => toast,
-    "timeline" => timeline,
-}
+include!("drawn.rs");
 
 pub(crate) fn kids(w: &mut W<'_>, bs: &[Value]) {
     for b in bs.iter().filter(|b| b.is_object()) {

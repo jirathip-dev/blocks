@@ -6,6 +6,7 @@ check: fmt clippy fixtures test guard perf soak deps deny web arch cap actionlin
 
 # Every generated file (.drover/arch.toml `generated`) from the Rust types; arch-check fails on a difference.
 gen: web-install
+    cargo run -q --locked -p blocks --features schema --bin blocks-codegen kinds
     cargo run -q --locked -p blocks --features schema --bin blocks-codegen
     npm --prefix web run build
     BLOCKS_GEN=1 cargo test -q --locked -p blocks --test sim generated
