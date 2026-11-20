@@ -1,9 +1,11 @@
 import type { Act, Block, Kind, Label, Locale, Tap, Toned } from "../gen/types.ts";
 import { linkable } from "../core/check.ts";
+import type { OnFile } from "../core/field/files.ts";
 import { type Blk, blks, isBlk, named } from "../core/tree.ts";
 import type { Held } from "../gesture.ts";
 import type { Theme } from "../theme.ts";
 export { type Blk, blks, isBlk, named };
+export type { OnFile, Picked } from "../core/field/files.ts";
 export type Post = {
     action: unknown;
     block?: unknown;
@@ -27,6 +29,7 @@ export type Ctx = {
     drop?: (what: string) => void;
     held?: Map<string, Held>;
     view?: Map<string, Record<string, unknown>>;
+    file?: OnFile;
 };
 export declare const obj: (v: unknown) => Blk;
 export declare const esc: (s: unknown) => string;

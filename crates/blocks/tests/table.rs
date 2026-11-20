@@ -49,7 +49,7 @@ fn diff_sends_a_changed_added_and_removed_row_as_row_ops_that_apply() {
         TableRow {
             id: "INV-0150".into(),
             cells: [("inv".to_string(), Cell::Text("INV-0150".into()))].into(),
-            tap: None,
+            ..TableRow::default()
         },
     );
     let (a, b) = (screen(old), screen(new));
@@ -140,7 +140,7 @@ fn averages_counts_digits_and_an_empty_table_draw_as_designed() {
             .into_iter()
             .flatten()
             .collect(),
-        tap: None,
+        ..TableRow::default()
     };
     let t = Table::new(
         vec![

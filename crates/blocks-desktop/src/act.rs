@@ -1,5 +1,6 @@
 use blocks::{Action, Fields, Set, Tap};
 use egui::{Button, OpenUrl, Ui};
+use serde_json::Value;
 
 use crate::cx::Cx;
 
@@ -17,7 +18,7 @@ pub enum Event {
 pub(crate) enum Did {
     Event(Event),
     Set(Vec<Set>),
-    Pick(String, String),
+    Pick(String, Value),
 }
 
 pub(crate) fn press(ui: &mut Ui, cx: &mut Cx<'_>, action: Option<&str>, b: Button<'_>) -> bool {
@@ -79,6 +80,6 @@ pub(crate) fn tap(ui: &Ui, cx: &mut Cx<'_>, t: &Tap) {
     }
 }
 
-pub(crate) fn pick(cx: &mut Cx<'_>, name: &str, value: &str) {
+pub(crate) fn pick(cx: &mut Cx<'_>, name: &str, value: impl Into<Value>) {
     cx.rec.did(Did::Pick(name.into(), value.into()));
 }
