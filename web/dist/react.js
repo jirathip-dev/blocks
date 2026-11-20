@@ -164,7 +164,9 @@ function card({ b, hooks: hooks3 }) {
   const head = b.title || b.badge ? h("div", "ch", null, h("b", "b-card__title", null, b.title ?? ""), ...badge, ...meta) : null;
   const buttons = b.buttons ?? [];
   const bar3 = buttons.length ? h("div", "bar b-card__actions", null, ...kids(buttons)) : null;
-  return h("div", cls, attrs, line, head, b.subtitle ? h("p", "m b-card__subtitle", null, b.subtitle) : null, ...kids(b.blocks), bar3);
+  const s = !b.subtitle ? null : typeof b.subtitle === "string" ? { text: b.subtitle, tone: null } : b.subtitle;
+  const sub = s ? h("p", `m b-card__subtitle ${s.tone ?? ""}`.trimEnd(), null, ticked(s.text, cx)) : null;
+  return h("div", cls, attrs, line, head, sub, ...kids(b.blocks), bar3);
 }
 
 // react/src/kinds/chips.ts

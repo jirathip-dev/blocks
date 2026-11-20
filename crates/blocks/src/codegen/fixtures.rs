@@ -5,8 +5,8 @@ use serde_json::{Map, Number, Value};
 
 use super::Files;
 use crate::{
-    site, theme, tree, Block, Built, Card, Child, Composer, ComposerChip, Diagram, List, Node, OldFrame, Op, Queued,
-    Row, Screen, Tap, Text, Tone,
+    site, theme, tree, Block, Built, Card, Child, Composer, ComposerChip, Diagram, List, Node, Nodes, OldFrame, Op,
+    Queued, Row, Screen, Tap, Text, Tone,
 };
 
 pub(super) fn files(root: &Path, _: &Value) -> std::io::Result<Files> {
@@ -117,12 +117,12 @@ fn workflow() -> Diagram {
                 .into_iter()
                 .collect::<BTreeMap<_, _>>(),
         )
-        .nodes(
+        .nodes(Nodes::Map(
             nodes
                 .map(|(k, n)| (k.to_string(), n))
                 .into_iter()
                 .collect::<BTreeMap<_, _>>(),
-        )
+        ))
 }
 
 const SWIFT_FALLBACKS: [&str; 6] = ["composer", "prose", "hero", "media", "nav", "island"];

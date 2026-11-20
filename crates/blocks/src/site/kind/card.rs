@@ -40,7 +40,8 @@ pub(super) fn draw(w: &mut W<'_>, b: &Value) {
         w.close("div");
     }
     if let Some(s) = b.get("subtitle").filter(|v| !v.is_null()) {
-        w.el("p", "m b-card__subtitle", &toned(Some(s)).0);
+        let (text, tone) = toned(Some(s));
+        w.el("p", format!("m b-card__subtitle {tone}").trim_end(), &text);
     }
     kids(w, list(b, "blocks"));
     let buttons = list(b, "buttons");
