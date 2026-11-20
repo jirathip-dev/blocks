@@ -270,7 +270,7 @@ fn release() -> Diagram {
         .id("release")
         .title("Release flow")
         .counts(counts)
-        .nodes(nodes)
+        .nodes(blocks::Nodes::Map(nodes))
 }
 
 fn stage(id: &str, label: &str, sub: Option<&str>, tap: bool) -> Stage {

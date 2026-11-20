@@ -8,10 +8,18 @@ internal struct DiagramBlock: View {
 
     private var counts: [String: Int] { (block.counts ?? [:]).mapValues { Int($0) } }
 
+    private var nodes: [String: Node] {
+        switch block.nodes {
+        case .list(let list): Dictionary(list.compactMap { n in n.id.map { ($0, n) } }) { first, _ in first }
+        case .map(let map): map
+        case nil: [:]
+        }
+    }
+
     internal var body: some View {
         let diagram = Chart(source: block.source)
         let map = { (metrics: DiagramMetrics) in
-            DiagramMap(diagram: diagram, nodes: block.nodes ?? [:], counts: counts, was: was, metrics: metrics)
+            DiagramMap(diagram: diagram, nodes: nodes, counts: counts, was: was, metrics: metrics)
         }
         ViewThatFits(in: .horizontal) {
             map(.wide)

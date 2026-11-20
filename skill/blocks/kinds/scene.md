@@ -11,7 +11,10 @@ The Rust type `Scene`; in TS, `scene(fields: Scene)` from `web/src/gen/builders.
 | `id` | `string` | optional |
 | `label` | `string` | optional |
 | `lanes` | `Lane[]` | optional |
+| `load` | `Load` | optional |
+| `repos` | `SceneRepo[]` | optional |
 | `show` | `Expr` | optional |
+| `weather` | `Weather` | optional |
 
 ## A sample
 

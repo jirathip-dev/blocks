@@ -1,6 +1,6 @@
 # `diagram`
 
-A diagram from its source, with counts and nodes by name.
+A diagram from its source, with counts and its nodes.
 
 The Rust type `Diagram`; in TS, `diagram(fields: Diagram)` from `web/src/gen/builders.ts`.
 
@@ -10,7 +10,7 @@ The Rust type `Diagram`; in TS, `diagram(fields: Diagram)` from `web/src/gen/bui
 |---|---|---|
 | `counts` | `Record<string, number>` | optional |
 | `id` | `string` | optional |
-| `nodes` | `Record<string, Node>` | optional |
+| `nodes` | `Nodes` | optional |
 | `selected` | `string` | optional |
 | `show` | `Expr` | optional |
 | `source` | `string` | required |
