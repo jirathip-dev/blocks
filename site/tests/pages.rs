@@ -27,7 +27,7 @@ fn pages(out: &Path) -> Vec<(String, String)> {
 fn every_page_has_its_head_and_no_url_from_the_domain_root() {
     let out = build("pages");
     let all = pages(&out);
-    assert_eq!(all.len(), 8 + 38);
+    assert_eq!(all.len(), 8 + 39);
     for (f, html) in &all {
         for want in [
             "<title>",
@@ -76,10 +76,10 @@ fn the_gallery_counts_every_kind_once_and_finds_its_fallback_group_from_the_rend
         .collect();
     fallback.sort();
     assert_ne!(fallback, Vec::<String>::new());
-    assert!(gallery.contains("All 38 core kinds"));
+    assert!(gallery.contains("All 39 core kinds"));
     assert!(gallery.contains("href=\"https://jirathip-dev.github.io/blocks/egui/\""));
     assert!(
-        home.contains("<b class=\"b-stat__value\">38</b><span class=\"m\">core kinds"),
+        home.contains("<b class=\"b-stat__value\">39</b><span class=\"m\">core kinds"),
         "home's kind count"
     );
     let group = gallery
@@ -156,7 +156,7 @@ fn the_playground_picks_home_and_every_kind_and_each_kind_page_links_to_it() {
     let want: Vec<&str> = std::iter::once("home")
         .chain(blocks::Block::KINDS.iter().copied())
         .collect();
-    assert_eq!(names.len(), 39);
+    assert_eq!(names.len(), 40);
     for k in &want {
         assert!(names.contains(k), "no {k} sample");
         assert!(

@@ -65,7 +65,7 @@ test("the fixtures/blocks files draw in one --plan launch, each run's PNG, tree 
 
 test("every fixtures/blocks file passes --check against its fixtures/trees tree in WebKit at 390 and 1440", () => {
   const kinds = readdirSync(blocks).map((f) => f.replace(/\.json$/, ""));
-  strictEqual(kinds.length, 42);
+  strictEqual(kinds.length, 43);
   for (const size of ["390x844", "1440x900"])
     for (const k of kinds) {
       const dir = join(out, size, k);
@@ -82,7 +82,7 @@ test("every fixtures/blocks file passes --check against its fixtures/trees tree 
 test("every fixtures/stress variant draws at 390 in one --plan launch with each block sized, inside the width and over no sibling", () => {
   const stress = at("../../fixtures/stress/");
   const names = readdirSync(stress).filter((f) => f !== "table.json").map((f) => f.replace(/\.json$/, ""));
-  strictEqual(names.length, 94);
+  strictEqual(names.length, 97);
   const seen = plan("stress", names.map((n) => ({ ...RUN, name: n, screen: join(stress, `${n}.json`) })));
   deepStrictEqual(seen.filter((s) => ["render/no-size", "render/overlap"].includes(s.rule) || (s.rule === "render/overflow" && s.at)), []);
 });

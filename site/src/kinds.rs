@@ -18,7 +18,7 @@ const GROUPS: [(&str, &[&str]); 4] = [
     (
         "Words and pictures",
         &[
-            "text", "prose", "message", "tool", "hero", "nav", "media", "images", "pages", "diagram",
+            "text", "prose", "message", "tool", "hero", "nav", "sidebar", "media", "images", "pages", "diagram",
         ],
     ),
     (
@@ -77,6 +77,7 @@ fn about(kind: &str) -> &'static str {
         "prose" => "Headings, paragraphs, lists, quotes and code.",
         "hero" => "A page's opening: a title, a line, a picture, its actions.",
         "nav" => "A site's link bar.",
+        "sidebar" => "A side navigation: an icon rail that opens on hover or pin, a drawer on a phone.",
         "media" => "A picture or a video of a known size.",
         "images" => "A strip of images.",
         "pages" => "A document as the app's pictures of its pages: paged and zoomed, with its PDF.",
@@ -541,6 +542,7 @@ pub fn samples() -> Vec<(String, Vec<Block>)> {
         picked("message"),
         picked("tool"),
         picked("modal"),
+        picked("sidebar"),
         vec![paperwork()],
     ]
     .concat();

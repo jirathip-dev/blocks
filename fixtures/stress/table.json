@@ -29,6 +29,7 @@
   "secret": { "long": ["label"], "why": "one secret field: no rows to empty or repeat" },
   "section": { "long": ["header", "markdown"], "empty": "blocks", "many": "blocks" },
   "sheet": { "long": ["title", "markdown"], "empty": "blocks", "many": "blocks" },
+  "sidebar": { "long": ["label", "title"], "empty": "groups", "many": "groups" },
   "steps": { "long": ["title", "label", "sub"], "empty": "steps", "many": "steps" },
   "stat": { "long": ["label"], "why": "one number and its label: nothing to empty or repeat" },
   "table": { "long": ["title", "label", "client"], "empty": "rows", "many": "rows" },

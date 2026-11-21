@@ -1,0 +1,19 @@
+{
+  "brand": {
+    "href": "#home",
+    "icon": "◈",
+    "label": "Workspace"
+  },
+  "empty": "No pages yet",
+  "footer": [
+    {
+      "href": "#settings",
+      "icon": "⚙",
+      "label": "Settings"
+    }
+  ],
+  "groups": [],
+  "id": "side",
+  "label": "main",
+  "type": "sidebar"
+}

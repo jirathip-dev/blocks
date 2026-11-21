@@ -68,7 +68,7 @@ async function markup(p, b) {
 }
 
 test("each kind React draws natively writes the HTML renderer's markup: tags, classes, data-*, role, aria-* and own text, in order", async () => {
-  deepStrictEqual([...native].sort(), ["button", "card", "chips", "choice", "composer", "config", "diagram", "diff", "editor", "form", "hero", "images", "import", "list", "media", "message", "modal", "nav", "pages", "prose", "row", "run", "scene", "screen", "secret", "section", "sheet", "stat", "table", "text", "timeline", "tool", "web"]);
+  deepStrictEqual([...native].sort(), ["button", "card", "chips", "choice", "composer", "config", "diagram", "diff", "editor", "form", "hero", "images", "import", "list", "media", "message", "modal", "nav", "pages", "prose", "row", "run", "scene", "screen", "secret", "section", "sheet", "sidebar", "stat", "table", "text", "timeline", "tool", "web"]);
   const p = await browser.newPage();
   await p.setContent("<base href=https://x.test/><div id=html></div><div id=react></div>");
   await p.addScriptTag({ content: reactJs() });

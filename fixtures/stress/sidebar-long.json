@@ -1,0 +1,67 @@
+{
+  "brand": {
+    "href": "#home",
+    "icon": "◈",
+    "label": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it"
+  },
+  "empty": "No pages yet",
+  "footer": [
+    {
+      "href": "#settings",
+      "icon": "⚙",
+      "label": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it"
+    }
+  ],
+  "groups": [
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it"
+            },
+            {
+              "href": "#archive",
+              "label": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it"
+            }
+          ],
+          "icon": "◆",
+          "label": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it"
+        }
+      ],
+      "title": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it"
+    }
+  ],
+  "id": "side",
+  "label": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+  "type": "sidebar"
+}

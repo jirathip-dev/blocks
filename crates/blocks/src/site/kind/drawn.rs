@@ -29,6 +29,7 @@ kinds! {
     "secret" => secret,
     "section" => section,
     "sheet" => sheet,
+    "sidebar" => sidebar,
     "stat" => stat,
     "steps" => steps,
     "table" => table,

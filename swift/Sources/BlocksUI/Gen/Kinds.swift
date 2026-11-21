@@ -42,6 +42,7 @@ extension Block {
         case .import(let b): ("import", b.id)
         case .message(let b): ("message", b.id)
         case .tool(let b): ("tool", b.id)
+        case .sidebar(let b): ("sidebar", b.id)
         case .appBlock(let b): (b.type, b.id)
         }
     }

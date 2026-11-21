@@ -39,4 +39,5 @@ kinds! {
     import { Import(Import) = "import" }
     message { Message(Message) = "message" }
     tool { Tool(Tool) = "tool" }
+    sidebar { Sidebar(Sidebar) = "sidebar" }
 }
