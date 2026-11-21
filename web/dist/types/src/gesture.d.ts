@@ -38,4 +38,17 @@ export type Typed<B, G, C> = Omit<Grabbed<B, G, string, C>, "reach" | "show"> & 
     left: (key: string) => void;
 };
 export declare function edited<B extends Block, G, C>(input: HTMLInputElement, c: Driven, o: Typed<B, G, C>): void;
+export type Steered<B, G, R, C> = {
+    rules: Rules<B, G, R, C>;
+    grab: G;
+    now: () => B;
+    reach: (dx: number, dy: number) => R;
+    show: (c: C | null) => void;
+    send: (c: C) => boolean;
+    tap?: (() => void) | undefined;
+    keys?: HTMLElement | null | undefined;
+    mark?: HTMLElement;
+    skip?: (e: UIEvent) => boolean;
+};
+export declare function steered<B, G, R, C>(el: HTMLElement, o: Steered<B, G, R, C>): void;
 export {};

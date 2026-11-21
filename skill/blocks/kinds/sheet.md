@@ -1,8 +1,8 @@
 # `sheet`
 
-A sheet over a screen.
+A box over a screen: a dialog dragged by its header, a fixed confirm or alert, or a tool window that resizes and folds to a pill.
 
-The Rust type `Sheet`; in TS, `sheet(fields: Sheet)` from `web/src/gen/builders.ts`.
+The Rust type `Modal`; in TS, `sheet(fields: Modal)` from `web/src/gen/builders.ts`.
 
 ## Fields
 
@@ -10,11 +10,15 @@ The Rust type `Sheet`; in TS, `sheet(fields: Sheet)` from `web/src/gen/builders.
 |---|---|---|
 | `blocks` | `Block[]` | required |
 | `cancel` | `string` | optional |
+| `destructive` | `boolean` | optional |
 | `done` | `Submit` | optional |
 | `id` | `string` | optional |
 | `locale` | `Locale` | optional |
+| `message` | `string` | optional |
+| `ok` | `string` | optional |
 | `show` | `Expr` | optional |
 | `title` | `string` | required |
+| `variant` | `ModalVariant` | optional |
 
 ## A sample
 
@@ -41,7 +45,7 @@ The Rust type `Sheet`; in TS, `sheet(fields: Sheet)` from `web/src/gen/builders.
   "id": "add",
   "variant": null,
   "drawn": "native",
-  "role": "group",
+  "role": "dialog",
   "name": "Add a repo",
   "children": [
     {

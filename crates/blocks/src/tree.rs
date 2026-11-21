@@ -8,7 +8,9 @@ use crate::built::{children, Built};
 use crate::expr::State;
 use crate::wire::{Action, Answer, Frame};
 
-pub(crate) const VARIANTS: [(&str, &str); 7] = [
+pub(crate) const VARIANTS: [(&str, &str); 9] = [
+    ("modal", "variant"),
+    ("sheet", "variant"),
     ("row", "style"),
     ("card", "kind"),
     ("button", "style"),
@@ -18,7 +20,9 @@ pub(crate) const VARIANTS: [(&str, &str); 7] = [
     ("tool", "state"),
 ];
 
-pub(crate) const ROLES: [(&str, &str); 8] = [
+pub(crate) const ROLES: [(&str, &str); 10] = [
+    ("modal", "dialog"),
+    ("sheet", "dialog"),
     ("section", "region"),
     ("form", "form"),
     ("config", "form"),
@@ -56,6 +60,7 @@ pub fn a11y(v: &Value) -> (&str, &str) {
         "button" | "row" if url && !wrapped => "link",
         "row" if tap.is_some() && !wrapped => "button",
         "button" | "editor" => "button",
+        "modal" | "sheet" if text_of(v, "variant") == Some("alert") => "alertdialog",
         _ => ROLES.iter().find(|(k, _)| *k == kind).map_or("group", |(_, r)| r),
     };
     let name = NAMES

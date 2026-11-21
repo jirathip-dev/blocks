@@ -4,7 +4,7 @@ import SwiftUI
 internal struct SheetBlock: View {
     @Environment(\.look) private var look
     @State private var values: [String: JSONValue] = [:]
-    internal let block: Sheet
+    internal let block: Modal
 
     internal var body: some View {
         let palette = look.palette

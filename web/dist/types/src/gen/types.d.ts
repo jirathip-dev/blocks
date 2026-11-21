@@ -58,8 +58,10 @@ export type Bar = {
 export type Block = ({
     type: "screen";
 } & Screen) | ({
+    type: "modal";
+} & Modal) | ({
     type: "sheet";
-} & Sheet) | ({
+} & Modal) | ({
     type: "section";
 } & Section) | ({
     type: "list";
@@ -628,6 +630,20 @@ export type Message = {
     show?: Expr | null;
     time?: string | null;
 };
+export type Modal = {
+    blocks: Block[];
+    cancel?: string | null;
+    destructive?: boolean | null;
+    done?: Submit | null;
+    id?: string | null;
+    locale?: Locale | null;
+    message?: string | null;
+    ok?: string | null;
+    show?: Expr | null;
+    title: string;
+    variant?: ModalVariant | null;
+};
+export type ModalVariant = "dialog" | "alert" | "tool";
 export type More = string | Page;
 export type Nav = {
     brand?: NavLink | null;
@@ -970,15 +986,6 @@ export type SetState = {
     to: Expr;
 };
 export type Severity = "error" | "warn";
-export type Sheet = {
-    blocks: Block[];
-    cancel?: string | null;
-    done?: Submit | null;
-    id?: string | null;
-    locale?: Locale | null;
-    show?: Expr | null;
-    title: string;
-};
 export type Shown = string | number | Bound | Time;
 export type SideBadge = {
     count: number;
@@ -1311,4 +1318,4 @@ export type Why = "evicted" | "unpaired" | "handover";
 export type Working = {
     since: string;
 };
-export type Kind = "screen" | "sheet" | "section" | "list" | "row" | "card" | "choice" | "form" | "config" | "secret" | "run" | "button" | "chips" | "stat" | "text" | "images" | "web" | "diff" | "editor" | "scene" | "diagram" | "composer" | "lines" | "prose" | "hero" | "media" | "nav" | "island" | "table" | "steps" | "chart" | "toast" | "pages" | "timeline" | "import" | "message" | "tool" | "sidebar";
+export type Kind = "screen" | "modal" | "sheet" | "section" | "list" | "row" | "card" | "choice" | "form" | "config" | "secret" | "run" | "button" | "chips" | "stat" | "text" | "images" | "web" | "diff" | "editor" | "scene" | "diagram" | "composer" | "lines" | "prose" | "hero" | "media" | "nav" | "island" | "table" | "steps" | "chart" | "toast" | "pages" | "timeline" | "import" | "message" | "tool" | "sidebar";

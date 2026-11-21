@@ -1416,6 +1416,68 @@
   {
     "app": [],
     "faults": [],
+    "name": "fixtures/blocks/modal-delete-items.json",
+    "screen": {
+      "blocks": [
+        {
+          "id": "delete-note",
+          "markdown": "Plan, Notes and Draft",
+          "type": "text"
+        }
+      ],
+      "cancel": "cancel",
+      "destructive": true,
+      "id": "delete-items",
+      "message": "They move to the bin.",
+      "ok": "delete",
+      "title": "Delete 3 items?",
+      "type": "modal",
+      "variant": "alert"
+    }
+  },
+  {
+    "app": [],
+    "faults": [],
+    "name": "fixtures/blocks/modal-layers.json",
+    "screen": {
+      "blocks": [
+        {
+          "id": "layers-note",
+          "markdown": "Header, Title, Body",
+          "type": "text"
+        }
+      ],
+      "id": "layers",
+      "title": "Layers",
+      "type": "modal",
+      "variant": "tool"
+    }
+  },
+  {
+    "app": [],
+    "faults": [],
+    "name": "fixtures/blocks/modal.json",
+    "screen": {
+      "blocks": [
+        {
+          "id": "modal-note",
+          "markdown": "Pick a name",
+          "type": "text"
+        }
+      ],
+      "cancel": "cancel",
+      "done": {
+        "action": "save-item",
+        "label": "save"
+      },
+      "id": "edit-item",
+      "title": "Edit item",
+      "type": "modal"
+    }
+  },
+  {
+    "app": [],
+    "faults": [],
     "name": "fixtures/blocks/nav.json",
     "screen": {
       "brand": {
@@ -2477,6 +2539,62 @@
           },
           "title": "Home",
           "type": "screen"
+        },
+        {
+          "blocks": [
+            {
+              "id": "modal-note",
+              "markdown": "Pick a name",
+              "type": "text"
+            }
+          ],
+          "cancel": "cancel",
+          "done": {
+            "action": "save-item",
+            "label": "save"
+          },
+          "fallback": {
+            "title": "Edit item"
+          },
+          "id": "edit-item",
+          "title": "Edit item",
+          "type": "modal"
+        },
+        {
+          "blocks": [
+            {
+              "id": "delete-note",
+              "markdown": "Plan, Notes and Draft",
+              "type": "text"
+            }
+          ],
+          "cancel": "cancel",
+          "destructive": true,
+          "fallback": {
+            "title": "Delete 3 items?"
+          },
+          "id": "delete-items",
+          "message": "They move to the bin.",
+          "ok": "delete",
+          "title": "Delete 3 items?",
+          "type": "modal",
+          "variant": "alert"
+        },
+        {
+          "blocks": [
+            {
+              "id": "layers-note",
+              "markdown": "Header, Title, Body",
+              "type": "text"
+            }
+          ],
+          "fallback": {
+            "title": "Layers"
+          },
+          "id": "layers",
+          "title": "Layers",
+          "type": "modal",
+          "variant": "tool"
         },
         {
           "blocks": [

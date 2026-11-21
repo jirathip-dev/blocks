@@ -35,10 +35,11 @@ Rust, node 24 and WebKit for the web gates. `./.gatekeeper/run list` names them;
   `.gatekeeper/baseline/`, which only shrinks)
 - `.gatekeeper/gates/`, blocks' own: `test`, `gen` (in CI; core/arch runs the generator on a lane), `guard` (`blocks check`), `perf` and `soak` in release, `no-egui` (the
   `blocks` crate's tree), `for-apps`, `web` (`web/lint.mjs`, the node tests, the lint fixtures, the token baseline),
-  `react` (the adapter's contract) and `bench` (`bench/` builds)
+  `react` (the adapter's contract), `bench` (`bench/` builds) and, on the macOS `swift` leg in CI only, `swift-lint`, `swift-test`,
+  `swift-snap`, `swift-plan` and `swift-stress`
 - `just sim 2000`: random op sequences on random screens, then one seeded corpus through Rust, TS and Swift; also run
   nightly (`.github/workflows/sim.yml`)
-- outside gatekeeper for now: `just swift` and `swift.yml` (the Swift package on macOS), `desktop.yml` (the desktop
+- outside gatekeeper for now: `just swift` (the Swift package on a macOS host), `desktop.yml` (the desktop
   renderer on Linux, Windows and macOS), `egui-demo.yml` and `compat.yml` (the last release against today's fixtures)
 
 ## For agents

@@ -15,6 +15,7 @@ import { import_ } from "../kinds/import.ts";
 import { list } from "../kinds/list.ts";
 import { media } from "../kinds/media.ts";
 import { message } from "../kinds/message.ts";
+import { modal } from "../kinds/modal.ts";
 import { nav } from "../kinds/nav.ts";
 import { pages } from "../kinds/pages.ts";
 import { prose } from "../kinds/prose.ts";
@@ -33,4 +34,4 @@ import { timeline } from "../kinds/timeline.ts";
 import { tool } from "../kinds/tool.ts";
 import { web } from "../kinds/web.ts";
 
-export const views: Views = { button, card, chips, choice, composer, config, diagram, diff, editor, form, hero, images, import: import_, list, media, message, nav, pages, prose, row, run, scene, screen, secret, section, sheet, sidebar, stat, table, text, timeline, tool, web };
+export const views: Views = { button, card, chips, choice, composer, config, diagram, diff, editor, form, hero, images, import: import_, list, media, message, modal, nav, pages, prose, row, run, scene, screen, secret, section, sheet, sidebar, stat, table, text, timeline, tool, web };

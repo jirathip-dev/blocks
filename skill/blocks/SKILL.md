@@ -5,12 +5,13 @@ description: Build a blocks screen as data: the kinds and their fields, the guar
 
 # blocks
 
-A screen is data: a `screen` or `sheet` block of typed blocks, checked, then drawn by a renderer. Start a new screen from a page in `examples/` (each has no guard finding), build it from the kinds below, keep it clear of the rules in `rules.md`, and check it with `blocks check`. Setting up and reading the guard: `docs/guard.md` in the blocks repo.
+A screen is data: a `screen` or `modal` block of typed blocks, checked, then drawn by a renderer. Start a new screen from a page in `examples/` (each has no guard finding), build it from the kinds below, keep it clear of the rules in `rules.md`, and check it with `blocks check`. Setting up and reading the guard: `docs/guard.md` in the blocks repo.
 
 ## Kinds
 
 - [`screen`](kinds/screen.md): A whole screen.
-- [`sheet`](kinds/sheet.md): A sheet over a screen.
+- [`modal`](kinds/modal.md): A box over a screen: a dialog dragged by its header, a fixed confirm or alert, or a tool window that resizes and folds to a pill.
+- [`sheet`](kinds/sheet.md): A box over a screen: a dialog dragged by its header, a fixed confirm or alert, or a tool window that resizes and folds to a pill.
 - [`section`](kinds/section.md): A titled group of blocks.
 - [`list`](kinds/list.md): A list of rows.
 - [`row`](kinds/row.md): One row of a list.

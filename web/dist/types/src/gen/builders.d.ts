@@ -1,9 +1,10 @@
-import type { Block, Button, Card, Chart, Chips, Choice, Composer, Diagram, Diff, Editor, Expr, Form, Hero, Images, Import, Island, Kind, Lines, List, Match, Media, Message, Nav, Pages, Prose, Row, Run, Scene, Screen, Secret, Section, Sheet, Sidebar, Stat, Steps, Table, Text, Timeline, Toast, Tool, Web } from "./types.ts";
+import type { Block, Button, Card, Chart, Chips, Choice, Composer, Diagram, Diff, Editor, Expr, Form, Hero, Images, Import, Island, Kind, Lines, List, Match, Media, Message, Modal, Nav, Pages, Prose, Row, Run, Scene, Screen, Secret, Section, Sidebar, Stat, Steps, Table, Text, Timeline, Toast, Tool, Web } from "./types.ts";
 export type Of<K extends Kind> = Extract<Block, {
     type: K;
 }>;
 export declare const screen: (fields: Screen) => Of<"screen">;
-export declare const sheet: (fields: Sheet) => Of<"sheet">;
+export declare const modal: (fields: Modal) => Of<"modal">;
+export declare const sheet: (fields: Modal) => Of<"sheet">;
 export declare const section: (fields: Section) => Of<"section">;
 export declare const list: (fields: List) => Of<"list">;
 export declare const row: (fields: Row) => Of<"row">;
