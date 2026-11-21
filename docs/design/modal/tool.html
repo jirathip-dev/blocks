@@ -1,0 +1,31 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="../neutral-default/tokens.css"><link rel="stylesheet" href="../../../web/dist/blocks.css"><link rel="stylesheet" href="modal.css"><link rel="stylesheet" href="page.css">
+<script src="bg.js"></script><title>modal: a tool window, resized and minimised</title></head>
+<body>
+<div class="stage"><div class="app"></div>
+<span class="ann d1440" style="left:1000px;top:676px">resized to 400 × 560, kept with its place</span>
+<span class="ann d1440" style="left:16px;top:842px">minimised: a pill each, click to restore</span>
+<div class="mds">
+<div class="md tool full" role="dialog" aria-labelledby="t2" style="--tx:1016px;--ty:96px;--tw:400px;--th:560px">
+<div class="mdk" role="button" tabindex="-1" aria-label="close, or drag down"></div>
+<header class="mdh"><span class="mdg" aria-hidden="true">⋮⋮</span><span class="mdt" id="t2" tabindex="0" aria-roledescription="movable heading">Layers</span><button type="button" class="mdn" aria-label="minimise"><span>–</span></button><button type="button" aria-label="close"><span>×</span></button></header>
+<div class="mdb"><div class="list" id="layers"></div></div>
+<span class="mdz" role="slider" tabindex="0" aria-label="resize" aria-valuetext="400 by 560"></span><span class="mde" aria-hidden="true"></span>
+</div></div>
+<nav class="mdp" aria-label="minimised windows"><button type="button" aria-label="restore Inspector"><span>▣ Inspector</span></button><button type="button" aria-label="restore History"><span>▣ History</span></button></nav>
+</div>
+<section class="notes"><h2>A tool window (opt in: <code>tool</code>)</h2><ol>
+<li class="d1440"><b>No scrim</b>: the screen behind stays live, so a tool window sits beside the work. F6 moves focus between the window and the screen; Escape inside it closes it.</li>
+<li class="d1440"><b>Drag</b> as a dialog does. <b>Resize</b> by the corner (both ways) or the right edge; at least 280 × 200, at most the viewport. The resize corner is a slider for the keyboard: arrows grow or shrink it 16 px, Shift 64 px. Size and place are kept together, per id, per user.</li>
+<li class="d1440"><b>Minimise</b> (–) folds it to a pill at the bottom left, in the order they were folded. A pill is a button: click or Enter restores the window at its kept place and size, with focus on its title. A reload brings back the pills too.</li>
+<li class="d1440">A dialog or a confirm has no –, no corner and no edge: only a tool window can resize or fold.</li>
+<li class="d390"><b>Tall content goes full-screen</b>: when the body would pass the sheet's height, the sheet takes the whole screen, still with its handle and its header's ×.</li>
+<li class="d390"><b>On a phone a tool window is a sheet</b> like any other: no –, no resize corner, no pills. Places and sizes kept on desktop are not used here.</li>
+</ol></section>
+<script>
+bg();
+const n = ["Header", "Title", "Subtitle", "Hero image", "Body text", "Quote", "Divider", "Card grid", "Card 1", "Card 2", "Card 3", "Caption", "Button row", "Primary button", "Secondary link", "Map", "Footer", "Legal text", "Social links", "Back to top", "Cookie note", "Badge", "Shape 1", "Shape 2"];
+document.getElementById("layers").innerHTML = n.map((t, i) => `<div class="row tap"><span class="rsg"><i class="gl mute">${i % 4 ? "▫" : "▪"}</i></span><span class="rm"><span class="rt">${t}</span></span><span class="rv m">${i % 3 ? "shown" : "hidden"}</span></div>`).join("");
+if (innerWidth > 600) document.querySelector(".md.tool").classList.remove("full");
+done();
+</script></body></html>

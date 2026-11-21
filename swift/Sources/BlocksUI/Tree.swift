@@ -94,6 +94,7 @@ extension Block {
             case .row(let b) where b.tap != nil && (b.rounds ?? []).isEmpty && (b.swipe ?? []).isEmpty:
                 b.tap?.url == nil ? "button" : "link"
             case .editor: "button"
+            case .modal(let b) where b.variant == .alert, .sheet(let b) where b.variant == .alert: "alertdialog"
             default: Self.roles[head.type] ?? "group"
             }
         let id = head.id.flatMap { $0.isEmpty ? nil : $0 }
@@ -112,7 +113,7 @@ extension Block {
         switch self {
         case .form(let form), .config(let form): form.fieldValues
         case .screen(let b): (b.blocks ?? []).fieldValues
-        case .sheet(let b): b.blocks.fieldValues
+        case .modal(let b), .sheet(let b): b.blocks.fieldValues
         case .section(let b): b.blocks.fieldValues
         case .card(let b): (b.blocks ?? []).fieldValues
         default: [:]

@@ -5,6 +5,7 @@ extension Block {
     internal var typeAndID: (type: String, id: String?) {
         switch self {
         case .screen(let b): ("screen", b.id)
+        case .modal(let b): ("modal", b.id)
         case .sheet(let b): ("sheet", b.id)
         case .section(let b): ("section", b.id)
         case .list(let b): ("list", b.id)
@@ -48,6 +49,8 @@ extension Block {
 
     internal var variant: String? {
         switch self {
+        case .modal(let b): b.variant?.rawValue
+        case .sheet(let b): b.variant?.rawValue
         case .row(let b): b.style?.rawValue
         case .card(let b): b.kind?.rawValue
         case .button(let b): b.style?.rawValue
@@ -82,6 +85,7 @@ extension Block {
     internal var named: [String?] {
         switch self {
         case .screen(let b): [b.title]
+        case .modal(let b): [b.title]
         case .sheet(let b): [b.title]
         case .section(let b): [b.header]
         case .row(let b): [b.title]
@@ -115,7 +119,7 @@ extension Block {
         }
     }
 
-    internal static let roles = ["section": "region", "form": "form", "config": "form", "nav": "navigation", "chart": "figure", "toast": "status", "message": "article", "sidebar": "navigation"]
+    internal static let roles = ["modal": "dialog", "sheet": "dialog", "section": "region", "form": "form", "config": "form", "nav": "navigation", "chart": "figure", "toast": "status", "message": "article", "sidebar": "navigation"]
     internal static let names = ["label", "title", "header", "question", "alt", "file", "command", "placeholder", "name"]
 }
 
@@ -131,6 +135,7 @@ internal struct KindView: View {
         case .import(let block): ImportBlock(block: block)
         case .list(let block): ListBlock(block: block)
         case .message(let block): MessageBlock(block: block)
+        case .modal(let block): ModalBlock(block: block)
         case .pages(let block): PagesBlock(block: block)
         case .screen(let block): ScreenBlock(block: block)
         case .section(let block): SectionBlock(block: block)
