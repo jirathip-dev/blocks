@@ -1,4 +1,5 @@
 import Blocks
+import BlocksSnapshot
 import BlocksUI
 import Foundation
 import AppKit
@@ -119,7 +120,7 @@ final class RenderTests: XCTestCase {
         window.contentView = host
         host.layout()
         for _ in 0..<20 where sent.isEmpty { await Task.yield() }
-        XCTAssertEqual(sent, [BlockAction(action: "ot-more", values: ["cursor": .string("c:2397")])])
+        XCTAssertEqual(sent, [BlockAction(action: "ot-more", block: "ot", values: ["cursor": .string("c:2397")])])
         host.layout()
         for _ in 0..<20 { await Task.yield() }
         XCTAssertEqual(sent.count, 1, "a refusal does not send again by itself")
@@ -272,12 +273,59 @@ final class RenderTests: XCTestCase {
     }
 
     func testAnAppKindNamedLikeACoreKindIsRefused() {
-        for kind in Self.core + Self.content {
+        for kind in Self.core + Self.content where kind != "scene" {
             XCTAssertThrowsError(try AppBlocks([kind: { _ in AnyView(EmptyView()) }])) {
                 XCTAssertEqual($0 as? AppBlocksError, .clash(kind))
             }
         }
         XCTAssertNoThrow(try AppBlocks(["pinned": { _ in AnyView(EmptyView()) }]))
+        XCTAssertNoThrow(try AppBlocks(["scene": { _ in AnyView(EmptyView()) }]), "a stage is the app's own art")
+    }
+
+    private static let red = { (r: UInt8, g: UInt8, b: UInt8, a: UInt8) in r > 200 && g < 40 && b < 40 && a > 200 }
+    private static let square: AppBlocks.Draw = { _ in AnyView(Color(red: 1, green: 0, blue: 0).frame(width: 20, height: 20)) }
+    private static let scene = #"{"type": "scene", "id": "ranch", "lanes": [{"id": "l1", "title": "impl", "state": "working"}]}"#
+
+    func testOneBlockThatDoesNotFitItsKindDecodesAsAnAppBlockAndTheRestOfTheScreenStays() throws {
+        let screen = try block(
+            #"{"type": "screen", "id": "s", "blocks": [{"type": "text", "text": "a"}, {"type": "scene", "id": "ranch", "load": 3, "next": "b"}, {"type": "row", "title": 7}, {"type": "text", "text": "b"}]}"#)
+        guard case .screen(let s) = screen, let blocks = s.blocks else { return XCTFail("no screen") }
+        XCTAssertEqual(blocks.count, 4)
+        guard case .text = blocks[0], case .appBlock(let bad) = blocks[1], case .appBlock = blocks[2], case .text = blocks[3] else {
+            return XCTFail("\(blocks)")
+        }
+        XCTAssertEqual(bad["load"], .number(3), "the bad block keeps its JSON")
+    }
+
+    func testAnAppDrawsTheSceneItRegistersDecodedOrNotAndItsLaneFigures() throws {
+        let blocks = try AppBlocks(["scene": Self.square])
+        let odd = try block(#"{"type": "scene", "id": "ranch", "load": 3, "next": "b"}"#)
+        XCTAssertEqual(try pixels(BlocksView(block(Self.scene), source: .core).appBlocks(blocks), Self.red), 400)
+        XCTAssertEqual(try pixels(BlocksView(odd, source: .core).appBlocks(blocks), Self.red), 400)
+        XCTAssertEqual(try pixels(BlocksView(block(Self.scene), source: .core), Self.red), 0)
+        let figures = try AppBlocks([:], figure: Self.square)
+        XCTAssertEqual(try pixels(BlocksView(block(Self.scene), source: .core).appBlocks(figures), Self.red), 400)
+    }
+
+    func testAnUnknownKindDrawsNothingWhenTheAppSaysSo() throws {
+        let gauge = try block(#"{"type": "section", "blocks": [{"type": "gauge", "fallback": {"title": "3 pinned"}}]}"#)
+        XCTAssertGreaterThan(height(BlocksView(gauge, source: .core)), 40, "the fallback row by default")
+        XCTAssertEqual(height(BlocksView(gauge, source: .core).appBlocks(try AppBlocks([:], unknown: .nothing))), 0)
+    }
+
+    func testAScreenDrawsItsTitleUnlessTheAppTurnsItOff() throws {
+        let screen = try block(#"{"type": "screen", "id": "s", "title": "Queue", "blocks": [{"type": "text", "text": "a"}]}"#)
+        let (shown, off) = (height(BlocksView(screen, source: .core)), height(BlocksView(screen, source: .core).screenTitle(false)))
+        XCTAssertGreaterThan(shown, off + 20, "the 30 pt title line is gone")
+    }
+
+    func testAnActionCarriesTheIdOfTheBlockItCameFrom() throws {
+        var sent: [BlockAction] = []
+        let card = try block(
+            #"{"type": "card", "id": "c", "blocks": [{"type": "island", "id": "e", "name": "x-echo", "events": ["echo"], "props": {"n": 1}, "fallback": {"title": "e"}}, {"type": "island", "name": "x-echo", "events": ["echo"], "props": {"n": 2}, "fallback": {"title": "-"}}]}"#)
+        _ = try pixels(BlocksView(card, source: .core, act: { sent.append($0) }).islands(["x-echo": Snapshot.echo]))
+        XCTAssertEqual(Set(sent.map(\.block)), ["e", nil], "a block with no id sends none, not its card's")
+        XCTAssertTrue(sent.allSatisfy { ($0.block == "e") == ($0.values["n"] == .number(1)) })
     }
 
     func testABlockStyleWrapsOnlyItsKind() throws {

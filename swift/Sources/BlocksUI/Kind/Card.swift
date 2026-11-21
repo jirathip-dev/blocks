@@ -5,6 +5,8 @@ internal struct CardBlock: View {
     @Environment(\.look) private var look
     @Environment(\.behaved) private var behaved
     @Environment(\.card) private var context
+    @Environment(\.act) private var act
+    @State private var open = false
     internal let block: Card
 
     private struct Kind {
@@ -42,30 +44,8 @@ internal struct CardBlock: View {
     @ViewBuilder private var card: some View {
         let tint = kind?.tint ?? look.palette.tone(block.tone?.rawValue) ?? look.palette.lead
         VStack(alignment: .leading, spacing: 10) {
-            header(tint)
-            if let title = block.title {
-                Text(title).ui(16, .semibold, look).foregroundStyle(look.palette.foreground)
-            }
-            if let subtitle = block.subtitle {
-                Group {
-                    switch subtitle {
-                    case .string(let text): Text(text).foregroundStyle(look.palette.mute)
-                    case .label(let label):
-                        RelativeValue { label.text.text(at: $0, behaved.view.values) }
-                            .foregroundStyle(look.palette.tone(label.tone?.rawValue) ?? look.palette.mute)
-                    }
-                }
-                .ui(13, .regular, look).lineLimit(2)
-            }
-            if let buttons = block.buttons, !buttons.isEmpty {
-                HStack(spacing: 8) {
-                    ForEach(Array(buttons.enumerated()), id: \.offset) { _, button in
-                        BlockNode(block: button)
-                    }
-                }
-            }
-            BlockStack(blocks: block.blocks ?? []).environment(
-                \.card, CardContext(poster: context.poster, tint: tint))
+            if let fold = block.fold { line(fold) }
+            if block.fold == nil || open { content(tint) }
         }
         .padding(14)
         .surface(look, radius: 20)
@@ -75,6 +55,52 @@ internal struct CardBlock: View {
             }
         }
         .modifier(BlockActs(menu: block.menu ?? []))
+    }
+
+    private func line(_ fold: Fold) -> some View {
+        HStack(spacing: Scale.gap) {
+            Button { open.toggle() } label: {
+                Text(fold.line).ui(Scale.cell, .regular, look).foregroundStyle(look.palette.foreground).lineLimit(1)
+                    .frame(maxWidth: .infinity, alignment: .leading).contentShape(.rect)
+            }
+            .buttonStyle(.plain).accessibilityValue(open ? "expanded" : "collapsed")
+            if let main = fold.main, !open {
+                Button {
+                    let choice = main.value.map { ["choice": JSONValue.string($0)] } ?? [:]
+                    act(BlockAction(action: main.action, block: main.block, values: (main.values ?? [:]).merging(choice) { $1 }))
+                } label: {
+                    CardButton(title: main.label, primary: true).fixedSize()
+                }
+                .buttonStyle(.plain).modifier(Identified(id: main.action, action: true))
+            }
+        }
+    }
+
+    @ViewBuilder private func content(_ tint: Color) -> some View {
+        header(tint)
+        if let title = block.title {
+            Text(title).ui(16, .semibold, look).foregroundStyle(look.palette.foreground)
+        }
+        if let subtitle = block.subtitle {
+            Group {
+                switch subtitle {
+                case .string(let text): Text(text).foregroundStyle(look.palette.mute)
+                case .label(let label):
+                    RelativeValue { label.text.text(at: $0, behaved.view.values) }
+                        .foregroundStyle(look.palette.tone(label.tone?.rawValue) ?? look.palette.mute)
+                }
+            }
+            .ui(13, .regular, look).lineLimit(2)
+        }
+        if let buttons = block.buttons, !buttons.isEmpty {
+            HStack(spacing: 8) {
+                ForEach(Array(buttons.enumerated()), id: \.offset) { _, button in
+                    BlockNode(block: button)
+                }
+            }
+        }
+        BlockStack(blocks: block.blocks ?? []).environment(
+            \.card, CardContext(poster: context.poster, tint: tint))
     }
 
     @ViewBuilder

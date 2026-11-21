@@ -4,6 +4,7 @@ import SwiftUI
 /// One block drawn as its kind, with its hidden, disabled and style state; an app block embeds its children with it.
 public struct BlockNode: View {
     @Environment(\.behaved) private var behaved
+    @Environment(\.appBlocks) private var appBlocks
     private let block: Block
 
     public init(block: Block) {
@@ -24,6 +25,7 @@ public struct BlockNode: View {
         case .chips(let chips): chips.options.isEmpty
         case .images(let images): images.items.isEmpty
         case .prose(let prose): prose.parts.isEmpty
+        case .appBlock(let app): appBlocks?.unknown == .nothing && appBlocks?.views[app.type] == nil
         default: false
         }
     }
@@ -38,7 +40,12 @@ public struct BlockNode: View {
             case .images(let images): ImagesBlock(block: images)
             case .diff(let diff): DiffBlock(block: diff)
             case .editor(let editor): EditorBlock(block: editor)
-            case .scene(let scene): LaneStage(block: scene)
+            case .scene(let scene):
+                if let draw = appBlocks?.views["scene"], let json = try? JSONValue(block) {
+                    draw(json)
+                } else {
+                    LaneStage(block: scene)
+                }
             case .diagram(let diagram): DiagramBlock(block: diagram)
             case .composer(let composer): ComposerBlock(block: composer)
             case .lines(let lines): LinesBlock(block: lines)

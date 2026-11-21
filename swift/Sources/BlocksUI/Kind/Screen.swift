@@ -4,12 +4,13 @@ import SwiftUI
 internal struct ScreenBlock: View {
     @Environment(\.look) private var look
     @Environment(\.refresh) private var refresh
+    @Environment(\.screenTitle) private var shown
     internal let block: Screen
 
     internal var body: some View {
         VStack(alignment: .leading, spacing: 14) {
             HStack(spacing: 8) {
-                Text(block.title ?? "").ui(block.large == false ? 17 : 30, .bold, look)
+                if shown { Text(block.title ?? "").ui(block.large == false ? 17 : 30, .bold, look) }
                 Spacer(minLength: 4)
                 ForEach(Array((block.actions ?? []).enumerated()), id: \.offset) { _, item in
                     ToolbarItemView(item: item)

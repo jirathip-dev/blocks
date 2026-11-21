@@ -1,22 +1,30 @@
 import Blocks
 import SwiftUI
 
-/// An app's own block kinds, drawn by name; a core kind's name is refused.
+/// An app's own block kinds, drawn by name; a core kind's name is refused but a stage's.
 public struct AppBlocks: Sendable {
     public typealias Draw = @MainActor @Sendable (JSONValue) -> AnyView
 
-    internal let views: [String: Draw]
+    internal static let stages: Set<String> = ["scene"]
 
-    public init(_ views: [String: Draw]) throws(AppBlocksError) {
-        if let clash = views.keys.sorted().first(where: Self.isCore) { throw .clash(clash) }
-        self.views = views
+    internal let views: [String: Draw]
+    internal let figure: Draw?
+    internal let unknown: Unknown
+
+    public init(_ views: [String: Draw], figure: Draw? = nil, unknown: Unknown = .fallback) throws(AppBlocksError) {
+        if let clash = views.keys.sorted().first(where: { Self.isCore($0) && !Self.stages.contains($0) }) {
+            throw .clash(clash)
+        }
+        (self.views, self.figure, self.unknown) = (views, figure, unknown)
     }
 
     /// Whether `type` is a core kind: the generated decoder takes it for one of its own.
-    public static func isCore(_ type: String) -> Bool {
-        guard let block = try? JSONValue.object(["type": .string(type)]).decode(Block.self) else { return true }
-        guard case .appBlock = block else { return true }
-        return false
+    public static func isCore(_ type: String) -> Bool { Block.tags.contains(type) }
+
+    /// What a kind with no view draws: its fallback row, or nothing.
+    public enum Unknown: Sendable {
+        case fallback
+        case nothing
     }
 }
 
@@ -33,6 +41,11 @@ extension View {
         environment(\.appBlocks, blocks)
     }
 
+    /// Whether a screen draws its title line; an app with its own navigation title turns it off.
+    public func screenTitle(_ shown: Bool) -> some View {
+        environment(\.screenTitle, shown)
+    }
+
     /// Wraps every block of `type` in `style`.
     public func blockStyle(_ type: String, _ style: some BlockStyle) -> some View {
         transformEnvironment(\.blockStyles) { $0[type] = { AnyView($0.modifier(style)) } }
@@ -41,6 +54,7 @@ extension View {
 
 extension EnvironmentValues {
     @Entry internal var appBlocks: AppBlocks?
+    @Entry internal var screenTitle = true
     @Entry internal var blockStyles: [String: @MainActor @Sendable (AnyView) -> AnyView] = [:]
 }
 
