@@ -77,6 +77,7 @@ fn the_gallery_counts_every_kind_once_and_finds_its_fallback_group_from_the_rend
     fallback.sort();
     assert_ne!(fallback, Vec::<String>::new());
     assert!(gallery.contains("All 35 core kinds"));
+    assert!(gallery.contains("href=\"https://jirathip-dev.github.io/blocks/egui/\""));
     assert!(
         home.contains("<b class=\"b-stat__value\">35</b><span class=\"m\">core kinds"),
         "home's kind count"

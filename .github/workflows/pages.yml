@@ -17,12 +17,24 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@1.99.1
+        with:
+          targets: wasm32-unknown-unknown
       - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: |
+            .
+            demo/egui
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: trunk
       - uses: actions/setup-node@v4
         with:
           node-version: 24
       - name: "build the showcase site (every page a blocks Screen; a broken page fails here)"
         run: cargo run -q --locked -p blocks-site -- _site
+      - name: "the egui demo to wasm, at /egui/ beside the HTML showcase"
+        working-directory: demo/egui
+        run: trunk build --release --locked --public-url /blocks/egui/ --dist "$GITHUB_WORKSPACE/_site/egui" && test -s "$GITHUB_WORKSPACE/_site/egui/index.html"
       - name: "Playwright's WebKit"
         run: npm --prefix web ci --no-audit --no-fund && npx --prefix web playwright install --with-deps webkit
       - name: "same PNG and tree before and after blocks.js, links and the look sheet under /blocks/"
