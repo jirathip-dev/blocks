@@ -1,0 +1,19 @@
+{
+  "kind": "modal",
+  "id": "edit-item",
+  "variant": null,
+  "drawn": "native",
+  "role": "dialog",
+  "name": "Edit item",
+  "children": [
+    {
+      "kind": "text",
+      "id": "modal-note",
+      "variant": null,
+      "drawn": "native",
+      "role": "group",
+      "name": "modal-note",
+      "children": []
+    }
+  ]
+}

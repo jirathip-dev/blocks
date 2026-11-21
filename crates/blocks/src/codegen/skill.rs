@@ -13,7 +13,7 @@ const BIN: &str = "crates/blocks-cli/src/gen/skill.rs";
 
 const HEAD: &str = "---\nname: blocks\ndescription: Build a blocks screen as data: the kinds and their fields, the guard's rules, and \
 example screens that pass them. Use it when writing or changing a screen.\n---\n\n# blocks\n\n\
-A screen is data: a `screen` or `sheet` block of typed blocks, checked, then drawn by a renderer. Start a new screen \
+A screen is data: a `screen` or `modal` block of typed blocks, checked, then drawn by a renderer. Start a new screen \
 from a page in `examples/` (each has no guard finding), build it from the kinds below, keep it clear of the rules in \
 `rules.md`, and check it with `blocks check`. Setting up and reading the guard: `docs/guard.md` in the blocks repo.\n\n\
 ## Kinds\n\n";

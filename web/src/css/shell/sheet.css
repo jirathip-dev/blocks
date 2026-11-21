@@ -1,7 +1,4 @@
-.b-sheet{position:fixed;inset:0;z-index:5;display:flex;align-items:flex-end;justify-content:center;background:var(--scrim)}
 .b-sheet[hidden]{display:none}
-.b-sheet.shb{flex-direction:column;justify-content:flex-start;align-items:center;overflow-y:auto}
-.b-sheet.shb>:first-child{margin-top:auto}
 .b-sheet__card{width:100%;max-width:640px;max-height:90%;overflow-y:auto;padding:var(--s2) var(--s4);background:var(--bg);border-radius:var(--radius) var(--radius) 0 0}
 .b-sheet__head{display:flex;align-items:center;gap:var(--s3);min-height:var(--hit)}
 .b-sheet__title{flex:1}

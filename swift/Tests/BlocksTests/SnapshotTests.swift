@@ -62,7 +62,7 @@ final class SnapshotTests: XCTestCase {
     func testEveryFixtureBlockPassesCheckAndItsTreeHasTheHTMLTreesShape() throws {
         let kinds = try FileManager.default.contentsOfDirectory(atPath: fixtures.appendingPathComponent("blocks").path)
             .map { String($0.dropLast(5)) }.sorted()
-        XCTAssertEqual(kinds.count, 39)
+        XCTAssertEqual(kinds.count, 42)
         for kind in kinds {
             let expect = try load(TreeNode.self, "trees/swift/\(kind).json")
             let run = try Snapshot(try load(Block.self, "blocks/\(kind).json")).run(

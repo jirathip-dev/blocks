@@ -68,7 +68,7 @@ async function markup(p, b) {
 }
 
 test("each kind React draws natively writes the HTML renderer's markup: tags, classes, data-*, role, aria-* and own text, in order", async () => {
-  deepStrictEqual([...native].sort(), ["button", "card", "chips", "choice", "composer", "config", "diagram", "diff", "editor", "form", "hero", "images", "import", "list", "media", "message", "nav", "pages", "prose", "row", "run", "scene", "screen", "secret", "section", "sheet", "stat", "table", "text", "timeline", "tool", "web"]);
+  deepStrictEqual([...native].sort(), ["button", "card", "chips", "choice", "composer", "config", "diagram", "diff", "editor", "form", "hero", "images", "import", "list", "media", "message", "modal", "nav", "pages", "prose", "row", "run", "scene", "screen", "secret", "section", "sheet", "stat", "table", "text", "timeline", "tool", "web"]);
   const p = await browser.newPage();
   await p.setContent("<base href=https://x.test/><div id=html></div><div id=react></div>");
   await p.addScriptTag({ content: reactJs() });
@@ -129,7 +129,7 @@ test("run, choice, secret, composer and config used the same way send the same a
   await steps("#html");
   await steps("#react");
   await p.waitForFunction(() => window.sent.length === 6);
-  const bare = ({ nonce, ...v }) => v;
+  const bare = ({ nonce: _nonce, ...v }) => v;
   const [posts, sent] = await p.evaluate(() => [window.posts.map(({ action, block, values }) => ({ action, block, values })), window.sent.map(({ screen, ...a }) => a)]);
   for (const a of [...posts, ...sent]) if (a.action === "say") a.values = bare(a.values);
   deepStrictEqual(posts.length, 6);

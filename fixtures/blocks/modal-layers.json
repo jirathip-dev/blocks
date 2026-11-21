@@ -1,0 +1,13 @@
+{
+  "type": "modal",
+  "id": "layers",
+  "title": "Layers",
+  "variant": "tool",
+  "blocks": [
+    {
+      "type": "text",
+      "id": "layers-note",
+      "markdown": "Header, Title, Body"
+    }
+  ]
+}

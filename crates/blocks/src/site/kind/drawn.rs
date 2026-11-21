@@ -18,6 +18,7 @@ kinds! {
     "list" => list,
     "media" => media,
     "message" => message,
+    "modal" => modal,
     "nav" => nav,
     "pages" => pages,
     "prose" => prose,

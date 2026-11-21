@@ -96,6 +96,8 @@ extension Block {
         case .lines(let b): ("lines", b.id, nil, Source(action: b.action))
         case .message(let b): ("message", b.id, b.role.rawValue, Source())
         case .tool(let b): ("tool", b.id, b.state.rawValue, Source())
+        case .modal(let b): ("modal", b.id, b.variant?.rawValue, Source())
+        case .sheet(let b): ("sheet", b.id, b.variant?.rawValue, Source())
         case .appBlock(let b):
             (
                 b.type, b.id, nil,
@@ -105,7 +107,7 @@ extension Block {
         }
     }
 
-    private static let roles = ["section": "region", "form": "form", "config": "form", "nav": "navigation", "chart": "figure", "toast": "status", "message": "article"]
+    private static let roles = ["modal": "dialog", "sheet": "dialog", "section": "region", "form": "form", "config": "form", "nav": "navigation", "chart": "figure", "toast": "status", "message": "article"]
     private static let names = ["label", "title", "header", "question", "alt", "file", "command", "placeholder", "name"]
 
     /// The accessible role and name every renderer gives this block's root, as `tree::a11y` in Rust.
@@ -117,6 +119,7 @@ extension Block {
             case .row(let b) where b.tap != nil && (b.rounds ?? []).isEmpty && (b.swipe ?? []).isEmpty:
                 b.tap?.url == nil ? "button" : "link"
             case .editor: "button"
+            case .modal(let b) where b.variant == .alert, .sheet(let b) where b.variant == .alert: "alertdialog"
             default: Self.roles[head.type] ?? "group"
             }
         let id = head.id.flatMap { $0.isEmpty ? nil : $0 }
@@ -126,7 +129,7 @@ extension Block {
     private var named: [String?] {
         switch self {
         case .screen(let b): [b.title]
-        case .sheet(let b): [b.title]
+        case .modal(let b), .sheet(let b): [b.title]
         case .section(let b): [b.header]
         case .row(let b): [b.title]
         case .card(let b): [b.title]
@@ -170,7 +173,7 @@ extension Block {
         switch self {
         case .form(let form), .config(let form): form.fieldValues
         case .screen(let b): (b.blocks ?? []).fieldValues
-        case .sheet(let b): b.blocks.fieldValues
+        case .modal(let b), .sheet(let b): b.blocks.fieldValues
         case .section(let b): b.blocks.fieldValues
         case .card(let b): (b.blocks ?? []).fieldValues
         default: [:]

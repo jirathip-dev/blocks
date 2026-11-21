@@ -11,6 +11,7 @@ import { grow } from "./render/kind/prose.ts";
 import { type Blk, blks, isBlk } from "./core/tree.ts";
 import { linkable } from "./render/act.ts";
 import { render } from "./render/block.ts";
+import { box } from "./render/kind/modal.ts";
 import { type Ctx, obj, type Post, posted, type Renderer, type Store } from "./render/ctx.ts";
 import { btn, el, h } from "./render/dom.ts";
 import { tick } from "./render/text.ts";
@@ -181,11 +182,8 @@ function draw(o: Mount, store: Store, theme: Theme, wear: (name: string | null, 
   const notes = toasts();
   const ask = el("div", "b-confirm");
   const sheet = el("div", "b-sheet");
-  const head = el("header", "b-sheet__head");
-  const sheetBody = el("div", "b-sheet__body");
   ask.hidden = sheet.hidden = true;
-  sheet.append(h("div", "b-sheet__card", head, sheetBody));
-  sheet.addEventListener("click", (e) => e.target === sheet && closeSheet());
+  sheet.addEventListener("close", () => closeSheet(), true);
   let sheetView: View | undefined;
   const say = (v: View, t: Toast, first = false) => {
     const u = t.undo;
@@ -209,7 +207,7 @@ function draw(o: Mount, store: Store, theme: Theme, wear: (name: string | null, 
 
   const ctx = (v: View): Ctx => ({
     screen: String(v.model?.id ?? v.path),
-    locale: v.model && (v.model.type === "screen" || v.model.type === "sheet") ? (v.model.locale ?? undefined) : undefined,
+    locale: v.model && (v.model.type === "screen" || v.model.type === "modal" || v.model.type === "sheet") ? (v.model.locale ?? undefined) : undefined,
     act: (a, b) => act(v, a, b),
     tap: (t) => tap(v, t),
     open: v.open,
@@ -227,8 +225,12 @@ function draw(o: Mount, store: Store, theme: Theme, wear: (name: string | null, 
     v.sync();
     const b = btn("‹ back", "b-back");
     b.onclick = () => back(v);
-    v.box.replaceChildren(...(v.back.length && v !== sheetView ? [b] : []), v.body);
-    if (v === sheetView) heading(v);
+    if (v === sheetView) {
+      const own = v.model?.type === "modal" || v.model?.type === "sheet";
+      const lead = v.back.length ? b : undefined;
+      if (own && lead) v.body.querySelector(".mdt")?.before(lead);
+      v.box.replaceChildren(own ? v.body : framed(String(obj(v.model)["title"] ?? ""), [v.body], lead));
+    } else v.box.replaceChildren(...(v.back.length ? [b] : []), v.body);
     if (!e || v.built.has(v.path)) return;
     v.built.add(v.path);
     requestAnimationFrame(() => settle(v.body));
@@ -278,30 +280,24 @@ function draw(o: Mount, store: Store, theme: Theme, wear: (name: string | null, 
     if (p !== undefined) go(v, p, false);
   };
 
+  const framed = (title: string, body: HTMLElement[], lead?: HTMLElement) => box({ title, blocks: [] }, body, { done: async () => true, store, lead });
   const closeSheet = () => {
     hide(sheetView);
     sheetView = undefined;
     sheet.hidden = true;
+    sheet.replaceChildren();
   };
   const sheetWith = (title: string, body: HTMLElement[], prev?: () => void) => {
-    hide(sheetView);
-    sheetView = undefined;
-    frame(title, prev);
-    sheetBody.replaceChildren(...body);
-    sheet.hidden = false;
-  };
-  const frame = (title: string, prev?: () => void) => {
-    const x = btn("close", "b-sheet__close");
-    x.onclick = closeSheet;
+    closeSheet();
     const b = btn("‹ back", "b-back");
     if (prev) b.onclick = prev;
-    head.replaceChildren(...(prev ? [b] : []), h("b", "b-sheet__title", title), x);
+    sheet.replaceChildren(framed(title, body, prev ? b : undefined));
+    sheet.hidden = false;
   };
-  const heading = (v: View) => frame(String(obj(v.model)["title"] ?? ""), v.back.length ? () => back(v) : undefined);
   const openSheet = (source: string, path: string) => {
     if (sheetView && !sheet.hidden) return go(sheetView, path);
     closeSheet();
-    const v = view(source, path, sheetBody);
+    const v = view(source, path, sheet);
     sheetView = v;
     sheet.hidden = false;
     show(v);
@@ -439,13 +435,9 @@ export function adopt(o: { theme?: Theme; store?: Store; blocks?: AppBlocks } = 
   wear(store.get("b:look"));
   const sheet = el("div", "b-sheet");
   const lookSheet = () => {
-    const x = btn("close", "b-sheet__close");
-    x.onclick = () => (sheet.hidden = true);
-    sheet.replaceChildren(h("div", "b-sheet__card", h("header", "b-sheet__head", h("b", "b-sheet__title", "look"), x), h("div", "b-sheet__body", looks(schemes, store, wear, lookSheet))));
-    sheet.hidden = false;
+    sheet.replaceChildren(box({ title: "look", blocks: [] }, [looks(schemes, store, wear, lookSheet)], { done: async () => true, store }));
     if (!sheet.isConnected) document.body.append(sheet);
   };
-  sheet.addEventListener("click", (e) => e.target === sheet && (sheet.hidden = true));
   document.addEventListener("click", (e) => {
     const s = e.target instanceof Element ? e.target.closest<HTMLElement>("[data-sheet]") : null;
     if (s) tap({ sheet: s.dataset["sheet"] });

@@ -1,7 +1,8 @@
 // src/gen/hooks.ts
 var hooks = {
   screen: { variant: null, parts: ["title", "badge", "actions"] },
-  sheet: { variant: null, parts: ["title"] },
+  modal: { variant: "variant", parts: ["title"] },
+  sheet: { variant: "variant", parts: ["title"] },
   section: { variant: null, parts: [] },
   list: { variant: null, parts: [] },
   row: { variant: "style", parts: ["title", "subtitle", "badge", "value", "figure", "actions"] },
@@ -38,7 +39,7 @@ var hooks = {
   message: { variant: "role", parts: [] },
   tool: { variant: "state", parts: [] }
 };
-var roles = { section: "region", form: "form", config: "form", nav: "navigation", chart: "figure", toast: "status", message: "article" };
+var roles = { modal: "dialog", sheet: "dialog", section: "region", form: "form", config: "form", nav: "navigation", chart: "figure", toast: "status", message: "article" };
 var names = ["label", "title", "header", "question", "alt", "file", "command", "placeholder", "name"];
 
 // src/gen/schemes.ts
@@ -309,6 +310,7 @@ function role(b, kind) {
   const wrapped = ["rounds", "swipe"].some((k) => Array.isArray(b[k]) && b[k].length > 0);
   if ((kind === "button" || kind === "row") && tap?.["url"] != null && !wrapped) return "link";
   if (kind === "row" && tap && !wrapped || kind === "button" || kind === "editor") return "button";
+  if ((kind === "modal" || kind === "sheet") && b["variant"] === "alert") return "alertdialog";
   return roles[kind] ?? "group";
 }
 function node(v, kinds3, state) {
@@ -478,6 +480,7 @@ var choose = (setting, dark, schemes = {}) => (setting !== null && Object.protot
 
 // src/gen/builders.ts
 var screen = (fields) => ({ type: "screen", ...fields });
+var modal = (fields) => ({ type: "modal", ...fields });
 var sheet = (fields) => ({ type: "sheet", ...fields });
 var section = (fields) => ({ type: "section", ...fields });
 var list2 = (fields) => ({ type: "list", ...fields });
@@ -761,6 +764,7 @@ var kinds = {
   "list": "List",
   "media": "Media",
   "message": "Message",
+  "modal": "Modal",
   "nav": "Nav",
   "pages": "Pages",
   "prose": "Prose",
@@ -770,7 +774,7 @@ var kinds = {
   "screen": "Screen",
   "secret": "Secret",
   "section": "Section",
-  "sheet": "Sheet",
+  "sheet": "Modal",
   "stat": "Stat",
   "steps": "Steps",
   "table": "Table",
@@ -926,6 +930,7 @@ var defs = {
         "not": {
           "enum": [
             "screen",
+            "modal",
             "sheet",
             "section",
             "list",
@@ -1081,7 +1086,20 @@ var defs = {
         "type": "object"
       },
       {
-        "$ref": "#/$defs/Sheet",
+        "$ref": "#/$defs/Modal",
+        "properties": {
+          "type": {
+            "const": "modal",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      {
+        "$ref": "#/$defs/Modal",
         "properties": {
           "type": {
             "const": "sheet",
@@ -4465,6 +4483,110 @@ var defs = {
     ],
     "type": "object"
   },
+  "Modal": {
+    "additionalProperties": true,
+    "properties": {
+      "blocks": {
+        "items": {
+          "$ref": "#/$defs/Block"
+        },
+        "type": "array"
+      },
+      "cancel": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "destructive": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "done": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Submit"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "id": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "locale": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Locale"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "message": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "ok": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "show": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "title": {
+        "type": "string"
+      },
+      "variant": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/ModalVariant"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      }
+    },
+    "required": [
+      "title",
+      "blocks"
+    ],
+    "type": "object"
+  },
+  "ModalVariant": {
+    "anyOf": [
+      {
+        "enum": [
+          "dialog",
+          "alert",
+          "tool"
+        ],
+        "type": "string"
+      },
+      {
+        "type": "string"
+      }
+    ]
+  },
   "More": {
     "anyOf": [
       {
@@ -6181,67 +6303,6 @@ var defs = {
     "required": [
       "key",
       "to"
-    ],
-    "type": "object"
-  },
-  "Sheet": {
-    "additionalProperties": true,
-    "properties": {
-      "blocks": {
-        "items": {
-          "$ref": "#/$defs/Block"
-        },
-        "type": "array"
-      },
-      "cancel": {
-        "type": [
-          "string",
-          "null"
-        ]
-      },
-      "done": {
-        "anyOf": [
-          {
-            "$ref": "#/$defs/Submit"
-          },
-          {
-            "type": "null"
-          }
-        ]
-      },
-      "id": {
-        "type": [
-          "string",
-          "null"
-        ]
-      },
-      "locale": {
-        "anyOf": [
-          {
-            "$ref": "#/$defs/Locale"
-          },
-          {
-            "type": "null"
-          }
-        ]
-      },
-      "show": {
-        "anyOf": [
-          {
-            "$ref": "#/$defs/Expr"
-          },
-          {
-            "type": "null"
-          }
-        ]
-      },
-      "title": {
-        "type": "string"
-      }
-    },
-    "required": [
-      "title",
-      "blocks"
     ],
     "type": "object"
   },
@@ -7986,6 +8047,7 @@ export {
   lit,
   media,
   message,
+  modal,
   named2 as named,
   names,
   nav,

@@ -1,0 +1,19 @@
+{
+  "kind": "modal",
+  "id": "layers",
+  "variant": "tool",
+  "drawn": "native",
+  "role": "dialog",
+  "name": "Layers",
+  "children": [
+    {
+      "kind": "text",
+      "id": "layers-note",
+      "variant": null,
+      "drawn": "native",
+      "role": "group",
+      "name": "layers-note",
+      "children": []
+    }
+  ]
+}

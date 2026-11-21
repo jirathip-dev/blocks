@@ -4,7 +4,8 @@ export type Hook = { variant: string | null; parts: readonly string[] };
 
 export const hooks: Record<Kind, Hook> = {
     screen: { variant: null, parts: ["title", "badge", "actions"] },
-    sheet: { variant: null, parts: ["title"] },
+    modal: { variant: "variant", parts: ["title"] },
+    sheet: { variant: "variant", parts: ["title"] },
     section: { variant: null, parts: [] },
     list: { variant: null, parts: [] },
     row: { variant: "style", parts: ["title", "subtitle", "badge", "value", "figure", "actions"] },
@@ -42,6 +43,6 @@ export const hooks: Record<Kind, Hook> = {
     tool: { variant: "state", parts: [] },
 };
 
-export const roles: Record<string, string> = { section: "region", form: "form", config: "form", nav: "navigation", chart: "figure", toast: "status", message: "article" };
+export const roles: Record<string, string> = { modal: "dialog", sheet: "dialog", section: "region", form: "form", config: "form", nav: "navigation", chart: "figure", toast: "status", message: "article" };
 
 export const names = ["label", "title", "header", "question", "alt", "file", "command", "placeholder", "name"] as const;
