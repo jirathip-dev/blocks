@@ -1,13 +1,7 @@
 frozen = [
-    "ci/cap.toml",
-    "crates/blocks/src/site/views.rs",
-    "docs/schema.md",
-    "swift/Sources/BlocksUI/Blocks.swift",
-    "swift/Sources/BlocksUI/BlockCards.swift",
-    "swift/Sources/BlocksUI/BlockLeaves.swift",
-    "web/src/blocks.css",
-    "web/src/render/index.ts",
-    "web/test/render.test.ts",
+    ".github/workflows/ci.yml", ".github/workflows/swift.yml", "ci/cap.toml", "crates/blocks/src/site/views.rs", "docs/schema.md",
+    "swift/Sources/BlocksUI/Blocks.swift", "swift/Sources/BlocksUI/BlockCards.swift", "swift/Sources/BlocksUI/BlockLeaves.swift",
+    "web/src/blocks.css", "web/src/render/index.ts", "web/test/render.test.ts",
 ]
 generated = [
     "schema/blocks.schema.json",
@@ -15,25 +9,18 @@ generated = [
     "web/src/gen/types.ts",
     "web/src/gen/hooks.ts",
     "web/src/gen/sample.ts",
-    "swift/Sources/Blocks/Gen/Blocks.swift",
+    "swift/Sources/Blocks/Gen/*.swift",
     "web/src/gen/schemes.ts",
-    "swift/Sources/Blocks/Gen/Schemes.swift",
-    "swift/Sources/Blocks/Gen/Style.swift",
-    "swift/Sources/Blocks/Gen/LayoutShapes.swift",
     "web/src/gen/layout.ts",
     "web/src/gen/kinds.ts",
     "web/src/gen/builders.ts",
     "web/src/gen/shapes.ts",
     "fixtures/check/*.json",
     "fixtures/built/*.json",
-    "web/dist/blocks.js",
-    "web/dist/blocks.css",
-    "web/dist/core.js", "web/dist/play.js", "web/dist/import.js", "web/dist/scan.js",
+    "web/dist/*.js", "web/dist/*.css",
     "web/src/gen/scoped.css",
-    "web/dist/blocks.scoped.css",
     "web/dist/types/**",
     "web/react/src/gen/views.ts",
-    "web/dist/react.js",
     "fixtures/trees/react/*.json",
     "fixtures/blocks/*.json",
     "fixtures/trees/*.json",
@@ -52,11 +39,10 @@ generated = [
     "web/src/gen/fields.ts",
     "web/react/src/gen/fields.ts",
     "web/src/gen/words.ts", "web/src/gen/words-import.ts",
-    "swift/Sources/Blocks/Gen/Words.swift",
     "fixtures/fields/*.json",
     "fixtures/fields/trees/*.json",
 ]
-generate = "just gen"
+generate = "sh scripts/arch-gen.sh"
 shared = [
     "crates/blocks/src/lib.rs",
     "crates/*/tests/support/**",
@@ -75,7 +61,27 @@ shared = [
     "crates/blocks/src/site/mod.rs",
     "crates/blocks/src/site/kind/mod.rs",
     "crates/blocks/tests/site.rs",
+    ".drover/rules.md",
+    "web/package.json",
+    "web/test/shot.test.ts",
+    "web/react/test/markup.test.ts",
+    "site/src/main.rs",
+    "site/tests/pages.rs",
+    "crates/blocks-desk/tests/desk.rs",
+    "crates/blocks-desktop/src/stage.rs",
+    "swift/Tests/BlocksTests/ApplyTests.swift",
+    "swift/Tests/BlocksTests/SnapshotTests.swift",
+    "swift/Sources/BlocksUI/AppBlocks.swift",
+    "swift/Sources/BlocksUI/BlocksView.swift",
+    "swift/Sources/BlocksUI/Look+Style.swift",
+    "swift/Sources/BlocksUI/Theme.swift",
+    "swift/Sources/BlocksUI/Tree.swift", "swift/Sources/Blocks/Apply.swift",
+    "web/src/shell.ts",
 ]
+
+[[collect]]
+dir = ".gatekeeper/gates"
+glob = "*.toml"
 
 [[collect]]
 dir = "ci/cap.d"
@@ -253,9 +259,15 @@ mods = ["blocks_cli"]
 may_use = ["guard", "kind", "built", "tree", "wire"]
 
 [[layer]]
+name = "desktop-words"
+paths = ["crates/blocks-desktop/src/words.rs"]
+mods = ["crate::words"]
+
+[[layer]]
 name = "desktop-bidi"
 paths = ["crates/blocks-desktop/src/bidi.rs", "crates/blocks-desktop/src/bidi/**"]
 mods = ["crate::bidi"]
+may_use = ["desktop-words"]
 
 [[layer]]
 name = "desktop-look"
@@ -359,8 +371,8 @@ reason = "one module knows the bidi algorithm: the rest ask bidi for a galley"
 [[ban]]
 pattern = "ui.label("
 paths = ["crates/blocks-desktop/src/**"]
-except = ["crates/blocks-desktop/src/bidi.rs", "crates/blocks-desktop/src/bidi/**"]
-reason = "text reaches egui through bidi::label, para or text, which put right-to-left text in visual order"
+except = ["crates/blocks-desktop/src/bidi.rs", "crates/blocks-desktop/src/bidi/**", "crates/blocks-desktop/src/words.rs"]
+reason = "text reaches egui through bidi::label, para or text, which put right-to-left text in visual order and break Thai between words"
 
 [[ban]]
 pattern = "ui.heading("
@@ -512,7 +524,10 @@ paths = ["swift/Tests/**/*.swift"]
 max_file_lines = 1000
 
 [[size]]
-paths = ["web/src/patch.ts", "web/test/patch.test.ts", "web/test/dom.ts", "web/shot/shot.ts", "crates/blocks/tests/site.rs"]
+paths = [
+    "web/src/patch.ts", "web/test/patch.test.ts", "web/test/dom.ts", "web/shot/shot.ts", "crates/blocks/tests/site.rs",
+    "swift/Sources/BlocksUI/Tree.swift",
+]
 max_file_lines = 200
 
 [[size]]
@@ -534,6 +549,42 @@ max_file_lines = 80
 [[size]]
 paths = ["crates/blocks/src/kind/field/mod.rs", "crates/blocks/src/site/field/mod.rs", "swift/Sources/BlocksUI/Field/FieldRow.swift"]
 max_file_lines = 80
+
+[[size]]
+paths = [".drover/rules.md", "web/package.json"]
+max_file_lines = 30
+
+[[size]]
+paths = ["swift/Sources/BlocksUI/AppBlocks.swift"]
+max_file_lines = 100
+
+[[size]]
+paths = ["web/react/test/markup.test.ts"]
+max_file_lines = 120
+
+[[size]]
+paths = ["swift/Sources/BlocksUI/Look+Style.swift", "swift/Sources/BlocksUI/Theme.swift"]
+max_file_lines = 140
+
+[[size]]
+paths = ["swift/Sources/BlocksUI/BlocksView.swift", "site/src/main.rs"]
+max_file_lines = 170
+
+[[size]]
+paths = ["crates/blocks-desktop/src/stage.rs", "site/tests/pages.rs"]
+max_file_lines = 250
+
+[[size]]
+paths = ["swift/Tests/BlocksTests/SnapshotTests.swift", "swift/Tests/BlocksTests/ApplyTests.swift", "swift/Sources/Blocks/Apply.swift"]
+max_file_lines = 290
+
+[[size]]
+paths = ["web/test/shot.test.ts"]
+max_file_lines = 320
+
+[[size]]
+paths = ["crates/blocks-desk/tests/desk.rs"]
+max_file_lines = 460
 
 [[ban]]
 pattern = "new Date("
@@ -579,3 +630,25 @@ reason = "the adapter sends nothing itself: bytes go to the app's file handler, 
 pattern = "URLSession"
 paths = ["swift/Sources/BlocksUI/**"]
 reason = "a view sends nothing itself: bytes go to the app's file handler, actions to act"
+
+[[ban]]
+pattern = "icu_segmenter"
+paths = ["crates/*/Cargo.toml", "crates/*/src/**"]
+except = ["crates/blocks-desktop/Cargo.toml", "crates/blocks-desktop/src/words.rs"]
+reason = "one module knows the segmenter: the rest ask words for a label or a layout"
+
+[[ban]]
+pattern = "hyperlink_to("
+paths = ["crates/blocks-desktop/src/**"]
+except = ["crates/blocks-desktop/src/bidi.rs", "crates/blocks-desktop/src/words.rs"]
+reason = "a link is bidi::link, which puts right-to-left text in visual order and breaks Thai between words"
+
+[[size]]
+paths = ["web/src/shell.ts"]
+max_file_lines = 40
+
+[[ban]]
+pattern = "patcher("
+paths = ["web/src/shell/**"]
+except = ["web/src/shell/host.ts"]
+reason = "one way to draw a screen: mount and adopt take their Ctx and their patcher from host"

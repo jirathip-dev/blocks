@@ -205,7 +205,10 @@ fn the_generated_schema_validates_every_fixture() {
 fn the_schema_and_the_types_refuse_a_core_kind_of_the_wrong_shape() {
     let s = schema();
     for (bad, why) in [
-        (r#"{"type": "row", "id": "a"}"#, "a row with no title"),
+        (
+            r#"{"type": "row", "id": "a", "title": 3}"#,
+            "a row whose title is no string",
+        ),
         (r#"{"type": "composer", "id": "say"}"#, "a composer with no action"),
         (
             r#"{"type": "web", "src": "/x", "height": "tall"}"#,
@@ -372,15 +375,15 @@ fn every_golden_parses_with_no_fault() {
     assert!(bad.is_empty(), "{}", bad.join("\n"));
 }
 
-const KINDS: [&str; 37] = [
-    "screen", "sheet", "section", "list", "row", "card", "choice", "form", "config", "secret", "run", "button",
-    "chips", "stat", "text", "images", "web", "diff", "editor", "scene", "diagram", "composer", "prose", "hero",
-    "media", "nav", "island", "lines", "steps", "table", "chart", "toast", "pages", "timeline", "import", "message",
-    "tool",
+const KINDS: [&str; 39] = [
+    "screen", "modal", "sheet", "section", "list", "row", "card", "choice", "form", "config", "secret", "run",
+    "button", "chips", "stat", "text", "images", "web", "diff", "editor", "scene", "diagram", "composer", "prose",
+    "hero", "media", "nav", "island", "lines", "steps", "table", "chart", "toast", "pages", "timeline", "import",
+    "message", "tool", "sidebar",
 ];
 
 #[test]
-fn the_37_kinds_each_have_a_typed_sample_that_is_its_fixture() {
+fn the_39_kinds_each_have_a_typed_sample_that_is_its_fixture() {
     let mut kinds: Vec<&str> = Block::KINDS.iter().copied().chain(["island"]).collect();
     kinds.sort_unstable();
     kinds.dedup();
@@ -440,7 +443,7 @@ fn check_finds_each_fault() {
         r#"{"type": "screen", "id": "s", "state": {"email": ""}, "blocks": [
             {"type": "row", "id": "a", "title": "one", "colour": "red"},
             {"type": "row", "id": "a", "title": "two"},
-            {"type": "row", "id": "b"},
+            {"type": "row", "id": "b", "title": 3},
             {"type": "text", "id": "", "markdown": "x", "show": {"get": "nope"}},
             {"type": "gauge", "id": "g"},
             {"type": "herd", "id": "h"},

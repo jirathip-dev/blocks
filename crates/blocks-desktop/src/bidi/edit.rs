@@ -5,6 +5,7 @@ use egui::text_edit::TextEditOutput;
 use egui::{Align, Align2, Color32, Event, FontSelection, Id, Key, Response, Stroke, TextBuffer, TextEdit, Ui};
 
 use super::{lay, reads_rtl, rtl, Fit, Laid};
+use crate::words;
 
 /// A text field of one row: egui's own until it holds a right-to-left character, then laid in visual order.
 pub fn edit(ui: &mut Ui, text: &mut String, on: bool, set: impl FnOnce(TextEdit<'_>) -> TextEdit<'_>) -> Response {
@@ -51,7 +52,24 @@ fn field(
     set: impl FnOnce(TextEdit<'_>) -> TextEdit<'_>,
 ) -> Response {
     if !rtl(text) {
-        return ui.add_enabled(on, set(make(text, many)));
+        if !many {
+            return ui.add_enabled(on, set(make(text, many)));
+        }
+        let mut thai = |ui: &Ui, buf: &dyn TextBuffer, width: f32| {
+            let font = FontSelection::Default.resolve(ui.style());
+            let line = ui.fonts_mut(|f| f.row_height(&font)) + ui.spacing().extra_text_line_spacing;
+            let color = ui
+                .visuals()
+                .override_text_color
+                .unwrap_or(ui.visuals().widgets.inactive.text_color());
+            let mut job = LayoutJob::simple(buf.as_str().to_owned(), font, color, width);
+            job.keep_trailing_whitespace = true;
+            for s in &mut job.sections {
+                s.format.line_height = Some(line);
+            }
+            words::lay(ui, job)
+        };
+        return ui.add_enabled(on, set(make(text, many)).layouter(&mut thai));
     }
     let id = ui.next_auto_id();
     let font = FontSelection::Default.resolve(ui.style());
@@ -79,7 +97,7 @@ fn field(
         let j = job(buf.as_str(), w);
         match lay(ui, &j, Fit::Column) {
             Some(l) => Arc::clone(&last.insert(l).galley),
-            None => ui.fonts_mut(|f| f.layout_job(j)),
+            None => words::lay(ui, j),
         }
     };
     let out = ui.scope(|ui| {

@@ -1,0 +1,25 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="../neutral-default/tokens.css"><link rel="stylesheet" href="../../../web/dist/blocks.css"><link rel="stylesheet" href="sidebar.css"><link rel="stylesheet" href="page.css">
+<script src="sidebar.js"></script><title>sidebar: the shell</title></head>
+<body>
+<div data-live data-side-spec='{"type": "sidebar", "id": "side", "label": "main", "brand": {"label": "Workspace", "icon": "◈", "href": "/"}, "groups": [{"links": [{"label": "Home", "icon": "⌂", "href": "/"}, {"label": "Inbox", "icon": "✉︎", "href": "/inbox", "current": true, "badge": {"count": 12}}, {"label": "Calendar", "icon": "◷", "href": "/calendar"}]}, {"title": "Work", "links": [{"label": "Projects", "icon": "◆", "open": true, "children": [{"label": "Spring launch", "href": "/projects/1"}, {"label": "Site refresh", "href": "/projects/2"}, {"label": "Archive", "href": "/projects/archive"}]}, {"label": "Reports", "icon": "▤", "href": "/reports"}, {"label": "Alerts", "icon": "⚑", "href": "/alerts", "badge": {"count": 3, "tone": "bad"}}]}, {"title": "Team", "links": [{"label": "People", "icon": "☺︎", "href": "/people"}, {"label": "Files", "icon": "▢", "href": "/files", "badge": {"count": 128}}]}], "footer": [{"label": "Sam Lee", "sub": "sam@example.com", "icon": "SL", "href": "/account"}, {"label": "Settings", "icon": "⚙︎", "href": "/settings"}]}'></div>
+<div class="b-sidescrim" aria-hidden="true"></div>
+<div class="b-sideedge" aria-hidden="true"></div>
+<div class="b-sidemain">
+<header class="b-sidebar"><button type="button" aria-label="menu" aria-controls="side" aria-expanded="false"><span>≡</span></button><span class="tw">Inbox</span><button type="button"><span>new</span></button></header>
+<main>
+<div class="top wide"><div class="tabh"><span class="tw">Inbox <small>· 12 new</small></span><button type="button"><span>filter</span></button><button type="button"><span>new message</span></button></div></div>
+<div class="sh">Today</div>
+<div class="list">
+<div class="row tap"><span class="rm"><span class="rt">Quarterly numbers are in</span><span class="rs">Ana · 09:12</span></span><span class="tag">2 files</span></div>
+<div class="row tap"><span class="rm"><span class="rt">Re: venue for the spring launch</span><span class="rs">Kim · 08:47</span></span></div>
+<div class="row tap"><span class="rm"><span class="rt">Design review moved to Thursday</span><span class="rs">Calendar · 08:30</span></span></div>
+<div class="row tap"><span class="rm"><span class="rt">Invoice 2026-114 is overdue</span><span class="rs">Billing · yesterday</span></span><span class="tag bad">overdue</span></div>
+<div class="row tap"><span class="rm"><span class="rt">Welcome the new team members</span><span class="rs">People · yesterday</span></span></div>
+<div class="row tap"><span class="rm"><span class="rt">Weekly report: site refresh</span><span class="rs">Reports · Mon</span></span></div>
+<div class="row tap"><span class="rm"><span class="rt">Draft: launch checklist</span><span class="rs">You · Mon</span></span><span class="tag">draft</span></div>
+</div>
+</main></div>
+<svg class="ptr" id="ptr" hidden viewBox="0 0 18 18" aria-hidden="true"><path d="M2 1 L2 15 L6 11 L9 17 L11 16 L8 10 L14 10 Z" fill="var(--fg)" stroke="var(--card)" stroke-width="1"/></svg>
+<script>draw();if(location.hash==="#open"){const p=document.getElementById("ptr");p.hidden=false;const a=document.querySelector('.b-side a[href="/reports"]');const r=a.getBoundingClientRect();p.style.left=(r.left+110)+"px";p.style.top=(r.top+14)+"px";a.style.background="var(--bg)"}if(location.hash==="#swipe"){const n=document.querySelector(".b-side").getBoundingClientRect();const t=document.createElement("div");t.className="touch";t.setAttribute("aria-hidden","true");t.style.left=(n.right-22)+"px";t.style.top="420px";document.body.append(t)}</script>
+</body></html>

@@ -217,27 +217,10 @@ extension JSONValue {
     private mutating func eachList(_ body: (inout [Self]) -> Bool) -> Bool {
         guard case .object(var o) = self else { return false }
         defer { self = .object(o) }
-        let keys: [String] =
-            switch type {
-            case "screen", "sheet", "section": ["blocks"]
-            case "list", "table": ["rows"]
-            case "card": ["blocks", "buttons"]
-            case "message": ["blocks"]
-            default: []
-            }
-        for key in keys {
+        for key in Block.walked {
             guard var items = o[key]?.items else { continue }
             let hit = body(&items)
             o[key] = .array(items)
-            if hit { return true }
-        }
-        guard type == "row", var rounds = o["rounds"]?.items else { return false }
-        for i in rounds.indices {
-            guard case .object(var round) = rounds[i], var blocks = round["blocks"]?.items else { continue }
-            let hit = body(&blocks)
-            round["blocks"] = .array(blocks)
-            rounds[i] = .object(round)
-            o["rounds"] = .array(rounds)
             if hit { return true }
         }
         return false
@@ -273,13 +256,9 @@ extension JSONValue {
     }
 
     private mutating func insert(_ child: Self, into: String, before: String?, after: String?) throws(ApplyError) {
-        let hosts = [
-            "screen": "blocks", "sheet": "blocks", "section": "blocks", "card": "blocks", "message": "blocks", "list": "rows",
-            "scene": "lanes", "row": "rounds", "table": "rows",
-        ]
         var fits = true
         let found = edit(into) { host in
-            guard let key = hosts[host.type] else {
+            guard let key = Block.hosts[host.type] else {
                 fits = false
                 return host
             }

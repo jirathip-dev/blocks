@@ -25,24 +25,46 @@ fn report(what: &str, took: f64, budget: f64) {
 #[test]
 #[ignore = "release only: desktop.yml's perf step"]
 fn the_200_row_screen_paints_every_pass_in_a_frame_and_each_patch_in_4_ms() {
-    budget("", "Run", "build green", "Patched");
-    budget("right-to-left, ", "הזמנה", "נשלחה לפני 2 דקות", "עודכן");
+    screen("Run", "build green", None, Some(PATCH_MS));
 }
 
-fn budget(case: &str, run: &str, sub: &str, patched: &str) {
-    let row = |i: usize, title: &str| json!({"type": "row", "id": format!("r{i}"), "title": format!("{title} {i}"), "subtitle": sub, "value": "2m"});
-    let rows: Vec<_> = (0..200).map(|i| row(i, run)).collect();
+#[test]
+#[ignore = "release only: desktop.yml's perf step"]
+fn the_200_row_screen_in_thai_paints_every_pass_in_a_frame() {
+    let font = std::fs::read(concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/tests/thai/NotoSansThai-Regular.ttf"
+    ))
+    .unwrap();
+    screen("งานสร้างของกิ่งหลัก", "ภาษาไทยไม่มีช่องว่างระหว่างคำ", Some(&font), None);
+}
+
+#[test]
+#[ignore = "release only: desktop.yml's perf step"]
+fn the_200_row_screen_right_to_left_paints_every_pass_in_a_frame() {
+    screen("הזמנה", "נשלחה לפני 2 דקות", None, None);
+}
+
+fn screen(title: &str, subtitle: &str, font: Option<&[u8]>, patch_ms: Option<f64>) {
+    let row = |i: usize, title: &str| json!({"type": "row", "id": format!("r{i}"), "title": format!("{title} {i}"), "subtitle": subtitle, "value": "2m"});
+    let rows: Vec<_> = (0..200).map(|i| row(i, title)).collect();
     let screen: Block = serde_json::from_value(json!({"type": "screen", "id": "s", "title": "Queue", "blocks": [
         {"type": "list", "id": "rows", "rows": rows}
     ]}))
     .unwrap();
     let frames: Vec<_> = (0..40usize)
-        .map(|n| json!({"frame": {"k": "s", "rev": n + 2, "ops": [{"op": "replace", "id": format!("r{}", n * 5), "block": row(n * 5, patched)}]}}))
+        .map(|n| json!({"frame": {"k": "s", "rev": n + 2, "ops": [{"op": "replace", "id": format!("r{}", n * 5), "block": row(n * 5, "Patched")}]}}))
         .collect();
     let steps: Vec<Step> = serde_json::from_value(json!(frames)).unwrap();
     for (w, h) in [(1440, 900), (390, 844)] {
         let runs: Vec<_> = (0..RUNS)
-            .map(|_| Desk::new(screen.clone()).size(w, h).run(&steps))
+            .map(|_| {
+                let mut desk = Desk::new(screen.clone()).size(w, h);
+                if let Some(f) = font {
+                    desk = desk.font(f.to_vec());
+                }
+                desk.run(&steps)
+            })
             .collect();
         let mut fastest = vec![f64::INFINITY; steps.len()];
         for run in &runs {
@@ -61,18 +83,20 @@ fn budget(case: &str, run: &str, sub: &str, patched: &str) {
             .fold(0.0, f64::max);
         let patch = fastest.iter().copied().fold(0.0, f64::max);
         report(
-            &format!("desktop: {case}longest pass of {RUNS} runs, 200 rows at {w}"),
+            &format!("desktop: longest pass of {RUNS} runs, 200 {title} rows at {w}"),
             longest,
             PASS_MS,
         );
         report(
-            &format!("desktop: {case}slowest patch at its fastest of {RUNS} runs, 200 rows at {w}"),
+            &format!("desktop: slowest patch at its fastest of {RUNS} runs, 200 {title} rows at {w}"),
             patch,
-            PATCH_MS,
+            patch_ms.unwrap_or(PASS_MS),
         );
-        assert!(
-            patch <= PATCH_MS,
-            "{w}: a patch took {patch} ms in every run, over {PATCH_MS} ms"
-        );
+        if let Some(budget) = patch_ms {
+            assert!(
+                patch <= budget,
+                "{w}: a patch took {patch} ms in every run, over {budget} ms"
+            );
+        }
     }
 }

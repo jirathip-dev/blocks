@@ -4,7 +4,7 @@ set -eu
 v=$(sed -n 's/^pub const SCHEMA_VERSION: u8 = \([0-9]*\);$/\1/p' crates/blocks/src/lib.rs)
 [ -n "$v" ] || { echo "release: no SCHEMA_VERSION in crates/blocks/src/lib.rs" >&2; exit 2; }
 runs=$(gh api "repos/$REPO/actions/runs?head_sha=$SHA&event=push&per_page=100" \
-  --jq '.workflow_runs[] | select(.name | IN("ci", "web", "swift", "cap", "compat", "desktop")) | "\(.name) \(.status) \(.conclusion)"')
+  --jq '.workflow_runs[] | select(.name | IN("ci", "swift", "compat", "desktop", "egui-demo")) | "\(.name) \(.status) \(.conclusion)"')
 echo "$runs" | grep -q '^ci completed success$' || { echo "release: ci is not green at $SHA yet; nothing published"; exit 0; }
 if echo "$runs" | grep -v ' completed success$' | grep -q .; then
   echo "release: not every push workflow is green at $SHA; nothing published"

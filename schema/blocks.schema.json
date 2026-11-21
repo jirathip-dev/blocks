@@ -110,7 +110,7 @@
       "type": "object"
     },
     "Action": {
-      "description": "What a client sends when a control is used: the screen, the block, the action and its values.",
+      "description": "What a client sends when a control is used: the screen, the block, the action and its values (a composer send's `nonce`: random per send, repeated on its retry).",
       "properties": {
         "action": {
           "type": "string"
@@ -204,6 +204,7 @@
           "not": {
             "enum": [
               "screen",
+              "modal",
               "sheet",
               "section",
               "list",
@@ -239,7 +240,8 @@
               "timeline",
               "import",
               "message",
-              "tool"
+              "tool",
+              "sidebar"
             ]
           },
           "type": "string"
@@ -363,7 +365,20 @@
           "type": "object"
         },
         {
-          "$ref": "#/$defs/Sheet",
+          "$ref": "#/$defs/Modal",
+          "properties": {
+            "type": {
+              "const": "modal",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/Modal",
           "properties": {
             "type": {
               "const": "sheet",
@@ -831,6 +846,19 @@
           "type": "object"
         },
         {
+          "$ref": "#/$defs/Sidebar",
+          "properties": {
+            "type": {
+              "const": "sidebar",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
           "$ref": "#/$defs/AppBlock"
         }
       ],
@@ -1008,6 +1036,12 @@
           },
           "type": [
             "array",
+            "null"
+          ]
+        },
+        "color": {
+          "type": [
+            "string",
             "null"
           ]
         },
@@ -1650,7 +1684,7 @@
     },
     "Composer": {
       "additionalProperties": true,
-      "description": "A message box: its send action, its chips and the messages queued.",
+      "description": "A message box: its send action, its chips and the messages queued; each send, queue or steer carries `values.nonce`, a fresh random id a retry repeats.",
       "properties": {
         "action": {
           "type": "string"
@@ -4105,6 +4139,111 @@
       ],
       "type": "object"
     },
+    "Modal": {
+      "additionalProperties": true,
+      "description": "A box over a screen: a dialog dragged by its header, a fixed confirm or alert, or a tool window that resizes and folds to a pill.",
+      "properties": {
+        "blocks": {
+          "items": {
+            "$ref": "#/$defs/Block"
+          },
+          "type": "array"
+        },
+        "cancel": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "destructive": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "done": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Submit"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "locale": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Locale"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "message": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "ok": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "title": {
+          "type": "string"
+        },
+        "variant": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ModalVariant"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "title",
+        "blocks"
+      ],
+      "type": "object"
+    },
+    "ModalVariant": {
+      "anyOf": [
+        {
+          "enum": [
+            "dialog",
+            "alert",
+            "tool"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "string"
+        }
+      ]
+    },
     "More": {
       "anyOf": [
         {
@@ -4375,7 +4514,7 @@
         {
           "properties": {
             "block": {
-              "$ref": "#/$defs/Block"
+              "$ref": "#/$defs/Child"
             },
             "id": {
               "type": "string"
@@ -5388,6 +5527,7 @@
           ]
         },
         "title": {
+          "default": "",
           "type": "string"
         },
         "value": {
@@ -5401,9 +5541,6 @@
           ]
         }
       },
-      "required": [
-        "title"
-      ],
       "type": "object"
     },
     "RowError": {
@@ -6250,68 +6387,6 @@
       ],
       "type": "string"
     },
-    "Sheet": {
-      "additionalProperties": true,
-      "description": "A sheet over a screen.",
-      "properties": {
-        "blocks": {
-          "items": {
-            "$ref": "#/$defs/Block"
-          },
-          "type": "array"
-        },
-        "cancel": {
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "done": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/Submit"
-            },
-            {
-              "type": "null"
-            }
-          ]
-        },
-        "id": {
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "locale": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/Locale"
-            },
-            {
-              "type": "null"
-            }
-          ]
-        },
-        "show": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/Expr"
-            },
-            {
-              "type": "null"
-            }
-          ]
-        },
-        "title": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "title",
-        "blocks"
-      ],
-      "type": "object"
-    },
     "Shown": {
       "anyOf": [
         {
@@ -6328,6 +6403,205 @@
         }
       ],
       "description": "A shown value (a row's or tile's value, a card's meta, a label's text): a string, a number, a state key's value, or a time."
+    },
+    "SideBadge": {
+      "description": "A count on a link; the `bad` tone draws it as needing attention.",
+      "properties": {
+        "count": {
+          "format": "uint64",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "tone": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Tone"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "count"
+      ],
+      "type": "object"
+    },
+    "SideGroup": {
+      "description": "A run of rows under an optional title.",
+      "properties": {
+        "links": {
+          "items": {
+            "$ref": "#/$defs/SideItem"
+          },
+          "type": "array"
+        },
+        "title": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "links"
+      ],
+      "type": "object"
+    },
+    "SideItem": {
+      "description": "A group's row: a link, or with `children` a parent that opens to show its links.",
+      "properties": {
+        "badge": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SideBadge"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "children": {
+          "items": {
+            "$ref": "#/$defs/SideLink"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "current": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "href": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "icon": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "label": {
+          "type": "string"
+        },
+        "open": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "label"
+      ],
+      "type": "object"
+    },
+    "SideLink": {
+      "description": "A sidebar link: its label, page, glyph icon, badge and whether it is the current page.",
+      "properties": {
+        "badge": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SideBadge"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "current": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "href": {
+          "type": "string"
+        },
+        "icon": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "label": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "label",
+        "href"
+      ],
+      "type": "object"
+    },
+    "Sidebar": {
+      "additionalProperties": true,
+      "description": "A side navigation: an icon rail that opens on hover or pin, a drawer on a phone.",
+      "properties": {
+        "brand": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SideLink"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "empty": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "footer": {
+          "items": {
+            "$ref": "#/$defs/SideLink"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "groups": {
+          "items": {
+            "$ref": "#/$defs/SideGroup"
+          },
+          "type": "array"
+        },
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "label": {
+          "type": "string"
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "label",
+        "groups"
+      ],
+      "type": "object"
     },
     "Sky": {
       "anyOf": [

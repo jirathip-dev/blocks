@@ -1,0 +1,13 @@
+{
+  "blocks": [
+    {
+      "id": "layers-note",
+      "markdown": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+      "type": "text"
+    }
+  ],
+  "id": "layers",
+  "title": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+  "type": "modal",
+  "variant": "tool"
+}

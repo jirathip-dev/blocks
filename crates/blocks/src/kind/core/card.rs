@@ -8,6 +8,7 @@ kind! {
         id: Option<String>,
         kind: Option<CardKind>,
         tone: Option<Tone>,
+        color: Option<String>,
         title: Option<String>,
         subtitle: Option<Toned>,
         meta: Option<Shown>,

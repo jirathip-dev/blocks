@@ -58,8 +58,10 @@ export type Bar = {
 export type Block = ({
     type: "screen";
 } & Screen) | ({
+    type: "modal";
+} & Modal) | ({
     type: "sheet";
-} & Sheet) | ({
+} & Modal) | ({
     type: "section";
 } & Section) | ({
     type: "list";
@@ -129,7 +131,9 @@ export type Block = ({
     type: "message";
 } & Message) | ({
     type: "tool";
-} & Tool) | (AppBlock & {
+} & Tool) | ({
+    type: "sidebar";
+} & Sidebar) | (AppBlock & {
     [key: string]: unknown;
 });
 export type Bound = {
@@ -159,6 +163,7 @@ export type Card = {
     badge?: Label | null;
     blocks?: Block[] | null;
     buttons?: Block[] | null;
+    color?: string | null;
     fold?: Fold | null;
     id?: string | null;
     kind?: CardKind | null;
@@ -625,6 +630,20 @@ export type Message = {
     show?: Expr | null;
     time?: string | null;
 };
+export type Modal = {
+    blocks: Block[];
+    cancel?: string | null;
+    destructive?: boolean | null;
+    done?: Submit | null;
+    id?: string | null;
+    locale?: Locale | null;
+    message?: string | null;
+    ok?: string | null;
+    show?: Expr | null;
+    title: string;
+    variant?: ModalVariant | null;
+};
+export type ModalVariant = "dialog" | "alert" | "tool";
 export type More = string | Page;
 export type Nav = {
     brand?: NavLink | null;
@@ -671,7 +690,7 @@ export type Op = {
     id: string;
 } | {
     op: "replace";
-    block: Block;
+    block: Child;
     id: string;
 } | {
     op: "append";
@@ -833,7 +852,7 @@ export type Row = {
     subtitle?: Toned | null;
     swipe?: Act[] | null;
     tap?: Tap | null;
-    title: string;
+    title?: string | null;
     value?: Shown | null;
 };
 export type RowError = {
@@ -967,16 +986,40 @@ export type SetState = {
     to: Expr;
 };
 export type Severity = "error" | "warn";
-export type Sheet = {
-    blocks: Block[];
-    cancel?: string | null;
-    done?: Submit | null;
-    id?: string | null;
-    locale?: Locale | null;
-    show?: Expr | null;
-    title: string;
-};
 export type Shown = string | number | Bound | Time;
+export type SideBadge = {
+    count: number;
+    tone?: Tone | null;
+};
+export type SideGroup = {
+    links: SideItem[];
+    title?: string | null;
+};
+export type SideItem = {
+    badge?: SideBadge | null;
+    children?: SideLink[] | null;
+    current?: boolean | null;
+    href?: string | null;
+    icon?: string | null;
+    label: string;
+    open?: boolean | null;
+};
+export type SideLink = {
+    badge?: SideBadge | null;
+    current?: boolean | null;
+    href: string;
+    icon?: string | null;
+    label: string;
+};
+export type Sidebar = {
+    brand?: SideLink | null;
+    empty?: string | null;
+    footer?: SideLink[] | null;
+    groups: SideGroup[];
+    id?: string | null;
+    label: string;
+    show?: Expr | null;
+};
 export type Sky = "clear" | "windy" | "fog" | "storm";
 export type SortDir = "asc" | "desc";
 export type Span = {
@@ -1275,4 +1318,4 @@ export type Why = "evicted" | "unpaired" | "handover";
 export type Working = {
     since: string;
 };
-export type Kind = "screen" | "sheet" | "section" | "list" | "row" | "card" | "choice" | "form" | "config" | "secret" | "run" | "button" | "chips" | "stat" | "text" | "images" | "web" | "diff" | "editor" | "scene" | "diagram" | "composer" | "lines" | "prose" | "hero" | "media" | "nav" | "island" | "table" | "steps" | "chart" | "toast" | "pages" | "timeline" | "import" | "message" | "tool";
+export type Kind = "screen" | "modal" | "sheet" | "section" | "list" | "row" | "card" | "choice" | "form" | "config" | "secret" | "run" | "button" | "chips" | "stat" | "text" | "images" | "web" | "diff" | "editor" | "scene" | "diagram" | "composer" | "lines" | "prose" | "hero" | "media" | "nav" | "island" | "table" | "steps" | "chart" | "toast" | "pages" | "timeline" | "import" | "message" | "tool" | "sidebar";

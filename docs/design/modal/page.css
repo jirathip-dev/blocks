@@ -1,0 +1,20 @@
+/* The host page for these previews only: an app screen as a stage, then the notes. */
+body{margin:0;color:var(--fg);font:13px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+.stage{position:relative;height:900px;overflow:hidden;contain:layout}
+.stage .mds,.stage .mdp{position:absolute}
+.app{max-width:880px;margin:0 auto;padding:var(--s4)}
+.top{background:var(--card);border:1px solid var(--edge);padding:0 var(--s2)}
+.top .tabh{margin:0;min-height:var(--hit)}
+.notes{max-width:880px;margin:0 auto;padding:var(--s4);border-top:1px solid var(--edge)}
+.notes h2{font-size:var(--fs);font-weight:600;margin:0 0 var(--s2)}
+.notes ol{margin:0;padding-left:var(--s4);color:var(--mute)}
+.notes li{margin:0 0 var(--s1)}
+.notes b{color:var(--fg);font-weight:600}
+.ann{position:absolute;z-index:7;font-size:var(--fs-meta);color:var(--p);white-space:nowrap}
+.ann::before{content:"◆ "}
+.ghost{position:absolute;z-index:6;box-sizing:border-box;border:1px dashed var(--p);pointer-events:none}
+.fld{display:flex;flex-direction:column;gap:var(--s1);margin:0 0 var(--s3)}
+.fld>span{color:var(--mute);font-size:var(--fs-meta)}
+.fld>input,.fld>select{width:100%;box-sizing:border-box}
+.d390{display:none}
+@media (max-width:600px){.stage{height:780px}.app{padding:var(--s2)}.notes{padding:var(--s2) var(--s4)}.d1440{display:none}.d390{display:revert}.ann.d1440,.ghost{display:none}}

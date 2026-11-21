@@ -88,7 +88,8 @@ public struct Bar: Codable, Equatable, Sendable {
 
 public enum Block: Codable, Equatable, Sendable {
     case screen(Screen)
-    case sheet(Sheet)
+    case modal(Modal)
+    case sheet(Modal)
     case section(Section)
     case list(List)
     case row(Row)
@@ -124,16 +125,18 @@ public enum Block: Codable, Equatable, Sendable {
     case `import`(Import)
     case message(Message)
     case tool(Tool)
+    case sidebar(Sidebar)
     case appBlock(JSONValue)
 
-    public static let tags: Set<String> = ["screen", "sheet", "section", "list", "row", "card", "choice", "form", "config", "secret", "run", "button", "chips", "stat", "text", "images", "web", "diff", "editor", "scene", "diagram", "composer", "lines", "prose", "hero", "media", "nav", "island", "table", "steps", "chart", "toast", "pages", "timeline", "import", "message", "tool"]
+    public static let tags: Set<String> = ["screen", "modal", "sheet", "section", "list", "row", "card", "choice", "form", "config", "secret", "run", "button", "chips", "stat", "text", "images", "web", "diff", "editor", "scene", "diagram", "composer", "lines", "prose", "hero", "media", "nav", "island", "table", "steps", "chart", "toast", "pages", "timeline", "import", "message", "tool", "sidebar"]
 
     private enum Tag: String, CodingKey { case tag = "type" }
 
     public init(from decoder: any Decoder) throws {
         switch try decoder.container(keyedBy: Tag.self).decode(String.self, forKey: .tag) {
         case "screen": self = try (try? Screen(from: decoder)).map(Self.screen) ?? .appBlock(JSONValue(from: decoder))
-        case "sheet": self = try (try? Sheet(from: decoder)).map(Self.sheet) ?? .appBlock(JSONValue(from: decoder))
+        case "modal": self = try (try? Modal(from: decoder)).map(Self.modal) ?? .appBlock(JSONValue(from: decoder))
+        case "sheet": self = try (try? Modal(from: decoder)).map(Self.sheet) ?? .appBlock(JSONValue(from: decoder))
         case "section": self = try (try? Section(from: decoder)).map(Self.section) ?? .appBlock(JSONValue(from: decoder))
         case "list": self = try (try? List(from: decoder)).map(Self.list) ?? .appBlock(JSONValue(from: decoder))
         case "row": self = try (try? Row(from: decoder)).map(Self.row) ?? .appBlock(JSONValue(from: decoder))
@@ -169,6 +172,7 @@ public enum Block: Codable, Equatable, Sendable {
         case "import": self = try (try? Import(from: decoder)).map(Self.`import`) ?? .appBlock(JSONValue(from: decoder))
         case "message": self = try (try? Message(from: decoder)).map(Self.message) ?? .appBlock(JSONValue(from: decoder))
         case "tool": self = try (try? Tool(from: decoder)).map(Self.tool) ?? .appBlock(JSONValue(from: decoder))
+        case "sidebar": self = try (try? Sidebar(from: decoder)).map(Self.sidebar) ?? .appBlock(JSONValue(from: decoder))
         default: self = .appBlock(try JSONValue(from: decoder))
         }
     }
@@ -176,6 +180,7 @@ public enum Block: Codable, Equatable, Sendable {
     public func encode(to encoder: any Encoder) throws {
         switch self {
         case .screen(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("screen", forKey: .tag)
+        case .modal(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("modal", forKey: .tag)
         case .sheet(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("sheet", forKey: .tag)
         case .section(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("section", forKey: .tag)
         case .list(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("list", forKey: .tag)
@@ -212,6 +217,7 @@ public enum Block: Codable, Equatable, Sendable {
         case .`import`(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("import", forKey: .tag)
         case .message(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("message", forKey: .tag)
         case .tool(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("tool", forKey: .tag)
+        case .sidebar(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("sidebar", forKey: .tag)
         case .appBlock(let v): try v.encode(to: encoder)
         }
     }
@@ -256,6 +262,7 @@ public struct Card: Codable, Equatable, Sendable {
     public var badge: Label?
     public var blocks: [Block]?
     public var buttons: [Block]?
+    public var color: String?
     public var fold: Fold?
     public var id: String?
     public var kind: CardKind?
@@ -1047,6 +1054,29 @@ public struct Message: Codable, Equatable, Sendable {
     public var time: String?
 }
 
+public struct Modal: Codable, Equatable, Sendable {
+    public var blocks: [Block]
+    public var cancel: String?
+    public var destructive: Bool?
+    public var done: Submit?
+    public var id: String?
+    public var locale: Locale?
+    public var message: String?
+    public var ok: String?
+    public var show: Expr?
+    public var title: String
+    public var variant: ModalVariant?
+}
+
+public struct ModalVariant: RawRepresentable, Hashable, Codable, Equatable, Sendable {
+    public let rawValue: String
+    public init(rawValue: String) { self.rawValue = rawValue }
+    public static let dialog = Self(rawValue: "dialog")
+    public static let alert = Self(rawValue: "alert")
+    public static let tool = Self(rawValue: "tool")
+    public static let all: [Self] = [.dialog, .alert, .tool]
+}
+
 public enum More: Codable, Equatable, Sendable {
     case string(String)
     case page(Page)
@@ -1130,7 +1160,7 @@ public struct OpRemove: Codable, Equatable, Sendable {
 }
 
 public struct OpReplace: Codable, Equatable, Sendable {
-    public var block: Block
+    public var block: Child
     public var id: String
 }
 
@@ -1424,7 +1454,7 @@ public struct Row: Codable, Equatable, Sendable {
     public var subtitle: Toned?
     public var swipe: [Act]?
     public var tap: Tap?
-    public var title: String
+    public var title: String?
     public var value: Shown?
 }
 
@@ -1593,16 +1623,6 @@ public struct Severity: RawRepresentable, Hashable, Codable, Equatable, Sendable
     public static let all: [Self] = [.error, .warn]
 }
 
-public struct Sheet: Codable, Equatable, Sendable {
-    public var blocks: [Block]
-    public var cancel: String?
-    public var done: Submit?
-    public var id: String?
-    public var locale: Locale?
-    public var show: Expr?
-    public var title: String
-}
-
 public enum Shown: Codable, Equatable, Sendable {
     case string(String)
     case number(Double)
@@ -1621,6 +1641,44 @@ public enum Shown: Codable, Equatable, Sendable {
         case .time(let v): try v.encode(to: encoder)
         }
     }
+}
+
+public struct SideBadge: Codable, Equatable, Sendable {
+    public var count: UInt64
+    public var tone: Tone?
+}
+
+public struct SideGroup: Codable, Equatable, Sendable {
+    public var links: [SideItem]
+    public var title: String?
+}
+
+public struct SideItem: Codable, Equatable, Sendable {
+    public var badge: SideBadge?
+    public var children: [SideLink]?
+    public var current: Bool?
+    public var href: String?
+    public var icon: String?
+    public var label: String
+    public var open: Bool?
+}
+
+public struct SideLink: Codable, Equatable, Sendable {
+    public var badge: SideBadge?
+    public var current: Bool?
+    public var href: String
+    public var icon: String?
+    public var label: String
+}
+
+public struct Sidebar: Codable, Equatable, Sendable {
+    public var brand: SideLink?
+    public var empty: String?
+    public var footer: [SideLink]?
+    public var groups: [SideGroup]
+    public var id: String?
+    public var label: String
+    public var show: Expr?
 }
 
 public struct Sky: RawRepresentable, Hashable, Codable, Equatable, Sendable {

@@ -1,0 +1,3 @@
+[
+  {"type":"images","id":"i","size":"large","items":[{"src":"/media/a.png","alt":"a"},{"src":"javascript:x","alt":"bad"},{"src":"https://x.test/b.png"}]}
+]

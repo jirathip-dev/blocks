@@ -85,10 +85,7 @@ fn spans(ui: &mut Ui, look: &Look, all: &[Span], style: &TextStyle, end: bool) {
                 t = t.code();
             }
             match &s.link {
-                Some(url) => {
-                    let t = bidi::text(ui, t.color(look.link(ui)).underline());
-                    ui.hyperlink_to(t, url)
-                }
+                Some(url) => bidi::link(ui, t.color(look.link(ui)).underline(), url),
                 None => bidi::label(ui, t),
             };
         }

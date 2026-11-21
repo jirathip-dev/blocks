@@ -1,0 +1,13 @@
+about = "bench/ builds: its two servers, its React bundle and its runner; the numbers are docs/bench.md's, never a gate"
+fix = "fix the build error the log names in bench/"
+budget_secs = 900
+leg = "bench"
+setup = ["rust", "node"]
+paths = ["bench/**", "crates/blocks/**", "Cargo.*", "rust-toolchain.toml", ".gatekeeper/gates/bench.toml"]
+run = """
+set -e
+cd bench && cargo build --locked && cd ..
+npm --prefix bench ci --no-audit --no-fund
+npm --prefix bench run build
+node --check bench/run.js
+"""

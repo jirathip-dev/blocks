@@ -35,12 +35,12 @@ fn decode(png: &[u8]) -> (usize, usize, Vec<[u8; 4]>) {
     assert_eq!(&png[..8], b"\x89PNG\r\n\x1a\n");
     let (mut at, mut w, mut h, mut z) = (8, 0, 0, vec![]);
     while at < png.len() {
-        let n = u32::from_be_bytes(png[at..at + 4].try_into().unwrap()) as usize;
+        let n = usize::try_from(u32::from_be_bytes(png[at..at + 4].try_into().unwrap())).unwrap();
         let data = &png[at + 8..at + 8 + n];
         match &png[at + 4..at + 8] {
             b"IHDR" => {
-                w = u32::from_be_bytes(data[..4].try_into().unwrap()) as usize;
-                h = u32::from_be_bytes(data[4..8].try_into().unwrap()) as usize;
+                w = usize::try_from(u32::from_be_bytes(data[..4].try_into().unwrap())).unwrap();
+                h = usize::try_from(u32::from_be_bytes(data[4..8].try_into().unwrap())).unwrap();
                 assert_eq!(data[8..], [8, 6, 0, 0, 0]);
             }
             b"IDAT" => z.extend_from_slice(data),
@@ -50,7 +50,7 @@ fn decode(png: &[u8]) -> (usize, usize, Vec<[u8; 4]>) {
     }
     let (mut raw, mut i) = (vec![], 2);
     loop {
-        let len = u16::from_le_bytes([z[i + 1], z[i + 2]]) as usize;
+        let len = usize::from(u16::from_le_bytes([z[i + 1], z[i + 2]]));
         raw.extend_from_slice(&z[i + 5..i + 5 + len]);
         i += 5 + len;
         if z[i - 5 - len] & 1 == 1 {

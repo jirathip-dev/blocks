@@ -28,18 +28,18 @@ run() {
   (cd "$t" && FAKE="$t" PATH="$t/bin:$PATH" REPO=o/blocks SHA=abc sh "$here/scripts/release.sh" > "$t/out.log")
   cat "$t/created" 2>/dev/null || true
 }
-green='ci completed success\nweb completed success\ncap completed success\ncompat completed success\n'
+green='ci completed success\nswift completed success\ndesktop completed success\ncompat completed success\n'
 got=$(run "$green" '' | head -n 1)
 test "$got" = "release create v3.0 -R o/blocks --target abc --title v3.0 --notes blocks v3.0 @ abc" || { echo "first tag: got: $got" >&2; exit 1; }
 got=$(run "$green" 'refs/tags/v3.0 s0\nrefs/tags/v3.1 s1\n' | head -n 1)
 test "$got" = "release create v3.2 -R o/blocks --target abc --title v3.2 --notes blocks v3.2 @ abc" || { echo "next tag: got: $got" >&2; exit 1; }
 got=$(run "$green" 'refs/tags/v3.0 abc\n')
 test -z "$got" || { echo "tagged twice: $got" >&2; exit 1; }
-got=$(run 'ci completed success\nweb completed failure\n' '')
+got=$(run 'ci completed success\nswift completed failure\n' '')
 test -z "$got" || { echo "a red push published: $got" >&2; exit 1; }
 got=$(run 'ci completed success\ncompat in_progress \n' '')
 test -z "$got" || { echo "a pending push published: $got" >&2; exit 1; }
-got=$(run 'ci completed failure\nweb completed success\n' '')
+got=$(run 'ci completed failure\nswift completed success\n' '')
 test -z "$got" || { echo "a red ci published: $got" >&2; exit 1; }
 printf 'schema: a new field (#7)\r\n## Summary\r\nx\r\n\r\n## For humans\r\n\r\nScreens may carry a badge.\r\n\r\nFor apps: nothing to do, the field is optional.\r\n' > "$t/pr-7"
 printf 'docs: a typo (#9)\n## For humans\n\nA typo is fixed.\n## Tests\nnone\n' > "$t/pr-9"

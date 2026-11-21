@@ -1,0 +1,17 @@
+{
+  "type": "screen",
+  "id": "latin",
+  "title": "Orders",
+  "blocks": [
+    {"type": "text", "id": "note", "text": "Latin text wraps at the spaces between its words, and a line that runs long goes on below, as it always has."},
+    {"type": "text", "id": "cjk", "text": "日本語のテキストは単語の間にスペースがありませんので、文字の間で改行されます。"},
+    {
+      "type": "list",
+      "id": "orders",
+      "rows": [
+        {"type": "row", "id": "order", "title": "Two jars of wild honey, sent to the address on file", "subtitle": "on its way", "value": "$12.50"}
+      ]
+    },
+    {"type": "card", "id": "ship", "title": "Shipping to the second address on the order, by the slow post", "subtitle": "three to five days", "badge": {"text": "late"}}
+  ]
+}

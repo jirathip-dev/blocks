@@ -19,6 +19,7 @@ import { lines } from "../render/kind/lines.ts";
 import { list } from "../render/kind/list.ts";
 import { media } from "../render/kind/media.ts";
 import { message } from "../render/kind/message.ts";
+import { modal } from "../render/kind/modal.ts";
 import { nav } from "../render/kind/nav.ts";
 import { pages } from "../render/kind/pages.ts";
 import { prose } from "../render/kind/prose.ts";
@@ -29,6 +30,7 @@ import { screen } from "../render/kind/screen.ts";
 import { secret } from "../render/kind/secret.ts";
 import { section } from "../render/kind/section.ts";
 import { sheet } from "../render/kind/sheet.ts";
+import { sidebar } from "../render/kind/sidebar.ts";
 import { stat } from "../render/kind/stat.ts";
 import { steps } from "../render/kind/steps.ts";
 import { table } from "../render/kind/table.ts";
@@ -42,6 +44,7 @@ export type Of<K extends Kind> = Extract<Block, { type: K }>;
 
 export const R: { [K in Kind]: (b: Of<K>, c: Ctx) => HTMLElement | null } = {
   screen,
+  modal,
   sheet,
   section,
   list,
@@ -78,6 +81,7 @@ export const R: { [K in Kind]: (b: Of<K>, c: Ctx) => HTMLElement | null } = {
   import: import_,
   message,
   tool,
+  sidebar,
 };
 
-export const native: readonly Kind[] = ["screen", "sheet", "section", "list", "row", "card", "choice", "form", "config", "secret", "run", "button", "chips", "stat", "text", "images", "web", "diff", "editor", "scene", "diagram", "composer", "lines", "prose", "hero", "media", "nav", "table", "steps", "chart", "toast", "pages", "timeline", "import", "message", "tool"];
+export const native: readonly Kind[] = ["screen", "modal", "sheet", "section", "list", "row", "card", "choice", "form", "config", "secret", "run", "button", "chips", "stat", "text", "images", "web", "diff", "editor", "scene", "diagram", "composer", "lines", "prose", "hero", "media", "nav", "table", "steps", "chart", "toast", "pages", "timeline", "import", "message", "tool", "sidebar"];

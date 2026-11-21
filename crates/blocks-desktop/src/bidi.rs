@@ -8,10 +8,12 @@ use std::sync::Arc;
 
 use egui::epaint::ClippedShape;
 use egui::text::{LayoutJob, TextWrapping};
-use egui::{FontSelection, Galley, Id, Label, Rect, Response, Shape, Ui, Vec2, WidgetText};
+use egui::{FontSelection, Galley, Id, Label, Rect, Response, Sense, Shape, Ui, Vec2, WidgetText};
 use unicode_bidi::{bidi_class, BidiClass, BidiInfo, Level};
 
 pub use edit::{area, edit, hidden};
+
+use crate::words;
 
 /// The box a text is set in: a label's own width, or the column a block of text owns.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
@@ -119,7 +121,7 @@ pub fn label(ui: &mut Ui, t: impl Into<WidgetText>) -> Response {
     let t = t.into();
     match laid(ui, &t, Fit::Own) {
         Some(g) => ui.add(Label::new(g).selectable(false)),
-        None => ui.label(t),
+        None => words::label(ui, t),
     }
 }
 
@@ -128,7 +130,25 @@ pub fn para(ui: &mut Ui, t: impl Into<WidgetText>) -> Response {
     let t = t.into();
     match laid(ui, &t, Fit::Column) {
         Some(g) => ui.add(Label::new(g).selectable(false)),
-        None => ui.label(t),
+        None => words::label(ui, t),
+    }
+}
+
+/// A label that senses `sense`: a card's tappable title.
+pub fn sensing(ui: &mut Ui, t: impl Into<WidgetText>, sense: Sense) -> Response {
+    let t = t.into();
+    match laid(ui, &t, Fit::Own) {
+        Some(g) => ui.add(Label::new(g).selectable(false).sense(sense)),
+        None => words::sensing(ui, t, sense),
+    }
+}
+
+/// A link that opens `url`: prose's.
+pub fn link(ui: &mut Ui, t: impl Into<WidgetText>, url: &str) -> Response {
+    let t = t.into();
+    match laid(ui, &t, Fit::Own) {
+        Some(g) => ui.hyperlink_to(g, url),
+        None => words::link(ui, t, url),
     }
 }
 

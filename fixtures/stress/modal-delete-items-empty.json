@@ -1,0 +1,11 @@
+{
+  "blocks": [],
+  "cancel": "cancel",
+  "destructive": true,
+  "id": "delete-items",
+  "message": "They move to the bin.",
+  "ok": "delete",
+  "title": "Delete 3 items?",
+  "type": "modal",
+  "variant": "alert"
+}

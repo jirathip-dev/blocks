@@ -71,7 +71,7 @@ fn changed(old: &Block, new: &Block, id: &str) -> Vec<Op> {
     .unwrap_or_else(|| {
         vec![Op::Replace {
             id: id.into(),
-            block: new.clone(),
+            block: Child::Block(new.clone()),
         }]
     })
 }

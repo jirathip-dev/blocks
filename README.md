@@ -15,7 +15,7 @@ harnesses (`docs/architecture/blocks/migration.md`).
 
 - One definition of a screen: Rust types, with the schema, TS and Swift generated from them (`docs/schema.md`).
 - Screens change by row ops in Mode A: `diff` two screens, `apply` the ops, and resume a stream after a reconnect.
-- Held to drover's standard from the first commit: every gate below runs in CI and in `just check`.
+- Held to drover's standard from the first commit: every gate below runs in CI and in `./.gatekeeper/run check`.
 
 ## Non-goals
 
@@ -25,20 +25,22 @@ harnesses (`docs/architecture/blocks/migration.md`).
 
 ## Gates
 
-`just check` runs them all locally but `just sim`, whose fixed seeds run inside `just test` (it needs `just`, `cargo-deny`, `actionlint`, node 24, and `drover` on PATH or in `$DROVER`).
+`./.gatekeeper/run check` (or `just check`) runs every gate, the same command as CI's `gates / done` and `drover turn
+done`; the wrapper fetches the pinned gatekeeper (`.gatekeeper/config.toml`), so only the repo's toolchains are needed:
+Rust, node 24 and WebKit for the web gates. `./.gatekeeper/run list` names them; `--gate <id>` reruns one.
 
-- `just fmt`, `just clippy`: rustfmt, clippy pedantic, and the banned APIs (`.drover/rules.md`)
-- `just fixtures`: each lint fixture in `ci/lint-fixtures/rust/` and `web/lint-fixtures/` must fail
-- `just test`, `just perf`, `just soak`: the tests, the release perf budgets and the flat-memory soak
-- `just sim 2000`: random op sequences on random screens, then one seeded corpus of screens, ops and expressions through Rust, TS and Swift; also run nightly (`.github/workflows/sim.yml`)
-- `just deps`, `just deny`: the allow-list in `docs/deps.md`, then licences, advisories, duplicates and sources
-- `just web`: strict tsc and `web/lint.mjs` on `web/src` (the generated `gen/` and the hand-written renderer, stream
-  and patcher), then the node tests in `web/test/`
-- `just arch`, `just cap`: drover's arch-check (`.drover/arch.toml`), and the line cap: the highest `line_cap` in `ci/cap.toml`
-  and `ci/cap.d/*.toml`, now 15,000 (`scripts/line-cap.sh`)
-- `just desktop`: the desktop renderer's tests (`crates/blocks-desktop`, egui), and no egui in the `blocks` crate's tree
-- `just actionlint`, `just swift`: the workflows, and the Swift package on macOS (op apply, the generated types, a
-  render test per core kind), warnings as errors
+- gatekeeper's packs: `core` (pin, arch-check on `.drover/arch.toml`, the line cap in `ci/cap.toml`, the rules file,
+  actionlint, the dependency list in `.gatekeeper/deps.toml`), `rust` (fmt, clippy pedantic and the banned APIs, the
+  lint floor and its fixtures, cargo-deny) and `ts` (tsc strict, oxlint, knip; their old findings in
+  `.gatekeeper/baseline/`, which only shrinks)
+- `.gatekeeper/gates/`, blocks' own: `test`, `gen` (in CI; core/arch runs the generator on a lane), `guard` (`blocks check`), `perf` and `soak` in release, `no-egui` (the
+  `blocks` crate's tree), `for-apps`, `web` (`web/lint.mjs`, the node tests, the lint fixtures, the token baseline),
+  `react` (the adapter's contract), `bench` (`bench/` builds) and, on the macOS `swift` leg in CI only, `swift-lint`, `swift-test`,
+  `swift-snap`, `swift-plan` and `swift-stress`
+- `just sim 2000`: random op sequences on random screens, then one seeded corpus through Rust, TS and Swift; also run
+  nightly (`.github/workflows/sim.yml`)
+- outside gatekeeper for now: `just swift` (the Swift package on a macOS host), `desktop.yml` (the desktop
+  renderer on Linux, Windows and macOS), `egui-demo.yml` and `compat.yml` (the last release against today's fixtures)
 
 ## For agents
 
