@@ -9,7 +9,7 @@ use crate::{layout, theme, SCHEMA_VERSION};
 mod kinds;
 
 pub(super) fn files(root: &Path, s: &Value) -> std::io::Result<Files> {
-    let mut out = kinds::files(root)?;
+    let mut out = kinds::files(root, s)?;
     out.extend([
         (
             "swift/Sources/Blocks/Gen/Blocks.swift".into(),

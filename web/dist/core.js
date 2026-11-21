@@ -41,6 +41,8 @@ var hooks = {
 };
 var roles = { section: "region", form: "form", config: "form", nav: "navigation", chart: "figure", toast: "status", message: "article", sidebar: "navigation" };
 var names = ["label", "title", "header", "question", "alt", "file", "command", "placeholder", "name"];
+var hosts = { screen: "blocks", sheet: "blocks", section: "blocks", card: "blocks", message: "blocks", list: "rows", scene: "lanes", row: "rounds", table: "rows" };
+var walked = ["blocks", "rows", "buttons", "rounds", "lanes"];
 
 // src/gen/schemes.ts
 var defaultPair = {
@@ -555,8 +557,6 @@ function grow(parts, op) {
 }
 
 // src/core/apply.ts
-var walked = ["blocks", "rows", "buttons", "rounds", "lanes"];
-var hosts = { screen: "blocks", sheet: "blocks", section: "blocks", card: "blocks", message: "blocks", list: "rows", scene: "lanes", row: "rounds", table: "rows" };
 var isRec = (v) => typeof v === "object" && v !== null && !Array.isArray(v);
 function locate(node2, id) {
   if (node2["id"] === id) return "root";
@@ -8190,6 +8190,7 @@ export {
   hero,
   hint,
   hooks,
+  hosts,
   ids,
   images,
   import_,
@@ -8246,5 +8247,6 @@ export {
   value,
   view,
   waits,
+  walked,
   web
 };
