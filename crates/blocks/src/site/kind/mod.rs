@@ -21,8 +21,15 @@ macro_rules! kinds {
 include!("drawn.rs");
 
 pub(crate) fn kids(w: &mut W<'_>, bs: &[Value]) {
+    let mut was: Option<&Value> = None;
     for b in bs.iter().filter(|b| b.is_object()) {
-        block(w, b);
+        let same = |k: &str| was.and_then(|a| get(a, k)) == get(b, k);
+        if get(b, "type") == Some("message") && same("type") && same("role") && same("name") {
+            message::said(w, b, true);
+        } else {
+            block(w, b);
+        }
+        was = Some(b);
     }
 }
 

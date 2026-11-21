@@ -37,4 +37,6 @@ kinds! {
     pages { Pages(Pages) = "pages" }
     timeline { Timeline(Timeline) = "timeline" }
     import { Import(Import) = "import" }
+    message { Message(Message) = "message" }
+    tool { Tool(Tool) = "tool" }
 }

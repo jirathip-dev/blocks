@@ -1,0 +1,44 @@
+{
+  "why": "text goes on the last span of a list's last item",
+  "parts": [
+    {
+      "part": "list",
+      "ordered": false,
+      "items": [
+        [
+          {
+            "text": "one"
+          }
+        ],
+        [
+          {
+            "text": "tw"
+          }
+        ]
+      ]
+    }
+  ],
+  "op": {
+    "op": "append",
+    "id": "p",
+    "text": "o"
+  },
+  "want": [
+    {
+      "part": "list",
+      "ordered": false,
+      "items": [
+        [
+          {
+            "text": "one"
+          }
+        ],
+        [
+          {
+            "text": "two"
+          }
+        ]
+      ]
+    }
+  ]
+}

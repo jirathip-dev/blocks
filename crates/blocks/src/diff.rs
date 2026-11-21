@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use serde_json::Value;
 
-use crate::kind::{Block, Fields, Table, TableRow};
+use crate::kind::{Block, Fields, Part, Prose, Table, TableRow};
 use crate::patch::apply;
 use crate::wire::{Child, Op};
 
@@ -77,9 +77,39 @@ fn changed(old: &Block, new: &Block, id: &str) -> Vec<Op> {
 }
 
 fn block_ops(old: &Block, new: &Block, id: &str) -> Option<Vec<Op>> {
-    let fields = own_fields(old, new)?;
+    let mut fields = own_fields(old, new)?;
+    let grown = match (old, new) {
+        (Block::Prose(a), Block::Prose(b)) if fields.remove("parts").is_some() => Some(append(id, a, b)),
+        _ => None,
+    };
     let merge = (!fields.is_empty()).then(|| Op::Merge { id: id.into(), fields });
-    Some(merge.into_iter().chain(kid_ops(old, new)?).collect())
+    Some(merge.into_iter().chain(grown).chain(kid_ops(old, new)?).collect())
+}
+
+fn append(id: &str, old: &Prose, new: &Prose) -> Op {
+    let (a, b) = (&old.parts, &new.parts);
+    let keep = a.iter().zip(b).take_while(|(x, y)| x == y).count();
+    let last = |p: &[Part]| p.last().and_then(Part::last_text);
+    let added = last(a)
+        .zip(last(b))
+        .and_then(|(x, y)| Some(y.strip_prefix(&x)?.to_string()));
+    let mut grown = old.clone();
+    if let Some(text) = added
+        .filter(|t| a.len() == b.len() && keep + 1 == a.len() && grown.grow(None, &[], t).is_ok() && grown.parts == *b)
+    {
+        return Op::Append {
+            id: id.into(),
+            keep: None,
+            parts: vec![],
+            text,
+        };
+    }
+    Op::Append {
+        id: id.into(),
+        keep: Some(keep),
+        parts: b.get(keep..).unwrap_or_default().to_vec(),
+        text: String::new(),
+    }
 }
 
 fn ids(list: &[Block]) -> Option<HashMap<&str, (usize, &Block)>> {

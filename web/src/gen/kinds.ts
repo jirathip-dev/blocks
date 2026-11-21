@@ -18,6 +18,7 @@ import { island } from "../render/kind/island.ts";
 import { lines } from "../render/kind/lines.ts";
 import { list } from "../render/kind/list.ts";
 import { media } from "../render/kind/media.ts";
+import { message } from "../render/kind/message.ts";
 import { nav } from "../render/kind/nav.ts";
 import { pages } from "../render/kind/pages.ts";
 import { prose } from "../render/kind/prose.ts";
@@ -34,6 +35,7 @@ import { table } from "../render/kind/table.ts";
 import { text } from "../render/kind/text.ts";
 import { timeline } from "../render/kind/timeline.ts";
 import { toast } from "../render/kind/toast.ts";
+import { tool } from "../render/kind/tool.ts";
 import { web } from "../render/kind/web.ts";
 
 export type Of<K extends Kind> = Extract<Block, { type: K }>;
@@ -74,6 +76,8 @@ export const R: { [K in Kind]: (b: Of<K>, c: Ctx) => HTMLElement | null } = {
   pages,
   timeline,
   import: import_,
+  message,
+  tool,
 };
 
-export const native: readonly Kind[] = ["screen", "sheet", "section", "list", "row", "card", "choice", "form", "config", "secret", "run", "button", "chips", "stat", "text", "images", "web", "diff", "editor", "scene", "diagram", "composer", "lines", "prose", "hero", "media", "nav", "table", "steps", "chart", "toast", "pages", "timeline", "import"];
+export const native: readonly Kind[] = ["screen", "sheet", "section", "list", "row", "card", "choice", "form", "config", "secret", "run", "button", "chips", "stat", "text", "images", "web", "diff", "editor", "scene", "diagram", "composer", "lines", "prose", "hero", "media", "nav", "table", "steps", "chart", "toast", "pages", "timeline", "import", "message", "tool"];

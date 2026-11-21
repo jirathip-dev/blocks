@@ -30,5 +30,5 @@ function part(p: Part): ReactNode {
 }
 
 export function prose({ b, hooks }: V<Prose>) {
-  return h("div", "prose", hooks, ...b.parts.map(part));
+  return h("div", "prose", { ...hooks, ...(b.streaming ? { "aria-busy": "true" } : null) }, ...b.parts.map(part));
 }

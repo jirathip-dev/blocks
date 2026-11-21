@@ -38,8 +38,15 @@ export function render(b: Blk, c: Ctx): HTMLElement | null {
   return e;
 }
 
+const said = (a: Blk | undefined, b: Blk) => b["type"] === "message" && a?.["type"] === "message" && a["role"] === b["role"] && a["name"] === b["name"];
+
 export function kids(bs: unknown, c: Ctx): HTMLElement[] {
-  return blks(bs)
-    .map((b) => render(b, c))
+  const all = blks(bs);
+  return all
+    .map((b, i) => {
+      const e = render(b, c);
+      if (e && said(all[i - 1], b)) e.classList.add("cont");
+      return e;
+    })
     .filter((e): e is HTMLElement => e !== null);
 }

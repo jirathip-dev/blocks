@@ -1418,6 +1418,81 @@
       },
       "title": "Import products",
       "type": "import"
+    },
+    {
+      "avatar": "media/sample.svg",
+      "blocks": [
+        {
+          "fallback": {
+            "title": "prose"
+          },
+          "id": "chat-a",
+          "parts": [
+            {
+              "part": "para",
+              "spans": [
+                {
+                  "text": "Reading both files."
+                }
+              ]
+            }
+          ],
+          "type": "prose"
+        },
+        {
+          "body": "use std::fmt;",
+          "fallback": {
+            "title": "Read"
+          },
+          "id": "chat-read",
+          "name": "Read",
+          "state": "done",
+          "summary": "patch.rs, 238 lines",
+          "type": "tool"
+        },
+        {
+          "fallback": {
+            "title": "prose"
+          },
+          "id": "chat-b",
+          "parts": [],
+          "streaming": true,
+          "type": "prose"
+        }
+      ],
+      "fallback": {
+        "title": "Scout"
+      },
+      "files": [
+        {
+          "name": "page.svg",
+          "tap": {
+            "url": "media/page.svg"
+          }
+        },
+        {
+          "name": "sample.svg",
+          "src": "media/sample.svg",
+          "tap": {
+            "url": "media/sample.svg"
+          }
+        }
+      ],
+      "id": "chat",
+      "name": "Scout",
+      "role": "agent",
+      "time": "14:32",
+      "type": "message"
+    },
+    {
+      "fallback": {
+        "title": "Test"
+      },
+      "id": "tool",
+      "name": "Test",
+      "state": "running",
+      "summary": "cargo test -p blocks",
+      "type": "tool"
     }
   ],
   "fallback": {

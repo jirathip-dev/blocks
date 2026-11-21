@@ -1,3 +1,4 @@
+import type { Append } from "../../core/kind/prose.ts";
 import type { Part, Prose, Span } from "../../gen/types.ts";
 import { linkable } from "../act.ts";
 import { el, h } from "../dom.ts";
@@ -30,5 +31,21 @@ function part(p: Part): HTMLElement {
 }
 
 export function prose(b: Prose): HTMLElement {
-  return h("div", "prose", ...b.parts.map(part));
+  const e = h("div", "prose", ...b.parts.map(part));
+  if (b.streaming) e.setAttribute("aria-busy", "true");
+  return e;
+}
+
+const last = (n: Node | null): Text | null => (n instanceof Text ? n : n?.lastChild ? last(n.lastChild) : null);
+
+/// Grows a drawn prose `el` by an `append` in place: the parts before `keep` and every text node but the last stay; false when it cannot.
+export function grow(el: HTMLElement, op: Append): boolean {
+  if (op.keep != null) {
+    if (op.keep > el.children.length) return false;
+    while (el.children.length > op.keep) el.lastElementChild?.remove();
+  }
+  el.append(...(op.parts ?? []).map(part));
+  const t = op.text ? last(el.lastElementChild) : null;
+  if (t) t.data += op.text;
+  return !op.text || t !== null;
 }

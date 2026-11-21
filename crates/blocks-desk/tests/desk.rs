@@ -1,8 +1,9 @@
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
-use blocks::tree::{Drawn, Node, Step};
-use blocks::Block;
+use blocks::behave::start;
+use blocks::tree::{check, expect, Drawn, Node, Step};
+use blocks::{Block, Built};
 use blocks_desk::{Desk, Ids, Want};
 use serde_json::json;
 
@@ -375,4 +376,43 @@ fn a_config_sends_each_committed_field_on_its_own() {
     ]);
     let want = json!({"screen": "settings", "block": "settings", "action": "save", "values": {"repo": "blocks"}});
     assert_eq!(sent(config, script), (vec![want], vec!["tap settings".to_owned()]));
+}
+
+fn find<'a>(n: &'a Node, id: &str) -> Option<&'a Node> {
+    if n.id.as_deref() == Some(id) {
+        return Some(n);
+    }
+    n.children.iter().find_map(|c| find(c, id))
+}
+
+#[test]
+fn the_thread_script_lands_its_ops_and_the_opened_tool_stays_open() {
+    let screen: Block = serde_json::from_value(fixture("append/thread.screen.json")).unwrap();
+    let script = steps(fixture("append/thread.steps.json"));
+    let mut run = Desk::new(screen.clone()).size(1440, 900).run(&script);
+    assert_eq!(run.report.dropped, Vec::<String>::new());
+    run.check(&Want::default());
+    assert!(run.faults.is_empty(), "{:?}", run.faults);
+
+    let mut applied = screen.clone();
+    for s in &script {
+        if let Step::Frame(f) = s {
+            blocks::apply(&mut applied, f.ops.as_deref().unwrap_or_default()).unwrap();
+        }
+    }
+    let built = Built::new(serde_json::to_value(&applied).unwrap());
+    let want = expect(&built, &blocks_desktop::kinds(), &start(&built));
+    let tree = &run.shots[0].tree;
+    assert_eq!(check(Some(tree), &want, "after"), Vec::<String>::new());
+    assert_eq!(find(tree, "t7-d").unwrap().variant.as_deref(), Some("done"));
+
+    let fresh = Desk::new(applied)
+        .size(1440, 900)
+        .run(&steps(json!([{"tap": {"id": "t7-b"}}, {"shot": {"name": "after"}}])));
+    assert_eq!(*tree, fresh.shots[0].tree);
+
+    let folded = Desk::new(screen).size(1440, 900).run(&script[1..]);
+    let tall = |t: &Node| find(t, "t7-b").unwrap().rect.unwrap()[3];
+    let (open, shut) = (tall(tree), tall(&folded.shots[0].tree));
+    assert!(open > shut + 44.0, "opened {open}, folded {shut}");
 }

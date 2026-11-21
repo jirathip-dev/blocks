@@ -42,6 +42,7 @@ pub(crate) struct Cx<'a> {
     pub(crate) me: Option<&'a str>,
     pub(crate) on: bool,
     pub(crate) up: bool,
+    pub(crate) follows: bool,
     local: &'a Local,
     plan: &'a [Node],
     next: usize,
@@ -85,6 +86,7 @@ impl<'a> Cx<'a> {
             me: None,
             on: true,
             up: true,
+            follows: false,
             local: g.local,
             plan,
             next: 0,
@@ -165,6 +167,10 @@ impl<'a> Cx<'a> {
         inner.me = plan.id.as_deref();
         inner.on = on;
         inner.up = self.on;
+        let before = at.checked_sub(1).and_then(|i| plans.get(i));
+        inner.follows = before.is_some_and(|p| {
+            p.drawn != Way::Hidden && p.kind == plan.kind && p.variant == plan.variant && p.name == plan.name
+        });
         let r = ui.scope_builder(builder, |ui| {
             if let Some(id) = b.id() {
                 let author = format!("block:{id}");

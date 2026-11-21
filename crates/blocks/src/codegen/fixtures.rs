@@ -186,6 +186,7 @@ pub(super) fn tree_of(b: &Block, kinds: &[&str]) -> std::io::Result<tree::Node> 
     let v = serde_json::to_value(b)?;
     let state = v
         .get("state")
+        .filter(|s| s.is_object())
         .cloned()
         .map(serde_json::from_value)
         .transpose()?

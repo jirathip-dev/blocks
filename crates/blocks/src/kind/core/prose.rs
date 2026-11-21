@@ -47,6 +47,47 @@ kind! {
     pub struct Prose {
         id: Option<String>,
         parts: Vec<Part>,
+        streaming: Option<bool>,
+    }
+}
+
+impl Part {
+    fn tail(&mut self) -> Option<&mut String> {
+        match self {
+            Self::Heading { spans, .. } | Self::Para { spans } | Self::Quote { spans } => {
+                spans.last_mut().map(|s| &mut s.text)
+            }
+            Self::List { items, .. } => items.last_mut()?.last_mut().map(|s| &mut s.text),
+            Self::Code { text, .. } => Some(text),
+            Self::Rule => None,
+        }
+    }
+
+    pub(crate) fn last_text(&self) -> Option<String> {
+        self.clone().tail().map(std::mem::take)
+    }
+}
+
+impl Prose {
+    /// The parts of `markdown`: headings, paragraphs, lists, quotes, fenced code, rules; bold, italic, code and links.
+    #[must_use]
+    pub fn read(markdown: &str) -> Vec<Part> {
+        crate::kind::read::read(markdown)
+    }
+
+    pub(crate) fn grow(&mut self, keep: Option<usize>, parts: &[Part], text: &str) -> Result<(), String> {
+        if let Some(keep) = keep {
+            if keep > self.parts.len() {
+                return Err(format!("keep {keep} of {} parts", self.parts.len()));
+            }
+            self.parts.truncate(keep);
+        }
+        self.parts.extend_from_slice(parts);
+        if !text.is_empty() {
+            let last = self.parts.last_mut().and_then(Part::tail);
+            last.ok_or("no text to add to")?.push_str(text);
+        }
+        Ok(())
     }
 }
 

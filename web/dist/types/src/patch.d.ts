@@ -1,10 +1,12 @@
+import type { Append } from "./core/kind/prose.ts";
 import type { Block, Op } from "./gen/types.ts";
 export type Draw = (block: Block) => HTMLElement | null;
-export declare function apply(screen: Block, ops: Op[]): Block | undefined;
+export type Grow = (el: HTMLElement, op: Append) => boolean;
 export declare function patcher(o: {
     root: HTMLElement;
     model: () => Block;
     draw: Draw;
+    grow?: Grow;
     saved?: () => void;
 }): {
     queue(next: Op[]): void;

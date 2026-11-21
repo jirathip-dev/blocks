@@ -5,6 +5,15 @@ one, else at the end), `move`, `remove`, `replace`, `badge` (the place's count),
 `screen` (the whole screen). A container's list is `rows` for a list or a table, `lanes` for a scene, `rounds` for a
 row, else `blocks`; `merge` and `remove` also name a table's row by its id, and `diff` sends a table's changed rows so.
 
+`append` grows a `prose` block at its end: it keeps the first `keep` parts, adds `parts`, then adds `text` to the last
+part's text (a heading's, paragraph's or quote's last span, a list's last item's last span, a code part's text). It
+counts parts, never characters; a `keep` over the parts, a last part with no text (a rule, no spans, none) or an id that
+is no prose does not fit, a gap as for any op. Only `diff` writes it, for a prose whose parts changed: `text` alone
+when only the last text grew, else `keep` and the parts after it; other changed fields go in a `merge` before it.
+`wire::old` turns it into a `merge` of the block's `parts`. A client built before it asks for the whole screen on
+each such frame, so an app ships its clients before its server streams. The cases are `fixtures/append/`, outside
+`fixtures/protocol/`, so the compat job's last release is not asked to know it.
+
 One stream per device carries every key (a screen's path) it opens. The server's `Shelf` keeps each key's rev, its
 JSON and a ring of its last 16 deltas (or 64 KB); the client's `Mirror` (the crate's, `web/src/stream.ts`'s) keeps
 the rev it holds and the screen. The stream starts with `hello` (`v`, `sid`, `epoch`, `keys`); the client answers

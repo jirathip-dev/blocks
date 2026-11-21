@@ -13,13 +13,15 @@ macro_rules! core {
     };
 }
 
-const CRATE: [(&str, &str); 6] = [
+const CRATE: [(&str, &str); 8] = [
     core!("chart"),
     core!("import"),
     core!("lines"),
+    core!("message"),
     core!("table"),
     core!("toast"),
     core!("timeline"),
+    core!("tool"),
 ];
 
 /// The lines of a source file that build a block: the whole `fn` its id is written in, numbered from 1.

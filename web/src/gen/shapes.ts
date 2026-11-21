@@ -21,6 +21,7 @@ export const kinds: Record<string, string> = {
   "lines": "Lines",
   "list": "List",
   "media": "Media",
+  "message": "Message",
   "nav": "Nav",
   "pages": "Pages",
   "prose": "Prose",
@@ -37,6 +38,7 @@ export const kinds: Record<string, string> = {
   "text": "Text",
   "timeline": "Timeline",
   "toast": "Toast",
+  "tool": "Tool",
   "web": "Web"
 };
 
@@ -219,7 +221,9 @@ export const defs: Record<string, Shape> = {
             "toast",
             "pages",
             "timeline",
-            "import"
+            "import",
+            "message",
+            "tool"
           ]
         },
         "type": "string"
@@ -227,6 +231,27 @@ export const defs: Record<string, Shape> = {
     },
     "required": [
       "type"
+    ],
+    "type": "object"
+  },
+  "Attachment": {
+    "properties": {
+      "name": {
+        "type": "string"
+      },
+      "src": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "tap": {
+        "$ref": "#/$defs/Tap"
+      }
+    },
+    "required": [
+      "name",
+      "tap"
     ],
     "type": "object"
   },
@@ -751,6 +776,32 @@ export const defs: Record<string, Shape> = {
         "properties": {
           "type": {
             "const": "import",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      {
+        "$ref": "#/$defs/Message",
+        "properties": {
+          "type": {
+            "const": "message",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      {
+        "$ref": "#/$defs/Tool",
+        "properties": {
+          "type": {
+            "const": "tool",
             "type": "string"
           }
         },
@@ -3608,6 +3659,68 @@ export const defs: Record<string, Shape> = {
     ],
     "type": "object"
   },
+  "Message": {
+    "additionalProperties": true,
+    "properties": {
+      "avatar": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "blocks": {
+        "items": {
+          "$ref": "#/$defs/Block"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "files": {
+        "items": {
+          "$ref": "#/$defs/Attachment"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "id": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "name": {
+        "type": "string"
+      },
+      "role": {
+        "$ref": "#/$defs/Role"
+      },
+      "show": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "time": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "required": [
+      "role",
+      "name"
+    ],
+    "type": "object"
+  },
   "More": {
     "anyOf": [
       {
@@ -4239,6 +4352,12 @@ export const defs: Record<string, Shape> = {
             "type": "null"
           }
         ]
+      },
+      "streaming": {
+        "type": [
+          "boolean",
+          "null"
+        ]
       }
     },
     "required": [
@@ -4261,6 +4380,21 @@ export const defs: Record<string, Shape> = {
       "text"
     ],
     "type": "object"
+  },
+  "Role": {
+    "anyOf": [
+      {
+        "enum": [
+          "agent",
+          "owner",
+          "system"
+        ],
+        "type": "string"
+      },
+      {
+        "type": "string"
+      }
+    ]
   },
   "Round": {
     "properties": {
@@ -6532,6 +6666,65 @@ export const defs: Record<string, Shape> = {
       },
       {
         "$ref": "#/$defs/Label"
+      }
+    ]
+  },
+  "Tool": {
+    "additionalProperties": true,
+    "properties": {
+      "body": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "id": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "name": {
+        "type": "string"
+      },
+      "show": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "state": {
+        "$ref": "#/$defs/ToolState"
+      },
+      "summary": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "required": [
+      "name",
+      "state"
+    ],
+    "type": "object"
+  },
+  "ToolState": {
+    "anyOf": [
+      {
+        "enum": [
+          "running",
+          "done",
+          "failed"
+        ],
+        "type": "string"
+      },
+      {
+        "type": "string"
       }
     ]
   },

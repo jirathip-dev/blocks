@@ -17,6 +17,7 @@
   "lines": { "long": ["label", "memo", "message"], "empty": "items", "many": "items" },
   "list": { "long": ["title", "subtitle", "value", "summary", "name", "markdown", "label"], "empty": "rows", "many": "rows" },
   "media": { "long": ["caption", "text"], "empty": "marks", "many": "marks" },
+  "message": { "long": ["name", "text", "summary", "body"], "empty": "blocks", "many": "blocks" },
   "nav": { "long": ["label"], "empty": "links", "why": "a nav bar holds a few links, never hundreds" },
   "pages": { "long": ["title", "note", "alt"], "empty": "pages", "many": "pages" },
   "prose": { "long": ["text"], "empty": "parts", "many": "parts" },
@@ -33,5 +34,6 @@
   "timeline": { "long": ["title", "subtitle", "label"], "empty": "tracks", "many": "tracks" },
   "toast": { "long": ["title", "label"], "why": "one line: an empty title draws its fallback, and one toast shows at a time" },
   "text": { "long": ["markdown"], "why": "one text: its empty is no block at all" },
+  "tool": { "long": ["name", "summary", "body"], "why": "one call: no list to empty or repeat" },
   "web": { "why": "an embedded page: its text and rows are the page's, not the kind's" }
 }

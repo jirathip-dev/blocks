@@ -39,6 +39,8 @@ extension Block {
         case .pages(let b): ("pages", b.id)
         case .timeline(let b): ("timeline", b.id)
         case .import(let b): ("import", b.id)
+        case .message(let b): ("message", b.id)
+        case .tool(let b): ("tool", b.id)
         case .appBlock(let b): (b.type, b.id)
         }
     }
@@ -55,6 +57,7 @@ internal struct KindView: View {
         case .choice(let block): ChoiceBlock(block: block)
         case .import(let block): ImportBlock(block: block)
         case .list(let block): ListBlock(block: block)
+        case .message(let block): MessageBlock(block: block)
         case .pages(let block): PagesBlock(block: block)
         case .screen(let block): ScreenBlock(block: block)
         case .section(let block): SectionBlock(block: block)
@@ -63,6 +66,7 @@ internal struct KindView: View {
         case .text(let block): TextBlock(block: block)
         case .timeline(let block): TimelineBlock(block: block)
         case .toast(let block): ToastBlock(block: block)
+        case .tool(let block): ToolBlock(block: block)
         case .web(let block): WebBlock(block: block)
         default: EmptyView()
         }

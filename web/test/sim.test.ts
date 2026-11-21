@@ -2,7 +2,7 @@ import { deepStrictEqual, strictEqual } from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
 import { evaluate, view } from "../src/core/eval.ts";
-import { apply } from "../src/patch.ts";
+import { apply } from "../src/core/apply.ts";
 
 const root = new URL("../../", import.meta.url);
 const read = (path) => JSON.parse(readFileSync(new URL(path, root), "utf8"));

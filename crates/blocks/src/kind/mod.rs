@@ -6,6 +6,7 @@ mod core;
 mod field;
 mod locale;
 mod parts;
+mod read;
 mod sample;
 
 pub(crate) use core::words as timeline_words;
@@ -13,6 +14,7 @@ pub use core::*;
 pub use field::*;
 pub use locale::{Era, Lang, Locale};
 pub use parts::*;
+pub(crate) use read::linkable;
 pub use sample::{fixtures, samples};
 
 wire! {

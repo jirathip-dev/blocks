@@ -1,0 +1,51 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>message: a thread whose reply streams</title>
+<link rel="stylesheet" href="../../../web/dist/blocks.css"><link rel="stylesheet" href="message.css"><link rel="stylesheet" href="page.css"></head>
+<body><main class="scr">
+<div class="tile"><div class="tabh"><span class="tw">blocks · thread t7</span><button type="button"><span>threads</span></button><button type="button"><span>board</span></button></div></div>
+<div class="tile">
+
+<article class="msg b b-message" data-block="message" data-id="t5" data-variant="system" aria-label="drover">
+  <div class="mh"><span class="mn b-message__name">drover</span><span class="mr">system</span></div>
+  <div class="mb"><div class="prose b b-prose" data-block="prose" data-id="t5-a" role="group" aria-label="t5-a"><p>#212 is in review(2): rev FAILed the head 4f2a9c1 on one test.</p></div></div>
+</article>
+
+<article class="msg b b-message" data-block="message" data-id="t6" data-variant="owner" aria-label="Mira">
+  <img class="mav b-message__avatar" src="mira.svg" alt="" aria-hidden="true">
+  <div class="mh"><span class="mn b-message__name">Mira</span><span class="mr">owner</span></div>
+  <div class="mb">
+    <div class="prose b b-prose" data-block="prose" data-id="t6-a" role="group" aria-label="t6-a"><p>Why does <code>patch_keeps_order</code> fail on staging? It passed on my machine. Screenshot of the CI page attached.</p></div>
+    <div class="mf b-message__files"><div class="mfi"><a href="#" aria-label="ci-failed.png"><img src="shot.svg" alt="ci-failed.png"></a></div></div>
+  </div>
+</article>
+
+<article class="msg b b-message" data-block="message" data-id="t7" data-variant="agent" aria-label="Scout">
+  <img class="mav b-message__avatar" src="scout.svg" alt="" aria-hidden="true">
+  <div class="mh"><span class="mn b-message__name">Scout</span><span class="mr">agent</span></div>
+  <div class="mb">
+    <div class="prose b b-prose" data-block="prose" data-id="t7-a" role="group" aria-label="t7-a"><p>Reading the test and the patcher first.</p></div>
+    <details class="tol has b b-tool" data-block="tool" data-id="t7-b" data-variant="done" role="group" aria-label="Read"><summary aria-label="Read"><i class="tog" aria-hidden="true">✓</i><span class="ton b-tool__name">Read</span><span class="tos b-tool__summary">crates/blocks/src/patch.rs · 238 lines</span><span class="toc" aria-hidden="true">›</span></summary><pre class="tob b-tool__body">use std::fmt;</pre></details>
+    <details class="tol has b b-tool" data-block="tool" data-id="t7-c" data-variant="failed" role="group" aria-label="Test" open><summary aria-label="Test"><i class="tog" aria-hidden="true">✕</i><span class="ton b-tool__name">Test</span><span class="tos b-tool__summary">cargo test -p blocks · 1 failed of 412</span><span class="toc" aria-hidden="true">›</span></summary><pre class="tob b-tool__body">running 412 tests
+test patch::patch_keeps_order ... FAILED
+
+---- patch::patch_keeps_order stdout ----
+assertion `left == right` failed
+  left: ["b", "a", "c"]
+ right: ["a", "b", "c"]
+
+test result: FAILED. 411 passed; 1 failed</pre></details>
+    <div class="prose b b-prose" data-block="prose" data-id="t7-d" role="group" aria-label="t7-d"><p>The test sorts by <code>HashMap</code> order, which is random per process. On your machine it happened to come out sorted. The fix is to keep the ops in a <code>Vec</code>:</p><pre><code class="lang-rust">let mut ops: Vec&lt;Op&gt; = Vec::new();
+for (id, block) in &amp;changed {
+    ops.push(Op::merge(id, block));</code></pre></div>
+    <details class="tol has b b-tool" data-block="tool" data-id="t7-e" data-variant="done" role="group" aria-label="Edit"><summary aria-label="Edit"><i class="tog" aria-hidden="true">✓</i><span class="ton b-tool__name">Edit</span><span class="tos b-tool__summary">patch.rs · +6 −4</span><span class="toc" aria-hidden="true">›</span></summary><pre class="tob b-tool__body">-let ops: HashMap&lt;String, Op&gt;
++let mut ops: Vec&lt;Op&gt;</pre></details>
+    <div class="tol b b-tool" data-block="tool" data-id="t7-f" data-variant="running" role="group" aria-label="Test" aria-busy="true"><div class="toh"><i class="tog" aria-hidden="true">↻</i><span class="ton b-tool__name">Test</span><span class="tos b-tool__summary">cargo test -p blocks patch</span></div></div>
+    <div class="prose b b-prose" data-block="prose" data-id="t7-g" role="group" aria-label="t7-g" aria-busy="true"><p>While that runs: the same pattern is in <code>diff.rs</code> line 88, so I will</p></div>
+  </div>
+</article>
+
+<form class="cmp b b-composer" data-block="composer" data-id="say" role="group" aria-label="message Scout" onsubmit="return false"><div class="cr"><button aria-label="attach" type="button"><span>+</span></button><textarea name="text" rows="1" placeholder="message Scout"></textarea><button class="primary" aria-label="send" type="submit"><span>send</span></button></div></form>
+</div>
+</main>
+<script>document.querySelectorAll(".tile").forEach((t, i) => t.style.setProperty("--i", i));document.body.dataset.h = Math.ceil(document.documentElement.scrollHeight);</script>
+</body></html>

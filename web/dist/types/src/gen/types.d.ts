@@ -37,6 +37,11 @@ export type AppBlock = {
     id?: string | null;
     type: string;
 };
+export type Attachment = {
+    name: string;
+    src?: string | null;
+    tap: Tap;
+};
 export type Band = {
     blocks?: Block[] | null;
     header?: string | null;
@@ -120,7 +125,11 @@ export type Block = ({
     type: "timeline";
 } & Timeline) | ({
     type: "import";
-} & Import) | (AppBlock & {
+} & Import) | ({
+    type: "message";
+} & Message) | ({
+    type: "tool";
+} & Tool) | (AppBlock & {
     [key: string]: unknown;
 });
 export type Bound = {
@@ -606,6 +615,16 @@ export type Media = {
     video?: boolean | null;
     width: number;
 };
+export type Message = {
+    avatar?: string | null;
+    blocks?: Block[] | null;
+    files?: Attachment[] | null;
+    id?: string | null;
+    name: string;
+    role: Role;
+    show?: Expr | null;
+    time?: string | null;
+};
 export type More = string | Page;
 export type Nav = {
     brand?: NavLink | null;
@@ -654,6 +673,12 @@ export type Op = {
     op: "replace";
     block: Block;
     id: string;
+} | {
+    op: "append";
+    id: string;
+    keep?: number | null;
+    parts?: Part[] | null;
+    text?: string | null;
 } | {
     op: "badge";
     count: number;
@@ -759,6 +784,7 @@ export type Prose = {
     id?: string | null;
     parts: Part[];
     show?: Expr | null;
+    streaming?: boolean | null;
 };
 export type Queued = {
     q: number;
@@ -770,6 +796,7 @@ export type Report = {
     shots: string[];
     timings: Timings;
 };
+export type Role = "agent" | "owner" | "system";
 export type Round = {
     blocks?: Block[] | null;
     id: string;
@@ -1185,6 +1212,15 @@ export type ToggleField = {
 };
 export type Tone = "ok" | "warn" | "bad" | "info" | "mute" | "accent" | "working" | "needs" | "done" | "fail" | "idle";
 export type Toned = string | Label;
+export type Tool = {
+    body?: string | null;
+    id?: string | null;
+    name: string;
+    show?: Expr | null;
+    state: ToolState;
+    summary?: string | null;
+};
+export type ToolState = "running" | "done" | "failed";
 export type Total = "sum" | "avg" | "count";
 export type TreeDrawn = "native" | "fallback" | "hidden";
 export type TreeNode = {
@@ -1239,4 +1275,4 @@ export type Why = "evicted" | "unpaired" | "handover";
 export type Working = {
     since: string;
 };
-export type Kind = "screen" | "sheet" | "section" | "list" | "row" | "card" | "choice" | "form" | "config" | "secret" | "run" | "button" | "chips" | "stat" | "text" | "images" | "web" | "diff" | "editor" | "scene" | "diagram" | "composer" | "lines" | "prose" | "hero" | "media" | "nav" | "island" | "table" | "steps" | "chart" | "toast" | "pages" | "timeline" | "import";
+export type Kind = "screen" | "sheet" | "section" | "list" | "row" | "card" | "choice" | "form" | "config" | "secret" | "run" | "button" | "chips" | "stat" | "text" | "images" | "web" | "diff" | "editor" | "scene" | "diagram" | "composer" | "lines" | "prose" | "hero" | "media" | "nav" | "island" | "table" | "steps" | "chart" | "toast" | "pages" | "timeline" | "import" | "message" | "tool";

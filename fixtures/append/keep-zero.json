@@ -1,0 +1,29 @@
+{
+  "why": "keep 0 sets every part again: the first text of a reply",
+  "parts": [],
+  "op": {
+    "op": "append",
+    "id": "p",
+    "keep": 0,
+    "parts": [
+      {
+        "part": "para",
+        "spans": [
+          {
+            "text": "Hello"
+          }
+        ]
+      }
+    ]
+  },
+  "want": [
+    {
+      "part": "para",
+      "spans": [
+        {
+          "text": "Hello"
+        }
+      ]
+    }
+  ]
+}

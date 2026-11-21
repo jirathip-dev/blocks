@@ -38,10 +38,31 @@ final class SnapshotTests: XCTestCase {
         "\(n.kind)#\(n.id ?? "")(\(n.variant ?? ""))\(n.role):\(n.name)[\(n.children.map(shape).joined(separator: ","))]"
     }
 
+    private func find(_ n: TreeNode?, _ id: String) -> TreeNode? {
+        guard let n else { return nil }
+        return n.id == id ? n : n.children.lazy.compactMap { self.find($0, id) }.first
+    }
+
+    func testTheThreadScriptKeepsTheOpenedToolOpenAndDrawsTheScreenTheOpsMake() throws {
+        let screen = try load(Block.self, "append/thread.screen.json")
+        let steps = try load([Step].self, "append/thread.steps.json")
+        let run = try Snapshot(screen).run(steps, check: true)
+        XCTAssertEqual(run.faults, [])
+        XCTAssertEqual(run.report.dropped, [])
+        var applied = screen
+        for case .frame(let frame) in steps { try applied.apply(frame.ops ?? []) }
+        let open = try Snapshot(applied).run(
+            try decode([Step].self, #"[{"tap": {"id": "t7-b"}}, {"shot": {"name": "after"}}]"#))
+        let folded = try Snapshot(applied).run([], name: "after")
+        XCTAssertEqual(run.trees["after"], open.trees["after"])
+        let height = { (r: SnapshotRun) in self.find(r.trees["after"], "t7-b")?.rect?[3] ?? 0 }
+        XCTAssertGreaterThan(height(run), height(folded) + 20, "the body of t7-b is still open")
+    }
+
     func testEveryFixtureBlockPassesCheckAndItsTreeHasTheHTMLTreesShape() throws {
         let kinds = try FileManager.default.contentsOfDirectory(atPath: fixtures.appendingPathComponent("blocks").path)
             .map { String($0.dropLast(5)) }.sorted()
-        XCTAssertEqual(kinds.count, 37)
+        XCTAssertEqual(kinds.count, 39)
         for kind in kinds {
             let expect = try load(TreeNode.self, "trees/swift/\(kind).json")
             let run = try Snapshot(try load(Block.self, "blocks/\(kind).json")).run(

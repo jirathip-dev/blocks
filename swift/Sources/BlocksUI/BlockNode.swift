@@ -24,7 +24,7 @@ public struct BlockNode: View {
         case .list(let list): list.rows.isEmpty
         case .chips(let chips): chips.options.isEmpty
         case .images(let images): images.items.isEmpty
-        case .prose(let prose): prose.parts.isEmpty
+        case .prose(let prose): prose.parts.isEmpty && prose.streaming != true
         case .appBlock(let app): appBlocks?.unknown == .nothing && appBlocks?.views[app.type] == nil
         default: false
         }
@@ -77,7 +77,18 @@ public struct BlockStack: View {
 
     public var body: some View {
         VStack(alignment: .leading, spacing: spacing ?? look.tiles?.seam ?? 10) {
-            ForEach(Array(blocks.enumerated()), id: \.offset) { _, block in BlockNode(block: block) }
+            ForEach(Array(blocks.enumerated()), id: \.offset) { index, block in
+                let speaker = Self.speaker(block)
+                BlockNode(block: block).environment(\.continues, speaker != nil && index > 0 && Self.speaker(blocks[index - 1]) == speaker)
+            }
         }
     }
+
+    private static func speaker(_ block: Block) -> String? {
+        if case .message(let m) = block { "\(m.role.rawValue) \(m.name)" } else { nil }
+    }
+}
+
+extension EnvironmentValues {
+    @Entry internal var continues = false
 }

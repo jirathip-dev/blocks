@@ -1,0 +1,80 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>message: one reply as it streams</title>
+<link rel="stylesheet" href="../../../web/dist/blocks.css"><link rel="stylesheet" href="message.css"><link rel="stylesheet" href="page.css"></head>
+<body><main class="scr">
+<div class="tile"><div class="sh">one reply as it streams · each frame is the ops the server's diff wrote, applied in place</div><p class="note">The ▮ caret is the streaming sign: drawn after the last text of a prose block with streaming set, never a node among its parts. Only the block an op names is touched: earlier messages, the tool above and the composer are not drawn again.</p></div>
+<div class="tile one"><div class="sh">1 · the reply opens</div>
+<article class="msg b b-message" data-block="message" data-id="t7" data-variant="agent" aria-label="Scout">
+  <img class="mav b-message__avatar" src="scout.svg" alt="" aria-hidden="true">
+  <div class="mh"><span class="mn b-message__name">Scout</span><span class="mr">agent</span></div>
+  <div class="mb">
+    <div class="prose b b-prose" data-block="prose" data-id="t7-a" role="group" aria-label="t7-a" aria-busy="true"></div>
+  </div>
+</article>
+<pre class="op">{&quot;op&quot;:&quot;insert&quot;,&quot;into&quot;:&quot;thread&quot;,&quot;block&quot;:{&quot;type&quot;:&quot;message&quot;,&quot;id&quot;:&quot;t7&quot;,…,
+ &quot;blocks&quot;:[{&quot;type&quot;:&quot;prose&quot;,&quot;id&quot;:&quot;t7-a&quot;,&quot;parts&quot;:[],&quot;streaming&quot;:true}]}}</pre></div>
+<div class="tile one"><div class="sh">2 · text grows</div>
+<article class="msg b b-message" data-block="message" data-id="t7" data-variant="agent" aria-label="Scout">
+  <img class="mav b-message__avatar" src="scout.svg" alt="" aria-hidden="true">
+  <div class="mh"><span class="mn b-message__name">Scout</span><span class="mr">agent</span></div>
+  <div class="mb">
+    <div class="prose b b-prose" data-block="prose" data-id="t7-a" role="group" aria-label="t7-a" aria-busy="true"><p>Reading the test and the</p></div>
+  </div>
+</article>
+<pre class="op">{&quot;op&quot;:&quot;append&quot;,&quot;id&quot;:&quot;t7-a&quot;,&quot;text&quot;:&quot; the&quot;}</pre></div>
+<div class="tile one"><div class="sh">3 · a tool starts</div>
+<article class="msg b b-message" data-block="message" data-id="t7" data-variant="agent" aria-label="Scout">
+  <img class="mav b-message__avatar" src="scout.svg" alt="" aria-hidden="true">
+  <div class="mh"><span class="mn b-message__name">Scout</span><span class="mr">agent</span></div>
+  <div class="mb">
+    <div class="prose b b-prose" data-block="prose" data-id="t7-a" role="group" aria-label="t7-a"><p>Reading the test and the patcher first.</p></div>
+    <div class="tol b b-tool" data-block="tool" data-id="t7-b" data-variant="running" role="group" aria-label="Read" aria-busy="true"><div class="toh"><i class="tog" aria-hidden="true">↻</i><span class="ton b-tool__name">Read</span><span class="tos b-tool__summary">crates/blocks/src/patch.rs</span></div></div>
+  </div>
+</article>
+<pre class="op">{&quot;op&quot;:&quot;merge&quot;,&quot;id&quot;:&quot;t7-a&quot;,&quot;fields&quot;:{&quot;streaming&quot;:false}}
+{&quot;op&quot;:&quot;insert&quot;,&quot;into&quot;:&quot;t7&quot;,&quot;block&quot;:{&quot;type&quot;:&quot;tool&quot;,&quot;id&quot;:&quot;t7-b&quot;,…}}</pre></div>
+<div class="tile one"><div class="sh">4 · it is done</div>
+<article class="msg b b-message" data-block="message" data-id="t7" data-variant="agent" aria-label="Scout">
+  <img class="mav b-message__avatar" src="scout.svg" alt="" aria-hidden="true">
+  <div class="mh"><span class="mn b-message__name">Scout</span><span class="mr">agent</span></div>
+  <div class="mb">
+    <div class="prose b b-prose" data-block="prose" data-id="t7-a" role="group" aria-label="t7-a"><p>Reading the test and the patcher first.</p></div>
+    <details class="tol has b b-tool" data-block="tool" data-id="t7-b" data-variant="done" role="group" aria-label="Read"><summary aria-label="Read"><i class="tog" aria-hidden="true">✓</i><span class="ton b-tool__name">Read</span><span class="tos b-tool__summary">crates/blocks/src/patch.rs · 238 lines</span><span class="toc" aria-hidden="true">›</span></summary><pre class="tob b-tool__body">use std::fmt;</pre></details>
+    <div class="prose b b-prose" data-block="prose" data-id="t7-c" role="group" aria-label="t7-c" aria-busy="true"><p>The fix keeps the ops in order:</p></div>
+  </div>
+</article>
+<pre class="op">{&quot;op&quot;:&quot;merge&quot;,&quot;id&quot;:&quot;t7-b&quot;,&quot;fields&quot;:{&quot;state&quot;:&quot;done&quot;,&quot;summary&quot;:…,&quot;body&quot;:…}}
+{&quot;op&quot;:&quot;insert&quot;,&quot;into&quot;:&quot;t7&quot;,&quot;block&quot;:{&quot;type&quot;:&quot;prose&quot;,&quot;id&quot;:&quot;t7-c&quot;,…}}</pre></div>
+<div class="tile one"><div class="sh">5 · inside a code block</div>
+<article class="msg b b-message" data-block="message" data-id="t7" data-variant="agent" aria-label="Scout">
+  <img class="mav b-message__avatar" src="scout.svg" alt="" aria-hidden="true">
+  <div class="mh"><span class="mn b-message__name">Scout</span><span class="mr">agent</span></div>
+  <div class="mb">
+    <div class="prose b b-prose" data-block="prose" data-id="t7-a" role="group" aria-label="t7-a"><p>Reading the test and the patcher first.</p></div>
+    <details class="tol has b b-tool" data-block="tool" data-id="t7-b" data-variant="done" role="group" aria-label="Read"><summary aria-label="Read"><i class="tog" aria-hidden="true">✓</i><span class="ton b-tool__name">Read</span><span class="tos b-tool__summary">crates/blocks/src/patch.rs · 238 lines</span><span class="toc" aria-hidden="true">›</span></summary><pre class="tob b-tool__body">use std::fmt;</pre></details>
+    <div class="prose b b-prose" data-block="prose" data-id="t7-c" role="group" aria-label="t7-c" aria-busy="true"><p>The fix keeps the ops in order:</p><pre><code class="lang-rust">let mut ops: Vec&lt;Op&gt; = Vec::new();
+for (id, block) in &amp;changed {</code></pre></div>
+  </div>
+</article>
+<pre class="op">{&quot;op&quot;:&quot;append&quot;,&quot;id&quot;:&quot;t7-c&quot;,&quot;keep&quot;:1,
+ &quot;parts&quot;:[{&quot;part&quot;:&quot;code&quot;,&quot;lang&quot;:&quot;rust&quot;,&quot;text&quot;:&quot;let mut ops…&quot;}]}
+{&quot;op&quot;:&quot;append&quot;,&quot;id&quot;:&quot;t7-c&quot;,&quot;text&quot;:&quot;\nfor (id, block) in &amp;changed {&quot;}</pre></div>
+<div class="tile one"><div class="sh">6 · the reply ends</div>
+<article class="msg b b-message" data-block="message" data-id="t7" data-variant="agent" aria-label="Scout">
+  <img class="mav b-message__avatar" src="scout.svg" alt="" aria-hidden="true">
+  <div class="mh"><span class="mn b-message__name">Scout</span><span class="mr">agent</span></div>
+  <div class="mb">
+    <div class="prose b b-prose" data-block="prose" data-id="t7-a" role="group" aria-label="t7-a"><p>Reading the test and the patcher first.</p></div>
+    <details class="tol has b b-tool" data-block="tool" data-id="t7-b" data-variant="done" role="group" aria-label="Read"><summary aria-label="Read"><i class="tog" aria-hidden="true">✓</i><span class="ton b-tool__name">Read</span><span class="tos b-tool__summary">crates/blocks/src/patch.rs · 238 lines</span><span class="toc" aria-hidden="true">›</span></summary><pre class="tob b-tool__body">use std::fmt;</pre></details>
+    <div class="prose b b-prose" data-block="prose" data-id="t7-c" role="group" aria-label="t7-c"><p>The fix keeps the ops in order:</p><pre><code class="lang-rust">let mut ops: Vec&lt;Op&gt; = Vec::new();
+for (id, block) in &amp;changed {
+    ops.push(Op::merge(id, block));
+}</code></pre><p>Running the tests again.</p></div>
+  </div>
+</article>
+<pre class="op">{&quot;op&quot;:&quot;append&quot;,&quot;id&quot;:&quot;t7-c&quot;,&quot;keep&quot;:2,
+ &quot;parts&quot;:[{&quot;part&quot;:&quot;para&quot;,…&quot;Running the tests again.&quot;}]}
+{&quot;op&quot;:&quot;merge&quot;,&quot;id&quot;:&quot;t7-c&quot;,&quot;fields&quot;:{&quot;streaming&quot;:false}}</pre></div>
+</main>
+<script>document.querySelectorAll(".tile").forEach((t, i) => t.style.setProperty("--i", i));document.body.dataset.h = Math.ceil(document.documentElement.scrollHeight);</script>
+</body></html>
