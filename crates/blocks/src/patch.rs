@@ -77,6 +77,7 @@ enum Spot<'a> {
     Row(&'a mut TableRow),
 }
 
+#[cfg(any(test, feature = "schema"))]
 pub(crate) const HOSTS: [(&str, &str); 9] = [
     ("screen", "blocks"),
     ("sheet", "blocks"),
@@ -89,6 +90,7 @@ pub(crate) const HOSTS: [(&str, &str); 9] = [
     ("table", "rows"),
 ];
 
+#[cfg(any(test, feature = "schema"))]
 pub(crate) const WALKED: [&str; 5] = ["blocks", "rows", "buttons", "rounds", "lanes"];
 
 enum Kids<'a> {
