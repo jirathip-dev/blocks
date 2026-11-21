@@ -25,6 +25,7 @@
       {"type": "prose", "id": "chat-a", "parts": [{"part": "para", "spans": [{"text": "קורא את "}, {"text": "שני", "bold": true}, {"text": " הקבצים."}]}]},
       {"type": "tool", "id": "chat-read", "name": "קריאה", "state": "done", "summary": "patch.rs, 238 שורות"}
     ]},
-    {"type": "sheet", "id": "add", "title": "הוספת מאגר", "blocks": [{"type": "text", "id": "sheet-note", "text": "בחרו אחד"}]}
+    {"type": "sheet", "id": "add", "title": "הוספת מאגר", "blocks": [{"type": "text", "id": "sheet-note", "text": "בחרו אחד"}]},
+    {"type": "modal", "id": "drop", "title": "מחיקת מאגר", "blocks": [{"type": "text", "id": "drop-note", "text": "לא ניתן לבטל"}]}
   ]
 }
