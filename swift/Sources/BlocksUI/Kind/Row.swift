@@ -1,13 +1,13 @@
 import Blocks
 import SwiftUI
 
-internal struct RowView: View {
+internal struct RowBlock: View {
     @Environment(\.look) private var look
     @Environment(\.behaved) private var behaved
     @State private var open: Bool?
-    internal let row: Row
+    internal let block: Row
 
-    private var rounds: [Round] { row.rounds ?? [] }
+    private var rounds: [Round] { block.rounds ?? [] }
     private var unfolded: Bool { !rounds.isEmpty && (open ?? (rounds.last?.state == .needs)) }
 
     internal var body: some View {
@@ -22,29 +22,29 @@ internal struct RowView: View {
                     .buttonStyle(.plain)
                     if unfolded { RoundsView(rounds: rounds) }
                 }
-            } else if row.tap == nil {
+            } else if block.tap == nil {
                 line
             } else {
-                let confirm = Confirmation(nil, label: nil, destructive: row.style?.rawValue == "destructive")
-                ActButton(source: Source(tap: row.tap, confirm: confirm)) { line }
+                let confirm = Confirmation(nil, label: nil, destructive: block.style?.rawValue == "destructive")
+                ActButton(source: Source(tap: block.tap, confirm: confirm)) { line }
             }
         }
-        .modifier(BlockActs(menu: row.menu ?? [], swipe: row.swipe ?? []))
+        .modifier(BlockActs(menu: block.menu ?? [], swipe: block.swipe ?? []))
     }
 
     private var line: some View {
         let palette = look.palette
         let subtitle: (text: Shown, tone: Tone?)? =
-            switch unfolded ? nil : row.subtitle {
+            switch unfolded ? nil : block.subtitle {
             case .string(let text): (.string(text), nil)
             case .label(let label): (label.text, label.tone)
             case nil: nil
             }
-        let style = row.style?.rawValue
+        let style = block.style?.rawValue
         return HStack(spacing: 10) {
-            if let figure = row.figure { Figure(figure: figure) }
+            if let figure = block.figure { Figure(figure: figure) }
             VStack(alignment: .leading, spacing: 2) {
-                if let title = row.title {
+                if let title = block.title {
                     Text(title).ui(15, .medium, look).lineLimit(1)
                     .foregroundStyle(
                         style == "destructive" ? palette.red : style == "link" ? palette.link : palette.foreground)
@@ -56,77 +56,31 @@ internal struct RowView: View {
                 }
             }
             Spacer(minLength: 4)
-            if let badge = row.badge { Pill(badge: badge) }
-            if let value = row.value {
+            if let badge = block.badge { Pill(badge: badge) }
+            if let value = block.value {
                 RelativeValue { value.text(at: $0, behaved.view.values) }.ui(13, .regular, look).foregroundStyle(palette.mute)
             }
-            if let button = row.button { RowButton(button: button) }
+            if let button = block.button { RowButton(button: button) }
             trailing
         }
-        .padding(.leading, CGFloat(row.indent ?? 0) * 18).padding(.horizontal, 12).frame(minHeight: 44)
+        .padding(.leading, CGFloat(block.indent ?? 0) * 18).padding(.horizontal, 12).frame(minHeight: 44)
         .contentShape(.rect)
         .overlay(alignment: .leading) {
-            if row.changed == true {
+            if block.changed == true {
                 RoundedRectangle(cornerRadius: look.radius(2)).fill(palette.lead).frame(width: 3).padding(.vertical, 10)
             }
         }
-        .modifier(Lifted(lifted: row.lifted == true))
+        .modifier(Lifted(lifted: block.lifted == true))
     }
 
     @ViewBuilder private var trailing: some View {
-        if row.handle == true {
+        if block.handle == true {
             Image(systemName: "line.3.horizontal").font(.system(size: 15, weight: .semibold))
                 .foregroundStyle(look.palette.mute).accessibilityLabel("Reorder")
-        } else if !rounds.isEmpty || (row.tap != nil && row.accessory != Accessory.none) {
+        } else if !rounds.isEmpty || (block.tap != nil && block.accessory != Accessory.none) {
             Image(systemName: unfolded ? "chevron.down" : "chevron.right").font(.system(size: 11, weight: .bold))
                 .foregroundStyle(look.palette.mute)
         }
-    }
-}
-
-/// A text redrawn each minute from the time now, such as an age or a countdown.
-public struct RelativeValue: View {
-    private let text: (Date) -> String
-
-    public init(text: @escaping (Date) -> String) {
-        self.text = text
-    }
-
-    public var body: some View {
-        TimelineView(.everyMinute) { context in Text(text(context.date)) }
-    }
-}
-
-extension Shown {
-    internal func text(at now: Date, _ values: [String: String]) -> String {
-        switch self {
-        case .string(let string): string
-        case .number(let number): number.formatted()
-        case .bound(let bound): values[bound.get] ?? ""
-        case .time(let time): Relative.text(since: time.since, until: time.until, label: time.label, at: now)
-        }
-    }
-}
-
-extension Relative {
-    internal static func text(since: String?, until: String? = nil, label: String? = nil, at now: Date) -> String {
-        if let label, let until = until?.date {
-            let left = max(0, Int((until.timeIntervalSince(now) / 60).rounded()))
-            return label.replacingOccurrences(of: "{rel}", with: "\(left)m")
-        }
-        if let since = since?.date {
-            let age = now.timeIntervalSince(since)
-            return label.map { $0.replacingOccurrences(of: "{}", with: aged(age)) } ?? text(age)
-        }
-        return until?.date.map { text($0.timeIntervalSince(now)) } ?? ""
-    }
-
-    private static func aged(_ seconds: TimeInterval) -> String {
-        let s = Int(max(0, seconds))
-        if s < 120 { return "\(s)s" }
-        if s < 7200 { return "\(s / 60)m" }
-        if s < 172_800 { return "\(s / 3600)h" }
-        return "\(s / 86400)d"
     }
 }
 

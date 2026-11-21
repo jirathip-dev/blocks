@@ -21,7 +21,7 @@ internal struct ListBlock: View {
                 VStack(spacing: tiles.seam) {
                     ForEach(rows, id: \.key) { item in
                         if case .row(let line) = item.row {
-                            reorderable(RowView(row: line).surface(look), line).modifier(Reported(block: item.row))
+                            reorderable(RowBlock(block: line).surface(look), line).modifier(Reported(block: item.row))
                                 .modifier(Identified(id: item.row.id))
                         } else {
                             BlockNode(block: item.row)
@@ -54,7 +54,7 @@ internal struct ListBlock: View {
         VStack(spacing: 0) {
             ForEach(Array(rows.enumerated()), id: \.element.key) { index, item in
                 if case .row(let line) = item.row {
-                    reorderable(RowView(row: line), line).modifier(Reported(block: item.row))
+                    reorderable(RowBlock(block: line), line).modifier(Reported(block: item.row))
                         .modifier(Identified(id: item.row.id))
                 } else {
                     BlockNode(block: item.row)
