@@ -13,6 +13,7 @@ npm --prefix web run test
 scripts/lint-fixtures.sh ts
 set -- {--base}
 if [ -n "${2:-}" ] && git cat-file -e "$2:ci/tokens/baseline.txt" 2>/dev/null; then
-  git diff --numstat "$2" HEAD -- ci/tokens/baseline.txt | awk '$1 > 0 { print "ci/tokens/baseline.txt gains " $1 " lines: use a scheme or style token instead"; bad = 1 } END { exit bad }'
+  { git show "$2:ci/tokens/baseline.txt" | sed 's/^[^ ]* /-/'; git show HEAD:ci/tokens/baseline.txt | sed 's/^[^ ]* /+/'; } |
+    awk '{ v = substr($0, 2); n[v] += substr($0, 1, 1) == "+" ? 1 : -1 } END { for (v in n) if (n[v] > 0) { print "ci/tokens/baseline.txt gains " n[v] " of `" v "`: use a scheme or style token instead"; bad = 1 } exit bad }'
 fi
 """

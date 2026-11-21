@@ -1,186 +1,6 @@
 ci/lint-fixtures/swift/stale.swift spacing: 6
 swift/Sources/BlocksUI/BlockActs.swift .ui(13
 swift/Sources/BlocksUI/BlockActs.swift duration: 0.5
-swift/Sources/BlocksUI/BlockChart.swift .padding(12
-swift/Sources/BlocksUI/BlockChart.swift .padding(8
-swift/Sources/BlocksUI/BlockChart.swift .ui(11
-swift/Sources/BlocksUI/BlockChart.swift .ui(11
-swift/Sources/BlocksUI/BlockChart.swift .ui(11
-swift/Sources/BlocksUI/BlockChart.swift .ui(11
-swift/Sources/BlocksUI/BlockChart.swift .ui(11
-swift/Sources/BlocksUI/BlockChart.swift .ui(13
-swift/Sources/BlocksUI/BlockChart.swift .ui(13
-swift/Sources/BlocksUI/BlockChart.swift .ui(13
-swift/Sources/BlocksUI/BlockChart.swift .ui(17
-swift/Sources/BlocksUI/BlockChart.swift height: 150
-swift/Sources/BlocksUI/BlockChart.swift height: 8
-swift/Sources/BlocksUI/BlockChart.swift height: 8
-swift/Sources/BlocksUI/BlockChart.swift horizontalSpacing: 8
-swift/Sources/BlocksUI/BlockChart.swift lineWidth: 2
-swift/Sources/BlocksUI/BlockChart.swift minHeight: 32
-swift/Sources/BlocksUI/BlockChart.swift radius: 16
-swift/Sources/BlocksUI/BlockChart.swift spacing: 12
-swift/Sources/BlocksUI/BlockChart.swift spacing: 16
-swift/Sources/BlocksUI/BlockChart.swift spacing: 2
-swift/Sources/BlocksUI/BlockChart.swift spacing: 4
-swift/Sources/BlocksUI/BlockChart.swift spacing: 4
-swift/Sources/BlocksUI/BlockChart.swift spacing: 4
-swift/Sources/BlocksUI/BlockChart.swift spacing: 4
-swift/Sources/BlocksUI/BlockChart.swift spacing: 8
-swift/Sources/BlocksUI/BlockChart.swift spacing: 8
-swift/Sources/BlocksUI/BlockChart.swift spacing: 8
-swift/Sources/BlocksUI/BlockChart.swift verticalSpacing: 2
-swift/Sources/BlocksUI/BlockChart.swift width: 150
-swift/Sources/BlocksUI/BlockChart.swift width: 3
-swift/Sources/BlocksUI/BlockChart.swift width: 8
-swift/Sources/BlocksUI/BlockChart.swift width: 8
-swift/Sources/BlocksUI/BlockContent.swift .padding(.horizontal, 10
-swift/Sources/BlocksUI/BlockContent.swift .padding(.horizontal, 12
-swift/Sources/BlocksUI/BlockContent.swift .padding(.horizontal, 16
-swift/Sources/BlocksUI/BlockContent.swift .padding(.leading, 12
-swift/Sources/BlocksUI/BlockContent.swift .padding(.vertical, 9
-swift/Sources/BlocksUI/BlockContent.swift .padding(12
-swift/Sources/BlocksUI/BlockContent.swift .padding(12
-swift/Sources/BlocksUI/BlockContent.swift .padding(6
-swift/Sources/BlocksUI/BlockContent.swift .ui(11
-swift/Sources/BlocksUI/BlockContent.swift .ui(13
-swift/Sources/BlocksUI/BlockContent.swift .ui(13
-swift/Sources/BlocksUI/BlockContent.swift .ui(13
-swift/Sources/BlocksUI/BlockContent.swift .ui(13
-swift/Sources/BlocksUI/BlockContent.swift .ui(14
-swift/Sources/BlocksUI/BlockContent.swift .ui(14
-swift/Sources/BlocksUI/BlockContent.swift .ui(15
-swift/Sources/BlocksUI/BlockContent.swift .ui(15
-swift/Sources/BlocksUI/BlockContent.swift .ui(15
-swift/Sources/BlocksUI/BlockContent.swift .ui(15
-swift/Sources/BlocksUI/BlockContent.swift .ui(15
-swift/Sources/BlocksUI/BlockContent.swift .ui(16
-swift/Sources/BlocksUI/BlockContent.swift .ui(17
-swift/Sources/BlocksUI/BlockContent.swift .ui(34
-swift/Sources/BlocksUI/BlockContent.swift height: 28
-swift/Sources/BlocksUI/BlockContent.swift height: 6
-swift/Sources/BlocksUI/BlockContent.swift maxWidth: 720
-swift/Sources/BlocksUI/BlockContent.swift maxWidth: 720
-swift/Sources/BlocksUI/BlockContent.swift maxWidth: 720
-swift/Sources/BlocksUI/BlockContent.swift minHeight: 48
-swift/Sources/BlocksUI/BlockContent.swift minLength: 4
-swift/Sources/BlocksUI/BlockContent.swift minLength: 4
-swift/Sources/BlocksUI/BlockContent.swift minLength: 8
-swift/Sources/BlocksUI/BlockContent.swift radius: 22
-swift/Sources/BlocksUI/BlockContent.swift size: 13
-swift/Sources/BlocksUI/BlockContent.swift spacing: 10
-swift/Sources/BlocksUI/BlockContent.swift spacing: 12
-swift/Sources/BlocksUI/BlockContent.swift spacing: 12
-swift/Sources/BlocksUI/BlockContent.swift spacing: 16
-swift/Sources/BlocksUI/BlockContent.swift spacing: 16
-swift/Sources/BlocksUI/BlockContent.swift spacing: 4
-swift/Sources/BlocksUI/BlockContent.swift spacing: 6
-swift/Sources/BlocksUI/BlockContent.swift spacing: 8
-swift/Sources/BlocksUI/BlockContent.swift spacing: 8
-swift/Sources/BlocksUI/BlockContent.swift spacing: 8
-swift/Sources/BlocksUI/BlockContent.swift spacing: 8
-swift/Sources/BlocksUI/BlockContent.swift spacing: 8
-swift/Sources/BlocksUI/BlockContent.swift spacing: 8
-swift/Sources/BlocksUI/BlockContent.swift width: 18
-swift/Sources/BlocksUI/BlockContent.swift width: 3
-swift/Sources/BlocksUI/BlockContent.swift width: 6
-swift/Sources/BlocksUI/BlockDiagram.swift .padding(.horizontal, 10
-swift/Sources/BlocksUI/BlockDiagram.swift .padding(.horizontal, 10
-swift/Sources/BlocksUI/BlockDiagram.swift .padding(.vertical, 6
-swift/Sources/BlocksUI/BlockDiagram.swift .ui(10.5
-swift/Sources/BlocksUI/BlockDiagram.swift .ui(10.5
-swift/Sources/BlocksUI/BlockDiagram.swift .ui(10.5
-swift/Sources/BlocksUI/BlockDiagram.swift .ui(12.5
-swift/Sources/BlocksUI/BlockDiagram.swift .ui(13
-swift/Sources/BlocksUI/BlockDiagram.swift .ui(14
-swift/Sources/BlocksUI/BlockDiagram.swift gap: 22
-swift/Sources/BlocksUI/BlockDiagram.swift gap: 40
-swift/Sources/BlocksUI/BlockDiagram.swift gutter: 12
-swift/Sources/BlocksUI/BlockDiagram.swift gutter: 18
-swift/Sources/BlocksUI/BlockDiagram.swift height: 12
-swift/Sources/BlocksUI/BlockDiagram.swift height: 46
-swift/Sources/BlocksUI/BlockDiagram.swift height: 54
-swift/Sources/BlocksUI/BlockDiagram.swift lineWidth: 1.4
-swift/Sources/BlocksUI/BlockDiagram.swift rowGap: 20
-swift/Sources/BlocksUI/BlockDiagram.swift rowGap: 22
-swift/Sources/BlocksUI/BlockDiagram.swift size: 14
-swift/Sources/BlocksUI/BlockDiagram.swift spacing: 4
-swift/Sources/BlocksUI/BlockDiagram.swift spacing: 4
-swift/Sources/BlocksUI/BlockDiagram.swift width: 12
-swift/Sources/BlocksUI/BlockDiagram.swift y: 16
-swift/Sources/BlocksUI/BlockDiagram.swift y: 4
-swift/Sources/BlocksUI/BlockEdits.swift .milliseconds(400
-swift/Sources/BlocksUI/BlockEdits.swift .padding(.bottom, 4
-swift/Sources/BlocksUI/BlockEdits.swift .padding(.horizontal, 10
-swift/Sources/BlocksUI/BlockEdits.swift .padding(.horizontal, 10
-swift/Sources/BlocksUI/BlockEdits.swift .padding(.horizontal, 10
-swift/Sources/BlocksUI/BlockEdits.swift .padding(.horizontal, 10
-swift/Sources/BlocksUI/BlockEdits.swift .padding(.horizontal, 8
-swift/Sources/BlocksUI/BlockEdits.swift .padding(.leading, 30
-swift/Sources/BlocksUI/BlockEdits.swift .padding(.vertical, 4
-swift/Sources/BlocksUI/BlockEdits.swift .padding(.vertical, 8
-swift/Sources/BlocksUI/BlockEdits.swift .padding(.vertical, 8
-swift/Sources/BlocksUI/BlockEdits.swift .ui(11.5
-swift/Sources/BlocksUI/BlockEdits.swift .ui(16
-swift/Sources/BlocksUI/BlockEdits.swift minHeight: 320
-swift/Sources/BlocksUI/BlockEdits.swift minLength: 4
-swift/Sources/BlocksUI/BlockEdits.swift radius: 12
-swift/Sources/BlocksUI/BlockEdits.swift radius: 12
-swift/Sources/BlocksUI/BlockEdits.swift size: 12
-swift/Sources/BlocksUI/BlockEdits.swift size: 12
-swift/Sources/BlocksUI/BlockEdits.swift spacing: 10
-swift/Sources/BlocksUI/BlockEdits.swift spacing: 2
-swift/Sources/BlocksUI/BlockEdits.swift width: 30
-swift/Sources/BlocksUI/BlockFields.swift .padding(.horizontal, 12
-swift/Sources/BlocksUI/BlockFields.swift .padding(.horizontal, 12
-swift/Sources/BlocksUI/BlockFields.swift .padding(10
-swift/Sources/BlocksUI/BlockFields.swift .padding(14
-swift/Sources/BlocksUI/BlockFields.swift .ui(11
-swift/Sources/BlocksUI/BlockFields.swift .ui(12
-swift/Sources/BlocksUI/BlockFields.swift .ui(12
-swift/Sources/BlocksUI/BlockFields.swift .ui(12
-swift/Sources/BlocksUI/BlockFields.swift .ui(14
-swift/Sources/BlocksUI/BlockFields.swift .ui(14
-swift/Sources/BlocksUI/BlockFields.swift .ui(15
-swift/Sources/BlocksUI/BlockFields.swift height: 38
-swift/Sources/BlocksUI/BlockFields.swift lineWidth: 2
-swift/Sources/BlocksUI/BlockFields.swift minHeight: 38
-swift/Sources/BlocksUI/BlockFields.swift size: 12
-swift/Sources/BlocksUI/BlockFields.swift size: 13
-swift/Sources/BlocksUI/BlockFields.swift spacing: 10
-swift/Sources/BlocksUI/BlockFields.swift spacing: 10
-swift/Sources/BlocksUI/BlockFields.swift spacing: 10
-swift/Sources/BlocksUI/BlockFields.swift spacing: 2
-swift/Sources/BlocksUI/BlockFields.swift spacing: 3
-swift/Sources/BlocksUI/BlockFields.swift spacing: 8
-swift/Sources/BlocksUI/BlockImages.swift .ui(12
-swift/Sources/BlocksUI/BlockImages.swift spacing: 8
-swift/Sources/BlocksUI/BlockLines.swift .milliseconds(400
-swift/Sources/BlocksUI/BlockLines.swift .padding(.horizontal, 8
-swift/Sources/BlocksUI/BlockLines.swift .padding(.leading, 8
-swift/Sources/BlocksUI/BlockLines.swift .padding(14
-swift/Sources/BlocksUI/BlockLines.swift .ui(11
-swift/Sources/BlocksUI/BlockLines.swift .ui(11
-swift/Sources/BlocksUI/BlockLines.swift .ui(11
-swift/Sources/BlocksUI/BlockLines.swift .ui(11
-swift/Sources/BlocksUI/BlockLines.swift .ui(12
-swift/Sources/BlocksUI/BlockLines.swift .ui(13
-swift/Sources/BlocksUI/BlockLines.swift .ui(13
-swift/Sources/BlocksUI/BlockLines.swift .ui(14
-swift/Sources/BlocksUI/BlockLines.swift .ui(14
-swift/Sources/BlocksUI/BlockLines.swift .ui(14
-swift/Sources/BlocksUI/BlockLines.swift height: 8
-swift/Sources/BlocksUI/BlockLines.swift maxWidth: 200
-swift/Sources/BlocksUI/BlockLines.swift minHeight: 32
-swift/Sources/BlocksUI/BlockLines.swift spacing: 10
-swift/Sources/BlocksUI/BlockLines.swift spacing: 10
-swift/Sources/BlocksUI/BlockLines.swift spacing: 10
-swift/Sources/BlocksUI/BlockLines.swift spacing: 2
-swift/Sources/BlocksUI/BlockLines.swift spacing: 4
-swift/Sources/BlocksUI/BlockLines.swift spacing: 6
-swift/Sources/BlocksUI/BlockLines.swift spacing: 8
-swift/Sources/BlocksUI/BlockLines.swift width: 3
-swift/Sources/BlocksUI/BlockLines.swift width: 8
 swift/Sources/BlocksUI/BlockRounds.swift .padding(.bottom, 12
 swift/Sources/BlocksUI/BlockRounds.swift .padding(.horizontal, 12
 swift/Sources/BlocksUI/BlockRounds.swift .padding(.leading, 22
@@ -212,103 +32,14 @@ swift/Sources/BlocksUI/BlockRounds.swift spacing: 8
 swift/Sources/BlocksUI/BlockRounds.swift spacing: 8
 swift/Sources/BlocksUI/BlockRounds.swift width: 20
 swift/Sources/BlocksUI/BlockRounds.swift width: 20
-swift/Sources/BlocksUI/BlockRows.swift .black
-swift/Sources/BlocksUI/BlockRows.swift .padding(.horizontal, 12
-swift/Sources/BlocksUI/BlockRows.swift .padding(.horizontal, 12
-swift/Sources/BlocksUI/BlockRows.swift .padding(.vertical, 10
-swift/Sources/BlocksUI/BlockRows.swift .ui(12
-swift/Sources/BlocksUI/BlockRows.swift .ui(12
-swift/Sources/BlocksUI/BlockRows.swift .ui(13
-swift/Sources/BlocksUI/BlockRows.swift .ui(13
-swift/Sources/BlocksUI/BlockRows.swift .ui(15
-swift/Sources/BlocksUI/BlockRows.swift height: 10
-swift/Sources/BlocksUI/BlockRows.swift height: 28
-swift/Sources/BlocksUI/BlockRows.swift minHeight: 30
-swift/Sources/BlocksUI/BlockRows.swift minLength: 4
-swift/Sources/BlocksUI/BlockRows.swift radius: 12
-swift/Sources/BlocksUI/BlockRows.swift size: 11
-swift/Sources/BlocksUI/BlockRows.swift size: 14
-swift/Sources/BlocksUI/BlockRows.swift size: 15
-swift/Sources/BlocksUI/BlockRows.swift spacing: 10
-swift/Sources/BlocksUI/BlockRows.swift spacing: 2
-swift/Sources/BlocksUI/BlockRows.swift width: 10
-swift/Sources/BlocksUI/BlockRows.swift width: 28
-swift/Sources/BlocksUI/BlockRows.swift width: 28
-swift/Sources/BlocksUI/BlockRows.swift width: 28
-swift/Sources/BlocksUI/BlockRows.swift width: 3
-swift/Sources/BlocksUI/BlockRows.swift y: -6
-swift/Sources/BlocksUI/BlockRows.swift y: 8
-swift/Sources/BlocksUI/BlockSteps.swift .padding(12
-swift/Sources/BlocksUI/BlockSteps.swift .ui(11
-swift/Sources/BlocksUI/BlockSteps.swift .ui(11
-swift/Sources/BlocksUI/BlockSteps.swift .ui(11
-swift/Sources/BlocksUI/BlockSteps.swift .ui(11
-swift/Sources/BlocksUI/BlockSteps.swift .ui(12
-swift/Sources/BlocksUI/BlockSteps.swift .ui(13
-swift/Sources/BlocksUI/BlockSteps.swift .ui(13
-swift/Sources/BlocksUI/BlockSteps.swift .ui(13
-swift/Sources/BlocksUI/BlockSteps.swift .ui(13
-swift/Sources/BlocksUI/BlockSteps.swift height: 14
-swift/Sources/BlocksUI/BlockSteps.swift height: 22
-swift/Sources/BlocksUI/BlockSteps.swift height: 8
-swift/Sources/BlocksUI/BlockSteps.swift minLength: 12
-swift/Sources/BlocksUI/BlockSteps.swift minWidth: 600
-swift/Sources/BlocksUI/BlockSteps.swift radius: 16
-swift/Sources/BlocksUI/BlockSteps.swift spacing: 12
-swift/Sources/BlocksUI/BlockSteps.swift spacing: 2
-swift/Sources/BlocksUI/BlockSteps.swift spacing: 4
-swift/Sources/BlocksUI/BlockSteps.swift spacing: 4
-swift/Sources/BlocksUI/BlockSteps.swift spacing: 4
-swift/Sources/BlocksUI/BlockSteps.swift spacing: 8
-swift/Sources/BlocksUI/BlockSteps.swift spacing: 8
-swift/Sources/BlocksUI/BlockSteps.swift spacing: 8
-swift/Sources/BlocksUI/BlockSteps.swift width: 22
-swift/Sources/BlocksUI/BlockSteps.swift width: 3
-swift/Sources/BlocksUI/BlockTable.swift .padding(.horizontal, 4
-swift/Sources/BlocksUI/BlockTable.swift .padding(12
-swift/Sources/BlocksUI/BlockTable.swift .padding(12
-swift/Sources/BlocksUI/BlockTable.swift .padding(12
-swift/Sources/BlocksUI/BlockTable.swift .padding(12
-swift/Sources/BlocksUI/BlockTable.swift .padding(12
-swift/Sources/BlocksUI/BlockTable.swift .ui(11
-swift/Sources/BlocksUI/BlockTable.swift .ui(12
-swift/Sources/BlocksUI/BlockTable.swift .ui(12
-swift/Sources/BlocksUI/BlockTable.swift .ui(12
-swift/Sources/BlocksUI/BlockTable.swift .ui(13
-swift/Sources/BlocksUI/BlockTable.swift .ui(14
-swift/Sources/BlocksUI/BlockTable.swift .ui(14
-swift/Sources/BlocksUI/BlockTable.swift .ui(14
-swift/Sources/BlocksUI/BlockTable.swift .ui(15
-swift/Sources/BlocksUI/BlockTable.swift .ui(15
-swift/Sources/BlocksUI/BlockTable.swift .ui(15
-swift/Sources/BlocksUI/BlockTable.swift .ui(15
-swift/Sources/BlocksUI/BlockTable.swift .ui(16
-swift/Sources/BlocksUI/BlockTable.swift .ui(16
-swift/Sources/BlocksUI/BlockTable.swift height: 6
-swift/Sources/BlocksUI/BlockTable.swift horizontalSpacing: 16
-swift/Sources/BlocksUI/BlockTable.swift maxWidth: 240
-swift/Sources/BlocksUI/BlockTable.swift minLength: 4
-swift/Sources/BlocksUI/BlockTable.swift minLength: 4
-swift/Sources/BlocksUI/BlockTable.swift minLength: 4
-swift/Sources/BlocksUI/BlockTable.swift minWidth: 600
-swift/Sources/BlocksUI/BlockTable.swift spacing: 10
-swift/Sources/BlocksUI/BlockTable.swift spacing: 4
-swift/Sources/BlocksUI/BlockTable.swift spacing: 6
-swift/Sources/BlocksUI/BlockTable.swift spacing: 8
-swift/Sources/BlocksUI/BlockTable.swift spacing: 8
-swift/Sources/BlocksUI/BlockTable.swift verticalSpacing: 10
-swift/Sources/BlocksUI/BlockTable.swift width: 48
-swift/Sources/BlocksUI/BlockTable.swift width: 48
 swift/Sources/BlocksUI/BlocksView.swift spacing: 24
-swift/Sources/BlocksUI/Components.swift .padding(.horizontal, 14
-swift/Sources/BlocksUI/Components.swift .padding(.horizontal, 8
-swift/Sources/BlocksUI/Components.swift .padding(.vertical, 3
-swift/Sources/BlocksUI/Components.swift .ui(11
-swift/Sources/BlocksUI/Components.swift .ui(15
-swift/Sources/BlocksUI/Components.swift .white
-swift/Sources/BlocksUI/Components.swift Color.black
-swift/Sources/BlocksUI/Components.swift height: 36
-swift/Sources/BlocksUI/Components.swift size: 15
+swift/Sources/BlocksUI/Field/FieldRowView.swift .padding(.horizontal, 12
+swift/Sources/BlocksUI/Field/FieldRowView.swift .ui(11
+swift/Sources/BlocksUI/Field/FieldRowView.swift .ui(14
+swift/Sources/BlocksUI/Field/FieldRowView.swift .ui(14
+swift/Sources/BlocksUI/Field/FieldRowView.swift lineWidth: 2
+swift/Sources/BlocksUI/Field/FieldRowView.swift minHeight: 38
+swift/Sources/BlocksUI/Field/FieldRowView.swift spacing: 2
 swift/Sources/BlocksUI/Kind/Card.swift .padding(.vertical, 16
 swift/Sources/BlocksUI/Kind/Card.swift .padding(14
 swift/Sources/BlocksUI/Kind/Card.swift .padding(14
@@ -325,6 +56,39 @@ swift/Sources/BlocksUI/Kind/Card.swift spacing: 10
 swift/Sources/BlocksUI/Kind/Card.swift spacing: 6
 swift/Sources/BlocksUI/Kind/Card.swift spacing: 8
 swift/Sources/BlocksUI/Kind/Card.swift width: 3
+swift/Sources/BlocksUI/Kind/Chart.swift .padding(12
+swift/Sources/BlocksUI/Kind/Chart.swift .padding(8
+swift/Sources/BlocksUI/Kind/Chart.swift .ui(11
+swift/Sources/BlocksUI/Kind/Chart.swift .ui(11
+swift/Sources/BlocksUI/Kind/Chart.swift .ui(11
+swift/Sources/BlocksUI/Kind/Chart.swift .ui(11
+swift/Sources/BlocksUI/Kind/Chart.swift .ui(11
+swift/Sources/BlocksUI/Kind/Chart.swift .ui(13
+swift/Sources/BlocksUI/Kind/Chart.swift .ui(13
+swift/Sources/BlocksUI/Kind/Chart.swift .ui(13
+swift/Sources/BlocksUI/Kind/Chart.swift .ui(17
+swift/Sources/BlocksUI/Kind/Chart.swift height: 150
+swift/Sources/BlocksUI/Kind/Chart.swift height: 8
+swift/Sources/BlocksUI/Kind/Chart.swift height: 8
+swift/Sources/BlocksUI/Kind/Chart.swift horizontalSpacing: 8
+swift/Sources/BlocksUI/Kind/Chart.swift lineWidth: 2
+swift/Sources/BlocksUI/Kind/Chart.swift minHeight: 32
+swift/Sources/BlocksUI/Kind/Chart.swift radius: 16
+swift/Sources/BlocksUI/Kind/Chart.swift spacing: 12
+swift/Sources/BlocksUI/Kind/Chart.swift spacing: 16
+swift/Sources/BlocksUI/Kind/Chart.swift spacing: 2
+swift/Sources/BlocksUI/Kind/Chart.swift spacing: 4
+swift/Sources/BlocksUI/Kind/Chart.swift spacing: 4
+swift/Sources/BlocksUI/Kind/Chart.swift spacing: 4
+swift/Sources/BlocksUI/Kind/Chart.swift spacing: 4
+swift/Sources/BlocksUI/Kind/Chart.swift spacing: 8
+swift/Sources/BlocksUI/Kind/Chart.swift spacing: 8
+swift/Sources/BlocksUI/Kind/Chart.swift spacing: 8
+swift/Sources/BlocksUI/Kind/Chart.swift verticalSpacing: 2
+swift/Sources/BlocksUI/Kind/Chart.swift width: 150
+swift/Sources/BlocksUI/Kind/Chart.swift width: 3
+swift/Sources/BlocksUI/Kind/Chart.swift width: 8
+swift/Sources/BlocksUI/Kind/Chart.swift width: 8
 swift/Sources/BlocksUI/Kind/Chips.swift .padding(.horizontal, 12
 swift/Sources/BlocksUI/Kind/Chips.swift .ui(13
 swift/Sources/BlocksUI/Kind/Chips.swift height: 30
@@ -335,14 +99,186 @@ swift/Sources/BlocksUI/Kind/Choice.swift .ui(14
 swift/Sources/BlocksUI/Kind/Choice.swift .ui(15
 swift/Sources/BlocksUI/Kind/Choice.swift height: 38
 swift/Sources/BlocksUI/Kind/Choice.swift spacing: 8
+swift/Sources/BlocksUI/Kind/Composer.swift .padding(.horizontal, 10
+swift/Sources/BlocksUI/Kind/Composer.swift .padding(.horizontal, 12
+swift/Sources/BlocksUI/Kind/Composer.swift .padding(.vertical, 9
+swift/Sources/BlocksUI/Kind/Composer.swift .padding(12
+swift/Sources/BlocksUI/Kind/Composer.swift .ui(13
+swift/Sources/BlocksUI/Kind/Composer.swift .ui(13
+swift/Sources/BlocksUI/Kind/Composer.swift .ui(13
+swift/Sources/BlocksUI/Kind/Composer.swift .ui(14
+swift/Sources/BlocksUI/Kind/Composer.swift .ui(15
+swift/Sources/BlocksUI/Kind/Composer.swift height: 28
+swift/Sources/BlocksUI/Kind/Composer.swift height: 6
+swift/Sources/BlocksUI/Kind/Composer.swift minLength: 4
+swift/Sources/BlocksUI/Kind/Composer.swift minLength: 4
+swift/Sources/BlocksUI/Kind/Composer.swift radius: 22
+swift/Sources/BlocksUI/Kind/Composer.swift spacing: 10
+swift/Sources/BlocksUI/Kind/Composer.swift spacing: 8
+swift/Sources/BlocksUI/Kind/Composer.swift spacing: 8
+swift/Sources/BlocksUI/Kind/Composer.swift spacing: 8
+swift/Sources/BlocksUI/Kind/Composer.swift spacing: 8
+swift/Sources/BlocksUI/Kind/Composer.swift width: 6
+swift/Sources/BlocksUI/Kind/Diagram.swift .padding(.horizontal, 10
+swift/Sources/BlocksUI/Kind/Diagram.swift .padding(.horizontal, 10
+swift/Sources/BlocksUI/Kind/Diagram.swift .padding(.vertical, 6
+swift/Sources/BlocksUI/Kind/Diagram.swift .ui(10.5
+swift/Sources/BlocksUI/Kind/Diagram.swift .ui(10.5
+swift/Sources/BlocksUI/Kind/Diagram.swift .ui(10.5
+swift/Sources/BlocksUI/Kind/Diagram.swift .ui(12.5
+swift/Sources/BlocksUI/Kind/Diagram.swift .ui(13
+swift/Sources/BlocksUI/Kind/Diagram.swift .ui(14
+swift/Sources/BlocksUI/Kind/Diagram.swift gap: 22
+swift/Sources/BlocksUI/Kind/Diagram.swift gap: 40
+swift/Sources/BlocksUI/Kind/Diagram.swift gutter: 12
+swift/Sources/BlocksUI/Kind/Diagram.swift gutter: 18
+swift/Sources/BlocksUI/Kind/Diagram.swift height: 12
+swift/Sources/BlocksUI/Kind/Diagram.swift height: 46
+swift/Sources/BlocksUI/Kind/Diagram.swift height: 54
+swift/Sources/BlocksUI/Kind/Diagram.swift lineWidth: 1.4
+swift/Sources/BlocksUI/Kind/Diagram.swift rowGap: 20
+swift/Sources/BlocksUI/Kind/Diagram.swift rowGap: 22
+swift/Sources/BlocksUI/Kind/Diagram.swift size: 14
+swift/Sources/BlocksUI/Kind/Diagram.swift spacing: 4
+swift/Sources/BlocksUI/Kind/Diagram.swift spacing: 4
+swift/Sources/BlocksUI/Kind/Diagram.swift width: 12
+swift/Sources/BlocksUI/Kind/Diagram.swift y: 16
+swift/Sources/BlocksUI/Kind/Diagram.swift y: 4
+swift/Sources/BlocksUI/Kind/Diff.swift .padding(.bottom, 4
+swift/Sources/BlocksUI/Kind/Diff.swift .padding(.horizontal, 10
+swift/Sources/BlocksUI/Kind/Diff.swift .padding(.horizontal, 10
+swift/Sources/BlocksUI/Kind/Diff.swift .padding(.horizontal, 10
+swift/Sources/BlocksUI/Kind/Diff.swift .padding(.vertical, 8
+swift/Sources/BlocksUI/Kind/Diff.swift minLength: 4
+swift/Sources/BlocksUI/Kind/Diff.swift radius: 12
+swift/Sources/BlocksUI/Kind/Diff.swift size: 12
+swift/Sources/BlocksUI/Kind/Editor.swift .milliseconds(400
+swift/Sources/BlocksUI/Kind/Editor.swift .padding(.horizontal, 10
+swift/Sources/BlocksUI/Kind/Editor.swift .padding(.horizontal, 8
+swift/Sources/BlocksUI/Kind/Editor.swift .padding(.leading, 30
+swift/Sources/BlocksUI/Kind/Editor.swift .padding(.vertical, 4
+swift/Sources/BlocksUI/Kind/Editor.swift .padding(.vertical, 8
+swift/Sources/BlocksUI/Kind/Editor.swift .ui(11.5
+swift/Sources/BlocksUI/Kind/Editor.swift minHeight: 320
+swift/Sources/BlocksUI/Kind/Editor.swift radius: 12
+swift/Sources/BlocksUI/Kind/Editor.swift size: 12
+swift/Sources/BlocksUI/Kind/Editor.swift spacing: 10
+swift/Sources/BlocksUI/Kind/Editor.swift spacing: 2
+swift/Sources/BlocksUI/Kind/Editor.swift width: 30
+swift/Sources/BlocksUI/Kind/Hero.swift .ui(17
+swift/Sources/BlocksUI/Kind/Hero.swift .ui(34
+swift/Sources/BlocksUI/Kind/Hero.swift maxWidth: 720
+swift/Sources/BlocksUI/Kind/Hero.swift spacing: 12
+swift/Sources/BlocksUI/Kind/Hero.swift spacing: 8
+swift/Sources/BlocksUI/Kind/Images.swift spacing: 8
+swift/Sources/BlocksUI/Kind/Lines.swift .milliseconds(400
+swift/Sources/BlocksUI/Kind/Lines.swift .padding(.horizontal, 8
+swift/Sources/BlocksUI/Kind/Lines.swift .padding(.leading, 8
+swift/Sources/BlocksUI/Kind/Lines.swift .padding(14
+swift/Sources/BlocksUI/Kind/Lines.swift .ui(11
+swift/Sources/BlocksUI/Kind/Lines.swift .ui(11
+swift/Sources/BlocksUI/Kind/Lines.swift .ui(11
+swift/Sources/BlocksUI/Kind/Lines.swift .ui(11
+swift/Sources/BlocksUI/Kind/Lines.swift .ui(12
+swift/Sources/BlocksUI/Kind/Lines.swift .ui(13
+swift/Sources/BlocksUI/Kind/Lines.swift .ui(13
+swift/Sources/BlocksUI/Kind/Lines.swift .ui(14
+swift/Sources/BlocksUI/Kind/Lines.swift .ui(14
+swift/Sources/BlocksUI/Kind/Lines.swift .ui(14
+swift/Sources/BlocksUI/Kind/Lines.swift height: 8
+swift/Sources/BlocksUI/Kind/Lines.swift maxWidth: 200
+swift/Sources/BlocksUI/Kind/Lines.swift minHeight: 32
+swift/Sources/BlocksUI/Kind/Lines.swift spacing: 10
+swift/Sources/BlocksUI/Kind/Lines.swift spacing: 10
+swift/Sources/BlocksUI/Kind/Lines.swift spacing: 10
+swift/Sources/BlocksUI/Kind/Lines.swift spacing: 2
+swift/Sources/BlocksUI/Kind/Lines.swift spacing: 4
+swift/Sources/BlocksUI/Kind/Lines.swift spacing: 6
+swift/Sources/BlocksUI/Kind/Lines.swift spacing: 8
+swift/Sources/BlocksUI/Kind/Lines.swift width: 3
+swift/Sources/BlocksUI/Kind/Lines.swift width: 8
 swift/Sources/BlocksUI/Kind/List.swift .padding(.leading, 12
 swift/Sources/BlocksUI/Kind/List.swift height: 0.5
 swift/Sources/BlocksUI/Kind/List.swift radius: 16
+swift/Sources/BlocksUI/Kind/Media.swift .ui(13
+swift/Sources/BlocksUI/Kind/Media.swift maxWidth: 720
+swift/Sources/BlocksUI/Kind/Media.swift spacing: 6
+swift/Sources/BlocksUI/Kind/Nav.swift .padding(.horizontal, 16
+swift/Sources/BlocksUI/Kind/Nav.swift .ui(14
+swift/Sources/BlocksUI/Kind/Nav.swift .ui(16
+swift/Sources/BlocksUI/Kind/Nav.swift minHeight: 48
+swift/Sources/BlocksUI/Kind/Nav.swift minLength: 8
+swift/Sources/BlocksUI/Kind/Nav.swift spacing: 16
+swift/Sources/BlocksUI/Kind/Nav.swift spacing: 16
+swift/Sources/BlocksUI/Kind/Prose.swift .padding(.leading, 12
+swift/Sources/BlocksUI/Kind/Prose.swift .padding(12
+swift/Sources/BlocksUI/Kind/Prose.swift .padding(6
+swift/Sources/BlocksUI/Kind/Prose.swift .ui(11
+swift/Sources/BlocksUI/Kind/Prose.swift .ui(15
+swift/Sources/BlocksUI/Kind/Prose.swift .ui(15
+swift/Sources/BlocksUI/Kind/Prose.swift .ui(15
+swift/Sources/BlocksUI/Kind/Prose.swift .ui(15
+swift/Sources/BlocksUI/Kind/Prose.swift maxWidth: 720
+swift/Sources/BlocksUI/Kind/Prose.swift size: 13
+swift/Sources/BlocksUI/Kind/Prose.swift spacing: 12
+swift/Sources/BlocksUI/Kind/Prose.swift spacing: 4
+swift/Sources/BlocksUI/Kind/Prose.swift spacing: 8
+swift/Sources/BlocksUI/Kind/Prose.swift width: 18
+swift/Sources/BlocksUI/Kind/Prose.swift width: 3
+swift/Sources/BlocksUI/Kind/Row.swift .black
+swift/Sources/BlocksUI/Kind/Row.swift .padding(.horizontal, 12
+swift/Sources/BlocksUI/Kind/Row.swift .padding(.horizontal, 12
+swift/Sources/BlocksUI/Kind/Row.swift .padding(.vertical, 10
+swift/Sources/BlocksUI/Kind/Row.swift .ui(12
+swift/Sources/BlocksUI/Kind/Row.swift .ui(12
+swift/Sources/BlocksUI/Kind/Row.swift .ui(13
+swift/Sources/BlocksUI/Kind/Row.swift .ui(13
+swift/Sources/BlocksUI/Kind/Row.swift .ui(15
+swift/Sources/BlocksUI/Kind/Row.swift height: 10
+swift/Sources/BlocksUI/Kind/Row.swift height: 28
+swift/Sources/BlocksUI/Kind/Row.swift minHeight: 30
+swift/Sources/BlocksUI/Kind/Row.swift minLength: 4
+swift/Sources/BlocksUI/Kind/Row.swift radius: 12
+swift/Sources/BlocksUI/Kind/Row.swift size: 11
+swift/Sources/BlocksUI/Kind/Row.swift size: 14
+swift/Sources/BlocksUI/Kind/Row.swift size: 15
+swift/Sources/BlocksUI/Kind/Row.swift spacing: 10
+swift/Sources/BlocksUI/Kind/Row.swift spacing: 2
+swift/Sources/BlocksUI/Kind/Row.swift width: 10
+swift/Sources/BlocksUI/Kind/Row.swift width: 28
+swift/Sources/BlocksUI/Kind/Row.swift width: 28
+swift/Sources/BlocksUI/Kind/Row.swift width: 28
+swift/Sources/BlocksUI/Kind/Row.swift width: 3
+swift/Sources/BlocksUI/Kind/Row.swift y: -6
+swift/Sources/BlocksUI/Kind/Row.swift y: 8
+swift/Sources/BlocksUI/Kind/Run.swift .padding(10
+swift/Sources/BlocksUI/Kind/Run.swift .ui(12
+swift/Sources/BlocksUI/Kind/Run.swift .ui(12
+swift/Sources/BlocksUI/Kind/Run.swift size: 12
+swift/Sources/BlocksUI/Kind/Run.swift size: 13
+swift/Sources/BlocksUI/Kind/Run.swift spacing: 10
+swift/Sources/BlocksUI/Kind/Run.swift spacing: 3
+swift/Sources/BlocksUI/Kind/Run.swift spacing: 8
+swift/Sources/BlocksUI/Kind/Scene.swift .padding(.horizontal, 10
+swift/Sources/BlocksUI/Kind/Scene.swift .padding(.vertical, 6
+swift/Sources/BlocksUI/Kind/Scene.swift .ui(11
+swift/Sources/BlocksUI/Kind/Scene.swift .ui(12
+swift/Sources/BlocksUI/Kind/Scene.swift .ui(13
+swift/Sources/BlocksUI/Kind/Scene.swift height: 8
+swift/Sources/BlocksUI/Kind/Scene.swift spacing: 6
+swift/Sources/BlocksUI/Kind/Scene.swift spacing: 8
+swift/Sources/BlocksUI/Kind/Scene.swift spacing: 8
+swift/Sources/BlocksUI/Kind/Scene.swift width: 8
 swift/Sources/BlocksUI/Kind/Screen.swift minLength: 4
 swift/Sources/BlocksUI/Kind/Screen.swift size: 36
 swift/Sources/BlocksUI/Kind/Screen.swift size: 36
 swift/Sources/BlocksUI/Kind/Screen.swift spacing: 14
 swift/Sources/BlocksUI/Kind/Screen.swift spacing: 8
+swift/Sources/BlocksUI/Kind/Secret.swift .padding(.horizontal, 12
+swift/Sources/BlocksUI/Kind/Secret.swift .ui(12
+swift/Sources/BlocksUI/Kind/Secret.swift .ui(15
+swift/Sources/BlocksUI/Kind/Secret.swift height: 38
+swift/Sources/BlocksUI/Kind/Secret.swift spacing: 10
 swift/Sources/BlocksUI/Kind/Section.swift .ui(12
 swift/Sources/BlocksUI/Kind/Section.swift .ui(12
 swift/Sources/BlocksUI/Kind/Section.swift spacing: 6
@@ -359,6 +295,67 @@ swift/Sources/BlocksUI/Kind/Stat.swift lineWidth: 1.5
 swift/Sources/BlocksUI/Kind/Stat.swift radius: 16
 swift/Sources/BlocksUI/Kind/Stat.swift spacing: 4
 swift/Sources/BlocksUI/Kind/Stat.swift spacing: 4
+swift/Sources/BlocksUI/Kind/Steps.swift .padding(12
+swift/Sources/BlocksUI/Kind/Steps.swift .ui(11
+swift/Sources/BlocksUI/Kind/Steps.swift .ui(11
+swift/Sources/BlocksUI/Kind/Steps.swift .ui(11
+swift/Sources/BlocksUI/Kind/Steps.swift .ui(11
+swift/Sources/BlocksUI/Kind/Steps.swift .ui(12
+swift/Sources/BlocksUI/Kind/Steps.swift .ui(13
+swift/Sources/BlocksUI/Kind/Steps.swift .ui(13
+swift/Sources/BlocksUI/Kind/Steps.swift .ui(13
+swift/Sources/BlocksUI/Kind/Steps.swift .ui(13
+swift/Sources/BlocksUI/Kind/Steps.swift height: 14
+swift/Sources/BlocksUI/Kind/Steps.swift height: 22
+swift/Sources/BlocksUI/Kind/Steps.swift height: 8
+swift/Sources/BlocksUI/Kind/Steps.swift minLength: 12
+swift/Sources/BlocksUI/Kind/Steps.swift minWidth: 600
+swift/Sources/BlocksUI/Kind/Steps.swift radius: 16
+swift/Sources/BlocksUI/Kind/Steps.swift spacing: 12
+swift/Sources/BlocksUI/Kind/Steps.swift spacing: 2
+swift/Sources/BlocksUI/Kind/Steps.swift spacing: 4
+swift/Sources/BlocksUI/Kind/Steps.swift spacing: 4
+swift/Sources/BlocksUI/Kind/Steps.swift spacing: 4
+swift/Sources/BlocksUI/Kind/Steps.swift spacing: 8
+swift/Sources/BlocksUI/Kind/Steps.swift spacing: 8
+swift/Sources/BlocksUI/Kind/Steps.swift spacing: 8
+swift/Sources/BlocksUI/Kind/Steps.swift width: 22
+swift/Sources/BlocksUI/Kind/Steps.swift width: 3
+swift/Sources/BlocksUI/Kind/Table.swift .padding(.horizontal, 4
+swift/Sources/BlocksUI/Kind/Table.swift .padding(12
+swift/Sources/BlocksUI/Kind/Table.swift .padding(12
+swift/Sources/BlocksUI/Kind/Table.swift .padding(12
+swift/Sources/BlocksUI/Kind/Table.swift .padding(12
+swift/Sources/BlocksUI/Kind/Table.swift .padding(12
+swift/Sources/BlocksUI/Kind/Table.swift .ui(11
+swift/Sources/BlocksUI/Kind/Table.swift .ui(12
+swift/Sources/BlocksUI/Kind/Table.swift .ui(12
+swift/Sources/BlocksUI/Kind/Table.swift .ui(12
+swift/Sources/BlocksUI/Kind/Table.swift .ui(13
+swift/Sources/BlocksUI/Kind/Table.swift .ui(14
+swift/Sources/BlocksUI/Kind/Table.swift .ui(14
+swift/Sources/BlocksUI/Kind/Table.swift .ui(14
+swift/Sources/BlocksUI/Kind/Table.swift .ui(15
+swift/Sources/BlocksUI/Kind/Table.swift .ui(15
+swift/Sources/BlocksUI/Kind/Table.swift .ui(15
+swift/Sources/BlocksUI/Kind/Table.swift .ui(15
+swift/Sources/BlocksUI/Kind/Table.swift .ui(16
+swift/Sources/BlocksUI/Kind/Table.swift .ui(16
+swift/Sources/BlocksUI/Kind/Table.swift height: 6
+swift/Sources/BlocksUI/Kind/Table.swift horizontalSpacing: 16
+swift/Sources/BlocksUI/Kind/Table.swift maxWidth: 240
+swift/Sources/BlocksUI/Kind/Table.swift minLength: 4
+swift/Sources/BlocksUI/Kind/Table.swift minLength: 4
+swift/Sources/BlocksUI/Kind/Table.swift minLength: 4
+swift/Sources/BlocksUI/Kind/Table.swift minWidth: 600
+swift/Sources/BlocksUI/Kind/Table.swift spacing: 10
+swift/Sources/BlocksUI/Kind/Table.swift spacing: 4
+swift/Sources/BlocksUI/Kind/Table.swift spacing: 6
+swift/Sources/BlocksUI/Kind/Table.swift spacing: 8
+swift/Sources/BlocksUI/Kind/Table.swift spacing: 8
+swift/Sources/BlocksUI/Kind/Table.swift verticalSpacing: 10
+swift/Sources/BlocksUI/Kind/Table.swift width: 48
+swift/Sources/BlocksUI/Kind/Table.swift width: 48
 swift/Sources/BlocksUI/Kind/Timeline.swift .padding(.horizontal, 12
 swift/Sources/BlocksUI/Kind/Timeline.swift .padding(.horizontal, 12
 swift/Sources/BlocksUI/Kind/Timeline.swift .padding(.leading, 11
@@ -405,16 +402,19 @@ swift/Sources/BlocksUI/Look+Style.swift radius: 10
 swift/Sources/BlocksUI/Look+Style.swift radius: 99
 swift/Sources/BlocksUI/Look+Style.swift width: 3
 swift/Sources/BlocksUI/Look+Style.swift y: 4
-swift/Sources/BlocksUI/Stage.swift .padding(.horizontal, 10
-swift/Sources/BlocksUI/Stage.swift .padding(.vertical, 6
-swift/Sources/BlocksUI/Stage.swift .ui(11
-swift/Sources/BlocksUI/Stage.swift .ui(12
-swift/Sources/BlocksUI/Stage.swift .ui(13
-swift/Sources/BlocksUI/Stage.swift height: 8
-swift/Sources/BlocksUI/Stage.swift spacing: 6
-swift/Sources/BlocksUI/Stage.swift spacing: 8
-swift/Sources/BlocksUI/Stage.swift spacing: 8
-swift/Sources/BlocksUI/Stage.swift width: 8
+swift/Sources/BlocksUI/Part/CardButton.swift .padding(.horizontal, 14
+swift/Sources/BlocksUI/Part/CardButton.swift .ui(15
+swift/Sources/BlocksUI/Part/CardButton.swift .white
+swift/Sources/BlocksUI/Part/CardButton.swift Color.black
+swift/Sources/BlocksUI/Part/CardButton.swift height: 36
+swift/Sources/BlocksUI/Part/DoneButton.swift .ui(16
+swift/Sources/BlocksUI/Part/Fields.swift .padding(14
+swift/Sources/BlocksUI/Part/Fields.swift spacing: 10
+swift/Sources/BlocksUI/Part/Picture.swift .ui(12
+swift/Sources/BlocksUI/Part/Pill.swift .padding(.horizontal, 8
+swift/Sources/BlocksUI/Part/Pill.swift .padding(.vertical, 3
+swift/Sources/BlocksUI/Part/Pill.swift .ui(11
+swift/Sources/BlocksUI/Part/RoundButton.swift size: 15
 web/lint-fixtures/stale.css padding 6px
 web/src/css/base/control.css animation 1s
 web/src/css/base/control.css min-width 28px
