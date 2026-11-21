@@ -1,0 +1,16 @@
+[package]
+name = "min-egui"
+description = "Spike #299: the smallest eframe window app, for binary size and the dependency tree"
+version = "0.0.0"
+edition = "2021"
+license = "MIT"
+publish = false
+
+[workspace]
+
+[dependencies]
+eframe = "0.37"
+
+[profile.release]
+lto = "thin"
+codegen-units = 1
