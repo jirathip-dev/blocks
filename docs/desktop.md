@@ -30,6 +30,10 @@ transport and its ops come back as frames. `docs/architecture/desktop/usage.md` 
 
 ## Fonts
 
+Type sizes, spacing and the page margin are the web renderer's tokens (`--fs`, `--fs-meta`, `--s2`, `--s4`), scaled
+by the style's `space`. `Look::faces` sets the app's own font: the first face draws all proportional text, each
+later one fills in the glyphs the ones before it lack, and egui's default comes after them; code stays monospace.
+
 The renderer ships no font. eframe turns on egui's default fonts, which have no Thai glyphs (measured below); an
 app that shows a script they lack adds a font for it with `ctx.add_font`, at the lowest priority so it only fills
 in the glyphs the others lack. The harness does the same with `--font` (`Desk::font`).
@@ -54,7 +58,6 @@ under `crates/blocks-desktop/src/draw/`:
 - `diff`, `editor`
 - `scene`
 - `diagram`
-- `composer`
 - `web`: egui has no web view, so it stays a fallback with its link
 
 The kinds added after the ADR (`lines`, `table`, `steps`, `toast`, `chart`, `timeline`) are gaps the same way.

@@ -73,7 +73,7 @@ fn the_kinds_of_the_first_fourth_and_fifth_slices_are_drawn_and_the_rest_are_gap
         kinds(),
         [
             "screen", "sheet", "section", "list", "row", "card", "choice", "form", "config", "secret", "run", "button",
-            "chips", "stat", "text", "prose", "message", "tool"
+            "chips", "stat", "text", "composer", "prose", "message", "tool"
         ]
     );
 }
