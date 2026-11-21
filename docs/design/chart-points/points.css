@@ -1,0 +1,22 @@
+/* All that #139 adds to web/src/css/kind/chart.css: tokens only, square corners. A grabbable point is a button the height of --hit across its column. */
+.chart.live .chp{touch-action:pan-y}
+.chq{position:absolute;z-index:2;height:var(--hit);margin:calc(var(--hit) / -2) 0 0;padding:0;min-height:0;border:0;border-radius:0;background:none;cursor:ns-resize;touch-action:none;text-transform:none;font:inherit}
+.chq::before,.chq::after{content:none}
+.chq>i{position:absolute;left:50%;top:50%;width:8px;height:8px;margin:-4px 0 0 -4px;background:var(--k);box-shadow:0 0 0 2px var(--card)}
+.chq.br>i{left:calc(var(--bl) + var(--bw) / 2);width:min(12px,calc(var(--bw) - 4px));height:2px;margin:2px 0 0 calc(min(12px,calc(var(--bw) - 4px)) / -2);background:var(--card);box-shadow:none}
+.chq.br.low>i{margin-top:-4px;background:var(--k)}
+.chq.fv>i{outline:2px solid var(--l);outline-offset:2px}
+.chq.lift>i,.chq.preview>i,.chq.sent>i{transform:scale(1.5)}
+.chq.br:is(.lift,.preview,.sent)>i{transform:scaleX(1.5)}
+.chq.sent{opacity:.55;cursor:progress}
+.chp rect.sent,.chp path.sent{opacity:.55}
+.chq0{position:absolute;width:8px;height:8px;margin:-5px 0 0 -5px;border:1px dashed var(--edge);pointer-events:none}
+.chp rect.ghost{fill:none;stroke:var(--edge);stroke-width:1;stroke-dasharray:3 2;vector-effect:non-scaling-stroke}
+.chp path.ghost{stroke:var(--edge);stroke-width:1;stroke-dasharray:3 2}
+.chtag{position:absolute;bottom:calc(50% + 12px);left:50%;transform:translateX(-50%);padding:1px var(--s1);background:var(--card);border:1px solid var(--l);color:var(--fg);font-size:var(--fs-meta);font-weight:400;line-height:1.4;white-space:nowrap;font-variant-numeric:tabular-nums;pointer-events:none}
+.chtag.r{left:auto;right:calc(50% - 6px);transform:none}.chtag.lft{left:calc(50% - 6px);transform:none}
+.chtag.dn{bottom:auto;top:calc(50% + 12px)}
+.chtag.m{border-color:var(--edge);color:var(--mute)}
+.chl .was{color:var(--mute);font-variant-numeric:tabular-nums}
+.chart .tst{margin-top:var(--s2)}
+@media (prefers-reduced-motion:reduce){.chq>i,.chp rect.s{transition:none}}

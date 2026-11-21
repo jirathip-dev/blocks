@@ -1,0 +1,13 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>chart points: a sales plan</title>
+<link rel="stylesheet" href="../neutral-default/tokens.css"><link rel="stylesheet" href="../../../web/dist/blocks.css"><link rel="stylesheet" href="points.css"><link rel="stylesheet" href="page.css">
+<script src="points.js"></script><script src="data.js"></script></head>
+<body><main>
+<div class="top"><b>Plan</b><span class="m">FY 2568 · Oct 2567 – Sep 2568 · Buddhist Era</span></div>
+<div class="one"><div id="target"></div></div>
+<div class="two"><div id="crew"></div><div id="actual"></div></div>
+</main><script>
+const pvs = { target: { s: 0, i: 5, ph: "focus" } };
+for (const id in plan) { const t = document.getElementById(id); t.dataset.b = JSON.stringify(Object.assign({}, plan[id], pvs[id] ? { pv: pvs[id] } : {})); }
+draw();
+</script></body></html>

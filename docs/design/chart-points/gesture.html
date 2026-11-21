@@ -1,0 +1,42 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>chart points: one drag, frame by frame</title>
+<link rel="stylesheet" href="../neutral-default/tokens.css"><link rel="stylesheet" href="../../../web/dist/blocks.css"><link rel="stylesheet" href="../toast/toast.css"><link rel="stylesheet" href="points.css"><link rel="stylesheet" href="page.css">
+<script src="points.js"></script><script src="data.js"></script></head>
+<body><main>
+<div class="top"><b>chart points</b><span class="m">one drag, frame by frame</span></div>
+<p class="note">Each frame is one phase of #136's statechart 1. The pointer, the keys and VoiceOver's Raise and Lower walk the same phases and send the same one action: <code>plan.target</code> with <code>point = {series, at, y}</code>, e.g. <code>{series: "Target", at: "2025-03", y: 1300000}</code>. Nothing in the data changes until the app answers. The axis keeps its top while a point is held. “Heard” is what a screen reader says at that frame; the tag over the point shows the same words.</p>
+<div id="f"></div>
+</main><script>
+const X = FY.slice(4, 10), T = M([1.1,1.2,1.15,1.2,1.15,1.25]);
+const line = (pv, o) => Object.assign({ type: "chart", id: "t", chart: "line", title: "Sales target", x: X, era: "be", format: "thb_m", move: TARGET,
+  series: [{ name: "Target", step: 50000, values: T }, { name: "FY 2567 actual", tone: "mute", dash: true, fixed: true, values: M([1.06,1.29,1.18,1.22,1.14,1.26]) }], pv }, o || {});
+const bar = (pv, o) => Object.assign({ type: "chart", id: "c", chart: "bar", title: "Crew plan", x: X, era: "be", format: "count", move: { action: "plan.crew", name: "point" },
+  series: [{ name: "Crew", tone: "info", step: 1, values: [12,14,15,15,16,18] }], pv }, o || {});
+const with3 = v => { const a = T.slice(); a[1] = v; return a; };
+const F = [
+  ["Line point: the Target series", null],
+  ["1 · idle, focused", "The block is one Tab stop; Left and Right walk the months, Up and Down the movable series of a month. Each movable point is a button with the role description “point”. The FY 2567 line is fixed, so it has no points to stop on.", "Target, Mar 2568, ฿1.2M, point. Actions available.", line({ s: 0, i: 1, ph: "focus" })],
+  ["2 · pressed", "Space, or the pointer down on the point’s band and 4 px of travel. On touch the band needs no hold; the rest of the column needs a 300 ms hold, so the page still scrolls. The point grows to 12 px.", "Target grabbed, Mar 2568, ฿1.2M. Up and Down move ฿50K, Shift ฿500K. Enter drops, Escape cancels.", line({ s: 0, i: 1, ph: "pressed" })],
+  ["3 · previewing", "Up twice, or a drag of two steps: the point snaps to the series’ step and its two segments follow. A dashed square and dashed segments stay where it came from. The legend reads the candidate and what it was.", "฿1.3M, up ฿100K.", line({ s: 0, i: 1, ph: "preview", y: 1.3e6 })],
+  ["4 · at the top of the axis", "The candidate is clamped between 0 and the axis’s top as it was at the press; Up there gives nothing. A higher target is dropped at the top, and the axis grows when the app answers.", "฿2M, up ฿800K. Top of the axis.", line({ s: 0, i: 1, ph: "preview", y: 2e6, tag: "฿2M, up ฿800K · top" })],
+  ["5 · released where it started", "Back to ฿1.2M and released (or Escape): the machine goes to idle and nothing is sent.", "Target, Mar 2568, ฿1.2M. Not changed.", line({ s: 0, i: 1, ph: "focus" })],
+  ["6 · sent", "Released on ฿1.3M: one action goes out. The point and its line stay where they were dropped, dimmed and busy; the point ignores the pointer until the answer. Other points stay usable.", "Sending.", line({ s: 0, i: 1, ph: "sent", y: 1.3e6 })],
+  ["7 · confirmed", "The app answered with a merge of the series: the point is drawn from the data now.", "Target, Mar 2568, ฿1.3M.", line({ s: 0, i: 1, ph: "focus" }, { series: [{ name: "Target", step: 50000, values: with3(1.3e6) }, { name: "FY 2567 actual", tone: "mute", dash: true, fixed: true, values: M([1.06,1.29,1.18,1.22,1.14,1.26]) }] })],
+  ["8 · refused", "The app failed the action. The point moves back over --settle (at once with reduced motion) and the app’s reason shows as a toast.", "Not changed. March targets were signed off on 15 Feb.", line({ s: 0, i: 1, ph: "back" }, { toast: "March targets were signed off on 15 Feb" })],
+  ["9 · confirmed elsewhere", "Dropped at ฿1.6M; the app capped it at ฿1.45M. The point moves from where it was dropped to the data.", "Target, Mar 2568, ฿1.45M.", line({ s: 0, i: 1, ph: "focus" }, { series: [{ name: "Target", step: 50000, values: with3(1.45e6) }, { name: "FY 2567 actual", tone: "mute", dash: true, fixed: true, values: M([1.06,1.29,1.18,1.22,1.14,1.26]) }] })],
+  ["Bar: the Crew series", null],
+  ["10 · a bar’s top focused", "A movable bar shows a 12 × 2 notch under its top edge; its band is the bar’s top, --hit tall, as wide as the column. Tapping the bar’s body (no travel) still sends the chart’s tap.", "Crew, Apr 2568, 15, point. Actions available.", bar({ s: 0, i: 2, ph: "focus" })],
+  ["11 · lowered", "Down three times, or a drag: the bar scales from the baseline to the candidate. A dashed outline keeps its old height.", "12, down 3.", bar({ s: 0, i: 2, ph: "preview", y: 12 })],
+  ["12 · down to zero", "The bottom of the axis is 0: Down there gives nothing. The notch sits on the baseline, so a zero bar can still be grabbed.", "0, down 15. Bottom of the axis.", bar({ s: 0, i: 2, ph: "preview", y: 0, tag: "0, down 15 · bottom" })],
+  ["13 · bar sent", "Released: <code>plan.crew</code> with <code>point = {series: \"Crew\", at: \"2025-04\", y: 12}</code>. The rest is frames 6 to 9.", "Sending.", bar({ s: 0, i: 2, ph: "sent", y: 12 })],
+];
+const host = document.getElementById("f"); let grid;
+F.forEach(([cap, note, heard, b]) => {
+  if (note === null) { const h = document.createElement("h2"); h.textContent = cap; host.before(h); grid = document.createElement("div"); grid.className = "frames"; host.before(grid); return; }
+  const c = document.createElement("div"), p = document.createElement("p"), n = document.createElement("p"), s = document.createElement("p"), q = document.createElement("q"), slot = document.createElement("div");
+  p.className = "cap"; p.append(Object.assign(document.createElement("b"), { textContent: cap }));
+  n.className = "note"; n.innerHTML = note; s.className = "say"; s.append("Heard: "); q.textContent = heard; s.append(q);
+  slot.dataset.b = JSON.stringify(b); c.append(p, n, s, slot); grid.append(c);
+});
+host.remove(); draw();
+</script></body></html>
