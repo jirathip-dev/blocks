@@ -1,0 +1,12 @@
+about = "the React adapter's contract: fixtures/trees/react and fixtures/ids through blocks-shot --adapter react --check at 390 and 1440, then the frame's cases in WebKit"
+fix = "fix the adapter or the tree the test names; rerun just gen when a generated tree is behind"
+budget_secs = 600
+leg = "web"
+setup = ["node"]
+paths = ["web/**", "fixtures/**", ".gatekeeper/gates/react.toml"]
+run = """
+set -e
+npm --prefix web ci --no-audit --no-fund
+if [ "${CI:-}" = true ]; then npx --prefix web playwright install --with-deps webkit; fi
+npm --prefix web run test:react
+"""

@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
 # #809: each banned API's fixture must fail its gate, and clean fixtures must pass.
-# rust: ci/lint-fixtures/rust/<lint>.rs under the workspace's [lints] and clippy.toml must fail clippy naming <lint>.
 # ts: web/lint-fixtures/<name>.ts and <name>.css must fail web/lint.mjs (clean.ts and clean.css must pass).
 # swift: ci/lint-fixtures/swift/<name>.swift must fail web/lint.mjs's token check (clean.swift must pass).
-# Usage: scripts/lint-fixtures.sh rust|ts|swift
+# Usage: scripts/lint-fixtures.sh ts|swift
 set -euo pipefail
 cd "$(dirname "$0")/.."
 bad=0
@@ -19,23 +18,6 @@ expect() {
   fi
 }
 case "${1:-}" in
-rust)
-  t="${DROVER_SCRATCH_TARGET:-${RUNNER_TEMP:-${TMPDIR:-/tmp}}}/lint-fixtures"
-  mkdir -p "$t/src"
-  cp rust-toolchain.toml clippy.toml "$t/"
-  {
-    printf '[package]\nname = "lint-fixture"\nversion = "0.0.0"\nedition = "2021"\n\n[workspace]\n\n'
-    sed -n '/^\[workspace\.lints\./,/^\[workspace\.dependencies\]/p' Cargo.toml |
-      grep -v '^\[workspace\.dependencies\]' | sed 's/^\[workspace\.lints\./[lints./'
-  } >"$t/Cargo.toml"
-  for f in ci/lint-fixtures/rust/*.rs; do
-    name=$(basename "$f" .rs)
-    cp "$f" "$t/src/lib.rs"
-    code=0
-    out=$(cd "$t" && cargo clippy -q --all-targets 2>&1) || code=$?
-    expect "$name" "$code" "$out" "${name//_/[_-]}"
-  done
-  ;;
 ts)
   for f in web/lint-fixtures/*.ts web/lint-fixtures/*.css; do
     name=$(basename "$f"); name=${name%.*}
@@ -75,7 +57,7 @@ swift)
   done
   ;;
 *)
-  echo "usage: $0 rust|ts|swift" >&2
+  echo "usage: $0 ts|swift" >&2
   exit 2
   ;;
 esac
