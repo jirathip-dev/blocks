@@ -1,8 +1,5 @@
 name: gpui-spike
 on:
-  push:
-    branches: [issue-299]
-    paths: ["docs/architecture/gpui/proto/**", ".github/workflows/gpui-spike.yml"]
   workflow_dispatch:
 
 permissions:
