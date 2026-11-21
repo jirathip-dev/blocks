@@ -1,0 +1,18 @@
+/* What draggable points add to chart.css: tokens only. A handle is the column wide and --hit tall, centred on its point. */
+.chq{position:absolute;height:var(--hit);min-width:0;margin:calc(var(--hit) / -2) 0 0;padding:0;border:0;border-radius:0;background:none;cursor:grab;touch-action:none;z-index:2}
+.chq::after{content:none}
+.chq::before{content:"";position:absolute;left:50%;top:50%;width:var(--s2);height:var(--s2);margin:calc(var(--s2) / -2) 0 0 calc(var(--s2) / -2);box-sizing:border-box;background:var(--card);border:var(--ring) solid var(--k);transition:transform calc(var(--settle) * var(--motion,1)) var(--ease)}
+.chq:focus-visible{outline:0}
+.chq:focus-visible::before,.chq.kf::before{outline:var(--ring) solid var(--l);outline-offset:var(--ring)}
+.chq[data-phase=pressed]::before{transform:scale(1.5);background:var(--k);box-shadow:0 0 0 var(--ring) var(--card)}
+.chq[data-phase=previewing]::before{transform:scale(1.5);background:var(--k);box-shadow:0 0 0 var(--ring) var(--card);transition:none}
+.chq[data-phase=sent]{opacity:.5;cursor:progress}
+.chq[data-phase=sent]::before{background:var(--k)}
+.chq.hitbox{outline:1px dashed var(--mute);outline-offset:-1px}
+.chq-g{position:absolute;width:var(--s2);height:var(--s2);margin:calc(var(--s2) / -2) 0 0 calc(var(--s2) / -2);box-sizing:border-box;border:1px dashed var(--mute);pointer-events:none}
+.chq-v{position:absolute;width:0;border-left:1px dashed var(--edge);pointer-events:none}
+.chy .chq-t{z-index:1;padding:0 var(--s1);background:var(--card);border:1px solid var(--l);color:var(--fg);font-weight:600}
+.chl .chq-d{font-style:normal;color:var(--mute)}
+.chl .chq-busy b::after{content:" ↻";color:var(--mute)}
+.chq-k{display:flex;flex-wrap:wrap;gap:var(--s1) var(--s3);margin-top:var(--s2);font-size:var(--fs-meta);color:var(--mute)}
+.chq-k kbd{font:inherit;color:var(--fg);font-weight:600}

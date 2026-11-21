@@ -2,8 +2,9 @@ use std::path::{Path, PathBuf};
 
 use blocks::gesture::{step, Effect, Event, Nudge, Phase, Rules};
 use blocks::{
-    Action, BarGrab, BarPart, Block, Built, Cell, CellEdit, DaySpan, Days, Fault, GridChange, GridGrab, GridReach,
-    List, MarkChange, MarkGrab, MarkReach, Media, SortDir, Table, TableSort, Timeline,
+    Action, BarGrab, BarPart, Block, Built, Cell, CellEdit, Chart, DaySpan, Days, Fault, GridChange, GridGrab,
+    GridReach, List, MarkChange, MarkGrab, MarkReach, Media, PointGrab, PointMove, PointReach, SortDir, Table,
+    TableSort, Timeline,
 };
 use serde::Deserialize;
 use serde_json::{json, Value};
@@ -345,4 +346,74 @@ fn a_timeline_with_a_gesture_needs_its_id_and_its_move_and_stretch_may_share_an_
     );
     let plain = json!({"type": "timeline", "from": "2026-12-01", "to": "2026-12-31", "tracks": []});
     assert_eq!(faults(&plain), vec![]);
+}
+
+#[derive(Deserialize)]
+struct PointCase {
+    grab: PointGrab,
+    reach: Option<PointReach>,
+    nudges: Option<Vec<Nudge>>,
+    want: Option<PointMove>,
+    says: Option<String>,
+}
+
+#[test]
+fn chart_rules_give_each_fixture_case_its_point_its_words_and_its_steps() {
+    let f = read("chart.json");
+    let c: Chart = serde_json::from_value(f["block"].clone()).unwrap();
+    let cases: Vec<PointCase> = serde_json::from_value(f["cases"].clone()).unwrap();
+    assert!(cases.len() >= 20);
+    for k in &cases {
+        let got = match (&k.reach, &k.nudges) {
+            (Some(r), _) => c.candidate(&k.grab, r),
+            (None, Some(ns)) => c
+                .start(&k.grab)
+                .and_then(|s| ns.iter().try_fold(s, |from, n| c.nudge(&k.grab, &from, *n))),
+            (None, None) => panic!("a case with neither reach nor nudges"),
+        };
+        assert_eq!(got, k.want, "{:?} {:?} {:?}", k.grab, k.reach, k.nudges);
+        assert_eq!(got.as_ref().map(|g| c.says(&k.grab, g)), k.says, "{:?}", k.grab);
+    }
+    for s in f["steps"].as_array().unwrap() {
+        let grab: PointGrab = serde_json::from_value(s["grab"].clone()).unwrap();
+        let names: Vec<String> = c.steps(&grab).into_iter().map(|(n, _)| n).collect();
+        assert_eq!(json!(names), s["want"], "{grab:?}");
+    }
+    let a: Action = serde_json::from_value(
+        json!({"screen": "s", "action": "plan.target", "values": {"point": {"series": "Target", "at": "2026-05", "y": 1_350_000}}}),
+    )
+    .unwrap();
+    assert_eq!(a.read::<PointMove>("point").unwrap().y, 1_350_000.into());
+}
+
+#[test]
+fn a_chart_with_no_move_takes_no_gesture_and_a_stacked_or_donut_one_with_move_is_unfit() {
+    let block = read("chart.json")["block"].clone();
+    assert_eq!(faults(&block), vec![]);
+    let grab = PointGrab {
+        series: "Target".into(),
+        at: "2026-05".into(),
+    };
+    let mut still: Chart = serde_json::from_value(block.clone()).unwrap();
+    still.moves = None;
+    assert_eq!(
+        (still.word(&grab), still.start(&grab), still.steps(&grab)),
+        (None, None, vec![])
+    );
+    for kind in ["stacked", "donut"] {
+        let mut b = block.clone();
+        b["chart"] = json!(kind);
+        b["series"] = json!([b["series"][1]]);
+        let why = "a stacked or donut chart with move: a segment has no value of its own";
+        assert_eq!(
+            faults(&b),
+            vec![Fault::Shape {
+                kind: "chart".into(),
+                why: why.into()
+            }],
+            "{kind}"
+        );
+        let c: Chart = serde_json::from_value(b).unwrap();
+        assert_eq!(c.start(&grab), None, "{kind}");
+    }
 }

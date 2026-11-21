@@ -235,6 +235,59 @@ final class GestureTests: XCTestCase {
     }
 }
 
+final class ChartGestureTests: XCTestCase {
+    private func read() throws -> JSONValue {
+        let url = URL(fileURLWithPath: #filePath).deletingLastPathComponent().appendingPathComponent("../../../fixtures/gesture/chart.json")
+        return try JSONDecoder().decode(JSONValue.self, from: Data(contentsOf: url))
+    }
+
+    private func grab(_ v: JSONValue?) -> PointGrab { PointGrab(v?.string("series") ?? "", at: v?.string("at") ?? "") }
+
+    func testChartRulesGiveEveryCaseTheCratesPointWordsAndSteps() throws {
+        let f = try read()
+        let c = try XCTUnwrap(f["block"]).decode(Chart.self)
+        XCTAssertGreaterThanOrEqual(f.list("cases").count, 20)
+        for k in f.list("cases") {
+            let g = grab(k["grab"])
+            let got: PointMove? =
+                if let r = k["reach"], r != .null {
+                    c.candidate(g, PointReach(Int(r["steps"]?.number ?? 0)))
+                } else {
+                    k.list("nudges").reduce(c.start(g)) { from, n in from.flatMap { c.nudge(g, from: $0, by: nudge(n)) } }
+                }
+            let want = k["want"].flatMap { $0 == .null ? nil : try? $0.decode(PointMove.self) }
+            XCTAssertEqual(got, want, "\(g) \(k)")
+            XCTAssertEqual(got.map { c.says(g, $0) }, k.string("says"), "\(g)")
+        }
+        for s in f.list("steps") {
+            XCTAssertEqual(c.steps(grab(s["grab"])).map(\.0), s.list("want").compactMap(\.string), "\(grab(s["grab"]))")
+        }
+        var still = c
+        still.move = nil
+        XCTAssertNil(Driven(still, PointGrab("Target", at: "2026-05")), "a chart with no move takes no gesture")
+        XCTAssertNil(Driven(c, PointGrab("Actual", at: "2026-01")), "a fixed series takes no gesture")
+    }
+}
+
+@MainActor
+final class ChartSnapshotTests: XCTestCase {
+    func testTheHarnessSendsOnePointByKeysAndByANamedActionAndDropsAPointer() throws {
+        let url = URL(fileURLWithPath: #filePath).deletingLastPathComponent().appendingPathComponent("../../../fixtures/gesture/chart.json")
+        let plan = try XCTUnwrap(try JSONDecoder().decode(JSONValue.self, from: Data(contentsOf: url))["block"])
+        let json = { (s: String) in try JSONDecoder().decode(JSONValue.self, from: Data(s.utf8)) }
+        let screen = try JSONValue.object(["type": .string("screen"), "id": .string("s"), "title": .string("P"), "blocks": .array([plan])])
+            .decode(Block.self)
+        let want = try json(#"[{"screen":"s","action":"plan.target","block":"plan","values":{"point":{"series":"Target","at":"2026-05","y":1250000}}}]"#)
+        for (via, reach) in [("keys", #"[{"dir":"up"}]"#), ("action", #"["Raise"]"#), ("pointer", "[[0, -14]]")] {
+            let step = try json(#"{"gesture":{"id":"plan","grab":{"series":"Target","at":"2026-05"},"via":"\#(via)","reach":\#(reach)}}"#)
+                .decode(Step.self)
+            let run = try Snapshot(screen).run([step])
+            XCTAssertEqual(try JSONValue(run.report.sent), via == "pointer" ? .array([]) : want, via)
+            XCTAssertEqual(run.report.dropped, via == "pointer" ? ["gesture pointer plan"] : [], via)
+        }
+    }
+}
+
 @MainActor
 final class GestureSnapshotTests: XCTestCase {
     func testTheHarnessSendsOneOrderByKeysAndByANamedActionAndDropsAPointer() throws {
