@@ -79,6 +79,7 @@ shared = [
     "swift/Sources/BlocksUI/Look+Style.swift",
     "swift/Sources/BlocksUI/Theme.swift",
     "swift/Sources/BlocksUI/Tree.swift", "swift/Sources/Blocks/Apply.swift",
+    "web/src/shell.ts",
 ]
 
 [[collect]]
@@ -621,3 +622,13 @@ pattern = "hyperlink_to("
 paths = ["crates/blocks-desktop/src/**"]
 except = ["crates/blocks-desktop/src/words.rs"]
 reason = "a link is words::link, which breaks Thai between words"
+
+[[size]]
+paths = ["web/src/shell.ts"]
+max_file_lines = 40
+
+[[ban]]
+pattern = "patcher("
+paths = ["web/src/shell/**"]
+except = ["web/src/shell/host.ts"]
+reason = "one way to draw a screen: mount and adopt take their Ctx and their patcher from host"
