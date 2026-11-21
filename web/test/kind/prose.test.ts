@@ -84,3 +84,16 @@ test("an append after a merge or an insert in one batch is drawn once, not twice
   const odd = await grown(start, [[{ op: "append", id: "p", parts: [{ part: "rule" }] }]]);
   ok(odd.same, odd.html);
 });
+
+test("a message draws its time beside the name, omits it unset, and a repeat speaker's head is marked to hide", async () => {
+  const said = (id, name, time) => ({ type: "message", id, role: "agent", name, time, blocks: [] });
+  const heads = await page.evaluate((screen) => {
+    const root = window.B.render(screen, { screen: "s", act: async () => true, tap: () => {}, open: new Set(), theme: window.B.plain, store: { get: () => null, put: () => {} }, held: new Map() });
+    return [...root.querySelectorAll("article")].map((a) => [a.classList.contains("cont"), a.querySelector(".mh")?.textContent, a.querySelector(".mh time.mt")?.textContent ?? null]);
+  }, { type: "screen", id: "s", blocks: [said("a", "Scout", "14:32"), said("b", "Scout", "14:33"), said("c", "Mira", null)] });
+  deepStrictEqual(heads, [
+    [false, "Scoutagent14:32", "14:32"],
+    [true, "Scoutagent14:33", "14:33"],
+    [false, "Miraagent", null],
+  ]);
+});

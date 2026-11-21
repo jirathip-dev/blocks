@@ -1413,6 +1413,7 @@
       "id": "chat",
       "name": "Scout",
       "role": "agent",
+      "time": "14:32",
       "type": "message"
     }
   },
@@ -3869,6 +3870,7 @@
           "id": "chat",
           "name": "Scout",
           "role": "agent",
+          "time": "14:32",
           "type": "message"
         },
         {

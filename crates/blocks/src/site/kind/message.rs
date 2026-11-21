@@ -69,6 +69,9 @@ pub(super) fn said(w: &mut W<'_>, b: &Value, cont: bool) {
     w.open("div", "mh", &[]);
     w.el("span", "mn b-message__name", name);
     w.el("span", "mr", role);
+    if let Some(time) = get(b, "time").filter(|t| !t.is_empty()) {
+        w.el("time", "mt", time);
+    }
     w.close("div");
     w.open("div", "mb", &[]);
     kids(w, list(b, "blocks"));

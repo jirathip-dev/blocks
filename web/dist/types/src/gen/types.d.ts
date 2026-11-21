@@ -623,6 +623,7 @@ export type Message = {
     name: string;
     role: Role;
     show?: Expr | null;
+    time?: string | null;
 };
 export type More = string | Page;
 export type Nav = {

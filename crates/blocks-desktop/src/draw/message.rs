@@ -57,15 +57,30 @@ fn head(b: &Message, ui: &mut Ui, cx: &Cx<'_>) {
         Role::Other(s) => s.as_str(),
     };
     ui.horizontal(|ui| {
-        let role = WidgetText::from(RichText::new(word).small().color(look.mute(ui)));
-        let role = role.into_galley(ui, Some(TextWrapMode::Extend), f32::INFINITY, TextStyle::Small);
-        let room = ui.available_width() - role.size().x - ui.spacing().item_spacing.x;
+        let gap = ui.spacing().item_spacing.x;
+        let meta = |ui: &Ui, s: &str| {
+            WidgetText::from(RichText::new(s).small().color(look.mute(ui))).into_galley(
+                ui,
+                Some(TextWrapMode::Extend),
+                f32::INFINITY,
+                TextStyle::Small,
+            )
+        };
+        let time = b.time.as_deref().filter(|t| !t.is_empty());
+        let after: Vec<_> = [Some(word).filter(|w| !w.is_empty()), time]
+            .into_iter()
+            .flatten()
+            .map(|s| meta(ui, s))
+            .collect();
+        let room = after
+            .iter()
+            .fold(ui.available_width(), |r, g| r - g.size().x - gap);
         ui.scope(|ui| {
             ui.set_max_width(room.max(0.0));
             ui.add(Label::new(RichText::new(&b.name).strong().color(look.fg(ui))).truncate());
         });
-        if !word.is_empty() {
-            ui.label(role);
+        for g in after {
+            ui.label(g);
         }
     });
 }

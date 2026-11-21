@@ -4,6 +4,7 @@
   "role": "agent",
   "name": "Scout",
   "avatar": "media/sample.svg",
+  "time": "14:32",
   "blocks": [
     {
       "type": "prose",

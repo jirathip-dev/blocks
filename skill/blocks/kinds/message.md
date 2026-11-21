@@ -15,6 +15,7 @@ The Rust type `Message`; in TS, `message(fields: Message)` from `web/src/gen/bui
 | `name` | `string` | required |
 | `role` | `Role` | required |
 | `show` | `Expr` | optional |
+| `time` | `string` | optional |
 
 ## A sample
 
@@ -25,6 +26,7 @@ The Rust type `Message`; in TS, `message(fields: Message)` from `web/src/gen/bui
   "role": "agent",
   "name": "Scout",
   "avatar": "media/sample.svg",
+  "time": "14:32",
   "blocks": [
     {
       "type": "prose",

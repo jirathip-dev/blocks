@@ -4441,6 +4441,12 @@ var defs = {
             "type": "null"
           }
         ]
+      },
+      "time": {
+        "type": [
+          "string",
+          "null"
+        ]
       }
     },
     "required": [

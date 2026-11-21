@@ -15,6 +15,7 @@ kind! {
         role: Role,
         name: String,
         avatar: Option<String>,
+        time: Option<String>,
         blocks: Option<Vec<Block>>,
         files: Option<Vec<Attachment>>,
     }

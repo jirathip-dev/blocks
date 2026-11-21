@@ -180,7 +180,7 @@ export type Match = { pattern: Pattern; value: Expr };
 
 export type Media = { alt: string; caption?: string | null; draw?: Gesture | null; height: number; id?: string | null; marks?: Mark[] | null; move?: Gesture | null; poster?: string | null; remove?: Gesture | null; show?: Expr | null; src: string; stretch?: Gesture | null; tools?: MarkKind[] | null; video?: boolean | null; width: number };
 
-export type Message = { avatar?: string | null; blocks?: Block[] | null; files?: Attachment[] | null; id?: string | null; name: string; role: Role; show?: Expr | null };
+export type Message = { avatar?: string | null; blocks?: Block[] | null; files?: Attachment[] | null; id?: string | null; name: string; role: Role; show?: Expr | null; time?: string | null };
 
 export type More = string | Page;
 

@@ -1835,7 +1835,7 @@ function message({ b, hooks: hooks4 }) {
   const files = b.files ?? [];
   const images2 = files.filter(image);
   const box = files.length ? h("div", "mf b-message__files", null, images2.length ? h("div", "mfi", null, ...images2.map(file)) : null, ...files.filter((f) => !image(f)).map(file)) : null;
-  const head4 = h("div", "mh", null, h("span", "mn b-message__name", null, b.name), h("span", "mr", null, roleWord(b.role)));
+  const head4 = h("div", "mh", null, h("span", "mn b-message__name", null, b.name), h("span", "mr", null, roleWord(b.role)), b.time ? h("time", "mt", null, b.time) : null);
   return h("article", "msg", hooks4, face, head4, h("div", "mb", null, ...kids2(b.blocks), box));
 }
 

@@ -22,6 +22,7 @@ kind! {
         role: Role,
         name: String,
         avatar: Option<String>,
+        time: Option<String>,
         blocks: Option<Vec<Block>>,
         files: Option<Vec<Attachment>>,
     }
@@ -52,6 +53,7 @@ pub(super) fn sample() -> Vec<Block> {
         Message::new(Role::Agent, "Scout")
             .id("chat")
             .avatar("media/sample.svg")
+            .time("14:32")
             .blocks(vec![
                 said("chat-a", "Reading both files."),
                 Block::Tool(Box::new(read)),

@@ -28,7 +28,7 @@ export function message(b: Message, c: Ctx): HTMLElement {
   const m = el("article", "msg");
   const face = avatar(b);
   if (face) m.append(face);
-  m.append(h("div", "mh", h("span", "mn b-message__name", b.name), h("span", "mr", roleWord(b.role))));
+  m.append(h("div", "mh", h("span", "mn b-message__name", b.name), h("span", "mr", roleWord(b.role)), ...(b.time ? [h("time", "mt", b.time)] : [])));
   const body = h("div", "mb", ...kids(b.blocks, c));
   const files = b.files ?? [];
   if (files.length) {

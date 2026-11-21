@@ -1044,6 +1044,7 @@ public struct Message: Codable, Equatable, Sendable {
     public var name: String
     public var role: Role
     public var show: Expr?
+    public var time: String?
 }
 
 public enum More: Codable, Equatable, Sendable {

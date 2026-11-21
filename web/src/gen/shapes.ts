@@ -3707,6 +3707,12 @@ export const defs: Record<string, Shape> = {
             "type": "null"
           }
         ]
+      },
+      "time": {
+        "type": [
+          "string",
+          "null"
+        ]
       }
     },
     "required": [

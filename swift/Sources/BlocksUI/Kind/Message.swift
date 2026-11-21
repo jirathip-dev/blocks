@@ -13,7 +13,10 @@ internal struct MessageBlock: View {
     private var system: some View {
         let edge = Rectangle().fill(look.palette.line).frame(height: 1)
         return VStack(alignment: .leading, spacing: Scale.pad) {
-            Text(block.name).ui(Scale.meta, .bold, look).lineLimit(1)
+            HStack(alignment: .firstTextBaseline, spacing: Scale.gap) {
+                Text(block.name).ui(Scale.meta, .bold, look).lineLimit(1)
+                if let time = block.time, !time.isEmpty { Text(time).ui(Scale.meta, .regular, look).fixedSize() }
+            }
             BlockStack(blocks: block.blocks ?? [], spacing: Scale.pad)
             files
         }
@@ -44,6 +47,9 @@ internal struct MessageBlock: View {
             Text(block.name).ui(Scale.title, .bold, look).foregroundStyle(look.palette.foreground)
                 .lineLimit(1).truncationMode(.tail)
             Text(word).ui(Scale.meta, .regular, look).foregroundStyle(look.palette.mute).fixedSize()
+            if let time = block.time, !time.isEmpty {
+                Text(time).ui(Scale.meta, .regular, look).foregroundStyle(look.palette.mute).fixedSize()
+            }
         }
     }
 

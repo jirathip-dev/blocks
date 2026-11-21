@@ -15,7 +15,8 @@ named like a core one or with no fallback, a state key read but not declared, a 
 current step nor `done`.
 
 A `message` is one message of a conversation: its `role` (`agent`, `owner`, `system`), its speaker's `name` and an
-optional `avatar`, then its `blocks` in the order they were said (a `prose` for text, a `tool` for each tool call, any
+optional `avatar` and `time` (drawn muted beside the name; a repeat speaker's message hides its head, time included),
+then its `blocks` in the order they were said (a `prose` for text, a `tool` for each tool call, any
 other block), then its `files`, each a `name`, a `tap` that opens it and, for an image, a small `src`. A `tool` is one
 call: its `name`, its `state` (`running`, `done`, `failed`), a one-line `summary` and an optional plain-text `body`
 folded until opened. A `prose` with `streaming` is still being written: renderers draw a caret after it and mark it
