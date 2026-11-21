@@ -1,6 +1,7 @@
 frozen = [
     ".github/workflows/ci.yml", ".github/workflows/swift.yml", "ci/cap.toml", "crates/blocks/src/site/views.rs", "docs/schema.md",
     "swift/Sources/BlocksUI/Blocks.swift", "swift/Sources/BlocksUI/BlockCards.swift", "swift/Sources/BlocksUI/BlockLeaves.swift",
+    "swift/Sources/BlocksUI/BlockRows.swift", "swift/Sources/BlocksUI/BlockFields.swift", "swift/Sources/BlocksUI/Components.swift",
     "web/src/blocks.css", "web/src/render/index.ts", "web/test/render.test.ts",
 ]
 generated = [
@@ -77,6 +78,7 @@ shared = [
     "swift/Sources/BlocksUI/Theme.swift",
     "swift/Sources/BlocksUI/Tree.swift", "swift/Sources/Blocks/Apply.swift",
     "web/src/shell.ts",
+    "swift/Sources/BlocksUI/BlockNode.swift",
 ]
 
 [[collect]]
@@ -137,6 +139,10 @@ glob = "*.ts"
 
 [[collect]]
 dir = "swift/Sources/BlocksUI/Field"
+glob = "*.swift"
+
+[[collect]]
+dir = "swift/Sources/BlocksUI/Part"
 glob = "*.swift"
 
 [[collect]]
@@ -526,7 +532,7 @@ paths = [".drover/rules.md", "web/package.json"]
 max_file_lines = 30
 
 [[size]]
-paths = ["swift/Sources/BlocksUI/AppBlocks.swift"]
+paths = ["swift/Sources/BlocksUI/AppBlocks.swift", "swift/Sources/BlocksUI/BlockNode.swift"]
 max_file_lines = 100
 
 [[size]]
