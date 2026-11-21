@@ -79,104 +79,33 @@ public struct Snapshot {
     ) throws
         -> SnapshotRun
     {
-        var screen = self.screen
-        let key = try JSONValue(screen).id ?? ""
-        var (edits, picks, opened) = (BlockState(), Picks(), Set<String>())
-        var (shots, sent, dropped, times) = ([String](), [JSONValue](), [String](), [Double]())
-        func hear(_ seen: Drawn) -> Drawn {
-            for (id, (name, values)) in seen.heard.sorted(by: { $0.key < $1.key }) {
-                if let values {
-                    sent.append(.object(["screen": .string(key), "action": .string(name), "block": .string(id), "values": .object(values)]))
-                } else {
-                    dropped.append("event \(id) \(name)")
-                }
-            }
-            return seen
-        }
+        let checks = check ? Check(expect: expect, ids: ids, measure: measure, width: size.width, look: look) : nil
         let clock = ContinuousClock()
         let start = clock.now
-        var seen = hear(draw(screen, edits, picks.rows, opened))
+        var run = try Run(screen, check: checks, draw: draw)
         let paint = ms(clock.now - start)
-        var (pngs, trees, found, faults) = ([String: Data](), [String: TreeNode](), [Seen](), [String]())
-        func take(_ shot: String) throws {
-            let tree = try seen.tree.decode(TreeNode.self)
-            pngs[shot] = seen.png
-            trees[shot] = tree
-            shots.append(shot)
-            if check, let expect { Self.same(expect, tree, shot, &faults) }
-            if check {
-                let probed = try Self.probe(tree, size.width).map {
-                    try JSONValue.object(["rule": .string($0), "at": .string($1), "detail": .string($2), "shot": .string(shot)]).decode(Seen.self)
-                }
-                found += probed
-                faults += probed.map { "\(shot): \($0.rule) \($0.at): \($0.detail)" }
-            }
-            if check, measure { faults += Self.measure(seen.png, tree, look: look).map { "\(shot): \($0)" } }
-            if check, let ids, ids != seen.drawnIds {
-                faults.append("\(shot): drew ids \(seen.drawnIds), expected \(ids)")
-            }
-        }
         for step in steps {
             let begun = clock.now
             switch step {
-            case .tap(let on):
-                let json = try JSONValue(screen)
-                let state = Behaviour.state(json, edits: edits)
-                let block = Self.find(json, on.id)
-                if block?.type == "tool", block?.string("body") != nil { opened.formSymmetricDifference([on.id]); seen = hear(draw(screen, edits, picks.rows, opened)); break }
-                let names = Set(block?.list("fields").compactMap { $0.string("name") } ?? [])
-                let off = Behaviour(json, state: state).disabled.contains(on.id) || picks.waits(names)
-                let sets = (try? block?["tap"]?["set"]?.decode([SetState].self)) ?? []
-                let set = Behaviour.tap(sets, state: state)
-                edits.merge(set) { $1 }
-                if !off, let tap = seen.taps[on.id] {
-                    let typed = edits.filter { names.contains($0.key) }.mapValues(\.json).merging(picks.ids(names)) { $1 }
-                    sent.append(
-                        .object([
-                            "screen": .string(key), "action": .string(tap.action), "block": .string(on.id),
-                            "values": .object(tap.values.merging(typed) { $1 }),
-                        ]))
-                } else if off || set.isEmpty {
-                    dropped.append("tap \(on.id)")
-                }
-                if !off, !set.isEmpty { seen = hear(draw(screen, edits, picks.rows, opened)) }
-            case .type(let typing):
-                let json = try JSONValue(screen)
-                let field = Self.find(json, typing.id).flatMap { $0.list("fields").first?.string("name") ?? $0.string("name") }
-                let view = Behaviour(json, state: Behaviour.state(json, edits: edits))
-                if let field, !view.hidden.contains(field), !view.disabled.contains(field) {
-                    edits[field] = .string(typing.text)
-                    seen = hear(draw(screen, edits, picks.rows, opened))
-                } else {
-                    dropped.append("type \(typing.id)")
-                }
-            case .scroll(let on): dropped.append("scroll \(on.id)")
-            case .frame(let frame):
-                if let new = frame.screen { screen = new } else { try screen.apply(frame.ops ?? []) }
-                seen = hear(draw(screen, edits, picks.rows, opened))
-            case .answer(let answer): try screen.apply(answer.ops ?? []); seen = hear(draw(screen, edits, picks.rows, opened))
-            case .shot(let shot): try take(shot.name)
-            case .gesture(let g):
-                let block = try? Self.find(try JSONValue(screen), g.id)?.decode(Block.self)
-                let ways = Self.gestured(block, g).map { Self.sent(key, g.id, $0) }
-                if ways.isEmpty { dropped.append("gesture \(g.via.rawValue) \(g.id)") } else { sent += ways }
-            case .refuse: seen = hear(draw(screen, edits, picks.rows, opened))
-            case .file(let f): if picks.pick(f, in: try JSONValue(screen)) { seen = hear(draw(screen, edits, picks.rows, opened)) } else { dropped.append("file \(f.field)") }
-            case .unknown(let value): dropped.append("unknown \(value)")
+            case .tap(let on): try run.tap(on)
+            case .type(let typing): try run.type(typing)
+            case .scroll(let on): run.scroll(on)
+            case .frame(let frame): try run.frame(frame)
+            case .answer(let answer): try run.answer(answer)
+            case .shot(let shot): try run.take(shot.name)
+            case .gesture(let g): try run.gesture(g)
+            case .refuse(let refuse): run.refuse(refuse)
+            case .file(let f): try run.file(f)
+            case .unknown(let value): run.unknown(value)
             }
-            times.append(ms(clock.now - begun))
+            run.out.times.append(ms(clock.now - begun))
         }
-        if shots.isEmpty {
+        if run.out.shots.isEmpty {
             let begun = clock.now
-            try take(name)
-            times.append(ms(clock.now - begun))
+            try run.take(name)
+            run.out.times.append(ms(clock.now - begun))
         }
-        let report = try JSONValue.object([
-            "shots": .array(shots.map(JSONValue.string)), "sent": .array(sent),
-            "dropped": .array(dropped.map(JSONValue.string)),
-            "timings": .object(["first_paint_ms": .number(paint), "steps_ms": .array(times.map(JSONValue.number))]),
-        ]).decode(Report.self)
-        return SnapshotRun(report: report, pngs: pngs, trees: trees, seen: found, faults: faults)
+        return try run.report(paint: paint)
     }
 
     private func wrapped(_ wrap: @escaping @MainActor (AnyView) -> AnyView) -> Self {
@@ -189,85 +118,13 @@ public struct Snapshot {
         Double(d.components.seconds) * 1000 + Double(d.components.attoseconds) / 1e15
     }
 
-    private static func gestured(_ block: Block?, _ g: StepGesture) -> [(Blocks.Gesture, JSONValue)] {
-        switch block {
-        case .list(let l)?:
-            guard let reorder = l.reorder, let grab = g.grab.string else { return [] }
-            return ways(l, grab, g).map { (reorder, .array($0.map(JSONValue.string))) }
-        case .media(let m)?:
-            guard let grab = MarkGrab(g.grab), let gesture = m.gesture(grab) else { return [] }
-            return ways(m, grab, g).map { (gesture, $0.value) }
-        case .table(let t)?: return grid(t, g)
-        case .timeline(let t)?: return timed(t, g)
-        default: return []
-        }
-    }
-
-    private static func grid(_ t: Blocks.Table, _ g: StepGesture) -> [(Blocks.Gesture, JSONValue)] {
-        if let id = g.grab.string, let reorder = t.reorder { return ways(t, .row(id), g).map { (reorder, $0.json) } }
-        let cell = GridGrab.cell(row: g.grab.string("row") ?? "", column: g.grab.string("column") ?? "")
-        guard let edit = t.edit, g.via != .pointer, var d = Driven(t, cell), let text = g.reach.first?.string else { return [] }
-        d.on(.press)
-        d.reach(.text(text))
-        guard case .send(let c)? = d.on(.release) else { return [] }
-        return [(edit, c.json)]
-    }
-
-    private static func timed(_ t: Timeline, _ g: StepGesture) -> [(Blocks.Gesture, JSONValue)] {
-        let part = g.grab.string("part").flatMap(BarGrab.Part.init(rawValue:))
-        let (grab, gesture): (BarGrab?, Blocks.Gesture?) =
-            if let row = g.grab.string("row") { (.row(row), t.draw) } else if let bar = g.grab.string("bar"), let part {
-                (.bar(bar, part), part == .body ? t.move : t.stretch)
-            } else { (nil, nil) }
-        guard let grab, let gesture else { return [] }
-        return ways(t, grab, g).compactMap { span in (try? JSONValue(span)).map { (gesture, $0) } }
-    }
-
-    private static func ways<R: Rules>(_ rules: R, _ grab: R.Grab, _ g: StepGesture) -> [R.Change] {
-        guard var d = Driven(rules, grab) else { return [] }
-        switch g.via {
-        case .keys:
-            d.on(.press)
-            for r in g.reach {
-                if let dir = r.string("dir").flatMap(Nudge.Dir.init(rawValue:)) { d.nudge(Nudge(dir, big: r["big"]?.bool ?? false)) }
-            }
-            guard case .send(let c)? = d.on(.release) else { return [] }
-            return [c]
-        case .action:
-            let steps = rules.steps(grab)
-            return g.reach.compactMap { name in
-                guard var one = Driven(rules, grab), let n = steps.first(where: { $0.0 == name.string })?.1,
-                    case .send(let c)? = one.named(n)
-                else { return nil }
-                return c
-            }
-        default: return []
-        }
-    }
-
-    private static func sent(_ screen: String, _ id: String, _ way: (Blocks.Gesture, JSONValue)) -> JSONValue {
-        .object([
-            "screen": .string(screen), "action": .string(way.0.action), "block": .string(id),
-            "values": .object([way.0.name: way.1]),
-        ])
-    }
-
-    private static func find(_ b: JSONValue, _ id: String) -> JSONValue? { first(b) { $0.id == id } }
-
-    fileprivate static func first(_ b: JSONValue, _ hit: (JSONValue) -> Bool) -> JSONValue? {
-        if hit(b) { return b }
-        let kids = b.list("blocks") + b.list("rows") + b.list("buttons") + b.list("rounds").flatMap { $0.list("blocks") }
-        for kid in kids { if let found = first(kid, hit) { return found } }
-        return nil
-    }
-
-    private func draw(_ screen: Block, _ edits: BlockState, _ files: [String: [FileRow]], _ opened: Set<String>) -> Drawn {
+    private func draw(_ run: Run) -> Drawn {
         let seen = Drawn()
         var view = AnyView(
-            BlocksView(screen, source: .core, state: edits).padding(BlocksView.inset)
+            BlocksView(run.screen, source: .core, state: run.edits).padding(BlocksView.inset)
                 .frame(width: size.width, height: size.height, alignment: .topLeading))
         for wrap in wraps { view = wrap(view) }
-        let root = view.opened(opened).fileRows(files).onFile { _, about in FileRef(about.name) }.islands(["x-echo": Self.echo]).hearsIslands { seen.heard[$0] = ($1, $2) }.reportsBlocks().background(look.palette.background).environment(\.look, look)
+        let root = view.opened(run.opened).fileRows(run.picks.rows).onFile { _, about in FileRef(about.name) }.islands(["x-echo": Self.echo]).hearsIslands { seen.heard[$0] = ($1, $2) }.reportsBlocks().background(look.palette.background).environment(\.look, look)
             .environment(\.colorScheme, look.palette.dark ? .dark : .light)
             .overlayPreferenceValue(DrawnBlocks.self) { blocks in
                 GeometryReader { proxy in seen.keep(blocks, proxy) }
@@ -286,124 +143,5 @@ public struct Snapshot {
         }
         CGImageDestinationAddImage(out, image, nil)
         return CGImageDestinationFinalize(out) ? data as Data : Data()
-    }
-
-    private static func who(_ n: TreeNode) -> String { n.kind + (n.id.map { "#\($0)" } ?? "") }
-
-    private static func same(_ want: TreeNode, _ got: TreeNode?, _ at: String, _ out: inout [String]) {
-        guard let got, want.kind == got.kind, want.id == got.id, want.drawn == got.drawn else {
-            let drew = got.map { "\(who($0)) \($0.drawn.rawValue)" } ?? "nothing"
-            return out.append("\(at): drew \(drew), expected \(who(want)) \(want.drawn.rawValue)")
-        }
-        let here = "\(at)/\(who(got))"
-        if want.role != got.role || want.name != got.name {
-            out.append("\(here): drew \(got.role) \"\(got.name)\", expected \(want.role) \"\(want.name)\"")
-        }
-        if want.children.count != got.children.count {
-            out.append("\(here): \(got.children.count) children, expected \(want.children.count)")
-        }
-        for (i, child) in want.children.enumerated() {
-            same(child, got.children.indices.contains(i) ? got.children[i] : nil, here, &out)
-        }
-    }
-
-    private static func probe(_ tree: TreeNode, _ width: CGFloat) -> [(String, String, String)] {
-        func walk(_ n: TreeNode, _ at: String) -> [(TreeNode, String)] {
-            [(n, at)] + n.children.indices.flatMap { walk(n.children[$0], "\(at)/\(step(n.children, $0))") }
-        }
-        let blocks = walk(tree, step([tree], 0))
-        let px = { (v: CGFloat) in String(format: "%g", v) }
-        let unnamed = blocks.filter { $0.0.role.isEmpty || $0.0.name.isEmpty }.map {
-            ("render/no-name", $0.1, $0.0.role.isEmpty ? "the block has no role" : "the block has no name")
-        }
-        let sizeless = blocks.filter { $0.0.drawn != .hidden }.map { ($0.1, rect($0.0)) }.filter { !($1.width > 0 && $1.height > 0) }.map {
-            ("render/no-size", $0, "\(px($1.width)) by \(px($1.height)) px")
-        }
-        let outside = blocks.map { ($0.1, rect($0.0)) }.filter { $1.minX < -0.5 || $1.maxX > width + 0.5 }.map {
-            ("render/overflow", $0, "the block spans \(px($1.minX.rounded())) to \(px($1.maxX.rounded())) px in a \(px(width)) px screen")
-        }
-        let wide = blocks.map { rect($0.0).maxX }.max() ?? 0
-        let page = wide > width + 0.5 ? [("render/overflow", "", "the page is \(px(wide.rounded())) px wide in a \(px(width)) px screen")] : []
-        let covered = blocks.flatMap { n, at in
-            let kids = n.children.indices.filter { n.children[$0].drawn != .hidden }
-            return kids.enumerated().flatMap { i, a in
-                kids.dropFirst(i + 1).filter { b in
-                    let both = rect(n.children[a]).intersection(rect(n.children[b]))
-                    return !both.isNull && both.width > 0.5 && both.height > 0.5
-                }.map { ("render/overlap", "\(at)/\(step(n.children, a))", "it covers \(step(n.children, $0))") }
-            }
-        }
-        return unnamed + sizeless + outside + page + covered
-    }
-
-    private static func step(_ sibs: [TreeNode], _ i: Int) -> String {
-        let n = sibs[i]
-        if let id = n.id { return "\(n.kind)#\(id)" }
-        return "\(n.kind)~\(sibs[..<i].filter { $0.id == nil && $0.kind == n.kind }.count)"
-    }
-
-    private static func rect(_ n: TreeNode) -> CGRect {
-        guard let r = n.rect, r.count == 4 else { return .zero }
-        return CGRect(x: r[0], y: r[1], width: r[2], height: r[3])
-    }
-}
-
-@MainActor
-private final class Drawn {
-    var tree: JSONValue = .null
-    var taps: [String: BlockAction] = [:]
-    var heard: [String: (String, [String: JSONValue]?)] = [:]
-    var png = Data()
-    var drawnIds = DrawnIdList(blocks: [], actions: [])
-
-    func keep(_ ids: [String]) -> Color {
-        let of = { (kind: String) in ids.filter { $0.hasPrefix(kind) }.map { String($0.dropFirst(kind.count)) } }
-        drawnIds = DrawnIdList(blocks: of("block:"), actions: of("action:"))
-        return .clear
-    }
-
-    func keep(_ blocks: [DrawnBlock], _ proxy: GeometryProxy) -> Color {
-        tree = blocks.first.map { node($0, proxy) } ?? .null
-        return .clear
-    }
-
-    private func node(_ b: DrawnBlock, _ proxy: GeometryProxy) -> JSONValue {
-        let r = proxy[b.bounds]
-        if let id = b.id, let tap = b.tap, !b.hidden, taps[id] == nil { taps[id] = tap }
-        return .object([
-            "kind": .string(b.kind), "id": b.id.map(JSONValue.string) ?? .null,
-            "variant": b.variant.map(JSONValue.string) ?? .null, "drawn": .string(b.hidden ? "hidden" : b.native ? "native" : "fallback"),
-            "role": .string(b.role), "name": .string(b.name),
-            "rect": .array([r.minX, r.minY, r.width, r.height].map { .number(Double($0)) }),
-            "children": .array(b.children.map { node($0, proxy) }),
-        ])
-    }
-}
-
-@MainActor
-private struct Picks {
-    var rows: [String: [FileRow]] = [:]
-    var handled = 0
-    var picked = 0
-
-    func waits(_ names: Set<String>) -> Bool { rows.filter { names.contains($0.key) }.values.joined().map(\.self).waits != nil }
-
-    func ids(_ names: Set<String>) -> [String: JSONValue] {
-        rows.filter { names.contains($0.key) }.mapValues { .array($0.ids.map(JSONValue.string)) }
-    }
-
-    mutating func pick(_ f: StepFile, in screen: JSONValue) -> Bool {
-        let named = { (field: JSONValue) in field.string("name") == f.field && field.type == "upload" }
-        let found = Snapshot.first(screen) { $0.list("fields").contains(where: named) }?.list("fields").first(where: named)
-        guard let field = try? found?.decode(UploadField.self) else { return false }
-        picked += 1
-        let key = "pick-\(picked)"
-        var next = field.picked(rows[f.field] ?? field.held, [FileRow(key: key, name: f.name, size: f.size, mime: f.mime)])
-        if let last = next.indices.last, next[last].key == key, !next[last].refused {
-            handled += 1
-            next[last].state = f.handler == .answers ? .done(FileRef("file-\(handled)", name: f.name)) : f.handler == .fails ? .failed : .uploading(0)
-        }
-        rows[f.field] = next
-        return true
     }
 }
