@@ -159,6 +159,7 @@ export type Card = {
     badge?: Label | null;
     blocks?: Block[] | null;
     buttons?: Block[] | null;
+    color?: string | null;
     fold?: Fold | null;
     id?: string | null;
     kind?: CardKind | null;
@@ -671,7 +672,7 @@ export type Op = {
     id: string;
 } | {
     op: "replace";
-    block: Block;
+    block: Child;
     id: string;
 } | {
     op: "append";
@@ -833,7 +834,7 @@ export type Row = {
     subtitle?: Toned | null;
     swipe?: Act[] | null;
     tap?: Tap | null;
-    title: string;
+    title?: string | null;
     value?: Shown | null;
 };
 export type RowError = {

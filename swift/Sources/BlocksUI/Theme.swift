@@ -98,6 +98,17 @@ extension EnvironmentValues {
 }
 
 extension Palette {
+    internal func fleet(_ code: String?) -> Color? {
+        switch code {
+        case "l": lead
+        case "p": purple
+        case "c": cyan
+        case "g": green
+        case "a": amber
+        default: nil
+        }
+    }
+
     internal func tone(_ name: String?) -> Color? {
         switch name {
         case "ok", "done": green

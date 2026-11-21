@@ -48,7 +48,7 @@ fn faulty() -> Vec<(&'static str, Value, Vec<&'static str>)> {
             json!({"type": "screen", "id": "s", "state": {"email": ""}, "blocks": [
                 {"type": "row", "id": "a", "title": "one", "colour": "red"},
                 {"type": "row", "id": "a", "title": "two"},
-                {"type": "row", "id": "b"},
+                {"type": "row", "id": "b", "title": 3},
                 {"type": "text", "id": "", "markdown": "x", "show": {"get": "nope"}},
                 {"type": "gauge", "id": "g"},
                 {"type": "herd", "id": "h"},

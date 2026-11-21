@@ -256,6 +256,7 @@ public struct Card: Codable, Equatable, Sendable {
     public var badge: Label?
     public var blocks: [Block]?
     public var buttons: [Block]?
+    public var color: String?
     public var fold: Fold?
     public var id: String?
     public var kind: CardKind?
@@ -1130,7 +1131,7 @@ public struct OpRemove: Codable, Equatable, Sendable {
 }
 
 public struct OpReplace: Codable, Equatable, Sendable {
-    public var block: Block
+    public var block: Child
     public var id: String
 }
 
@@ -1424,7 +1425,7 @@ public struct Row: Codable, Equatable, Sendable {
     public var subtitle: Toned?
     public var swipe: [Act]?
     public var tap: Tap?
-    public var title: String
+    public var title: String?
     public var value: Shown?
 }
 

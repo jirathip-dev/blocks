@@ -11,6 +11,7 @@ The Rust type `Card`; in TS, `card(fields: Card)` from `web/src/gen/builders.ts`
 | `badge` | `Label` | optional |
 | `blocks` | `Block[]` | optional |
 | `buttons` | `Block[]` | optional |
+| `color` | `string` | optional |
 | `fold` | `Fold` | optional |
 | `id` | `string` | optional |
 | `kind` | `CardKind` | optional |

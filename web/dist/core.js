@@ -553,7 +553,7 @@ function grow(parts, op) {
 }
 
 // src/core/apply.ts
-var walked = ["blocks", "rows", "buttons", "rounds"];
+var walked = ["blocks", "rows", "buttons", "rounds", "lanes"];
 var hosts = { screen: "blocks", sheet: "blocks", section: "blocks", card: "blocks", message: "blocks", list: "rows", scene: "lanes", row: "rounds", table: "rows" };
 var isRec = (v) => typeof v === "object" && v !== null && !Array.isArray(v);
 function locate(node2, id) {
@@ -603,8 +603,9 @@ function apply(screen2, ops) {
       case "replace": {
         const s = locate(root, op.id);
         if (!s) return void 0;
-        if (s === "root") out = structuredClone(op.block);
-        else s.list[s.at] = structuredClone(op.block);
+        if (s !== "root") s.list[s.at] = structuredClone(op.block);
+        else if ("type" in op.block) out = structuredClone(op.block);
+        else return void 0;
         break;
       }
       case "remove":
@@ -1705,6 +1706,12 @@ var defs = {
         },
         "type": [
           "array",
+          "null"
+        ]
+      },
+      "color": {
+        "type": [
+          "string",
           "null"
         ]
       },
@@ -5399,9 +5406,6 @@ var defs = {
         ]
       }
     },
-    "required": [
-      "title"
-    ],
     "type": "object"
   },
   "RowError": {

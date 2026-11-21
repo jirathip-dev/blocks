@@ -47,7 +47,7 @@ pub enum Op {
     },
     Replace {
         id: String,
-        block: Block,
+        block: Child,
     },
     Append {
         id: String,
@@ -196,7 +196,7 @@ pub fn old(ops: Vec<Op>, new: &Block) -> Vec<Op> {
             Op::Move { into, .. } if replaced.insert(into.clone()) => match new.get(&into) {
                 Some(b) if new.id() != Some(into.as_str()) => out.push(Op::Replace {
                     id: into,
-                    block: b.clone(),
+                    block: Child::Block(b.clone()),
                 }),
                 _ => return vec![Op::Screen { screen: new.clone() }],
             },
