@@ -77,6 +77,23 @@ enum Spot<'a> {
     Row(&'a mut TableRow),
 }
 
+#[cfg(any(test, feature = "schema"))]
+pub(crate) const HOSTS: [(&str, &str); 10] = [
+    ("screen", "blocks"),
+    ("modal", "blocks"),
+    ("sheet", "blocks"),
+    ("section", "blocks"),
+    ("card", "blocks"),
+    ("message", "blocks"),
+    ("list", "rows"),
+    ("scene", "lanes"),
+    ("row", "rounds"),
+    ("table", "rows"),
+];
+
+#[cfg(any(test, feature = "schema"))]
+pub(crate) const WALKED: [&str; 5] = ["blocks", "rows", "buttons", "rounds", "lanes"];
+
 enum Kids<'a> {
     Blocks(&'a mut Vec<Block>),
     Lanes(&'a mut Vec<Lane>),
@@ -291,4 +308,74 @@ pub fn apply(root: &mut Block, ops: &[Op]) -> Result<(), ApplyError> {
         }
     }
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use serde_json::Value;
+
+    use super::{Kids, HOSTS, WALKED};
+    use crate::kind::{samples, Block, Lane, Round, TableRow, Text};
+
+    fn len(v: &Value, key: &str) -> usize {
+        v.get(key).and_then(Value::as_array).map_or(0, Vec::len)
+    }
+
+    fn grown(b: &mut Block) -> bool {
+        let id = String::from("added");
+        match b.list() {
+            Some(Kids::Blocks(l)) => l.push(Block::Text(Box::new(Text::new().id(id)))),
+            Some(Kids::Lanes(l)) => l.push(Lane { id, ..Lane::default() }),
+            Some(Kids::Rounds(l)) => l.push(Round { id, ..Round::default() }),
+            Some(Kids::Rows(l)) => l.push(TableRow {
+                id,
+                ..TableRow::default()
+            }),
+            None => return false,
+        }
+        true
+    }
+
+    fn ids(v: &Value, walked: bool, out: &mut Vec<(String, bool)>) {
+        let Value::Object(o) = v else { return };
+        for (key, x) in o {
+            let under = walked && WALKED.contains(&key.as_str());
+            for item in x.as_array().into_iter().flatten() {
+                if let Some(id) = item.get("id").and_then(Value::as_str) {
+                    out.push((id.into(), under));
+                }
+                ids(item, under, out);
+            }
+            if x.is_object() {
+                ids(x, false, out);
+            }
+        }
+    }
+
+    #[test]
+    fn hosts_and_walked_are_where_each_kind_keeps_its_children() -> serde_json::Result<()> {
+        let mut grew = vec![];
+        for (kind, b) in samples() {
+            let host = HOSTS.iter().find(|(k, _)| *k == kind).map(|(_, key)| *key);
+            assert_eq!(b.clone().list().is_some(), host.is_some(), "{kind}: list against HOSTS");
+            let before = serde_json::to_value(&b)?;
+            let mut more = b.clone();
+            if let Some(key) = host.filter(|_| grown(&mut more)) {
+                let after = serde_json::to_value(&more)?;
+                assert_eq!(len(&after, key), len(&before, key) + 1, "{kind}: list is not `{key}`");
+                grew.push(kind);
+            }
+            let mut found = vec![];
+            ids(&serde_json::to_value(&more)?, true, &mut found);
+            for (id, walked) in found.into_iter().filter(|(id, _)| more.id() != Some(id)) {
+                let mut b = more.clone();
+                let hit = b.find(&id).is_some() || b.spot(&id).is_some();
+                assert_eq!(hit, walked, "{kind}: `{id}` found by patch against under WALKED");
+            }
+        }
+        for (kind, _) in HOSTS {
+            assert!(grew.contains(&kind), "no {kind} sample");
+        }
+        Ok(())
+    }
 }
