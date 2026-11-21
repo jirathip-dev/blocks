@@ -1,0 +1,178 @@
+{
+  "type": "screen",
+  "id": "samples",
+  "title": "Samples",
+  "blocks": [
+    {
+      "type": "list",
+      "id": "rows",
+      "rows": [
+        {
+          "type": "row",
+          "id": "row",
+          "title": "Build",
+          "subtitle": "green",
+          "value": "2m",
+          "rounds": [
+            {
+              "id": "r1",
+              "name": "impl",
+              "state": "done",
+              "summary": "pushed",
+              "tap": {
+                "url": "/runs/1"
+              }
+            },
+            {
+              "id": "r2",
+              "name": "review 1",
+              "state": "needs",
+              "summary": "one finding",
+              "lane": {
+                "name": "rev-1",
+                "lines": [
+                  "reading the diff"
+                ]
+              },
+              "blocks": [
+                {
+                  "type": "text",
+                  "id": "finding",
+                  "markdown": "Fix the test"
+                }
+              ],
+              "links": [
+                {
+                  "label": "verdict",
+                  "tap": {
+                    "url": "/verdict"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "row",
+      "id": "build",
+      "title": "Build",
+      "subtitle": "green",
+      "value": "2m"
+    },
+    {
+      "type": "card",
+      "id": "card",
+      "kind": "ask",
+      "title": "q1",
+      "subtitle": "waiting",
+      "meta": {
+        "since": "2026-11-09T09:35:00Z",
+        "label": "as of {} ago"
+      },
+      "badge": {
+        "text": {
+          "until": "2026-11-09T09:53:00Z",
+          "label": "lapses in {rel}"
+        }
+      },
+      "blocks": [
+        {
+          "type": "row",
+          "id": "card-row",
+          "title": "Review",
+          "subtitle": {
+            "text": {
+              "until": "2026-11-09T09:53:00Z",
+              "label": "decides in {rel}"
+            }
+          },
+          "value": {
+            "since": "2026-11-09T09:35:00Z",
+            "label": "{} ago"
+          }
+        },
+        {
+          "type": "stat",
+          "id": "card-up",
+          "label": "up",
+          "value": {
+            "since": "2026-11-09T09:35:00Z",
+            "label": "{}"
+          }
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "note",
+      "markdown": "**Hello**"
+    },
+    {
+      "type": "prose",
+      "id": "about",
+      "parts": [
+        {
+          "part": "heading",
+          "level": 2,
+          "spans": [
+            {
+              "text": "Blocks"
+            }
+          ]
+        },
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Typed "
+            },
+            {
+              "text": "screens",
+              "bold": true
+            }
+          ]
+        },
+        {
+          "part": "list",
+          "ordered": false,
+          "items": [
+            [
+              {
+                "text": "one"
+              }
+            ],
+            [
+              {
+                "text": "two"
+              }
+            ]
+          ]
+        },
+        {
+          "part": "quote",
+          "spans": [
+            {
+              "text": "Built by type."
+            }
+          ]
+        },
+        {
+          "part": "code",
+          "lang": "rust",
+          "text": "Row::new(\"a\")"
+        },
+        {
+          "part": "rule"
+        }
+      ]
+    },
+    {
+      "type": "composer",
+      "id": "say",
+      "action": "say",
+      "placeholder": "message the team"
+    }
+  ]
+}
