@@ -1,0 +1,3 @@
+[
+  {"type":"choice","id":"ch","action":"answer","recommended":"b","default":{"value":"b","until":"2026-11-09T09:35:00Z","label":"goes to b"},"other":{"placeholder":"say","for":"c"},"options":[{"value":"a","label":"A"},{"value":"b","label":"B"}]}
+]
