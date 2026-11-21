@@ -1,0 +1,21 @@
+[package]
+name = "thai-size"
+description = "Architect #306: what the segmenter adds to a release binary"
+version = "0.0.0"
+edition = "2021"
+license = "MIT"
+publish = false
+
+[workspace]
+
+[features]
+dict = ["dep:icu_segmenter"]
+lstm = ["dep:icu_segmenter", "icu_segmenter/lstm"]
+plain = ["dep:icu_segmenter"]
+
+[dependencies]
+icu_segmenter = { version = "2.4", default-features = false, features = ["compiled_data"], optional = true }
+
+[profile.release]
+lto = "thin"
+codegen-units = 1

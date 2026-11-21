@@ -6,6 +6,7 @@ use egui::{
 
 use crate::cx::{Cx, Draw};
 use crate::look::{MARK, TAP};
+use crate::words;
 
 pub(super) const DRAW: Option<Draw<Tool>> = Some(draw);
 
@@ -42,7 +43,7 @@ fn draw(b: &Tool, ui: &mut Ui, cx: &mut Cx<'_>) {
             .show(ui, |ui| {
                 ui.set_width(ui.available_width());
                 ScrollArea::both().id_salt("body").max_height(tall).show(ui, |ui| {
-                    ui.label(RichText::new(body).monospace().color(look.fg(ui)));
+                    words::label(ui, RichText::new(body).monospace().color(look.fg(ui)));
                 });
             });
     });
