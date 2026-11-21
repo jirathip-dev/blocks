@@ -33,7 +33,7 @@ extension EnvironmentValues {
 }
 
 internal struct Reported: ViewModifier {
-    private static let gaps: Set = ["composer", "prose", "hero", "media", "nav"]
+    private static let gaps: Set = ["composer", "prose", "hero", "media", "nav", "sidebar"]
     @Environment(\.reportsBlocks) private var reports
     @Environment(\.appBlocks) private var appBlocks
     @Environment(\.islands) private var islands
@@ -105,7 +105,7 @@ extension Block {
         }
     }
 
-    private static let roles = ["section": "region", "form": "form", "config": "form", "nav": "navigation", "chart": "figure", "toast": "status", "message": "article"]
+    private static let roles = ["section": "region", "form": "form", "config": "form", "nav": "navigation", "chart": "figure", "toast": "status", "message": "article", "sidebar": "navigation"]
     private static let names = ["label", "title", "header", "question", "alt", "file", "command", "placeholder", "name"]
 
     /// The accessible role and name every renderer gives this block's root, as `tree::a11y` in Rust.
@@ -154,6 +154,7 @@ extension Block {
         case .import(let b): [b.title]
         case .message(let b): [b.name]
         case .tool(let b): [b.name]
+        case .sidebar(let b): [b.label]
         case .appBlock(let b): Self.names.map { b.string($0) }
         default: []
         }

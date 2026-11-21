@@ -1,0 +1,4720 @@
+{
+  "brand": {
+    "href": "#home",
+    "icon": "◈",
+    "label": "Workspace"
+  },
+  "empty": "No pages yet",
+  "footer": [
+    {
+      "href": "#settings",
+      "icon": "⚙",
+      "label": "Settings"
+    }
+  ],
+  "groups": [
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    },
+    {
+      "links": [
+        {
+          "href": "#home",
+          "icon": "⌂",
+          "label": "Home"
+        },
+        {
+          "badge": {
+            "count": 12
+          },
+          "current": true,
+          "href": "#inbox",
+          "icon": "✉",
+          "label": "Inbox"
+        }
+      ]
+    },
+    {
+      "links": [
+        {
+          "children": [
+            {
+              "href": "#spring",
+              "label": "Spring launch"
+            },
+            {
+              "href": "#archive",
+              "label": "Archive"
+            }
+          ],
+          "icon": "◆",
+          "label": "Projects",
+          "open": true
+        },
+        {
+          "badge": {
+            "count": 3,
+            "tone": "bad"
+          },
+          "href": "#alerts",
+          "icon": "⚑",
+          "label": "Alerts"
+        }
+      ],
+      "title": "Work"
+    }
+  ],
+  "id": "side",
+  "label": "main",
+  "type": "sidebar"
+}

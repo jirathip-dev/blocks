@@ -239,7 +239,8 @@
               "timeline",
               "import",
               "message",
-              "tool"
+              "tool",
+              "sidebar"
             ]
           },
           "type": "string"
@@ -822,6 +823,19 @@
           "properties": {
             "type": {
               "const": "tool",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/Sidebar",
+          "properties": {
+            "type": {
+              "const": "sidebar",
               "type": "string"
             }
           },
@@ -6332,6 +6346,205 @@
         }
       ],
       "description": "A shown value (a row's or tile's value, a card's meta, a label's text): a string, a number, a state key's value, or a time."
+    },
+    "SideBadge": {
+      "description": "A count on a link; the `bad` tone draws it as needing attention.",
+      "properties": {
+        "count": {
+          "format": "uint64",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "tone": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Tone"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "count"
+      ],
+      "type": "object"
+    },
+    "SideGroup": {
+      "description": "A run of rows under an optional title.",
+      "properties": {
+        "links": {
+          "items": {
+            "$ref": "#/$defs/SideItem"
+          },
+          "type": "array"
+        },
+        "title": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "links"
+      ],
+      "type": "object"
+    },
+    "SideItem": {
+      "description": "A group's row: a link, or with `children` a parent that opens to show its links.",
+      "properties": {
+        "badge": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SideBadge"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "children": {
+          "items": {
+            "$ref": "#/$defs/SideLink"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "current": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "href": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "icon": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "label": {
+          "type": "string"
+        },
+        "open": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "label"
+      ],
+      "type": "object"
+    },
+    "SideLink": {
+      "description": "A sidebar link: its label, page, glyph icon, badge and whether it is the current page.",
+      "properties": {
+        "badge": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SideBadge"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "current": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "href": {
+          "type": "string"
+        },
+        "icon": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "label": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "label",
+        "href"
+      ],
+      "type": "object"
+    },
+    "Sidebar": {
+      "additionalProperties": true,
+      "description": "A side navigation: an icon rail that opens on hover or pin, a drawer on a phone.",
+      "properties": {
+        "brand": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SideLink"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "empty": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "footer": {
+          "items": {
+            "$ref": "#/$defs/SideLink"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "groups": {
+          "items": {
+            "$ref": "#/$defs/SideGroup"
+          },
+          "type": "array"
+        },
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "label": {
+          "type": "string"
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "label",
+        "groups"
+      ],
+      "type": "object"
     },
     "Sky": {
       "anyOf": [

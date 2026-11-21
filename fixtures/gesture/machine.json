@@ -121,6 +121,37 @@
         [{ "at": "confirmed" }, null],
         [{ "at": "idle" }, null]
       ]
+    },
+    {
+      "name": "a sidebar's edge pull follows the finger and is sent on release, then settles",
+      "start": 0,
+      "events": [{ "on": "press" }, { "on": "move", "c": 20 }, { "on": "move", "c": 60 }, { "on": "release" }, { "on": "answer", "ok": true }, { "on": "settled" }],
+      "want": [
+        [{ "at": "pressed" }, null],
+        [{ "at": "previewing", "c": 20 }, null],
+        [{ "at": "previewing", "c": 60 }, null],
+        [{ "at": "sent", "c": 60 }, { "send": 60 }],
+        [{ "at": "confirmed" }, null],
+        [{ "at": "idle" }, null]
+      ]
+    },
+    {
+      "name": "a sidebar pull taken back to the edge sends nothing",
+      "start": 0,
+      "events": [{ "on": "press" }, { "on": "move", "c": 40 }, { "on": "move", "c": 0 }, { "on": "release" }],
+      "want": [[{ "at": "pressed" }, null], [{ "at": "previewing", "c": 40 }, null], [{ "at": "previewing", "c": 0 }, null], [{ "at": "idle" }, null]]
+    },
+    {
+      "name": "a sidebar pull cancelled mid-way sends nothing",
+      "start": 0,
+      "events": [{ "on": "press" }, { "on": "move", "c": 50 }, { "on": "cancel" }],
+      "want": [[{ "at": "pressed" }, null], [{ "at": "previewing", "c": 50 }, null], [{ "at": "idle" }, null]]
+    },
+    {
+      "name": "a swipe left on an open sidebar drawer is sent with its pull on release",
+      "start": 100,
+      "events": [{ "on": "press" }, { "on": "move", "c": 40 }, { "on": "release" }],
+      "want": [[{ "at": "pressed" }, null], [{ "at": "previewing", "c": 40 }, null], [{ "at": "sent", "c": 40 }, { "send": 40 }]]
     }
   ]
 }

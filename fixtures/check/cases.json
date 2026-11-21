@@ -1642,6 +1642,78 @@
   {
     "app": [],
     "faults": [],
+    "name": "fixtures/blocks/sidebar.json",
+    "screen": {
+      "brand": {
+        "href": "#home",
+        "icon": "◈",
+        "label": "Workspace"
+      },
+      "empty": "No pages yet",
+      "footer": [
+        {
+          "href": "#settings",
+          "icon": "⚙",
+          "label": "Settings"
+        }
+      ],
+      "groups": [
+        {
+          "links": [
+            {
+              "href": "#home",
+              "icon": "⌂",
+              "label": "Home"
+            },
+            {
+              "badge": {
+                "count": 12
+              },
+              "current": true,
+              "href": "#inbox",
+              "icon": "✉",
+              "label": "Inbox"
+            }
+          ]
+        },
+        {
+          "links": [
+            {
+              "children": [
+                {
+                  "href": "#spring",
+                  "label": "Spring launch"
+                },
+                {
+                  "href": "#archive",
+                  "label": "Archive"
+                }
+              ],
+              "icon": "◆",
+              "label": "Projects",
+              "open": true
+            },
+            {
+              "badge": {
+                "count": 3,
+                "tone": "bad"
+              },
+              "href": "#alerts",
+              "icon": "⚑",
+              "label": "Alerts"
+            }
+          ],
+          "title": "Work"
+        }
+      ],
+      "id": "side",
+      "label": "main",
+      "type": "sidebar"
+    }
+  },
+  {
+    "app": [],
+    "faults": [],
     "name": "fixtures/blocks/stat.json",
     "screen": {
       "id": "open",
@@ -3878,6 +3950,76 @@
           "state": "running",
           "summary": "cargo test -p blocks",
           "type": "tool"
+        },
+        {
+          "brand": {
+            "href": "#home",
+            "icon": "◈",
+            "label": "Workspace"
+          },
+          "empty": "No pages yet",
+          "fallback": {
+            "title": "main"
+          },
+          "footer": [
+            {
+              "href": "#settings",
+              "icon": "⚙",
+              "label": "Settings"
+            }
+          ],
+          "groups": [
+            {
+              "links": [
+                {
+                  "href": "#home",
+                  "icon": "⌂",
+                  "label": "Home"
+                },
+                {
+                  "badge": {
+                    "count": 12
+                  },
+                  "current": true,
+                  "href": "#inbox",
+                  "icon": "✉",
+                  "label": "Inbox"
+                }
+              ]
+            },
+            {
+              "links": [
+                {
+                  "children": [
+                    {
+                      "href": "#spring",
+                      "label": "Spring launch"
+                    },
+                    {
+                      "href": "#archive",
+                      "label": "Archive"
+                    }
+                  ],
+                  "icon": "◆",
+                  "label": "Projects",
+                  "open": true
+                },
+                {
+                  "badge": {
+                    "count": 3,
+                    "tone": "bad"
+                  },
+                  "href": "#alerts",
+                  "icon": "⚑",
+                  "label": "Alerts"
+                }
+              ],
+              "title": "Work"
+            }
+          ],
+          "id": "side",
+          "label": "main",
+          "type": "sidebar"
         }
       ],
       "fallback": {
