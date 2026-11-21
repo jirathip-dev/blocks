@@ -4,6 +4,7 @@ use egui::{vec2, Align2, Button, Label, RichText, Sense, TextStyle, TextWrapMode
 use crate::act;
 use crate::cx::{Cx, Draw};
 use crate::look::{FACE, TAP};
+use crate::words;
 
 pub(super) const DRAW: Option<Draw<Message>> = Some(draw);
 
@@ -80,7 +81,7 @@ fn head(b: &Message, ui: &mut Ui, cx: &Cx<'_>) {
             ui.add(Label::new(RichText::new(&b.name).strong().color(look.fg(ui))).truncate());
         });
         for g in after {
-            ui.label(g);
+            words::label(ui, g);
         }
     });
 }

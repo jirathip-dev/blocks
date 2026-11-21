@@ -5,6 +5,7 @@ use egui::{vec2, Color32, Frame, RichText, ScrollArea, Sense, Stroke, TextStyle,
 
 use crate::cx::{Cx, Draw};
 use crate::look::{Look, MARK};
+use crate::words;
 
 pub(super) const DRAW: Option<Draw<Prose>> = Some(draw);
 
@@ -43,7 +44,7 @@ fn part(p: &Part, at: usize, ui: &mut Ui, look: &Look, end: bool) {
             for (i, item) in items.iter().enumerate() {
                 let mark = if *ordered { format!("{}.", i + 1) } else { "•".into() };
                 ui.horizontal_top(|ui| {
-                    ui.label(RichText::new(mark).color(look.mute(ui)));
+                    words::label(ui, RichText::new(mark).color(look.mute(ui)));
                     spans(ui, look, item, &TextStyle::Body, end && Some(i) == last);
                 });
             }
@@ -83,8 +84,8 @@ fn spans(ui: &mut Ui, look: &Look, all: &[Span], style: &TextStyle, end: bool) {
                 t = t.code();
             }
             match &s.link {
-                Some(url) => ui.hyperlink_to(t.color(look.link(ui)).underline(), url),
-                None => ui.label(t),
+                Some(url) => words::link(ui, t.color(look.link(ui)).underline(), url),
+                None => words::label(ui, t),
             };
         }
         if end {
@@ -101,7 +102,7 @@ fn code(text: &str, at: usize, ui: &mut Ui, look: &Look, end: bool) {
         ui.set_width(ui.available_width());
         ScrollArea::horizontal().id_salt(("code", at)).show(ui, |ui| {
             ui.horizontal(|ui| {
-                ui.label(RichText::new(text).monospace().color(ink(ui, look)));
+                words::label(ui, RichText::new(text).monospace().color(ink(ui, look)));
                 if end {
                     caret(ui, look);
                 }

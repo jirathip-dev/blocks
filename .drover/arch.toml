@@ -251,27 +251,33 @@ mods = ["blocks_cli"]
 may_use = ["guard", "kind", "built", "tree", "wire"]
 
 [[layer]]
+name = "desktop-words"
+paths = ["crates/blocks-desktop/src/words.rs"]
+mods = ["crate::words"]
+
+[[layer]]
 name = "desktop-look"
 paths = ["crates/blocks-desktop/src/look.rs", "crates/blocks-desktop/src/art.rs", "crates/blocks-desktop/src/text.rs"]
 mods = ["crate::look", "crate::art", "crate::text"]
+may_use = ["desktop-words"]
 
 [[layer]]
 name = "desktop-cx"
 paths = ["crates/blocks-desktop/src/cx.rs", "crates/blocks-desktop/src/drawn.rs", "crates/blocks-desktop/src/act.rs", "crates/blocks-desktop/src/fallback.rs", "crates/blocks-desktop/src/island.rs", "crates/blocks-desktop/src/draw.rs"]
 mods = ["crate::cx", "crate::drawn", "crate::act", "crate::fallback", "crate::island", "crate::draw"]
-may_use = ["desktop-look", "tree"]
+may_use = ["desktop-words", "desktop-look", "tree"]
 
 [[layer]]
 name = "desktop-draw"
 paths = ["crates/blocks-desktop/src/draw/**"]
 mods = []
-may_use = ["desktop-look", "desktop-cx"]
+may_use = ["desktop-words", "desktop-look", "desktop-cx"]
 
 [[layer]]
 name = "desktop-stage"
 paths = ["crates/blocks-desktop/src/stage.rs", "crates/blocks-desktop/src/lib.rs"]
 mods = ["crate::stage", "blocks_desktop"]
-may_use = ["desktop-look", "desktop-cx", "expr", "behave", "tree"]
+may_use = ["desktop-words", "desktop-look", "desktop-cx", "expr", "behave", "tree"]
 
 [[layer]]
 name = "desk"
@@ -548,3 +554,21 @@ reason = "the adapter sends nothing itself: bytes go to the app's file handler, 
 pattern = "URLSession"
 paths = ["swift/Sources/BlocksUI/**"]
 reason = "a view sends nothing itself: bytes go to the app's file handler, actions to act"
+
+[[ban]]
+pattern = "icu_segmenter"
+paths = ["crates/*/Cargo.toml", "crates/*/src/**"]
+except = ["crates/blocks-desktop/Cargo.toml", "crates/blocks-desktop/src/words.rs"]
+reason = "one module knows the segmenter: the rest ask words for a label or a layout"
+
+[[ban]]
+pattern = "ui.label("
+paths = ["crates/blocks-desktop/src/**"]
+except = ["crates/blocks-desktop/src/words.rs"]
+reason = "a label reaches egui through words::label, which breaks Thai between words"
+
+[[ban]]
+pattern = "hyperlink_to("
+paths = ["crates/blocks-desktop/src/**"]
+except = ["crates/blocks-desktop/src/words.rs"]
+reason = "a link is words::link, which breaks Thai between words"
