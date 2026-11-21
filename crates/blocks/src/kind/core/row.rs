@@ -6,6 +6,7 @@ kind! {
     /// One row of a list.
     pub struct Row {
         id: Option<String>,
+        #[serde(default)]
         title: String,
         subtitle: Option<Toned>,
         badge: Option<Label>,

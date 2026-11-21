@@ -4,7 +4,7 @@ use blocks::behave::{lit, start, view};
 use blocks::expr::{eval, Lit, State};
 use blocks::tree::{expect, Node};
 use blocks::{AppBlock, Block, Built};
-use egui::Ui;
+use egui::{Frame, Ui};
 use serde_json::Value;
 
 use crate::act::{Did, Event};
@@ -169,7 +169,10 @@ impl Stage {
             now: unix_now,
         };
         let mut cx = Cx::new(ground, &mut rec, std::slice::from_ref(&h.plan));
-        cx.block(ui, &h.block);
+        Frame::new().inner_margin(kit.look.margin()).show(ui, |ui| {
+            kit.look.dress(ui);
+            cx.block(ui, &h.block);
+        });
         let tree = cx.done().into_iter().next();
         self.islands = std::mem::take(&mut rec.islands);
         let (drawn, did) = rec.done(tree.unwrap_or_else(|| h.plan.clone()));

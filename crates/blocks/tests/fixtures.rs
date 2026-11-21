@@ -205,7 +205,10 @@ fn the_generated_schema_validates_every_fixture() {
 fn the_schema_and_the_types_refuse_a_core_kind_of_the_wrong_shape() {
     let s = schema();
     for (bad, why) in [
-        (r#"{"type": "row", "id": "a"}"#, "a row with no title"),
+        (
+            r#"{"type": "row", "id": "a", "title": 3}"#,
+            "a row whose title is no string",
+        ),
         (r#"{"type": "composer", "id": "say"}"#, "a composer with no action"),
         (
             r#"{"type": "web", "src": "/x", "height": "tall"}"#,
@@ -440,7 +443,7 @@ fn check_finds_each_fault() {
         r#"{"type": "screen", "id": "s", "state": {"email": ""}, "blocks": [
             {"type": "row", "id": "a", "title": "one", "colour": "red"},
             {"type": "row", "id": "a", "title": "two"},
-            {"type": "row", "id": "b"},
+            {"type": "row", "id": "b", "title": 3},
             {"type": "text", "id": "", "markdown": "x", "show": {"get": "nope"}},
             {"type": "gauge", "id": "g"},
             {"type": "herd", "id": "h"},

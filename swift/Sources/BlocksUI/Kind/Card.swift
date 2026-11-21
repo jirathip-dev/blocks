@@ -6,6 +6,8 @@ internal struct CardBlock: View {
     @Environment(\.behaved) private var behaved
     @Environment(\.card) private var context
     @Environment(\.act) private var act
+    @Environment(\.appBlocks) private var appBlocks
+    @Environment(\.pending) private var pending
     @State private var open = false
     internal let block: Card
 
@@ -18,7 +20,7 @@ internal struct CardBlock: View {
     private var kind: Kind? {
         let palette = look.palette
         let poster =
-            if case .plugin(let name) = context.poster { " · \(name)" } else { "" }
+            if appBlocks?.poster == nil, case .plugin(let name) = context.poster { " · \(name)" } else { "" }
         switch block.kind?.rawValue {
         case "ask": return Kind(label: "ask\(poster)", symbol: "hand.raised.fill", tint: palette.red)
         case "config": return Kind(label: "config\(poster)", symbol: "slider.horizontal.3", tint: palette.cyan)
@@ -60,7 +62,8 @@ internal struct CardBlock: View {
     private func line(_ fold: Fold) -> some View {
         HStack(spacing: Scale.gap) {
             Button { open.toggle() } label: {
-                Text(fold.line).ui(Scale.cell, .regular, look).foregroundStyle(look.palette.foreground).lineLimit(1)
+                Text(fold.line).ui(Scale.cell, .regular, look)
+                    .foregroundStyle(look.palette.fleet(block.color) ?? look.palette.foreground).lineLimit(1)
                     .frame(maxWidth: .infinity, alignment: .leading).contentShape(.rect)
             }
             .buttonStyle(.plain).accessibilityValue(open ? "expanded" : "collapsed")
@@ -72,6 +75,7 @@ internal struct CardBlock: View {
                     CardButton(title: main.label, primary: true).fixedSize()
                 }
                 .buttonStyle(.plain).modifier(Identified(id: main.action, action: true))
+                .disabled(pending.contains(main.action))
             }
         }
     }
@@ -94,9 +98,7 @@ internal struct CardBlock: View {
         }
         if let buttons = block.buttons, !buttons.isEmpty {
             HStack(spacing: 8) {
-                ForEach(Array(buttons.enumerated()), id: \.offset) { _, button in
-                    BlockNode(block: button)
-                }
+                ForEach(ChildKey.keyed(buttons, \.id), id: \.key) { BlockNode(block: $0.item) }
             }
         }
         BlockStack(blocks: block.blocks ?? []).environment(
@@ -107,12 +109,14 @@ internal struct CardBlock: View {
     private func header(_ tint: Color) -> some View {
         let meta = block.meta
         let badge = block.badge
-        if kind != nil || meta != nil || badge != nil {
+        let poster = appBlocks?.poster
+        if kind != nil || meta != nil || badge != nil || poster != nil {
             HStack(spacing: 6) {
                 if let kind {
                     if !look.textMarks { Image(systemName: kind.symbol).font(.system(size: 12, weight: .bold)) }
                     Text(look.label(.kind, kind.label)).ui(11, .bold, look)
                 }
+                if let poster, let json = try? JSONValue(block) { poster(json) }
                 Spacer(minLength: 4)
                 if let badge { Pill(badge: badge) }
                 if let meta {

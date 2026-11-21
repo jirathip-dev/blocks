@@ -974,6 +974,12 @@ export const defs: Record<string, Shape> = {
           "null"
         ]
       },
+      "color": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
       "fold": {
         "anyOf": [
           {
@@ -4665,9 +4671,6 @@ export const defs: Record<string, Shape> = {
         ]
       }
     },
-    "required": [
-      "title"
-    ],
     "type": "object"
   },
   "RowError": {

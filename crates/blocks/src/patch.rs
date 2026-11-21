@@ -63,6 +63,20 @@ fn place<T: Id>(list: &mut Vec<T>, item: T, before: Option<&str>, after: Option<
     list.insert(i, item);
 }
 
+fn pull<T: Id>(list: &mut Vec<T>, id: &str) -> bool {
+    let Some(i) = list.iter().position(|x| x.key() == Some(id)) else {
+        return false;
+    };
+    drop(list.remove(i));
+    true
+}
+
+enum Spot<'a> {
+    Lane(&'a mut Lane),
+    Round(&'a mut Round),
+    Row(&'a mut TableRow),
+}
+
 enum Kids<'a> {
     Blocks(&'a mut Vec<Block>),
     Lanes(&'a mut Vec<Lane>),
@@ -145,19 +159,33 @@ impl Block {
         self.lists().into_iter().flatten().find_map(|b| b.find(id))
     }
 
-    fn row(&mut self, id: &str) -> Option<&mut TableRow> {
-        if let Self::Table(t) = self {
-            return t.rows.iter_mut().find(|r| r.id == id);
+    fn spot(&mut self, id: &str) -> Option<Spot<'_>> {
+        let has = |key: Option<&str>| key == Some(id);
+        let here = match &*self {
+            Self::Scene(s) => s.lanes.iter().flatten().any(|x| has(x.key())),
+            Self::Row(r) => r.rounds.iter().flatten().any(|x| has(x.key())),
+            Self::Table(_) => true,
+            _ => false,
+        };
+        if !here {
+            return self.lists().into_iter().flatten().find_map(|b| b.spot(id));
         }
-        self.lists().into_iter().flatten().find_map(|b| b.row(id))
+        match self {
+            Self::Scene(s) => s.lanes.iter_mut().flatten().find(|x| has(x.key())).map(Spot::Lane),
+            Self::Row(r) => r.rounds.iter_mut().flatten().find(|x| has(x.key())).map(Spot::Round),
+            Self::Table(t) => t.rows.iter_mut().find(|x| has(x.key())).map(Spot::Row),
+            _ => None,
+        }
     }
 
-    fn take_row(&mut self, id: &str) -> Option<TableRow> {
-        if let Self::Table(t) = self {
-            let i = t.rows.iter().position(|r| r.id == id)?;
-            return Some(t.rows.remove(i));
-        }
-        self.lists().into_iter().flatten().find_map(|b| b.take_row(id))
+    fn drop_part(&mut self, id: &str) -> bool {
+        let hit = match self {
+            Self::Scene(s) => s.lanes.as_mut().is_some_and(|l| pull(l, id)),
+            Self::Row(r) => r.rounds.as_mut().is_some_and(|l| pull(l, id)),
+            Self::Table(t) => pull(&mut t.rows, id),
+            _ => false,
+        };
+        hit || self.lists().into_iter().flatten().any(|b| b.drop_part(id))
     }
 
     fn take(&mut self, id: &str) -> Option<Block> {
@@ -202,6 +230,22 @@ fn insert(
     Ok(())
 }
 
+fn replace(root: &mut Block, id: &str, child: &Child) -> Result<(), ApplyError> {
+    let other = || ApplyError::Shape(format!("`{id}` is another kind of child"));
+    if let Some(b) = root.find(id) {
+        let Child::Block(new) = child else { return Err(other()) };
+        b.clone_from(new);
+        return Ok(());
+    }
+    match (root.spot(id).ok_or_else(|| ApplyError::NoBlock(id.into()))?, child) {
+        (Spot::Lane(x), Child::Lane(new)) => x.clone_from(new),
+        (Spot::Round(x), Child::Round(new)) => x.clone_from(new),
+        (Spot::Row(x), Child::TableRow(new)) => x.clone_from(new),
+        _ => return Err(other()),
+    }
+    Ok(())
+}
+
 /// Applies `ops` in order; on an error the ops before it stay applied; `badge` sets a screen's badge, `dot` leaves the screen as is.
 pub fn apply(root: &mut Block, ops: &[Op]) -> Result<(), ApplyError> {
     let no = |id: &str| ApplyError::NoBlock(id.into());
@@ -209,7 +253,11 @@ pub fn apply(root: &mut Block, ops: &[Op]) -> Result<(), ApplyError> {
         match op {
             Op::Merge { id, fields } => match root.find(id) {
                 Some(b) => merge(b, fields)?,
-                None => merge(root.row(id).ok_or_else(|| no(id))?, fields)?,
+                None => match root.spot(id).ok_or_else(|| no(id))? {
+                    Spot::Lane(x) => merge(x, fields)?,
+                    Spot::Round(x) => merge(x, fields)?,
+                    Spot::Row(x) => merge(x, fields)?,
+                },
             },
             Op::Insert {
                 into,
@@ -222,11 +270,11 @@ pub fn apply(root: &mut Block, ops: &[Op]) -> Result<(), ApplyError> {
                 insert(root, into, Child::Block(b), before.as_deref(), None)?;
             }
             Op::Remove { id } => {
-                if root.take(id).is_none() {
-                    drop(root.take_row(id).ok_or_else(|| no(id))?);
+                if root.take(id).is_none() && !root.drop_part(id) {
+                    return Err(no(id));
                 }
             }
-            Op::Replace { id, block } => *root.find(id).ok_or_else(|| no(id))? = block.clone(),
+            Op::Replace { id, block } => replace(root, id, block)?,
             Op::Append { id, keep, parts, text } => match root.find(id) {
                 Some(Block::Prose(p)) => p.grow(*keep, parts, text).map_err(ApplyError::Shape)?,
                 Some(_) => return Err(ApplyError::Shape(format!("`{id}` is no prose block"))),

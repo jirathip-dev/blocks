@@ -78,6 +78,30 @@ final class ApplyTests: XCTestCase {
         XCTAssertEqual(screen.list("blocks")[0].list("rows")[0].list("rounds").compactMap(\.id), ["r1"])
     }
 
+    func testMergeReplaceAndRemoveReachALaneAndARound() throws {
+        let queue = """
+            {"type": "screen", "id": "s", "blocks": [
+              {"type": "scene", "id": "sc", "lanes": [{"id": "l-722", "title": "#722", "state": "idle"},
+                {"id": "l-708", "title": "#708", "state": "idle"}]},
+              {"type": "row", "id": "q", "title": "#722", "rounds": [{"id": "r-722-impl", "name": "impl", "state": "working"},
+                {"id": "r-722-rev", "name": "rev", "state": "idle"}]}]}
+            """
+        let merged = try JSONValue(
+            try applied(
+                #"""
+                [{"op": "merge", "id": "l-722", "fields": {"state": "working"}},
+                 {"op": "merge", "id": "r-722-impl", "fields": {"state": "done"}},
+                 {"op": "replace", "id": "l-708", "block": {"id": "l-708", "title": "#708", "state": "done"}},
+                 {"op": "replace", "id": "r-722-rev", "block": {"id": "r-722-rev", "name": "rev", "state": "needs"}}]
+                """#, to: queue))
+        XCTAssertEqual(merged.list("blocks")[0].list("lanes").compactMap { $0.string("state") }, ["working", "done"])
+        XCTAssertEqual(merged.list("blocks")[1].list("rounds").compactMap { $0.string("state") }, ["done", "needs"])
+        let removed = try JSONValue(
+            try applied(#"[{"op": "remove", "id": "l-722"}, {"op": "remove", "id": "r-722-impl"}]"#, to: queue))
+        XCTAssertEqual(removed.list("blocks")[0].list("lanes").compactMap(\.id), ["l-708"])
+        XCTAssertEqual(removed.list("blocks")[1].list("rounds").compactMap(\.id), ["r-722-rev"])
+    }
+
     func testMoveTakesABlockOutAndPutsItBeforeAnother() throws {
         XCTAssertEqual(try rows(try applied(#"[{"op": "move", "id": "b", "into": "l", "before": "a"}]"#)), ["b", "a"])
         let out = try JSONValue(try applied(#"[{"op": "move", "id": "go", "into": "l"}]"#))

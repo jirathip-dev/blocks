@@ -42,11 +42,13 @@ internal struct RowView: View {
             }
         let style = row.style?.rawValue
         return HStack(spacing: 10) {
-            if let figure = row.figure { Figure(figure: figure, title: row.title) }
+            if let figure = row.figure { Figure(figure: figure) }
             VStack(alignment: .leading, spacing: 2) {
-                Text(row.title).ui(15, .medium, look).lineLimit(1)
+                if let title = row.title {
+                    Text(title).ui(15, .medium, look).lineLimit(1)
                     .foregroundStyle(
                         style == "destructive" ? palette.red : style == "link" ? palette.link : palette.foreground)
+                }
                 if let subtitle {
                     RelativeValue { subtitle.text.text(at: $0, behaved.view.values) }.ui(12, .regular, look).foregroundStyle(
                         palette.tone(subtitle.tone?.rawValue) ?? palette.mute
@@ -130,12 +132,14 @@ extension Relative {
 
 internal struct Figure: View {
     @Environment(\.look) private var look
+    @Environment(\.appBlocks) private var appBlocks
     internal let figure: Blocks.Figure
-    internal var title = ""
 
     internal var body: some View {
         let palette = look.palette
-        if let icon = figure.icon {
+        if let draw = appBlocks?.figure, let json = try? JSONValue(figure) {
+            draw(json)
+        } else if let icon = figure.icon {
             Image(systemName: icon).font(.system(size: 14, weight: .semibold)).foregroundStyle(palette.link).frame(
                 width: 28)
         } else if let avatar = figure.avatar {

@@ -48,7 +48,7 @@ fallback, and its rows and cards have the spacing and type sizes of slice 1.
 
 | File in `look/` | What |
 |---|---|
-| `egui-look-{1440,390}-{light,dark}.png` | `blocks-desktop` as it draws today |
+| `egui-look-{1440,390}-{light,dark}.png` | `blocks-desktop` with the styled look (#303): `blocks-desk --screen look/look.json --size <390x844\|1440x900> --scheme <light\|dark>`, no app font |
 | `gpui-look-{1440,390}-{light,dark}.png` | the prototype |
 | `egui-look-390-{light,dark}-styled.png` | `blocks-desktop` unchanged, with the app setting a font (the OS's), type sizes, spacing and a margin on egui's context: about 30 lines in `proto/egui/src/window.rs` |
 | `egui-scripts-390-light.png`, `gpui-scripts-390-light.png` (and `-2x`) | the scripts screen |

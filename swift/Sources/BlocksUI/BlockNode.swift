@@ -77,9 +77,10 @@ public struct BlockStack: View {
 
     public var body: some View {
         VStack(alignment: .leading, spacing: spacing ?? look.tiles?.seam ?? 10) {
-            ForEach(Array(blocks.enumerated()), id: \.offset) { index, block in
-                let speaker = Self.speaker(block)
-                BlockNode(block: block).environment(\.continues, speaker != nil && index > 0 && Self.speaker(blocks[index - 1]) == speaker)
+            ForEach(ChildKey.keyed(blocks, \.id), id: \.key) { child in
+                let speaker = Self.speaker(child.item)
+                BlockNode(block: child.item)
+                    .environment(\.continues, speaker != nil && child.index > 0 && Self.speaker(blocks[child.index - 1]) == speaker)
             }
         }
     }
@@ -91,4 +92,17 @@ public struct BlockStack: View {
 
 extension EnvironmentValues {
     @Entry internal var continues = false
+}
+
+internal enum ChildKey: Hashable {
+    case id(String)
+    case at(Int)
+
+    internal static func keyed<T>(_ items: [T], _ id: (T) -> String?) -> [(key: Self, index: Int, item: T)] {
+        var seen = Set<String>()
+        return items.enumerated().map { index, item in
+            let key: Self = if let id = id(item), seen.insert(id).inserted { .id(id) } else { .at(index) }
+            return (key, index, item)
+        }
+    }
 }
