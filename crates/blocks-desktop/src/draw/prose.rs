@@ -1,8 +1,9 @@
 use std::time::Duration;
 
 use blocks::{Part, Prose, Span};
-use egui::{vec2, Color32, Frame, RichText, ScrollArea, Sense, Stroke, TextStyle, Ui};
+use egui::{vec2, Align, Color32, Layout, Frame, RichText, ScrollArea, Sense, Stroke, TextStyle, Ui};
 
+use crate::bidi;
 use crate::cx::{Cx, Draw};
 use crate::look::{Look, MARK};
 
@@ -43,7 +44,7 @@ fn part(p: &Part, at: usize, ui: &mut Ui, look: &Look, end: bool) {
             for (i, item) in items.iter().enumerate() {
                 let mark = if *ordered { format!("{}.", i + 1) } else { "•".into() };
                 ui.horizontal_top(|ui| {
-                    ui.label(RichText::new(mark).color(look.mute(ui)));
+                    bidi::label(ui, RichText::new(mark).color(look.mute(ui)));
                     spans(ui, look, item, &TextStyle::Body, end && Some(i) == last);
                 });
             }
@@ -69,7 +70,8 @@ fn ink(ui: &Ui, look: &Look) -> Color32 {
 }
 
 fn spans(ui: &mut Ui, look: &Look, all: &[Span], style: &TextStyle, end: bool) {
-    ui.horizontal_wrapped(|ui| {
+    let said: String = all.iter().map(|s| s.text.as_str()).collect();
+    let row = |ui: &mut Ui| {
         ui.spacing_mut().item_spacing.x = 0.0;
         for s in all {
             let mut t = RichText::new(&s.text).text_style(style.clone()).color(ink(ui, look));
@@ -83,14 +85,23 @@ fn spans(ui: &mut Ui, look: &Look, all: &[Span], style: &TextStyle, end: bool) {
                 t = t.code();
             }
             match &s.link {
-                Some(url) => ui.hyperlink_to(t.color(look.link(ui)).underline(), url),
-                None => ui.label(t),
+                Some(url) => {
+                    let t = bidi::text(ui, t.color(look.link(ui)).underline());
+                    ui.hyperlink_to(t, url)
+                }
+                None => bidi::label(ui, t),
             };
         }
         if end {
             caret(ui, look);
         }
-    });
+    };
+    if bidi::reads_rtl(&said) {
+        let size = vec2(ui.available_size_before_wrap().x, ui.spacing().interact_size.y);
+        ui.allocate_ui_with_layout(size, Layout::right_to_left(Align::Center).with_main_wrap(true), row);
+    } else {
+        ui.horizontal_wrapped(row);
+    }
 }
 
 fn code(text: &str, at: usize, ui: &mut Ui, look: &Look, end: bool) {
@@ -101,7 +112,7 @@ fn code(text: &str, at: usize, ui: &mut Ui, look: &Look, end: bool) {
         ui.set_width(ui.available_width());
         ScrollArea::horizontal().id_salt(("code", at)).show(ui, |ui| {
             ui.horizontal(|ui| {
-                ui.label(RichText::new(text).monospace().color(ink(ui, look)));
+                bidi::label(ui, RichText::new(text).monospace().color(ink(ui, look)));
                 if end {
                     caret(ui, look);
                 }

@@ -1,6 +1,7 @@
 use blocks::Screen;
 use egui::{Button, RichText, Ui};
 
+use crate::bidi;
 use crate::act;
 use crate::cx::{Cx, Draw};
 
@@ -8,7 +9,7 @@ pub(super) const DRAW: Option<Draw<Screen>> = Some(draw);
 
 fn draw(b: &Screen, ui: &mut Ui, cx: &mut Cx<'_>) {
     if let Some(t) = &b.title {
-        ui.heading(RichText::new(t).color(cx.look.fg(ui)));
+        bidi::label(ui, RichText::new(t).heading().color(cx.look.fg(ui)));
     }
     let acts = b.actions.as_deref().unwrap_or_default();
     if !acts.is_empty() {
@@ -17,7 +18,7 @@ fn draw(b: &Screen, ui: &mut Ui, cx: &mut Cx<'_>) {
                 let action = a.tap.as_ref().map_or(a.action.as_deref(), |t| t.action.as_deref());
                 let key = action.unwrap_or(&a.label);
                 let on = cx.act_on(action);
-                if !act::press_as(ui, cx, Some(key), on, action, Button::new(&a.label)) {
+                if !act::press_as(ui, cx, Some(key), on, action, Button::new(bidi::text(ui, &a.label))) {
                     continue;
                 }
                 match (&a.tap, &a.action) {

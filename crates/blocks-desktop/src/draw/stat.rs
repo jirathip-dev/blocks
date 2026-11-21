@@ -3,6 +3,7 @@ use serde_json::Number;
 use egui::emath::Numeric;
 use egui::{pos2, vec2, RichText, Sense, Stroke, Ui};
 
+use crate::bidi;
 use crate::cx::{Cx, Draw};
 use crate::text::shown;
 
@@ -51,9 +52,9 @@ fn tile(t: &Tile<'_>, ui: &mut Ui, cx: &Cx<'_>) {
     let look = cx.look;
     let value = t.value.map(|v| shown(v, cx.values(), cx.now)).unwrap_or_default();
     let unit = t.unit.map(|u| format!(" {u}")).unwrap_or_default();
-    ui.label(RichText::new(format!("{value}{unit}")).strong().size(20.0).color(look.tone(ui, t.tone)));
+    bidi::label(ui, RichText::new(format!("{value}{unit}")).strong().size(20.0).color(look.tone(ui, t.tone)));
     if let Some(l) = t.label {
-        ui.label(RichText::new(l).color(look.mute(ui)));
+        bidi::label(ui, RichText::new(l).color(look.mute(ui)));
     }
     let points: Vec<f64> = t.spark.iter().filter_map(Number::as_f64).collect();
     if points.len() < 2 {

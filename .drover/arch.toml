@@ -253,27 +253,33 @@ mods = ["blocks_cli"]
 may_use = ["guard", "kind", "built", "tree", "wire"]
 
 [[layer]]
+name = "desktop-bidi"
+paths = ["crates/blocks-desktop/src/bidi.rs", "crates/blocks-desktop/src/bidi/**"]
+mods = ["crate::bidi"]
+
+[[layer]]
 name = "desktop-look"
 paths = ["crates/blocks-desktop/src/look.rs", "crates/blocks-desktop/src/art.rs", "crates/blocks-desktop/src/text.rs"]
 mods = ["crate::look", "crate::art", "crate::text"]
+may_use = ["desktop-bidi"]
 
 [[layer]]
 name = "desktop-cx"
 paths = ["crates/blocks-desktop/src/cx.rs", "crates/blocks-desktop/src/drawn.rs", "crates/blocks-desktop/src/act.rs", "crates/blocks-desktop/src/fallback.rs", "crates/blocks-desktop/src/island.rs", "crates/blocks-desktop/src/draw.rs"]
 mods = ["crate::cx", "crate::drawn", "crate::act", "crate::fallback", "crate::island", "crate::draw"]
-may_use = ["desktop-look", "tree"]
+may_use = ["desktop-bidi", "desktop-look", "tree"]
 
 [[layer]]
 name = "desktop-draw"
 paths = ["crates/blocks-desktop/src/draw/**"]
 mods = []
-may_use = ["desktop-look", "desktop-cx"]
+may_use = ["desktop-bidi", "desktop-look", "desktop-cx"]
 
 [[layer]]
 name = "desktop-stage"
 paths = ["crates/blocks-desktop/src/stage.rs", "crates/blocks-desktop/src/lib.rs"]
 mods = ["crate::stage", "blocks_desktop"]
-may_use = ["desktop-look", "desktop-cx", "expr", "behave", "tree"]
+may_use = ["desktop-bidi", "desktop-look", "desktop-cx", "expr", "behave", "tree"]
 
 [[layer]]
 name = "desk"
@@ -343,6 +349,29 @@ reason = "the library is pure: no clock; time is the caller's"
 pattern = "egui"
 paths = ["crates/blocks/Cargo.toml", "crates/blocks/src/**", "site/Cargo.toml"]
 reason = "the blocks crate links no toolkit: egui is the desktop renderer's alone"
+
+[[ban]]
+pattern = "unicode_bidi"
+paths = ["crates/*/src/**"]
+except = ["crates/blocks-desktop/src/bidi.rs", "crates/blocks-desktop/src/bidi/**"]
+reason = "one module knows the bidi algorithm: the rest ask bidi for a galley"
+
+[[ban]]
+pattern = "ui.label("
+paths = ["crates/blocks-desktop/src/**"]
+except = ["crates/blocks-desktop/src/bidi.rs", "crates/blocks-desktop/src/bidi/**"]
+reason = "text reaches egui through bidi::label, para or text, which put right-to-left text in visual order"
+
+[[ban]]
+pattern = "ui.heading("
+paths = ["crates/blocks-desktop/src/**"]
+reason = "a heading is bidi::label with a heading's RichText"
+
+[[ban]]
+pattern = "TextEdit::"
+paths = ["crates/blocks-desktop/src/**"]
+except = ["crates/blocks-desktop/src/bidi.rs", "crates/blocks-desktop/src/bidi/**"]
+reason = "a text field is bidi::edit, which draws the caret of a right-to-left line"
 
 [[ban]]
 pattern = "eframe"
