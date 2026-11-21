@@ -1,0 +1,61 @@
+/* Everything the sidebar kind adds, in the blocks layer, on tokens only. */
+@layer blocks {
+.b-side{--rail:calc(4 * var(--s4));--side:calc(14 * var(--s4));--icon:calc(2 * var(--s3));position:fixed;z-index:6;top:0;bottom:0;left:0;width:var(--rail);display:flex;flex-direction:column;background:var(--card);border-right:1px solid var(--edge);overflow:hidden;transition:width calc(var(--enter) * var(--motion,1)) var(--ease)}
+.b-side,.b-side *{box-sizing:border-box}
+.b-side ul{list-style:none;margin:0;padding:0}
+.b-side .sdh,.b-side .sdf{flex:none;padding:var(--s2)}
+.b-side .sdh{display:flex;align-items:center;min-height:var(--hit);border-bottom:1px solid var(--line)}
+.b-side .sdf{border-top:1px solid var(--line)}
+.b-side .sdg{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding:0 var(--s2)}
+.b-side .sdgr{padding:var(--s2) 0}
+.b-side .sdgr+.sdgr{border-top:1px solid var(--line)}
+.b-side .sdgt{margin:0;padding:var(--s1) var(--s3);min-height:var(--s4);color:var(--mute);font-size:var(--fs-meta);font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.b-side .sdk{position:relative;display:flex;align-items:center;gap:var(--s3);width:100%;height:auto;min-height:var(--hit);padding:0 var(--s3);color:var(--l);text-decoration:none;text-transform:none;font-size:var(--fs);white-space:nowrap;justify-content:flex-start;text-align:left}
+.b-side .sdk::before,.b-side .sdk::after{content:none}
+.b-side .sdk:hover{background:var(--bg)}
+.b-side .sdk:focus-visible,.b-side .sdpin:focus-visible{outline:var(--ring) solid var(--l);outline-offset:calc(-1 * var(--ring))}
+.b-side .sdk[aria-current=page]{background:var(--bg);color:var(--fg);font-weight:600;box-shadow:inset var(--mark) 0 var(--l)}
+.b-side .sdk.in{color:var(--fg)}
+.b-side .sdi{flex:none;width:var(--icon);text-align:center;font-style:normal;font-size:var(--s4);line-height:1;font-variant-emoji:text}
+.b-side .sdi.av{height:var(--icon);display:flex;align-items:center;justify-content:center;border:1px solid var(--l);font-size:var(--fs-meta);font-weight:600}
+.b-side .sdl{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.b-side .sdl small{display:block;color:var(--mute);font-size:var(--fs-meta);font-weight:400}
+.b-side .sdk .tag{flex:none;background:var(--card);font-weight:400}
+.b-side .sdk .tag.bad{color:var(--r)}
+.b-side .sdc{flex:none;width:var(--s4);text-align:center;color:var(--mute);font-style:normal}
+.b-side .sdsub{margin-left:calc(var(--s3) + var(--icon) / 2);border-left:1px solid var(--line)}
+.b-side .sdsub .sdk{min-height:calc(var(--hit) - var(--s2));padding-left:calc(var(--s3) + var(--icon) / 2)}
+.b-side .sdsub .sdk[aria-current=page]{box-shadow:inset var(--mark) 0 var(--l)}
+.b-side .sdpin{flex:none;margin-left:auto}
+.b-side .sdb{flex:1;min-width:0;font-weight:700}
+.b-side .sdb:hover{background:none}
+
+.b-side[data-side=rail] .sdl,.b-side[data-side=rail] .sdgt,.b-side[data-side=rail] .sdc{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.b-side[data-side=rail] .sdgt{min-height:0;padding:0}
+.b-side[data-side=rail] .sdsub,.b-side[data-side=rail] .sdpin{display:none}
+.b-side[data-side=rail] .sdk .tag{position:absolute;top:var(--s1);left:calc(var(--s3) + var(--icon) - var(--s2));padding:0 calc(var(--s1) / 2);line-height:1.2}
+.b-side[data-side=rail] .sdk.in{background:var(--bg);font-weight:600;box-shadow:inset var(--mark) 0 var(--l)}
+
+.b-side[data-side=open]{width:var(--side);border-right-color:var(--l)}
+.b-side[data-side=pinned]{width:var(--side)}
+.b-side[data-side=pinned] .sdpin,.b-side[data-side=open] .sdpin{display:inline-flex}
+
+.b-sidemain{padding-left:calc(4 * var(--s4));transition:padding-left calc(var(--enter) * var(--motion,1)) var(--ease)}
+.b-sidemain.pinned{padding-left:calc(14 * var(--s4))}
+
+.b-sidebar{display:none}
+@media (max-width:599px){
+.b-sidebar{position:sticky;top:0;z-index:4;display:flex;align-items:center;gap:var(--s2);min-height:var(--hit);padding:0 var(--s2);background:var(--card);border-bottom:1px solid var(--edge)}
+.b-sidebar .tw{flex:1}
+.b-side{width:min(calc(18 * var(--s4)),calc(100vw - var(--hit) * 2));border-right-color:var(--l);transform:translateX(calc(-100% * (1 - var(--pull,0))));transition:transform calc(var(--enter) * var(--motion,1)) var(--ease)}
+.b-side[data-side]{width:min(calc(18 * var(--s4)),calc(100vw - var(--hit) * 2))}
+.b-side[data-side=drawer]{--pull:1}
+.b-side .sdpin{display:none!important}
+.b-side .sdx{flex:none;margin-left:auto}
+.b-sidescrim{position:fixed;inset:0;z-index:5;background:var(--scrim);opacity:var(--pull,0);pointer-events:none}
+.b-sidescrim.on{pointer-events:auto}
+.b-sidemain,.b-sidemain.pinned{padding-left:0}
+.b-sideedge{position:fixed;z-index:3;top:var(--hit);bottom:0;left:0;width:calc(2 * var(--s2))}
+}
+@media (min-width:600px){.b-side .sdx,.b-sidescrim,.b-sideedge{display:none}}
+}
