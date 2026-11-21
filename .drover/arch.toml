@@ -50,7 +50,7 @@ generated = [
     "fixtures/fields/*.json",
     "fixtures/fields/trees/*.json",
 ]
-generate = "sh scripts/gen.sh"
+generate = "sh scripts/arch-gen.sh"
 shared = [
     "crates/blocks/src/lib.rs",
     "crates/*/tests/support/**",

@@ -33,7 +33,7 @@ Rust, node 24 and WebKit for the web gates. `./.gatekeeper/run list` names them;
   actionlint, the dependency list in `.gatekeeper/deps.toml`), `rust` (fmt, clippy pedantic and the banned APIs, the
   lint floor and its fixtures, cargo-deny) and `ts` (tsc strict, oxlint, knip; their old findings in
   `.gatekeeper/baseline/`, which only shrinks)
-- `.gatekeeper/gates/`, blocks' own: `test`, `guard` (`blocks check`), `perf` and `soak` in release, `no-egui` (the
+- `.gatekeeper/gates/`, blocks' own: `test`, `gen` (in CI; core/arch runs the generator on a lane), `guard` (`blocks check`), `perf` and `soak` in release, `no-egui` (the
   `blocks` crate's tree), `for-apps`, `web` (`web/lint.mjs`, the node tests, the lint fixtures, the token baseline),
   `react` (the adapter's contract) and `bench` (`bench/` builds)
 - `just sim 2000`: random op sequences on random screens, then one seeded corpus through Rust, TS and Swift; also run

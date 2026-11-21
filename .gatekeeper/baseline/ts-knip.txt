@@ -1,6 +1,3 @@
-web/dist/types/react/src/act.d.ts: unlisted: @types/react
-web/dist/types/react/src/arrange.d.ts: unlisted: @types/react
-web/dist/types/react/src/view.d.ts: unlisted: @types/react
 web/react/src/block.ts: exports: hooksOf
 web/react/test/gesture.test.ts: unresolved: /blocks.js
 web/src/core/apply.ts: exports: isRec
