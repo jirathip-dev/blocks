@@ -20,12 +20,12 @@ sim n="500":
 web-install:
     npm --prefix web ci --no-audit --no-fund
 
-# The token lint on the SwiftUI views (ci/tokens), then the Swift package's tests, warnings as errors; macOS only (CI's swift job).
+# The token lint on the SwiftUI views (ci/tokens), then the Swift package's tests, warnings as errors; macOS only (CI's swift leg).
 swift:
     #!/usr/bin/env bash
     set -euo pipefail
     node --no-warnings web/lint.mjs swift/Sources/BlocksUI
-    if [ "$(uname)" != Darwin ]; then echo "swift: macOS only, skipped (CI's swift job runs it)"; exit 0; fi
+    if [ "$(uname)" != Darwin ]; then echo "swift: macOS only, skipped (CI's swift leg runs it)"; exit 0; fi
     BLOCKS_STRICT=1 swift test
 
 # The 200-row screen in blocks, React and topcoat in headless WebKit (docs/bench.md); writes bench/results.json and docs/bench-blocks.json.
