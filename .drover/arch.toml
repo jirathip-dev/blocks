@@ -20,14 +20,10 @@ generated = [
     "web/src/gen/shapes.ts",
     "fixtures/check/*.json",
     "fixtures/built/*.json",
-    "web/dist/blocks.js",
-    "web/dist/blocks.css",
-    "web/dist/core.js", "web/dist/play.js", "web/dist/import.js", "web/dist/scan.js",
+    "web/dist/*.js", "web/dist/*.css",
     "web/src/gen/scoped.css",
-    "web/dist/blocks.scoped.css",
     "web/dist/types/**",
     "web/react/src/gen/views.ts",
-    "web/dist/react.js",
     "fixtures/trees/react/*.json",
     "fixtures/blocks/*.json",
     "fixtures/trees/*.json",
@@ -70,6 +66,7 @@ shared = [
     "crates/blocks/src/site/kind/mod.rs",
     "crates/blocks/tests/site.rs",
     ".drover/rules.md",
+    "web/package.json",
     "web/test/shot.test.ts",
     "web/react/test/markup.test.ts",
     "site/src/main.rs",
@@ -524,7 +521,7 @@ paths = ["crates/blocks/src/kind/field/mod.rs", "crates/blocks/src/site/field/mo
 max_file_lines = 80
 
 [[size]]
-paths = [".drover/rules.md"]
+paths = [".drover/rules.md", "web/package.json"]
 max_file_lines = 30
 
 [[size]]
