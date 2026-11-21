@@ -1,93 +1,10 @@
+import { get, type Rec } from "./core/apply.ts";
+import type { Append } from "./core/kind/prose.ts";
 import type { Block, Op } from "./gen/types.ts";
 import { enter } from "./motion.ts";
 
-type Rec = { [key: string]: unknown };
-type Spot = { list: unknown[]; at: number } | "root";
-
 export type Draw = (block: Block) => HTMLElement | null;
-
-const walked = ["blocks", "rows", "buttons", "rounds"];
-const hosts: Record<string, string> = { screen: "blocks", sheet: "blocks", section: "blocks", card: "blocks", list: "rows", scene: "lanes", row: "rounds", table: "rows" };
-const isRec = (v: unknown): v is Rec => typeof v === "object" && v !== null && !Array.isArray(v);
-
-function locate(node: Rec, id: string): Spot | undefined {
-  if (node["id"] === id) return "root";
-  for (const key of walked) {
-    const list = node[key];
-    if (!Array.isArray(list)) continue;
-    for (let at = 0; at < list.length; at++) {
-      const x: unknown = list[at];
-      if (!isRec(x)) continue;
-      if (x["id"] === id) return { list, at };
-      const deeper = locate(x, id);
-      if (deeper && deeper !== "root") return deeper;
-    }
-  }
-  return undefined;
-}
-
-function get(root: Rec, id: string): Rec | undefined {
-  const s = locate(root, id);
-  const v: unknown = s === "root" ? root : s?.list[s.at];
-  return isRec(v) ? v : undefined;
-}
-
-function place(root: Rec, into: string, child: unknown, before?: string | null, after?: string | null): boolean {
-  const host = get(root, into);
-  const key = host && typeof host["type"] === "string" ? hosts[host["type"]] : undefined;
-  if (!host || !key) return false;
-  const list = host[key] ?? (host[key] = []);
-  if (!Array.isArray(list)) return false;
-  const find = (id?: string | null) => (id ? list.findIndex((x) => isRec(x) && x["id"] === id) : -1);
-  const b = find(before);
-  const a = find(after);
-  list.splice(b >= 0 ? b : a >= 0 ? a + 1 : list.length, 0, child);
-  return true;
-}
-
-/// Applies `ops` to a copy of `screen` as the crate's `apply` does; undefined when one does not fit or is unknown.
-export function apply(screen: Block, ops: Op[]): Block | undefined {
-  let out = structuredClone(screen);
-  for (const op of ops) {
-    const root: Rec = out;
-    switch (op.op) {
-      case "merge": {
-        const t = get(root, op.id);
-        if (!t) return undefined;
-        for (const [k, v] of Object.entries(op.fields)) if (v === null) delete t[k];
-        else t[k] = v;
-        break;
-      }
-      case "replace": {
-        const s = locate(root, op.id);
-        if (!s) return undefined;
-        if (s === "root") out = structuredClone(op.block);
-        else s.list[s.at] = structuredClone(op.block);
-        break;
-      }
-      case "remove":
-      case "move": {
-        const s = locate(root, op.id);
-        if (!s || s === "root") return undefined;
-        const [b] = s.list.splice(s.at, 1);
-        if (op.op === "move" && !place(root, op.into, b, op.before)) return undefined;
-        break;
-      }
-      case "insert":
-        if (!place(root, op.into, structuredClone(op.block), op.before, op.after)) return undefined;
-        break;
-      case "screen":
-        out = structuredClone(op.screen);
-        break;
-      case "badge":
-        if (root["type"] === "screen") root["badge"] = op.count;
-        break;
-      default:
-        if (op.op !== "dot") return undefined;
-    }
-  }
-  return out;
-}
+export type Grow = (el: HTMLElement, op: Append) => boolean;
 
 function node(el: Element, id: string): Element | undefined {
   if (el.getAttribute("data-id") === id) return el;
@@ -100,11 +17,12 @@ function node(el: Element, id: string): Element | undefined {
 
 const home = (el: Element): Element => Array.from(el.children).find((c) => c.hasAttribute("data-kids")) ?? el;
 
-type View = { root: HTMLElement; draw: Draw };
+type View = { root: HTMLElement; draw: Draw; grow?: Grow | undefined; fresh: Set<Element> };
 
 function whole(v: View, model: Block): void {
   const n = v.draw(model);
   v.root.replaceChildren(...(n ? [n] : []));
+  if (n) v.fresh.add(n);
 }
 
 function one(v: View, op: Op, model: Block): void {
@@ -115,7 +33,7 @@ function one(v: View, op: Op, model: Block): void {
     if (el === v.root || b === model) return whole(v, model);
     const n = b && isBlock(b) ? v.draw(b) : null;
     if (el.querySelector("iframe") && n?.isEqualNode(el)) return;
-    if (n) el.replaceWith(n);
+    if (n) el.replaceWith(n), v.fresh.add(n);
     else el.remove();
   };
   const at = "id" in op ? node(v.root, op.id) : undefined;
@@ -129,6 +47,12 @@ function one(v: View, op: Op, model: Block): void {
     }
     case "replace":
       return redraw(op.id);
+    case "append": {
+      const el = node(v.root, op.id);
+      for (let e: Element | null | undefined = el; e && e !== v.root; e = e.parentElement) if (v.fresh.has(e)) return;
+      if (!(el instanceof HTMLElement && v.grow?.(el, op))) redraw(op.id);
+      return;
+    }
     case "remove":
       return node(v.root, op.id)?.remove();
     case "screen":
@@ -166,17 +90,17 @@ const refocus = (root: HTMLElement, k: Kept, i = root.querySelector(`.form[data-
   i instanceof HTMLInputElement && i !== document.activeElement && ((i.value = k.value), i.focus(), k.from === null || i.setSelectionRange(k.from, k.to));
 
 /// Patches the view in `root` with every op queued within one animation frame, in one pass; over 500 it redraws.
-export function patcher(o: { root: HTMLElement; model: () => Block; draw: Draw; saved?: () => void }) {
+export function patcher(o: { root: HTMLElement; model: () => Block; draw: Draw; grow?: Grow; saved?: () => void }) {
   let ops: Op[] = [];
   let over = false;
   let due = false;
   const run = (): void => {
     due = false;
     if (!ops.length && !over) return;
-    const [model, todo, k] = [o.model(), ops, kept(o.root)];
+    const [model, todo, k, v] = [o.model(), ops, kept(o.root), { ...o, fresh: new Set<Element>() }];
     ops = [];
-    if (over) whole(o, model);
-    else for (const op of todo) one(o, op, model);
+    if (over) whole(v, model);
+    else for (const op of todo) one(v, op, model);
     if (k) refocus(o.root, k);
     over = false;
     o.saved?.();

@@ -1,2 +1,3 @@
 import type { Tool } from "../../gen/types.ts";
-export declare function tool(b: Tool): HTMLElement;
+import type { Ctx } from "../ctx.ts";
+export declare function tool(b: Tool, c: Ctx): HTMLElement;

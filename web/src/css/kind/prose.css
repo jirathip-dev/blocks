@@ -1,3 +1,7 @@
 .prose{line-height:1.5}
 .prose blockquote{margin:var(--s2) 0;padding-left:var(--s3);border-left:2px solid var(--edge);color:var(--mute)}
 .prose hr{border:0;border-top:1px solid var(--edge)}
+.prose[aria-busy=true]>:is(p,h1,h2,h3,h4,h5,h6,blockquote):last-child::after,.prose[aria-busy=true]>pre:last-child>code::after,.prose[aria-busy=true]>:is(ul,ol):last-child>li:last-child::after,.prose[aria-busy=true]:empty::before{content:"";display:inline-block;width:var(--s2);height:var(--fs);margin-left:var(--s1);vertical-align:text-bottom;background:var(--l);animation:b-caret calc(var(--build) * 5 * var(--motion,1)) steps(1) infinite}
+.prose[aria-busy=true]:empty{display:block;min-height:calc(var(--fs) * 1.5)}
+.prose[aria-busy=true]:empty::before{margin-left:0}
+@keyframes b-caret{50%{opacity:0}}

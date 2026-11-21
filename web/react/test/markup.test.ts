@@ -43,6 +43,8 @@ more.push(
   { type: "composer", id: "cm", action: "say", label: "Send", acts: { steer: "steer", unqueue: "unq" }, queued: [{ q: 1, text: "later" }], chips: [{ name: "model", all: ["m1", "m2"], cur: "m2" }, { name: "effort", all: ["lo", "hi"] }] },
 );
 more.push({ ...JSON.parse(readFileSync(new URL("../../../fixtures/gesture/media.json", import.meta.url), "utf8")).block });
+more.push({ ...JSON.parse(readFileSync(new URL("../../../fixtures/append/thread.screen.json", import.meta.url), "utf8")) });
+more.push({ type: "section", id: "two", blocks: [{ type: "message", id: "m1", role: "owner", name: "Mira", blocks: [{ type: "tool", id: "x", name: "Test", state: "failed", summary: "1 failed", body: "boom" }] }, { type: "message", id: "m2", role: "owner", name: "Mira", files: [{ name: "a.zip", tap: { action: "get" } }] }] });
 
 let browser;
 before(async () => (browser = await webkit.launch()));
@@ -66,7 +68,7 @@ async function markup(p, b) {
 }
 
 test("each kind React draws natively writes the HTML renderer's markup: tags, classes, data-*, role, aria-* and own text, in order", async () => {
-  deepStrictEqual([...native].sort(), ["button", "card", "chips", "choice", "composer", "config", "diagram", "diff", "editor", "form", "hero", "images", "import", "list", "media", "nav", "pages", "prose", "row", "run", "scene", "screen", "secret", "section", "sheet", "stat", "table", "text", "timeline", "web"]);
+  deepStrictEqual([...native].sort(), ["button", "card", "chips", "choice", "composer", "config", "diagram", "diff", "editor", "form", "hero", "images", "import", "list", "media", "message", "nav", "pages", "prose", "row", "run", "scene", "screen", "secret", "section", "sheet", "stat", "table", "text", "timeline", "tool", "web"]);
   const p = await browser.newPage();
   await p.setContent("<base href=https://x.test/><div id=html></div><div id=react></div>");
   await p.addScriptTag({ content: reactJs() });

@@ -1364,7 +1364,7 @@
     "faults": [],
     "name": "fixtures/blocks/message.json",
     "screen": {
-      "avatar": "/media/sample.svg",
+      "avatar": "media/sample.svg",
       "blocks": [
         {
           "id": "chat-a",
@@ -1397,16 +1397,16 @@
       ],
       "files": [
         {
-          "name": "plan.pdf",
+          "name": "page.svg",
           "tap": {
-            "url": "/files/plan.pdf"
+            "url": "media/page.svg"
           }
         },
         {
-          "name": "shot.png",
-          "src": "/media/sample.svg",
+          "name": "sample.svg",
+          "src": "media/sample.svg",
           "tap": {
-            "url": "/files/shot.png"
+            "url": "media/sample.svg"
           }
         }
       ],
@@ -3808,7 +3808,7 @@
           "type": "import"
         },
         {
-          "avatar": "/media/sample.svg",
+          "avatar": "media/sample.svg",
           "blocks": [
             {
               "fallback": {
@@ -3853,16 +3853,16 @@
           },
           "files": [
             {
-              "name": "plan.pdf",
+              "name": "page.svg",
               "tap": {
-                "url": "/files/plan.pdf"
+                "url": "media/page.svg"
               }
             },
             {
-              "name": "shot.png",
-              "src": "/media/sample.svg",
+              "name": "sample.svg",
+              "src": "media/sample.svg",
               "tap": {
-                "url": "/files/shot.png"
+                "url": "media/sample.svg"
               }
             }
           ],

@@ -28,7 +28,8 @@ test("a web block whose src is not http or https draws a muted box at its height
 });
 
 test("a redraw of a web block with the same src keeps its frame; a new src replaces it", async () => {
-  const { apply, patcher } = await import("../../src/patch.ts");
+  const { patcher } = await import("../../src/patch.ts");
+  const { apply } = await import("../../src/core/apply.ts");
   let model = { type: "screen", id: "s", title: "Q", blocks: [{ ...fixture("web"), show: null }] };
   const root = document.createElement("div");
   const draw = (b) => render(b, ctx());

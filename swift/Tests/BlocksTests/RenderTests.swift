@@ -16,7 +16,7 @@ final class RenderTests: XCTestCase {
         "screen", "sheet", "section", "list", "row", "card", "choice", "form", "config", "secret", "run", "button",
         "chips", "stat", "text", "images", "web", "diff", "editor", "scene", "diagram", "composer", "lines",
     ]
-    private static let content = ["prose", "hero", "media", "nav", "steps", "toast", "pages", "timeline", "import"]
+    private static let content = ["prose", "hero", "media", "nav", "steps", "toast", "pages", "timeline", "import", "message", "tool"]
     private let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent().appendingPathComponent("../../..")
 
     private func pixels(
@@ -92,6 +92,16 @@ final class RenderTests: XCTestCase {
             XCTAssertGreaterThan(try pixels(BlocksView(fixture(kind), source: .core)), 0, "\(kind) draws nothing")
         }
         XCTAssertGreaterThan(height(BlocksView(try fixture("prose"), source: .core)), 150, "every part laid out")
+    }
+
+    func testASecondMessageBySameSpeakerDrawsNoHead() throws {
+        let pair = { (second: String) in
+            try self.block(
+                #"{"type": "section", "id": "s", "blocks": [{"type": "message", "id": "a", "role": "agent", "name": "Scout", "blocks": [{"type": "text", "id": "x", "text": "hi"}]}, {"type": "message", "id": "b", "role": "agent", "name": "\#(second)", "blocks": [{"type": "text", "id": "y", "text": "hi"}]}]}"#)
+        }
+        let same = height(BlocksView(try pair("Scout"), source: .core))
+        let other = height(BlocksView(try pair("Mira"), source: .core))
+        XCTAssertGreaterThan(other, same + 10)
     }
 
     func testATableIsAGridWhenWideAndStackedRowsOnAPhone() throws {

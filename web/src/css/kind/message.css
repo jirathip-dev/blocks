@@ -1,1 +1,27 @@
-.message{margin:var(--s1) 0}
+.msg{display:grid;grid-template-columns:var(--ctl) minmax(0,1fr);column-gap:var(--s3);padding:var(--s3) 0 var(--s2)}
+.msg+.msg.cont{padding-top:0}
+.msg.cont>.mh{display:none}
+.msg.cont>.mav{visibility:hidden;height:0}
+.mav{grid-row:1/3;width:var(--ctl);height:var(--ctl);object-fit:cover;border-radius:var(--radius)}
+.mav.ini{display:grid;place-items:center;background:var(--line);color:var(--fg);font-weight:700;text-transform:uppercase}
+.msg[data-variant=owner] .mav.ini{background:var(--l);color:var(--bg)}
+.mh{display:flex;align-items:baseline;gap:var(--s2);min-width:0;min-height:var(--ctl);line-height:var(--ctl)}
+.mn{min-width:0;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mr{flex:none;color:var(--mute);font-size:var(--fs-meta)}
+.mb{grid-column:2;min-width:0;display:flex;flex-direction:column;gap:var(--s2)}
+.mb>.prose>:first-child{margin-top:0}
+.mb>.prose>:last-child{margin-bottom:0}
+.msg[data-variant=owner]>.mb>.prose{padding:var(--s2) var(--s3);background:var(--card);box-shadow:inset var(--mark) 0 0 var(--l)}
+.msg[data-variant=system]{grid-template-columns:minmax(0,1fr);padding:var(--s2) 0;color:var(--mute);font-size:var(--fs-meta);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.msg[data-variant=system] .mr{display:none}
+.msg[data-variant=system] .mh{min-height:0;line-height:inherit}
+.msg[data-variant=system] .mn{font-weight:600}
+.msg[data-variant=system]>.mb{grid-column:1}
+.mf{display:flex;flex-direction:column;gap:var(--s1);margin-top:var(--s1)}
+.mfi{display:flex;gap:var(--s2);overflow-x:auto}
+.mfi>*{flex:none;display:block;height:auto;min-width:44px;min-height:44px;padding:0;border:0;background:none;line-height:0}
+.mfi img{height:calc(var(--hit) * 2);max-width:calc(var(--hit) * 4);object-fit:cover;border:1px solid var(--line);border-radius:var(--radius)}
+.mf button::before,.mf button::after{content:none}
+.mff{display:flex;align-items:center;justify-content:flex-start;height:auto;line-height:inherit;text-transform:none;gap:var(--s2);min-height:var(--hit);max-width:100%;padding:0 var(--s3);box-sizing:border-box;border:1px solid var(--edge);background:var(--card);color:var(--fg);font:inherit;text-align:left;text-decoration:none}
+.mff>.mfx{flex:none;font-size:var(--fs-meta);color:var(--mute);text-transform:lowercase}
+.mff>.mfn{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--link);text-decoration:underline;text-underline-offset:var(--seam)}

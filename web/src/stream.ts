@@ -1,6 +1,6 @@
 import type { Block, Bye, Frame, Have, Hello, KeyState, Op, Synced } from "./gen/types.ts";
 import { schemaVersion } from "./gen/types.ts";
-import { apply } from "./patch.ts";
+import { apply } from "./core/apply.ts";
 
 export type Took = "patched" | "replaced" | "old" | "gap";
 export type Outdated = "app" | "server";

@@ -5120,8 +5120,7 @@
         {
           "type": "string"
         }
-      ],
-      "description": "Who sent a message: an agent, the owner, or the system."
+      ]
     },
     "Round": {
       "description": "One round of a row's work: its state, lane, blocks and links.",
@@ -7850,8 +7849,7 @@
         {
           "type": "string"
         }
-      ],
-      "description": "Where a tool call is: still running, done, or failed."
+      ]
     },
     "Total": {
       "anyOf": [

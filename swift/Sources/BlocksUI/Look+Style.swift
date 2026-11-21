@@ -28,6 +28,11 @@ internal enum Scale {
     static let gap: CGFloat = 6
     static let pad: CGFloat = 4
     static let mark: CGFloat = 3
+    static let avatar: CGFloat = 28
+    static let strip: CGFloat = 88
+    static let fold: CGFloat = 200
+    static let blink = 0.5
+    static let caret = "▍"
 }
 
 extension View {

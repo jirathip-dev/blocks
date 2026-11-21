@@ -17,7 +17,9 @@ const GROUPS: [(&str, &[&str]); 4] = [
     ("Layout", &["screen", "section", "sheet", "card"]),
     (
         "Words and pictures",
-        &["text", "prose", "hero", "nav", "media", "images", "pages", "diagram"],
+        &[
+            "text", "prose", "message", "tool", "hero", "nav", "media", "images", "pages", "diagram",
+        ],
     ),
     (
         "Lists and figures",
@@ -77,6 +79,8 @@ fn about(kind: &str) -> &'static str {
         "media" => "A picture or a video of a known size.",
         "images" => "A strip of images.",
         "pages" => "A document as the app's pictures of its pages: paged and zoomed, with its PDF.",
+        "message" => "One message of a chat: who said it, its text as it streams in, its tool calls and files.",
+        "tool" => "One tool call of an agent: its name, a summary, its state and a body that opens.",
         "diagram" => "A diagram from its source, with counts on its nodes.",
         "list" => "A list of rows.",
         "row" => "One row: a title, a line, a value.",
@@ -533,6 +537,8 @@ pub fn samples() -> Vec<(String, Vec<Block>)> {
         vec![document()],
         picked("timeline"),
         picked("import"),
+        picked("message"),
+        picked("tool"),
         vec![paperwork()],
     ]
     .concat();

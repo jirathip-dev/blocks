@@ -1,5 +1,5 @@
 {
-  "avatar": "/media/sample.svg",
+  "avatar": "media/sample.svg",
   "blocks": [
     {
       "id": "chat-a",
@@ -34,14 +34,14 @@
     {
       "name": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
       "tap": {
-        "url": "/files/plan.pdf"
+        "url": "media/page.svg"
       }
     },
     {
       "name": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
-      "src": "/media/sample.svg",
+      "src": "media/sample.svg",
       "tap": {
-        "url": "/files/shot.png"
+        "url": "media/sample.svg"
       }
     }
   ],

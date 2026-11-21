@@ -33,7 +33,8 @@ fn wrap(w: &mut W<'_>, tag: &str, all: &[Value]) {
 }
 
 pub(super) fn draw(w: &mut W<'_>, b: &Value) {
-    w.open_block("div", "prose", b, &[]);
+    let busy: &[(&str, &str)] = if on(b, "streaming") { &[("aria-busy", "true")] } else { &[] };
+    w.open_block("div", "prose", b, busy);
     for p in list(b, "parts") {
         match get(p, "part").unwrap_or_default() {
             "heading" => {

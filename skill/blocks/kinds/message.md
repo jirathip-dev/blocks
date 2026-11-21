@@ -24,7 +24,7 @@ The Rust type `Message`; in TS, `message(fields: Message)` from `web/src/gen/bui
   "id": "chat",
   "role": "agent",
   "name": "Scout",
-  "avatar": "/media/sample.svg",
+  "avatar": "media/sample.svg",
   "blocks": [
     {
       "type": "prose",
@@ -57,17 +57,17 @@ The Rust type `Message`; in TS, `message(fields: Message)` from `web/src/gen/bui
   ],
   "files": [
     {
-      "name": "plan.pdf",
+      "name": "page.svg",
       "tap": {
-        "url": "/files/plan.pdf"
+        "url": "media/page.svg"
       }
     },
     {
-      "name": "shot.png",
+      "name": "sample.svg",
       "tap": {
-        "url": "/files/shot.png"
+        "url": "media/sample.svg"
       },
-      "src": "/media/sample.svg"
+      "src": "media/sample.svg"
     }
   ]
 }

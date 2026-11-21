@@ -4,10 +4,7 @@ use crate::kind::Block;
 
 listed! { 36: Tool(Tool) = "tool" }
 
-words!(
-    /// Where a tool call is: still running, done, or failed.
-    ToolState { Running, Done, Failed }
-);
+words!(ToolState { Running, Done, Failed });
 
 kind! {
     /// One tool call: its name, a one-line summary, its state, and a body shown when it is opened.

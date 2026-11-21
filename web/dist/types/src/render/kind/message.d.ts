@@ -1,2 +1,3 @@
 import type { Message } from "../../gen/types.ts";
-export declare function message(b: Message): HTMLElement;
+import type { Ctx } from "../ctx.ts";
+export declare function message(b: Message, c: Ctx): HTMLElement;

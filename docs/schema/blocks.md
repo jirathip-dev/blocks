@@ -5,7 +5,7 @@ The core kinds are the superset of both apps': cooee's 21 (`screen`, `sheet`, `s
 `choice`, `form`, `config`, `secret`, `run`, `button`, `chips`, `stat`, `text`, `images`, `web`, `diff`, `editor`,
 `scene`, `diagram`), drover's `composer`, the content kinds `prose`, `hero`, `media`, `nav`, the `island`, the
 line-item editor `lines`, `steps` (a stepper or progress bars), the data `table`, the `toast` an action's answer
-carries and the `timeline`, 32 in all, with every field either app sends.
+carries, the `timeline`, and the chat's `message` and `tool`, with every field either app sends.
 Each kind has `new(<its required fields>)` and a setter per optional one; a server builds its blocks so, never with
 `json!`. Any other `type` is an app's own kind (`AppBlock`): it is
 kept whole, and may carry a `fallback` row. A core kind of the wrong shape is refused, by the types and by the
@@ -13,6 +13,13 @@ schema. `Built::of` writes a server's own screen with the fallback of each kind 
 `Built::check` lists its faults: an id twice, an unknown kind, a wrong shape, a field its kind lacks, an app kind
 named like a core one or with no fallback, a state key read but not declared, a stepper with neither a
 current step nor `done`.
+
+A `message` is one message of a conversation: its `role` (`agent`, `owner`, `system`), its speaker's `name` and an
+optional `avatar`, then its `blocks` in the order they were said (a `prose` for text, a `tool` for each tool call, any
+other block), then its `files`, each a `name`, a `tap` that opens it and, for an image, a small `src`. A `tool` is one
+call: its `name`, its `state` (`running`, `done`, `failed`), a one-line `summary` and an optional plain-text `body`
+folded until opened. A `prose` with `streaming` is still being written: renderers draw a caret after it and mark it
+busy, and `diff` grows it by `append` (stream.md). `Prose::read` turns markdown into parts once, on the server.
 
 A `lines` block's `calc` maps a column to an `Expr` over its row's values (`{"mul": [{"get": "qty"}, {"get": "price"}]}`),
 worked out as you type; its `sum` columns are totalled in minor units (`scale` decimals, default 2), never as floats.

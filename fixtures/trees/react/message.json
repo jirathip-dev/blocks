@@ -2,7 +2,7 @@
   "kind": "message",
   "id": "chat",
   "variant": "agent",
-  "drawn": "fallback",
+  "drawn": "native",
   "role": "article",
   "name": "Scout",
   "children": [
@@ -19,7 +19,7 @@
       "kind": "tool",
       "id": "chat-read",
       "variant": "done",
-      "drawn": "fallback",
+      "drawn": "native",
       "role": "group",
       "name": "Read",
       "children": []

@@ -1,1 +1,19 @@
-.tool{margin:var(--s1) 0}
+.tol{min-width:0;max-width:100%;box-sizing:border-box;margin:0;border:1px solid var(--line);background:var(--card)}
+.tol+.tol{margin-top:calc(-1 * var(--s2) - 1px)}
+.tol>details{margin:0}
+.tol summary,.tol>.toh{list-style:none;display:flex;align-items:center;justify-content:flex-start;height:auto;line-height:inherit;text-transform:none;white-space:normal;gap:var(--s2);min-height:var(--hit);padding:0 var(--s3);box-sizing:border-box;width:100%;margin:0;border:0;border-radius:0;background:none;font:inherit;color:inherit;text-align:left;cursor:default}
+.tol summary::-webkit-details-marker{display:none}
+.tol>.toh::before,.tol>.toh::after{content:none}
+.tol.has>.toh,.tol summary{cursor:pointer}
+.tol>.toh:focus-visible,.tol summary:focus-visible{outline:var(--ring) solid var(--l);outline-offset:calc(-1 * var(--ring))}
+.tog{flex:none;width:var(--s4);text-align:center;font-style:normal;font-weight:700}
+.tol[data-variant=running] .tog{color:var(--fk-g);animation:s calc(var(--build) * 5 * var(--motion,1)) linear infinite}
+.tol[data-variant=done] .tog{color:var(--l)}
+.tol[data-variant=failed]{box-shadow:inset var(--mark) 0 0 var(--r)}
+.tol[data-variant=failed] .tog,.tol[data-variant=failed] .tos{color:var(--r)}
+.ton{flex:none;max-width:calc(100% * .4);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:var(--fs-meta);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tos{flex:1;min-width:0;color:var(--mute);font-size:var(--fs-meta);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tol[data-variant=running] .tos{color:var(--fk-g)}
+.toc{flex:none;width:var(--s4);color:var(--mute);font-weight:700;text-align:center}
+.tol>[aria-expanded=true] .toc,.tol details[open]>summary .toc{transform:rotate(90deg)}
+.tob{box-sizing:border-box;max-width:100%;margin:0;max-height:calc(var(--fs-meta) * 18);overflow:auto;padding:var(--s2) var(--s3);border-top:1px solid var(--line);background:var(--bg);border-radius:0;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:var(--fs-meta);line-height:1.5;color:var(--mute);white-space:pre}

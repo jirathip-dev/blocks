@@ -4,10 +4,7 @@ use crate::kind::{Block, Part, Prose, Span, Tap, Tool, ToolState};
 
 listed! { 35: Message(Message) = "message" }
 
-words!(
-    /// Who sent a message: an agent, the owner, or the system.
-    Role { Agent, Owner, System }
-);
+words!(Role { Agent, Owner, System });
 
 wire! {
     /// A message's attachment: its name and what opens it; with `src` it is an image, drawn small.
@@ -39,13 +36,13 @@ fn said(id: &str, text: &str) -> Block {
 }
 
 pub(super) fn sample() -> Vec<Block> {
-    let file = |name: &str, src: Option<&str>| Attachment {
+    let file = |name: &str, image: bool| Attachment {
         name: name.into(),
         tap: Tap {
-            url: Some(format!("/files/{name}")),
+            url: Some(format!("media/{name}")),
             ..Tap::default()
         },
-        src: src.map(Into::into),
+        src: image.then(|| format!("media/{name}")),
     };
     let read = Tool::new("Read", ToolState::Done)
         .id("chat-read")
@@ -54,15 +51,15 @@ pub(super) fn sample() -> Vec<Block> {
     vec![Block::Message(Box::new(
         Message::new(Role::Agent, "Scout")
             .id("chat")
-            .avatar("/media/sample.svg")
+            .avatar("media/sample.svg")
             .blocks(vec![
                 said("chat-a", "Reading both files."),
                 Block::Tool(Box::new(read)),
                 Block::Prose(Box::new(Prose::new(vec![]).id("chat-b").streaming(true))),
             ])
             .files(vec![
-                file("plan.pdf", None),
-                file("shot.png", Some("/media/sample.svg")),
+                file("page.svg", false),
+                file("sample.svg", true),
             ]),
     ))]
 }
