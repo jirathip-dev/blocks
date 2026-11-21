@@ -10,6 +10,7 @@ public struct ActButton<Label: View>: View {
     @Environment(\.openThread) private var openThread
     @Environment(\.open) private var open
     @Environment(\.openBeside) private var openBeside
+    @Environment(\.pending) private var sent
     @State private var pending: Source?
     private let action: String?
     private let source: Source
@@ -31,7 +32,8 @@ public struct ActButton<Label: View>: View {
         .buttonStyle(.plain)
         .modifier(Confirming(pending: $pending) { _ in fire() })
         .modifier(Identified(id: sends, action: true))
-        .disabled(sends.map(behaved.view.acts.contains) == true)
+        .disabled(sends.map { behaved.view.acts.contains($0) || sent.contains($0) } == true)
+        .opacity(sends.map(sent.contains) == true ? 0.5 : 1)
     }
 
     private var sends: String? {

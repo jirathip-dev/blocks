@@ -9,6 +9,8 @@ public struct BlocksView: View {
     private let source: LayoutSource?
     private let act: @MainActor (BlockAction) -> Void
     private let open: @MainActor (String) -> Void
+    private let openBeside: (@MainActor (String) -> Void)?
+    private let pending: Set<String>
     private let openThread: @MainActor (String) -> Void
     private let refresh: (@MainActor () -> Void)?
     private let acted: (@MainActor (BlockAction) async -> Bool)?
@@ -35,6 +37,7 @@ public struct BlocksView: View {
             }
         }
         .environment(\.act, act).environment(\.acted, acted).environment(\.open, open).environment(\.refresh, refresh)
+        .environment(\.openBeside, openBeside).environment(\.pending, pending)
         .environment(\.openThread, openThread).environment(\.focus, focus).environment(\.picked, picked)
         .environment(\.card, CardContext(poster: source)).environment(\.screenId, block.id)
         .environment(\.behaved, Behaved(view: Behaviour(json, state: state), state: state, edited: Set(edited.keys)))
@@ -51,6 +54,8 @@ public struct BlocksView: View {
         state: BlockState = [:],
         act: @escaping @MainActor (BlockAction) -> Void = { _ in },
         open: @escaping @MainActor (String) -> Void = { _ in },
+        openBeside: (@MainActor (String) -> Void)? = nil,
+        pending: Set<String> = [],
         openThread: @escaping @MainActor (String) -> Void = { _ in },
         refresh: (@MainActor () -> Void)? = nil,
         acted: (@MainActor (BlockAction) async -> Bool)? = nil
@@ -62,6 +67,8 @@ public struct BlocksView: View {
         self.source = source
         self.act = act
         self.open = open
+        self.openBeside = openBeside
+        self.pending = pending
         self.openThread = openThread
         self.focus = focus
         self.picked = picked
@@ -127,6 +134,7 @@ extension EnvironmentValues {
     @Entry internal var actionBlock: String?
     @Entry internal var opened: Set<String> = []
     @Entry internal var folds = Folds()
+    @Entry internal var pending: Set<String> = []
 
     internal var edit: @MainActor (BlockState) -> Void {
         get { self[EditKey.self] }

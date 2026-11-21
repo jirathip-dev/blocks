@@ -14,7 +14,8 @@ internal struct LaneStage: View {
             }
             ScrollView(.horizontal) {
                 HStack(spacing: 8) {
-                    ForEach(Array((block.lanes ?? []).enumerated()), id: \.offset) { _, lane in
+                    ForEach(ChildKey.keyed(block.lanes ?? []) { $0.id }, id: \.key) { child in
+                        let lane = child.item
                         ActButton(source: Source(tap: lane.tap)) {
                             HStack(spacing: 6) {
                                 if let figure = appBlocks?.figure, let json = try? JSONValue(lane) {

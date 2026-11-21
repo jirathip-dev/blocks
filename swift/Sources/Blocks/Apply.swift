@@ -223,6 +223,8 @@ extension JSONValue {
             case "list", "table": ["rows"]
             case "card": ["blocks", "buttons"]
             case "message": ["blocks"]
+            case "scene": ["lanes"]
+            case "row": ["rounds"]
             default: []
             }
         for key in keys {

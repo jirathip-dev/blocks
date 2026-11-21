@@ -74,6 +74,7 @@
         },
         {
           "id": "b",
+          "title": 3,
           "type": "row"
         },
         {
@@ -489,11 +490,6 @@
         "fault": "extra",
         "field": "subtitle",
         "kind": "screen"
-      },
-      {
-        "fault": "shape",
-        "kind": "row",
-        "why": "data did not match any variant of untagged enum Block"
       },
       {
         "fault": "shape",

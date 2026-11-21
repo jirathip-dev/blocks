@@ -262,7 +262,7 @@ fn sample() -> Vec<OldFrame> {
         },
         Op::Replace {
             id: "note".into(),
-            block: Block::Card(Box::new(card)),
+            block: Child::Block(Block::Card(Box::new(card))),
         },
         Op::Remove { id: "d".into() },
         Op::Badge { count: 2 },

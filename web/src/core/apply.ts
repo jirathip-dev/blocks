@@ -4,7 +4,7 @@ import { grow } from "./kind/prose.ts";
 export type Rec = { [key: string]: unknown };
 type Spot = { list: unknown[]; at: number } | "root";
 
-const walked = ["blocks", "rows", "buttons", "rounds"];
+const walked = ["blocks", "rows", "buttons", "rounds", "lanes"];
 const hosts: Record<string, string> = { screen: "blocks", sheet: "blocks", section: "blocks", card: "blocks", message: "blocks", list: "rows", scene: "lanes", row: "rounds", table: "rows" };
 export const isRec = (v: unknown): v is Rec => typeof v === "object" && v !== null && !Array.isArray(v);
 
@@ -59,8 +59,9 @@ export function apply(screen: Block, ops: Op[]): Block | undefined {
       case "replace": {
         const s = locate(root, op.id);
         if (!s) return undefined;
-        if (s === "root") out = structuredClone(op.block);
-        else s.list[s.at] = structuredClone(op.block);
+        if (s !== "root") s.list[s.at] = structuredClone(op.block);
+        else if ("type" in op.block) out = structuredClone(op.block);
+        else return undefined;
         break;
       }
       case "remove":

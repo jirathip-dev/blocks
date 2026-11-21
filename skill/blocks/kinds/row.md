@@ -25,7 +25,7 @@ The Rust type `Row`; in TS, `row(fields: Row)` from `web/src/gen/builders.ts`.
 | `subtitle` | `Toned` | optional |
 | `swipe` | `Act[]` | optional |
 | `tap` | `Tap` | optional |
-| `title` | `string` | required |
+| `title` | `string` | optional |
 | `value` | `Shown` | optional |
 
 ## A sample
