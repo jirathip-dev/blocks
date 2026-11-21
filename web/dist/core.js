@@ -3077,6 +3077,25 @@ var defs = {
           "null"
         ]
       },
+      "issue": {
+        "minimum": 0,
+        "type": [
+          "integer",
+          "null"
+        ]
+      },
+      "load": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "moment": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
       "state": {
         "anyOf": [
           {
@@ -6198,6 +6217,12 @@ var defs = {
           {
             "type": "null"
           }
+        ]
+      },
+      "value": {
+        "type": [
+          "string",
+          "null"
         ]
       },
       "was": {

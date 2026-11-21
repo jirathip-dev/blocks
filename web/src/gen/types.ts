@@ -94,7 +94,7 @@ export type FieldNode = { drawn: FieldDrawn; label: string; name: string; role: 
 
 export type FieldValue = string | number | boolean;
 
-export type Figure = { act?: string | null; avatar?: string | null; coat?: string | null; grow?: string | null; icon?: string | null; state?: Tone | null; tool?: string | null };
+export type Figure = { act?: string | null; avatar?: string | null; coat?: string | null; grow?: string | null; icon?: string | null; issue?: number | null; load?: string | null; moment?: string | null; state?: Tone | null; tool?: string | null };
 
 export type FileLink = { name: string; src: string };
 
@@ -256,7 +256,7 @@ export type Screen = { actions?: Act[] | null; back?: string | null; badge?: num
 
 export type Secret = { action: string; id?: string | null; label?: string | null; name: string; placeholder?: string | null; set?: boolean | null; show?: Expr | null; values?: Record<string, unknown> | null };
 
-export type SecretField = { checks?: Check[] | null; doc?: string | null; enabled?: Expr | null; error?: string | null; label?: string | null; name: string; open?: boolean | null; placeholder?: string | null; set?: boolean | null; show?: Expr | null; was?: string | null };
+export type SecretField = { checks?: Check[] | null; doc?: string | null; enabled?: Expr | null; error?: string | null; label?: string | null; name: string; open?: boolean | null; placeholder?: string | null; set?: boolean | null; show?: Expr | null; value?: string | null; was?: string | null };
 
 export type Section = { blocks: Block[]; footer?: string | null; header?: string | null; id?: string | null; show?: Expr | null };
 

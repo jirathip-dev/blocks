@@ -7,6 +7,7 @@ field! {
     pub struct SecretField {
         placeholder: Option<String>,
         set: Option<bool>,
+        value: Option<String>,
     }
 }
 

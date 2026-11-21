@@ -674,6 +674,9 @@ public struct Figure: Codable, Equatable, Sendable {
     public var coat: String?
     public var grow: String?
     public var icon: String?
+    public var issue: UInt64?
+    public var load: String?
+    public var moment: String?
     public var state: Tone?
     public var tool: String?
 }
@@ -1573,6 +1576,7 @@ public struct SecretField: Codable, Equatable, Sendable {
     public var placeholder: String?
     public var set: Bool?
     public var show: Expr?
+    public var value: String?
     public var was: String?
 }
 

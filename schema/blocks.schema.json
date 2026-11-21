@@ -2469,6 +2469,26 @@
             "null"
           ]
         },
+        "issue": {
+          "format": "uint64",
+          "minimum": 0,
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "load": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "moment": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "state": {
           "anyOf": [
             {
@@ -6200,6 +6220,12 @@
             {
               "type": "null"
             }
+          ]
+        },
+        "value": {
+          "type": [
+            "string",
+            "null"
           ]
         },
         "was": {
