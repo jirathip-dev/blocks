@@ -176,6 +176,23 @@ pub(super) fn defs(s: &Value) -> Result<Vec<(&str, Def<'_>)>, String> {
         .collect()
 }
 
+pub(super) fn kinds<'a>(all: &'a [(&'a str, Def<'a>)]) -> Result<Vec<(&'a str, &'a [Prop<'a>])>, String> {
+    let Some((_, Def::Tagged { cases, .. })) = all.iter().find(|(k, _)| *k == "Block") else {
+        return Err("no Block in the schema".into());
+    };
+    Ok(cases
+        .iter()
+        .filter_map(|(kind, case)| {
+            let Case::Ref(n) = case else { return None };
+            let props = match all.iter().find(|(k, _)| k == n) {
+                Some((_, Def::Struct(ps))) => ps.as_slice(),
+                _ => &[],
+            };
+            Some((*kind, props))
+        })
+        .collect())
+}
+
 pub(super) fn js(kind: &str) -> String {
     let f = camel(kind, false);
     if ["import", "export", "default", "new", "delete", "class", "function"].contains(&f.as_str()) {

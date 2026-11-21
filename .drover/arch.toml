@@ -9,11 +9,8 @@ generated = [
     "web/src/gen/types.ts",
     "web/src/gen/hooks.ts",
     "web/src/gen/sample.ts",
-    "swift/Sources/Blocks/Gen/Blocks.swift",
+    "swift/Sources/Blocks/Gen/*.swift",
     "web/src/gen/schemes.ts",
-    "swift/Sources/Blocks/Gen/Schemes.swift",
-    "swift/Sources/Blocks/Gen/Style.swift",
-    "swift/Sources/Blocks/Gen/LayoutShapes.swift",
     "web/src/gen/layout.ts",
     "web/src/gen/kinds.ts",
     "web/src/gen/builders.ts",
@@ -46,7 +43,6 @@ generated = [
     "web/src/gen/fields.ts",
     "web/react/src/gen/fields.ts",
     "web/src/gen/words.ts", "web/src/gen/words-import.ts",
-    "swift/Sources/Blocks/Gen/Words.swift",
     "fixtures/fields/*.json",
     "fixtures/fields/trees/*.json",
 ]
@@ -82,6 +78,7 @@ shared = [
     "swift/Sources/BlocksUI/BlocksView.swift",
     "swift/Sources/BlocksUI/Look+Style.swift",
     "swift/Sources/BlocksUI/Theme.swift",
+    "swift/Sources/BlocksUI/Tree.swift", "swift/Sources/Blocks/Apply.swift",
     "web/src/shell.ts",
     "swift/Sources/BlocksSnapshot/Snapshot.swift",
     "swift/Tests/BlocksTests/RenderTests.swift",
@@ -505,6 +502,7 @@ max_file_lines = 1000
 [[size]]
 paths = [
     "web/src/patch.ts", "web/test/patch.test.ts", "web/test/dom.ts", "web/shot/shot.ts", "crates/blocks/tests/site.rs",
+    "swift/Sources/BlocksUI/Tree.swift",
     "swift/Sources/BlocksSnapshot/Snapshot.swift", "swift/Tests/BlocksTests/RenderTests.swift",
 ]
 max_file_lines = 200
@@ -554,7 +552,7 @@ paths = ["crates/blocks-desktop/src/stage.rs", "site/tests/pages.rs"]
 max_file_lines = 250
 
 [[size]]
-paths = ["swift/Tests/BlocksTests/SnapshotTests.swift", "swift/Tests/BlocksTests/ApplyTests.swift"]
+paths = ["swift/Tests/BlocksTests/SnapshotTests.swift", "swift/Tests/BlocksTests/ApplyTests.swift", "swift/Sources/Blocks/Apply.swift"]
 max_file_lines = 290
 
 [[size]]
