@@ -87,7 +87,7 @@ pub struct Desk {
     width: u16,
     height: u16,
     kit: Kit,
-    font: Option<Vec<u8>>,
+    fonts: Vec<Vec<u8>>,
 }
 
 struct Live {
@@ -110,7 +110,7 @@ impl Desk {
             width: 390,
             height: 844,
             kit: Kit::default().island(ECHO, || Box::new(Echo)),
-            font: None,
+            fonts: vec![],
         }
     }
 
@@ -126,13 +126,11 @@ impl Desk {
         Self { kit, ..self }
     }
 
-    /// A font every text falls back to for a glyph egui's own fonts lack, such as Thai.
+    /// Adds a font every text falls back to for a glyph egui's own fonts lack, such as Thai or Hebrew.
     #[must_use]
-    pub fn font(self, data: Vec<u8>) -> Self {
-        Self {
-            font: Some(data),
-            ..self
-        }
+    pub fn font(mut self, data: Vec<u8>) -> Self {
+        self.fonts.push(data);
+        self
     }
 
     /// Paints the screen, then runs `steps` in turn.
@@ -162,12 +160,16 @@ impl Live {
     fn new(d: Desk) -> Self {
         let ctx = Context::default();
         ctx.global_style_mut(|s| s.animation_time = 0.0);
-        if let Some(data) = d.font {
+        for (i, data) in d.fonts.into_iter().enumerate() {
             let families = [FontFamily::Proportional, FontFamily::Monospace].map(|family| InsertFontFamily {
                 family,
                 priority: FontPriority::Lowest,
             });
-            ctx.add_font(FontInsert::new("extra", FontData::from_owned(data), families.into()));
+            ctx.add_font(FontInsert::new(
+                &format!("extra{i}"),
+                FontData::from_owned(data),
+                families.into(),
+            ));
         }
         let report = Report {
             shots: vec![],
