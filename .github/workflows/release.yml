@@ -1,7 +1,7 @@
 name: release
 on:
   workflow_run:
-    workflows: [ci, web, swift, cap, compat, desktop]
+    workflows: [ci, swift, compat, desktop, egui-demo]
     types: [completed]
     branches: [main]
 
@@ -30,7 +30,7 @@ jobs:
         run: scripts/release.sh
 
   scan-perf:
-    if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' && github.event.workflow_run.name == 'web'
+    if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' && github.event.workflow_run.name == 'ci'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

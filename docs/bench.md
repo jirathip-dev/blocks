@@ -2,7 +2,7 @@
 
 The same 200-row screen built three ways (blocks, React, topcoat), measured in the headless harness's WebKit.
 This is owner decision q2111. It is not a CI gate: blocks' perf gates stay its own budgets
-(`crates/blocks/tests/perf.rs`). CI only checks that `bench/` builds (`just bench-build`). The public site shows
+(`crates/blocks/tests/perf.rs`). CI only checks that `bench/` builds (the `local/bench` gate). The public site shows
 only blocks' own numbers, from `docs/bench-blocks.json`. Nothing from the named comparison goes there.
 
 `just bench` builds everything and runs `bench/run.js`. It writes `bench/results.json` (every target) and

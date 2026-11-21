@@ -1,0 +1,9 @@
+about = "the hard perf budgets in release (crates/blocks/tests/perf.rs); in CI the numbers go to the job summary"
+fix = "make the case the test names fit its budget; a budget is raised only in its own issue"
+budget_secs = 600
+setup = ["rust"]
+paths = ["crates/blocks/**", "fixtures/**", "Cargo.*", "rust-toolchain.toml", ".gatekeeper/gates/perf.toml"]
+run = """
+if [ -n "${GITHUB_STEP_SUMMARY:-}" ]; then printf '### perf (release)\\n\\n| case | took | budget |\\n|---|---|---|\\n' >> "$GITHUB_STEP_SUMMARY"; fi
+cargo test --release --locked -p blocks --test perf -- --ignored --nocapture --test-threads=1
+"""

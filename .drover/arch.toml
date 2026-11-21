@@ -1,13 +1,7 @@
 frozen = [
-    "ci/cap.toml",
-    "crates/blocks/src/site/views.rs",
-    "docs/schema.md",
-    "swift/Sources/BlocksUI/Blocks.swift",
-    "swift/Sources/BlocksUI/BlockCards.swift",
-    "swift/Sources/BlocksUI/BlockLeaves.swift",
-    "web/src/blocks.css",
-    "web/src/render/index.ts",
-    "web/test/render.test.ts",
+    ".github/workflows/ci.yml", "ci/cap.toml", "crates/blocks/src/site/views.rs", "docs/schema.md",
+    "swift/Sources/BlocksUI/Blocks.swift", "swift/Sources/BlocksUI/BlockCards.swift", "swift/Sources/BlocksUI/BlockLeaves.swift",
+    "web/src/blocks.css", "web/src/render/index.ts", "web/test/render.test.ts",
 ]
 generated = [
     "schema/blocks.schema.json",
@@ -56,7 +50,7 @@ generated = [
     "fixtures/fields/*.json",
     "fixtures/fields/trees/*.json",
 ]
-generate = "just gen"
+generate = "sh scripts/arch-gen.sh"
 shared = [
     "crates/blocks/src/lib.rs",
     "crates/*/tests/support/**",
@@ -76,6 +70,10 @@ shared = [
     "crates/blocks/src/site/kind/mod.rs",
     "crates/blocks/tests/site.rs",
 ]
+
+[[collect]]
+dir = ".gatekeeper/gates"
+glob = "*.toml"
 
 [[collect]]
 dir = "ci/cap.d"
