@@ -1,0 +1,13 @@
+[package]
+name = "rtl-proto"
+description = "Architect #304: bidi reordering of egui 0.37 galleys, measured before it is built"
+version = "0.0.0"
+edition = "2021"
+license = "MIT"
+publish = false
+
+[workspace]
+
+[dependencies]
+egui = { version = "0.37", features = ["default_fonts"] }
+unicode-bidi = "0.3"
