@@ -583,7 +583,7 @@ function choice({ b, hooks: hooks4 }) {
 
 // react/src/kinds/composer.ts
 import { createElement as createElement2, useContext as useContext5, useEffect as useEffect2, useLayoutEffect as useLayoutEffect2, useRef as useRef3, useState as useState5 } from "react";
-import { send as upload } from "./core.js";
+import { nonce as mint, send as upload } from "./core.js";
 var SAID = { sending: "sending\u2026", sent: "\u2713 sent", failed: "not sent" };
 function Pill({ b, post }) {
   const [, tick2] = useState5(0);
@@ -658,6 +658,7 @@ function composer({ b, hooks: hooks4 }) {
   const [q, setQ] = useState5(void 0);
   const [st, setSt] = useState5("");
   const [steering, setSteering] = useState5(false);
+  const nonce = useRef3(void 0);
   const { files, add, drop, clear } = useSend(b, cx);
   const ta = useRef3(null);
   const pick2 = useRef3(null);
@@ -671,11 +672,13 @@ function composer({ b, hooks: hooks4 }) {
     const done = files.filter((r) => r.state === "done");
     if (!text4.trim() && !done.length || files.some((r) => r.state === "uploading")) return;
     const queue = !steer && (b.working || q != null) ? act2("queue") : "";
-    const v = { ...picks, text: text4, files: done.map(({ id, name, src }) => ({ id, name, src: src ?? null })), ...queue && q != null ? { q } : null };
+    nonce.current ??= mint();
+    const v = { ...picks, text: text4, files: done.map(({ id, name, src }) => ({ id, name, src: src ?? null })), nonce: nonce.current, ...queue && q != null ? { q } : null };
     setSt("sending");
     setSteering(false);
     const ok = await post(steer ? act2("steer") : queue || b.action, v);
     if (ok) {
+      nonce.current = void 0;
       clear();
       setQ(void 0);
       setText("");
@@ -691,17 +694,20 @@ function composer({ b, hooks: hooks4 }) {
   const edit2 = (x) => () => {
     setQ(x.q);
     setText(x.text);
+    nonce.current = void 0;
     ta.current?.focus();
   };
   const said3 = q != null ? "save" : b.working ? "queue" : b.label ?? "";
   const go2 = btn(said3, "primary", void 0, b.action, { "aria-label": said3 || "send", "aria-busy": st === "sending" || void 0, ...held3 });
   const typed = (e) => {
     setText(e.target.value);
+    nonce.current = void 0;
     if (st === "sent") setSt("");
   };
   const took = (e) => {
     add(Array.from(e.target.files ?? []));
     e.target.value = "";
+    nonce.current = void 0;
     setSt("");
   };
   const row5 = h(

@@ -1,6 +1,6 @@
 # `composer`
 
-A message box: its send action, its chips and the messages queued.
+A message box: its send action, its chips and the messages queued; each send, queue or steer carries `values.nonce`, a fresh random id a retry repeats.
 
 The Rust type `Composer`; in TS, `composer(fields: Composer)` from `web/src/gen/builders.ts`.
 

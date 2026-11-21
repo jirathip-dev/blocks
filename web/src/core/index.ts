@@ -11,6 +11,7 @@ export { apply } from "./apply.ts";
 export { ext, glyph, initial, roleWord } from "./kind/message.ts";
 export { built, type Built } from "./built.ts";
 export { share } from "./share.ts";
+export { nonce } from "./nonce.ts";
 export { actions, check, linkable } from "./check.ts";
 export { accepts, fill, held, hint, ids, pick, picked, refused, scanHeld, scanHint, scanLine, scanned, scanner, send, sized, status, waits, type FileRow, type FileState, type OnFile, type Picked, type ScanRow } from "./field/files.ts";
 export type { Fault } from "../gen/shapes.ts";
