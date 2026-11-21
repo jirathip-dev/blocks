@@ -1,0 +1,37 @@
+{
+  "/Users/jkmacmini/.local/share/drover/work/blocks/issue-321/swift/Sources/BlocksUI/Kind/List.swift" : {
+    "const-values" : "/Users/jkmacmini/.local/share/drover/work/blocks/issue-321/swift/out/Intermediates.noindex/Blocks.build/Debug/BlocksUI-t.build/Objects-normal/arm64/List.swiftconstvalues",
+    "dependencies" : "/Users/jkmacmini/.local/share/drover/work/blocks/issue-321/swift/out/Intermediates.noindex/Blocks.build/Debug/BlocksUI-t.build/Objects-normal/arm64/List.d",
+    "diagnostics" : "/Users/jkmacmini/.local/share/drover/work/blocks/issue-321/swift/out/Intermediates.noindex/Blocks.build/Debug/BlocksUI-t.build/Objects-normal/arm64/List.dia",
+    "object" : "/Users/jkmacmini/.local/share/drover/work/blocks/issue-321/swift/out/Intermediates.noindex/Blocks.build/Debug/BlocksUI-t.build/Objects-normal/arm64/List.o",
+    "swift-dependencies" : "/Users/jkmacmini/.local/share/drover/work/blocks/issue-321/swift/out/Intermediates.noindex/Blocks.build/Debug/BlocksUI-t.build/Objects-normal/arm64/List.swiftdeps"
+  },
+  "/Users/jkmacmini/.local/share/drover/work/blocks/issue-321/swift/Sources/BlocksUI/Kind/Marks.swift" : {
+    "const-values" : "/Users/jkmacmini/.local/share/drover/work/blocks/issue-321/swift/out/Intermediates.noindex/Blocks.build/Debug/BlocksUI-t.build/Objects-normal/arm64/Marks.swiftconstvalues",
+    "dependencies" : "/Users/jkmacmini/.local/share/drover/work/blocks/issue-321/swift/out/Intermediates.noindex/Blocks.build/Debug/BlocksUI-t.build/Objects-normal/arm64/Marks.d",
+    "diagnostics" : "/Users/jkmacmini/.local/share/drover/work/blocks/issue-321/swift/out/Intermediates.noindex/Blocks.build/Debug/BlocksUI-t.build/Objects-normal/arm64/Marks.dia",
+    "object" : "/Users/jkmacmini/.local/share/drover/work/blocks/issue-321/swift/out/Intermediates.noindex/Blocks.build/Debug/BlocksUI-t.build/Objects-normal/arm64/Marks.o",
+    "swift-dependencies" : "/Users/jkmacmini/.local/share/drover/work/blocks/issue-321/swift/out/Intermediates.noindex/Blocks.build/Debug/BlocksUI-t.build/Objects-normal/arm64/Marks.swiftdeps"
+  },
+  "/Users/jkmacmini/.local/share/drover/work/blocks/issue-321/swift/Sources/BlocksUI/Kind/Message.swift" : {
+    "const-values" : "/Users/jkmacmini/.local/share/drover/work/blocks/issue-321/swift/out/Intermediates.noindex/Blocks.build/Debug/BlocksUI-t.build/Objects-normal/arm64/Message.swiftconstvalues",
+    "dependencies" : "/Users/jkmacmini/.local/share/drover/work/blocks/issue-321/swift/out/Intermediates.noindex/Blocks.build/Debug/BlocksUI-t.build/Objects-normal/arm64/Message.d",
+    "diagnostics" : "/Users/jkmacmini/.local/share/drover/work/blocks/issue-321/swift/out/Intermediates.noindex/Blocks.build/Debug/BlocksUI-t.build/Objects-normal/arm64/Message.dia",
+    "object" : "/Users/jkmacmini/.local/share/drover/work/blocks/issue-321/swift/out/Intermediates.noindex/Blocks.build/Debug/BlocksUI-t.build/Objects-normal/arm64/Message.o",
+    "swift-dependencies" : "/Users/jkmacmini/.local/share/drover/work/blocks/issue-321/swift/out/Intermediates.noindex/Blocks.build/Debug/BlocksUI-t.build/Objects-normal/arm64/Message.swiftdeps"
+  },
+  "/Users/jkmacmini/.local/share/drover/work/blocks/issue-321/swift/Sources/BlocksUI/Kind/More.swift" : {
+    "const-values" : "/Users/jkmacmini/.local/share/drover/work/blocks/issue-321/swift/out/Intermediates.noindex/Blocks.build/Debug/BlocksUI-t.build/Objects-normal/arm64/More.swiftconstvalues",
+    "dependencies" : "/Users/jkmacmini/.local/share/drover/work/blocks/issue-321/swift/out/Intermediates.noindex/Blocks.build/Debug/BlocksUI-t.build/Objects-normal/arm64/More.d",
+    "diagnostics" : "/Users/jkmacmini/.local/share/drover/work/blocks/issue-321/swift/out/Intermediates.noindex/Blocks.build/Debug/BlocksUI-t.build/Objects-normal/arm64/More.dia",
+    "object" : "/Users/jkmacmini/.local/share/drover/work/blocks/issue-321/swift/out/Intermediates.noindex/Blocks.build/Debug/BlocksUI-t.build/Objects-normal/arm64/More.o",
+    "swift-dependencies" : "/Users/jkmacmini/.local/share/drover/work/blocks/issue-321/swift/out/Intermediates.noindex/Blocks.build/Debug/BlocksUI-t.build/Objects-normal/arm64/More.swiftdeps"
+  },
+  "/Users/jkmacmini/.local/share/drover/work/blocks/issue-321/swift/Sources/BlocksUI/Kind/Pages.swift" : {
+    "const-values" : "/Users/jkmacmini/.local/share/drover/work/blocks/issue-321/swift/out/Intermediates.noindex/Blocks.build/Debug/BlocksUI-t.build/Objects-normal/arm64/Pages.swiftconstvalues",
+    "dependencies" : "/Users/jkmacmini/.local/share/drover/work/blocks/issue-321/swift/out/Intermediates.noindex/Blocks.build/Debug/BlocksUI-t.build/Objects-normal/arm64/Pages.d",
+    "diagnostics" : "/Users/jkmacmini/.local/share/drover/work/blocks/issue-321/swift/out/Intermediates.noindex/Blocks.build/Debug/BlocksUI-t.build/Objects-normal/arm64/Pages.dia",
+    "object" : "/Users/jkmacmini/.local/share/drover/work/blocks/issue-321/swift/out/Intermediates.noindex/Blocks.build/Debug/BlocksUI-t.build/Objects-normal/arm64/Pages.o",
+    "swift-dependencies" : "/Users/jkmacmini/.local/share/drover/work/blocks/issue-321/swift/out/Intermediates.noindex/Blocks.build/Debug/BlocksUI-t.build/Objects-normal/arm64/Pages.swiftdeps"
+  }
+}

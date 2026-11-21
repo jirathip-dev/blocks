@@ -1,0 +1,37 @@
+{
+  "/Users/jkmacmini/.local/share/drover/work/blocks/issue-321/swift/Sources/BlocksUI/Field/PickerField.swift" : {
+    "const-values" : "/Users/jkmacmini/.local/share/drover/work/blocks/issue-321/swift/out/Intermediates.noindex/Blocks.build/Debug/BlocksUI-t.build/Objects-normal/arm64/PickerField.swiftconstvalues",
+    "dependencies" : "/Users/jkmacmini/.local/share/drover/work/blocks/issue-321/swift/out/Intermediates.noindex/Blocks.build/Debug/BlocksUI-t.build/Objects-normal/arm64/PickerField.d",
+    "diagnostics" : "/Users/jkmacmini/.local/share/drover/work/blocks/issue-321/swift/out/Intermediates.noindex/Blocks.build/Debug/BlocksUI-t.build/Objects-normal/arm64/PickerField.dia",
+    "object" : "/Users/jkmacmini/.local/share/drover/work/blocks/issue-321/swift/out/Intermediates.noindex/Blocks.build/Debug/BlocksUI-t.build/Objects-normal/arm64/PickerField.o",
+    "swift-dependencies" : "/Users/jkmacmini/.local/share/drover/work/blocks/issue-321/swift/out/Intermediates.noindex/Blocks.build/Debug/BlocksUI-t.build/Objects-normal/arm64/PickerField.swiftdeps"
+  },
+  "/Users/jkmacmini/.local/share/drover/work/blocks/issue-321/swift/Sources/BlocksUI/Field/ScanField.swift" : {
+    "const-values" : "/Users/jkmacmini/.local/share/drover/work/blocks/issue-321/swift/out/Intermediates.noindex/Blocks.build/Debug/BlocksUI-t.build/Objects-normal/arm64/ScanField.swiftconstvalues",
+    "dependencies" : "/Users/jkmacmini/.local/share/drover/work/blocks/issue-321/swift/out/Intermediates.noindex/Blocks.build/Debug/BlocksUI-t.build/Objects-normal/arm64/ScanField.d",
+    "diagnostics" : "/Users/jkmacmini/.local/share/drover/work/blocks/issue-321/swift/out/Intermediates.noindex/Blocks.build/Debug/BlocksUI-t.build/Objects-normal/arm64/ScanField.dia",
+    "object" : "/Users/jkmacmini/.local/share/drover/work/blocks/issue-321/swift/out/Intermediates.noindex/Blocks.build/Debug/BlocksUI-t.build/Objects-normal/arm64/ScanField.o",
+    "swift-dependencies" : "/Users/jkmacmini/.local/share/drover/work/blocks/issue-321/swift/out/Intermediates.noindex/Blocks.build/Debug/BlocksUI-t.build/Objects-normal/arm64/ScanField.swiftdeps"
+  },
+  "/Users/jkmacmini/.local/share/drover/work/blocks/issue-321/swift/Sources/BlocksUI/Field/SecretField.swift" : {
+    "const-values" : "/Users/jkmacmini/.local/share/drover/work/blocks/issue-321/swift/out/Intermediates.noindex/Blocks.build/Debug/BlocksUI-t.build/Objects-normal/arm64/SecretField.swiftconstvalues",
+    "dependencies" : "/Users/jkmacmini/.local/share/drover/work/blocks/issue-321/swift/out/Intermediates.noindex/Blocks.build/Debug/BlocksUI-t.build/Objects-normal/arm64/SecretField.d",
+    "diagnostics" : "/Users/jkmacmini/.local/share/drover/work/blocks/issue-321/swift/out/Intermediates.noindex/Blocks.build/Debug/BlocksUI-t.build/Objects-normal/arm64/SecretField.dia",
+    "object" : "/Users/jkmacmini/.local/share/drover/work/blocks/issue-321/swift/out/Intermediates.noindex/Blocks.build/Debug/BlocksUI-t.build/Objects-normal/arm64/SecretField.o",
+    "swift-dependencies" : "/Users/jkmacmini/.local/share/drover/work/blocks/issue-321/swift/out/Intermediates.noindex/Blocks.build/Debug/BlocksUI-t.build/Objects-normal/arm64/SecretField.swiftdeps"
+  },
+  "/Users/jkmacmini/.local/share/drover/work/blocks/issue-321/swift/Sources/BlocksUI/Field/TextField.swift" : {
+    "const-values" : "/Users/jkmacmini/.local/share/drover/work/blocks/issue-321/swift/out/Intermediates.noindex/Blocks.build/Debug/BlocksUI-t.build/Objects-normal/arm64/TextField.swiftconstvalues",
+    "dependencies" : "/Users/jkmacmini/.local/share/drover/work/blocks/issue-321/swift/out/Intermediates.noindex/Blocks.build/Debug/BlocksUI-t.build/Objects-normal/arm64/TextField.d",
+    "diagnostics" : "/Users/jkmacmini/.local/share/drover/work/blocks/issue-321/swift/out/Intermediates.noindex/Blocks.build/Debug/BlocksUI-t.build/Objects-normal/arm64/TextField.dia",
+    "object" : "/Users/jkmacmini/.local/share/drover/work/blocks/issue-321/swift/out/Intermediates.noindex/Blocks.build/Debug/BlocksUI-t.build/Objects-normal/arm64/TextField.o",
+    "swift-dependencies" : "/Users/jkmacmini/.local/share/drover/work/blocks/issue-321/swift/out/Intermediates.noindex/Blocks.build/Debug/BlocksUI-t.build/Objects-normal/arm64/TextField.swiftdeps"
+  },
+  "/Users/jkmacmini/.local/share/drover/work/blocks/issue-321/swift/Sources/BlocksUI/Field/ToggleField.swift" : {
+    "const-values" : "/Users/jkmacmini/.local/share/drover/work/blocks/issue-321/swift/out/Intermediates.noindex/Blocks.build/Debug/BlocksUI-t.build/Objects-normal/arm64/ToggleField.swiftconstvalues",
+    "dependencies" : "/Users/jkmacmini/.local/share/drover/work/blocks/issue-321/swift/out/Intermediates.noindex/Blocks.build/Debug/BlocksUI-t.build/Objects-normal/arm64/ToggleField.d",
+    "diagnostics" : "/Users/jkmacmini/.local/share/drover/work/blocks/issue-321/swift/out/Intermediates.noindex/Blocks.build/Debug/BlocksUI-t.build/Objects-normal/arm64/ToggleField.dia",
+    "object" : "/Users/jkmacmini/.local/share/drover/work/blocks/issue-321/swift/out/Intermediates.noindex/Blocks.build/Debug/BlocksUI-t.build/Objects-normal/arm64/ToggleField.o",
+    "swift-dependencies" : "/Users/jkmacmini/.local/share/drover/work/blocks/issue-321/swift/out/Intermediates.noindex/Blocks.build/Debug/BlocksUI-t.build/Objects-normal/arm64/ToggleField.swiftdeps"
+  }
+}

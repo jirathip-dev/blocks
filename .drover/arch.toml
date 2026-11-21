@@ -69,6 +69,19 @@ shared = [
     "crates/blocks/src/site/mod.rs",
     "crates/blocks/src/site/kind/mod.rs",
     "crates/blocks/tests/site.rs",
+    ".drover/rules.md",
+    "web/test/shot.test.ts",
+    "web/react/test/markup.test.ts",
+    "site/src/main.rs",
+    "site/tests/pages.rs",
+    "crates/blocks-desk/tests/desk.rs",
+    "crates/blocks-desktop/src/stage.rs",
+    "swift/Tests/BlocksTests/ApplyTests.swift",
+    "swift/Tests/BlocksTests/SnapshotTests.swift",
+    "swift/Sources/BlocksUI/AppBlocks.swift",
+    "swift/Sources/BlocksUI/BlocksView.swift",
+    "swift/Sources/BlocksUI/Look+Style.swift",
+    "swift/Sources/BlocksUI/Theme.swift",
 ]
 
 [[collect]]
@@ -509,6 +522,42 @@ max_file_lines = 80
 [[size]]
 paths = ["crates/blocks/src/kind/field/mod.rs", "crates/blocks/src/site/field/mod.rs", "swift/Sources/BlocksUI/Field/FieldRow.swift"]
 max_file_lines = 80
+
+[[size]]
+paths = [".drover/rules.md"]
+max_file_lines = 30
+
+[[size]]
+paths = ["swift/Sources/BlocksUI/AppBlocks.swift"]
+max_file_lines = 100
+
+[[size]]
+paths = ["web/react/test/markup.test.ts"]
+max_file_lines = 120
+
+[[size]]
+paths = ["swift/Sources/BlocksUI/Look+Style.swift", "swift/Sources/BlocksUI/Theme.swift"]
+max_file_lines = 140
+
+[[size]]
+paths = ["swift/Sources/BlocksUI/BlocksView.swift", "site/src/main.rs"]
+max_file_lines = 170
+
+[[size]]
+paths = ["crates/blocks-desktop/src/stage.rs", "site/tests/pages.rs"]
+max_file_lines = 250
+
+[[size]]
+paths = ["swift/Tests/BlocksTests/SnapshotTests.swift", "swift/Tests/BlocksTests/ApplyTests.swift"]
+max_file_lines = 290
+
+[[size]]
+paths = ["web/test/shot.test.ts"]
+max_file_lines = 320
+
+[[size]]
+paths = ["crates/blocks-desk/tests/desk.rs"]
+max_file_lines = 460
 
 [[ban]]
 pattern = "new Date("

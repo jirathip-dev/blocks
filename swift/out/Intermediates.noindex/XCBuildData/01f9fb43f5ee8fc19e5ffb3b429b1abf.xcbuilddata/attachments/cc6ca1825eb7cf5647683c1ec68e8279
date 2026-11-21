@@ -1,0 +1,4 @@
+module BlocksSnapshot {
+header "BlocksSnapshot-Swift.h"
+export *
+}

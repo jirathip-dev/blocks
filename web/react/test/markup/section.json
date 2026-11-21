@@ -1,0 +1,4 @@
+[
+  {"type":"section","id":"s","header":"waiting on you","footer":"that is all","blocks":[{"type":"stat","id":"t","items":[{"label":"cpu","value":4,"unit":"%","tone":"g","spark":[1,3,2]},{"label":"mem","value":{"get":"m"}}]}]},
+  {"type":"section","id":"two","blocks":[{"type":"message","id":"m1","role":"owner","name":"Mira","blocks":[{"type":"tool","id":"x","name":"Test","state":"failed","summary":"1 failed","body":"boom"}]},{"type":"message","id":"m2","role":"owner","name":"Mira","files":[{"name":"a.zip","tap":{"action":"get"}}]}]}
+]
