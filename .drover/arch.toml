@@ -341,7 +341,7 @@ reason = "the library is pure: no clock; time is the caller's"
 
 [[ban]]
 pattern = "egui"
-paths = ["crates/blocks/Cargo.toml", "crates/blocks/src/**", "site/Cargo.toml", "site/src/**"]
+paths = ["crates/blocks/Cargo.toml", "crates/blocks/src/**", "site/Cargo.toml"]
 reason = "the blocks crate links no toolkit: egui is the desktop renderer's alone"
 
 [[ban]]

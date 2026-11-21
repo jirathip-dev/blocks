@@ -609,8 +609,9 @@ pub fn gallery(all: &[(String, Vec<Block>)]) -> Page {
     let intro = text(
         "intro",
         &format!(
-            "All {} core kinds, each drawn by the real HTML renderer from a sample this site builds with the typed API. The {fb} kinds the renderer has no HTML view for yet draw the fallback every block carries, and say so; the build works that group out from the renderer.",
-            all.len()
+            "All {} core kinds, each drawn by the real HTML renderer from a sample this site builds with the typed API. The {fb} kinds the renderer has no HTML view for yet draw the fallback every block carries, and say so; the build works that group out from the renderer. The same samples drawn by the egui renderer, on a canvas: [the egui demo]({}egui/).",
+            all.len(),
+            crate::BASE
         ),
     );
     let jump = Nav::new(
