@@ -11,6 +11,7 @@ repository.workspace = true
 blocks = { path = "../blocks" }
 egui.workspace = true
 serde_json.workspace = true
+unicode-bidi.workspace = true
 
 [lints]
 workspace = true

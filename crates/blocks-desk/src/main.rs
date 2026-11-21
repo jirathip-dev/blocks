@@ -8,8 +8,8 @@ use blocks_desktop::{Kit, Look};
 use serde::de::DeserializeOwned;
 use serde::Serialize;
 
-const USAGE: &str = "usage: blocks-desk --screen <file> [--size 390x844] [--scheme light|dark] [--script <steps.json>] [--expect <tree.json>] [--ids <ids.json>] [--font <ttf>] [--check] --out <dir>";
-const KEYS: [&str; 8] = ["screen", "size", "scheme", "script", "expect", "ids", "font", "out"];
+const USAGE: &str = "usage: blocks-desk --screen <file> [--size 390x844] [--scheme light|dark] [--script <steps.json>] [--expect <tree.json>] [--ids <ids.json>] [--font <ttf>]... [--check] --out <dir>";
+const KEYS: [&str; 7] = ["screen", "size", "scheme", "script", "expect", "ids", "out"];
 
 struct Failed(String);
 
@@ -41,9 +41,14 @@ fn write(dir: &Path, file: &str, v: &impl Serialize) -> Result<(), String> {
 fn run(mut args: impl Iterator<Item = String>) -> Result<Vec<String>, String> {
     let mut opts = BTreeMap::new();
     let mut check = false;
+    let mut fonts = vec![];
     while let Some(a) = args.next() {
         if a == "--check" {
             check = true;
+            continue;
+        }
+        if a == "--font" {
+            fonts.push(args.next().ok_or(USAGE)?);
             continue;
         }
         let key = a.strip_prefix("--").filter(|k| KEYS.contains(k)).ok_or(USAGE)?;
@@ -81,7 +86,7 @@ fn run(mut args: impl Iterator<Item = String>) -> Result<Vec<String>, String> {
     let mut desk = Desk::new(read(screen)?)
         .size(width, height)
         .kit(Kit::new(look).island(ECHO, || Box::new(Echo)));
-    if let Some(f) = opt("font") {
+    for f in &fonts {
         desk = desk.font(std::fs::read(f).map_err(|e| format!("{f}: {e}"))?);
     }
     let mut run = desk.run(&steps);

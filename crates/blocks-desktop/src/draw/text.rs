@@ -1,6 +1,7 @@
 use blocks::{Text, TextStyle};
 use egui::{RichText, Ui};
 
+use crate::bidi;
 use crate::cx::{Cx, Draw};
 
 pub(super) const DRAW: Option<Draw<Text>> = Some(draw);
@@ -13,5 +14,5 @@ fn draw(b: &Text, ui: &mut Ui, cx: &mut Cx<'_>) {
     if b.style == Some(TextStyle::Footnote) {
         t = t.small();
     }
-    ui.label(t);
+    bidi::para(ui, t);
 }

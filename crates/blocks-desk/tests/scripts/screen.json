@@ -1,0 +1,18 @@
+{
+  "type": "screen",
+  "id": "scripts",
+  "title": "Orders",
+  "blocks": [
+    {
+      "type": "list",
+      "id": "orders",
+      "rows": [
+        {"type": "row", "id": "latin", "title": "Build green on main", "subtitle": "12 minutes ago", "value": "1,250"},
+        {"type": "row", "id": "thai", "title": "สั่งซื้อน้ำผึ้งป่าสองขวด", "subtitle": "กำลังจัดส่ง", "value": "฿1,250"},
+        {"type": "row", "id": "cjk", "title": "日本語のテキスト", "subtitle": "中文", "value": "¥1,250"}
+      ]
+    },
+    {"type": "text", "id": "note", "text": "A paragraph of Latin text that wraps at 390 points, with a number 1250 and a word in brackets (main)."},
+    {"type": "form", "id": "contact", "action": "save", "fields": [{"type": "text", "name": "email", "label": "Email", "placeholder": "name@example.com"}]}
+  ]
+}

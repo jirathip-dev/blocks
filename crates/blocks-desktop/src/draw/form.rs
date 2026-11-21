@@ -1,8 +1,8 @@
 use blocks::{Field, Fields, Form, SecretField};
-use egui::{vec2, Button, Checkbox, ComboBox, Response, RichText, TextEdit, Ui};
+use egui::{vec2, Button, Checkbox, ComboBox, Response, RichText, Ui};
 use serde_json::Value;
 
-use crate::act;
+use crate::{act, bidi};
 use crate::cx::{Cx, Draw};
 
 pub(super) const DRAW: Option<Draw<Form>> = Some(draw);
@@ -32,11 +32,8 @@ fn blank(v: &Value) -> bool {
 pub(super) fn hush(ui: &mut Ui, cx: &mut Cx<'_>, key: &str, on: bool, hint: &str) -> (Response, String) {
     let id = ui.scope_id().with(("hush", key));
     let mut text: String = ui.data_mut(|d| d.get_temp(id)).unwrap_or_default();
-    let edit = TextEdit::singleline(&mut text)
-        .password(true)
-        .hint_text(hint)
-        .desired_width(ui.available_width());
-    let r = ui.add_enabled(on, edit);
+    let (hint, wide) = (bidi::text(ui, hint), ui.available_width());
+    let r = bidi::hidden(ui, &mut text, on, |e| e.hint_text(hint).desired_width(wide));
     cx.rec.field(key, r.rect, on);
     ui.data_mut(|d| d.insert_temp(id, text.clone()));
     (r, text)
@@ -74,10 +71,11 @@ fn input(f: &Field, ui: &mut Ui, cx: &mut Cx<'_>, on: bool) -> (Response, Value)
             let opts = p.options.iter().flatten().filter(|o| **o != text);
             let opts: Vec<&String> = std::iter::once(&text).chain(opts).filter(|o| !o.is_empty()).collect();
             let r = ui.add_enabled_ui(on, |ui| {
-                let c = ComboBox::from_id_salt(name).selected_text(text.as_str());
+                let c = ComboBox::from_id_salt(name).selected_text(bidi::text(ui, text.as_str()));
                 c.show_ui(ui, |ui| {
                     for o in opts {
-                        ui.selectable_value(&mut v, o.clone(), o);
+                        let t = bidi::text(ui, o);
+                        ui.selectable_value(&mut v, o.clone(), t);
                     }
                 })
             });
@@ -94,10 +92,8 @@ fn input(f: &Field, ui: &mut Ui, cx: &mut Cx<'_>, on: bool) -> (Response, Value)
                 Field::Text(t) => t.placeholder.as_deref(),
                 _ => None,
             };
-            let edit = TextEdit::singleline(&mut v)
-                .hint_text(hint.unwrap_or_default())
-                .desired_width(ui.available_width());
-            let r = ui.add_enabled(on, edit);
+            let (hint, wide) = (bidi::text(ui, hint.unwrap_or_default()), ui.available_width());
+            let r = bidi::edit(ui, &mut v, on, |e| e.hint_text(hint).desired_width(wide));
             cx.rec.field(name, r.rect, on);
             (r, Value::from(v))
         }
@@ -130,10 +126,10 @@ fn draw(b: &Form, ui: &mut Ui, cx: &mut Cx<'_>) {
             continue;
         }
         let label = each!(f, x => x.label.as_deref()).unwrap_or(name);
-        ui.label(RichText::new(label).color(look.fg(ui)));
+        bidi::label(ui, RichText::new(label).color(look.fg(ui)));
         let (r, v) = input(f, ui, cx, open && !cx.off(name));
         if let Some(n) = note(f, ui, cx) {
-            ui.label(n);
+            bidi::para(ui, n);
         }
         let typed = !matches!(f, Field::Toggle(_) | Field::Picker(_));
         if let Some(me) = cx.me.filter(|_| typed) {
@@ -150,7 +146,7 @@ fn draw(b: &Form, ui: &mut Ui, cx: &mut Cx<'_>) {
     }
     let Some(s) = &b.submit else { return };
     let on = cx.on && s.off != Some(true);
-    let (me, label) = (cx.me, Button::new(&s.label));
+    let (me, label) = (cx.me, Button::new(bidi::text(ui, &s.label)));
     if act::press_as(ui, cx, me, on, Some(&s.action), label) && !values.values().all(blank) {
         b.fields.iter().for_each(|f| forget(ui, f.name()));
         let mut all = s.values.clone().unwrap_or_default();

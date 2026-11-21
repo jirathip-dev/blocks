@@ -1,6 +1,7 @@
 use blocks::{Row, Toned};
 use egui::{RichText, Ui};
 
+use crate::bidi;
 use crate::cx::{Cx, Draw};
 use crate::text::shown;
 
@@ -14,16 +15,16 @@ fn draw(b: &Row, ui: &mut Ui, cx: &mut Cx<'_>) {
             cx.art.figure(f, ui);
         }
         ui.vertical(|ui| {
-            ui.label(RichText::new(&b.title).color(look.fg(ui)));
+            bidi::label(ui, RichText::new(&b.title).color(look.fg(ui)));
             if let Some(s) = &b.subtitle {
                 toned(ui, cx, s);
             }
         });
         if let Some(v) = &b.value {
-            ui.label(RichText::new(text(v)).color(look.mute(ui)));
+            bidi::label(ui, RichText::new(text(v)).color(look.mute(ui)));
         }
         if let Some(l) = &b.badge {
-            ui.label(RichText::new(text(&l.text)).color(look.tone(ui, l.tone.as_ref())));
+            bidi::label(ui, RichText::new(text(&l.text)).color(look.tone(ui, l.tone.as_ref())));
         }
     });
     for r in b.rounds.iter().flatten() {
@@ -34,9 +35,9 @@ fn draw(b: &Row, ui: &mut Ui, cx: &mut Cx<'_>) {
 pub(super) fn toned(ui: &mut Ui, cx: &Cx<'_>, s: &Toned) {
     let look = cx.look;
     match s {
-        Toned::Text(s) => ui.label(RichText::new(s).color(look.mute(ui))),
+        Toned::Text(s) => bidi::label(ui, RichText::new(s).color(look.mute(ui))),
         Toned::Label(l) => {
-            ui.label(RichText::new(shown(&l.text, cx.values(), cx.now)).color(look.tone(ui, l.tone.as_ref())))
+            bidi::label(ui, RichText::new(shown(&l.text, cx.values(), cx.now)).color(look.tone(ui, l.tone.as_ref())))
         }
     };
 }
