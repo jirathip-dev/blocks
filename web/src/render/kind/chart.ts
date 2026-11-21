@@ -1,4 +1,6 @@
-import type { Chart, ChartFormat, Series, Tone } from "../../gen/types.ts";
+import { axis, chart as rules, isLine, type PointGrab, shown, stepOf } from "../../core/kind/chart.ts";
+import type { Chart, ChartFormat, PointMove, Series, Tone } from "../../gen/types.ts";
+import { gestured, held } from "../../gesture.ts";
 import { sends } from "../act.ts";
 import type { Ctx } from "../ctx.ts";
 import { esc, nodes } from "../dom.ts";
@@ -40,36 +42,7 @@ function label(c: Chart, x: string, long: boolean): string {
 
 const colour = (tone: Tone | null | undefined, i: number) => `--k:var(${TONES[tone ?? ""] ?? ORDER[i % ORDER.length]})`;
 
-function nice(v: number): number {
-  if (v <= 0) return 1;
-  const p = Math.pow(10, Math.floor(Math.log10(v)));
-  return p * ([1, 2, 2.5, 5].find((m) => v / p <= m) ?? 10);
-}
-
 const at = (s: Series, i: number): number | undefined => s.values[i];
-const each = (ss: Series[], i: number) => ss.flatMap((s) => (at(s, i) === undefined ? [] : [at(s, i) ?? 0]));
-const isLine = (c: Chart, s: Series) => c.chart === "line" || (c.chart === "combo" && s.as === "line");
-
-function scale(c: Chart): [number, number] {
-  const all = c.series.flatMap((s) => s.values);
-  if (c.chart === "line") {
-    if (!all.length) return [0, 1];
-    const lo = Math.min(...all), hi = Math.max(...all);
-    const step = nice(hi > lo ? (hi - lo) / 2 : Math.max(Math.abs(hi), 1) / 2);
-    const low = Math.floor(lo / step) * step;
-    let top = Math.max(Math.ceil(hi / step) * step, low + step);
-    if (Math.round((top - low) / step) % 2 === 1) top += step;
-    return [low, top];
-  }
-  let max = 0;
-  for (let i = 0; i < c.x.length; i++) {
-    const bars = each(c.series.filter((s) => !isLine(c, s)), i);
-    const lines = each(c.series.filter((s) => isLine(c, s)), i);
-    const bar = c.chart !== "bar" ? bars.reduce((a, v) => a + v, 0) : Math.max(0, ...bars);
-    max = Math.max(max, bar, ...lines);
-  }
-  return [0, nice(max * 1.04)];
-}
 
 function svg(c: Chart, lo: number, hi: number): string {
   const n = c.x.length, w = num(n * 10);
@@ -110,6 +83,7 @@ function svg(c: Chart, lo: number, hi: number): string {
   return out + "</svg>";
 }
 
+const top = (v: number, lo: number, hi: number) => (1 - (v - lo) / (hi - lo)) * 100;
 const pct = (share: number) => `${Math.round(share).toFixed(0)}%`;
 const tag = (t: string, cls: string, text: string, attrs = "") => `<${t}${cls ? ` class="${cls}"` : ""}${attrs}>${esc(text)}</${t}>`;
 
@@ -142,7 +116,7 @@ const readout = (c: Chart, hover: number | null) => (isEmpty(c) ? null : (hover 
 
 function plot(c: Chart): string {
   const n = c.x.length, empty = isEmpty(c), picked = pickOf(c);
-  const [lo, hi] = scale(c);
+  const [lo, hi] = axis(c);
   let out = legend(c, readout(c, null));
   out += `<div class="chg"><div class="chy">`;
   for (const t of [0, 0.5, 1]) out += tag("span", "", empty ? "" : value(lo + (hi - lo) * t, c.format), ` style="top:${num(100 - t * 100)}%"`);
@@ -162,6 +136,14 @@ function plot(c: Chart): string {
       const name = `${label(c, x, true)}: ${c.series.map((s) => `${s.name} ${value(at(s, i), c.format)}`).join(", ")}`;
       out += `${tapBtn(c, "chc", ` style="${band(i)}" aria-label="${esc(name)}"${picked === i ? ` aria-pressed="true"` : ""}`)}</button>`;
     });
+  c.series.forEach((s, si) =>
+    s.values.forEach((v, i) => {
+      const x = c.x[i];
+      if (x === undefined || !rules.word(c, { series: s.name, at: x })) return;
+      const name = `${s.name}, ${label(c, x, true)}: ${shown(c, s, v)}`;
+      out += `<span class="chqw"><span class="chq" role="button" tabindex="-1" data-si="${si}" data-i="${i}" aria-roledescription="editable point" aria-label="${esc(name)}" style="${band(i)};top:${num(top(v, lo, hi))}%;${colour(s.tone, si)}"></span></span>`;
+    }),
+  );
   out += `</div><div class="chx2">`;
   const wide = Math.max(1, Math.ceil(n / 12)), phone = Math.max(1, Math.ceil(n / 6));
   c.x.forEach((x, i) => {
@@ -169,6 +151,7 @@ function plot(c: Chart): string {
     out += tag("span", cls, label(c, x, false), ` style="left:${num(((i + 0.5) / n) * 100)}%"`);
   });
   out += "</div></div>";
+  if (c.move != null) out += `<div class="chq-k"><span><kbd>↑ ↓</kbd> one step</span><span><kbd>Shift</kbd> ten steps</span><span><kbd>Enter</kbd> drop</span><span><kbd>Esc</kbd> cancel</span></div>`;
   const rows = c.x.map((x, i) => [label(c, x, true), ...c.series.map((s) => value(at(s, i), c.format))]);
   return out + table(c, ["", ...c.series.map((s) => s.name)], rows);
 }
@@ -224,7 +207,74 @@ export function chart(b: Chart, ctx: Ctx): HTMLElement {
       e.onmouseenter = () => read(i);
       e.onmouseleave = () => read(null);
     });
+    if (now.move) points(root, now, ctx, now.move);
   };
   draw();
+  rove(root);
   return root;
 }
+
+function rove(root: HTMLElement) {
+  const centre = (q: Element) => {
+    const r = q.getBoundingClientRect();
+    return r.top + r.height / 2;
+  };
+  root.addEventListener(
+    "pointerdown",
+    (e) => {
+      const q = e.target instanceof HTMLElement && e.target.classList.contains("chq") ? e.target : null;
+      const near = Array.from(root.querySelectorAll<HTMLElement>(`.chq[data-i="${q?.dataset["i"] ?? ""}"]`)).sort((a, b) => Math.abs(centre(a) - e.clientY) - Math.abs(centre(b) - e.clientY))[0];
+      if (!q || !near || near === q || !e.isTrusted) return;
+      e.stopPropagation();
+      near.dispatchEvent(new PointerEvent("pointerdown", e));
+    },
+    { capture: true },
+  );
+  root.addEventListener("keydown", (e) => {
+    const by = { ArrowLeft: -1, ArrowRight: 1 }[e.key];
+    const q = e.target instanceof HTMLElement && e.target.classList.contains("chq") ? e.target : null;
+    if (!q || by === undefined || e.defaultPrevented) return;
+    const all = Array.from(root.querySelectorAll<HTMLElement>(`.chq[data-si="${q.dataset["si"] ?? ""}"]`));
+    const next = all[all.indexOf(q) + by];
+    if (!next) return;
+    all.forEach((x) => (x.tabIndex = x === next ? 0 : -1));
+    next.focus();
+    e.preventDefault();
+  });
+}
+
+function points(root: HTMLElement, now: Chart, ctx: Ctx, gesture: NonNullable<Chart["move"]>) {
+  const [lo, hi] = axis(now);
+  const seen = new Set<string>();
+  root.querySelectorAll<HTMLElement>(".chq").forEach((q) => {
+    const [si, i] = [Number(q.dataset["si"]), Number(q.dataset["i"])];
+    const s = now.series[si], x = now.x[i], start = s?.values[i];
+    if (!s || x === undefined || start === undefined) return;
+    if (!seen.has(s.name)) (seen.add(s.name), (q.tabIndex = 0));
+    const grab: PointGrab = { series: s.name, at: x };
+    let dragged = false;
+    const show = (m: PointMove | null) => {
+      dragged ||= m !== null;
+      const y = m?.y ?? start;
+      const moved: Chart = { ...now, series: now.series.map((o, k) => (k === si ? { ...o, values: o.values.map((v, j) => (j === i ? y : v)) } : o)) };
+      q.style.top = `${num(top(y, lo, hi))}%`;
+      root.querySelector(".chp svg")?.replaceWith(...nodes(svg(moved, lo, hi)));
+      root.querySelector(".chl")?.replaceWith(...nodes(legend(moved, m ? i : readout(now, null))));
+      root.querySelectorAll(".chq-g,.chq-t").forEach((e) => e.remove());
+      if (!m || m.y === start) return;
+      const d = m.y - start, item = root.querySelectorAll(".chl>span:not(.chx)")[si];
+      item?.querySelector("b")?.replaceChildren(shown(now, s, m.y));
+      item?.append(...nodes(tag("em", "chq-d", `${d > 0 ? "+" : "−"}${shown(now, s, Math.abs(d))} from ${shown(now, s, start)}`)));
+      q.before(...nodes(`<i class="chq-g" style="left:${num(((i + 0.5) / now.x.length) * 100)}%;top:${num(top(start, lo, hi))}%"></i>`));
+      root.querySelector(".chy")?.append(...nodes(tag("span", "chq-t", shown(now, s, m.y), ` style="top:${num(top(m.y, lo, hi))}%"`)));
+    };
+    q.addEventListener("pointerdown", () => (dragged = false));
+    q.addEventListener("click", () => dragged || root.querySelectorAll<HTMLElement>(".chc")[i]?.click());
+    const px = () => ((root.querySelector<HTMLElement>(".chp")?.offsetHeight ?? H) * stepOf(now, s)) / (hi - lo);
+    gestured(q, ctx, { block: now, gesture, rules, grab, item: `${s.name}\n${x}`, reach: (_, dy) => ({ steps: Math.round(-dy / px()) }), show });
+    const out = held(ctx, { block: now, rules, grab, item: `${s.name}\n${x}` });
+    if (isMove(out)) show(out);
+  });
+}
+
+const isMove = (v: unknown): v is PointMove => typeof v === "object" && v !== null && "y" in v && typeof v.y === "number";

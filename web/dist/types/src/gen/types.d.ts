@@ -185,6 +185,7 @@ export type Chart = {
     format?: ChartFormat | null;
     id?: string | null;
     lang?: string | null;
+    move?: Gesture | null;
     selected?: string | null;
     series: Series[];
     show?: Expr | null;
@@ -799,6 +800,11 @@ export type PlanRun = {
     size: string;
     steps: Step[];
 };
+export type PointMove = {
+    at: string;
+    series: string;
+    y: number;
+};
 export type Prose = {
     id?: string | null;
     parts: Part[];
@@ -976,7 +982,9 @@ export type Seen = {
 export type Series = {
     as?: SeriesMark | null;
     dash?: boolean | null;
+    fixed?: boolean | null;
     name: string;
+    step?: number | null;
     tone?: Tone | null;
     values: number[];
 };

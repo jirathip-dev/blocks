@@ -1,9 +1,0 @@
-{
-  "kind": "hero",
-  "id": "hero",
-  "variant": null,
-  "drawn": "fallback",
-  "role": "group",
-  "name": "Blocks",
-  "children": []
-}

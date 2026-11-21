@@ -1,6 +1,0 @@
-{
-  "type": "diagram",
-  "id": "flow",
-  "title": "Flow",
-  "source": "[*] --> a\na --> b"
-}

@@ -1,9 +1,0 @@
-{
-  "kind": "config",
-  "id": "settings",
-  "variant": null,
-  "drawn": "native",
-  "role": "form",
-  "name": "settings",
-  "children": []
-}

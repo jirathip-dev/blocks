@@ -1932,6 +1932,16 @@ var defs = {
           "null"
         ]
       },
+      "move": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Gesture"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
       "selected": {
         "type": [
           "string",
@@ -6273,8 +6283,20 @@ var defs = {
           "null"
         ]
       },
+      "fixed": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
       "name": {
         "type": "string"
+      },
+      "step": {
+        "type": [
+          "number",
+          "null"
+        ]
       },
       "tone": {
         "anyOf": [

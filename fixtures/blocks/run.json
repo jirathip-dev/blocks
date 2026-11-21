@@ -1,8 +1,0 @@
-{
-  "type": "run",
-  "id": "run",
-  "action": "approve",
-  "command": "cargo test",
-  "sha": "4f2a9c1",
-  "dir": "crates"
-}

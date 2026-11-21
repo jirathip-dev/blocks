@@ -13,12 +13,24 @@ internal struct ChartModel {
     private static let th = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."]
 
     internal let chart: Blocks.Chart
+    internal let scale: (lo: Double, hi: Double)
+    internal let preview: PointMove?
+
+    internal init(chart: Blocks.Chart, preview: PointMove? = nil) {
+        var c = chart
+        if let p = preview, let si = c.series.firstIndex(where: { $0.name == p.series }), let i = c.x.firstIndex(of: p.at),
+            c.series[si].values.indices.contains(i)
+        {
+            c.series[si].values[i] = p.y
+            c.selected = p.at
+        }
+        (self.chart, scale, self.preview) = (c, chart.axis, preview)
+    }
+
     internal var thai: Bool { chart.lang == "th" }
     internal var empty: Bool { chart.x.isEmpty || chart.series.allSatisfy(\.values.isEmpty) }
     internal var picked: Int? { empty ? nil : chart.x.firstIndex { $0 == chart.selected } }
     internal var readout: Int? { empty ? nil : picked ?? max(0, chart.x.count - 1) }
-
-    internal func isLine(_ s: Series) -> Bool { chart.chart == .line || (chart.chart == .combo && s.as == .line) }
 
     internal func at(_ s: Series, _ i: Int) -> Double? { s.values.indices.contains(i) ? s.values[i] : nil }
 
@@ -58,32 +70,6 @@ internal struct ChartModel {
         return "\((thai ? Self.th : Self.en)[month - 1]) " + (long ? "\(y)" : String(format: "%02d", y % 100))
     }
 
-    private static func nice(_ v: Double) -> Double {
-        guard v > 0 else { return 1 }
-        let p = pow(10, log10(v).rounded(.down))
-        return p * ([1, 2, 2.5, 5].first { v / p <= $0 } ?? 10)
-    }
-
-    internal var scale: (lo: Double, hi: Double) {
-        let all = chart.series.flatMap(\.values)
-        if chart.chart == .line {
-            guard let lo = all.min(), let hi = all.max() else { return (0, 1) }
-            let step = Self.nice(hi > lo ? (hi - lo) / 2 : max(abs(hi), 1) / 2)
-            let low = (lo / step).rounded(.down) * step
-            var top = max((hi / step).rounded(.up) * step, low + step)
-            if Int(((top - low) / step).rounded()) % 2 == 1 { top += step }
-            return (low, top)
-        }
-        let top = chart.x.indices.map { i in
-            let bars = chart.series.filter { !isLine($0) }.compactMap { at($0, i) }
-            let lines = chart.series.filter(isLine).compactMap { at($0, i) }
-            let bar = chart.chart != .bar ? bars.reduce(0, +) : bars.reduce(0, max)
-            return lines.reduce(bar, max)
-        }
-        .reduce(0, max)
-        return (0, Self.nice(top * 1.04))
-    }
-
     internal var slices: [Slice] {
         let s = chart.series.first
         let parts = chart.x.enumerated().map { i, x in Slice(name: x, value: s.flatMap { at($0, i) } ?? 0) }
@@ -113,12 +99,13 @@ internal struct ChartBlock: View {
     @Environment(\.act) private var act
     @State private var picked: String?
     @State private var width: CGFloat = 390
+    @State private var preview: PointMove?
     internal let block: Blocks.Chart
 
     private var model: ChartModel {
         var c = block
         c.selected = picked ?? block.selected
-        return ChartModel(chart: c)
+        return ChartModel(chart: c, preview: preview)
     }
 
     internal var body: some View {
@@ -126,7 +113,9 @@ internal struct ChartBlock: View {
         VStack(alignment: .leading, spacing: 8) {
             Text(block.title).ui(13, .semibold, look).foregroundStyle(look.palette.foreground)
                 .fixedSize(horizontal: false, vertical: true)
-            if block.chart == .donut { ChartDonut(model: m, pick: pick) } else { ChartPlot(model: m, width: width, pick: pick) }
+            if block.chart == .donut { ChartDonut(model: m, pick: pick) } else {
+                ChartPlot(model: m, width: width, pick: pick, points: ChartPoints(block: block, model: m) { preview = $0 })
+            }
             ChartTable(model: m)
         }
         .padding(12).frame(maxWidth: .infinity, alignment: .leading).surface(look, radius: 16)
@@ -149,9 +138,13 @@ private struct ChartLegend: View {
         let items = ForEach(Array(c.series.enumerated()), id: \.offset) { i, s in
             HStack(spacing: 4) {
                 Rectangle().fill(model.colour(s.tone, i, look.palette))
-                    .frame(width: model.isLine(s) ? 12 : 8, height: model.isLine(s) ? 2 : 8)
+                    .frame(width: model.chart.isLine(s) ? 12 : 8, height: model.chart.isLine(s) ? 2 : 8)
                 Text(s.name).foregroundStyle(look.palette.mute)
-                if let at = model.readout { Text(model.value(model.at(s, at))).fontWeight(.semibold) }
+                if let p = model.preview, p.series == s.name {
+                    Text(c.shown(s, p.y)).fontWeight(.semibold)
+                } else if let at = model.readout {
+                    Text(model.value(model.at(s, at))).fontWeight(.semibold)
+                }
             }
         }
         let head = model.readout.map { Text(model.label(c.x[$0], long: true)).fontWeight(.semibold) }
@@ -174,6 +167,7 @@ private struct ChartPlot: View {
     let model: ChartModel
     let width: CGFloat
     let pick: (String) -> Void
+    let points: ChartPoints
 
     var body: some View {
         let c = model.chart, n = c.x.count, (lo, hi) = model.scale
@@ -192,7 +186,7 @@ private struct ChartPlot: View {
                 }
                 .ui(11, .regular, look).foregroundStyle(look.palette.mute).frame(width: 44, height: height)
                 VStack(spacing: 4) {
-                    marks.frame(height: height).overlay { columns }
+                    marks.frame(height: height).overlay { columns }.overlay { points }
                     HStack(spacing: 0) {
                         ForEach(Array(c.x.enumerated()), id: \.offset) { i, x in
                             Text(" ").frame(maxWidth: .infinity).overlay {
@@ -236,7 +230,7 @@ private struct ChartPlot: View {
                 ctx.stroke(Path { $0.addLines([CGPoint(x: 0, y: size.height * (1 - t)), CGPoint(x: size.width, y: size.height * (1 - t))]) }, with: .color(p.line))
             }
             let gap = col * (c.x.count > 16 ? 0.15 : 0.25)
-            let bars = c.series.enumerated().filter { !model.isLine($0.1) }
+            let bars = c.series.enumerated().filter { !model.chart.isLine($0.1) }
             for i in c.x.indices {
                 var base = 0.0
                 for (k, (si, s)) in bars.enumerated() {
@@ -254,7 +248,7 @@ private struct ChartPlot: View {
                 }
             }
             ctx.stroke(Path { $0.addLines([CGPoint(x: 0, y: size.height), CGPoint(x: size.width, y: size.height)]) }, with: .color(p.edge))
-            for (si, s) in c.series.enumerated() where model.isLine(s) {
+            for (si, s) in c.series.enumerated() where model.chart.isLine(s) {
                 let pts = c.x.indices.compactMap { i in model.at(s, i).map { CGPoint(x: (CGFloat(i) + 0.5) * col, y: y($0)) } }
                 let colour = model.colour(s.tone, si, p)
                 ctx.stroke(Path { $0.addLines(pts) }, with: .color(colour), style: StrokeStyle(lineWidth: 2, lineJoin: .round, dash: s.dash == true ? [4, 3] : []))
@@ -262,6 +256,40 @@ private struct ChartPlot: View {
                     let dot = CGRect(x: (CGFloat(i) + 0.5) * col - 4, y: y(v) - 4, width: 8, height: 8)
                     ctx.fill(Path(dot.insetBy(dx: -2, dy: -2)), with: .color(p.card))
                     ctx.fill(Path(dot), with: .color(colour))
+                }
+            }
+        }
+    }
+}
+
+private struct ChartPoints: View {
+    @Environment(\.look) private var look
+    let block: Blocks.Chart
+    let model: ChartModel
+    let show: (PointMove?) -> Void
+
+    var body: some View {
+        GeometryReader { geo in
+            let c = block, (lo, hi) = model.scale, col = geo.size.width / CGFloat(max(c.x.count, 1))
+            let y = { (v: Double) in geo.size.height * (1 - CGFloat((v - lo) / (hi - lo))) }
+            if let gesture = c.move {
+                ForEach(Array(c.series.enumerated()), id: \.offset) { si, s in
+                    let px = geo.size.height * CGFloat(c.step(s) / (hi - lo))
+                    ForEach(Array(zip(c.x, s.values).enumerated()), id: \.offset) { i, p in
+                        let grab = PointGrab(s.name, at: p.0)
+                        let now = model.preview.flatMap { $0.series == s.name && $0.at == p.0 ? $0.y : nil } ?? p.1
+                        if c.word(grab) != nil {
+                            Rectangle().strokeBorder(model.colour(s.tone, si, look.palette), lineWidth: 2).background(look.palette.card)
+                                .frame(width: 8, height: 8).frame(width: col, height: 44).contentShape(Rectangle())
+                                .modifier(
+                                    Gestured(
+                                        rules: c, grab: grab, gesture: gesture, label: "\(s.name), \(model.label(p.0, long: true)): \(c.shown(s, p.1))",
+                                        reach: { PointReach(Int((-$0.translation.height / max(px, 1)).rounded())) },
+                                        value: { (try? JSONValue($0)) ?? .null }, show: show)
+                                )
+                                .position(x: (CGFloat(i) + 0.5) * col, y: y(now))
+                        }
+                    }
                 }
             }
         }

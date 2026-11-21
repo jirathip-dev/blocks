@@ -1,9 +1,0 @@
-{
-  "kind": "row",
-  "id": "build",
-  "variant": null,
-  "drawn": "native",
-  "role": "group",
-  "name": "Build",
-  "children": []
-}

@@ -1,7 +1,0 @@
-{
-  "type": "editor",
-  "id": "editor",
-  "name": "notes",
-  "text": "hello",
-  "action": "save-notes"
-}

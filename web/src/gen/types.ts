@@ -40,7 +40,7 @@ export type CardKind = "ask" | "run" | "secret" | "config" | "proposal";
 
 export type Cell = string | number | Label;
 
-export type Chart = { chart: ChartKind; empty?: string | null; era?: Era | null; format?: ChartFormat | null; id?: string | null; lang?: string | null; selected?: string | null; series: Series[]; show?: Expr | null; tap?: Tap | null; title: string; x: string[] };
+export type Chart = { chart: ChartKind; empty?: string | null; era?: Era | null; format?: ChartFormat | null; id?: string | null; lang?: string | null; move?: Gesture | null; selected?: string | null; series: Series[]; show?: Expr | null; tap?: Tap | null; title: string; x: string[] };
 
 export type ChartFormat = "count" | "thb" | "thb_m" | "percent";
 
@@ -224,6 +224,8 @@ export type Plan = { out: string; runs: PlanRun[] };
 
 export type PlanRun = { css: string[]; kinds: string[]; name: string; probes: boolean; screen: string; scripts: string[]; size: string; steps: Step[] };
 
+export type PointMove = { at: string; series: string; y: number };
+
 export type Prose = { id?: string | null; parts: Part[]; show?: Expr | null; streaming?: boolean | null };
 
 export type Queued = { q: number; text: string };
@@ -262,7 +264,7 @@ export type Section = { blocks: Block[]; footer?: string | null; header?: string
 
 export type Seen = { at: string; detail: string; file?: string | null; line?: number | null; rule: string; run?: string | null; shot?: string | null };
 
-export type Series = { as?: SeriesMark | null; dash?: boolean | null; name: string; tone?: Tone | null; values: number[] };
+export type Series = { as?: SeriesMark | null; dash?: boolean | null; fixed?: boolean | null; name: string; step?: number | null; tone?: Tone | null; values: number[] };
 
 export type SeriesMark = "bar" | "line";
 

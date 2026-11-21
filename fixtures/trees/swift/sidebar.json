@@ -1,9 +1,0 @@
-{
-  "kind": "sidebar",
-  "id": "side",
-  "variant": null,
-  "drawn": "fallback",
-  "role": "navigation",
-  "name": "main",
-  "children": []
-}
