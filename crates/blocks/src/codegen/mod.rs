@@ -17,7 +17,6 @@ mod theme;
 mod ts;
 
 type Files = Vec<(String, String)>;
-
 /// The JSON Schema of a `Frame`; its `$defs` hold `Block`, `Op` and the stream's other messages.
 pub fn schema() -> Value {
     let mut g = schemars::SchemaGenerator::default();

@@ -104,9 +104,7 @@ code{color:var(--l)}
 .chq-g{position:absolute;width:var(--s2);height:var(--s2);margin:calc(var(--s2) / -2) 0 0 calc(var(--s2) / -2);box-sizing:border-box;border:1px dashed var(--mute);pointer-events:none}
 .chy .chq-t{z-index:1;padding:0 var(--s1);background:var(--card);border:1px solid var(--l);color:var(--fg);font-weight:600}
 .chl .chq-d{font-style:normal;color:var(--mute)}
-.chq-k{display:none;flex-wrap:wrap;gap:var(--s1) var(--s3);margin-top:var(--s2);font-size:var(--fs-meta);color:var(--mute)}
-.chart:has(.chq:focus-visible:is([data-phase=pressed],[data-phase=previewing])) .chq-k{display:flex}
-.chq-k kbd{font:inherit;color:var(--fg);font-weight:600}
+.chart:has(.chq:focus-visible:is([data-phase=pressed],[data-phase=previewing])) .chg::after{content:"↑ ↓ one step · Shift ten steps · Enter drop · Esc cancel";grid-column:2;margin-top:var(--s2);font-size:var(--fs-meta);color:var(--mute)}
 .chips{display:flex;flex-wrap:wrap;gap:var(--s4) var(--s4);margin:var(--s4) 0;padding:0 var(--s1)}
 .chips button.on{background:var(--l);color:var(--bg)}
 button.pick{display:flex;width:100%;height:auto;min-height:var(--ctl);padding:calc((var(--ctl) - 1.35em) / 2) 1ch;justify-content:flex-start;text-align:left;white-space:normal;line-height:1.35;text-transform:none}

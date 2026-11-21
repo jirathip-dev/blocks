@@ -151,7 +151,6 @@ function plot(c: Chart): string {
     out += tag("span", cls, label(c, x, false), ` style="left:${num(((i + 0.5) / n) * 100)}%"`);
   });
   out += "</div></div>";
-  if (c.move != null) out += `<div class="chq-k"><span><kbd>↑ ↓</kbd> one step</span><span><kbd>Shift</kbd> ten steps</span><span><kbd>Enter</kbd> drop</span><span><kbd>Esc</kbd> cancel</span></div>`;
   const rows = c.x.map((x, i) => [label(c, x, true), ...c.series.map((s) => value(at(s, i), c.format))]);
   return out + table(c, ["", ...c.series.map((s) => s.name)], rows);
 }
