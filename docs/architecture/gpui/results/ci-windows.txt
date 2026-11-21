@@ -1,0 +1,118 @@
+## build the two minimal window apps and the two prototypes in release
+built min-egui in 194 s
+built min-gpui in 238 s
+built egui in 174 s
+built gpui in 181 s
+## release binary size of each minimal window app
+min-egui bytes=13662720
+min-egui stripped_bytes=13662720
+min-gpui bytes=8930816
+min-gpui stripped_bytes=8930816
+## frame times with no window: egui, GPUI, GPUI with its headless GPU renderer
+{"toolkit":"egui","case":"first-paint","size":"1440x900","frames":1,"median_ms":6.827,"p95_ms":6.827,"max_ms":6.827,"over_16_7_ms":0}
+{"toolkit":"egui","case":"repaint-still","size":"1440x900","frames":120,"median_ms":1.041,"p95_ms":1.155,"max_ms":1.690,"over_16_7_ms":0}
+{"toolkit":"egui","case":"scroll","size":"1440x900","frames":240,"median_ms":1.045,"p95_ms":1.289,"max_ms":1.959,"over_16_7_ms":0}
+{"toolkit":"egui","case":"stream-rows","size":"1440x900","frames":120,"median_ms":1.583,"p95_ms":2.321,"max_ms":2.537,"over_16_7_ms":0}
+{"toolkit":"egui","case":"stream-text","size":"1440x900","frames":120,"median_ms":1.636,"p95_ms":1.816,"max_ms":2.045,"over_16_7_ms":0}
+{"toolkit":"gpui","case":"first-paint","size":"1440x900","frames":1,"median_ms":104.241,"p95_ms":104.241,"max_ms":104.241,"over_16_7_ms":1}
+{"toolkit":"gpui","case":"repaint-still","size":"1440x900","frames":120,"median_ms":4.169,"p95_ms":4.382,"max_ms":6.926,"over_16_7_ms":0}
+{"toolkit":"gpui","case":"scroll","size":"1440x900","frames":240,"median_ms":4.112,"p95_ms":4.371,"max_ms":6.573,"over_16_7_ms":0}
+{"toolkit":"gpui","case":"stream-rows","size":"1440x900","frames":120,"median_ms":8.377,"p95_ms":9.081,"max_ms":12.848,"over_16_7_ms":0}
+{"toolkit":"gpui","case":"stream-text","size":"1440x900","frames":120,"median_ms":8.740,"p95_ms":9.364,"max_ms":12.966,"over_16_7_ms":0}
+blocks-gpui: no pixels with no window here: render_to_image not available: no HeadlessRenderer configured
+FAILED(1): blocks-gpui.exe bench --size 1440x900 --gpu
+{"toolkit":"egui","case":"first-paint","size":"390x844","frames":1,"median_ms":5.756,"p95_ms":5.756,"max_ms":5.756,"over_16_7_ms":0}
+{"toolkit":"egui","case":"repaint-still","size":"390x844","frames":120,"median_ms":1.025,"p95_ms":1.087,"max_ms":1.435,"over_16_7_ms":0}
+{"toolkit":"egui","case":"scroll","size":"390x844","frames":240,"median_ms":1.035,"p95_ms":1.299,"max_ms":1.633,"over_16_7_ms":0}
+{"toolkit":"egui","case":"stream-rows","size":"390x844","frames":120,"median_ms":1.538,"p95_ms":1.663,"max_ms":2.433,"over_16_7_ms":0}
+{"toolkit":"egui","case":"stream-text","size":"390x844","frames":120,"median_ms":1.658,"p95_ms":1.816,"max_ms":2.012,"over_16_7_ms":0}
+{"toolkit":"gpui","case":"first-paint","size":"390x844","frames":1,"median_ms":84.743,"p95_ms":84.743,"max_ms":84.743,"over_16_7_ms":1}
+{"toolkit":"gpui","case":"repaint-still","size":"390x844","frames":120,"median_ms":4.159,"p95_ms":6.112,"max_ms":6.831,"over_16_7_ms":0}
+{"toolkit":"gpui","case":"scroll","size":"390x844","frames":240,"median_ms":4.099,"p95_ms":4.338,"max_ms":6.847,"over_16_7_ms":0}
+{"toolkit":"gpui","case":"stream-rows","size":"390x844","frames":120,"median_ms":8.316,"p95_ms":8.841,"max_ms":12.092,"over_16_7_ms":0}
+{"toolkit":"gpui","case":"stream-text","size":"390x844","frames":120,"median_ms":8.662,"p95_ms":9.175,"max_ms":13.770,"over_16_7_ms":0}
+blocks-gpui: no pixels with no window here: render_to_image not available: no HeadlessRenderer configured
+FAILED(1): blocks-gpui.exe bench --size 390x844 --gpu
+## screenshots with no window at 1440 and 390, light and dark
+blocks-gpui: capture: render_to_image not available: no HeadlessRenderer configured
+FAILED(1): blocks-gpui.exe shot look --size 1440x900 --scheme light --out gpui-look-1440-light.png
+blocks-gpui: capture: render_to_image not available: no HeadlessRenderer configured
+FAILED(1): blocks-gpui.exe shot look --size 1440x900 --scheme dark --out gpui-look-1440-dark.png
+blocks-gpui: capture: render_to_image not available: no HeadlessRenderer configured
+FAILED(1): blocks-gpui.exe shot look --size 390x844 --scheme light --out gpui-look-390-light.png
+blocks-gpui: capture: render_to_image not available: no HeadlessRenderer configured
+FAILED(1): blocks-gpui.exe shot look --size 390x844 --scheme dark --out gpui-look-390-dark.png
+blocks-gpui: capture: render_to_image not available: no HeadlessRenderer configured
+FAILED(1): blocks-gpui.exe shot scripts --size 390x844 --out gpui-scripts-390-light.png
+blocks-gpui: capture: render_to_image not available: no HeadlessRenderer configured
+FAILED(1): blocks-gpui.exe shot scripts --size 390x844 --scale 2 --out gpui-scripts-390-light-2x.png
+## Windows and macOS: a real window, its frame gaps, a screenshot and the text probe
+{"toolkit":"gpui-window-gap","case":"scroll","size":"1440x900","frames":240,"median_ms":15.905,"p95_ms":31.787,"max_ms":47.966,"over_16_7_ms":72}
+{"toolkit":"gpui-window-gap","case":"stream-rows","size":"1440x900","frames":120,"median_ms":15.921,"p95_ms":31.365,"max_ms":32.876,"over_16_7_ms":38}
+{"toolkit":"gpui-window-gap","case":"stream-text","size":"1440x900","frames":120,"median_ms":15.873,"p95_ms":31.371,"max_ms":46.071,"over_16_7_ms":34}
+{"toolkit":"egui-window-gap","case":"scroll","size":"1440x900","frames":240,"median_ms":31.262,"p95_ms":46.729,"max_ms":59.347,"over_16_7_ms":152}
+{"toolkit":"egui-window-cpu","case":"scroll","size":"1440x900","frames":240,"median_ms":2.522,"p95_ms":9.048,"max_ms":14.530,"over_16_7_ms":0}
+{"toolkit":"egui-window-gap","case":"stream-rows","size":"1440x900","frames":120,"median_ms":31.848,"p95_ms":47.152,"max_ms":62.026,"over_16_7_ms":118}
+{"toolkit":"egui-window-cpu","case":"stream-rows","size":"1440x900","frames":120,"median_ms":3.351,"p95_ms":13.540,"max_ms":17.309,"over_16_7_ms":3}
+{"toolkit":"egui-window-gap","case":"stream-text","size":"1440x900","frames":120,"median_ms":33.075,"p95_ms":47.364,"max_ms":60.512,"over_16_7_ms":120}
+{"toolkit":"egui-window-cpu","case":"stream-text","size":"1440x900","frames":120,"median_ms":3.553,"p95_ms":15.811,"max_ms":17.821,"over_16_7_ms":5}
+gpu Some(GpuSpecs { is_software_emulated: false, device_name: "Microsoft Basic Render Driver", driver_name: "Unknown Vendor (ID: 0x1414)", driver_info: "10.0.26100.33648" })
+{"toolkit":"gpui","hebrew_x":[0.0, 8.9140625, 20.733398, 26.87207],"hebrew_order":"left-to-right","arabic_x":[0.0, 3.506836, 20.200195, 28.382813],"arabic_order":"left-to-right","thai_base_width":8.03,"thai_base_and_mark_width":8.03,"thai_lines_at_120":["ภาษาไทยไม\u{e48}ม\u{e35}ช\u{e48}องว\u{e48}างร", "ะหว\u{e48}างคำ"],"thai_breaks_on_words":false}
+{"toolkit":"egui","hebrew_x":[7.0, 0.0, 25.0, 18.0],"hebrew_order":"mixed","arabic_x":[10.0, 0.0, 20.0, 16.0],"arabic_order":"mixed","thai_base_width":8.03,"thai_base_and_mark_width":8.03,"thai_lines_at_120":["ภาษาไทยไมมมมชชองววางระ", "หววางคคค"],"thai_breaks_on_words":false}
+## Windows again with DirectComposition off
+{"toolkit":"gpui-window-gap","case":"scroll","size":"1440x900","frames":240,"median_ms":15.860,"p95_ms":31.323,"max_ms":33.420,"over_16_7_ms":70}
+{"toolkit":"gpui-window-gap","case":"stream-rows","size":"1440x900","frames":120,"median_ms":15.864,"p95_ms":31.154,"max_ms":32.120,"over_16_7_ms":30}
+{"toolkit":"gpui-window-gap","case":"stream-text","size":"1440x900","frames":120,"median_ms":15.887,"p95_ms":31.618,"max_ms":32.992,"over_16_7_ms":47}
+{"toolkit":"egui-window-gap","case":"scroll","size":"1440x900","frames":240,"median_ms":30.006,"p95_ms":45.186,"max_ms":47.235,"over_16_7_ms":141}
+{"toolkit":"egui-window-cpu","case":"scroll","size":"1440x900","frames":240,"median_ms":2.700,"p95_ms":9.928,"max_ms":16.585,"over_16_7_ms":0}
+{"toolkit":"egui-window-gap","case":"stream-rows","size":"1440x900","frames":120,"median_ms":31.775,"p95_ms":47.118,"max_ms":63.107,"over_16_7_ms":118}
+{"toolkit":"egui-window-cpu","case":"stream-rows","size":"1440x900","frames":120,"median_ms":3.408,"p95_ms":16.609,"max_ms":16.949,"over_16_7_ms":6}
+{"toolkit":"egui-window-gap","case":"stream-text","size":"1440x900","frames":120,"median_ms":31.825,"p95_ms":47.810,"max_ms":62.723,"over_16_7_ms":120}
+{"toolkit":"egui-window-cpu","case":"stream-text","size":"1440x900","frames":120,"median_ms":3.745,"p95_ms":17.724,"max_ms":17.903,"over_16_7_ms":20}
+gpu Some(GpuSpecs { is_software_emulated: false, device_name: "Microsoft Basic Render Driver", driver_name: "Unknown Vendor (ID: 0x1414)", driver_info: "10.0.26100.33648" })
+## Windows: what UI Automation sees of each window (the block ids)
+uia blocks-gpui: nodes=12 with_block_id=11
+  id=block:samples | ControlType.Group | name=Samples
+  id=block:rows | ControlType.List | name=list
+  id=block:row | ControlType.ListItem | name=Build
+  id=block:finding | ControlType.Group | name=Fix the test
+  id=block:build | ControlType.ListItem | name=Build
+  id=block:card | ControlType.Group | name=q1
+  id=block:card-row | ControlType.ListItem | name=Review
+  id=block:card-up | ControlType.Group | name=stat card-up
+  id=block:note | ControlType.Group | name=**Hello**
+  id=block:about | ControlType.Document | name=prose
+  id=block:say | ControlType.Group | name=composer
+  id= | ControlType.Edit | name=message the team
+uia blocks-egui: nodes=31 with_block_id=11
+  id=block:samples | ControlType.Group | name=Samples
+  id= | ControlType.Text | name=Samples
+  id=block:rows | ControlType.Group | name=rows
+  id=block:row | ControlType.Group | name=Build
+  id= | ControlType.Text | name=Build
+  id= | ControlType.Text | name=green
+  id= | ControlType.Text | name=2m
+  id=block:finding | ControlType.Group | name=finding
+  id= | ControlType.Text | name=Fix the test
+  id=block:build | ControlType.Group | name=Build
+  id= | ControlType.Text | name=Build
+  id= | ControlType.Text | name=green
+  id= | ControlType.Text | name=2m
+  id=block:card | ControlType.Group | name=q1
+  id= | ControlType.Text | name=q1
+  id= | ControlType.Text | name=lapses in 29903633m
+  id= | ControlType.Text | name=as of 0s ago
+  id= | ControlType.Text | name=waiting
+  id=block:card-row | ControlType.Group | name=Review
+  id= | ControlType.Text | name=Review
+  id= | ControlType.Text | name=decides in 29903633m
+  id= | ControlType.Text | name=0s ago
+  id=block:card-up | ControlType.Group | name=up
+  id= | ControlType.Text | name=0s
+  id= | ControlType.Text | name=up
+  id=block:note | ControlType.Group | name=note
+  id= | ControlType.Text | name=**Hello**
+  id=block:about | ControlType.Group | name=about
+  id= | ControlType.Text | name=about
+  id=block:say | ControlType.Group | name=message the team
+  id= | ControlType.Text | name=message the team

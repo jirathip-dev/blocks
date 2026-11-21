@@ -1,0 +1,165 @@
+## size
+min-egui bytes=12067888
+min-egui stripped_bytes=10134896
+min-gpui bytes=7301104
+min-gpui stripped_bytes=6009072
+## deps
+== min-egui: 427 packages in the lock, its own included
+min-egui x86_64-unknown-linux-gnu: crates=280 in_two_or_more_versions=15
+min-egui x86_64-pc-windows-msvc: crates=179 in_two_or_more_versions=6
+min-egui aarch64-apple-darwin: crates=178 in_two_or_more_versions=8
+min-egui cargo deny: advisories ok, bans FAILED, licenses FAILED, sources ok
+   3 error[banned]
+  17 error[duplicate]: found 2 duplicate entries
+   2 error[duplicate]: found 3 duplicate entries
+   6 error[rejected]
+  licence refused: arrayref-0.3.9 "BSD-2-Clause"
+  licence refused: clipboard-win-5.4.3 "BSL-1.0"
+  licence refused: error-code-3.4.0 "BSL-1.0"
+  licence refused: libloading-0.8.9 "ISC"
+  licence refused: tiny-skia-0.11.4 "BSD-3-Clause"
+  licence refused: tiny-skia-path-0.11.4 "BSD-3-Clause"
+  banned: crate 'eframe = 0.37.0' is explicitly banned
+  banned: crate 'wgpu = 30.0.2' is explicitly banned
+  banned: crate 'winit = 0.30.13' is explicitly banned
+== min-gpui: 632 packages in the lock, its own included
+min-gpui x86_64-unknown-linux-gnu: crates=441 in_two_or_more_versions=24
+min-gpui x86_64-pc-windows-msvc: crates=263 in_two_or_more_versions=8
+min-gpui aarch64-apple-darwin: crates=303 in_two_or_more_versions=23
+min-gpui cargo deny: advisories ok, bans FAILED, licenses FAILED, sources FAILED
+   1 error[banned]
+  23 error[duplicate]: found 2 duplicate entries
+   2 error[duplicate]: found 3 duplicate entries
+  14 error[rejected]
+  34 error[source-not-allowed]
+  licence refused: arrayref-0.3.9 "BSD-2-Clause"
+  licence refused: cbindgen-0.28.0 "MPL-2.0"
+  licence refused: dwrote-0.11.5 "MPL-2.0"
+  licence refused: encoding_rs-0.8.44 "(Apache-2.0 OR MIT) AND BSD-3-Clause"
+  licence refused: exr-1.74.3 "BSD-3-Clause"
+  licence refused: lebe-0.5.3 "BSD-3-Clause"
+  licence refused: libloading-0.8.9 "ISC"
+  licence refused: option-ext-0.2.0 "MPL-2.0"
+  licence refused: sha1_smol-1.0.1 "BSD-3-Clause"
+  licence refused: slotmap-1.1.1 "Zlib"
+  licence refused: subtle-2.6.1 "BSD-3-Clause"
+  licence refused: tiny-keccak-2.0.2 "CC0-1.0"
+  licence refused: tiny-skia-0.11.4 "BSD-3-Clause"
+  licence refused: tiny-skia-path-0.11.4 "BSD-3-Clause"
+  git source refused:  11 git+https://github.com/gfx-rs/wgpu
+  git source refused:   1 git+https://github.com/zed-industries/font-kit
+  git source refused:   1 git+https://github.com/zed-industries/oo7
+  git source refused:   3 git+https://github.com/zed-industries/xim-rs.git
+  git source refused:  18 git+https://github.com/zed-industries/zed
+  banned: crate 'wgpu = 30.0.0' is explicitly banned
+== egui-alone: 60 packages in the lock, its own included
+warning: nothing to print.
+
+To find dependencies that require specific target platforms, try to use option `--target all` first, and then narrow your search scope accordingly.
+egui-alone x86_64-unknown-linux-gnu: crates=54 in_two_or_more_versions=0
+warning: nothing to print.
+
+To find dependencies that require specific target platforms, try to use option `--target all` first, and then narrow your search scope accordingly.
+egui-alone x86_64-pc-windows-msvc: crates=54 in_two_or_more_versions=0
+warning: nothing to print.
+
+To find dependencies that require specific target platforms, try to use option `--target all` first, and then narrow your search scope accordingly.
+egui-alone aarch64-apple-darwin: crates=54 in_two_or_more_versions=0
+egui-alone cargo deny: advisories ok, bans ok, licenses ok, sources ok
+== gpui-alone: 358 packages in the lock, its own included
+gpui-alone x86_64-unknown-linux-gnu: crates=249 in_two_or_more_versions=8
+gpui-alone x86_64-pc-windows-msvc: crates=254 in_two_or_more_versions=7
+gpui-alone aarch64-apple-darwin: crates=247 in_two_or_more_versions=7
+gpui-alone cargo deny: advisories ok, bans FAILED, licenses FAILED, sources FAILED
+   7 error[duplicate]: found 2 duplicate entries
+   6 error[rejected]
+  12 error[source-not-allowed]
+  licence refused: arrayref-0.3.9 "BSD-2-Clause"
+  licence refused: exr-1.74.3 "BSD-3-Clause"
+  licence refused: lebe-0.5.3 "BSD-3-Clause"
+  licence refused: slotmap-1.1.1 "Zlib"
+  licence refused: tiny-skia-0.11.4 "BSD-3-Clause"
+  licence refused: tiny-skia-path-0.11.4 "BSD-3-Clause"
+  git source refused:  12 git+https://github.com/zed-industries/zed
+== gpui-0-2-2: 709 packages in the lock, its own included
+gpui-0-2-2 x86_64-unknown-linux-gnu: crates=536 in_two_or_more_versions=59
+gpui-0-2-2 x86_64-pc-windows-msvc: crates=443 in_two_or_more_versions=44
+gpui-0-2-2 aarch64-apple-darwin: crates=450 in_two_or_more_versions=47
+gpui-0-2-2 cargo deny: advisories ok, bans FAILED, licenses FAILED, sources ok
+   2 error[banned]
+  49 error[duplicate]: found 2 duplicate entries
+   8 error[duplicate]: found 3 duplicate entries
+  26 error[rejected]
+  licence refused: ar_archive_writer-0.5.5 "Apache-2.0 WITH LLVM-exception"
+  licence refused: arrayref-0.3.9 "BSD-2-Clause"
+  licence refused: av1-grain-0.2.5 "BSD-2-Clause"
+  licence refused: avif-serialize-0.8.9 "BSD-3-Clause"
+  licence refused: bindgen-0.71.1 "BSD-3-Clause"
+  licence refused: cbindgen-0.28.0 "MPL-2.0"
+  licence refused: dwrote-0.11.5 "MPL-2.0"
+  licence refused: encoding_rs-0.8.44 "(Apache-2.0 OR MIT) AND BSD-3-Clause"
+  licence refused: exr-1.74.3 "BSD-3-Clause"
+  licence refused: hexf-parse-0.2.1 "CC0-1.0"
+  licence refused: lebe-0.5.3 "BSD-3-Clause"
+  licence refused: libloading-0.8.9 "ISC"
+  licence refused: nanorand-0.7.0 "Zlib"
+  licence refused: option-ext-0.2.0 "MPL-2.0"
+  licence refused: rav1e-0.8.1 "BSD-2-Clause"
+  licence refused: ravif-0.13.0 "BSD-3-Clause"
+  licence refused: ring-0.17.14 "Apache-2.0 AND ISC"
+  licence refused: rustls-webpki-0.103.17 "ISC"
+  licence refused: sha1_smol-1.0.1 "BSD-3-Clause"
+  licence refused: slotmap-1.1.1 "Zlib"
+  licence refused: subtle-2.6.1 "BSD-3-Clause"
+  licence refused: tiny-keccak-2.0.2 "CC0-1.0"
+  licence refused: tiny-skia-0.11.4 "BSD-3-Clause"
+  licence refused: tiny-skia-path-0.11.4 "BSD-3-Clause"
+  licence refused: untrusted-0.9.0 "ISC"
+  licence refused: v_frame-0.3.9 "BSD-2-Clause"
+  banned: crate 'hyper = 1.12.0' is explicitly banned
+  banned: crate 'tokio = 1.54.1' is explicitly banned
+## bench
+{"toolkit":"egui","case":"first-paint","size":"1440x900","frames":1,"median_ms":7.562,"p95_ms":7.562,"max_ms":7.562,"over_16_7_ms":0}
+{"toolkit":"egui","case":"repaint-still","size":"1440x900","frames":120,"median_ms":0.275,"p95_ms":0.344,"max_ms":0.370,"over_16_7_ms":0}
+{"toolkit":"egui","case":"scroll","size":"1440x900","frames":240,"median_ms":0.257,"p95_ms":0.309,"max_ms":0.369,"over_16_7_ms":0}
+{"toolkit":"egui","case":"stream-rows","size":"1440x900","frames":120,"median_ms":0.415,"p95_ms":0.544,"max_ms":0.710,"over_16_7_ms":0}
+{"toolkit":"egui","case":"stream-text","size":"1440x900","frames":120,"median_ms":0.442,"p95_ms":0.610,"max_ms":0.661,"over_16_7_ms":0}
+{"toolkit":"gpui","case":"first-paint","size":"1440x900","frames":1,"median_ms":41.843,"p95_ms":41.843,"max_ms":41.843,"over_16_7_ms":1}
+{"toolkit":"gpui","case":"repaint-still","size":"1440x900","frames":120,"median_ms":1.404,"p95_ms":1.802,"max_ms":2.071,"over_16_7_ms":0}
+{"toolkit":"gpui","case":"scroll","size":"1440x900","frames":240,"median_ms":1.435,"p95_ms":1.932,"max_ms":2.460,"over_16_7_ms":0}
+{"toolkit":"gpui","case":"stream-rows","size":"1440x900","frames":120,"median_ms":2.719,"p95_ms":2.899,"max_ms":3.749,"over_16_7_ms":0}
+{"toolkit":"gpui","case":"stream-text","size":"1440x900","frames":120,"median_ms":2.799,"p95_ms":3.151,"max_ms":3.355,"over_16_7_ms":0}
+{"toolkit":"gpui+gpu","case":"first-paint","size":"1440x900","frames":1,"median_ms":46.879,"p95_ms":46.879,"max_ms":46.879,"over_16_7_ms":1}
+{"toolkit":"gpui+gpu","case":"repaint-still","size":"1440x900","frames":120,"median_ms":2.640,"p95_ms":2.950,"max_ms":4.910,"over_16_7_ms":0}
+{"toolkit":"gpui+gpu","case":"scroll","size":"1440x900","frames":240,"median_ms":2.786,"p95_ms":3.753,"max_ms":5.870,"over_16_7_ms":0}
+{"toolkit":"gpui+gpu","case":"stream-rows","size":"1440x900","frames":120,"median_ms":4.491,"p95_ms":5.843,"max_ms":6.747,"over_16_7_ms":0}
+{"toolkit":"gpui+gpu","case":"stream-text","size":"1440x900","frames":120,"median_ms":5.063,"p95_ms":6.511,"max_ms":7.746,"over_16_7_ms":0}
+{"toolkit":"egui","case":"first-paint","size":"390x844","frames":1,"median_ms":1.426,"p95_ms":1.426,"max_ms":1.426,"over_16_7_ms":0}
+{"toolkit":"egui","case":"repaint-still","size":"390x844","frames":120,"median_ms":0.258,"p95_ms":0.303,"max_ms":0.333,"over_16_7_ms":0}
+{"toolkit":"egui","case":"scroll","size":"390x844","frames":240,"median_ms":0.255,"p95_ms":0.301,"max_ms":0.401,"over_16_7_ms":0}
+{"toolkit":"egui","case":"stream-rows","size":"390x844","frames":120,"median_ms":0.395,"p95_ms":0.447,"max_ms":0.618,"over_16_7_ms":0}
+{"toolkit":"egui","case":"stream-text","size":"390x844","frames":120,"median_ms":0.414,"p95_ms":0.479,"max_ms":0.551,"over_16_7_ms":0}
+{"toolkit":"gpui","case":"first-paint","size":"390x844","frames":1,"median_ms":27.122,"p95_ms":27.122,"max_ms":27.122,"over_16_7_ms":1}
+{"toolkit":"gpui","case":"repaint-still","size":"390x844","frames":120,"median_ms":1.296,"p95_ms":1.543,"max_ms":1.763,"over_16_7_ms":0}
+{"toolkit":"gpui","case":"scroll","size":"390x844","frames":240,"median_ms":1.351,"p95_ms":1.604,"max_ms":2.348,"over_16_7_ms":0}
+{"toolkit":"gpui","case":"stream-rows","size":"390x844","frames":120,"median_ms":2.816,"p95_ms":3.098,"max_ms":4.106,"over_16_7_ms":0}
+{"toolkit":"gpui","case":"stream-text","size":"390x844","frames":120,"median_ms":3.033,"p95_ms":3.676,"max_ms":4.732,"over_16_7_ms":0}
+{"toolkit":"gpui+gpu","case":"first-paint","size":"390x844","frames":1,"median_ms":40.201,"p95_ms":40.201,"max_ms":40.201,"over_16_7_ms":1}
+{"toolkit":"gpui+gpu","case":"repaint-still","size":"390x844","frames":120,"median_ms":2.638,"p95_ms":3.636,"max_ms":4.516,"over_16_7_ms":0}
+{"toolkit":"gpui+gpu","case":"scroll","size":"390x844","frames":240,"median_ms":2.223,"p95_ms":2.500,"max_ms":3.477,"over_16_7_ms":0}
+{"toolkit":"gpui+gpu","case":"stream-rows","size":"390x844","frames":120,"median_ms":3.752,"p95_ms":4.089,"max_ms":4.344,"over_16_7_ms":0}
+{"toolkit":"gpui+gpu","case":"stream-text","size":"390x844","frames":120,"median_ms":3.957,"p95_ms":4.490,"max_ms":6.392,"over_16_7_ms":0}
+## probe
+{"toolkit":"gpui","hebrew_x":[26.174805, 17.916992, 8.435547, 0.0],"hebrew_order":"right-to-left","arabic_x":[33.776367, 21.177734, 12.325195, 0.0],"arabic_order":"right-to-left","thai_base_width":8.48,"thai_base_and_mark_width":8.48,"thai_lines_at_120":["ภาษาไทยไม\u{e48}ม\u{e35}ช\u{e48}องว\u{e48}า", "งระหว\u{e48}างคำ"],"thai_breaks_on_words":false}
+{"toolkit":"egui","hebrew_x":[8.0, 0.0, 27.0, 20.0],"hebrew_order":"mixed","arabic_x":[9.0, 0.0, 22.0, 16.0],"arabic_order":"mixed","thai_base_width":8.41,"thai_base_and_mark_width":8.41,"thai_lines_at_120":["ภาษาไทยไม\u{e48}ม\u{e35}ช\u{e48}องว\u{e48}า", "งระหว\u{e48}างคำ"],"thai_breaks_on_words":false}
+## window
+{"toolkit":"gpui-window-gap","case":"scroll","size":"1440x900","frames":240,"median_ms":10.005,"p95_ms":10.055,"max_ms":11.135,"over_16_7_ms":0}
+{"toolkit":"gpui-window-gap","case":"stream-rows","size":"1440x900","frames":120,"median_ms":10.004,"p95_ms":10.061,"max_ms":10.342,"over_16_7_ms":0}
+{"toolkit":"gpui-window-gap","case":"stream-text","size":"1440x900","frames":120,"median_ms":10.005,"p95_ms":10.050,"max_ms":10.091,"over_16_7_ms":0}
+{"toolkit":"egui-window-gap","case":"scroll","size":"1440x900","frames":240,"median_ms":9.993,"p95_ms":10.562,"max_ms":13.159,"over_16_7_ms":0}
+{"toolkit":"egui-window-cpu","case":"scroll","size":"1440x900","frames":240,"median_ms":0.919,"p95_ms":1.591,"max_ms":6.169,"over_16_7_ms":0}
+{"toolkit":"egui-window-gap","case":"stream-rows","size":"1440x900","frames":120,"median_ms":10.014,"p95_ms":10.414,"max_ms":12.072,"over_16_7_ms":0}
+{"toolkit":"egui-window-cpu","case":"stream-rows","size":"1440x900","frames":120,"median_ms":1.233,"p95_ms":3.168,"max_ms":3.805,"over_16_7_ms":0}
+{"toolkit":"egui-window-gap","case":"stream-text","size":"1440x900","frames":120,"median_ms":9.984,"p95_ms":10.608,"max_ms":11.949,"over_16_7_ms":0}
+{"toolkit":"egui-window-cpu","case":"stream-text","size":"1440x900","frames":120,"median_ms":1.238,"p95_ms":2.322,"max_ms":4.749,"over_16_7_ms":0}
+gpu None

@@ -1,0 +1,54 @@
+## build the two minimal window apps and the two prototypes in release
+built min-egui in 122 s
+built min-gpui in 233 s
+built egui in 121 s
+built gpui in 119 s
+## release binary size of each minimal window app
+min-egui bytes=12051392
+min-egui stripped_bytes=10118400
+min-gpui bytes=7301104
+min-gpui stripped_bytes=6009072
+## frame times with no window: egui, GPUI, GPUI with its headless GPU renderer
+{"toolkit":"egui","case":"first-paint","size":"1440x900","frames":1,"median_ms":55.775,"p95_ms":55.775,"max_ms":55.775,"over_16_7_ms":1}
+{"toolkit":"egui","case":"repaint-still","size":"1440x900","frames":120,"median_ms":0.573,"p95_ms":0.742,"max_ms":1.212,"over_16_7_ms":0}
+{"toolkit":"egui","case":"scroll","size":"1440x900","frames":240,"median_ms":0.664,"p95_ms":0.992,"max_ms":2.147,"over_16_7_ms":0}
+{"toolkit":"egui","case":"stream-rows","size":"1440x900","frames":120,"median_ms":1.081,"p95_ms":2.381,"max_ms":2.746,"over_16_7_ms":0}
+{"toolkit":"egui","case":"stream-text","size":"1440x900","frames":120,"median_ms":1.070,"p95_ms":1.487,"max_ms":2.311,"over_16_7_ms":0}
+{"toolkit":"gpui","case":"first-paint","size":"1440x900","frames":1,"median_ms":655.085,"p95_ms":655.085,"max_ms":655.085,"over_16_7_ms":1}
+{"toolkit":"gpui","case":"repaint-still","size":"1440x900","frames":120,"median_ms":3.636,"p95_ms":7.708,"max_ms":48.367,"over_16_7_ms":2}
+{"toolkit":"gpui","case":"scroll","size":"1440x900","frames":240,"median_ms":3.376,"p95_ms":6.713,"max_ms":12.697,"over_16_7_ms":0}
+{"toolkit":"gpui","case":"stream-rows","size":"1440x900","frames":120,"median_ms":5.881,"p95_ms":8.467,"max_ms":25.200,"over_16_7_ms":1}
+{"toolkit":"gpui","case":"stream-text","size":"1440x900","frames":120,"median_ms":5.937,"p95_ms":6.801,"max_ms":9.453,"over_16_7_ms":0}
+{"toolkit":"gpui+gpu","case":"first-paint","size":"1440x900","frames":1,"median_ms":1283.479,"p95_ms":1283.479,"max_ms":1283.479,"over_16_7_ms":1}
+{"toolkit":"gpui+gpu","case":"repaint-still","size":"1440x900","frames":120,"median_ms":12.555,"p95_ms":17.215,"max_ms":20.715,"over_16_7_ms":8}
+{"toolkit":"gpui+gpu","case":"scroll","size":"1440x900","frames":240,"median_ms":12.297,"p95_ms":21.921,"max_ms":30.679,"over_16_7_ms":45}
+{"toolkit":"gpui+gpu","case":"stream-rows","size":"1440x900","frames":120,"median_ms":19.166,"p95_ms":40.802,"max_ms":49.244,"over_16_7_ms":80}
+{"toolkit":"gpui+gpu","case":"stream-text","size":"1440x900","frames":120,"median_ms":21.743,"p95_ms":28.947,"max_ms":39.313,"over_16_7_ms":112}
+{"toolkit":"egui","case":"first-paint","size":"390x844","frames":1,"median_ms":40.160,"p95_ms":40.160,"max_ms":40.160,"over_16_7_ms":1}
+{"toolkit":"egui","case":"repaint-still","size":"390x844","frames":120,"median_ms":0.618,"p95_ms":1.841,"max_ms":4.469,"over_16_7_ms":0}
+{"toolkit":"egui","case":"scroll","size":"390x844","frames":240,"median_ms":0.602,"p95_ms":1.913,"max_ms":10.381,"over_16_7_ms":0}
+{"toolkit":"egui","case":"stream-rows","size":"390x844","frames":120,"median_ms":0.924,"p95_ms":2.749,"max_ms":14.019,"over_16_7_ms":0}
+{"toolkit":"egui","case":"stream-text","size":"390x844","frames":120,"median_ms":1.014,"p95_ms":2.840,"max_ms":4.075,"over_16_7_ms":0}
+{"toolkit":"gpui","case":"first-paint","size":"390x844","frames":1,"median_ms":122.055,"p95_ms":122.055,"max_ms":122.055,"over_16_7_ms":1}
+{"toolkit":"gpui","case":"repaint-still","size":"390x844","frames":120,"median_ms":3.374,"p95_ms":7.957,"max_ms":8.985,"over_16_7_ms":0}
+{"toolkit":"gpui","case":"scroll","size":"390x844","frames":240,"median_ms":3.173,"p95_ms":7.668,"max_ms":14.442,"over_16_7_ms":0}
+{"toolkit":"gpui","case":"stream-rows","size":"390x844","frames":120,"median_ms":7.804,"p95_ms":14.094,"max_ms":19.176,"over_16_7_ms":2}
+{"toolkit":"gpui","case":"stream-text","size":"390x844","frames":120,"median_ms":9.684,"p95_ms":15.672,"max_ms":29.613,"over_16_7_ms":1}
+{"toolkit":"gpui+gpu","case":"first-paint","size":"390x844","frames":1,"median_ms":580.755,"p95_ms":580.755,"max_ms":580.755,"over_16_7_ms":1}
+{"toolkit":"gpui+gpu","case":"repaint-still","size":"390x844","frames":120,"median_ms":9.241,"p95_ms":13.699,"max_ms":18.142,"over_16_7_ms":1}
+{"toolkit":"gpui+gpu","case":"scroll","size":"390x844","frames":240,"median_ms":10.388,"p95_ms":20.915,"max_ms":41.378,"over_16_7_ms":28}
+{"toolkit":"gpui+gpu","case":"stream-rows","size":"390x844","frames":120,"median_ms":14.584,"p95_ms":25.072,"max_ms":40.309,"over_16_7_ms":44}
+{"toolkit":"gpui+gpu","case":"stream-text","size":"390x844","frames":120,"median_ms":13.977,"p95_ms":21.362,"max_ms":26.051,"over_16_7_ms":32}
+## Windows and macOS: a real window, its frame gaps, a screenshot and the text probe
+{"toolkit":"gpui-window-gap","case":"scroll","size":"1440x900","frames":240,"median_ms":16.669,"p95_ms":19.644,"max_ms":20.799,"over_16_7_ms":122}
+{"toolkit":"gpui-window-gap","case":"stream-rows","size":"1440x900","frames":120,"median_ms":16.663,"p95_ms":18.057,"max_ms":19.749,"over_16_7_ms":58}
+{"toolkit":"gpui-window-gap","case":"stream-text","size":"1440x900","frames":120,"median_ms":16.669,"p95_ms":18.517,"max_ms":29.284,"over_16_7_ms":60}
+{"toolkit":"egui-window-gap","case":"scroll","size":"1440x900","frames":240,"median_ms":16.690,"p95_ms":20.264,"max_ms":31.702,"over_16_7_ms":120}
+{"toolkit":"egui-window-cpu","case":"scroll","size":"1440x900","frames":240,"median_ms":3.315,"p95_ms":4.217,"max_ms":10.313,"over_16_7_ms":0}
+{"toolkit":"egui-window-gap","case":"stream-rows","size":"1440x900","frames":120,"median_ms":16.767,"p95_ms":19.339,"max_ms":19.883,"over_16_7_ms":64}
+{"toolkit":"egui-window-cpu","case":"stream-rows","size":"1440x900","frames":120,"median_ms":4.618,"p95_ms":5.635,"max_ms":8.302,"over_16_7_ms":0}
+{"toolkit":"egui-window-gap","case":"stream-text","size":"1440x900","frames":120,"median_ms":16.654,"p95_ms":20.389,"max_ms":30.481,"over_16_7_ms":59}
+{"toolkit":"egui-window-cpu","case":"stream-text","size":"1440x900","frames":120,"median_ms":5.270,"p95_ms":6.073,"max_ms":7.672,"over_16_7_ms":0}
+gpu None
+{"toolkit":"gpui","hebrew_x":[26.174805, 17.916992, 8.435547, 0.0],"hebrew_order":"right-to-left","arabic_x":[33.776367, 21.177734, 12.325195, 0.0],"arabic_order":"right-to-left","thai_base_width":8.48,"thai_base_and_mark_width":8.48,"thai_lines_at_120":["ภาษาไทยไม\u{e48}ม\u{e35}ช\u{e48}องว\u{e48}า", "งระหว\u{e48}างคำ"],"thai_breaks_on_words":false}
+{"toolkit":"egui","hebrew_x":[8.0, 0.0, 27.0, 20.0],"hebrew_order":"mixed","arabic_x":[9.0, 0.0, 22.0, 16.0],"arabic_order":"mixed","thai_base_width":8.41,"thai_base_and_mark_width":8.41,"thai_lines_at_120":["ภาษาไทยไม\u{e48}ม\u{e35}ช\u{e48}องว\u{e48}า", "งระหว\u{e48}างคำ"],"thai_breaks_on_words":false}
