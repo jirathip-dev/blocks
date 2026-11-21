@@ -72,7 +72,7 @@ pub enum Op {
     Unknown,
 }
 
-/// What a client sends when a control is used: the screen, the block, the action and its values.
+/// What a client sends when a control is used: the screen, the block, the action and its values (a composer send's `nonce`: random per send, repeated on its retry).
 #[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
 #[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
 pub struct Action {

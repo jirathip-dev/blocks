@@ -110,7 +110,7 @@
       "type": "object"
     },
     "Action": {
-      "description": "What a client sends when a control is used: the screen, the block, the action and its values.",
+      "description": "What a client sends when a control is used: the screen, the block, the action and its values (a composer send's `nonce`: random per send, repeated on its retry).",
       "properties": {
         "action": {
           "type": "string"
@@ -1650,7 +1650,7 @@
     },
     "Composer": {
       "additionalProperties": true,
-      "description": "A message box: its send action, its chips and the messages queued.",
+      "description": "A message box: its send action, its chips and the messages queued; each send, queue or steer carries `values.nonce`, a fresh random id a retry repeats.",
       "properties": {
         "action": {
           "type": "string"

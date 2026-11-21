@@ -46,10 +46,14 @@ internal struct ComposerBlock: View {
     private func send(_ steer: String? = nil) {
         guard !draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
         let queue = steer == nil && (working != nil || editing != nil) ? name("queue") : nil
-        var values = picks.merging(["text": .string(draft)]) { $1 }
-        if queue != nil, let q = editing?.q { values["q"] = .number(Double(q)) }
-        post(steer ?? queue ?? block.action, values)
+        post(steer ?? queue ?? block.action, Self.sending(draft, picks: picks, q: queue == nil ? nil : editing?.q))
         (draft, editing) = ("", nil)
+    }
+
+    internal static func sending(_ text: String, picks: [String: JSONValue], q: UInt64?) -> [String: JSONValue] {
+        var values = picks.merging(["text": .string(text), "nonce": .string(UUID().uuidString)]) { $1 }
+        if let q { values["q"] = .number(Double(q)) }
+        return values
     }
 
     private func strip(_ working: Working) -> some View {

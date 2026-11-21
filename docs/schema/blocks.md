@@ -22,6 +22,10 @@ call: its `name`, its `state` (`running`, `done`, `failed`), a one-line `summary
 folded until opened. A `prose` with `streaming` is still being written: renderers draw a caret after it and mark it
 busy, and `diff` grows it by `append` (stream.md). `Prose::read` turns markdown into parts once, on the server.
 
+A `composer` sends its `action` (or its `acts`' `queue` or `steer`) with `values` of the picked chips, the `text`,
+the `files` and a `nonce`: a random id, fresh for each send, that a retry of a failed send (its draft unchanged)
+repeats, so an app stores a retried send once. A new send, or an edit to the draft, gets a new one.
+
 A `lines` block's `calc` maps a column to an `Expr` over its row's values (`{"mul": [{"get": "qty"}, {"get": "price"}]}`),
 worked out as you type; its `sum` columns are totalled in minor units (`scale` decimals, default 2), never as floats.
 

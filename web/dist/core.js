@@ -736,6 +736,9 @@ function share(prev, next) {
   return same ? prev : next;
 }
 
+// src/core/nonce.ts
+var nonce = () => Array.from(crypto.getRandomValues(new Uint8Array(16)), (n) => n.toString(16).padStart(2, "0")).join("");
+
 // src/gen/shapes.ts
 var kinds = {
   "button": "Button",
@@ -7982,6 +7985,7 @@ export {
   named2 as named,
   names,
   nav,
+  nonce,
   pages,
   pick,
   picked,

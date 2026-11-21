@@ -1,5 +1,5 @@
 import { createElement, type KeyboardEvent, type MouseEvent, type ReactNode, useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
-import { type Composer, type FileRow, type Queued, send as upload } from "../../../src/core/index.ts";
+import { type Composer, type FileRow, nonce as mint, type Queued, send as upload } from "../../../src/core/index.ts";
 import { type Ctx, Cx } from "../act.ts";
 import { btn, figure, type V } from "../draw.ts";
 import { h } from "../h.ts";
@@ -88,6 +88,7 @@ export function composer({ b, hooks }: V<Composer>) {
   const [q, setQ] = useState<number | undefined>(undefined);
   const [st, setSt] = useState("");
   const [steering, setSteering] = useState(false);
+  const nonce = useRef<string | undefined>(undefined);
   const { files, add, drop, clear } = useSend(b, cx);
   const ta = useRef<HTMLTextAreaElement>(null);
   const pick = useRef<HTMLInputElement>(null);
@@ -101,11 +102,13 @@ export function composer({ b, hooks }: V<Composer>) {
     const done = files.filter((r) => r.state === "done");
     if ((!text.trim() && !done.length) || files.some((r) => r.state === "uploading")) return;
     const queue = !steer && (b.working || q != null) ? act("queue") : "";
-    const v: Blk = { ...picks, text, files: done.map(({ id, name, src }) => ({ id, name, src: src ?? null })), ...(queue && q != null ? { q } : null) };
+    nonce.current ??= mint();
+    const v: Blk = { ...picks, text, files: done.map(({ id, name, src }) => ({ id, name, src: src ?? null })), nonce: nonce.current, ...(queue && q != null ? { q } : null) };
     setSt("sending");
     setSteering(false);
     const ok = await post(steer ? act("steer") : queue || b.action, v);
     if (ok) {
+      nonce.current = undefined;
       clear();
       setQ(undefined);
       setText("");
@@ -121,17 +124,20 @@ export function composer({ b, hooks }: V<Composer>) {
   const edit = (x: Queued) => () => {
     setQ(x.q);
     setText(x.text);
+    nonce.current = undefined;
     ta.current?.focus();
   };
   const said = q != null ? "save" : b.working ? "queue" : (b.label ?? "");
   const go = btn(said, "primary", undefined, b.action, { "aria-label": said || "send", "aria-busy": st === "sending" || undefined, ...held });
   const typed = (e: { target: { value: string } }) => {
     setText(e.target.value);
+    nonce.current = undefined;
     if (st === "sent") setSt("");
   };
   const took = (e: { target: HTMLInputElement }) => {
     add(Array.from(e.target.files ?? []));
     e.target.value = "";
+    nonce.current = undefined;
     setSt("");
   };
   const row = h(
