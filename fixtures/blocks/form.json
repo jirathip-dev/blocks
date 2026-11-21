@@ -1,0 +1,12 @@
+{
+  "type": "form",
+  "id": "signup",
+  "action": "sign-up",
+  "fields": [
+    {
+      "type": "text",
+      "name": "email",
+      "label": "Email"
+    }
+  ]
+}

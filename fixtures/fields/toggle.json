@@ -1,0 +1,63 @@
+{
+  "blocks": [
+    {
+      "fallback": {
+        "title": "form"
+      },
+      "fields": [
+        {
+          "label": "I agree",
+          "name": "ack-empty",
+          "type": "toggle"
+        },
+        {
+          "label": "I agree",
+          "name": "ack",
+          "type": "toggle",
+          "value": true
+        },
+        {
+          "error": "Check this one",
+          "label": "I agree",
+          "name": "ack-error",
+          "type": "toggle",
+          "value": true
+        },
+        {
+          "label": "I agree",
+          "name": "ack-was",
+          "type": "toggle",
+          "value": true,
+          "was": "the old value"
+        },
+        {
+          "doc": "A line that says what it is for",
+          "label": "I agree",
+          "name": "ack-doc",
+          "type": "toggle",
+          "value": true
+        },
+        {
+          "label": "A label long enough to wrap onto a second line on a phone held upright",
+          "name": "ack-label",
+          "type": "toggle",
+          "value": true
+        }
+      ],
+      "id": "toggle",
+      "submit": {
+        "action": "send",
+        "label": "send"
+      },
+      "type": "form"
+    }
+  ],
+  "fallback": {
+    "title": "screen"
+  },
+  "id": "fields-toggle",
+  "locale": {
+    "lang": "en"
+  },
+  "type": "screen"
+}

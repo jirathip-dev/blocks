@@ -250,7 +250,10 @@ function points(root: HTMLElement, now: Chart, ctx: Ctx, gesture: NonNullable<Ch
     const [si, i] = [Number(q.dataset["si"]), Number(q.dataset["i"])];
     const s = now.series[si], x = now.x[i], start = s?.values[i];
     if (!s || x === undefined || start === undefined) return;
-    if (!seen.has(s.name)) (seen.add(s.name), (q.tabIndex = 0));
+    if (!seen.has(s.name)) {
+      seen.add(s.name);
+      q.tabIndex = 0;
+    }
     const grab: PointGrab = { series: s.name, at: x };
     let dragged = false;
     const show = (m: PointMove | null) => {
@@ -269,7 +272,9 @@ function points(root: HTMLElement, now: Chart, ctx: Ctx, gesture: NonNullable<Ch
       root.querySelector(".chy")?.append(...nodes(tag("span", "chq-t", shown(now, s, m.y), ` style="top:${num(top(m.y, lo, hi))}%"`)));
     };
     q.addEventListener("pointerdown", () => (dragged = false));
-    q.addEventListener("click", () => dragged || root.querySelectorAll<HTMLElement>(".chc")[i]?.click());
+    q.addEventListener("click", () => {
+      if (!dragged) root.querySelectorAll<HTMLElement>(".chc")[i]?.click();
+    });
     const px = () => ((root.querySelector<HTMLElement>(".chp")?.offsetHeight ?? H) * stepOf(now, s)) / (hi - lo);
     gestured(q, ctx, { block: now, gesture, rules, grab, item: `${s.name}\n${x}`, reach: (_, dy) => ({ steps: Math.round(-dy / px()) }), show });
     const out = held(ctx, { block: now, rules, grab, item: `${s.name}\n${x}` });

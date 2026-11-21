@@ -1,0 +1,9 @@
+{
+  "kind": "web",
+  "id": "doc",
+  "variant": null,
+  "drawn": "native",
+  "role": "group",
+  "name": "doc",
+  "children": []
+}

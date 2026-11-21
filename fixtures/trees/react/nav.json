@@ -1,0 +1,9 @@
+{
+  "kind": "nav",
+  "id": "nav",
+  "variant": null,
+  "drawn": "native",
+  "role": "navigation",
+  "name": "nav",
+  "children": []
+}

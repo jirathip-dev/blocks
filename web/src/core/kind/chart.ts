@@ -56,18 +56,19 @@ export function axis(c: Chart): [number, number] {
 }
 
 /// The step a series' point moves by, as the crate's `Chart::step`: its `step`, else what the format shows.
-export const stepOf = (c: Chart, s: Series) => (s.step != null && s.step > 0 ? s.step : c.format === "thb_m" ? 1e5 : c.format === "percent" ? 0.1 : 1);
+export function stepOf(c: Chart, s: Series): number {
+  if (s.step != null && s.step > 0) return s.step;
+  if (c.format === "thb_m") return 1e5;
+  return c.format === "percent" ? 0.1 : 1;
+}
 
 /// A value at its series' step precision, as the crate's `Chart::shown`: ฿1.35M for a 50K step.
 export function shown(c: Chart, s: Series, v: number): string {
-  const a = Math.abs(v), st = stepOf(c, s);
-  const body =
-    c.format === "thb_m" && a >= 1e6 ? `฿${fixed(a / 1e6, Math.max(1, decimals(st / 1e6)))}M`
-    : c.format === "thb_m" && a >= 1e3 ? `฿${fixed(a / 1e3, decimals(st / 1e3))}K`
-    : c.format === "thb_m" || c.format === "thb" ? `฿${fixed(a, decimals(st))}`
-    : c.format === "percent" ? `${fixed(a, decimals(st))}%`
-    : fixed(a, decimals(st));
-  return (v < 0 ? "-" : "") + body;
+  const sign = v < 0 ? "-" : "", a = Math.abs(v), st = stepOf(c, s);
+  if (c.format === "thb_m" && a >= 1e6) return `${sign}฿${fixed(a / 1e6, Math.max(1, decimals(st / 1e6)))}M`;
+  if (c.format === "thb_m" && a >= 1e3) return `${sign}฿${fixed(a / 1e3, decimals(st / 1e3))}K`;
+  if (c.format === "thb_m" || c.format === "thb") return `${sign}฿${fixed(a, decimals(st))}`;
+  return `${sign}${fixed(a, decimals(st))}${c.format === "percent" ? "%" : ""}`;
 }
 
 const point = (c: Chart, g: PointGrab): [Series, number] | null => {

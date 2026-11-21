@@ -1,0 +1,1676 @@
+{
+  "blocks": [
+    {
+      "blocks": [
+        {
+          "id": "hint",
+          "markdown": "Ready",
+          "show": {
+            "get": "ready"
+          },
+          "type": "text"
+        }
+      ],
+      "fallback": {
+        "title": "Home"
+      },
+      "id": "home",
+      "state": {
+        "ready": true
+      },
+      "title": "Home",
+      "type": "screen"
+    },
+    {
+      "blocks": [
+        {
+          "id": "modal-note",
+          "markdown": "Pick a name",
+          "type": "text"
+        }
+      ],
+      "cancel": "cancel",
+      "done": {
+        "action": "save-item",
+        "label": "save"
+      },
+      "fallback": {
+        "title": "Edit item"
+      },
+      "id": "edit-item",
+      "title": "Edit item",
+      "type": "modal"
+    },
+    {
+      "blocks": [
+        {
+          "id": "delete-note",
+          "markdown": "Plan, Notes and Draft",
+          "type": "text"
+        }
+      ],
+      "cancel": "cancel",
+      "destructive": true,
+      "fallback": {
+        "title": "Delete 3 items?"
+      },
+      "id": "delete-items",
+      "message": "They move to the bin.",
+      "ok": "delete",
+      "title": "Delete 3 items?",
+      "type": "modal",
+      "variant": "alert"
+    },
+    {
+      "blocks": [
+        {
+          "id": "layers-note",
+          "markdown": "Header, Title, Body",
+          "type": "text"
+        }
+      ],
+      "fallback": {
+        "title": "Layers"
+      },
+      "id": "layers",
+      "title": "Layers",
+      "type": "modal",
+      "variant": "tool"
+    },
+    {
+      "blocks": [
+        {
+          "id": "sheet-note",
+          "markdown": "Pick one",
+          "type": "text"
+        }
+      ],
+      "fallback": {
+        "title": "Add a repo"
+      },
+      "id": "add",
+      "title": "Add a repo",
+      "type": "sheet"
+    },
+    {
+      "blocks": [
+        {
+          "id": "today-note",
+          "markdown": "Quiet",
+          "type": "text"
+        }
+      ],
+      "fallback": {
+        "title": "Today"
+      },
+      "header": "Today",
+      "id": "today",
+      "type": "section"
+    },
+    {
+      "fallback": {
+        "title": "list"
+      },
+      "id": "rows",
+      "rows": [
+        {
+          "id": "row",
+          "rounds": [
+            {
+              "id": "r1",
+              "name": "impl",
+              "state": "done",
+              "summary": "pushed",
+              "tap": {
+                "url": "/runs/1"
+              }
+            },
+            {
+              "blocks": [
+                {
+                  "id": "finding",
+                  "markdown": "Fix the test",
+                  "type": "text"
+                }
+              ],
+              "id": "r2",
+              "lane": {
+                "lines": [
+                  "reading the diff"
+                ],
+                "name": "rev-1"
+              },
+              "links": [
+                {
+                  "label": "verdict",
+                  "tap": {
+                    "url": "/verdict"
+                  }
+                }
+              ],
+              "name": "review 1",
+              "state": "needs",
+              "summary": "one finding"
+            }
+          ],
+          "subtitle": "green",
+          "title": "Build",
+          "type": "row",
+          "value": "2m"
+        }
+      ],
+      "type": "list"
+    },
+    {
+      "id": "build",
+      "subtitle": "green",
+      "title": "Build",
+      "type": "row",
+      "value": "2m"
+    },
+    {
+      "badge": {
+        "text": {
+          "label": "lapses in {rel}",
+          "until": "2026-11-09T09:53:00Z"
+        }
+      },
+      "blocks": [
+        {
+          "id": "card-row",
+          "subtitle": {
+            "text": {
+              "label": "decides in {rel}",
+              "until": "2026-11-09T09:53:00Z"
+            }
+          },
+          "title": "Review",
+          "type": "row",
+          "value": {
+            "label": "{} ago",
+            "since": "2026-11-09T09:35:00Z"
+          }
+        },
+        {
+          "fallback": {
+            "title": "up"
+          },
+          "id": "card-up",
+          "label": "up",
+          "type": "stat",
+          "value": {
+            "label": "{}",
+            "since": "2026-11-09T09:35:00Z"
+          }
+        }
+      ],
+      "fallback": {
+        "subtitle": "waiting",
+        "title": "q1"
+      },
+      "id": "card",
+      "kind": "ask",
+      "meta": {
+        "label": "as of {} ago",
+        "since": "2026-11-09T09:35:00Z"
+      },
+      "subtitle": "waiting",
+      "title": "q1",
+      "type": "card"
+    },
+    {
+      "action": "answer",
+      "fallback": {
+        "title": "Merge it?"
+      },
+      "id": "ask",
+      "options": [
+        {
+          "label": "Yes",
+          "value": "yes"
+        }
+      ],
+      "question": "Merge it?",
+      "type": "choice"
+    },
+    {
+      "action": "sign-up",
+      "fallback": {
+        "title": "form"
+      },
+      "fields": [
+        {
+          "label": "Email",
+          "name": "email",
+          "type": "text"
+        }
+      ],
+      "id": "signup",
+      "type": "form"
+    },
+    {
+      "action": "save",
+      "fallback": {
+        "title": "config"
+      },
+      "fields": [
+        {
+          "label": "Repo",
+          "name": "repo",
+          "type": "text"
+        }
+      ],
+      "id": "settings",
+      "type": "config"
+    },
+    {
+      "action": "save-token",
+      "fallback": {
+        "title": "API token"
+      },
+      "id": "token",
+      "label": "API token",
+      "name": "token",
+      "type": "secret"
+    },
+    {
+      "action": "approve",
+      "command": "cargo test",
+      "dir": "crates",
+      "fallback": {
+        "title": "cargo test"
+      },
+      "id": "run",
+      "sha": "4f2a9c1",
+      "type": "run"
+    },
+    {
+      "action": "save",
+      "fallback": {
+        "title": "Save"
+      },
+      "id": "save",
+      "label": "Save",
+      "type": "button"
+    },
+    {
+      "fallback": {
+        "title": "effort"
+      },
+      "id": "effort",
+      "name": "effort",
+      "options": [
+        {
+          "label": "low",
+          "value": "low"
+        },
+        {
+          "label": "high",
+          "value": "high"
+        }
+      ],
+      "type": "chips"
+    },
+    {
+      "fallback": {
+        "title": "open"
+      },
+      "id": "open",
+      "label": "open",
+      "type": "stat",
+      "value": 3
+    },
+    {
+      "id": "note",
+      "markdown": "**Hello**",
+      "type": "text"
+    },
+    {
+      "fallback": {
+        "title": "images"
+      },
+      "id": "shots",
+      "items": [
+        {
+          "alt": "a",
+          "src": "/media/a.png"
+        }
+      ],
+      "type": "images"
+    },
+    {
+      "fallback": {
+        "title": "/doc"
+      },
+      "height": 240,
+      "id": "doc",
+      "src": "/doc",
+      "type": "web"
+    },
+    {
+      "fallback": {
+        "title": "src/lib.rs"
+      },
+      "file": "src/lib.rs",
+      "hunks": [
+        {
+          "at": "@@ -1 +1 @@",
+          "lines": [
+            "-a",
+            "+b"
+          ]
+        }
+      ],
+      "id": "change",
+      "type": "diff"
+    },
+    {
+      "action": "save-notes",
+      "fallback": {
+        "title": "notes"
+      },
+      "id": "editor",
+      "name": "notes",
+      "text": "hello",
+      "type": "editor"
+    },
+    {
+      "fallback": {
+        "title": "lanes"
+      },
+      "id": "scene",
+      "label": "lanes",
+      "lanes": [
+        {
+          "id": "impl-1",
+          "state": "working",
+          "title": "impl"
+        }
+      ],
+      "type": "scene"
+    },
+    {
+      "fallback": {
+        "title": "Flow"
+      },
+      "id": "flow",
+      "source": "[*] --> a\na --> b",
+      "title": "Flow",
+      "type": "diagram"
+    },
+    {
+      "action": "say",
+      "fallback": {
+        "title": "composer"
+      },
+      "id": "say",
+      "placeholder": "message the team",
+      "type": "composer"
+    },
+    {
+      "action": "check-journal",
+      "add": "add line",
+      "balance": [
+        "debit",
+        "credit"
+      ],
+      "columns": [
+        {
+          "label": "Account",
+          "name": "account",
+          "options": [
+            "6100 Rent",
+            "6200 Utilities",
+            "2100 Payables"
+          ],
+          "type": "picker"
+        },
+        {
+          "label": "Description",
+          "name": "memo",
+          "type": "text"
+        },
+        {
+          "keyboard": "number",
+          "label": "Debit",
+          "name": "debit",
+          "type": "text"
+        },
+        {
+          "keyboard": "number",
+          "label": "Credit",
+          "name": "credit",
+          "type": "text"
+        }
+      ],
+      "errors": [
+        {
+          "message": "pick an account for line 2",
+          "name": "account",
+          "row": "l2"
+        }
+      ],
+      "fallback": {
+        "title": "journal lines"
+      },
+      "id": "journal",
+      "items": [
+        {
+          "id": "l1",
+          "values": {
+            "account": "6100 Rent",
+            "debit": "2400",
+            "memo": "office rent"
+          }
+        },
+        {
+          "id": "l2",
+          "values": {
+            "account": "",
+            "debit": "318.40",
+            "memo": "power and water"
+          }
+        },
+        {
+          "id": "l3",
+          "values": {
+            "account": "2100 Payables",
+            "credit": "2668.50",
+            "memo": "landlord"
+          }
+        }
+      ],
+      "label": "journal lines",
+      "min": 2,
+      "name": "lines",
+      "submit": {
+        "action": "post-journal",
+        "label": "post entry"
+      },
+      "sum": [
+        "debit",
+        "credit"
+      ],
+      "type": "lines"
+    },
+    {
+      "fallback": {
+        "title": "prose"
+      },
+      "id": "about",
+      "parts": [
+        {
+          "level": 2,
+          "part": "heading",
+          "spans": [
+            {
+              "text": "Blocks"
+            }
+          ]
+        },
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Typed "
+            },
+            {
+              "bold": true,
+              "text": "screens"
+            }
+          ]
+        },
+        {
+          "items": [
+            [
+              {
+                "text": "one"
+              }
+            ],
+            [
+              {
+                "text": "two"
+              }
+            ]
+          ],
+          "ordered": false,
+          "part": "list"
+        },
+        {
+          "part": "quote",
+          "spans": [
+            {
+              "text": "Built by type."
+            }
+          ]
+        },
+        {
+          "lang": "rust",
+          "part": "code",
+          "text": "Row::new(\"a\")"
+        },
+        {
+          "part": "rule"
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "actions": [
+        {
+          "action": "start",
+          "label": "Start"
+        }
+      ],
+      "fallback": {
+        "subtitle": "One shape, three renderers",
+        "title": "Blocks"
+      },
+      "id": "hero",
+      "media": {
+        "alt": "a bar chart",
+        "caption": "This week",
+        "height": 360,
+        "src": "/media/chart.png",
+        "width": 640
+      },
+      "subtitle": "One shape, three renderers",
+      "title": "Blocks",
+      "type": "hero"
+    },
+    {
+      "alt": "a bar chart",
+      "caption": "This week",
+      "fallback": {
+        "title": "/media/chart.png"
+      },
+      "height": 360,
+      "id": "chart",
+      "marks": [
+        {
+          "at": [
+            0.5,
+            0.2
+          ],
+          "id": "peak",
+          "kind": "highlight",
+          "to": [
+            0.62,
+            0.9
+          ],
+          "tone": "warn"
+        },
+        {
+          "at": [
+            0.3,
+            0.15
+          ],
+          "id": "arrow",
+          "kind": "arrow",
+          "to": [
+            0.48,
+            0.3
+          ]
+        },
+        {
+          "at": [
+            0.05,
+            0.08
+          ],
+          "id": "note",
+          "kind": "text",
+          "text": "Release week"
+        },
+        {
+          "at": [
+            0.78,
+            0.7
+          ],
+          "id": "dip",
+          "kind": "pin",
+          "text": "1",
+          "tone": "info"
+        }
+      ],
+      "src": "/media/chart.png",
+      "type": "media",
+      "width": 640
+    },
+    {
+      "brand": {
+        "href": "/",
+        "label": "Blocks"
+      },
+      "fallback": {
+        "title": "nav"
+      },
+      "id": "nav",
+      "links": [
+        {
+          "href": "/docs",
+          "label": "Docs"
+        }
+      ],
+      "type": "nav"
+    },
+    {
+      "events": [
+        "pick"
+      ],
+      "fallback": {
+        "title": "The map"
+      },
+      "id": "map",
+      "name": "x-map",
+      "props": {
+        "zoom": 3
+      },
+      "type": "island"
+    },
+    {
+      "columns": [
+        {
+          "id": "inv",
+          "kind": "text",
+          "label": "Invoice",
+          "phone": "meta"
+        },
+        {
+          "id": "client",
+          "kind": "text",
+          "label": "Client",
+          "phone": "title",
+          "width": 18
+        },
+        {
+          "id": "status",
+          "kind": "tone",
+          "label": "Status"
+        },
+        {
+          "era": "be",
+          "id": "due",
+          "kind": "date",
+          "label": "Due"
+        },
+        {
+          "digits": 0,
+          "id": "late",
+          "kind": "bar",
+          "label": "Overdue",
+          "max": 60,
+          "tone": "warn",
+          "unit": "days"
+        },
+        {
+          "currency": "THB",
+          "id": "amount",
+          "kind": "money",
+          "label": "Amount",
+          "total": "sum"
+        }
+      ],
+      "empty": "No invoices yet.",
+      "export": [
+        "csv",
+        "xlsx"
+      ],
+      "fallback": {
+        "subtitle": "5 rows · total amount ฿126,750.00",
+        "title": "Invoices"
+      },
+      "id": "invoices",
+      "rows": [
+        {
+          "cells": {
+            "amount": 48750,
+            "client": "Orchard Lane Clinic",
+            "due": "2026-10-18",
+            "inv": "INV-0133",
+            "late": 32,
+            "status": {
+              "text": "overdue",
+              "tone": "warn"
+            }
+          },
+          "id": "INV-0133",
+          "tap": {
+            "open": "/invoice/INV-0133"
+          }
+        },
+        {
+          "cells": {
+            "amount": 31500,
+            "client": "Bluepeak Logistics",
+            "due": "2026-11-05",
+            "inv": "INV-0136",
+            "late": 14,
+            "status": {
+              "text": "disputed",
+              "tone": "bad"
+            }
+          },
+          "id": "INV-0136",
+          "tap": {
+            "open": "/invoice/INV-0136"
+          }
+        },
+        {
+          "cells": {
+            "amount": 18000,
+            "client": "Saffron & Salt",
+            "due": "2026-11-19",
+            "inv": "INV-0138",
+            "status": {
+              "text": "sent",
+              "tone": "done"
+            }
+          },
+          "id": "INV-0138",
+          "tap": {
+            "open": "/invoice/INV-0138"
+          }
+        },
+        {
+          "cells": {
+            "amount": 15000,
+            "client": "Tidewater Bakery",
+            "due": "2026-11-26",
+            "inv": "INV-0139",
+            "status": {
+              "text": "paid",
+              "tone": "ok"
+            }
+          },
+          "id": "INV-0139",
+          "tap": {
+            "open": "/invoice/INV-0139"
+          }
+        },
+        {
+          "cells": {
+            "amount": 13500,
+            "client": "Moss Hill School",
+            "inv": "INV-0143",
+            "status": {
+              "text": "draft",
+              "tone": "mute"
+            }
+          },
+          "id": "INV-0143",
+          "tap": {
+            "open": "/invoice/INV-0143"
+          }
+        }
+      ],
+      "select": {
+        "actions": [
+          {
+            "action": "remind",
+            "label": "send reminder"
+          },
+          {
+            "action": "void",
+            "bad": true,
+            "label": "void"
+          }
+        ]
+      },
+      "sort": {
+        "by": "due",
+        "dir": "asc"
+      },
+      "title": "Invoices",
+      "type": "table"
+    },
+    {
+      "calc": {
+        "cost": {
+          "mul": [
+            {
+              "mul": [
+                {
+                  "get": "qty"
+                },
+                {
+                  "get": "price"
+                }
+              ]
+            },
+            {
+              "get": "mult"
+            }
+          ]
+        },
+        "sell": {
+          "div": [
+            {
+              "get": "cost"
+            },
+            {
+              "sub": [
+                1,
+                {
+                  "div": [
+                    {
+                      "get": "margin"
+                    },
+                    100
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "columns": [
+        {
+          "edit": true,
+          "id": "name",
+          "kind": "text",
+          "label": "Item",
+          "width": 22
+        },
+        {
+          "digits": 0,
+          "edit": true,
+          "id": "qty",
+          "kind": "number",
+          "label": "Qty"
+        },
+        {
+          "currency": "THB",
+          "edit": true,
+          "id": "price",
+          "kind": "money",
+          "label": "Unit cost",
+          "phone": "meta"
+        },
+        {
+          "edit": true,
+          "id": "mult",
+          "kind": "number",
+          "label": "Mult"
+        },
+        {
+          "currency": "THB",
+          "id": "cost",
+          "kind": "money",
+          "label": "Cost",
+          "total": "sum"
+        },
+        {
+          "digits": 1,
+          "edit": true,
+          "id": "margin",
+          "kind": "number",
+          "label": "Margin",
+          "unit": "%"
+        },
+        {
+          "currency": "THB",
+          "id": "sell",
+          "kind": "money",
+          "label": "Price",
+          "total": "sum"
+        },
+        {
+          "currency": "THB",
+          "id": "final",
+          "kind": "money",
+          "label": "Final",
+          "total": "sum"
+        }
+      ],
+      "edit": {
+        "action": "set-cell",
+        "name": "cell"
+      },
+      "fallback": {
+        "subtitle": "6 rows · total cost ฿68,984.00",
+        "title": "Mark-up · K-12 tower"
+      },
+      "id": "grid",
+      "reorder": {
+        "action": "order",
+        "name": "rows"
+      },
+      "rows": [
+        {
+          "cells": {
+            "name": "Pipework"
+          },
+          "group": true,
+          "id": "g-pipe"
+        },
+        {
+          "cells": {
+            "final": 21000,
+            "margin": 18,
+            "mult": 1.05,
+            "name": "Steel pipe 2in, sch 40",
+            "price": 410,
+            "qty": 40
+          },
+          "id": "p1"
+        },
+        {
+          "cells": {
+            "final": 3100,
+            "margin": 22,
+            "mult": 1.05,
+            "name": "Elbow 2in 90°",
+            "price": 95,
+            "qty": 24
+          },
+          "id": "p2"
+        },
+        {
+          "cells": {
+            "name": "Valves"
+          },
+          "group": true,
+          "id": "g-valve"
+        },
+        {
+          "cells": {
+            "final": 21800,
+            "margin": 15,
+            "mult": 1.1,
+            "name": "Gate valve 3in",
+            "price": 4200,
+            "qty": 4
+          },
+          "id": "v1"
+        },
+        {
+          "cells": {
+            "final": 12800,
+            "margin": 15,
+            "mult": 1.1,
+            "name": "Ball valve 2in",
+            "price": 1650,
+            "qty": 6
+          },
+          "id": "v2"
+        },
+        {
+          "cells": {
+            "name": "Labour"
+          },
+          "group": true,
+          "id": "g-lab"
+        },
+        {
+          "cells": {
+            "final": 19200,
+            "margin": 25,
+            "mult": 1,
+            "name": "Fitter, day",
+            "price": 2400,
+            "qty": 6
+          },
+          "id": "l1"
+        },
+        {
+          "cells": {
+            "final": 5600,
+            "margin": 0,
+            "mult": 1,
+            "name": "Transport, by weight",
+            "price": 5600,
+            "qty": 1
+          },
+          "fixed": true,
+          "id": "l2"
+        }
+      ],
+      "title": "Mark-up · K-12 tower",
+      "type": "table"
+    },
+    {
+      "columns": [
+        {
+          "id": "req",
+          "kind": "text",
+          "label": "Request"
+        },
+        {
+          "id": "who",
+          "kind": "text",
+          "label": "Employee"
+        },
+        {
+          "id": "status",
+          "kind": "tone",
+          "label": "Status"
+        },
+        {
+          "id": "hours",
+          "kind": "number",
+          "label": "Hours",
+          "total": "sum"
+        }
+      ],
+      "fallback": {
+        "subtitle": "4 rows · total hours 11",
+        "title": "OT requests"
+      },
+      "id": "ot",
+      "more": {
+        "action": "ot-more",
+        "cursor": "c:2397"
+      },
+      "rows": [
+        {
+          "cells": {
+            "hours": 2,
+            "req": "OT-2400",
+            "status": {
+              "text": "pending",
+              "tone": "warn"
+            },
+            "who": "Somchai P."
+          },
+          "id": "OT-2400"
+        },
+        {
+          "cells": {
+            "hours": 3,
+            "req": "OT-2399",
+            "status": {
+              "text": "pending",
+              "tone": "warn"
+            },
+            "who": "Nattaya K."
+          },
+          "id": "OT-2399"
+        },
+        {
+          "cells": {
+            "hours": 4,
+            "req": "OT-2398",
+            "status": {
+              "text": "approved",
+              "tone": "ok"
+            },
+            "who": "Arthit W."
+          },
+          "id": "OT-2398"
+        },
+        {
+          "cells": {
+            "hours": 2,
+            "req": "OT-2397",
+            "status": {
+              "text": "rejected",
+              "tone": "bad"
+            },
+            "who": "Wanida T."
+          },
+          "id": "OT-2397"
+        }
+      ],
+      "title": "OT requests",
+      "type": "table"
+    },
+    {
+      "done": true,
+      "fallback": {
+        "title": "Stop 3 of 8"
+      },
+      "id": "stop",
+      "steps": [
+        {
+          "id": "stop",
+          "label": "Stop",
+          "sub": "arrived 09:42",
+          "tap": {
+            "open": "stop"
+          }
+        },
+        {
+          "id": "lines",
+          "label": "Lines",
+          "sub": "6 checked",
+          "tap": {
+            "open": "lines"
+          }
+        }
+      ],
+      "title": "Stop 3 of 8",
+      "type": "steps"
+    },
+    {
+      "chart": "combo",
+      "era": "be",
+      "fallback": {
+        "tap": {
+          "action": "sales.month"
+        },
+        "title": "Revenue and target"
+      },
+      "format": "thb_m",
+      "id": "revenue",
+      "selected": "2024-03",
+      "series": [
+        {
+          "name": "Revenue",
+          "values": [
+            11100000,
+            10600000,
+            12900000,
+            11800000,
+            12200000,
+            11400000
+          ]
+        },
+        {
+          "as": "line",
+          "name": "Target",
+          "tone": "warn",
+          "values": [
+            11000000,
+            11000000,
+            12000000,
+            12000000,
+            12000000,
+            12500000
+          ]
+        }
+      ],
+      "tap": {
+        "action": "sales.month"
+      },
+      "title": "Revenue and target",
+      "type": "chart",
+      "x": [
+        "2024-01",
+        "2024-02",
+        "2024-03",
+        "2024-04",
+        "2024-05",
+        "2024-06"
+      ]
+    },
+    {
+      "chart": "combo",
+      "fallback": {
+        "title": "Revenue plan"
+      },
+      "format": "thb_m",
+      "id": "targets",
+      "move": {
+        "action": "plan.target",
+        "name": "point"
+      },
+      "series": [
+        {
+          "fixed": true,
+          "name": "Actual",
+          "values": [
+            1120000,
+            1080000,
+            1260000
+          ]
+        },
+        {
+          "as": "line",
+          "name": "Target",
+          "step": 50000,
+          "tone": "warn",
+          "values": [
+            1100000,
+            1100000,
+            1200000,
+            1200000,
+            1200000,
+            1250000
+          ]
+        }
+      ],
+      "title": "Revenue plan",
+      "type": "chart",
+      "x": [
+        "2026-01",
+        "2026-02",
+        "2026-03",
+        "2026-04",
+        "2026-05",
+        "2026-06"
+      ]
+    },
+    {
+      "fallback": {
+        "title": "Archived 3 orders"
+      },
+      "id": "archived",
+      "title": "Archived 3 orders",
+      "tone": "ok",
+      "type": "toast",
+      "undo": {
+        "action": "unarchive",
+        "values": {
+          "ids": [
+            "o-4821",
+            "o-4822",
+            "o-4825"
+          ]
+        }
+      }
+    },
+    {
+      "fallback": {
+        "title": "Q-2026-0418 rev 3"
+      },
+      "file": "/q/0418.pdf",
+      "id": "quote",
+      "note": "Out of date: the prices changed after this was drawn.",
+      "pages": [
+        {
+          "alt": "Cover and priced items: 8 lines, total 51,092.50 including VAT",
+          "height": 1754,
+          "src": "/q/0418/1.png",
+          "width": 1240
+        },
+        {
+          "alt": "Terms and conditions, clauses 1 to 6",
+          "height": 1754,
+          "src": "/q/0418/2.png",
+          "width": 1240
+        },
+        {
+          "alt": "Programme of works and the acceptance signature box",
+          "height": 1754,
+          "src": "/q/0418/3.png",
+          "width": 1240
+        }
+      ],
+      "title": "Q-2026-0418 rev 3",
+      "type": "pages"
+    },
+    {
+      "draw": {
+        "action": "schedule",
+        "name": "bar"
+      },
+      "fallback": {
+        "title": "Crews"
+      },
+      "from": "2026-12-01",
+      "id": "plan",
+      "move": {
+        "action": "schedule",
+        "name": "bar"
+      },
+      "off": [
+        "2026-12-05",
+        "2026-12-06",
+        "2026-12-10",
+        "2026-12-12",
+        "2026-12-13",
+        "2026-12-19",
+        "2026-12-20",
+        "2026-12-26",
+        "2026-12-27",
+        "2026-12-31"
+      ],
+      "stretch": {
+        "action": "schedule",
+        "name": "bar"
+      },
+      "title": "Crews",
+      "to": "2026-12-31",
+      "tracks": [
+        {
+          "bars": [
+            {
+              "end": "2026-12-04",
+              "id": "b01",
+              "label": "Fit-out",
+              "progress": 80,
+              "start": "2026-11-23"
+            }
+          ],
+          "id": "j0",
+          "subtitle": "Crew 3 · fit-out",
+          "title": "St Anne's annexe"
+        },
+        {
+          "bars": [
+            {
+              "end": "2026-12-04",
+              "id": "b11",
+              "label": "Formwork",
+              "progress": 100,
+              "start": "2026-12-01",
+              "tone": "ok"
+            },
+            {
+              "end": "2026-12-09",
+              "id": "b12",
+              "label": "Pour",
+              "start": "2026-12-07"
+            },
+            {
+              "end": "2026-12-22",
+              "id": "b13",
+              "label": "Cure",
+              "start": "2026-12-14",
+              "tone": "info"
+            }
+          ],
+          "id": "j1",
+          "subtitle": "Crew 1",
+          "title": "Riverside Tower A"
+        },
+        {
+          "bars": [
+            {
+              "end": "2026-12-08",
+              "id": "b21",
+              "label": "Excavate",
+              "progress": 60,
+              "start": "2026-12-02"
+            },
+            {
+              "end": "2026-12-18",
+              "id": "b22",
+              "label": "Footings",
+              "start": "2026-12-11"
+            }
+          ],
+          "id": "j2",
+          "subtitle": "Crew 2",
+          "title": "Riverside Tower B"
+        },
+        {
+          "bars": [
+            {
+              "end": "2026-12-23",
+              "id": "b31",
+              "label": "Brickwork",
+              "progress": 30,
+              "start": "2026-12-07",
+              "tone": "warn"
+            },
+            {
+              "end": "2026-12-28",
+              "id": "b32",
+              "label": "Inspect",
+              "start": "2026-12-28"
+            }
+          ],
+          "id": "j3",
+          "subtitle": "Crew 3 · behind",
+          "title": "Marlow Street flats"
+        },
+        {
+          "bars": [
+            {
+              "end": "2026-12-03",
+              "fixed": true,
+              "id": "b41",
+              "label": "Roof",
+              "progress": 100,
+              "start": "2026-12-01",
+              "tone": "ok"
+            },
+            {
+              "end": "2026-12-08",
+              "fixed": true,
+              "id": "b42",
+              "label": "Snag list",
+              "progress": 100,
+              "start": "2026-12-07"
+            }
+          ],
+          "id": "j4",
+          "subtitle": "Crew 1 · finished",
+          "title": "Kingfisher school hall"
+        },
+        {
+          "bars": [
+            {
+              "end": "2026-12-18",
+              "id": "b51",
+              "label": "Resurface · no permit",
+              "start": "2026-12-15",
+              "tone": "bad"
+            },
+            {
+              "end": "2026-12-22",
+              "id": "b52",
+              "label": "Lines",
+              "start": "2026-12-21"
+            }
+          ],
+          "id": "j5",
+          "subtitle": "Crew 4",
+          "title": "Quayside car park"
+        },
+        {
+          "bars": [],
+          "id": "j6",
+          "subtitle": "unassigned",
+          "title": "Old Mill conversion"
+        },
+        {
+          "bars": [
+            {
+              "end": "2026-12-23",
+              "id": "b71",
+              "label": "Survey",
+              "start": "2026-12-21"
+            },
+            {
+              "end": "2027-01-08",
+              "id": "b72",
+              "label": "Dig",
+              "start": "2026-12-28",
+              "tone": "accent"
+            }
+          ],
+          "id": "j7",
+          "subtitle": "Crew 2",
+          "title": "Pier Road drainage"
+        }
+      ],
+      "type": "timeline"
+    },
+    {
+      "action": "import",
+      "columns": [
+        {
+          "key": "sku",
+          "label": "SKU",
+          "required": true,
+          "type": "text"
+        },
+        {
+          "key": "name",
+          "label": "Name",
+          "type": "text"
+        },
+        {
+          "key": "cat",
+          "label": "Category",
+          "type": "choice",
+          "values": [
+            "Bakery",
+            "Dairy"
+          ]
+        },
+        {
+          "key": "price",
+          "label": "Price ฿",
+          "required": true,
+          "type": "money"
+        }
+      ],
+      "fallback": {
+        "title": "Import products"
+      },
+      "id": "products",
+      "into": "Products",
+      "mb": 10,
+      "read": "read",
+      "template": {
+        "name": "products.xlsx",
+        "src": "https://example.com/files/template-products.xlsx"
+      },
+      "title": "Import products",
+      "type": "import"
+    },
+    {
+      "avatar": "media/sample.svg",
+      "blocks": [
+        {
+          "fallback": {
+            "title": "prose"
+          },
+          "id": "chat-a",
+          "parts": [
+            {
+              "part": "para",
+              "spans": [
+                {
+                  "text": "Reading both files."
+                }
+              ]
+            }
+          ],
+          "type": "prose"
+        },
+        {
+          "body": "use std::fmt;",
+          "fallback": {
+            "title": "Read"
+          },
+          "id": "chat-read",
+          "name": "Read",
+          "state": "done",
+          "summary": "patch.rs, 238 lines",
+          "type": "tool"
+        },
+        {
+          "fallback": {
+            "title": "prose"
+          },
+          "id": "chat-b",
+          "parts": [],
+          "streaming": true,
+          "type": "prose"
+        }
+      ],
+      "fallback": {
+        "title": "Scout"
+      },
+      "files": [
+        {
+          "name": "page.svg",
+          "tap": {
+            "url": "media/page.svg"
+          }
+        },
+        {
+          "name": "sample.svg",
+          "src": "media/sample.svg",
+          "tap": {
+            "url": "media/sample.svg"
+          }
+        }
+      ],
+      "id": "chat",
+      "name": "Scout",
+      "role": "agent",
+      "time": "14:32",
+      "type": "message"
+    },
+    {
+      "fallback": {
+        "title": "Test"
+      },
+      "id": "tool",
+      "name": "Test",
+      "state": "running",
+      "summary": "cargo test -p blocks",
+      "type": "tool"
+    },
+    {
+      "brand": {
+        "href": "#home",
+        "icon": "◈",
+        "label": "Workspace"
+      },
+      "empty": "No pages yet",
+      "fallback": {
+        "title": "main"
+      },
+      "footer": [
+        {
+          "href": "#settings",
+          "icon": "⚙",
+          "label": "Settings"
+        }
+      ],
+      "groups": [
+        {
+          "links": [
+            {
+              "href": "#home",
+              "icon": "⌂",
+              "label": "Home"
+            },
+            {
+              "badge": {
+                "count": 12
+              },
+              "current": true,
+              "href": "#inbox",
+              "icon": "✉",
+              "label": "Inbox"
+            }
+          ]
+        },
+        {
+          "links": [
+            {
+              "children": [
+                {
+                  "href": "#spring",
+                  "label": "Spring launch"
+                },
+                {
+                  "href": "#archive",
+                  "label": "Archive"
+                }
+              ],
+              "icon": "◆",
+              "label": "Projects",
+              "open": true
+            },
+            {
+              "badge": {
+                "count": 3,
+                "tone": "bad"
+              },
+              "href": "#alerts",
+              "icon": "⚑",
+              "label": "Alerts"
+            }
+          ],
+          "title": "Work"
+        }
+      ],
+      "id": "side",
+      "label": "main",
+      "type": "sidebar"
+    }
+  ],
+  "fallback": {
+    "title": "screen"
+  },
+  "id": "every",
+  "type": "screen"
+}

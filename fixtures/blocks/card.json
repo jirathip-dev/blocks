@@ -1,0 +1,43 @@
+{
+  "type": "card",
+  "id": "card",
+  "kind": "ask",
+  "title": "q1",
+  "subtitle": "waiting",
+  "meta": {
+    "since": "2026-11-09T09:35:00Z",
+    "label": "as of {} ago"
+  },
+  "badge": {
+    "text": {
+      "until": "2026-11-09T09:53:00Z",
+      "label": "lapses in {rel}"
+    }
+  },
+  "blocks": [
+    {
+      "type": "row",
+      "id": "card-row",
+      "title": "Review",
+      "subtitle": {
+        "text": {
+          "until": "2026-11-09T09:53:00Z",
+          "label": "decides in {rel}"
+        }
+      },
+      "value": {
+        "since": "2026-11-09T09:35:00Z",
+        "label": "{} ago"
+      }
+    },
+    {
+      "type": "stat",
+      "id": "card-up",
+      "label": "up",
+      "value": {
+        "since": "2026-11-09T09:35:00Z",
+        "label": "{}"
+      }
+    }
+  ]
+}

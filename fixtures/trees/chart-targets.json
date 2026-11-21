@@ -1,0 +1,9 @@
+{
+  "kind": "chart",
+  "id": "targets",
+  "variant": null,
+  "drawn": "native",
+  "role": "figure",
+  "name": "Revenue plan",
+  "children": []
+}

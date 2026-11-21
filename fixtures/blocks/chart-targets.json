@@ -1,0 +1,44 @@
+{
+  "type": "chart",
+  "id": "targets",
+  "title": "Revenue plan",
+  "chart": "combo",
+  "x": [
+    "2026-01",
+    "2026-02",
+    "2026-03",
+    "2026-04",
+    "2026-05",
+    "2026-06"
+  ],
+  "series": [
+    {
+      "name": "Actual",
+      "values": [
+        1120000,
+        1080000,
+        1260000
+      ],
+      "fixed": true
+    },
+    {
+      "name": "Target",
+      "values": [
+        1100000,
+        1100000,
+        1200000,
+        1200000,
+        1200000,
+        1250000
+      ],
+      "tone": "warn",
+      "as": "line",
+      "step": 50000
+    }
+  ],
+  "format": "thb_m",
+  "move": {
+    "action": "plan.target",
+    "name": "point"
+  }
+}
