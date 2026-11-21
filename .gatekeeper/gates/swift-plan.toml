@@ -1,0 +1,18 @@
+about = "blocks-snap --plan on every fixtures/blocks file at 390 in one process: seen.json is empty"
+fix = "fix the view the run names in shots/plan/seen.json"
+budget_secs = 600
+leg = "swift"
+paths = ["Package.swift", "swift/**", "schema/sample.json", "fixtures/**", ".gatekeeper/gates/swift-plan.toml"]
+run = """
+if [ -z "${CI:-}" ]; then echo "swift-plan: CI's swift leg runs it"; exit 0; fi
+set -e
+export BLOCKS_STRICT=1
+swift build --product blocks-snap
+snap="$(swift build --show-bin-path)/blocks-snap"
+mkdir -p shots/plan
+for f in fixtures/blocks/*.json; do
+  jq -n --arg f "$f" '{name: ($f | ltrimstr("fixtures/blocks/") | rtrimstr(".json")), screen: $f, size: "390x844", css: [], scripts: [], kinds: [], steps: [], probes: true}'
+done | jq -s '{out: "shots/plan", runs: .}' > shots/plan.json
+"$snap" --plan shots/plan.json
+jq -e 'length == 0' shots/plan/seen.json
+"""

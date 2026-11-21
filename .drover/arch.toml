@@ -1,5 +1,5 @@
 frozen = [
-    ".github/workflows/ci.yml", "ci/cap.toml", "crates/blocks/src/site/views.rs", "docs/schema.md",
+    ".github/workflows/ci.yml", ".github/workflows/swift.yml", "ci/cap.toml", "crates/blocks/src/site/views.rs", "docs/schema.md",
     "swift/Sources/BlocksUI/Blocks.swift", "swift/Sources/BlocksUI/BlockCards.swift", "swift/Sources/BlocksUI/BlockLeaves.swift",
     "web/src/blocks.css", "web/src/render/index.ts", "web/test/render.test.ts",
 ]
