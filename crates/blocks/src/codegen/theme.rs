@@ -23,10 +23,33 @@ fn schemes_ts() -> serde_json::Result<String> {
         "export type Mode = \"dark\" | \"light\";\n\nexport type Token = {tokens};\n\n\
          export type Scheme = {{ label: string; \"color-scheme\": Mode; tokens: Record<Token, string> }};\n\n\
          export const defaultPair: Record<Mode, Scheme> = {};\n\n\
-         export const defaultStyle: Record<string, string> = {};\n",
+         export const defaultStyle: Record<string, string> = {};\n\n\
+         export const rules = {{\n  type: {},\n  surface: {},\n  fills: {},\n  marks: {},\n  sections: {},\n}};\n\n\
+         export const curves = {};\n\n\
+         export const cases = {};\n\n\
+         export const drawn = {};\n\n\
+         type Label = {{ prefix?: string; suffix?: string; case?: keyof typeof cases }};\n\n\
+         export type Axes = {{ [K in keyof typeof rules]?: keyof (typeof rules)[K] }};\n\n\
+         export type Scale = Axes & {{ space?: number; motion?: number; radius?: number; easing?: keyof typeof curves; labels?: Record<string, Label> }};\n",
         serde_json::to_string_pretty(theme::default())?,
-        serde_json::to_string_pretty(&std::collections::BTreeMap::from(theme::DEFAULT_STYLE))?
+        serde_json::to_string_pretty(&std::collections::BTreeMap::from(theme::DEFAULT_STYLE))?,
+        table(theme::TypeDesign::ALL, |v| Some(v.css()))?,
+        table(theme::Surface::ALL, |v| Some(v.css()))?,
+        table(theme::Fills::ALL, |v| Some(v.css()))?,
+        table(theme::Marks::ALL, |v| Some(v.css()))?,
+        table(theme::Sections::ALL, |v| Some(v.css()))?,
+        table(theme::Easing::ALL, |v| Some(v.curve()))?,
+        table(theme::LabelCase::ALL, |v| Some(v.css()))?,
+        table(theme::LabelRole::ALL, theme::LabelRole::selector)?,
     ))
+}
+
+fn table<T: Copy + serde::Serialize>(all: &[T], css: impl Fn(T) -> Option<&'static str>) -> serde_json::Result<String> {
+    let rows = all
+        .iter()
+        .filter_map(|v| css(*v).map(|c| Ok(format!("{}: {}", serde_json::to_string(v)?, serde_json::to_string(c)?))))
+        .collect::<serde_json::Result<Vec<_>>>()?;
+    Ok(format!("{{ {} }}", rows.join(", ")))
 }
 
 fn scheme_swift(s: &theme::Scheme) -> serde_json::Result<String> {
