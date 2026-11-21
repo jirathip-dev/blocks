@@ -1,5 +1,5 @@
 import { deepStrictEqual, ok, strictEqual } from "node:assert/strict";
-import { existsSync, mkdirSync, readdirSync, readFileSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { extname, join } from "node:path";
 import { after, before, test } from "node:test";
 import { webkit } from "playwright";
@@ -61,7 +61,13 @@ test("every page is the same PNG and tree before and after blocks.js adopts it, 
     const want = await tree(plain.page);
     await plain.close();
     const on = await open(f);
-    ok(png.equals(await on.page.screenshot({ fullPage: true })), `${f}: the PNG changed when blocks.js adopted it`);
+    const live = await on.page.screenshot({ fullPage: true });
+    if (!png.equals(live) && process.env.SHOTS) {
+      mkdirSync(process.env.SHOTS, { recursive: true });
+      writeFileSync(join(process.env.SHOTS, `${f}-static.png`), png);
+      writeFileSync(join(process.env.SHOTS, `${f}-adopted.png`), live);
+    }
+    ok(png.equals(live), `${f}: the PNG changed when blocks.js adopted it`);
     deepStrictEqual(await tree(on.page), want, f);
     deepStrictEqual(on.warned, [], f);
     deepStrictEqual(on.stray, [], f);
