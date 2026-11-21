@@ -1,0 +1,18 @@
+about = "blocks-snap --check on every fixtures/blocks file against its fixtures/trees/swift tree at 390 and 1440"
+fix = "fix the view or the tree the check names; rerun just gen when a generated tree is behind"
+budget_secs = 900
+leg = "swift"
+paths = ["Package.swift", "swift/**", "schema/sample.json", "fixtures/**", ".gatekeeper/gates/swift-snap.toml"]
+run = """
+if [ -z "${CI:-}" ]; then echo "swift-snap: CI's swift leg runs it"; exit 0; fi
+set -e
+export BLOCKS_STRICT=1
+swift build --product blocks-snap
+snap="$(swift build --show-bin-path)/blocks-snap"
+for size in 390x844 1440x900; do
+  for f in fixtures/blocks/*.json; do
+    k=$(basename "$f" .json)
+    "$snap" --screen "$f" --size "$size" --expect "fixtures/trees/swift/$k.json" --check --out "shots/swift/$size/$k"
+  done
+done
+"""

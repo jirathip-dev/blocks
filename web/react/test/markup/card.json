@@ -1,0 +1,4 @@
+[
+  {"type":"card","id":"f","title":"Folded","fold":{"line":"3 waiting","main":{"label":"Yes","action":"pick","value":"yes"}}},
+  {"type":"card","id":"k","title":"Ask","tone":"r","buttons":[{"type":"button","id":"ok","label":"OK","action":"ok","style":"primary"},{"type":"button","id":"web","label":"Site","tap":{"url":"https://x.test/s"}}]}
+]

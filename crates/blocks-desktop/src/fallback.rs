@@ -2,6 +2,7 @@ use blocks::{Block, Fields};
 use egui::{RichText, Ui};
 
 use crate::cx::Cx;
+use crate::words;
 
 fn loose(f: &Fields) -> Vec<Block> {
     f.get("blocks")
@@ -24,9 +25,9 @@ pub(crate) fn draw(b: &Block, name: &str, ui: &mut Ui, cx: &mut Cx<'_>) {
     };
     let title = app.map_or(name, |f| f.title.as_str());
     let look = cx.look;
-    ui.label(RichText::new(title).color(look.mute(ui)));
+    words::label(ui, RichText::new(title).color(look.mute(ui)));
     if let Some(s) = app.and_then(|f| f.subtitle.as_deref()) {
-        ui.label(RichText::new(s).color(look.mute(ui)));
+        words::label(ui, RichText::new(s).color(look.mute(ui)));
     }
     cx.blocks(ui, &under(b));
 }

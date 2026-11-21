@@ -1,4 +1,4 @@
-use blocks::{wire, Block, Frame, Op, Put, Shelf};
+use blocks::{wire, Block, Child, Frame, Op, Put, Shelf};
 use serde_json::json;
 
 fn screen(rows: &[(&str, &str)]) -> Block {
@@ -94,7 +94,7 @@ fn old_turns_a_move_into_a_replace_of_its_parent_and_of_the_root_into_the_screen
             rm.clone(),
             Op::Replace {
                 id: "l".into(),
-                block: l
+                block: Child::Block(l)
             }
         ]
     );

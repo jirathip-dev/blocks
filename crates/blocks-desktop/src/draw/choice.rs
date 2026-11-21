@@ -5,13 +5,14 @@ use serde_json::Value;
 use crate::act;
 use crate::cx::{Cx, Draw};
 use crate::text::age;
+use crate::words;
 
 pub(super) const DRAW: Option<Draw<Choice>> = Some(draw);
 
 fn draw(b: &Choice, ui: &mut Ui, cx: &mut Cx<'_>) {
     let look = cx.look;
     if let Some(q) = &b.question {
-        ui.label(RichText::new(q).strong().color(look.fg(ui)));
+        words::label(ui, RichText::new(q).strong().color(look.fg(ui)));
     }
     let mut opts: Vec<_> = b.options.iter().collect();
     opts.sort_by_key(|o| Some(&o.value) != b.recommended.as_ref());
@@ -33,7 +34,7 @@ fn draw(b: &Choice, ui: &mut Ui, cx: &mut Cx<'_>) {
             label: d.label.clone(),
             since: None,
         };
-        ui.label(RichText::new(age(&t, cx.now)).color(look.mute(ui)));
+        words::label(ui, RichText::new(age(&t, cx.now)).color(look.mute(ui)));
     }
     let Some(other) = &b.other else { return };
     let id = ui.scope_id().with("other");

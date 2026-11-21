@@ -12,11 +12,6 @@ private struct Red: BlockStyle {
 
 @MainActor
 final class RenderTests: XCTestCase {
-    private static let core = [
-        "screen", "sheet", "section", "list", "row", "card", "choice", "form", "config", "secret", "run", "button",
-        "chips", "stat", "text", "images", "web", "diff", "editor", "scene", "diagram", "composer", "lines",
-    ]
-    private static let content = ["prose", "hero", "media", "nav", "steps", "toast", "pages", "timeline", "import", "message", "tool"]
     private let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent().appendingPathComponent("../../..")
 
     private func pixels(
@@ -48,36 +43,6 @@ final class RenderTests: XCTestCase {
 
     private func block(_ json: String) throws -> Block { try JSONDecoder().decode(Block.self, from: Data(json.utf8)) }
 
-    private func samples() throws -> [String: Block] {
-        var found: [String: Block] = [:]
-        func walk(_ value: JSONValue) throws {
-            if !value.type.isEmpty, AppBlocks.isCore(value.type), found[value.type] == nil {
-                found[value.type] = try value.decode(Block.self)
-            }
-            for key in ["blocks", "rows", "buttons", "block", "screen", "ops"] {
-                if let child = value[key] { try walk(child) }
-            }
-            for item in value.items { try walk(item) }
-        }
-        let dir = root.appendingPathComponent("fixtures/screens")
-        for app in try FileManager.default.contentsOfDirectory(atPath: dir.path).sorted() {
-            let folder = dir.appendingPathComponent(app)
-            for name in try FileManager.default.contentsOfDirectory(atPath: folder.path).sorted() {
-                try walk(JSONDecoder().decode(JSONValue.self, from: Data(contentsOf: folder.appendingPathComponent(name))))
-            }
-        }
-        return found
-    }
-
-    func testEveryCoreKindInTheFixturesDraws() throws {
-        var found = try samples()
-        found["lines"] = try found["lines"] ?? fixture("lines")
-        XCTAssertEqual(Set(found.keys), Set(Self.core))
-        for (kind, sample) in found.sorted(by: { $0.key < $1.key }) {
-            XCTAssertGreaterThan(try pixels(BlocksView(sample, source: .core)), 0, "\(kind) draws nothing")
-        }
-    }
-
     private func height(_ view: some View) -> CGFloat {
         NSHostingView(rootView: view.frame(width: 390).environment(\.look, Look(still: true))).fittingSize.height
     }
@@ -87,8 +52,8 @@ final class RenderTests: XCTestCase {
             Block.self, from: Data(contentsOf: root.appendingPathComponent("fixtures/blocks/\(kind).json")))
     }
 
-    func testEveryContentKindDrawsItsOwnView() throws {
-        for kind in Self.content {
+    func testEveryKindsFixtureDrawsItsOwnView() throws {
+        for kind in Block.tags.sorted() {
             XCTAssertGreaterThan(try pixels(BlocksView(fixture(kind), source: .core)), 0, "\(kind) draws nothing")
         }
         XCTAssertGreaterThan(height(BlocksView(try fixture("prose"), source: .core)), 150, "every part laid out")
@@ -164,6 +129,19 @@ final class RenderTests: XCTestCase {
         let busy = #"{"type": "composer", "action": "say", "acts": {"stop": "halt"}, "working": {"since": "2026-01-01T00:00:00Z"}}"#
         XCTAssertEqual(try pixels(BlocksView(block(idle), source: .core), red), 0)
         XCTAssertGreaterThan(try pixels(BlocksView(block(busy), source: .core), red), 0)
+    }
+
+    func testAFoldedCardDrawsItsLineInItsFleetColour() throws {
+        let rgb = try XCTUnwrap(NSColor(Look(still: true).palette.amber).usingColorSpace(.sRGB))
+        let amber = { (r: UInt8, g: UInt8, b: UInt8, a: UInt8) in
+            let want = [rgb.redComponent, rgb.greenComponent, rgb.blueComponent].map { Int($0 * 255) }
+            return a > 200 && zip([r, g, b].map(Int.init), want).allSatisfy { abs($0 - $1) < 24 }
+        }
+        let card = { (color: String) in
+            #"{"type": "card", "id": "c", "title": "Deploy", "color": "\#(color)", "fold": {"line": "paused: waiting on the owner"}}"#
+        }
+        XCTAssertEqual(try pixels(BlocksView(block(card("x")), source: .core), amber), 0)
+        XCTAssertGreaterThan(try pixels(BlocksView(block(card("a")), source: .core), amber), 0)
     }
 
     func testPagesFrameEachPageAtItsSizeFittedToTheWidthAndSayNoPagesYetWhenEmpty() throws {
@@ -283,7 +261,7 @@ final class RenderTests: XCTestCase {
     }
 
     func testAnAppKindNamedLikeACoreKindIsRefused() {
-        for kind in Self.core + Self.content where kind != "scene" {
+        for kind in Block.tags.sorted() where kind != "scene" {
             XCTAssertThrowsError(try AppBlocks([kind: { _ in AnyView(EmptyView()) }])) {
                 XCTAssertEqual($0 as? AppBlocksError, .clash(kind))
             }

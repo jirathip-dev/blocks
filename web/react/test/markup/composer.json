@@ -1,0 +1,3 @@
+[
+  {"type":"composer","id":"cm","action":"say","label":"Send","acts":{"steer":"steer","unqueue":"unq"},"queued":[{"q":1,"text":"later"}],"chips":[{"name":"model","all":["m1","m2"],"cur":"m2"},{"name":"effort","all":["lo","hi"]}]}
+]

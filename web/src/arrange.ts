@@ -1,6 +1,7 @@
 import type { SizeClass } from "./gen/layout.ts";
 import { type Editing, type Placed, rows, wire } from "./edits.ts";
 import { btn, el, h } from "./render/dom.ts";
+import { box } from "./render/kind/modal.ts";
 
 export type { Editing } from "./edits.ts";
 
@@ -25,18 +26,16 @@ function arrange(tree: Placed, size: SizeClass, o: Editing, refuse: (why: string
 export function editor(o: Editing, root: HTMLElement): { tab: HTMLElement; sheet: HTMLElement; draw(tree: Placed, size: SizeClass): void } {
   const sheet = el("div", "b-sheet");
   sheet.hidden = true;
+  sheet.addEventListener("close", () => (sheet.hidden = true), true);
   let now: [Placed, SizeClass] | undefined;
-  const close = () => (sheet.hidden = true);
+  const close = () => ((sheet.hidden = true), sheet.replaceChildren());
   const draw = (tree: Placed, size: SizeClass) => {
     now = [tree, size];
     root.append(sheet);
     if (sheet.hidden) return;
     const why = h("p", "m");
     why.setAttribute("role", "alert");
-    const x = btn("done", "b-sheet__close");
-    x.onclick = close;
-    const head = h("header", "b-sheet__head", h("b", "b-sheet__title", `layout on ${size}`), x);
-    sheet.replaceChildren(h("div", "b-sheet__card", head, h("div", "b-sheet__body", arrange(tree, size, o, (w) => (why.textContent = w), close), why)));
+    sheet.replaceChildren(box({ title: `layout on ${size}`, blocks: [] }, [h("div", "b-sheet__body", arrange(tree, size, o, (w) => (why.textContent = w), close), why)], { done: async () => true }));
   };
   const tab = btn("edit layout", "b-tab");
   tab.onclick = () => {

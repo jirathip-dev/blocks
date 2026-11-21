@@ -72,8 +72,8 @@ fn the_kinds_of_the_first_fourth_and_fifth_slices_are_drawn_and_the_rest_are_gap
     assert_eq!(
         kinds(),
         [
-            "screen", "sheet", "section", "list", "row", "card", "choice", "form", "config", "secret", "run", "button",
-            "chips", "stat", "text", "prose", "message", "tool"
+            "screen", "modal", "sheet", "section", "list", "row", "card", "choice", "form", "config", "secret", "run",
+            "button", "chips", "stat", "text", "composer", "prose", "message", "tool"
         ]
     );
 }

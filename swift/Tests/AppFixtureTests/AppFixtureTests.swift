@@ -42,6 +42,14 @@ struct Tally: View {
     }
 }
 
+struct PosterArt: View {
+    @Environment(\.card) private var card
+
+    var body: some View {
+        if case .plugin("res") = card.poster { Color(red: 1, green: 0, blue: 1).frame(width: 16, height: 16) }
+    }
+}
+
 @MainActor
 final class AppFixtureTests: XCTestCase {
     private func block(_ json: String) throws -> Block {
@@ -88,6 +96,51 @@ final class AppFixtureTests: XCTestCase {
                 space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue))
         context.draw(image, in: CGRect(x: 0, y: 0, width: w, height: h))
         return stride(from: 0, to: data.count, by: 4).filter { data[$0] > 200 && data[$0 + 1] < 60 && data[$0 + 2] < 60 }.count
+    }
+
+    private static let art = Color(red: 1, green: 0, blue: 1)
+
+    private func art(_ screen: Block, _ apps: AppBlocks, source: LayoutSource = .core) throws -> Int {
+        let view = BlocksView(screen, source: source).appBlocks(apps).padding(BlocksView.inset)
+            .frame(width: 390, height: 400, alignment: .topLeading).background(Color.white).blocksLook(BlocksUI.Look(still: true))
+        let image = try XCTUnwrap(ImageRenderer(content: view).cgImage)
+        let (w, h) = (image.width, image.height)
+        var data = [UInt8](repeating: 0, count: w * h * 4)
+        let context = try XCTUnwrap(
+            CGContext(
+                data: &data, width: w, height: h, bitsPerComponent: 8, bytesPerRow: w * 4,
+                space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue))
+        context.draw(image, in: CGRect(x: 0, y: 0, width: w, height: h))
+        return stride(from: 0, to: data.count, by: 4).filter { data[$0] > 200 && data[$0 + 1] < 60 && data[$0 + 2] > 200 }.count
+    }
+
+    func testAnAppDrawsARowsFigureFromItsStateAndToolAndAFigureOnlyRowDecodes() throws {
+        let screen = try block(
+            #"""
+            {"type": "screen", "id": "home", "blocks": [{"type": "list", "id": "l", "rows": [
+              {"type": "row", "id": "r", "figure": {"state": "working", "tool": "edit"}}]}]}
+            """#)
+        guard case .screen(let s) = screen, case .list(let list)? = s.blocks?.first, case .row(let row)? = list.rows.first else {
+            return XCTFail("the figure-only row did not decode")
+        }
+        XCTAssertNil(row.title)
+        let sprite = try AppBlocks([:]) { figure in
+            let editing = figure.string("state") == "working" && figure.string("tool") == "edit"
+            return AnyView(Self.art.frame(width: editing ? 20 : 0, height: 20))
+        }
+        XCTAssertEqual(try art(screen, try AppBlocks([:])), 0)
+        XCTAssertGreaterThanOrEqual(try art(screen, sprite), 20 * 20)
+    }
+
+    func testAnAppDrawsACardsPosterInItsHeader() throws {
+        let screen = try block(
+            #"""
+            {"type": "screen", "id": "home", "blocks": [{"type": "card", "id": "c", "kind": "ask", "title": "Merge it?"}]}
+            """#)
+        let member = try AppBlocks([:], poster: { _ in AnyView(PosterArt()) })
+        XCTAssertEqual(try art(screen, try AppBlocks([:]), source: .plugin("res")), 0)
+        XCTAssertGreaterThanOrEqual(try art(screen, member, source: .plugin("res")), 16 * 16)
+        XCTAssertEqual(try art(screen, member, source: .core), 0, "the app reads who posted from the card context")
     }
 
     func testTheAppsPaletteWithNoTilesDrawsNoDotGridAndNoBuildUp() throws {

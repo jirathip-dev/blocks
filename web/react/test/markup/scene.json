@@ -1,0 +1,3 @@
+[
+  {"type":"scene","id":"sc","label":"lanes","lanes":[{"id":"a","title":"impl","state":"working","stage":"build","tool":"cargo","tap":{"action":"see"}},{"id":"b","title":"rev","state":"done","tap":{"url":"https://x.test/l"}}]}
+]

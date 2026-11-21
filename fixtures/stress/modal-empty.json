@@ -1,0 +1,11 @@
+{
+  "blocks": [],
+  "cancel": "cancel",
+  "done": {
+    "action": "save-item",
+    "label": "save"
+  },
+  "id": "edit-item",
+  "title": "Edit item",
+  "type": "modal"
+}

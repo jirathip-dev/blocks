@@ -1,0 +1,3 @@
+[
+  {"type":"screen","id":"thread-1","title":"Talk","focus":true,"actions":[{"label":"Add","action":"add"},{"label":"Docs","tap":{"url":"https://x.test/d"}},{"label":"More","menu":[{"label":"Mute","action":"mute","enabled":false}]}],"blocks":[{"type":"row","id":"top","title":"Pinned","sticky":true},{"type":"text","id":"m","markdown":"see t12 and `a **b**`\n[docs](https://x.test/a) or https://x.test/b.\n```sh\nls\n```"}]}
+]

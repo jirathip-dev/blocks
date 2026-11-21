@@ -1,0 +1,10 @@
+about = "the blocks crate's dependency tree links no egui; egui stays in blocks-desktop and blocks-desk"
+fix = "keep egui out of crates/blocks/Cargo.toml and its features; the desktop renderer depends on blocks, never the other way"
+budget_secs = 60
+setup = ["rust"]
+paths = ["Cargo.*", "crates/*/Cargo.toml", ".gatekeeper/gates/no-egui.toml"]
+run = """
+tree=$(cargo tree --locked -p blocks --all-features --target all -e normal,build --prefix none)
+if printf '%s\\n' "$tree" | grep -q egui; then echo "the blocks crate links egui"; exit 1; fi
+echo "the blocks crate links no egui"
+"""

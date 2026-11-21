@@ -8,6 +8,7 @@ mod island;
 mod look;
 mod stage;
 mod text;
+pub mod words;
 
 pub use act::Event;
 pub use art::{Art, Pack, Plain};

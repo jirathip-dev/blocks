@@ -9,13 +9,17 @@ public struct AppBlocks: Sendable {
 
     internal let views: [String: Draw]
     internal let figure: Draw?
+    internal let poster: Draw?
     internal let unknown: Unknown
 
-    public init(_ views: [String: Draw], figure: Draw? = nil, unknown: Unknown = .fallback) throws(AppBlocksError) {
+    /// `figure` draws a lane's or a row's figure from its JSON; `poster` draws a card's poster in its header (`card` holds who posted).
+    public init(
+        _ views: [String: Draw], figure: Draw? = nil, poster: Draw? = nil, unknown: Unknown = .fallback
+    ) throws(AppBlocksError) {
         if let clash = views.keys.sorted().first(where: { Self.isCore($0) && !Self.stages.contains($0) }) {
             throw .clash(clash)
         }
-        (self.views, self.figure, self.unknown) = (views, figure, unknown)
+        (self.views, self.figure, self.poster, self.unknown) = (views, figure, poster, unknown)
     }
 
     /// Whether `type` is a core kind: the generated decoder takes it for one of its own.

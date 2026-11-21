@@ -1,10 +1,11 @@
 import type { Composer, Queued } from "../../gen/types.ts";
 import type { Blk } from "../../core/tree.ts";
 import { type FileRow, send as upload } from "../../core/field/files.ts";
+import { nonce } from "../../core/nonce.ts";
 import { type Ctx, obj } from "../ctx.ts";
 import { btn, el, h } from "../dom.ts";
 
-type Draft = { files: FileRow[]; picks: Blk; q?: number; st?: string | undefined; steer?: boolean; stopping?: boolean };
+type Draft = { files: FileRow[]; picks: Blk; nonce?: string | undefined; q?: number; st?: string | undefined; steer?: boolean; stopping?: boolean };
 const drafts = new Map<string, Draft>();
 const SAID: Record<string, string> = { sending: "sending…", sent: "✓ sent", failed: "not sent" };
 
@@ -33,12 +34,12 @@ export function composer(b: Composer, c: Ctx): HTMLElement {
     if ((!ta.value.trim() && !done.length) || d.files.some((r) => r.state === "uploading")) return;
     const queue = !steer && (b.working || d.q != null) ? act("queue") : "";
     const action = steer ? act("steer") : queue || b.action;
-    const v: Blk = { ...d.picks, text: ta.value, files: done.map(({ id, name, src }) => ({ id, name, src: src ?? null })) };
+    const v: Blk = { ...d.picks, text: ta.value, files: done.map(({ id, name, src }) => ({ id, name, src: src ?? null })), nonce: (d.nonce ??= nonce()) };
     if (queue && d.q != null) v["q"] = d.q;
     [d.st, d.steer] = ["sending", false];
     draw();
     if (await post(action, v, steer ? undefined : go)) {
-      Object.assign(d, { files: [], q: undefined, st: "sent" });
+      Object.assign(d, { files: [], nonce: undefined, q: undefined, st: "sent" });
       ta.value = "";
       c.store.put(key, null);
       grow();
@@ -47,7 +48,7 @@ export function composer(b: Composer, c: Ctx): HTMLElement {
   };
   ta.oninput = () => {
     c.store.put(key, ta.value || null);
-    d.st = d.st === "sent" ? "" : d.st;
+    [d.st, d.nonce] = [d.st === "sent" ? "" : d.st, undefined];
     grow();
   };
   ta.onkeydown = (e) => {
@@ -58,7 +59,7 @@ export function composer(b: Composer, c: Ctx): HTMLElement {
   pick.onchange = () => {
     const fresh = Array.from(pick.files ?? [], (blob): FileRow => ({ name: blob.name, size: blob.size, mime: blob.type, state: "uploading", part: 0, blob })).slice(0, 10 - d.files.length);
     d.files = [...d.files, ...fresh];
-    [pick.value, d.st] = ["", ""];
+    [pick.value, d.st, d.nonce] = ["", "", undefined];
     for (const r of fresh) if (c.file) upload(r, c.file, { screen: c.screen, block: b.id ?? undefined, field: "files" }, draw);
     draw();
   };
@@ -113,7 +114,7 @@ export function composer(b: Composer, c: Ctx): HTMLElement {
     const rm = btn("remove", "bad", undefined, act("unqueue"));
     now.onclick = () => post(act("steer"), { q }, now);
     edit.onclick = () => {
-      [d.q, ta.value] = [q, text];
+      [d.q, ta.value, d.nonce] = [q, text, undefined];
       c.store.put(key, text);
       grow();
       ta.focus();

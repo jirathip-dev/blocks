@@ -1,0 +1,95 @@
+web/lint.mjs: eslint(no-nested-ternary): Do not nest ternary expressions.
+web/react/src/act.ts: eslint(no-nested-ternary): Do not nest ternary expressions.
+web/react/src/draw.ts: eslint(no-nested-ternary): Do not nest ternary expressions.
+web/react/src/fields/_input.ts: eslint(no-nested-ternary): Do not nest ternary expressions.
+web/react/src/kinds/card.ts: eslint(no-nested-ternary): Do not nest ternary expressions.
+web/react/src/kinds/chips.ts: eslint(no-nested-ternary): Do not nest ternary expressions.
+web/react/src/kinds/composer.ts: eslint(no-nested-ternary): Do not nest ternary expressions.
+web/react/src/kinds/composer.ts: unicorn(no-useless-undefined): Do not use useless `undefined`.
+web/react/src/kinds/config.ts: unicorn(no-useless-undefined): Do not use useless `undefined`.
+web/react/src/kinds/diff.ts: eslint(no-nested-ternary): Do not nest ternary expressions.
+web/react/src/kinds/form.ts: eslint(no-nested-ternary): Do not nest ternary expressions.
+web/react/src/kinds/form.ts: unicorn(no-useless-undefined): Do not use useless `undefined`.
+web/react/src/kinds/media.ts: eslint(no-nested-ternary): Do not nest ternary expressions.
+web/react/src/kinds/media.ts: eslint(no-unused-vars): Parameter '_' is declared but never used.
+web/react/src/kinds/message.ts: eslint(no-nested-ternary): Do not nest ternary expressions.
+web/react/src/kinds/row.ts: eslint(no-nested-ternary): Do not nest ternary expressions.
+web/react/src/kinds/table.ts: eslint(no-nested-ternary): Do not nest ternary expressions.
+web/react/src/kinds/table.ts: eslint(no-unused-expressions): Expected expression to be used
+web/react/src/kinds/timeline.ts: eslint(no-nested-ternary): Do not nest ternary expressions.
+web/react/test/frame.test.ts: eslint(no-unused-vars): Identifier 'readFileSync' is imported but never used.
+web/react/test/markup.test.ts: eslint(no-unused-vars): Parameter 'screen' is declared but never used. Unused parameters should start with a '_'.
+web/shot/gesture.ts: eslint(no-unused-expressions): Expected expression to be used
+web/shot/look.ts: eslint(no-nested-ternary): Do not nest ternary expressions.
+web/shot/look.ts: eslint(no-unused-expressions): Expected expression to be used
+web/shot/probe/no-name.ts: eslint(no-nested-ternary): Do not nest ternary expressions.
+web/shot/react.ts: eslint(no-nested-ternary): Do not nest ternary expressions.
+web/shot/shot.ts: eslint(no-nested-ternary): Do not nest ternary expressions.
+web/shot/shot.ts: eslint(no-unused-expressions): Expected expression to be used
+web/src/core/apply.ts: eslint(no-nested-ternary): Do not nest ternary expressions.
+web/src/core/check.ts: eslint(no-control-regex): Unexpected control character
+web/src/core/check.ts: eslint(no-nested-ternary): Do not nest ternary expressions.
+web/src/core/eval.ts: eslint(no-nested-ternary): Do not nest ternary expressions.
+web/src/core/eval.ts: unicorn(no-useless-undefined): Do not use useless `undefined`.
+web/src/core/field/files.ts: eslint(no-nested-ternary): Do not nest ternary expressions.
+web/src/core/gate.ts: eslint(no-nested-ternary): Do not nest ternary expressions.
+web/src/core/kind/diagram.ts: eslint(no-nested-ternary): Do not nest ternary expressions.
+web/src/core/kind/import.ts: eslint(no-nested-ternary): Do not nest ternary expressions.
+web/src/core/kind/media.ts: eslint(no-nested-ternary): Do not nest ternary expressions.
+web/src/core/kind/table.ts: eslint(no-nested-ternary): Do not nest ternary expressions.
+web/src/core/kind/table.ts: eslint(no-unused-expressions): Expected expression to be used
+web/src/core/table.ts: eslint(no-nested-ternary): Do not nest ternary expressions.
+web/src/core/text.ts: eslint(no-nested-ternary): Do not nest ternary expressions.
+web/src/core/tree.ts: eslint(no-nested-ternary): Do not nest ternary expressions.
+web/src/dump.ts: eslint(no-nested-ternary): Do not nest ternary expressions.
+web/src/edits.ts: eslint(no-nested-ternary): Do not nest ternary expressions.
+web/src/gesture.ts: eslint(no-nested-ternary): Do not nest ternary expressions.
+web/src/lazy/import.ts: eslint(no-nested-ternary): Do not nest ternary expressions.
+web/src/patch.ts: eslint(no-nested-ternary): Do not nest ternary expressions.
+web/src/patch.ts: eslint(no-unused-expressions): Expected expression to be used
+web/src/patch.ts: eslint(no-useless-return): Unnecessary return statement.
+web/src/play/fault.ts: eslint(no-control-regex): Unexpected control characters
+web/src/play/index.ts: unicorn(no-useless-undefined): Do not use useless `undefined`.
+web/src/render/act.ts: eslint(no-nested-ternary): Do not nest ternary expressions.
+web/src/render/block.ts: eslint(no-nested-ternary): Do not nest ternary expressions.
+web/src/render/field/_input.ts: eslint(no-nested-ternary): Do not nest ternary expressions.
+web/src/render/kind/chart.ts: eslint(no-nested-ternary): Do not nest ternary expressions.
+web/src/render/kind/chips.ts: eslint(no-nested-ternary): Do not nest ternary expressions.
+web/src/render/kind/composer.ts: eslint(no-nested-ternary): Do not nest ternary expressions.
+web/src/render/kind/diff.ts: eslint(no-nested-ternary): Do not nest ternary expressions.
+web/src/render/kind/form.ts: eslint(no-nested-ternary): Do not nest ternary expressions.
+web/src/render/kind/lines.ts: eslint(no-nested-ternary): Do not nest ternary expressions.
+web/src/render/kind/prose.ts: eslint(no-nested-ternary): Do not nest ternary expressions.
+web/src/render/kind/steps.ts: eslint(no-nested-ternary): Do not nest ternary expressions.
+web/src/render/kind/table.ts: eslint(no-nested-ternary): Do not nest ternary expressions.
+web/src/render/kind/table.ts: eslint(no-unused-expressions): Expected expression to be used
+web/src/render/kind/timeline.ts: eslint(no-nested-ternary): Do not nest ternary expressions.
+web/src/render/more.ts: eslint(no-nested-ternary): Do not nest ternary expressions.
+web/src/render/more.ts: eslint(no-unused-expressions): Expected expression to be used
+web/src/scan/index.ts: eslint(no-nested-ternary): Do not nest ternary expressions.
+web/src/scan/index.ts: unicorn(no-useless-undefined): Do not use useless `undefined`.
+web/src/scan/page.ts: eslint(no-nested-ternary): Do not nest ternary expressions.
+web/src/scan/page.ts: unicorn(no-new-array): Do not use `new Array(singleArgument)`.
+web/src/shell/adopt.ts: eslint(no-console): Unexpected console statement.
+web/src/shell/adopt.ts: unicorn(no-useless-undefined): Do not use useless `undefined`.
+web/src/shell/look.ts: eslint(no-nested-ternary): Do not nest ternary expressions.
+web/src/shell/store.ts: eslint(no-useless-return): Unnecessary return statement.
+web/src/stream.ts: eslint(no-nested-ternary): Do not nest ternary expressions.
+web/src/stream.ts: unicorn(no-useless-undefined): Do not use useless `undefined`.
+web/src/theme.ts: unicorn(no-useless-undefined): Do not use useless `undefined`.
+web/src/toasts.ts: eslint(no-nested-ternary): Do not nest ternary expressions.
+web/test/built.test.ts: typescript(consistent-type-assertions): Do not use any type assertions.
+web/test/dom.ts: typescript(no-this-alias): Unexpected aliasing of 'this' to local variable.
+web/test/dom.ts: unicorn(no-useless-undefined): Do not use useless `undefined`.
+web/test/gesture.test.ts: eslint(no-nested-ternary): Do not nest ternary expressions.
+web/test/kind/composer.test.ts: unicorn(no-unnecessary-await): Unexpected `await` on a non-Promise value
+web/test/kind/config.test.ts: eslint(no-unused-vars): Identifier 'ok' is imported but never used.
+web/test/kind/import.test.ts: unicorn(no-unnecessary-await): Unexpected `await` on a non-Promise value
+web/test/kind/import.test.ts: unicorn(no-useless-promise-resolve-reject): Prefer `throw error` over `return Promise.reject(error)`.
+web/test/kind/prose.test.ts: eslint(no-restricted-properties): 'outerHTML' is restricted from being used.
+web/test/kind/prose.test.ts: eslint(no-unused-expressions): Expected expression to be used
+web/test/look.test.ts: unicorn(no-useless-spread): Using a spread operator here creates a new array unnecessarily.
+web/test/scan.test.ts: eslint(no-nested-ternary): Do not nest ternary expressions.
+web/test/sim.test.ts: eslint(no-nested-ternary): Do not nest ternary expressions.
+web/test/sim.test.ts: unicorn(no-useless-undefined): Do not use useless `undefined`.
+web/test/site.test.ts: eslint(no-restricted-properties): 'innerHTML' is restricted from being used.

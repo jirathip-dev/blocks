@@ -22,7 +22,7 @@ export type Band = { blocks?: Block[] | null; header?: string | null; id: string
 
 export type Bar = { label: string; sub?: string | null; tone?: Tone | null; value: number };
 
-export type Block = ({ type: "screen" } & Screen) | ({ type: "sheet" } & Sheet) | ({ type: "section" } & Section) | ({ type: "list" } & List) | ({ type: "row" } & Row) | ({ type: "card" } & Card) | ({ type: "choice" } & Choice) | ({ type: "form" } & Form) | ({ type: "config" } & Form) | ({ type: "secret" } & Secret) | ({ type: "run" } & Run) | ({ type: "button" } & Button) | ({ type: "chips" } & Chips) | ({ type: "stat" } & Stat) | ({ type: "text" } & Text) | ({ type: "images" } & Images) | ({ type: "web" } & Web) | ({ type: "diff" } & Diff) | ({ type: "editor" } & Editor) | ({ type: "scene" } & Scene) | ({ type: "diagram" } & Diagram) | ({ type: "composer" } & Composer) | ({ type: "lines" } & Lines) | ({ type: "prose" } & Prose) | ({ type: "hero" } & Hero) | ({ type: "media" } & Media) | ({ type: "nav" } & Nav) | ({ type: "island" } & Island) | ({ type: "table" } & Table) | ({ type: "steps" } & Steps) | ({ type: "chart" } & Chart) | ({ type: "toast" } & Toast) | ({ type: "pages" } & Pages) | ({ type: "timeline" } & Timeline) | ({ type: "import" } & Import) | ({ type: "message" } & Message) | ({ type: "tool" } & Tool) | (AppBlock & { [key: string]: unknown });
+export type Block = ({ type: "screen" } & Screen) | ({ type: "modal" } & Modal) | ({ type: "sheet" } & Modal) | ({ type: "section" } & Section) | ({ type: "list" } & List) | ({ type: "row" } & Row) | ({ type: "card" } & Card) | ({ type: "choice" } & Choice) | ({ type: "form" } & Form) | ({ type: "config" } & Form) | ({ type: "secret" } & Secret) | ({ type: "run" } & Run) | ({ type: "button" } & Button) | ({ type: "chips" } & Chips) | ({ type: "stat" } & Stat) | ({ type: "text" } & Text) | ({ type: "images" } & Images) | ({ type: "web" } & Web) | ({ type: "diff" } & Diff) | ({ type: "editor" } & Editor) | ({ type: "scene" } & Scene) | ({ type: "diagram" } & Diagram) | ({ type: "composer" } & Composer) | ({ type: "lines" } & Lines) | ({ type: "prose" } & Prose) | ({ type: "hero" } & Hero) | ({ type: "media" } & Media) | ({ type: "nav" } & Nav) | ({ type: "island" } & Island) | ({ type: "table" } & Table) | ({ type: "steps" } & Steps) | ({ type: "chart" } & Chart) | ({ type: "toast" } & Toast) | ({ type: "pages" } & Pages) | ({ type: "timeline" } & Timeline) | ({ type: "import" } & Import) | ({ type: "message" } & Message) | ({ type: "tool" } & Tool) | ({ type: "sidebar" } & Sidebar) | (AppBlock & { [key: string]: unknown });
 
 export type Bound = { get: string };
 
@@ -34,7 +34,7 @@ export type ButtonStyle = "primary" | "plain" | "destructive";
 
 export type Bye = { why: Why };
 
-export type Card = { badge?: Label | null; blocks?: Block[] | null; buttons?: Block[] | null; fold?: Fold | null; id?: string | null; kind?: CardKind | null; menu?: Act[] | null; meta?: Shown | null; push?: boolean | null; show?: Expr | null; subtitle?: Toned | null; tap?: Tap | null; title?: string | null; tone?: Tone | null };
+export type Card = { badge?: Label | null; blocks?: Block[] | null; buttons?: Block[] | null; color?: string | null; fold?: Fold | null; id?: string | null; kind?: CardKind | null; menu?: Act[] | null; meta?: Shown | null; push?: boolean | null; show?: Expr | null; subtitle?: Toned | null; tap?: Tap | null; title?: string | null; tone?: Tone | null };
 
 export type CardKind = "ask" | "run" | "secret" | "config" | "proposal";
 
@@ -182,6 +182,10 @@ export type Media = { alt: string; caption?: string | null; draw?: Gesture | nul
 
 export type Message = { avatar?: string | null; blocks?: Block[] | null; files?: Attachment[] | null; id?: string | null; name: string; role: Role; show?: Expr | null; time?: string | null };
 
+export type Modal = { blocks: Block[]; cancel?: string | null; destructive?: boolean | null; done?: Submit | null; id?: string | null; locale?: Locale | null; message?: string | null; ok?: string | null; show?: Expr | null; title: string; variant?: ModalVariant | null };
+
+export type ModalVariant = "dialog" | "alert" | "tool";
+
 export type More = string | Page;
 
 export type Nav = { brand?: NavLink | null; id?: string | null; links: NavLink[]; show?: Expr | null };
@@ -194,7 +198,7 @@ export type Nodes = Node[] | Record<string, Node>;
 
 export type OldFrame = { ops: Op[]; seq: number };
 
-export type Op = { op: "merge"; fields: Record<string, unknown>; id: string } | { op: "insert"; after?: string | null; before?: string | null; block: Child; into: string } | { op: "move"; before?: string | null; id: string; into: string } | { op: "remove"; id: string } | { op: "replace"; block: Block; id: string } | { op: "append"; id: string; keep?: number | null; parts?: Part[] | null; text?: string | null } | { op: "badge"; count: number } | { op: "dot"; on: boolean } | { op: "screen"; screen: Block };
+export type Op = { op: "merge"; fields: Record<string, unknown>; id: string } | { op: "insert"; after?: string | null; before?: string | null; block: Child; into: string } | { op: "move"; before?: string | null; id: string; into: string } | { op: "remove"; id: string } | { op: "replace"; block: Child; id: string } | { op: "append"; id: string; keep?: number | null; parts?: Part[] | null; text?: string | null } | { op: "badge"; count: number } | { op: "dot"; on: boolean } | { op: "screen"; screen: Block };
 
 export type Other = { for?: string | null; placeholder?: string | null };
 
@@ -232,7 +236,7 @@ export type Round = { blocks?: Block[] | null; id: string; lane?: RoundLane | nu
 
 export type RoundLane = { harness?: string | null; host?: string | null; lines?: string[] | null; model?: string | null; name?: string | null };
 
-export type Row = { accessory?: Accessory | null; badge?: Label | null; button?: Act | null; changed?: boolean | null; figure?: Figure | null; handle?: boolean | null; id?: string | null; indent?: number | null; lifted?: boolean | null; menu?: Act[] | null; rounds?: Round[] | null; show?: Expr | null; sticky?: boolean | null; style?: RowStyle | null; subtitle?: Toned | null; swipe?: Act[] | null; tap?: Tap | null; title: string; value?: Shown | null };
+export type Row = { accessory?: Accessory | null; badge?: Label | null; button?: Act | null; changed?: boolean | null; figure?: Figure | null; handle?: boolean | null; id?: string | null; indent?: number | null; lifted?: boolean | null; menu?: Act[] | null; rounds?: Round[] | null; show?: Expr | null; sticky?: boolean | null; style?: RowStyle | null; subtitle?: Toned | null; swipe?: Act[] | null; tap?: Tap | null; title?: string | null; value?: Shown | null };
 
 export type RowError = { message: string; name?: string | null; row?: string | null };
 
@@ -266,9 +270,17 @@ export type SetState = { key: string; to: Expr };
 
 export type Severity = "error" | "warn";
 
-export type Sheet = { blocks: Block[]; cancel?: string | null; done?: Submit | null; id?: string | null; locale?: Locale | null; show?: Expr | null; title: string };
-
 export type Shown = string | number | Bound | Time;
+
+export type SideBadge = { count: number; tone?: Tone | null };
+
+export type SideGroup = { links: SideItem[]; title?: string | null };
+
+export type SideItem = { badge?: SideBadge | null; children?: SideLink[] | null; current?: boolean | null; href?: string | null; icon?: string | null; label: string; open?: boolean | null };
+
+export type SideLink = { badge?: SideBadge | null; current?: boolean | null; href: string; icon?: string | null; label: string };
+
+export type Sidebar = { brand?: SideLink | null; empty?: string | null; footer?: SideLink[] | null; groups: SideGroup[]; id?: string | null; label: string; show?: Expr | null };
 
 export type Sky = "clear" | "windy" | "fog" | "storm";
 
@@ -362,4 +374,4 @@ export type Why = "evicted" | "unpaired" | "handover";
 
 export type Working = { since: string };
 
-export type Kind = "screen" | "sheet" | "section" | "list" | "row" | "card" | "choice" | "form" | "config" | "secret" | "run" | "button" | "chips" | "stat" | "text" | "images" | "web" | "diff" | "editor" | "scene" | "diagram" | "composer" | "lines" | "prose" | "hero" | "media" | "nav" | "island" | "table" | "steps" | "chart" | "toast" | "pages" | "timeline" | "import" | "message" | "tool";
+export type Kind = "screen" | "modal" | "sheet" | "section" | "list" | "row" | "card" | "choice" | "form" | "config" | "secret" | "run" | "button" | "chips" | "stat" | "text" | "images" | "web" | "diff" | "editor" | "scene" | "diagram" | "composer" | "lines" | "prose" | "hero" | "media" | "nav" | "island" | "table" | "steps" | "chart" | "toast" | "pages" | "timeline" | "import" | "message" | "tool" | "sidebar";

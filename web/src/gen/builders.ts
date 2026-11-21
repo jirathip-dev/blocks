@@ -1,9 +1,10 @@
-import type { Block, Button, Card, Chart, Chips, Choice, Composer, Diagram, Diff, Editor, Expr, Form, Hero, Images, Import, Island, Kind, Lines, List, Match, Media, Message, Nav, Pages, Prose, Row, Run, Scene, Screen, Secret, Section, Sheet, Stat, Steps, Table, Text, Timeline, Toast, Tool, Web } from "./types.ts";
+import type { Block, Button, Card, Chart, Chips, Choice, Composer, Diagram, Diff, Editor, Expr, Form, Hero, Images, Import, Island, Kind, Lines, List, Match, Media, Message, Modal, Nav, Pages, Prose, Row, Run, Scene, Screen, Secret, Section, Sidebar, Stat, Steps, Table, Text, Timeline, Toast, Tool, Web } from "./types.ts";
 
 export type Of<K extends Kind> = Extract<Block, { type: K }>;
 
 export const screen = (fields: Screen): Of<"screen"> => ({ type: "screen", ...fields });
-export const sheet = (fields: Sheet): Of<"sheet"> => ({ type: "sheet", ...fields });
+export const modal = (fields: Modal): Of<"modal"> => ({ type: "modal", ...fields });
+export const sheet = (fields: Modal): Of<"sheet"> => ({ type: "sheet", ...fields });
 export const section = (fields: Section): Of<"section"> => ({ type: "section", ...fields });
 export const list = (fields: List): Of<"list"> => ({ type: "list", ...fields });
 export const row = (fields: Row): Of<"row"> => ({ type: "row", ...fields });
@@ -39,6 +40,7 @@ export const timeline = (fields: Timeline): Of<"timeline"> => ({ type: "timeline
 export const import_ = (fields: Import): Of<"import"> => ({ type: "import", ...fields });
 export const message = (fields: Message): Of<"message"> => ({ type: "message", ...fields });
 export const tool = (fields: Tool): Of<"tool"> => ({ type: "tool", ...fields });
+export const sidebar = (fields: Sidebar): Of<"sidebar"> => ({ type: "sidebar", ...fields });
 
 export const expr = {
   get: (v: string): Expr => ({ get: v }),

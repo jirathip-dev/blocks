@@ -4,7 +4,7 @@ use super::{AppBlock, Fields};
 
 kinds! {
     screen { Screen(Screen) = "screen" }
-    sheet { Sheet(Sheet) = "sheet" }
+    modal { Modal(Modal) = "modal", Sheet(Modal) = "sheet" }
     section { Section(Section) = "section" }
     list { List(List) = "list" }
     row { Row(Row) = "row" }
@@ -39,4 +39,5 @@ kinds! {
     import { Import(Import) = "import" }
     message { Message(Message) = "message" }
     tool { Tool(Tool) = "tool" }
+    sidebar { Sidebar(Sidebar) = "sidebar" }
 }

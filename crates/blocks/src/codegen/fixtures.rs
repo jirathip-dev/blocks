@@ -125,7 +125,7 @@ fn workflow() -> Diagram {
         ))
 }
 
-const SWIFT_FALLBACKS: [&str; 6] = ["composer", "prose", "hero", "media", "nav", "island"];
+const SWIFT_FALLBACKS: [&str; 7] = ["composer", "prose", "hero", "media", "nav", "island", "sidebar"];
 
 fn trees(root: &Path) -> std::io::Result<Files> {
     let web = super::ts::kinds::native(root)?;
@@ -262,7 +262,7 @@ fn sample() -> Vec<OldFrame> {
         },
         Op::Replace {
             id: "note".into(),
-            block: Block::Card(Box::new(card)),
+            block: Child::Block(Block::Card(Box::new(card))),
         },
         Op::Remove { id: "d".into() },
         Op::Badge { count: 2 },

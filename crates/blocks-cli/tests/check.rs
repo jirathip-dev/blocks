@@ -231,7 +231,7 @@ fn valid(schema: &Value, root: &Value, v: &Value, at: &str) -> Result<(), String
     }
     if let Some(a) = v.as_array() {
         if let Some(min) = s.get("minItems").and_then(Value::as_u64) {
-            if (a.len() as u64) < min {
+            if u64::try_from(a.len()).unwrap() < min {
                 return fail("too few items");
             }
         }

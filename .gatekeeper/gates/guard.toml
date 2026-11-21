@@ -1,0 +1,5 @@
+about = "blocks check on this repo's screens (.blocks/guard.json): the lint and the ratchet, on the fixtures a branch changed"
+fix = "apply the fix text the finding prints; never grow .blocks/ baselines"
+budget_secs = 300
+setup = ["rust"]
+run = "cargo run -q --locked -p blocks-cli -- check {--base}"

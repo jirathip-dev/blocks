@@ -27,8 +27,8 @@ internal struct RoundsView: View {
 
     internal var body: some View {
         VStack(alignment: .leading, spacing: 2) {
-            ForEach(Array(rounds.enumerated()), id: \.offset) { index, round in
-                RoundView(round: round, current: index == rounds.count - 1)
+            ForEach(ChildKey.keyed(rounds) { $0.id }, id: \.key) { child in
+                RoundView(round: child.item, current: child.index == rounds.count - 1)
             }
         }
         .padding(.leading, 22).padding(.trailing, 12).padding(.bottom, 12)

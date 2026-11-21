@@ -1,0 +1,10 @@
+about = "a pull request touching ci/for-apps.paths carries a For apps line in its body; scripts/for-apps.test.sh holds the check"
+fix = "add a line `For apps: <what an app must do, or nothing to do and why>` to the PR body"
+budget_secs = 30
+run = """
+sh scripts/for-apps.test.sh
+set -- {--base}
+if [ -z "${2:-}" ] || [ -z "${PR_BODY+set}" ]; then echo "for-apps: no pull request body here; CI checks it"; exit 0; fi
+printf '%s' "$PR_BODY" > target/gatekeeper/for-apps-body.md
+git diff --name-only "$2" HEAD | sh scripts/for-apps.sh target/gatekeeper/for-apps-body.md
+"""

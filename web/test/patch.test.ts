@@ -99,6 +99,22 @@ test("apply follows the crate: before, else after, else the end; a move; an unkn
   strictEqual(apply(s, [{ op: "remove", id: "zz" }]), undefined);
 });
 
+test("merge, replace and remove reach a scene's lanes and a row's rounds", () => {
+  const lane = (id, state) => ({ id, title: id, state });
+  const round = (id, state) => ({ id, name: id, state });
+  const s = { type: "screen", id: "s", blocks: [{ type: "scene", id: "sc", lanes: [lane("l-1", "idle"), lane("l-2", "idle")] }, { type: "row", id: "r", title: "R", rounds: [round("r-1", "working"), round("r-2", "done")] }] };
+  const out = apply(s, [
+    { op: "merge", id: "l-1", fields: { state: "working" } },
+    { op: "replace", id: "l-2", block: lane("l-2", "done") },
+    { op: "merge", id: "r-1", fields: { state: "done" } },
+    { op: "replace", id: "r-2", block: round("r-2", "needs") },
+    { op: "remove", id: "l-1" },
+    { op: "remove", id: "r-1" },
+  ]);
+  deepStrictEqual(out?.blocks, [{ type: "scene", id: "sc", lanes: [lane("l-2", "done")] }, { type: "row", id: "r", title: "R", rounds: [round("r-2", "needs")] }]);
+  strictEqual(apply(s, [{ op: "replace", id: "s", block: lane("s", "done") }]), undefined);
+});
+
 test("the patcher draws every op queued within one frame in one pass on that frame, touching only the nodes they name", () => {
   const v = view(screen(row("a", "A"), row("b", "B"), row("c", "C")));
   const [, b] = v.root.children[0].children[0].children[0].children[0].children;

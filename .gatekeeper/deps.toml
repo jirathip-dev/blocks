@@ -1,0 +1,11 @@
+growth = 10
+
+[cargo]
+egui = "the desktop renderer's toolkit, in blocks-desktop and blocks-desk only; never in the blocks crate"
+icu_segmenter = "ICU4X's line segmenter with its dictionaries, for Thai word breaks in blocks-desktop only"
+schemars = "the JSON Schema behind the schema feature, so codegen only; never in drover's build"
+serde = "the wire types' derive"
+serde_json = "the wire format, serialize and parse"
+
+[npm]
+react = "the React adapter's optional peer dependency (web/react), never bundled"

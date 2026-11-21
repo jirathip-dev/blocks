@@ -1,0 +1,18 @@
+about = "web/lint.mjs on web/src and react/src, node --test (fixtures/protocol, stream, patch, blocks-shot --check on every fixtures/blocks file in WebKit), each web/lint-fixtures file refused, and ci/tokens/baseline.txt only shrinks"
+fix = "fix what the lint or the test names; use a scheme or style token, never grow ci/tokens/baseline.txt"
+budget_secs = 600
+leg = "web"
+setup = ["node"]
+paths = ["web/**", "fixtures/**", "ci/tokens/**", "scripts/lint-fixtures.sh", ".gatekeeper/gates/web.toml"]
+run = """
+set -e
+npm --prefix web ci --no-audit --no-fund
+if [ "${CI:-}" = true ]; then npx --prefix web playwright install --with-deps webkit; fi
+npm --prefix web run lint
+npm --prefix web run test
+scripts/lint-fixtures.sh ts
+set -- {--base}
+if [ -n "${2:-}" ] && git cat-file -e "$2:ci/tokens/baseline.txt" 2>/dev/null; then
+  git diff --numstat "$2" HEAD -- ci/tokens/baseline.txt | awk '$1 > 0 { print "ci/tokens/baseline.txt gains " $1 " lines: use a scheme or style token instead"; bad = 1 } END { exit bad }'
+fi
+"""

@@ -1,7 +1,8 @@
 // src/gen/hooks.ts
 var hooks = {
   screen: { variant: null, parts: ["title", "badge", "actions"] },
-  sheet: { variant: null, parts: ["title"] },
+  modal: { variant: "variant", parts: ["title"] },
+  sheet: { variant: "variant", parts: ["title"] },
   section: { variant: null, parts: [] },
   list: { variant: null, parts: [] },
   row: { variant: "style", parts: ["title", "subtitle", "badge", "value", "figure", "actions"] },
@@ -36,10 +37,13 @@ var hooks = {
   timeline: { variant: null, parts: ["title"] },
   import: { variant: null, parts: ["title"] },
   message: { variant: "role", parts: [] },
-  tool: { variant: "state", parts: [] }
+  tool: { variant: "state", parts: [] },
+  sidebar: { variant: null, parts: [] }
 };
-var roles = { section: "region", form: "form", config: "form", nav: "navigation", chart: "figure", toast: "status", message: "article" };
+var roles = { modal: "dialog", sheet: "dialog", section: "region", form: "form", config: "form", nav: "navigation", chart: "figure", toast: "status", message: "article", sidebar: "navigation" };
 var names = ["label", "title", "header", "question", "alt", "file", "command", "placeholder", "name"];
+var hosts = { screen: "blocks", modal: "blocks", sheet: "blocks", section: "blocks", card: "blocks", message: "blocks", list: "rows", scene: "lanes", row: "rounds", table: "rows" };
+var walked = ["blocks", "rows", "buttons", "rounds", "lanes"];
 
 // src/gen/schemes.ts
 var defaultPair = {
@@ -309,6 +313,7 @@ function role(b, kind) {
   const wrapped = ["rounds", "swipe"].some((k) => Array.isArray(b[k]) && b[k].length > 0);
   if ((kind === "button" || kind === "row") && tap?.["url"] != null && !wrapped) return "link";
   if (kind === "row" && tap && !wrapped || kind === "button" || kind === "editor") return "button";
+  if ((kind === "modal" || kind === "sheet") && b["variant"] === "alert") return "alertdialog";
   return roles[kind] ?? "group";
 }
 function node(v, kinds3, state) {
@@ -478,6 +483,7 @@ var choose = (setting, dark, schemes = {}) => (setting !== null && Object.protot
 
 // src/gen/builders.ts
 var screen = (fields) => ({ type: "screen", ...fields });
+var modal = (fields) => ({ type: "modal", ...fields });
 var sheet = (fields) => ({ type: "sheet", ...fields });
 var section = (fields) => ({ type: "section", ...fields });
 var list2 = (fields) => ({ type: "list", ...fields });
@@ -514,6 +520,7 @@ var timeline = (fields) => ({ type: "timeline", ...fields });
 var import_ = (fields) => ({ type: "import", ...fields });
 var message = (fields) => ({ type: "message", ...fields });
 var tool = (fields) => ({ type: "tool", ...fields });
+var sidebar = (fields) => ({ type: "sidebar", ...fields });
 var expr = {
   get: (v) => ({ get: v }),
   not: (v) => ({ not: v }),
@@ -553,8 +560,6 @@ function grow(parts, op) {
 }
 
 // src/core/apply.ts
-var walked = ["blocks", "rows", "buttons", "rounds"];
-var hosts = { screen: "blocks", sheet: "blocks", section: "blocks", card: "blocks", message: "blocks", list: "rows", scene: "lanes", row: "rounds", table: "rows" };
 var isRec = (v) => typeof v === "object" && v !== null && !Array.isArray(v);
 function locate(node2, id) {
   if (node2["id"] === id) return "root";
@@ -603,8 +608,9 @@ function apply(screen2, ops) {
       case "replace": {
         const s = locate(root, op.id);
         if (!s) return void 0;
-        if (s === "root") out = structuredClone(op.block);
-        else s.list[s.at] = structuredClone(op.block);
+        if (s !== "root") s.list[s.at] = structuredClone(op.block);
+        else if ("type" in op.block) out = structuredClone(op.block);
+        else return void 0;
         break;
       }
       case "remove":
@@ -646,6 +652,11 @@ var ext = (name) => {
   return dot > 0 ? [name.slice(dot + 1), name.slice(0, dot)] : ["", name];
 };
 var initial = (name) => [...name.trim()][0] ?? "";
+
+// src/core/kind/sidebar.ts
+var sideTitle = (b) => [...b.groups.flatMap((g) => g.links.flatMap((l) => [l, ...l.children ?? []])), ...b.footer ?? []].find((l) => l.current)?.label ?? b.brand?.label ?? b.label;
+var sideIcon = (l) => [l.icon || l.label.slice(0, 1).toUpperCase(), /^[A-Z]{2}$/.test(l.icon ?? "")];
+var sideCount = (b) => [b.count > 99 ? "99+" : String(b.count), `${b.count} ${b.tone === "bad" ? "need attention" : "new"}`];
 
 // src/core/table.ts
 var SIGN = { THB: "\u0E3F", USD: "$", EUR: "\u20AC" };
@@ -736,6 +747,9 @@ function share(prev, next) {
   return same ? prev : next;
 }
 
+// src/core/nonce.ts
+var nonce = () => Array.from(crypto.getRandomValues(new Uint8Array(16)), (n) => n.toString(16).padStart(2, "0")).join("");
+
 // src/gen/shapes.ts
 var kinds = {
   "button": "Button",
@@ -757,6 +771,7 @@ var kinds = {
   "list": "List",
   "media": "Media",
   "message": "Message",
+  "modal": "Modal",
   "nav": "Nav",
   "pages": "Pages",
   "prose": "Prose",
@@ -766,7 +781,8 @@ var kinds = {
   "screen": "Screen",
   "secret": "Secret",
   "section": "Section",
-  "sheet": "Sheet",
+  "sheet": "Modal",
+  "sidebar": "Sidebar",
   "stat": "Stat",
   "steps": "Steps",
   "table": "Table",
@@ -922,6 +938,7 @@ var defs = {
         "not": {
           "enum": [
             "screen",
+            "modal",
             "sheet",
             "section",
             "list",
@@ -957,7 +974,8 @@ var defs = {
             "timeline",
             "import",
             "message",
-            "tool"
+            "tool",
+            "sidebar"
           ]
         },
         "type": "string"
@@ -1077,7 +1095,20 @@ var defs = {
         "type": "object"
       },
       {
-        "$ref": "#/$defs/Sheet",
+        "$ref": "#/$defs/Modal",
+        "properties": {
+          "type": {
+            "const": "modal",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      {
+        "$ref": "#/$defs/Modal",
         "properties": {
           "type": {
             "const": "sheet",
@@ -1545,6 +1576,19 @@ var defs = {
         "type": "object"
       },
       {
+        "$ref": "#/$defs/Sidebar",
+        "properties": {
+          "type": {
+            "const": "sidebar",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      {
         "$ref": "#/$defs/AppBlock"
       }
     ]
@@ -1705,6 +1749,12 @@ var defs = {
         },
         "type": [
           "array",
+          "null"
+        ]
+      },
+      "color": {
+        "type": [
+          "string",
           "null"
         ]
       },
@@ -4455,6 +4505,110 @@ var defs = {
     ],
     "type": "object"
   },
+  "Modal": {
+    "additionalProperties": true,
+    "properties": {
+      "blocks": {
+        "items": {
+          "$ref": "#/$defs/Block"
+        },
+        "type": "array"
+      },
+      "cancel": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "destructive": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "done": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Submit"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "id": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "locale": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Locale"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "message": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "ok": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "show": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "title": {
+        "type": "string"
+      },
+      "variant": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/ModalVariant"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      }
+    },
+    "required": [
+      "title",
+      "blocks"
+    ],
+    "type": "object"
+  },
+  "ModalVariant": {
+    "anyOf": [
+      {
+        "enum": [
+          "dialog",
+          "alert",
+          "tool"
+        ],
+        "type": "string"
+      },
+      {
+        "type": "string"
+      }
+    ]
+  },
   "More": {
     "anyOf": [
       {
@@ -5399,9 +5553,6 @@ var defs = {
         ]
       }
     },
-    "required": [
-      "title"
-    ],
     "type": "object"
   },
   "RowError": {
@@ -6177,67 +6328,6 @@ var defs = {
     ],
     "type": "object"
   },
-  "Sheet": {
-    "additionalProperties": true,
-    "properties": {
-      "blocks": {
-        "items": {
-          "$ref": "#/$defs/Block"
-        },
-        "type": "array"
-      },
-      "cancel": {
-        "type": [
-          "string",
-          "null"
-        ]
-      },
-      "done": {
-        "anyOf": [
-          {
-            "$ref": "#/$defs/Submit"
-          },
-          {
-            "type": "null"
-          }
-        ]
-      },
-      "id": {
-        "type": [
-          "string",
-          "null"
-        ]
-      },
-      "locale": {
-        "anyOf": [
-          {
-            "$ref": "#/$defs/Locale"
-          },
-          {
-            "type": "null"
-          }
-        ]
-      },
-      "show": {
-        "anyOf": [
-          {
-            "$ref": "#/$defs/Expr"
-          },
-          {
-            "type": "null"
-          }
-        ]
-      },
-      "title": {
-        "type": "string"
-      }
-    },
-    "required": [
-      "title",
-      "blocks"
-    ],
-    "type": "object"
-  },
   "Shown": {
     "anyOf": [
       {
@@ -6253,6 +6343,199 @@ var defs = {
         "$ref": "#/$defs/Time"
       }
     ]
+  },
+  "SideBadge": {
+    "properties": {
+      "count": {
+        "minimum": 0,
+        "type": "integer"
+      },
+      "tone": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Tone"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      }
+    },
+    "required": [
+      "count"
+    ],
+    "type": "object"
+  },
+  "SideGroup": {
+    "properties": {
+      "links": {
+        "items": {
+          "$ref": "#/$defs/SideItem"
+        },
+        "type": "array"
+      },
+      "title": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "required": [
+      "links"
+    ],
+    "type": "object"
+  },
+  "SideItem": {
+    "properties": {
+      "badge": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/SideBadge"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "children": {
+        "items": {
+          "$ref": "#/$defs/SideLink"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "current": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "href": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "icon": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "label": {
+        "type": "string"
+      },
+      "open": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      }
+    },
+    "required": [
+      "label"
+    ],
+    "type": "object"
+  },
+  "SideLink": {
+    "properties": {
+      "badge": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/SideBadge"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "current": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "href": {
+        "type": "string"
+      },
+      "icon": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "label": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "label",
+      "href"
+    ],
+    "type": "object"
+  },
+  "Sidebar": {
+    "additionalProperties": true,
+    "properties": {
+      "brand": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/SideLink"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "empty": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "footer": {
+        "items": {
+          "$ref": "#/$defs/SideLink"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "groups": {
+        "items": {
+          "$ref": "#/$defs/SideGroup"
+        },
+        "type": "array"
+      },
+      "id": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "label": {
+        "type": "string"
+      },
+      "show": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      }
+    },
+    "required": [
+      "label",
+      "groups"
+    ],
+    "type": "object"
   },
   "Sky": {
     "anyOf": [
@@ -7968,6 +8251,7 @@ export {
   hero,
   hint,
   hooks,
+  hosts,
   ids,
   images,
   import_,
@@ -7979,9 +8263,11 @@ export {
   lit,
   media,
   message,
+  modal,
   named2 as named,
   names,
   nav,
+  nonce,
   pages,
   pick,
   picked,
@@ -8004,6 +8290,10 @@ export {
   send,
   share,
   sheet,
+  sideCount,
+  sideIcon,
+  sideTitle,
+  sidebar,
   sized,
   start,
   stat,
@@ -8019,5 +8309,6 @@ export {
   value,
   view,
   waits,
+  walked,
   web
 };

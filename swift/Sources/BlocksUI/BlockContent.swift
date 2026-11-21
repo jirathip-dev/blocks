@@ -2,12 +2,31 @@ import Blocks
 import SwiftUI
 import WebKit
 
+/// A composer's send in flight: its nonce, kept for a retry until the send lands or the draft changes.
+internal struct Outbox {
+    private var nonce: String?
+
+    internal mutating func values(_ text: String, picks: [String: JSONValue], q: UInt64?) -> [String: JSONValue] {
+        let nonce = nonce ?? UUID().uuidString
+        self.nonce = nonce
+        var values = picks.merging(["text": .string(text), "nonce": .string(nonce)]) { $1 }
+        if let q { values["q"] = .number(Double(q)) }
+        return values
+    }
+
+    internal mutating func settle(_ ok: Bool) { if ok { nonce = nil } }
+
+    internal mutating func edited() { nonce = nil }
+}
+
 internal struct ComposerBlock: View {
     @Environment(\.look) private var look
     @Environment(\.act) private var act
+    @Environment(\.acted) private var acted
     @State private var draft = ""
     @State private var picks: [String: JSONValue] = [:]
     @State private var editing: Queued?
+    @State private var outbox = Outbox()
     internal let block: Composer
 
     private var working: Working? { block.working }
@@ -30,6 +49,7 @@ internal struct ComposerBlock: View {
             chips
         }
         .padding(12).surface(look, radius: 22)
+        .onChange(of: draft) { outbox.edited() }
     }
 
     private var sendLabel: String {
@@ -46,10 +66,15 @@ internal struct ComposerBlock: View {
     private func send(_ steer: String? = nil) {
         guard !draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
         let queue = steer == nil && (working != nil || editing != nil) ? name("queue") : nil
-        var values = picks.merging(["text": .string(draft)]) { $1 }
-        if queue != nil, let q = editing?.q { values["q"] = .number(Double(q)) }
-        post(steer ?? queue ?? block.action, values)
-        (draft, editing) = ("", nil)
+        let action = steer ?? queue ?? block.action
+        let values = outbox.values(draft, picks: picks, q: queue == nil ? nil : editing?.q)
+        let a = BlockAction(action: action, values: (block.values ?? [:]).merging(values) { $1 })
+        Task { @MainActor in
+            var ok = true
+            if let acted { ok = await acted(a) } else { act(a) }
+            outbox.settle(ok)
+            if ok { (draft, editing) = ("", nil) }
+        }
     }
 
     private func strip(_ working: Working) -> some View {
