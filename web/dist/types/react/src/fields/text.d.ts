@@ -1,3 +1,0 @@
-import type { TextField } from "../../../src/core/index.ts";
-import type { FieldView } from "./_view.ts";
-export declare const text: FieldView<TextField>;
