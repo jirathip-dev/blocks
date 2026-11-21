@@ -46,3 +46,7 @@ export const hooks: Record<Kind, Hook> = {
 export const roles: Record<string, string> = { section: "region", form: "form", config: "form", nav: "navigation", chart: "figure", toast: "status", message: "article", sidebar: "navigation" };
 
 export const names = ["label", "title", "header", "question", "alt", "file", "command", "placeholder", "name"] as const;
+
+export const hosts: Record<string, string> = { screen: "blocks", sheet: "blocks", section: "blocks", card: "blocks", message: "blocks", list: "rows", scene: "lanes", row: "rounds", table: "rows" };
+
+export const walked = ["blocks", "rows", "buttons", "rounds", "lanes"] as const;
