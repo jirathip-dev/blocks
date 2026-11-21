@@ -1,0 +1,24 @@
+[package]
+name = "blocks-gpui-proto"
+description = "Spike #299: a few blocks kinds drawn with GPUI, measured against blocks-desktop"
+version = "0.0.0"
+edition = "2021"
+license = "MIT"
+publish = false
+
+[workspace]
+
+[[bin]]
+name = "blocks-gpui"
+path = "src/main.rs"
+
+[dependencies]
+blocks = { path = "../../../../../crates/blocks" }
+gpui = { git = "https://github.com/zed-industries/zed", rev = "2f808b3c2de049ecfdbad0fdb26763cebfcaa3b4", features = ["test-support"] }
+gpui_platform = { git = "https://github.com/zed-industries/zed", rev = "2f808b3c2de049ecfdbad0fdb26763cebfcaa3b4", features = ["font-kit", "wayland", "x11", "runtime_shaders", "test-support"] }
+image = { version = "0.25", default-features = false, features = ["png"] }
+serde_json = "1"
+
+[profile.release]
+lto = "thin"
+codegen-units = 1

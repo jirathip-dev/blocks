@@ -1,0 +1,69 @@
+## build the two minimal window apps and the two prototypes in release
+built min-egui in 144 s
+built min-gpui in 204 s
+built egui in 102 s
+built gpui in 171 s
+## release binary size of each minimal window app
+min-egui bytes=22415304
+min-egui stripped_bytes=18465688
+min-gpui bytes=28538176
+min-gpui stripped_bytes=23539512
+## frame times with no window: egui, GPUI, GPUI with its headless GPU renderer
+{"toolkit":"egui","case":"first-paint","size":"1440x900","frames":1,"median_ms":3.542,"p95_ms":3.542,"max_ms":3.542,"over_16_7_ms":0}
+{"toolkit":"egui","case":"repaint-still","size":"1440x900","frames":120,"median_ms":0.717,"p95_ms":0.797,"max_ms":1.014,"over_16_7_ms":0}
+{"toolkit":"egui","case":"scroll","size":"1440x900","frames":240,"median_ms":0.718,"p95_ms":0.795,"max_ms":1.045,"over_16_7_ms":0}
+{"toolkit":"egui","case":"stream-rows","size":"1440x900","frames":120,"median_ms":1.068,"p95_ms":1.139,"max_ms":1.496,"over_16_7_ms":0}
+{"toolkit":"egui","case":"stream-text","size":"1440x900","frames":120,"median_ms":1.159,"p95_ms":1.219,"max_ms":1.313,"over_16_7_ms":0}
+{"toolkit":"gpui","case":"first-paint","size":"1440x900","frames":1,"median_ms":58.698,"p95_ms":58.698,"max_ms":58.698,"over_16_7_ms":1}
+{"toolkit":"gpui","case":"repaint-still","size":"1440x900","frames":120,"median_ms":3.639,"p95_ms":3.752,"max_ms":3.918,"over_16_7_ms":0}
+{"toolkit":"gpui","case":"scroll","size":"1440x900","frames":240,"median_ms":3.654,"p95_ms":3.734,"max_ms":4.131,"over_16_7_ms":0}
+{"toolkit":"gpui","case":"stream-rows","size":"1440x900","frames":120,"median_ms":7.471,"p95_ms":7.572,"max_ms":8.389,"over_16_7_ms":0}
+{"toolkit":"gpui","case":"stream-text","size":"1440x900","frames":120,"median_ms":7.904,"p95_ms":8.155,"max_ms":8.424,"over_16_7_ms":0}
+{"toolkit":"gpui+gpu","case":"first-paint","size":"1440x900","frames":1,"median_ms":1687.788,"p95_ms":1687.788,"max_ms":1687.788,"over_16_7_ms":1}
+{"toolkit":"gpui+gpu","case":"repaint-still","size":"1440x900","frames":120,"median_ms":6.559,"p95_ms":6.756,"max_ms":9.880,"over_16_7_ms":0}
+{"toolkit":"gpui+gpu","case":"scroll","size":"1440x900","frames":240,"median_ms":6.588,"p95_ms":6.793,"max_ms":9.182,"over_16_7_ms":0}
+{"toolkit":"gpui+gpu","case":"stream-rows","size":"1440x900","frames":120,"median_ms":10.548,"p95_ms":10.781,"max_ms":11.227,"over_16_7_ms":0}
+{"toolkit":"gpui+gpu","case":"stream-text","size":"1440x900","frames":120,"median_ms":11.319,"p95_ms":12.227,"max_ms":13.484,"over_16_7_ms":0}
+{"toolkit":"egui","case":"first-paint","size":"390x844","frames":1,"median_ms":4.336,"p95_ms":4.336,"max_ms":4.336,"over_16_7_ms":0}
+{"toolkit":"egui","case":"repaint-still","size":"390x844","frames":120,"median_ms":0.708,"p95_ms":0.904,"max_ms":1.262,"over_16_7_ms":0}
+{"toolkit":"egui","case":"scroll","size":"390x844","frames":240,"median_ms":0.712,"p95_ms":1.061,"max_ms":2.342,"over_16_7_ms":0}
+{"toolkit":"egui","case":"stream-rows","size":"390x844","frames":120,"median_ms":1.048,"p95_ms":1.086,"max_ms":1.618,"over_16_7_ms":0}
+{"toolkit":"egui","case":"stream-text","size":"390x844","frames":120,"median_ms":1.141,"p95_ms":1.211,"max_ms":1.292,"over_16_7_ms":0}
+{"toolkit":"gpui","case":"first-paint","size":"390x844","frames":1,"median_ms":26.190,"p95_ms":26.190,"max_ms":26.190,"over_16_7_ms":1}
+{"toolkit":"gpui","case":"repaint-still","size":"390x844","frames":120,"median_ms":3.617,"p95_ms":3.689,"max_ms":3.817,"over_16_7_ms":0}
+{"toolkit":"gpui","case":"scroll","size":"390x844","frames":240,"median_ms":3.625,"p95_ms":3.725,"max_ms":4.150,"over_16_7_ms":0}
+{"toolkit":"gpui","case":"stream-rows","size":"390x844","frames":120,"median_ms":7.432,"p95_ms":7.608,"max_ms":12.057,"over_16_7_ms":0}
+{"toolkit":"gpui","case":"stream-text","size":"390x844","frames":120,"median_ms":7.893,"p95_ms":8.178,"max_ms":9.125,"over_16_7_ms":0}
+{"toolkit":"gpui+gpu","case":"first-paint","size":"390x844","frames":1,"median_ms":131.384,"p95_ms":131.384,"max_ms":131.384,"over_16_7_ms":1}
+{"toolkit":"gpui+gpu","case":"repaint-still","size":"390x844","frames":120,"median_ms":4.949,"p95_ms":5.080,"max_ms":5.579,"over_16_7_ms":0}
+{"toolkit":"gpui+gpu","case":"scroll","size":"390x844","frames":240,"median_ms":4.939,"p95_ms":5.096,"max_ms":6.393,"over_16_7_ms":0}
+{"toolkit":"gpui+gpu","case":"stream-rows","size":"390x844","frames":120,"median_ms":8.841,"p95_ms":9.070,"max_ms":9.465,"over_16_7_ms":0}
+{"toolkit":"gpui+gpu","case":"stream-text","size":"390x844","frames":120,"median_ms":9.604,"p95_ms":10.170,"max_ms":11.406,"over_16_7_ms":0}
+## Linux X11 under Xvfb: a real window, its frame gaps, a screenshot and the text probe
+{"toolkit":"gpui-window-gap","case":"scroll","size":"1440x900","frames":240,"median_ms":48.000,"p95_ms":48.044,"max_ms":48.154,"over_16_7_ms":240}
+{"toolkit":"gpui-window-gap","case":"stream-rows","size":"1440x900","frames":120,"median_ms":48.001,"p95_ms":48.040,"max_ms":48.089,"over_16_7_ms":120}
+{"toolkit":"gpui-window-gap","case":"stream-text","size":"1440x900","frames":120,"median_ms":48.000,"p95_ms":48.034,"max_ms":48.111,"over_16_7_ms":120}
+{"toolkit":"egui-window-gap","case":"scroll","size":"1440x900","frames":240,"median_ms":7.300,"p95_ms":10.292,"max_ms":11.509,"over_16_7_ms":0}
+{"toolkit":"egui-window-cpu","case":"scroll","size":"1440x900","frames":240,"median_ms":2.504,"p95_ms":2.834,"max_ms":3.341,"over_16_7_ms":0}
+{"toolkit":"egui-window-gap","case":"stream-rows","size":"1440x900","frames":120,"median_ms":11.371,"p95_ms":12.004,"max_ms":12.743,"over_16_7_ms":0}
+{"toolkit":"egui-window-cpu","case":"stream-rows","size":"1440x900","frames":120,"median_ms":2.924,"p95_ms":3.250,"max_ms":3.460,"over_16_7_ms":0}
+{"toolkit":"egui-window-gap","case":"stream-text","size":"1440x900","frames":120,"median_ms":12.678,"p95_ms":14.526,"max_ms":16.507,"over_16_7_ms":0}
+{"toolkit":"egui-window-cpu","case":"stream-text","size":"1440x900","frames":120,"median_ms":3.005,"p95_ms":3.401,"max_ms":4.639,"over_16_7_ms":0}
+gpu Some(GpuSpecs { is_software_emulated: true, device_name: "llvmpipe (LLVM 21.1.8, 256 bits)", driver_name: "llvmpipe", driver_info: "Mesa 26.0.8-1ubuntu0.3 (LLVM 21.1.8)" })
+blocks-gpui: window shot: render_to_image not implemented for this platform
+FAILED(124): cap 60 blocks-gpui shot look --window --size 1440x900 --out x11/gpui-window-look-1440-light.png
+{"toolkit":"gpui","hebrew_x":[24.472, 16.464, 7.5880013, 1.4305115e-6],"hebrew_order":"right-to-left","arabic_x":[33.236, 19.334, 7.448, 0.0],"arabic_order":"right-to-left","thai_base_width":8.40,"thai_base_and_mark_width":8.40,"thai_lines_at_120":["ภาษาไทยไม\u{e48}ม\u{e35}ช\u{e48}องว\u{e48}าง", "ระหว\u{e48}างคำ"],"thai_breaks_on_words":true}
+{"toolkit":"egui","hebrew_x":[8.0, 0.0, 28.0, 20.0],"hebrew_order":"mixed","arabic_x":[13.0, 0.0, 27.0, 20.0],"arabic_order":"mixed","thai_base_width":8.47,"thai_base_and_mark_width":8.47,"thai_lines_at_120":["ภาษาไทยไมมมมชชองวว", "างระหววางคคค"],"thai_breaks_on_words":false}
+## Linux Wayland under headless sway: a real window, its frame gaps and a screenshot
+{"toolkit":"gpui-window-gap","case":"scroll","size":"1440x900","frames":240,"median_ms":40.943,"p95_ms":41.442,"max_ms":42.881,"over_16_7_ms":240}
+{"toolkit":"gpui-window-gap","case":"stream-rows","size":"1440x900","frames":120,"median_ms":40.678,"p95_ms":41.433,"max_ms":42.119,"over_16_7_ms":120}
+{"toolkit":"gpui-window-gap","case":"stream-text","size":"1440x900","frames":120,"median_ms":40.969,"p95_ms":41.735,"max_ms":41.998,"over_16_7_ms":120}
+{"toolkit":"egui-window-gap","case":"scroll","size":"1440x900","frames":240,"median_ms":16.443,"p95_ms":16.496,"max_ms":16.676,"over_16_7_ms":1}
+{"toolkit":"egui-window-cpu","case":"scroll","size":"1440x900","frames":240,"median_ms":0.921,"p95_ms":0.975,"max_ms":1.438,"over_16_7_ms":0}
+{"toolkit":"egui-window-gap","case":"stream-rows","size":"1440x900","frames":120,"median_ms":16.433,"p95_ms":16.462,"max_ms":16.539,"over_16_7_ms":0}
+{"toolkit":"egui-window-cpu","case":"stream-rows","size":"1440x900","frames":120,"median_ms":1.306,"p95_ms":1.360,"max_ms":1.745,"over_16_7_ms":0}
+{"toolkit":"egui-window-gap","case":"stream-text","size":"1440x900","frames":120,"median_ms":16.443,"p95_ms":16.473,"max_ms":16.534,"over_16_7_ms":0}
+{"toolkit":"egui-window-cpu","case":"stream-text","size":"1440x900","frames":120,"median_ms":1.426,"p95_ms":1.516,"max_ms":1.755,"over_16_7_ms":0}
+gpu Some(GpuSpecs { is_software_emulated: true, device_name: "llvmpipe (LLVM 21.1.8, 256 bits)", driver_name: "llvmpipe", driver_info: "Mesa 26.0.8-1ubuntu0.3 (LLVM 21.1.8)" })
+blocks-gpui: window shot: render_to_image not implemented for this platform
+FAILED(124): cap 60 blocks-gpui shot look --window --size 1440x900 --out wayland/gpui-window-look-1440-light.png

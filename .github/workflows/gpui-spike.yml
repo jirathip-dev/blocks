@@ -1,0 +1,90 @@
+name: gpui-spike
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TARGET_DIR: ${{ github.workspace }}/target-spike
+  PROTO: docs/architecture/gpui/proto
+
+jobs:
+  spike:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 120
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@1.99.1
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: |
+            . -> target-spike
+            docs/architecture/gpui/proto/min-egui -> ../../../../../target-spike
+            docs/architecture/gpui/proto/min-gpui -> ../../../../../target-spike
+            docs/architecture/gpui/proto/egui -> ../../../../../target-spike
+            docs/architecture/gpui/proto/gpui -> ../../../../../target-spike
+      - name: "Linux: the libraries GPUI links, a software Vulkan driver, an X server, a Wayland compositor and fonts"
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes libxkbcommon-dev libxkbcommon-x11-dev libwayland-dev libx11-xcb-dev libxcb1-dev libfontconfig-dev libvulkan1 mesa-vulkan-drivers libegl1 libgl1-mesa-dri xvfb sway fonts-noto-core fonts-noto-cjk fonts-noto-color-emoji fonts-thai-tlwg
+      - name: "build the two minimal window apps and the two prototypes in release"
+        run: bash "$PROTO/measure.sh" build
+      - name: "release binary size of each minimal window app"
+        if: always()
+        run: bash "$PROTO/measure.sh" size
+      - name: "frame times with no window: egui, GPUI, GPUI with its headless GPU renderer"
+        if: always()
+        timeout-minutes: 10
+        run: OUT="$PWD/spike-out" bash "$PROTO/measure.sh" bench
+      - name: "screenshots with no window at 1440 and 390, light and dark"
+        if: always()
+        timeout-minutes: 15
+        run: OUT="$PWD/spike-out" bash "$PROTO/measure.sh" shots
+      - name: "Windows and macOS: a real window, its frame gaps, a screenshot and the text probe"
+        if: always() && runner.os != 'Linux'
+        timeout-minutes: 10
+        run: |
+          OUT="$PWD/spike-out" bash "$PROTO/measure.sh" window
+          OUT="$PWD/spike-out" bash "$PROTO/measure.sh" probe
+      - name: "Windows again with DirectComposition off"
+        if: always() && runner.os == 'Windows'
+        timeout-minutes: 10
+        run: GPUI_DISABLE_DIRECT_COMPOSITION=1 OUT="$PWD/spike-out/no-dcomp" bash "$PROTO/measure.sh" window
+      - name: "Windows: what UI Automation sees of each window (the block ids)"
+        if: always() && runner.os == 'Windows'
+        timeout-minutes: 5
+        run: bash "$PROTO/measure.sh" uia
+      - name: "Linux X11 under Xvfb: a real window, its frame gaps, a screenshot and the text probe"
+        if: always() && runner.os == 'Linux'
+        timeout-minutes: 10
+        run: |
+          OUT="$PWD/spike-out/x11" xvfb-run -a -s "-screen 0 1600x1000x24" bash "$PROTO/measure.sh" window
+          OUT="$PWD/spike-out/x11" xvfb-run -a -s "-screen 0 1600x1000x24" bash "$PROTO/measure.sh" probe
+      - name: "Linux Wayland under headless sway: a real window, its frame gaps and a screenshot"
+        if: always() && runner.os == 'Linux'
+        timeout-minutes: 10
+        run: |
+          export XDG_RUNTIME_DIR="$RUNNER_TEMP/xdg"
+          mkdir -p "$XDG_RUNTIME_DIR"
+          chmod 700 "$XDG_RUNTIME_DIR"
+          printf 'output HEADLESS-1 mode 1600x1000\n' > "$RUNNER_TEMP/sway.conf"
+          env -u DISPLAY WLR_BACKENDS=headless WLR_LIBINPUT_NO_DEVICES=1 WLR_RENDERER=pixman sway --config "$RUNNER_TEMP/sway.conf" > "$RUNNER_TEMP/sway.log" 2>&1 &
+          sleep 5
+          ls "$XDG_RUNTIME_DIR"
+          test -S "$XDG_RUNTIME_DIR/wayland-1" || { echo "FAILED: sway did not start"; cat "$RUNNER_TEMP/sway.log"; }
+          env -u DISPLAY WAYLAND_DISPLAY=wayland-1 OUT="$PWD/spike-out/wayland" bash "$PROTO/measure.sh" window
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gpui-spike-${{ runner.os }}
+          path: spike-out
+          if-no-files-found: ignore
