@@ -49,7 +49,7 @@ pub fn window(block: Block, mode: Mode, (w, h): (u32, u32), out: PathBuf) -> Res
         let options = WindowOptions {
             window_bounds: Some(WindowBounds::Windowed(bounds)),
             focus: false,
-            show: false,
+            show: true,
             ..Default::default()
         };
         let shot = cx
@@ -64,6 +64,9 @@ pub fn window(block: Block, mode: Mode, (w, h): (u32, u32), out: PathBuf) -> Res
             .and_then(|image| image)
             .map_err(|e| format!("window shot: {e:#}"))
             .and_then(|image| image.save(&out).map_err(|e| format!("{}: {e}", out.display())));
+        if let Err(e) = &shot {
+            eprintln!("blocks-gpui: {e}");
+        }
         *told.borrow_mut() = shot;
         cx.quit();
     });

@@ -14,7 +14,7 @@ use blocks::{apply, Block, Op};
 use blocks_desktop::{Kit, Look, Stage};
 use eframe::egui::{Context, Pos2, RawInput, Rect, ScrollArea, Vec2};
 
-const USAGE: &str = "usage: blocks-egui dump <look|rows|scripts> | bench [--size WxH] | window <look|rows|scripts> [--size WxH] [--scheme light|dark] [--bench] [--probe] [--shot <png>] [--font <ttf>]...";
+const USAGE: &str = "usage: blocks-egui dump <look|rows|scripts> | bench [--size WxH] | window <look|rows|scripts> [--size WxH] [--scheme light|dark] [--bench] [--probe] [--styled] [--face <ttf>] [--shot <png>] [--font <ttf>]...";
 pub const STEP: f32 = 30.0;
 
 pub fn screen(name: &str) -> Option<Block> {
@@ -143,6 +143,8 @@ fn main() {
                 shot: flag("--shot").map(Into::into),
                 fonts,
                 probe: args.iter().any(|a| a == "--probe"),
+                styled: args.iter().any(|a| a == "--styled"),
+                face: flag("--face").map(Into::into),
             };
             if let Err(e) = window::open(run) {
                 eprintln!("window: {e}");

@@ -2,7 +2,9 @@ use std::time::Instant;
 
 use blocks::theme::Mode;
 use blocks::{Block, Op};
-use gpui::{point, prelude::*, px, size, App, Bounds, Context, Entity, Window, WindowBounds, WindowOptions};
+use gpui::{
+    point, prelude::*, px, size, App, Bounds, Context, Entity, TitlebarOptions, Window, WindowBounds, WindowOptions,
+};
 
 use crate::look::Look;
 use crate::stage::{Event, Stage};
@@ -74,6 +76,10 @@ pub fn open(block: Block, mode: Mode, (w, h): (u32, u32), bench: bool) -> Result
         let bounds = Bounds::centered(None, size(px(w as f32), px(h as f32)), cx);
         let options = WindowOptions {
             window_bounds: Some(WindowBounds::Windowed(bounds)),
+            titlebar: Some(TitlebarOptions {
+                title: Some("blocks-gpui".into()),
+                ..Default::default()
+            }),
             ..Default::default()
         };
         let opened = cx.open_window(options, |_, cx| {

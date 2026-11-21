@@ -7,7 +7,7 @@ use blocks::theme::Mode;
 use blocks::{apply, Block, Op};
 use blocks_desktop::{Kit, Stage};
 use eframe::egui::epaint::text::{FontInsert, FontPriority, InsertFontFamily};
-use eframe::egui::{self, Color32, ColorImage, FontData, FontFamily, FontId, ScrollArea, ViewportCommand};
+use eframe::egui::{self, Color32, ColorImage, FontData, FontFamily, FontId, ScrollArea, TextStyle, ViewportCommand};
 
 use crate::{bursts, kit, probe, stats, STEP};
 
@@ -22,6 +22,8 @@ pub struct Run {
     pub shot: Option<PathBuf>,
     pub fonts: Vec<String>,
     pub probe: bool,
+    pub styled: bool,
+    pub face: Option<String>,
 }
 
 struct Win {
@@ -127,7 +129,19 @@ impl eframe::App for Win {
         if self.run.bench && self.frame >= WARM {
             area = area.vertical_scroll_offset(self.step());
         }
-        area.show(ui, |ui| self.stage.show(ui, &self.kit, 0.0));
+        let margin = if self.run.styled { 16 } else { 0 };
+        let pair = blocks::theme::default();
+        let dark = self.run.mode == Mode::Dark;
+        let bg = if dark {
+            pair.dark.tokens.bg.as_str()
+        } else {
+            pair.light.tokens.bg.as_str()
+        };
+        let fill = Color32::from_hex(bg.get(..7).unwrap_or("#000000")).unwrap_or(Color32::BLACK);
+        egui::Frame::new().fill(fill).inner_margin(margin).show(ui, |ui| {
+            ui.set_min_size(ui.available_size());
+            area.show(ui, |ui| self.stage.show(ui, &self.kit, 0.0));
+        });
         self.frame += 1;
         let ctx = ui.ctx().clone();
         if self.run.bench {
@@ -185,6 +199,27 @@ pub fn open(run: Run) -> eframe::Result {
                     FontData::from_owned(data),
                     families.into(),
                 ));
+            }
+            if let Some(f) = &run.face {
+                let first = [FontFamily::Proportional].map(|family| InsertFontFamily {
+                    family,
+                    priority: FontPriority::Highest,
+                });
+                let data = FontData::from_owned(std::fs::read(f)?);
+                cc.egui_ctx.add_font(FontInsert::new("face", data, first.into()));
+            }
+            if run.styled {
+                cc.egui_ctx.global_style_mut(|s| {
+                    s.spacing.item_spacing = egui::vec2(8.0, 8.0);
+                    for (style, font) in &mut s.text_styles {
+                        font.size = match style {
+                            TextStyle::Heading => 22.0,
+                            TextStyle::Small => 12.0,
+                            TextStyle::Monospace => 13.0,
+                            _ => 14.0,
+                        };
+                    }
+                });
             }
             let mut stage = Stage::default();
             stage.set(Some(&run.block));

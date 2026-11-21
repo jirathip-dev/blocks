@@ -26,7 +26,13 @@ impl Head {
         let drawn = self.cx.update_window(self.win, |_, window, cx| {
             window.draw(cx).clear(cx);
             if gpu {
-                black_box(window.render_to_image().map(|i| i.width()).unwrap_or(0));
+                match window.render_to_image() {
+                    Ok(image) => drop(black_box(image)),
+                    Err(e) => {
+                        eprintln!("blocks-gpui: no pixels with no window here: {e:#}");
+                        std::process::exit(1);
+                    }
+                }
             }
         });
         if let Err(e) = drawn {
