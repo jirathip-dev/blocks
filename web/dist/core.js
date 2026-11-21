@@ -34,7 +34,9 @@ var hooks = {
   toast: { variant: null, parts: ["title"] },
   pages: { variant: null, parts: ["title"] },
   timeline: { variant: null, parts: ["title"] },
-  import: { variant: null, parts: ["title"] }
+  import: { variant: null, parts: ["title"] },
+  message: { variant: null, parts: [] },
+  tool: { variant: null, parts: [] }
 };
 var roles = { section: "region", form: "form", config: "form", nav: "navigation", chart: "figure", toast: "status" };
 var names = ["label", "title", "header", "question", "alt", "file", "command", "placeholder", "name"];
@@ -510,6 +512,8 @@ var toast = (fields) => ({ type: "toast", ...fields });
 var pages = (fields) => ({ type: "pages", ...fields });
 var timeline = (fields) => ({ type: "timeline", ...fields });
 var import_ = (fields) => ({ type: "import", ...fields });
+var message = (fields) => ({ type: "message", ...fields });
+var tool = (fields) => ({ type: "tool", ...fields });
 var expr = {
   get: (v) => ({ get: v }),
   not: (v) => ({ not: v }),
@@ -637,6 +641,7 @@ var kinds = {
   "lines": "Lines",
   "list": "List",
   "media": "Media",
+  "message": "Message",
   "nav": "Nav",
   "pages": "Pages",
   "prose": "Prose",
@@ -653,6 +658,7 @@ var kinds = {
   "text": "Text",
   "timeline": "Timeline",
   "toast": "Toast",
+  "tool": "Tool",
   "web": "Web"
 };
 var defs = {
@@ -834,7 +840,9 @@ var defs = {
             "toast",
             "pages",
             "timeline",
-            "import"
+            "import",
+            "message",
+            "tool"
           ]
         },
         "type": "string"
@@ -842,6 +850,27 @@ var defs = {
     },
     "required": [
       "type"
+    ],
+    "type": "object"
+  },
+  "Attachment": {
+    "properties": {
+      "name": {
+        "type": "string"
+      },
+      "src": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "tap": {
+        "$ref": "#/$defs/Tap"
+      }
+    },
+    "required": [
+      "name",
+      "tap"
     ],
     "type": "object"
   },
@@ -1366,6 +1395,32 @@ var defs = {
         "properties": {
           "type": {
             "const": "import",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      {
+        "$ref": "#/$defs/Message",
+        "properties": {
+          "type": {
+            "const": "message",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      {
+        "$ref": "#/$defs/Tool",
+        "properties": {
+          "type": {
+            "const": "tool",
             "type": "string"
           }
         },
@@ -4223,6 +4278,62 @@ var defs = {
     ],
     "type": "object"
   },
+  "Message": {
+    "additionalProperties": true,
+    "properties": {
+      "avatar": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "blocks": {
+        "items": {
+          "$ref": "#/$defs/Block"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "files": {
+        "items": {
+          "$ref": "#/$defs/Attachment"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "id": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "name": {
+        "type": "string"
+      },
+      "role": {
+        "$ref": "#/$defs/Role"
+      },
+      "show": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      }
+    },
+    "required": [
+      "role",
+      "name"
+    ],
+    "type": "object"
+  },
   "More": {
     "anyOf": [
       {
@@ -4854,6 +4965,12 @@ var defs = {
             "type": "null"
           }
         ]
+      },
+      "streaming": {
+        "type": [
+          "boolean",
+          "null"
+        ]
       }
     },
     "required": [
@@ -4876,6 +4993,21 @@ var defs = {
       "text"
     ],
     "type": "object"
+  },
+  "Role": {
+    "anyOf": [
+      {
+        "enum": [
+          "agent",
+          "owner",
+          "system"
+        ],
+        "type": "string"
+      },
+      {
+        "type": "string"
+      }
+    ]
   },
   "Round": {
     "properties": {
@@ -7150,6 +7282,65 @@ var defs = {
       }
     ]
   },
+  "Tool": {
+    "additionalProperties": true,
+    "properties": {
+      "body": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "id": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "name": {
+        "type": "string"
+      },
+      "show": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "state": {
+        "$ref": "#/$defs/ToolState"
+      },
+      "summary": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "required": [
+      "name",
+      "state"
+    ],
+    "type": "object"
+  },
+  "ToolState": {
+    "anyOf": [
+      {
+        "enum": [
+          "running",
+          "done",
+          "failed"
+        ],
+        "type": "string"
+      },
+      {
+        "type": "string"
+      }
+    ]
+  },
   "Total": {
     "anyOf": [
       {
@@ -7662,6 +7853,7 @@ export {
   list2 as list,
   lit,
   media,
+  message,
   named2 as named,
   names,
   nav,
@@ -7696,6 +7888,7 @@ export {
   tiles,
   timeline,
   toast,
+  tool,
   tree,
   value,
   view,

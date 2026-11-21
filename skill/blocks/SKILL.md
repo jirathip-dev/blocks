@@ -44,6 +44,8 @@ A screen is data: a `screen` or `sheet` block of typed blocks, checked, then dra
 - [`pages`](kinds/pages.md): A document as the app's server drew it, one picture a page: paged and zoomed in the view, with its PDF.
 - [`timeline`](kinds/timeline.md): Rows of bars on a day axis from `from` to `to` (ISO days); `move`, `stretch` and `draw` each send a `DaySpan`.
 - [`import`](kinds/import.md): A spreadsheet import the app's server reads: upload a file, check the column match and the row errors, confirm one action.
+- [`message`](kinds/message.md): One message of a conversation: who said it, what was said as blocks, and its attachments.
+- [`tool`](kinds/tool.md): One tool call: its name, a one-line summary, its state, and a body shown when it is opened.
 
 ## More
 

@@ -1,0 +1,21 @@
+{
+  "markdown": "one\nline\n\ntwo",
+  "parts": [
+    {
+      "part": "para",
+      "spans": [
+        {
+          "text": "one line"
+        }
+      ]
+    },
+    {
+      "part": "para",
+      "spans": [
+        {
+          "text": "two"
+        }
+      ]
+    }
+  ]
+}

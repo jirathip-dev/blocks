@@ -37,7 +37,7 @@ pub(crate) fn get<'v>(v: &'v Value, k: &str) -> Option<&'v str> {
 }
 
 pub(crate) fn link<'v>(v: &'v Value, k: &str) -> Option<&'v str> {
-    get(v, k).filter(|u| crate::built::linkable(u))
+    get(v, k).filter(|u| crate::kind::linkable(u))
 }
 
 pub(crate) fn list<'v>(v: &'v Value, k: &str) -> &'v [Value] {

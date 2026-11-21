@@ -17,6 +17,7 @@ kinds! {
     "lines" => lines,
     "list" => list,
     "media" => media,
+    "message" => message,
     "nav" => nav,
     "pages" => pages,
     "prose" => prose,
@@ -33,5 +34,6 @@ kinds! {
     "text" => text,
     "timeline" => timeline,
     "toast" => toast,
+    "tool" => tool,
     "web" => web,
 }

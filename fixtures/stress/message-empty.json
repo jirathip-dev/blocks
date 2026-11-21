@@ -1,0 +1,23 @@
+{
+  "avatar": "/media/sample.svg",
+  "blocks": [],
+  "files": [
+    {
+      "name": "plan.pdf",
+      "tap": {
+        "url": "/files/plan.pdf"
+      }
+    },
+    {
+      "name": "shot.png",
+      "src": "/media/sample.svg",
+      "tap": {
+        "url": "/files/shot.png"
+      }
+    }
+  ],
+  "id": "chat",
+  "name": "Scout",
+  "role": "agent",
+  "type": "message"
+}

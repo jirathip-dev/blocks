@@ -5,7 +5,7 @@ use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
-use crate::kind::{Block, Fields, Lane, Round, TableRow, Toast};
+use crate::kind::{Block, Fields, Lane, Part, Round, TableRow, Toast};
 use crate::SCHEMA_VERSION;
 
 /// What an `insert` adds: a block, a scene's lane, a row's round or a table's row.
@@ -48,6 +48,15 @@ pub enum Op {
     Replace {
         id: String,
         block: Block,
+    },
+    Append {
+        id: String,
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        keep: Option<usize>,
+        #[serde(default, skip_serializing_if = "Vec::is_empty")]
+        parts: Vec<Part>,
+        #[serde(default, skip_serializing_if = "String::is_empty")]
+        text: String,
     },
     Badge {
         count: u64,
@@ -178,7 +187,7 @@ pub struct OldFrame {
     pub ops: Vec<Op>,
 }
 
-/// The ops the old per-screen stream sends for `ops`: a `move` becomes a `replace` of its parent, of the root a `screen`.
+/// The ops the old per-screen stream sends for `ops`: a `move` becomes a `replace` of its parent, of the root a `screen`, an `append` a `merge` of its parts.
 pub fn old(ops: Vec<Op>, new: &Block) -> Vec<Op> {
     let mut replaced = HashSet::new();
     let mut out = Vec::with_capacity(ops.len());
@@ -192,6 +201,16 @@ pub fn old(ops: Vec<Op>, new: &Block) -> Vec<Op> {
                 _ => return vec![Op::Screen { screen: new.clone() }],
             },
             Op::Move { .. } => {}
+            Op::Append { id, .. } => match new.get(&id) {
+                Some(Block::Prose(p)) => match serde_json::to_value(&p.parts) {
+                    Ok(parts) => out.push(Op::Merge {
+                        id,
+                        fields: Fields::from_iter([("parts".into(), parts)]),
+                    }),
+                    Err(_) => return vec![Op::Screen { screen: new.clone() }],
+                },
+                _ => return vec![Op::Screen { screen: new.clone() }],
+            },
             Op::Insert { ref into, .. } if replaced.contains(into) => {}
             other => out.push(other),
         }

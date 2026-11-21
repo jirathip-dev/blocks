@@ -1,0 +1,28 @@
+{
+  "type": "screen",
+  "id": "s",
+  "title": "Thread",
+  "blocks": [
+    {
+      "type": "message",
+      "role": "agent",
+      "name": "Scout",
+      "blocks": [
+        {
+          "type": "prose",
+          "id": "t1-a",
+          "parts": [
+            {
+              "part": "para",
+              "spans": [
+                {
+                  "text": "Done."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

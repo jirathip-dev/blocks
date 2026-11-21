@@ -1,0 +1,18 @@
+{
+  "markdown": "```rust\nfn a() {\n\n}\n```\nafter",
+  "parts": [
+    {
+      "part": "code",
+      "lang": "rust",
+      "text": "fn a() {\n\n}"
+    },
+    {
+      "part": "para",
+      "spans": [
+        {
+          "text": "after"
+        }
+      ]
+    }
+  ]
+}

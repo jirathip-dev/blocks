@@ -78,6 +78,7 @@ impl Block {
             Self::Section(b) => Some(&b.blocks),
             Self::List(b) => Some(&b.rows),
             Self::Card(b) => b.blocks.as_ref(),
+            Self::Message(b) => b.blocks.as_ref(),
             _ => None,
         }
     }
@@ -97,6 +98,7 @@ impl Block {
             Self::Section(b) => Kids::Blocks(&mut b.blocks),
             Self::List(b) => Kids::Blocks(&mut b.rows),
             Self::Card(b) => Kids::Blocks(b.blocks.get_or_insert_with(Vec::new)),
+            Self::Message(b) => Kids::Blocks(b.blocks.get_or_insert_with(Vec::new)),
             Self::Scene(b) => Kids::Lanes(b.lanes.get_or_insert_with(Vec::new)),
             Self::Row(b) => Kids::Rounds(b.rounds.get_or_insert_with(Vec::new)),
             Self::Table(b) => Kids::Rows(&mut b.rows),
@@ -111,6 +113,7 @@ impl Block {
             Self::Section(b) => vec![&mut b.blocks],
             Self::List(b) => vec![&mut b.rows],
             Self::Card(b) => b.blocks.iter_mut().chain(b.buttons.iter_mut()).collect(),
+            Self::Message(b) => b.blocks.iter_mut().collect(),
             Self::Row(b) => b
                 .rounds
                 .iter_mut()
@@ -224,6 +227,11 @@ pub fn apply(root: &mut Block, ops: &[Op]) -> Result<(), ApplyError> {
                 }
             }
             Op::Replace { id, block } => *root.find(id).ok_or_else(|| no(id))? = block.clone(),
+            Op::Append { id, keep, parts, text } => match root.find(id) {
+                Some(Block::Prose(p)) => p.grow(*keep, parts, text).map_err(ApplyError::Shape)?,
+                Some(_) => return Err(ApplyError::Shape(format!("`{id}` is no prose block"))),
+                None => return Err(no(id)),
+            },
             Op::Badge { count } => {
                 if let Block::Screen(s) = root {
                     s.badge = Some(*count);

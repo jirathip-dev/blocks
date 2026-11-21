@@ -1,0 +1,9 @@
+{
+  "kind": "tool",
+  "id": "tool",
+  "variant": null,
+  "drawn": "native",
+  "role": "group",
+  "name": "Test",
+  "children": []
+}

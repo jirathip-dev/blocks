@@ -1847,6 +1847,7 @@ var kinds = {
   "lines": "Lines",
   "list": "List",
   "media": "Media",
+  "message": "Message",
   "nav": "Nav",
   "pages": "Pages",
   "prose": "Prose",
@@ -1863,6 +1864,7 @@ var kinds = {
   "text": "Text",
   "timeline": "Timeline",
   "toast": "Toast",
+  "tool": "Tool",
   "web": "Web"
 };
 

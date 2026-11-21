@@ -11,6 +11,7 @@ The Rust type `Prose`; in TS, `prose(fields: Prose)` from `web/src/gen/builders.
 | `id` | `string` | optional |
 | `parts` | `Part[]` | required |
 | `show` | `Expr` | optional |
+| `streaming` | `boolean` | optional |
 
 ## A sample
 

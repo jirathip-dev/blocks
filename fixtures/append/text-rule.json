@@ -1,0 +1,14 @@
+{
+  "why": "a last part with no text, a rule, takes no text",
+  "parts": [
+    {
+      "part": "rule"
+    }
+  ],
+  "op": {
+    "op": "append",
+    "id": "p",
+    "text": "x"
+  },
+  "want": null
+}

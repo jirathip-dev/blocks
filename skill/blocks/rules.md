@@ -1,6 +1,6 @@
 # The guard's rules
 
-Guard version 2. A new error fails `blocks check`; a warning never fails.
+Guard version 3. A new error fails `blocks check`; a warning never fails.
 
 | rule | severity | since | fires on | fix |
 |---|---|---|---|---|
@@ -15,14 +15,14 @@ Guard version 2. A new error fails `blocks check`; a warning never fails.
 | `lint/depth` | error | 1 | blocks nested deeper than 6 | Flatten it: open the inner part as a sheet or a screen of its own with `tap.open`. |
 | `lint/destructive-unconfirmed` | error | 1 | a destructive button or act sends an action with no confirm | Add a `confirm` whose title names what is lost. |
 | `render/dropped` | warn | 2 | an island sent an event its `events` does not name | Name the event in the island's `events`, or stop sending it. |
-| `lint/empty-state` | error | 1 | a list with no rows or a section with no blocks, and no visible text, prose, hero or card beside it | Add a `text` beside it that says what will appear here. |
+| `lint/empty-state` | error | 1 | a list with no rows, a section with no blocks or a message with no blocks and no files, and no visible text, prose, hero or card beside it | Add a `text` beside it that says what will appear here. |
 | `explore/error-screen` | error | 1 | an answer is an error, its ops do not apply, or the screen they give has a fault | Answer with ops that apply to the screen as it is; `Built::check` the result. |
 | `lint/fault` | error | 1 | Built::check returns a fault | Build the block with its typed constructor; `Built::check` must return nothing. |
 | `css/fixed-width` | error | 2 | a `width` or `min-width` over 390 px | Use `max-width`, or a width in `%`. |
 | `render/frame-budget` | warn | 1 | first paint over 300 ms, or a frame over 16.7 ms | Draw fewer blocks at first: page the list, or fold the rest. |
 | `lint/island-unsized` | warn | 1 | an island with no size | Reserve its box with `size`, so the page does not jump when it loads. |
-| `lint/label-empty` | error | 1 | a blank button, act, chip, option or field label, or row title | Give it a label of one to three words. |
-| `lint/label-long` | error | 1 | a button, act or chip label over 30 characters, or a badge over 20 | Shorten it to a verb and its object; move the rest to a `confirm` or a `text` block. |
+| `lint/label-empty` | error | 1 | a blank button, act, chip, option or field label, row title, or message, tool or attachment name | Give it a label of one to three words. |
+| `lint/label-long` | error | 1 | a button, act or chip label, or a message's or tool's name, over 30 characters, or a badge over 20 | Shorten it to a verb and its object; move the rest to a `confirm` or a `text` block. |
 | `lint/label-twice` | error | 1 | two buttons or acts in one group with one label and different actions | Rename one so that each says what it does. |
 | `lint/level-blocks` | warn | 1 | more than 12 blocks in one level, rows not counted | Group them into sections, or split the screen. |
 | `css/motion` | error | 2 | a transition or keyframe of anything but `transform` and `opacity` | Animate `transform` or `opacity` only. |
@@ -35,6 +35,9 @@ Guard version 2. A new error fails `blocks check`; a warning never fails.
 | `css/raw-colour` | error | 2 | an app colour property set to anything but a scheme token (`var(--fg)`, `var(--card)`, …), `currentColor`, `transparent` or `inherit` | Use the scheme token for that role, or add the colour to the app's scheme so the gate checks it. |
 | `guard/seed-missing` | warn | 1 | a screen with a list has no `empty` fixture, or no `long` one | Add the fixture from the app's fixture writer. |
 | `explore/sent-differs` | error | 1 | the renderer sent other actions than the screen declares for the step | Send the action from the block that declares it; an app view posts through the `act` it is handed. |
+| `lint/stream-no-id` | error | 3 | a message, a tool, or a prose with `streaming`, that has no id | Give it an `id`: ops reach a block by its id, and without one each change replaces its parent. |
+| `lint/summary-long` | warn | 3 | a tool's summary over 80 characters | Keep one line that says what it did; put the output in `body`. |
+| `lint/tap-empty` | error | 3 | an attachment whose tap opens nothing | Give its `tap` a `url`, an `open`, a `sheet` or an `action`. |
 | `render/tap-target` | error | 2 | a control under 44 by 44 px; a link inside running text is exempt | Give the control at least 44 px each way: use the kind's own button, or drop the app rule that shrinks it. |
 | `lint/text-wall` | warn | 1 | a text block's markdown over 600 characters | Use `prose`, or split it under section headers. |
 | `lint/title-long` | error | 1 | a title, header or question over 60 characters | Shorten it to 60 characters or fewer; move the detail to `subtitle` or to a `text` block. |

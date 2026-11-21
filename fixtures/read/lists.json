@@ -1,0 +1,42 @@
+{
+  "markdown": "- one\n- two\n  - nested\n\n1. first\n2) second\ncontinued",
+  "parts": [
+    {
+      "part": "list",
+      "ordered": false,
+      "items": [
+        [
+          {
+            "text": "one"
+          }
+        ],
+        [
+          {
+            "text": "two"
+          }
+        ],
+        [
+          {
+            "text": "nested"
+          }
+        ]
+      ]
+    },
+    {
+      "part": "list",
+      "ordered": true,
+      "items": [
+        [
+          {
+            "text": "first"
+          }
+        ],
+        [
+          {
+            "text": "second continued"
+          }
+        ]
+      ]
+    }
+  ]
+}

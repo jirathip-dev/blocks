@@ -1,0 +1,52 @@
+{
+  "type": "message",
+  "id": "chat",
+  "role": "agent",
+  "name": "Scout",
+  "avatar": "/media/sample.svg",
+  "blocks": [
+    {
+      "type": "prose",
+      "id": "chat-a",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "tool",
+      "id": "chat-read",
+      "name": "Read",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "body": "use std::fmt;"
+    },
+    {
+      "type": "prose",
+      "id": "chat-b",
+      "parts": [],
+      "streaming": true
+    }
+  ],
+  "files": [
+    {
+      "name": "plan.pdf",
+      "tap": {
+        "url": "/files/plan.pdf"
+      }
+    },
+    {
+      "name": "shot.png",
+      "tap": {
+        "url": "/files/shot.png"
+      },
+      "src": "/media/sample.svg"
+    }
+  ]
+}

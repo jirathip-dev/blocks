@@ -1,0 +1,62 @@
+{
+  "why": "keep drops the parts after it, then the new parts are added",
+  "parts": [
+    {
+      "part": "para",
+      "spans": [
+        {
+          "text": "one"
+        }
+      ]
+    },
+    {
+      "part": "para",
+      "spans": [
+        {
+          "text": "tw"
+        }
+      ]
+    }
+  ],
+  "op": {
+    "op": "append",
+    "id": "p",
+    "keep": 1,
+    "parts": [
+      {
+        "part": "para",
+        "spans": [
+          {
+            "text": "two "
+          },
+          {
+            "text": "three",
+            "italic": true
+          }
+        ]
+      }
+    ]
+  },
+  "want": [
+    {
+      "part": "para",
+      "spans": [
+        {
+          "text": "one"
+        }
+      ]
+    },
+    {
+      "part": "para",
+      "spans": [
+        {
+          "text": "two "
+        },
+        {
+          "text": "three",
+          "italic": true
+        }
+      ]
+    }
+  ]
+}

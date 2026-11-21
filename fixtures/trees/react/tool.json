@@ -1,0 +1,9 @@
+{
+  "kind": "tool",
+  "id": "tool",
+  "variant": null,
+  "drawn": "fallback",
+  "role": "group",
+  "name": "Test",
+  "children": []
+}

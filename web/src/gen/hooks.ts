@@ -38,6 +38,8 @@ export const hooks: Record<Kind, Hook> = {
     pages: { variant: null, parts: ["title"] },
     timeline: { variant: null, parts: ["title"] },
     import: { variant: null, parts: ["title"] },
+    message: { variant: null, parts: [] },
+    tool: { variant: null, parts: [] },
 };
 
 export const roles: Record<string, string> = { section: "region", form: "form", config: "form", nav: "navigation", chart: "figure", toast: "status" };

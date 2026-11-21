@@ -46,7 +46,7 @@ fn every_rule_has_a_what_a_fix_an_engine_and_a_unique_id() {
         );
         assert_eq!(guard::rule(r.id), Some(*r));
     }
-    assert_eq!(RULES.len(), 40);
+    assert_eq!(RULES.len(), 43);
     assert_eq!(guard::rule("lint/nope"), None);
 }
 
@@ -57,7 +57,7 @@ fn every_lint_rule_has_a_bad_fixture_that_fires_it_and_no_other() {
         .filter(|r| r.id.starts_with("lint/"))
         .map(|r| r.id.to_string())
         .collect();
-    assert_eq!(lint.len(), 16);
+    assert_eq!(lint.len(), 19);
     let bad: BTreeSet<String> = files("fixtures/guard/bad/lint")
         .iter()
         .map(|p| format!("lint/{}", p.file_stem().unwrap().to_string_lossy()))
@@ -93,7 +93,7 @@ fn a_finding_carries_its_rules_fix_and_names_the_block_by_its_ids() {
     assert_eq!(f.file, "fixtures/guard/bad/lint/label-long.json");
     assert_eq!(
         f.message,
-        "a button, act or chip label over 30 characters, or a badge over 20: 38 characters"
+        "a button, act or chip label, or a message's or tool's name, over 30 characters, or a badge over 20: 38 characters"
     );
     assert_eq!(f.fix, guard::rule("lint/label-long").unwrap().fix);
     let json = serde_json::to_value(f).unwrap();
@@ -232,4 +232,42 @@ fn an_action_with_no_answer_or_an_error_answer_is_seen_and_the_harness_must_send
         &mut |a| Some(Ok(answer(a))),
     );
     assert_eq!(typed.seen, []);
+}
+
+#[test]
+fn a_message_widens_label_long_label_empty_and_empty_state() {
+    let msg = |name: &str, blocks: serde_json::Value, files: serde_json::Value| {
+        let m = serde_json::json!({"type": "message", "id": "m", "role": "agent", "name": name, "blocks": blocks, "files": files});
+        let s = serde_json::json!({"type": "screen", "id": "s", "title": "Thread", "blocks": [m]});
+        guard::lint(&Built::new(s), &[])
+            .into_iter()
+            .map(|x| (x.rule, x.detail))
+            .collect::<Vec<_>>()
+    };
+    let tool = serde_json::json!([{"type": "tool", "id": "t", "name": "", "state": "done"}]);
+    let file = serde_json::json!([{"name": " ", "tap": {"url": "/f"}}]);
+    let long = "a name that runs past thirty characters";
+    assert_eq!(
+        msg(long, serde_json::json!([]), file.clone()),
+        [
+            ("lint/label-empty".into(), "a blank attachment name".into()),
+            ("lint/label-long".into(), "39 characters".into()),
+        ]
+    );
+    assert_eq!(
+        msg("Scout", tool, serde_json::json!([])),
+        [("lint/label-empty".into(), "a blank name".into())]
+    );
+    assert_eq!(
+        msg("Scout", serde_json::json!([]), serde_json::json!([])),
+        [("lint/empty-state".into(), "an empty message".into())]
+    );
+    assert_eq!(
+        msg(
+            "Scout",
+            serde_json::json!([]),
+            serde_json::json!([{"name": "a.pdf", "tap": {"url": "/f"}}])
+        ),
+        []
+    );
 }

@@ -1,0 +1,7 @@
+{
+  "type": "tool",
+  "id": "tool",
+  "name": "Test",
+  "state": "running",
+  "summary": "cargo test -p blocks"
+}

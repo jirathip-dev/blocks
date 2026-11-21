@@ -1,0 +1,37 @@
+{
+  "kind": "message",
+  "id": "chat",
+  "variant": null,
+  "drawn": "native",
+  "role": "group",
+  "name": "Scout",
+  "children": [
+    {
+      "kind": "prose",
+      "id": "chat-a",
+      "variant": null,
+      "drawn": "fallback",
+      "role": "group",
+      "name": "chat-a",
+      "children": []
+    },
+    {
+      "kind": "tool",
+      "id": "chat-read",
+      "variant": null,
+      "drawn": "native",
+      "role": "group",
+      "name": "Read",
+      "children": []
+    },
+    {
+      "kind": "prose",
+      "id": "chat-b",
+      "variant": null,
+      "drawn": "fallback",
+      "role": "group",
+      "name": "chat-b",
+      "children": []
+    }
+  ]
+}

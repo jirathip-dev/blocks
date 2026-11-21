@@ -495,6 +495,7 @@ polygon.mki{fill:var(--mk)}
 .mkin{position:absolute;display:flex;gap:var(--s2);align-items:center;padding:var(--s1);background:var(--card);border:1px solid var(--l)}
 .mkin input{height:var(--ctl);width:var(--mk-input);font:inherit;font-size:var(--fs-input);color:var(--fg);background:var(--card);border:1px solid var(--edge);border-radius:var(--radius);padding:0 var(--s1)}
 .mkhint{margin:var(--s1) 0 0;color:var(--mute);font-size:var(--fs-meta)}
+.message{margin:var(--s1) 0}
 .nav{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s4);padding:var(--s2)}
 .nav .brand{margin-right:auto;font-weight:700}
 .nav a[aria-current=page]{color:var(--fg)}
@@ -882,6 +883,7 @@ polygon.mki{fill:var(--mk)}
 .tst:is(:hover,:focus-within) .tsk>b{background:var(--mute)}
 .tsts>.tst{animation:b-settle calc(var(--enter) * var(--motion,1)) var(--ease) backwards}
 .tst.inl{grid-template-columns:auto minmax(0,1fr);margin:var(--seam) 0;border-color:var(--edge)}
+.tool{margin:var(--s1) 0}
 .web{margin:var(--s2) 0 0}
 .web .wf{display:block;box-sizing:border-box;width:100%;max-height:80svh;border:1px solid var(--edge);border-radius:var(--radius);background:var(--bg)}
 .web .wf.none{display:flex;align-items:center;justify-content:center;padding:var(--s3);color:var(--mute);font-size:var(--fs-meta);text-align:center}
