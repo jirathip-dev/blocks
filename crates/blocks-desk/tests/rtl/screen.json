@@ -11,6 +11,7 @@
       ]}
     ]},
     {"type": "text", "id": "note", "text": "הבנייה נכשלה ב־main אחרי 12 דקות (שורה 238), ולכן המיזוג נעצר עד שהבדיקות יעברו."},
+    {"type": "composer", "id": "say", "action": "say", "placeholder": "כתבו לצוות"},
     {"type": "card", "id": "card", "title": "שלום (עולם)!", "subtitle": "Build נכשל on main", "meta": "לפני 3 דקות"},
     {"type": "stat", "id": "open", "label": "פתוחות", "value": 3, "unit": "בקשות"},
     {"type": "chips", "id": "effort", "name": "effort", "options": [{"value": "low", "label": "נמוך"}, {"value": "high", "label": "גבוה"}]},
