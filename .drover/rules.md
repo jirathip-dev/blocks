@@ -9,7 +9,7 @@
 - don't import bench/ (React, topcoat, the bench servers) from the crate, web/src or the Swift package (enforced by: CI arch-check, the `bench/` ban)
 - don't import drover or a transport (tokio, HTTP, std::net) here, or start a process, read a clock or write a file outside codegen and `crates/blocks-cli` (enforced by: CI arch-check bans, deny.toml bans)
 - don't draw a block without a role and a name, an actionable element without a name, or an image with no alt and not aria-hidden (enforced by: CI web, `blocks-shot --check` at 390 and 1440 and site.test on every fixtures/blocks file; CI swift, `blocks-snap --check` on each node's role and name)
-- don't break .drover/arch.toml's layers (expr <- kind <- built, wire <- patch <- diff <- shelf, mirror; built <- behave <- tree <- site, which also uses theme; theme, layout and web stand alone; codegen uses them all; desktop-look <- desktop-cx <- desktop-draw, desktop-stage over them with expr, behave and tree, desk over desktop-stage), size limits or frozen files (enforced by: CI arch-check)
+- don't break .drover/arch.toml's layers (expr <- kind <- built, wire <- patch <- diff <- shelf, mirror; built <- behave <- tree <- site, which also uses theme; theme, layout and web stand alone; codegen uses them all; desktop-words <- desktop-look <- desktop-cx <- desktop-draw, desktop-stage over them with expr, behave and tree, desk over desktop-stage), size limits or frozen files (enforced by: CI arch-check)
 - don't hand-edit a generated file (the schema, its sample, the TS and Swift types): rerun `just gen` (enforced by: CI arch-check, `generated`)
 - don't build a screen with two blocks sharing an id, or a block with two actions sharing an id (enforced by: Built::check, CI test over the fixtures)
 - don't change the wire types against docs/schema.md's versioning rule (enforced by: CI compat from the first release tag; none before it, since compat skips with no tag)
@@ -26,3 +26,4 @@
 - don't add a guard rule without its fix text and a fixture that fails it (enforced by: CI test, the rule table test in crates/blocks/tests/guard.rs)
 - don't hand-edit skill/: rerun `just gen`; prose goes in docs/guard.md (enforced by: CI arch-check, `generated`)
 - don't write a raw colour or size in a renderer: use the scheme and style tokens (enforced by: CI web lint and the swift token lint, with a baseline that only shrinks)
+- don't hand a label to egui in blocks-desktop except through words (enforced by: CI arch-check, the `ui.label(` and `hyperlink_to(` bans; CI desktop, the Thai sample's test over the kinds that wrap text)

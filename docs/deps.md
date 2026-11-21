@@ -8,6 +8,7 @@ drover and cooee.
 - `serde_json`: the wire format, serialize and parse
 - `schemars`: the JSON Schema behind the `schema` feature, so codegen only; never in drover's build
 - `egui`: the desktop renderer's toolkit, in `blocks-desktop` and `blocks-desk` only; never in the `blocks` crate
+- `icu_segmenter`: ICU4X's line segmenter with its dictionaries, for Thai word breaks in `blocks-desktop` only
 - `blocks`: `crates/blocks-cli`'s path dependency on this repo's own crate, so `blocks check` runs at the app's pin
 
 ## Dev tools (bench/ only)

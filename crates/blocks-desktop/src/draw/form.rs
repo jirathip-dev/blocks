@@ -4,6 +4,7 @@ use serde_json::Value;
 
 use crate::act;
 use crate::cx::{Cx, Draw};
+use crate::words;
 
 pub(super) const DRAW: Option<Draw<Form>> = Some(draw);
 
@@ -130,10 +131,10 @@ fn draw(b: &Form, ui: &mut Ui, cx: &mut Cx<'_>) {
             continue;
         }
         let label = each!(f, x => x.label.as_deref()).unwrap_or(name);
-        ui.label(RichText::new(label).color(look.fg(ui)));
+        words::label(ui, RichText::new(label).color(look.fg(ui)));
         let (r, v) = input(f, ui, cx, open && !cx.off(name));
         if let Some(n) = note(f, ui, cx) {
-            ui.label(n);
+            words::label(ui, n);
         }
         let typed = !matches!(f, Field::Toggle(_) | Field::Picker(_));
         if let Some(me) = cx.me.filter(|_| typed) {
