@@ -33,7 +33,7 @@ The Rust type `Tool`; in TS, `tool(fields: Tool)` from `web/src/gen/builders.ts`
 {
   "kind": "tool",
   "id": "tool",
-  "variant": null,
+  "variant": "running",
   "drawn": "native",
   "role": "group",
   "name": "Test",

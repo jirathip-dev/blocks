@@ -1,9 +1,9 @@
 {
   "kind": "message",
   "id": "chat",
-  "variant": null,
+  "variant": "agent",
   "drawn": "fallback",
-  "role": "group",
+  "role": "article",
   "name": "Scout",
   "children": [
     {
@@ -18,7 +18,7 @@
     {
       "kind": "tool",
       "id": "chat-read",
-      "variant": null,
+      "variant": "done",
       "drawn": "fallback",
       "role": "group",
       "name": "Read",

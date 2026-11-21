@@ -8,21 +8,24 @@ use crate::built::{children, Built};
 use crate::expr::State;
 use crate::wire::{Action, Answer, Frame};
 
-pub(crate) const VARIANTS: [(&str, &str); 5] = [
+pub(crate) const VARIANTS: [(&str, &str); 7] = [
     ("row", "style"),
     ("card", "kind"),
     ("button", "style"),
     ("text", "style"),
     ("images", "size"),
+    ("message", "role"),
+    ("tool", "state"),
 ];
 
-pub(crate) const ROLES: [(&str, &str); 6] = [
+pub(crate) const ROLES: [(&str, &str); 7] = [
     ("section", "region"),
     ("form", "form"),
     ("config", "form"),
     ("nav", "navigation"),
     ("chart", "figure"),
     ("toast", "status"),
+    ("message", "article"),
 ];
 pub(crate) const NAMES: [&str; 9] = [
     "label",

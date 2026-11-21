@@ -79,9 +79,9 @@ The Rust type `Message`; in TS, `message(fields: Message)` from `web/src/gen/bui
 {
   "kind": "message",
   "id": "chat",
-  "variant": null,
+  "variant": "agent",
   "drawn": "native",
-  "role": "group",
+  "role": "article",
   "name": "Scout",
   "children": [
     {
@@ -96,7 +96,7 @@ The Rust type `Message`; in TS, `message(fields: Message)` from `web/src/gen/bui
     {
       "kind": "tool",
       "id": "chat-read",
-      "variant": null,
+      "variant": "done",
       "drawn": "native",
       "role": "group",
       "name": "Read",

@@ -1,0 +1,71 @@
+[
+  {
+    "tap": {
+      "id": "t7-b"
+    }
+  },
+  {
+    "frame": {
+      "k": "/t",
+      "from": 1,
+      "rev": 2,
+      "ops": [
+        {
+          "op": "append",
+          "id": "t7-c",
+          "text": ", so a reply"
+        }
+      ]
+    }
+  },
+  {
+    "frame": {
+      "k": "/t",
+      "from": 2,
+      "rev": 3,
+      "ops": [
+        {
+          "op": "append",
+          "id": "t7-c",
+          "keep": 1,
+          "parts": [
+            {
+              "part": "code",
+              "lang": "rust",
+              "text": "grow(keep, parts, text)"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "frame": {
+      "k": "/t",
+      "from": 3,
+      "rev": 4,
+      "ops": [
+        {
+          "op": "merge",
+          "id": "t7-d",
+          "fields": {
+            "state": "done",
+            "summary": "212 passed"
+          }
+        },
+        {
+          "op": "merge",
+          "id": "t7-c",
+          "fields": {
+            "streaming": null
+          }
+        }
+      ]
+    }
+  },
+  {
+    "shot": {
+      "name": "after"
+    }
+  }
+]

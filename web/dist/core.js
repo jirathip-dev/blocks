@@ -35,10 +35,10 @@ var hooks = {
   pages: { variant: null, parts: ["title"] },
   timeline: { variant: null, parts: ["title"] },
   import: { variant: null, parts: ["title"] },
-  message: { variant: null, parts: [] },
-  tool: { variant: null, parts: [] }
+  message: { variant: "role", parts: [] },
+  tool: { variant: "state", parts: [] }
 };
-var roles = { section: "region", form: "form", config: "form", nav: "navigation", chart: "figure", toast: "status" };
+var roles = { section: "region", form: "form", config: "form", nav: "navigation", chart: "figure", toast: "status", message: "article" };
 var names = ["label", "title", "header", "question", "alt", "file", "command", "placeholder", "name"];
 
 // src/gen/schemes.ts

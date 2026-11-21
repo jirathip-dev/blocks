@@ -8,7 +8,10 @@ fn cases(dir: &str) -> Vec<(String, Value)> {
     let mut out: Vec<(String, Value)> = std::fs::read_dir(dir)
         .unwrap()
         .map(|e| e.unwrap().path())
-        .filter(|p| p.extension().is_some_and(|x| x == "json") && !p.to_string_lossy().ends_with(".steps.json"))
+        .filter(|p| {
+            p.extension().is_some_and(|x| x == "json")
+                && !p.file_name().unwrap().to_string_lossy().starts_with("thread.")
+        })
         .map(|p| {
             let v = serde_json::from_str(&std::fs::read_to_string(&p).unwrap()).unwrap();
             (p.file_name().unwrap().to_string_lossy().into_owned(), v)
@@ -187,4 +190,22 @@ fn old_turns_an_append_into_a_merge_of_the_parts() {
     let mut got = was.clone();
     apply(&mut got, &ops).unwrap();
     assert_eq!(got, now);
+}
+
+#[test]
+fn the_thread_script_applies_to_its_screen() {
+    let dir = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../fixtures/append");
+    let read = |f: &str| -> Value { serde_json::from_str(&std::fs::read_to_string(dir.join(f)).unwrap()).unwrap() };
+    let mut s: Block = serde_json::from_value(read("thread.screen.json")).unwrap();
+    assert_eq!(blocks::Built::new(serde_json::to_value(&s).unwrap()).check(&[]), vec![]);
+    for step in read("thread.steps.json").as_array().unwrap() {
+        if let Some(ops) = step.get("frame").map(|f| f["ops"].clone()) {
+            apply(&mut s, &serde_json::from_value::<Vec<Op>>(ops).unwrap()).unwrap();
+        }
+    }
+    let v = serde_json::to_value(&s).unwrap();
+    let reply = &v["blocks"][0]["blocks"][2]["blocks"];
+    assert_eq!(reply[2]["parts"][1]["text"], "grow(keep, parts, text)");
+    assert_eq!(reply[2].get("streaming"), None);
+    assert_eq!(reply[3]["state"], "done");
 }

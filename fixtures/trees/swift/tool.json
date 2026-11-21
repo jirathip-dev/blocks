@@ -1,7 +1,7 @@
 {
   "kind": "tool",
   "id": "tool",
-  "variant": null,
+  "variant": "running",
   "drawn": "native",
   "role": "group",
   "name": "Test",
