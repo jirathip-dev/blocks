@@ -2,12 +2,41 @@
   "workspaces": {
     ".": {
       "entry": [],
-      "project": []
+      "project": [],
+      "ignoreDependencies": [
+        "react"
+      ]
     },
     "web": {
-      "entry": ["src/shell.ts", "src/lazy/import.ts", "src/scan/index.ts", "src/core/index.ts", "src/play/index.ts", "react/src/index.ts", "shot/cli.ts", "shot/probe/*.ts", "test/**/*.test.ts", "test/clash/*.ts", "react/test/*.test.ts", "lint.mjs"],
-      "project": ["src/**/*.ts", "react/src/**/*.ts", "shot/**/*.ts", "test/**/*.ts", "react/test/**/*.ts"],
-      "ignore": ["dist/**", "lint-fixtures/**"]
+      "entry": [
+        "src/shell.ts",
+        "src/lazy/import.ts",
+        "src/scan/index.ts",
+        "src/core/index.ts",
+        "src/play/index.ts",
+        "react/src/index.ts",
+        "shot/cli.ts",
+        "shot/probe/*.ts",
+        "test/**/*.test.ts",
+        "test/clash/*.ts",
+        "react/test/*.test.ts",
+        "lint.mjs"
+      ],
+      "project": [
+        "src/**/*.ts",
+        "react/src/**/*.ts",
+        "shot/**/*.ts",
+        "test/**/*.ts",
+        "react/test/**/*.ts"
+      ],
+      "ignore": [
+        "dist/**",
+        "lint-fixtures/**"
+      ],
+      "ignoreBinaries": [
+        "esbuild",
+        "tsc"
+      ]
     }
   }
 }
