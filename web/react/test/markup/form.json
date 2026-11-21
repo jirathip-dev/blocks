@@ -1,0 +1,3 @@
+[
+  {"type":"form","id":"f2","submit":{"action":"go","label":"Go"},"fields":[{"type":"text","name":"q","keyboard":"number","value":3},{"type":"secret","name":"pw","set":true},{"type":"picker","name":"p","options":["a","b"]},{"type":"other","name":"o","label":"Other"}]}
+]

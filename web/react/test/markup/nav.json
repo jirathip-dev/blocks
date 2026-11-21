@@ -1,0 +1,3 @@
+[
+  {"type":"nav","id":"nv","links":[{"label":"Here","href":"/here","current":true},{"label":"Bad","href":"javascript:x"}]}
+]

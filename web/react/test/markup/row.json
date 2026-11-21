@@ -1,0 +1,6 @@
+[
+  {"type":"row","id":"r","title":"Lane","style":"link","indent":5,"figure":{"state":"working"},"badge":{"text":"new","tone":"g"},"subtitle":{"text":"busy","tone":"r"},"value":{"since":"2026-11-09T09:35:00Z"},"tap":{"action":"go"}},
+  {"type":"row","id":"u","title":"Out","tap":{"url":"https://x.test/u"}},
+  {"type":"row","id":"w","title":"Swiped","swipe":[{"label":"Drop","action":"drop","tone":"bad"},{"label":"Keep","action":"keep"}]},
+  {"type":"row","id":"q","title":"Quiet","rounds":[{"id":"a","name":"impl","state":"done","since":"2026-11-09T09:35:00Z","tap":{"action":"see"}},{"id":"b","name":"rev","state":"working","lane":{"name":"rev-1","harness":"claude","lines":["one","two"]}}]}
+]
