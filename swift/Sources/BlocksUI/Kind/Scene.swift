@@ -1,6 +1,19 @@
 import Blocks
 import SwiftUI
 
+internal struct SceneBlock: View {
+    @Environment(\.appBlocks) private var appBlocks
+    internal let block: Blocks.Scene
+
+    internal var body: some View {
+        if let draw = appBlocks?.views["scene"], let json = try? JSONValue(Block.scene(block)) {
+            draw(json)
+        } else {
+            LaneStage(block: block)
+        }
+    }
+}
+
 internal struct LaneStage: View {
     @Environment(\.look) private var look
     @Environment(\.appBlocks) private var appBlocks

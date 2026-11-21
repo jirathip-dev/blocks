@@ -9,7 +9,7 @@ use crate::{patch, tree, Block};
 const DIR: &str = "swift/Sources/BlocksUI/Kind";
 
 pub(in crate::codegen) fn files(root: &Path, s: &Value) -> std::io::Result<Files> {
-    let mut drawn = vec![];
+    let (mut drawn, mut seen) = (vec![], vec![]);
     for e in std::fs::read_dir(root.join(DIR))? {
         let name = e?.file_name().to_string_lossy().into_owned();
         let Some(view) = name.strip_suffix(".swift") else {
@@ -18,7 +18,11 @@ pub(in crate::codegen) fn files(root: &Path, s: &Value) -> std::io::Result<Files
         let kind = view.to_lowercase();
         if Block::KINDS.contains(&kind.as_str()) {
             drawn.push(format!("        case .{kind}(let block): {view}Block(block: block)\n"));
+            seen.push(kind);
         }
+    }
+    if let Some(kind) = Block::KINDS.iter().find(|k| !seen.iter().any(|s| s == *k)) {
+        return Err(std::io::Error::other(format!("{DIR}: no file draws the {kind} kind")));
     }
     drawn.sort();
     let named: String = Block::KINDS
@@ -27,7 +31,7 @@ pub(in crate::codegen) fn files(root: &Path, s: &Value) -> std::io::Result<Files
         .collect();
     let facts = facts(s).map_err(std::io::Error::other)?;
     let text = format!(
-        "import Blocks\nimport SwiftUI\n\nextension Block {{\n    internal var typeAndID: (type: String, id: String?) {{\n        switch self {{\n{named}        case .appBlock(let b): (b.type, b.id)\n        }}\n    }}\n{facts}}}\n\ninternal struct KindView: View {{\n    internal let block: Block\n\n    internal var body: some View {{\n        switch block {{\n{}        default: EmptyView()\n        }}\n    }}\n}}\n",
+        "import Blocks\nimport SwiftUI\n\nextension Block {{\n    internal var typeAndID: (type: String, id: String?) {{\n        switch self {{\n{named}        case .appBlock(let b): (b.type, b.id)\n        }}\n    }}\n{facts}}}\n\ninternal struct KindView: View {{\n    internal let block: Block\n\n    internal var body: some View {{\n        switch block {{\n{}        case .appBlock(let block): AppBlockView(block: block)\n        }}\n    }}\n}}\n",
         drawn.concat()
     );
     let hosts = patch::HOSTS.map(|(k, l)| format!("\"{k}\": \"{l}\""));
