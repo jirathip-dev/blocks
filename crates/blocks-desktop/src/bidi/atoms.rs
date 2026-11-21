@@ -54,7 +54,11 @@ pub(super) fn cut(job: &LayoutJob, info: &BidiInfo<'_>) -> Vec<Atom> {
             _ if !level.is_rtl() && odd_number(c) => Kind::One,
             _ if !level.is_rtl() => Kind::Ltr,
             BidiClass::R | BidiClass::AL => {
-                strong = if class == BidiClass::R { Script::Hebrew } else { Script::Arabic };
+                strong = if class == BidiClass::R {
+                    Script::Hebrew
+                } else {
+                    Script::Arabic
+                };
                 Kind::Word(strong)
             }
             BidiClass::NSM => Kind::Word(strong),
@@ -100,17 +104,27 @@ pub(super) fn shaped(job: &LayoutJob, atoms: &[Atom]) -> LayoutJob {
         });
     };
     for a in atoms {
-        let Some(section) = job.sections.iter().find(|s| s.byte_range.as_usize().contains(&a.bytes.start)) else {
+        let Some(section) = job
+            .sections
+            .iter()
+            .find(|s| s.byte_range.as_usize().contains(&a.bytes.start))
+        else {
             continue;
         };
-        let lead = if section.byte_range.as_usize().start == a.bytes.start { section.leading_space } else { 0.0 };
+        let lead = if section.byte_range.as_usize().start == a.bytes.start {
+            section.leading_space
+        } else {
+            0.0
+        };
         let text = job.text.get(a.bytes.clone()).unwrap_or_default();
         match a.kind {
             Kind::Newline => {
                 push("\n", lead, &section.format);
                 continue;
             }
-            Kind::One if a.level.is_rtl() => push(&text.chars().map(mirrored).collect::<String>(), lead, &section.format),
+            Kind::One if a.level.is_rtl() => {
+                push(&text.chars().map(mirrored).collect::<String>(), lead, &section.format);
+            }
             _ => push(&text.replace(MARK, SPARE), lead, &section.format),
         }
         push(&MARK.to_string(), 0.0, &section.format);

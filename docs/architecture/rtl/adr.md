@@ -97,6 +97,7 @@ Read in `epaint` 0.37.0 and measured with the prototype in `proto/` (`measured.m
 | Draw | One right-to-left word wider than its line has its rows in the wrong order (`look/noto-390.png`, last block) | egui breaks the shaped run |
 | Draw | A text cut to one row with an ellipsis is not reordered at its cut end. No kind cuts text today | egui edits the glyphs after wrapping |
 | Draw | An underline or a background stays where egui drew it. No kind sets one today; native prose adds it in `place` | they are drawn per row before the move |
+| Draw | A prose paragraph that reads right to left flows its spans from the right edge; two left-to-right spans side by side inside it come out in right-to-left span order | spans are separate labels in a wrapping row, and links stay their own widgets |
 | Draw | Six bracket and quote pairs are mirrored: `()`, `[]`, `{}`, `<>`, `«»`, `‹›`. Mathematical symbols are not | a short table, not a second data crate |
 | Draw | A word that needs two fonts, or an override character forcing Hebrew left to right, is drawn by egui's guess | rare; the run cannot be told apart from outside |
 | Access | AccessKit's text runs still say left-to-right. Names and values are the logical text | egui sets it; no screen reader was run |

@@ -5,7 +5,7 @@ mod stopwatch;
 
 use blocks::tree::{expect, Node, Report, Step, Timings};
 use blocks::{apply, Block, Built, Fields, Op};
-use blocks_desktop::{kinds, Event, Island, Kit, Out, Stage};
+use blocks_desktop::{bidi, kinds, Event, Island, Kit, Out, Stage};
 use egui::emath::Numeric;
 use egui::epaint::text::{FontData, FontInsert, FontPriority, InsertFontFamily};
 use egui::{Button, Context, FontFamily, Key, Modifiers, PointerButton, Pos2, RawInput, Rect, Vec2, ViewportId};
@@ -65,11 +65,13 @@ pub struct Run {
     pub faults: Vec<String>,
     width: f64,
     plans: Vec<Node>,
+    order: Vec<String>,
 }
 
 impl Run {
-    /// Adds to `faults` each shot's tree, sizes, width, overlaps and ids that differ from `want`.
+    /// Adds to `faults` each shot's tree, sizes, width, overlaps, ids that differ from `want`, and text out of order.
     pub fn check(&mut self, want: &Want) {
+        self.faults.append(&mut self.order);
         for (s, plan) in self.shots.iter().zip(&self.plans) {
             let tree = want.tree.as_ref().unwrap_or(plan);
             self.faults.extend(fit::faults(&s.tree, tree, self.width, &s.name));
@@ -100,6 +102,7 @@ struct Live {
     textures: Textures,
     canvas: Canvas,
     frames: Option<Vec<f64>>,
+    order: Vec<String>,
 }
 
 impl Desk {
@@ -189,6 +192,7 @@ impl Live {
             faults: vec![],
             width: f64::from(d.width),
             plans: vec![],
+            order: vec![],
         };
         let size = Vec2::new(f32::from(d.width), f32::from(d.height));
         let mut live = Self {
@@ -201,6 +205,7 @@ impl Live {
             textures: Textures::default(),
             canvas: Canvas::new(d.width, d.height),
             frames: None,
+            order: vec![],
         };
         live.land();
         live
@@ -217,6 +222,7 @@ impl Live {
             let mut did = vec![];
             let mut full = self.ctx.run_ui(input, |ui| did = self.stage.show(ui, &self.kit, 0.0));
             self.textures.update(&full.textures_delta);
+            self.order = bidi::faults(&full.shapes);
             let prims = self.ctx.tessellate(full.shapes, full.pixels_per_point);
             self.canvas.paint(&prims, &self.textures);
             self.textures.free(&full.textures_delta);
@@ -327,5 +333,7 @@ impl Live {
             },
         });
         self.run.report.shots.push(name.into());
+        let order = self.order.iter().map(|f| format!("{name}: {f}"));
+        self.run.order.extend(order);
     }
 }

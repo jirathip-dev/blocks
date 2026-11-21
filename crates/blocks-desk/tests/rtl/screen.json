@@ -1,0 +1,29 @@
+{
+  "type": "screen",
+  "id": "rtl",
+  "title": "הזמנות",
+  "actions": [{"label": "רענון", "action": "refresh"}],
+  "blocks": [
+    {"type": "section", "id": "orders", "header": "פתוחות", "footer": "מתעדכן כל דקה (שורה 238)", "blocks": [
+      {"type": "list", "id": "list", "rows": [
+        {"type": "row", "id": "he", "title": "הזמנה 1250 נשלחה", "subtitle": "אב גד", "value": "₪1,250", "badge": {"text": "חדש"}},
+        {"type": "row", "id": "ar", "title": "اب جد", "subtitle": "السعر ۱۲۳ ريال", "value": "لا إله"}
+      ]}
+    ]},
+    {"type": "text", "id": "note", "text": "הבנייה נכשלה ב־main אחרי 12 דקות (שורה 238), ולכן המיזוג נעצר עד שהבדיקות יעברו."},
+    {"type": "card", "id": "card", "title": "שלום (עולם)!", "subtitle": "Build נכשל on main", "meta": "לפני 3 דקות"},
+    {"type": "stat", "id": "open", "label": "פתוחות", "value": 3, "unit": "בקשות"},
+    {"type": "chips", "id": "effort", "name": "effort", "options": [{"value": "low", "label": "נמוך"}, {"value": "high", "label": "גבוה"}]},
+    {"type": "button", "id": "go", "label": "שלח עכשיו", "action": "go"},
+    {"type": "choice", "id": "ask", "action": "answer", "question": "למזג את זה?", "options": [{"value": "yes", "label": "כן"}], "other": {"placeholder": "אחר…"}},
+    {"type": "form", "id": "contact", "action": "save", "fields": [{"type": "text", "name": "name", "label": "שם מלא", "placeholder": "ישראל ישראלי", "doc": "כפי שבתעודה"}]},
+    {"type": "config", "id": "settings", "action": "save", "fields": [{"type": "picker", "name": "lang", "label": "שפה", "options": ["עברית", "العربية"]}]},
+    {"type": "secret", "id": "token", "name": "token", "action": "save-token", "label": "אסימון"},
+    {"type": "run", "id": "run", "action": "approve", "command": "cargo test", "sha": "4f2a9c1", "dir": "תיקייה"},
+    {"type": "message", "id": "chat", "role": "agent", "name": "סקאוט", "time": "14:32", "blocks": [
+      {"type": "prose", "id": "chat-a", "parts": [{"part": "para", "spans": [{"text": "קורא את "}, {"text": "שני", "bold": true}, {"text": " הקבצים."}]}]},
+      {"type": "tool", "id": "chat-read", "name": "קריאה", "state": "done", "summary": "patch.rs, 238 שורות"}
+    ]},
+    {"type": "sheet", "id": "add", "title": "הוספת מאגר", "blocks": [{"type": "text", "id": "sheet-note", "text": "בחרו אחד"}]}
+  ]
+}

@@ -25,14 +25,19 @@ fn report(what: &str, took: f64, budget: f64) {
 #[test]
 #[ignore = "release only: desktop.yml's perf step"]
 fn the_200_row_screen_paints_every_pass_in_a_frame_and_each_patch_in_4_ms() {
-    let row = |i: usize, title: &str| json!({"type": "row", "id": format!("r{i}"), "title": format!("{title} {i}"), "subtitle": "build green", "value": "2m"});
-    let rows: Vec<_> = (0..200).map(|i| row(i, "Run")).collect();
+    budget("", "Run", "build green", "Patched");
+    budget("right-to-left, ", "הזמנה", "נשלחה לפני 2 דקות", "עודכן");
+}
+
+fn budget(case: &str, run: &str, sub: &str, patched: &str) {
+    let row = |i: usize, title: &str| json!({"type": "row", "id": format!("r{i}"), "title": format!("{title} {i}"), "subtitle": sub, "value": "2m"});
+    let rows: Vec<_> = (0..200).map(|i| row(i, run)).collect();
     let screen: Block = serde_json::from_value(json!({"type": "screen", "id": "s", "title": "Queue", "blocks": [
         {"type": "list", "id": "rows", "rows": rows}
     ]}))
     .unwrap();
     let frames: Vec<_> = (0..40usize)
-        .map(|n| json!({"frame": {"k": "s", "rev": n + 2, "ops": [{"op": "replace", "id": format!("r{}", n * 5), "block": row(n * 5, "Patched")}]}}))
+        .map(|n| json!({"frame": {"k": "s", "rev": n + 2, "ops": [{"op": "replace", "id": format!("r{}", n * 5), "block": row(n * 5, patched)}]}}))
         .collect();
     let steps: Vec<Step> = serde_json::from_value(json!(frames)).unwrap();
     for (w, h) in [(1440, 900), (390, 844)] {
@@ -56,12 +61,12 @@ fn the_200_row_screen_paints_every_pass_in_a_frame_and_each_patch_in_4_ms() {
             .fold(0.0, f64::max);
         let patch = fastest.iter().copied().fold(0.0, f64::max);
         report(
-            &format!("desktop: longest pass of {RUNS} runs, 200 rows at {w}"),
+            &format!("desktop: {case}longest pass of {RUNS} runs, 200 rows at {w}"),
             longest,
             PASS_MS,
         );
         report(
-            &format!("desktop: slowest patch at its fastest of {RUNS} runs, 200 rows at {w}"),
+            &format!("desktop: {case}slowest patch at its fastest of {RUNS} runs, 200 rows at {w}"),
             patch,
             PATCH_MS,
         );
