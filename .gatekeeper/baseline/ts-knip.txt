@@ -1,0 +1,16 @@
+web/react/src/block.ts: exports: hooksOf
+web/react/test/gesture.test.ts: unresolved: /blocks.js
+web/src/core/apply.ts: exports: isRec
+web/src/core/kind/import.ts: types: Phase
+web/src/core/kind/media.ts: exports: ninth
+web/src/core/kind/media.ts: types: Pen
+web/src/core/kind/table.ts: exports: editable
+web/src/core/kind/table.ts: exports: parse
+web/src/core/kind/table.ts: exports: shown
+web/src/gen/sample.ts: files: web/src/gen/sample.ts
+web/src/render/kind/images.ts: exports: viewer
+web/src/render/kind/lines.ts: exports: minor
+web/src/render/kind/lines.ts: exports: money
+web/test/gesture.test.ts: unresolved: /blocks.js
+web/test/scan.test.ts: unresolved: ./scan.js
+web/test/site.test.ts: unresolved: /blocks.js

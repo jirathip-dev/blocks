@@ -1,0 +1,6 @@
+about = "a stream's memory stays flat over 200,000 frames and 400 reconnects (crates/blocks/tests/soak.rs, release)"
+fix = "drop what the stream keeps per frame or per reconnect; its memory must not grow with its length"
+budget_secs = 600
+setup = ["rust"]
+paths = ["crates/blocks/**", "Cargo.*", "rust-toolchain.toml", ".gatekeeper/gates/soak.toml"]
+run = "cargo test --release --locked -p blocks --test soak -- --ignored --nocapture"
