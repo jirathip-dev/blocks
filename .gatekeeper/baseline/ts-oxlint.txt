@@ -70,10 +70,10 @@ web/src/scan/index.ts: eslint(no-nested-ternary): Do not nest ternary expression
 web/src/scan/index.ts: unicorn(no-useless-undefined): Do not use useless `undefined`.
 web/src/scan/page.ts: eslint(no-nested-ternary): Do not nest ternary expressions.
 web/src/scan/page.ts: unicorn(no-new-array): Do not use `new Array(singleArgument)`.
-web/src/shell.ts: eslint(no-console): Unexpected console statement.
-web/src/shell.ts: eslint(no-nested-ternary): Do not nest ternary expressions.
-web/src/shell.ts: eslint(no-useless-return): Unnecessary return statement.
-web/src/shell.ts: unicorn(no-useless-undefined): Do not use useless `undefined`.
+web/src/shell/adopt.ts: eslint(no-console): Unexpected console statement.
+web/src/shell/adopt.ts: unicorn(no-useless-undefined): Do not use useless `undefined`.
+web/src/shell/look.ts: eslint(no-nested-ternary): Do not nest ternary expressions.
+web/src/shell/store.ts: eslint(no-useless-return): Unnecessary return statement.
 web/src/stream.ts: eslint(no-nested-ternary): Do not nest ternary expressions.
 web/src/stream.ts: unicorn(no-useless-undefined): Do not use useless `undefined`.
 web/src/theme.ts: unicorn(no-useless-undefined): Do not use useless `undefined`.
