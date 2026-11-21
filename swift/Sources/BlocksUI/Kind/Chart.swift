@@ -279,8 +279,8 @@ private struct ChartPoints: View {
                         let grab = PointGrab(s.name, at: p.0)
                         let now = model.preview.flatMap { $0.series == s.name && $0.at == p.0 ? $0.y : nil } ?? p.1
                         if c.word(grab) != nil {
-                            Rectangle().strokeBorder(model.colour(s.tone, si, look.palette), lineWidth: 2).background(look.palette.card)
-                                .frame(width: 8, height: 8).frame(width: col, height: 44).contentShape(Rectangle())
+                            Rectangle().strokeBorder(model.colour(s.tone, si, look.palette), lineWidth: Token.s2 / 4).background(look.palette.card)
+                                .frame(width: Token.s2, height: Token.s2).frame(width: col, height: 44).contentShape(Rectangle())
                                 .modifier(
                                     Gestured(
                                         rules: c, grab: grab, gesture: gesture, label: "\(s.name), \(model.label(p.0, long: true)): \(c.shown(s, p.1))",
