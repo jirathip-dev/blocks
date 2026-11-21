@@ -1,4 +1,0 @@
-module BlocksUI {
-header "BlocksUI-Swift.h"
-export *
-}

@@ -1,4 +1,0 @@
-module Blocks {
-header "Blocks-Swift.h"
-export *
-}
