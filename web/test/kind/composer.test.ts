@@ -1,4 +1,4 @@
-import { deepStrictEqual, ok, strictEqual } from "node:assert/strict";
+import { deepStrictEqual, match, notStrictEqual, ok, strictEqual } from "node:assert/strict";
 import { test } from "node:test";
 import { all, ctx, fixture, render } from "../kit.ts";
 
@@ -43,4 +43,37 @@ test("send waits while an attachment is still uploading, and without a file hand
   await flush();
   strictEqual(sent.length, 0);
   strictEqual(button(render(fixture("composer"), ctx({ screen: `s-${Math.random()}` })), "attach").disabled, true);
+});
+
+test("each send carries a fresh nonce, a retry of a failed send repeats it, and a queue carries one too", async () => {
+  const sent = [];
+  let pass = false;
+  const c = ctx({ screen: `s-${Math.random()}`, act: async (a) => (sent.push(a), pass) });
+  const e = render(fixture("composer"), c);
+  const ta = all(e).find((x) => x.tagName === "TEXTAREA");
+  ta.value = "hi";
+  ta.oninput();
+  button(e, "send").onclick();
+  await flush();
+  pass = true;
+  button(e, "retry").onclick();
+  await flush();
+  ta.value = "hi";
+  ta.oninput();
+  button(e, "send").onclick();
+  await flush();
+  const [first, retry, next] = sent.map((a) => a.values.nonce);
+  match(first, /^[0-9a-f]{32}$/);
+  strictEqual(retry, first);
+  notStrictEqual(next, first);
+  const busy = { ...fixture("composer"), acts: { queue: "later", steer: "now" }, working: { since: "2026-01-01T00:00:00Z" } };
+  const w = render(busy, c);
+  const wt = all(w).find((x) => x.tagName === "TEXTAREA");
+  wt.value = "q";
+  wt.oninput();
+  button(w, "queue").onclick();
+  await flush();
+  strictEqual(sent.at(-1).action, "later");
+  match(sent.at(-1).values.nonce, /^[0-9a-f]{32}$/);
+  notStrictEqual(sent.at(-1).values.nonce, next);
 });
