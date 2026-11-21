@@ -32,6 +32,7 @@ export const kinds: Record<string, string> = {
   "secret": "Secret",
   "section": "Section",
   "sheet": "Sheet",
+  "sidebar": "Sidebar",
   "stat": "Stat",
   "steps": "Steps",
   "table": "Table",
@@ -223,7 +224,8 @@ export const defs: Record<string, Shape> = {
             "timeline",
             "import",
             "message",
-            "tool"
+            "tool",
+            "sidebar"
           ]
         },
         "type": "string"
@@ -802,6 +804,19 @@ export const defs: Record<string, Shape> = {
         "properties": {
           "type": {
             "const": "tool",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      {
+        "$ref": "#/$defs/Sidebar",
+        "properties": {
+          "type": {
+            "const": "sidebar",
             "type": "string"
           }
         },
@@ -5522,6 +5537,199 @@ export const defs: Record<string, Shape> = {
         "$ref": "#/$defs/Time"
       }
     ]
+  },
+  "SideBadge": {
+    "properties": {
+      "count": {
+        "minimum": 0,
+        "type": "integer"
+      },
+      "tone": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Tone"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      }
+    },
+    "required": [
+      "count"
+    ],
+    "type": "object"
+  },
+  "SideGroup": {
+    "properties": {
+      "links": {
+        "items": {
+          "$ref": "#/$defs/SideItem"
+        },
+        "type": "array"
+      },
+      "title": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "required": [
+      "links"
+    ],
+    "type": "object"
+  },
+  "SideItem": {
+    "properties": {
+      "badge": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/SideBadge"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "children": {
+        "items": {
+          "$ref": "#/$defs/SideLink"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "current": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "href": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "icon": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "label": {
+        "type": "string"
+      },
+      "open": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      }
+    },
+    "required": [
+      "label"
+    ],
+    "type": "object"
+  },
+  "SideLink": {
+    "properties": {
+      "badge": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/SideBadge"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "current": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "href": {
+        "type": "string"
+      },
+      "icon": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "label": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "label",
+      "href"
+    ],
+    "type": "object"
+  },
+  "Sidebar": {
+    "additionalProperties": true,
+    "properties": {
+      "brand": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/SideLink"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "empty": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "footer": {
+        "items": {
+          "$ref": "#/$defs/SideLink"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "groups": {
+        "items": {
+          "$ref": "#/$defs/SideGroup"
+        },
+        "type": "array"
+      },
+      "id": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "label": {
+        "type": "string"
+      },
+      "show": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      }
+    },
+    "required": [
+      "label",
+      "groups"
+    ],
+    "type": "object"
   },
   "Sky": {
     "anyOf": [

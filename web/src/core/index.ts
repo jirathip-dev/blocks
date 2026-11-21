@@ -9,6 +9,7 @@ export { choose, css, gated, tiles, type Look, type Pair, type Scale } from "./l
 export * from "../gen/builders.ts";
 export { apply } from "./apply.ts";
 export { ext, glyph, initial, roleWord } from "./kind/message.ts";
+export { sideCount, sideIcon, sideTitle } from "./kind/sidebar.ts";
 export { built, type Built } from "./built.ts";
 export { share } from "./share.ts";
 export { nonce } from "./nonce.ts";

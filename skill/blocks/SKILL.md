@@ -46,6 +46,7 @@ A screen is data: a `screen` or `sheet` block of typed blocks, checked, then dra
 - [`import`](kinds/import.md): A spreadsheet import the app's server reads: upload a file, check the column match and the row errors, confirm one action.
 - [`message`](kinds/message.md): One message of a conversation: who said it, what was said as blocks, and its attachments.
 - [`tool`](kinds/tool.md): One tool call: its name, a one-line summary, its state, and a body shown when it is opened.
+- [`sidebar`](kinds/sidebar.md): A side navigation: an icon rail that opens on hover or pin, a drawer on a phone.
 
 ## More
 

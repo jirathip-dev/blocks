@@ -125,7 +125,7 @@ fn workflow() -> Diagram {
         ))
 }
 
-const SWIFT_FALLBACKS: [&str; 6] = ["composer", "prose", "hero", "media", "nav", "island"];
+const SWIFT_FALLBACKS: [&str; 7] = ["composer", "prose", "hero", "media", "nav", "island", "sidebar"];
 
 fn trees(root: &Path) -> std::io::Result<Files> {
     let web = super::ts::kinds::native(root)?;
