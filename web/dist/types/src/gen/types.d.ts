@@ -129,7 +129,9 @@ export type Block = ({
     type: "message";
 } & Message) | ({
     type: "tool";
-} & Tool) | (AppBlock & {
+} & Tool) | ({
+    type: "sidebar";
+} & Sidebar) | (AppBlock & {
     [key: string]: unknown;
 });
 export type Bound = {
@@ -978,6 +980,39 @@ export type Sheet = {
     title: string;
 };
 export type Shown = string | number | Bound | Time;
+export type SideBadge = {
+    count: number;
+    tone?: Tone | null;
+};
+export type SideGroup = {
+    links: SideItem[];
+    title?: string | null;
+};
+export type SideItem = {
+    badge?: SideBadge | null;
+    children?: SideLink[] | null;
+    current?: boolean | null;
+    href?: string | null;
+    icon?: string | null;
+    label: string;
+    open?: boolean | null;
+};
+export type SideLink = {
+    badge?: SideBadge | null;
+    current?: boolean | null;
+    href: string;
+    icon?: string | null;
+    label: string;
+};
+export type Sidebar = {
+    brand?: SideLink | null;
+    empty?: string | null;
+    footer?: SideLink[] | null;
+    groups: SideGroup[];
+    id?: string | null;
+    label: string;
+    show?: Expr | null;
+};
 export type Sky = "clear" | "windy" | "fog" | "storm";
 export type SortDir = "asc" | "desc";
 export type Span = {
@@ -1276,4 +1311,4 @@ export type Why = "evicted" | "unpaired" | "handover";
 export type Working = {
     since: string;
 };
-export type Kind = "screen" | "sheet" | "section" | "list" | "row" | "card" | "choice" | "form" | "config" | "secret" | "run" | "button" | "chips" | "stat" | "text" | "images" | "web" | "diff" | "editor" | "scene" | "diagram" | "composer" | "lines" | "prose" | "hero" | "media" | "nav" | "island" | "table" | "steps" | "chart" | "toast" | "pages" | "timeline" | "import" | "message" | "tool";
+export type Kind = "screen" | "sheet" | "section" | "list" | "row" | "card" | "choice" | "form" | "config" | "secret" | "run" | "button" | "chips" | "stat" | "text" | "images" | "web" | "diff" | "editor" | "scene" | "diagram" | "composer" | "lines" | "prose" | "hero" | "media" | "nav" | "island" | "table" | "steps" | "chart" | "toast" | "pages" | "timeline" | "import" | "message" | "tool" | "sidebar";

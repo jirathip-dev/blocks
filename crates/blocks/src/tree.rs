@@ -18,7 +18,7 @@ pub(crate) const VARIANTS: [(&str, &str); 7] = [
     ("tool", "state"),
 ];
 
-pub(crate) const ROLES: [(&str, &str); 7] = [
+pub(crate) const ROLES: [(&str, &str); 8] = [
     ("section", "region"),
     ("form", "form"),
     ("config", "form"),
@@ -26,6 +26,7 @@ pub(crate) const ROLES: [(&str, &str); 7] = [
     ("chart", "figure"),
     ("toast", "status"),
     ("message", "article"),
+    ("sidebar", "navigation"),
 ];
 pub(crate) const NAMES: [&str; 9] = [
     "label",

@@ -53,6 +53,7 @@ public struct BlockNode: View {
             case .hero(let hero): HeroBlock(block: hero)
             case .media(let media): MediaBlock(block: media)
             case .nav(let nav): NavBlock(block: nav)
+            case .sidebar(let sidebar): FallbackRow(fallback: JSONValue.object(["title": .string(sidebar.label)]))
             case .island(let island): IslandView(block: island)
             case .table(let table): TableBlock(block: table)
             case .steps(let steps): StepsBlock(block: steps)

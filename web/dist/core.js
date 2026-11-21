@@ -36,9 +36,10 @@ var hooks = {
   timeline: { variant: null, parts: ["title"] },
   import: { variant: null, parts: ["title"] },
   message: { variant: "role", parts: [] },
-  tool: { variant: "state", parts: [] }
+  tool: { variant: "state", parts: [] },
+  sidebar: { variant: null, parts: [] }
 };
-var roles = { section: "region", form: "form", config: "form", nav: "navigation", chart: "figure", toast: "status", message: "article" };
+var roles = { section: "region", form: "form", config: "form", nav: "navigation", chart: "figure", toast: "status", message: "article", sidebar: "navigation" };
 var names = ["label", "title", "header", "question", "alt", "file", "command", "placeholder", "name"];
 
 // src/gen/schemes.ts
@@ -514,6 +515,7 @@ var timeline = (fields) => ({ type: "timeline", ...fields });
 var import_ = (fields) => ({ type: "import", ...fields });
 var message = (fields) => ({ type: "message", ...fields });
 var tool = (fields) => ({ type: "tool", ...fields });
+var sidebar = (fields) => ({ type: "sidebar", ...fields });
 var expr = {
   get: (v) => ({ get: v }),
   not: (v) => ({ not: v }),
@@ -648,6 +650,11 @@ var ext = (name) => {
 };
 var initial = (name) => [...name.trim()][0] ?? "";
 
+// src/core/kind/sidebar.ts
+var sideTitle = (b) => [...b.groups.flatMap((g) => g.links.flatMap((l) => [l, ...l.children ?? []])), ...b.footer ?? []].find((l) => l.current)?.label ?? b.brand?.label ?? b.label;
+var sideIcon = (l) => [l.icon || l.label.slice(0, 1).toUpperCase(), /^[A-Z]{2}$/.test(l.icon ?? "")];
+var sideCount = (b) => [b.count > 99 ? "99+" : String(b.count), `${b.count} ${b.tone === "bad" ? "need attention" : "new"}`];
+
 // src/core/table.ts
 var SIGN = { THB: "\u0E3F", USD: "$", EUR: "\u20AC" };
 var at = (r, id) => r.cells[id];
@@ -737,6 +744,9 @@ function share(prev, next) {
   return same ? prev : next;
 }
 
+// src/core/nonce.ts
+var nonce = () => Array.from(crypto.getRandomValues(new Uint8Array(16)), (n) => n.toString(16).padStart(2, "0")).join("");
+
 // src/gen/shapes.ts
 var kinds = {
   "button": "Button",
@@ -768,6 +778,7 @@ var kinds = {
   "secret": "Secret",
   "section": "Section",
   "sheet": "Sheet",
+  "sidebar": "Sidebar",
   "stat": "Stat",
   "steps": "Steps",
   "table": "Table",
@@ -958,7 +969,8 @@ var defs = {
             "timeline",
             "import",
             "message",
-            "tool"
+            "tool",
+            "sidebar"
           ]
         },
         "type": "string"
@@ -1537,6 +1549,19 @@ var defs = {
         "properties": {
           "type": {
             "const": "tool",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      {
+        "$ref": "#/$defs/Sidebar",
+        "properties": {
+          "type": {
+            "const": "sidebar",
             "type": "string"
           }
         },
@@ -6258,6 +6283,199 @@ var defs = {
       }
     ]
   },
+  "SideBadge": {
+    "properties": {
+      "count": {
+        "minimum": 0,
+        "type": "integer"
+      },
+      "tone": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Tone"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      }
+    },
+    "required": [
+      "count"
+    ],
+    "type": "object"
+  },
+  "SideGroup": {
+    "properties": {
+      "links": {
+        "items": {
+          "$ref": "#/$defs/SideItem"
+        },
+        "type": "array"
+      },
+      "title": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "required": [
+      "links"
+    ],
+    "type": "object"
+  },
+  "SideItem": {
+    "properties": {
+      "badge": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/SideBadge"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "children": {
+        "items": {
+          "$ref": "#/$defs/SideLink"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "current": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "href": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "icon": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "label": {
+        "type": "string"
+      },
+      "open": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      }
+    },
+    "required": [
+      "label"
+    ],
+    "type": "object"
+  },
+  "SideLink": {
+    "properties": {
+      "badge": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/SideBadge"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "current": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "href": {
+        "type": "string"
+      },
+      "icon": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "label": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "label",
+      "href"
+    ],
+    "type": "object"
+  },
+  "Sidebar": {
+    "additionalProperties": true,
+    "properties": {
+      "brand": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/SideLink"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "empty": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "footer": {
+        "items": {
+          "$ref": "#/$defs/SideLink"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "groups": {
+        "items": {
+          "$ref": "#/$defs/SideGroup"
+        },
+        "type": "array"
+      },
+      "id": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "label": {
+        "type": "string"
+      },
+      "show": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      }
+    },
+    "required": [
+      "label",
+      "groups"
+    ],
+    "type": "object"
+  },
   "Sky": {
     "anyOf": [
       {
@@ -7986,6 +8204,7 @@ export {
   named2 as named,
   names,
   nav,
+  nonce,
   pages,
   pick,
   picked,
@@ -8008,6 +8227,10 @@ export {
   send,
   share,
   sheet,
+  sideCount,
+  sideIcon,
+  sideTitle,
+  sidebar,
   sized,
   start,
   stat,

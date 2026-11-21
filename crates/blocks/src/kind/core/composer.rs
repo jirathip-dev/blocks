@@ -6,7 +6,7 @@ use crate::kind::{Block, ComposerChip, Fields, Queued, Working};
 listed! { 21: Composer(Composer) = "composer" }
 
 kind! {
-    /// A message box: its send action, its chips and the messages queued.
+    /// A message box: its send action, its chips and the messages queued; each send, queue or steer carries `values.nonce`, a fresh random id a retry repeats.
     pub struct Composer {
         id: Option<String>,
         action: String,

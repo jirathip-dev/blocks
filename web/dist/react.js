@@ -382,7 +382,7 @@ function Arrange(p) {
 }
 
 // react/src/view.ts
-import { createElement as createElement14, useMemo as useMemo3, useRef as useRef17, useSyncExternalStore } from "react";
+import { createElement as createElement14, useMemo as useMemo3, useRef as useRef18, useSyncExternalStore } from "react";
 import { hooks as hooks3, share } from "./core.js";
 
 // react/src/act.ts
@@ -451,8 +451,8 @@ function useCx(p, screen2) {
     asking?.done(ok);
     setAsking(null);
   };
-  const button2 = (label2, ok, cls = "") => h("button", cls, { type: "button", onClick: () => end(ok) }, h("span", "", null, label2));
-  const ask = asking ? h("div", "b-confirm", { role: "dialog" }, h("p", "", null, h("b", "", null, asking.c.title)), asking.c.message ? h("p", "m", null, asking.c.message) : null, h("div", "bar", null, button2("cancel", false), button2(asking.c.ok ?? "ok", true, asking.c.destructive ? "bad" : ""))) : null;
+  const button3 = (label2, ok, cls = "") => h("button", cls, { type: "button", onClick: () => end(ok) }, h("span", "", null, label2));
+  const ask = asking ? h("div", "b-confirm", { role: "dialog" }, h("p", "", null, h("b", "", null, asking.c.title)), asking.c.message ? h("p", "m", null, asking.c.message) : null, h("div", "bar", null, button3("cancel", false), button3(asking.c.ok ?? "ok", true, asking.c.destructive ? "bad" : ""))) : null;
   return { cx, ask };
 }
 
@@ -501,11 +501,11 @@ function inline(s, stages) {
   return [...got, ...next(s.slice(at2))];
 }
 function md(s, refs) {
-  const link2 = new RegExp(String.raw`\[([^\]]+)\]\((https?:[^)\s]+)\)|(https?:\/\/[^\s<]*[^\s<.,;:!?)])|\b(${refs ? "t\\d+" : "(?!)"})\b`, "g");
+  const link3 = new RegExp(String.raw`\[([^\]]+)\]\((https?:[^)\s]+)\)|(https?:\/\/[^\s<]*[^\s<.,;:!?)])|\b(${refs ? "t\\d+" : "(?!)"})\b`, "g");
   const stages = [
     [/`([^`]+)`/g, (m, n) => h("code", "", null, ...n(m[1] ?? ""))],
     [/\*\*([^*]+)\*\*/g, (m, n) => h("b", "", null, ...n(m[1] ?? ""))],
-    [link2, (m, n) => m[4] ? h("a", "", { href: "#", "data-thread": m[4] }, m[4]) : h("a", "", out(m[2] ?? m[3] ?? ""), ...n(m[1] ?? m[3] ?? ""))],
+    [link3, (m, n) => m[4] ? h("a", "", { href: "#", "data-thread": m[4] }, m[4]) : h("a", "", out(m[2] ?? m[3] ?? ""), ...n(m[1] ?? m[3] ?? ""))],
     [/\n/g, () => h("br", "", null)]
   ];
   const cb = (part2) => h("div", "cb", null, h("pre", "", null, part2.replace(/\n$/, "")), h("button", "cpy", { type: "button" }, h("span", "", null, "copy")));
@@ -536,9 +536,9 @@ function card({ b, hooks: hooks4 }) {
   const mainBtn = main && shut ? btn(main.label, "main", void 0, main.action, { onClick: send4 }) : null;
   const line = fold ? h("div", "fold", { tabIndex: 0, role: "button", "aria-expanded": String(!shut), onClick: flip }, h("span", "fl", null, fold.line), mainBtn) : null;
   if (shut) return h("div", cls, attrs, line);
-  const badge = b.badge ? [" ", h("span", `tag b-card__badge ${b.badge.tone ?? ""}`, null, ticked(b.badge.text, cx))] : [];
+  const badge2 = b.badge ? [" ", h("span", `tag b-card__badge ${b.badge.tone ?? ""}`, null, ticked(b.badge.text, cx))] : [];
   const meta = b.meta ? [" ", h("span", "m", null, ticked(b.meta, cx))] : [];
-  const head4 = b.title || b.badge ? h("div", "ch", null, h("b", "b-card__title", null, b.title ?? ""), ...badge, ...meta) : null;
+  const head4 = b.title || b.badge ? h("div", "ch", null, h("b", "b-card__title", null, b.title ?? ""), ...badge2, ...meta) : null;
   const buttons = b.buttons ?? [];
   const bar5 = buttons.length ? h("div", "bar b-card__actions", null, ...kids2(buttons)) : null;
   const s = !b.subtitle ? null : typeof b.subtitle === "string" ? { text: b.subtitle, tone: null } : b.subtitle;
@@ -583,7 +583,7 @@ function choice({ b, hooks: hooks4 }) {
 
 // react/src/kinds/composer.ts
 import { createElement as createElement2, useContext as useContext5, useEffect as useEffect2, useLayoutEffect as useLayoutEffect2, useRef as useRef3, useState as useState5 } from "react";
-import { send as upload } from "./core.js";
+import { nonce as mint, send as upload } from "./core.js";
 var SAID = { sending: "sending\u2026", sent: "\u2713 sent", failed: "not sent" };
 function Pill({ b, post }) {
   const [, tick2] = useState5(0);
@@ -658,6 +658,7 @@ function composer({ b, hooks: hooks4 }) {
   const [q, setQ] = useState5(void 0);
   const [st, setSt] = useState5("");
   const [steering, setSteering] = useState5(false);
+  const nonce = useRef3(void 0);
   const { files, add, drop, clear } = useSend(b, cx);
   const ta = useRef3(null);
   const pick2 = useRef3(null);
@@ -671,11 +672,13 @@ function composer({ b, hooks: hooks4 }) {
     const done = files.filter((r) => r.state === "done");
     if (!text4.trim() && !done.length || files.some((r) => r.state === "uploading")) return;
     const queue = !steer && (b.working || q != null) ? act2("queue") : "";
-    const v = { ...picks, text: text4, files: done.map(({ id, name, src }) => ({ id, name, src: src ?? null })), ...queue && q != null ? { q } : null };
+    nonce.current ??= mint();
+    const v = { ...picks, text: text4, files: done.map(({ id, name, src }) => ({ id, name, src: src ?? null })), nonce: nonce.current, ...queue && q != null ? { q } : null };
     setSt("sending");
     setSteering(false);
     const ok = await post(steer ? act2("steer") : queue || b.action, v);
     if (ok) {
+      nonce.current = void 0;
       clear();
       setQ(void 0);
       setText("");
@@ -691,17 +694,20 @@ function composer({ b, hooks: hooks4 }) {
   const edit2 = (x) => () => {
     setQ(x.q);
     setText(x.text);
+    nonce.current = void 0;
     ta.current?.focus();
   };
   const said3 = q != null ? "save" : b.working ? "queue" : b.label ?? "";
   const go2 = btn(said3, "primary", void 0, b.action, { "aria-label": said3 || "send", "aria-busy": st === "sending" || void 0, ...held3 });
   const typed = (e) => {
     setText(e.target.value);
+    nonce.current = void 0;
     if (st === "sent") setSt("");
   };
   const took = (e) => {
     add(Array.from(e.target.files ?? []));
     e.target.value = "";
+    nonce.current = void 0;
     setSt("");
   };
   const row5 = h(
@@ -895,7 +901,7 @@ var upload2 = {
 function Scan({ x, c, attrs }) {
   const w = (k) => word(c, k), label2 = x.label ?? x.name, off = !c.file;
   const [rows2, setRows] = useState7(() => scanHeld(x));
-  const live3 = useRef5(rows2), kept = useRef5(void 0);
+  const live3 = useRef5(rows2), kept2 = useRef5(void 0);
   const changed = (next) => {
     live3.current = next;
     setRows(next);
@@ -904,20 +910,20 @@ function Scan({ x, c, attrs }) {
   const go2 = (r) => c.file && send2(r, c.file, { screen: c.screen, block: c.block, field: x.name }, () => changed([...live3.current]));
   const drop = () => {
     live3.current.forEach((r) => r.stop?.abort());
-    kept.current = void 0;
+    kept2.current = void 0;
     changed([]);
   };
   const open2 = async (again2) => {
-    const out2 = await (await scanner()).scan({ label: label2, max: x.max ?? 20, w, pages: again2 ? kept.current : void 0 });
+    const out2 = await (await scanner()).scan({ label: label2, max: x.max ?? 20, w, pages: again2 ? kept2.current : void 0 });
     if (!out2) return;
     live3.current.forEach((r2) => r2.stop?.abort());
-    kept.current = out2.pages;
+    kept2.current = out2.pages;
     const r = scanned(x, out2.pdf, out2.pages.length, out2.pages[0]?.url);
     changed([r]);
     go2(r);
   };
   const named4 = (k, name, f) => btn(w(k), "", void 0, void 0, { "aria-label": `${w(k)}: ${name}`, onClick: f }, off);
-  const list3 = rows2.map((r) => item(scanLine(r, w), r, w, drop, go2, kept.current ? [named4("editPages", r.name, () => open2(true))] : []));
+  const list3 = rows2.map((r) => item(scanLine(r, w), r, w, drop, go2, kept2.current ? [named4("editPages", r.name, () => open2(true))] : []));
   const again = rows2.length ? "rescan" : "scan";
   const group2 = { role: "group", "data-field": x.name, "aria-label": label2, "aria-invalid": attrs["aria-invalid"] };
   return h("div", "fu", group2, x.error ? h("span", "fe", null, x.error) : null, list3.length ? h("ul", "fuf", null, ...list3) : null, h("div", "fub", null, named4(again, label2, () => open2(false)), h("span", "fuh", null, scanHint(x, w, !off))));
@@ -1881,6 +1887,7 @@ var kinds = {
   "secret": "Secret",
   "section": "Section",
   "sheet": "Sheet",
+  "sidebar": "Sidebar",
   "stat": "Stat",
   "steps": "Steps",
   "table": "Table",
@@ -2156,8 +2163,8 @@ function round2(d2, now, cx) {
   const lines = d2.lane?.lines ?? [];
   const line = (t, i) => d2.state === "working" && i === lines.length - 1 ? h("div", "live", null, `\u258D ${t}`) : h("div", "", null, t);
   const lane2 = d2.lane ? [h("div", "rdh", null, [d2.lane.name, d2.lane.harness, d2.lane.model, d2.lane.host].filter(Boolean).join(" \xB7 ")), h("div", "rdo", null, ...lines.map(line))] : [];
-  const link2 = links.map((k) => btn(k.label, "", urlOf(k.tap), sends(k.tap), { onClick: urlOf(k.tap) ? void 0 : () => cx.tap(k.tap) }));
-  const body2 = now && (d2.lane || d2.blocks?.length || links.length) ? h("div", "rdb", null, ...lane2, ...kids2(d2.blocks), links.length ? h("div", "rdk", null, ...link2) : null) : null;
+  const link3 = links.map((k) => btn(k.label, "", urlOf(k.tap), sends(k.tap), { onClick: urlOf(k.tap) ? void 0 : () => cx.tap(k.tap) }));
+  const body2 = now && (d2.lane || d2.blocks?.length || links.length) ? h("div", "rdb", null, ...lane2, ...kids2(d2.blocks), links.length ? h("div", "rdk", null, ...link3) : null) : null;
   return h("li", `rd ${d2.state}${now ? " now" : ""}`, null, h("i", "rdm", { "aria-label": d2.state }), h("div", "rdx", null, l, body2));
 }
 function row2({ b, hooks: hooks4 }) {
@@ -2170,8 +2177,8 @@ function row2({ b, hooks: hooks4 }) {
   const last = rounds[rounds.length - 1];
   const open2 = last !== void 0 && last.state === "needs" !== flip;
   const sub = b.subtitle == null || open2 ? null : typeof b.subtitle === "string" ? { text: b.subtitle, tone: null } : b.subtitle;
-  const badge = b.badge ? [" ", h("span", `tag b-row__badge ${b.badge.tone ?? ""}`, null, ticked(b.badge.text, cx))] : [];
-  const main = h("span", "rm", null, h("span", "rt b-row__title", null, b.title ?? ""), ...badge, sub ? h("span", `rs b-row__subtitle ${sub.tone ?? ""}`, null, ticked(sub.text, cx)) : null);
+  const badge2 = b.badge ? [" ", h("span", `tag b-row__badge ${b.badge.tone ?? ""}`, null, ticked(b.badge.text, cx))] : [];
+  const main = h("span", "rm", null, h("span", "rt b-row__title", null, b.title ?? ""), ...badge2, sub ? h("span", `rs b-row__subtitle ${sub.tone ?? ""}`, null, ticked(sub.text, cx)) : null);
   const parts2 = [b.figure ? figure(b.figure, "b-row__figure") : null, main, b.value != null ? h("span", "rv b-row__value", null, ticked(b.value, cx)) : null];
   const id = { "data-id": b.id ?? "" };
   if (last) {
@@ -2179,14 +2186,14 @@ function row2({ b, hooks: hooks4 }) {
     return h("div", `rr${open2 ? " open" : ""}`, hooks4, r, open2 ? h("ol", "rds", null, ...rounds.map((d2) => round2(d2, d2 === last, cx))) : null);
   }
   const url2 = urlOf(b.tap);
-  const swipe = b.swipe ?? [];
-  const tapped = !url2 && (b.tap != null || swipe.length > 0);
+  const swipe2 = b.swipe ?? [];
+  const tapped = !url2 && (b.tap != null || swipe2.length > 0);
   const own3 = { ...id, ...tapped ? { "data-action": sends(b.tap), ...press(() => b.tap ? cx.tap(b.tap) : toggle2()) } : null };
   const rc = url2 || tapped ? `${cls} tap` : cls;
-  if (!swipe.length) return url2 ? h("a", rc, { ...hooks4, ...own3, ...out(url2) }, ...parts2) : h("div", rc, { ...hooks4, ...own3 }, ...parts2);
+  if (!swipe2.length) return url2 ? h("a", rc, { ...hooks4, ...own3, ...out(url2) }, ...parts2) : h("div", rc, { ...hooks4, ...own3 }, ...parts2);
   const touch = { onTouchStart: (e) => x0.current = e.touches[0]?.clientX ?? x0.current, onTouchEnd: (e) => x0.current - (e.changedTouches[0]?.clientX ?? x0.current) > 40 && !flip && toggle2() };
   const go2 = (s) => () => void cx.act({ action: s.action ?? "", block: b.id, values: s.values ?? {}, confirm: s.confirm });
-  const bar5 = h("div", "ra b-row__actions", { hidden: !flip }, ...swipe.map((s) => act(s, s.tone === "bad" ? "bad" : "", cx, void 0, go2(s))));
+  const bar5 = h("div", "ra b-row__actions", { hidden: !flip }, ...swipe2.map((s) => act(s, s.tone === "bad" ? "bad" : "", cx, void 0, go2(s))));
   return h("div", "rw", hooks4, h("div", rc, { ...own3, ...touch }, ...parts2), bar5);
 }
 
@@ -2229,10 +2236,10 @@ function screen({ b, hooks: hooks4 }) {
   const attrs = { ...hooks4, "data-id": String(b.id) };
   const bs = b.blocks ?? [];
   if (!b.focus) return h("div", "scr", attrs, head4, ...kids2(bs));
-  const kept = bs.filter(stays);
-  const at2 = kept.findIndex((x) => x.type === "composer");
-  const cut = at2 < 0 ? kept.length : at2;
-  return h("div", "scr", attrs, ...kids2(kept.slice(0, cut)), h("div", "msgs", null, head4, ...kids2(bs.filter((x) => !stays(x)))), ...kids2(kept.slice(cut)));
+  const kept2 = bs.filter(stays);
+  const at2 = kept2.findIndex((x) => x.type === "composer");
+  const cut = at2 < 0 ? kept2.length : at2;
+  return h("div", "scr", attrs, ...kids2(kept2.slice(0, cut)), h("div", "msgs", null, head4, ...kids2(bs.filter((x) => !stays(x)))), ...kids2(kept2.slice(cut)));
 }
 
 // react/src/kinds/secret.ts
@@ -2271,6 +2278,225 @@ function section({ b, hooks: hooks4 }) {
 // react/src/kinds/sheet.ts
 var sheet = ({ b, hooks: hooks4 }) => h("div", "shb", hooks4, ...kids2(b.blocks));
 
+// react/src/kinds/sidebar.ts
+import { useLayoutEffect as useLayoutEffect7, useRef as useRef15 } from "react";
+import { linkable as linkable9, sideCount, sideIcon, sideTitle } from "./core.js";
+
+// src/sidebar.ts
+var HOVER_IN = 150;
+var HOVER_OUT = 300;
+var FLICK = 0.5;
+var CUT = 33;
+function toggles(root, signal, open2) {
+  for (const g of root.querySelectorAll("button.sdk[aria-controls]")) {
+    const id = g.getAttribute("aria-controls") ?? "";
+    const key3 = `sidebar:${id}`;
+    const flip = () => {
+      const now = g.getAttribute("aria-expanded") !== "true";
+      g.setAttribute("aria-expanded", String(now));
+      root.querySelector(`#${CSS.escape(id)}`)?.toggleAttribute("hidden", !now);
+      if (!open2) return;
+      if (open2.has(key3)) open2.delete(key3);
+      else open2.add(key3);
+    };
+    g.addEventListener("click", flip, { signal });
+  }
+}
+var pullOf = (from, x0, x, wide) => Math.round(Math.min(100, Math.max(0, from + (x - x0) / wide * 100)));
+function swipe(d2, from, signal) {
+  return (e) => {
+    if (e.pointerType === "mouse" || from === 0 === (d2.shown() === "drawer")) return;
+    const [x0, wide] = [e.clientX, d2.panel.getBoundingClientRect().width || 1];
+    let [x1, t1] = [x0, performance.now()];
+    let p = { at: "idle" };
+    const go2 = (ev2) => {
+      const [next, fx] = step(p, ev2, from);
+      p = next;
+      if (p.at === "previewing") {
+        d2.root.style.setProperty("--pull", String(p.c / 100));
+        d2.root.dataset["pull"] = "";
+      }
+      if (fx && fx !== "tap") {
+        p = step(step(p, { on: "answer", ok: true }, from)[0], { on: "settled" }, from)[0];
+        if (Math.abs(fx.send - from) > CUT === (from === 0)) d2.open();
+        else d2.shut();
+      } else if (p.at === "idle" && ev2.on !== "press") d2.back();
+    };
+    const move2 = (m) => {
+      const t = performance.now();
+      const fast = Math.abs(m.clientX - x1) / Math.max(1, t - t1) > FLICK;
+      [x1, t1] = [m.clientX, t];
+      const flung = m.clientX > x0 ? 100 : 0;
+      go2({ on: "move", c: fast ? flung : pullOf(from, x0, m.clientX, wide) });
+    };
+    const drag = new AbortController();
+    const end = (on) => () => {
+      drag.abort();
+      go2({ on });
+    };
+    addEventListener("pointermove", move2, { signal: drag.signal });
+    addEventListener("pointerup", end("release"), { signal: drag.signal });
+    addEventListener("pointercancel", end("cancel"), { signal: drag.signal });
+    signal.addEventListener("abort", () => drag.abort());
+    go2({ on: "press" });
+  };
+}
+function behave(root, key3, store, open2) {
+  const q = (s) => root.querySelector(s);
+  const [panel, menu2, pin] = [q(".sdp"), q(".sdm"), q(".sdpin")];
+  if (!panel || !menu2 || !pin) return () => {
+  };
+  const life = new AbortController();
+  const { signal } = life;
+  const on = (e, type, f) => e?.addEventListener(type, f, { signal });
+  let pinned = store.get(key3) === "1";
+  let shown4 = "rail";
+  let timer;
+  const to = (s) => {
+    clearTimeout(timer);
+    shown4 = s;
+    if (root.dataset["pull"] !== void 0) {
+      root.style.removeProperty("--pull");
+      delete root.dataset["pull"];
+    }
+    root.dataset["side"] = shown4 === "rail" && pinned ? "pinned" : shown4;
+    menu2.setAttribute("aria-expanded", String(shown4 === "drawer"));
+    pin.setAttribute("aria-pressed", String(pinned));
+    pin.setAttribute("aria-label", pinned ? "unpin sidebar" : "pin sidebar");
+  };
+  const focusables = () => Array.from(panel.querySelectorAll("a[href], button")).filter((e) => e.offsetParent !== null);
+  const openDrawer = () => {
+    to("drawer");
+    focusables()[0]?.focus();
+  };
+  const shut = () => {
+    const was = shown4;
+    to("rail");
+    if (was === "drawer") menu2.focus();
+  };
+  const hover = (s, ms) => (e) => {
+    const mouse = !(e instanceof PointerEvent) || e.pointerType === "mouse";
+    const inside = s === "rail" && e instanceof FocusEvent && e.relatedTarget instanceof Node && panel.contains(e.relatedTarget);
+    if (!mouse || inside || pinned || shown4 !== (s === "open" ? "rail" : "open")) return;
+    clearTimeout(timer);
+    timer = setTimeout(() => to(s), ms);
+  };
+  on(menu2, "click", openDrawer);
+  on(q(".sdx"), "click", shut);
+  on(q(".sdscrim"), "click", shut);
+  on(pin, "click", () => {
+    pinned = !pinned;
+    store.put(key3, pinned ? "1" : null);
+    to("rail");
+  });
+  on(panel, "pointerenter", hover("open", HOVER_IN));
+  on(panel, "focusin", hover("open", HOVER_IN));
+  on(panel, "pointerleave", hover("rail", HOVER_OUT));
+  on(panel, "focusout", hover("rail", HOVER_OUT));
+  on(panel, "click", (e) => {
+    if (shown4 === "drawer" && e.target instanceof Element && e.target.closest("a[href]")) shut();
+  });
+  on(root, "keydown", (e) => {
+    if (e.key === "Escape" && shown4 !== "rail") {
+      e.preventDefault();
+      shut();
+    }
+    if (e.key !== "Tab" || shown4 !== "drawer") return;
+    const all = focusables();
+    const [first, last] = [all[0], all[all.length - 1]];
+    const at2 = document.activeElement;
+    if (!(e.shiftKey ? at2 === first || !panel.contains(at2) : at2 === last)) return;
+    e.preventDefault();
+    (e.shiftKey ? last : first)?.focus();
+  });
+  const d2 = { root, panel, shown: () => shown4, open: openDrawer, shut, back: () => to(shown4) };
+  on(q(".sdedge"), "pointerdown", swipe(d2, 0, signal));
+  on(panel, "pointerdown", swipe(d2, 100, signal));
+  toggles(root, signal, open2);
+  to("rail");
+  return () => {
+    life.abort();
+    clearTimeout(timer);
+  };
+}
+
+// react/src/kinds/sidebar.ts
+var shelf = () => {
+  try {
+    return typeof localStorage === "undefined" ? null : localStorage;
+  } catch {
+    return null;
+  }
+};
+var kept = {
+  get: (k) => shelf()?.getItem(k) ?? null,
+  put: (k, v) => {
+    if (v === null) shelf()?.removeItem(k);
+    else shelf()?.setItem(k, v);
+  }
+};
+var badge = (b) => {
+  if (!b) return null;
+  const [shown4, said3] = sideCount(b);
+  return h("span", b.tone === "bad" ? "tag bad" : "tag", null, h("span", "", { "aria-hidden": "true" }, shown4), h("span", "b-sr", null, said3));
+};
+var icon = (l) => {
+  const [g, initials] = sideIcon(l);
+  return h("i", initials ? "sdi av" : "sdi", { "aria-hidden": "true" }, g);
+};
+var link2 = (l, child, cls = "sdk") => h(
+  linkable9(l.href ?? "") ? "a" : "span",
+  cls,
+  { href: linkable9(l.href ?? "") ? l.href ?? void 0 : void 0, "aria-current": l.current ? "page" : void 0 },
+  child ? null : icon(l),
+  h("span", "sdl", { title: l.label }, l.label),
+  badge(l.badge)
+);
+function parent(l, id) {
+  const kids3 = l.children ?? [];
+  const inner = kids3.some((k) => k.current);
+  const open2 = l.open === true || inner;
+  return [
+    h("button", inner ? "sdk in" : "sdk", { key: "b", type: "button", "aria-controls": id, "aria-expanded": String(open2) }, icon(l), h("span", "sdl", { title: l.label }, l.label), badge(l.badge), h("i", "sdc", { "aria-hidden": "true" }, "\u25B8")),
+    h("ul", "sdsub", { key: "u", id, hidden: !open2 || void 0 }, ...kids3.map((k) => h("li", "", null, link2(k, true))))
+  ];
+}
+var button2 = (cls, name, ...text4) => h("button", cls, { type: "button", "aria-label": name }, ...text4.map((t) => h("span", "", null, t)));
+function sidebar({ b, hooks: hooks4 }) {
+  const ref3 = useRef15(null);
+  const id = `sd-${b.id ?? "side"}`;
+  useLayoutEffect7(() => ref3.current ? behave(ref3.current, `sidebar-pin:${b.id ?? "side"}`, kept) : void 0, [b]);
+  const groups = b.groups.flatMap(
+    (g, gi) => g.links.length ? [
+      h(
+        "section",
+        "sdgr",
+        { "aria-labelledby": g.title ? `${id}-t${gi}` : void 0 },
+        g.title ? h("h3", "sdgt", { id: `${id}-t${gi}` }, g.title) : null,
+        h("ul", "", null, ...g.links.map((l, li) => h("li", "", null, ...l.children ? parent(l, `${id}-g${gi}-${li}`) : [link2(l, false)])))
+      )
+    ] : []
+  );
+  const foot2 = b.footer?.length ? h("div", "sdf", null, h("ul", "", null, ...b.footer.map((l) => h("li", "", null, link2(l, false))))) : null;
+  return h(
+    "div",
+    "sd",
+    { ...hooks4, ref: ref3 },
+    h("button", "sdm", { type: "button", "aria-label": "menu", "aria-controls": id, "aria-expanded": "false" }, h("span", "", null, "\u2261")),
+    h("span", "sdn", null, sideTitle(b)),
+    h("div", "sdscrim", { "aria-hidden": "true" }),
+    h("div", "sdedge", { "aria-hidden": "true" }),
+    h(
+      "div",
+      "sdp",
+      { id },
+      h("div", "sdh", null, b.brand ? link2(b.brand, false, "sdk sdb") : null, button2("sdpin", "pin sidebar", "pin", "unpin"), button2("sdx", "close menu", "\xD7")),
+      h("div", "sdg", null, ...groups.length ? groups : [h("p", "sde", null, b.empty ?? "No pages yet")]),
+      foot2
+    )
+  );
+}
+
 // react/src/kinds/stat.ts
 import { useContext as useContext20 } from "react";
 function stat({ b, hooks: hooks4 }) {
@@ -2287,7 +2513,7 @@ function stat({ b, hooks: hooks4 }) {
 }
 
 // react/src/kinds/table.ts
-import { useContext as useContext21, useLayoutEffect as useLayoutEffect7, useReducer as useReducer2, useRef as useRef15 } from "react";
+import { useContext as useContext21, useLayoutEffect as useLayoutEffect8, useReducer as useReducer2, useRef as useRef16 } from "react";
 
 // src/core/table.ts
 var SIGN = { THB: "\u0E3F", USD: "$", EUR: "\u20AC" };
@@ -2741,8 +2967,8 @@ function shows(v) {
   const out2 = b.rows.map((r) => held(v.c, { block: b, rules: grid, grab: r.id, item: r.id })).find(isIds);
   const all = (out2 ? out2.flatMap((id) => b.rows.find((r) => r.id === id) ?? []) : b.rows).map((r) => live2(v, r));
   const hit = (r) => words3.every((w) => cols.some((x) => shown2(x, at(r, x.id)).toLowerCase().includes(w)));
-  const kept = all.filter((r, i) => r.group ? itemsOf(all, i).some(hit) : hit(r));
-  const rows2 = sorted(kept, sort(v), st.sort?.dir);
+  const kept2 = all.filter((r, i) => r.group ? itemsOf(all, i).some(hit) : hit(r));
+  const rows2 = sorted(kept2, sort(v), st.sort?.dir);
   const items = rows2.filter((r) => !r.group);
   for (const s of st.sel) if (!items.some((r) => r.id === s)) st.sel.delete(s);
   const sel = st.sel.size;
@@ -2837,16 +3063,16 @@ var init = (b) => ({
 });
 function table({ b, hooks: hooks4 }) {
   const cx = useContext21(Cx);
-  const live3 = useRef15(cx);
+  const live3 = useRef16(cx);
   live3.current = cx;
-  const keep = useRef15(/* @__PURE__ */ new Map());
-  const wired = useRef15(/* @__PURE__ */ new WeakSet());
-  const box = useRef15(null);
-  const kept = useRef15(null);
+  const keep = useRef16(/* @__PURE__ */ new Map());
+  const wired = useRef16(/* @__PURE__ */ new WeakSet());
+  const box = useRef16(null);
+  const kept2 = useRef16(null);
   const [, draw2] = useReducer2((n) => n + 1, 0);
-  const st = state2(b, kept.current ??= init(b));
+  const st = state2(b, kept2.current ??= init(b));
   const v = { b, c: { act: (a) => live3.current.act(a), held: keep.current }, tap: (t2) => live3.current.tap(t2), st, box, wired: wired.current, draw: draw2 };
-  useLayoutEffect7(() => {
+  useLayoutEffect8(() => {
     if (!st.focus || !st.cur) return;
     st.focus = false;
     cellAt(v, st.cur)?.focus();
@@ -2865,7 +3091,7 @@ function text3({ b, hooks: hooks4 }) {
 }
 
 // react/src/kinds/timeline.ts
-import { useContext as useContext23, useLayoutEffect as useLayoutEffect8, useRef as useRef16, useState as useState14 } from "react";
+import { useContext as useContext23, useLayoutEffect as useLayoutEffect9, useRef as useRef17, useState as useState14 } from "react";
 
 // src/core/kind/timeline.ts
 var MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -3147,11 +3373,11 @@ function rove(root) {
 }
 function timeline2({ b, hooks: hooks4 }) {
   const cx = useContext23(Cx);
-  const live3 = useRef16(cx);
+  const live3 = useRef17(cx);
   live3.current = cx;
-  const keep = useRef16(/* @__PURE__ */ new Map());
-  const done = useRef16(/* @__PURE__ */ new WeakSet());
-  const [root, wrap, grid2] = [useRef16(null), useRef16(null), useRef16(null)];
+  const keep = useRef17(/* @__PURE__ */ new Map());
+  const done = useRef17(/* @__PURE__ */ new WeakSet());
+  const [root, wrap, grid2] = [useRef17(null), useRef17(null), useRef17(null)];
   const [px, setPx] = useState14(null);
   const [f, t] = [day(b.from), day(b.to)];
   const on = b.move != null || b.stretch != null || b.draw != null;
@@ -3159,8 +3385,8 @@ function timeline2({ b, hooks: hooks4 }) {
   const ax = f === null || t === null || t < f || b.tracks.length === 0 ? null : { f, t, n: t - f + 1, z, px, live: on, lane: () => grid2.current?.querySelector(".tmn")?.offsetWidth ?? 1 };
   const k = JSON.stringify([b, px]);
   const wires = [];
-  useLayoutEffect8(() => root.current ? rove(root.current) : void 0, []);
-  useLayoutEffect8(() => {
+  useLayoutEffect9(() => root.current ? rove(root.current) : void 0, []);
+  useLayoutEffect9(() => {
     if (done.current.has(wires)) return;
     done.current.add(wires);
     const c = { act: (a) => live3.current.act(a), tap: (x) => live3.current.tap(x), held: keep.current };
@@ -3219,12 +3445,12 @@ function web({ b, hooks: hooks4 }) {
 }
 
 // react/src/gen/views.ts
-var views3 = { button, card, chips, choice, composer, config, diagram, diff, editor, form, hero, images, import: import_, list: list2, media: media2, message, nav, pages, prose, row: row2, run, scene, screen, secret: secret2, section, sheet, stat, table, text: text3, timeline: timeline2, tool, web };
+var views3 = { button, card, chips, choice, composer, config, diagram, diff, editor, form, hero, images, import: import_, list: list2, media: media2, message, nav, pages, prose, row: row2, run, scene, screen, secret: secret2, section, sheet, sidebar, stat, table, text: text3, timeline: timeline2, tool, web };
 
 // react/src/island.ts
-import { createElement as createElement12, Suspense, useContext as useContext24, useLayoutEffect as useLayoutEffect9, useState as useState16 } from "react";
+import { createElement as createElement12, Suspense, useContext as useContext24, useLayoutEffect as useLayoutEffect10, useState as useState16 } from "react";
 function Mark({ on }) {
-  useLayoutEffect9(() => {
+  useLayoutEffect10(() => {
     on(true);
     return () => on(false);
   }, [on]);
@@ -3324,7 +3550,7 @@ var watch = (on) => {
   return () => m.removeEventListener("change", on);
 };
 function BlocksView(p) {
-  const last = useRef17(void 0);
+  const last = useRef18(void 0);
   const screen2 = useMemo3(() => last.current = share(last.current, p.screen), [p.screen]);
   const { cx, ask } = useCx(p, screen2);
   const dark = useSyncExternalStore(watch, () => matchMedia(DARK).matches, () => false);

@@ -30,7 +30,7 @@ A screen is data: a `screen` or `sheet` block of typed blocks, checked, then dra
 - [`editor`](kinds/editor.md): A text editor and its errors.
 - [`scene`](kinds/scene.md): Lanes at work.
 - [`diagram`](kinds/diagram.md): A diagram from its source, with counts and its nodes.
-- [`composer`](kinds/composer.md): A message box: its send action, its chips and the messages queued.
+- [`composer`](kinds/composer.md): A message box: its send action, its chips and the messages queued; each send, queue or steer carries `values.nonce`, a fresh random id a retry repeats.
 - [`lines`](kinds/lines.md): Repeating rows of fields with add and remove, running totals and a balance check.
 - [`prose`](kinds/prose.md): Text as a tree of headings, paragraphs, lists, quotes and code.
 - [`hero`](kinds/hero.md): A page's opening: a title, a line, a picture and its actions.
@@ -46,6 +46,7 @@ A screen is data: a `screen` or `sheet` block of typed blocks, checked, then dra
 - [`import`](kinds/import.md): A spreadsheet import the app's server reads: upload a file, check the column match and the row errors, confirm one action.
 - [`message`](kinds/message.md): One message of a conversation: who said it, what was said as blocks, and its attachments.
 - [`tool`](kinds/tool.md): One tool call: its name, a one-line summary, its state, and a body shown when it is opened.
+- [`sidebar`](kinds/sidebar.md): A side navigation: an icon rail that opens on hover or pin, a drawer on a phone.
 
 ## More
 

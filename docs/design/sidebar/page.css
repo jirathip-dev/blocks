@@ -1,0 +1,21 @@
+/* The host page for these previews only, on #57's default look. */
+body{margin:0;color:var(--fg);font:13px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+.b-sidemain main{max-width:880px;margin:0 auto;padding:var(--s4)}
+.top{background:var(--card);border:1px solid var(--edge);padding:0 var(--s2)}
+.top .tabh{margin:0;min-height:var(--hit)}
+.sh{margin:var(--s4) 0 var(--s1)}
+.list .row{background:var(--card);padding:var(--s1) var(--s3)}
+.rm{display:flex;flex-direction:column;flex:1;min-width:0}
+.rs{color:var(--mute);font-size:var(--fs-meta)}
+.rt{color:var(--fg);text-decoration:none}
+.ptr{position:fixed;z-index:9;width:18px;height:18px;pointer-events:none}
+@media (max-width:599px){.b-sidemain main{padding:var(--s2)}.ptr{display:none}.wide{display:none}}
+.sheet{max-width:1280px;margin:0 auto;padding:var(--s4)}
+h2{font-size:var(--fs);font-weight:600;color:var(--mute);margin:calc(2 * var(--dot-gap)) 0 var(--s1)}
+.note{color:var(--mute);font-size:var(--fs-meta);margin:var(--s1) 0 var(--s2);max-width:72ch}
+.cases{display:flex;flex-wrap:wrap;gap:var(--s4);align-items:flex-start}
+.case{display:flex;flex-direction:column;gap:var(--s1)}
+.case small{color:var(--mute);font-size:var(--fs-meta)}
+.case .b-side{position:relative;height:var(--h,560px);transform:none;transition:none}
+@media (max-width:599px){.sheet{padding:var(--s2)}.case .b-side[data-side=open],.case .b-side[data-side=pinned]{width:calc(14 * var(--s4))}}
+.touch{position:fixed;z-index:9;width:var(--hit);height:var(--hit);border:var(--ring) solid var(--fg);border-radius:50%;background:var(--scrim)}
