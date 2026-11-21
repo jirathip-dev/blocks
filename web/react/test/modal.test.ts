@@ -146,6 +146,7 @@ for (const adapter of ["react", "html"]) {
     const r = await box(page);
     deepStrictEqual([r.x, r.width, r.bottom], [0, 390, 844]);
     await drag(page, "dialog.md .mdt", 0, -200);
+    strictEqual(await page.evaluate(() => String(getSelection())), "");
     deepStrictEqual(await box(page), r);
     await drag(page, "dialog.md .mdk", 0, 20);
     strictEqual(await page.evaluate(() => document.querySelector("dialog.md").open), true);

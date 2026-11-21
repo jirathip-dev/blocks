@@ -2159,6 +2159,7 @@ function framed(d2, b, o) {
   keys(s);
   addEventListener("resize", resize);
   if (v === "tool") document.addEventListener("keydown", f6);
+  d2.dataset["live"] = "";
   if (!d2.open) {
     try {
       if (v === "tool") d2.show();

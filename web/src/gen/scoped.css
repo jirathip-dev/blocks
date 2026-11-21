@@ -529,7 +529,7 @@ dialog.md{position:fixed;z-index:6;inset:auto;left:var(--md-half);top:var(--md-h
 dialog.md::backdrop{background:var(--scrim)}
 dialog.md.tool{width:var(--tw,var(--md-tool-w));height:var(--th,var(--md-tool-h));min-width:var(--md-min-w);min-height:var(--md-min-h);max-height:none}
 dialog.md.alert{width:min(var(--md-alert),calc(100% - 2 * var(--s4)));transform:translate(var(--md-mid),var(--md-mid))}
-.mdh{display:flex;align-items:center;gap:var(--s2);min-height:var(--hit);padding:0 var(--s1) 0 var(--s3);border-bottom:1px solid var(--line);user-select:none}
+.mdh{display:flex;align-items:center;gap:var(--s2);min-height:var(--hit);padding:0 var(--s1) 0 var(--s3);border-bottom:1px solid var(--line);user-select:none;-webkit-user-select:none}
 .md.dlg .mdh,.md.tool .mdh{cursor:grab}
 .md.alert .mdh{border-bottom:0;cursor:default}
 .mdt{flex:1;min-width:0;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -551,12 +551,13 @@ dialog.md.alert{width:min(var(--md-alert),calc(100% - 2 * var(--s4)));transform:
 dialog.md.dlg,dialog.md.tool{left:0;right:0;top:auto;bottom:0;width:auto;height:auto;min-width:0;min-height:0;max-height:calc(100% - 2 * var(--hit));transform:translateY(var(--sy,0px));border-width:1px 0 0;border-radius:var(--radius) var(--radius) 0 0}
 dialog.md.full{top:0;max-height:none;border-top:0}
 .md.dlg .mdh,.md.tool .mdh{cursor:default}
-.mdk{display:flex;justify-content:center;align-items:center;height:calc(var(--hit) / 2);touch-action:none;cursor:grab}
+.mdk{display:flex;justify-content:center;align-items:center;height:calc(var(--hit) / 2);touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
 .mdk::before{content:"";width:var(--md-grip);height:var(--md-bar);border-radius:var(--ring);background:var(--edge)}
 .mdg,.mdz,.mde,.mdh .mdn,.mdp{display:none}
 dialog.md.alert{width:min(var(--md-alert-phone),calc(100% - 2 * var(--s4)))}
 }
 @media (prefers-reduced-motion:no-preference){dialog.md{transition:transform calc(var(--enter) * var(--motion,1)) var(--ease)}dialog.md[data-phase=pressed],dialog.md[data-phase=previewing]{transition:none}}
+dialog.md:not([data-live]){position:relative;z-index:auto;inset:auto;transform:none;margin:var(--s2) 0}
 .nav{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s4);padding:var(--s2)}
 .nav .brand{margin-right:auto;font-weight:700}
 .nav a[aria-current=page]{color:var(--fg)}

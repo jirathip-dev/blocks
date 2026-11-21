@@ -213,6 +213,7 @@ export function framed(d: HTMLDialogElement, b: Modal, o: { done: Done; store?: 
   keys(s);
   addEventListener("resize", resize);
   if (v === "tool") document.addEventListener("keydown", f6);
+  d.dataset["live"] = "";
   if (!d.open) {
     try {
       if (v === "tool") d.show();
