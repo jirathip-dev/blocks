@@ -1,0 +1,13 @@
+{
+  "markdown": "> said\n> twice",
+  "parts": [
+    {
+      "part": "quote",
+      "spans": [
+        {
+          "text": "said twice"
+        }
+      ]
+    }
+  ]
+}

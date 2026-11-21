@@ -94,6 +94,8 @@ extension Block {
         case .editor(let b): ("editor", b.id, nil, Source(action: b.action))
         case .composer(let b): ("composer", b.id, nil, Source(action: b.action, values: b.values))
         case .lines(let b): ("lines", b.id, nil, Source(action: b.action))
+        case .message(let b): ("message", b.id, b.role.rawValue, Source())
+        case .tool(let b): ("tool", b.id, b.state.rawValue, Source())
         case .appBlock(let b):
             (
                 b.type, b.id, nil,
@@ -103,7 +105,7 @@ extension Block {
         }
     }
 
-    private static let roles = ["section": "region", "form": "form", "config": "form", "nav": "navigation", "chart": "figure", "toast": "status"]
+    private static let roles = ["section": "region", "form": "form", "config": "form", "nav": "navigation", "chart": "figure", "toast": "status", "message": "article"]
     private static let names = ["label", "title", "header", "question", "alt", "file", "command", "placeholder", "name"]
 
     /// The accessible role and name every renderer gives this block's root, as `tree::a11y` in Rust.
@@ -150,6 +152,8 @@ extension Block {
         case .pages(let b): [b.title]
         case .timeline(let b): [b.title]
         case .import(let b): [b.title]
+        case .message(let b): [b.name]
+        case .tool(let b): [b.name]
         case .appBlock(let b): Self.names.map { b.string($0) }
         default: []
         }

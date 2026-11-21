@@ -360,14 +360,14 @@ paths = ["Cargo.toml", "crates/*/Cargo.toml", "crates/*/src/**"]
 reason = "the harness draws on the CPU: no GPU crate here"
 
 [[ban]]
-pattern = "fetch("
+pattern = "structuredClone"
 paths = ["web/src/patch.ts"]
-reason = "the patcher draws what it is handed; the stream does the network"
+reason = "the patcher draws; the model's copy and its ops are core/apply.ts"
 
 [[ban]]
 pattern = "fetch("
-paths = ["web/src/render/**"]
-reason = "a renderer draws one block from what it is handed; the shell and the stream do the network"
+paths = ["web/src/patch.ts", "web/src/render/**"]
+reason = "the patcher and a renderer draw what they are handed; the shell and the stream do the network"
 
 [[ban]]
 pattern = "gen/kinds.ts"

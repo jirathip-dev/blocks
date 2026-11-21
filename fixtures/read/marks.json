@@ -1,0 +1,45 @@
+{
+  "markdown": "a **bold** and *it* and `co*de*` and __b__ and _i_",
+  "parts": [
+    {
+      "part": "para",
+      "spans": [
+        {
+          "text": "a "
+        },
+        {
+          "text": "bold",
+          "bold": true
+        },
+        {
+          "text": " and "
+        },
+        {
+          "text": "it",
+          "italic": true
+        },
+        {
+          "text": " and "
+        },
+        {
+          "text": "co*de*",
+          "code": true
+        },
+        {
+          "text": " and "
+        },
+        {
+          "text": "b",
+          "bold": true
+        },
+        {
+          "text": " and "
+        },
+        {
+          "text": "i",
+          "italic": true
+        }
+      ]
+    }
+  ]
+}

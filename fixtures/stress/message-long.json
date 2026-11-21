@@ -1,0 +1,53 @@
+{
+  "avatar": "media/sample.svg",
+  "blocks": [
+    {
+      "id": "chat-a",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it"
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+      "id": "chat-read",
+      "name": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+      "state": "done",
+      "summary": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    }
+  ],
+  "files": [
+    {
+      "name": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+      "tap": {
+        "url": "media/page.svg"
+      }
+    },
+    {
+      "name": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+      "src": "media/sample.svg",
+      "tap": {
+        "url": "media/sample.svg"
+      }
+    }
+  ],
+  "id": "chat",
+  "name": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+  "role": "agent",
+  "time": "14:32",
+  "type": "message"
+}

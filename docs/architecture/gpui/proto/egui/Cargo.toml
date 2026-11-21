@@ -1,0 +1,24 @@
+[package]
+name = "blocks-egui-proto"
+description = "Spike #299: blocks-desktop in an eframe window, the egui side of the GPUI comparison"
+version = "0.0.0"
+edition = "2021"
+license = "MIT"
+publish = false
+
+[workspace]
+
+[[bin]]
+name = "blocks-egui"
+path = "src/main.rs"
+
+[dependencies]
+blocks = { path = "../../../../../crates/blocks" }
+blocks-desktop = { path = "../../../../../crates/blocks-desktop" }
+eframe = "0.37"
+png = "0.18"
+serde_json = "1"
+
+[profile.release]
+lto = "thin"
+codegen-units = 1

@@ -4,7 +4,7 @@ use serde::Serialize;
 use serde_json::{Map, Value};
 
 use crate::gesture::Word;
-use crate::kind::{Block, Fallback, Fields, Screen, Steps, Table, Tap};
+use crate::kind::{linkable, Block, Fallback, Fields, Screen, Steps, Table, Tap};
 
 /// What makes a screen unfit to send: a server checks its own before it serves it.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
@@ -57,16 +57,6 @@ pub struct Built(Value);
 const LISTS: [&str; 3] = ["blocks", "rows", "buttons"];
 const DRAWN: [&str; 3] = ["row", "text", "island"];
 const LINKS: [&str; 5] = ["url", "href", "link", "open", "src"];
-
-pub(crate) fn linkable(url: &str) -> bool {
-    let head = url.split(['/', '?', '#']).next().unwrap_or_default();
-    head.split_once(':').is_none_or(|(scheme, _)| {
-        let bare = scheme.chars().filter(|c| *c > ' ' && !c.is_control());
-        ["http", "https", "mailto"]
-            .iter()
-            .any(|s| bare.clone().map(|c| c.to_ascii_lowercase()).eq(s.chars()))
-    })
-}
 
 fn placed(o: &Fields) -> impl Iterator<Item = (String, &Value)> {
     let rows = kind(o) != "table";

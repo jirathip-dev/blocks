@@ -5,7 +5,9 @@ import { type Editing, editor } from "./arrange.ts";
 import { behave } from "./behave.ts";
 import type { Held } from "./gesture.ts";
 import { choose, type Pair, type Scale } from "./core/look.ts";
-import { apply, patcher } from "./patch.ts";
+import { apply } from "./core/apply.ts";
+import { patcher } from "./patch.ts";
+import { grow } from "./render/kind/prose.ts";
 import { type Blk, blks, isBlk } from "./core/tree.ts";
 import { linkable } from "./render/act.ts";
 import { render } from "./render/block.ts";
@@ -19,11 +21,9 @@ import { toasts } from "./toasts.ts";
 import { plain, type Theme, tiles } from "./theme.ts";
 
 export type { Editing } from "./arrange.ts";
-export { behave } from "./behave.ts";
 export { evaluate, start, view } from "./core/eval.ts";
 export { dump } from "./dump.ts";
-export { settle } from "./motion.ts";
-export { apply, patcher } from "./patch.ts";
+export { apply, behave, grow, patcher, settle };
 export { kids, render } from "./render/block.ts";
 export { el, h } from "./render/dom.ts";
 export type { OnFile, Picked } from "./core/field/files.ts";
@@ -247,7 +247,7 @@ function draw(o: Mount, store: Store, theme: Theme, wear: (name: string | null, 
     const was = store.get(kept);
     if (!v.model && was) v.model = JSON.parse(was);
     paint(v);
-    const p = patcher({ root: v.body, model: () => v.model ?? { type: "screen" }, draw: (b) => render(b, ctx(v)), saved: v.sync });
+    const p = patcher({ root: v.body, model: () => v.model ?? { type: "screen" }, draw: (b) => render(b, ctx(v)), grow, saved: v.sync });
     const s = live(v.source);
     s.open(v.path, (screen, ops) => {
       v.model = screen;
@@ -450,7 +450,7 @@ export function adopt(o: { theme?: Theme; store?: Store; blocks?: AppBlocks } = 
     const s = e.target instanceof Element ? e.target.closest<HTMLElement>("[data-sheet]") : null;
     if (s) tap({ sheet: s.dataset["sheet"] });
   });
-  const p = patcher({ root, model: () => model, draw: (b) => render(b, ctx) });
+  const p = patcher({ root, model: () => model, draw: (b) => render(b, ctx), grow });
   behave(root, () => model);
   const take = (ops: Op[]) => {
     model = apply(model, ops) ?? model;

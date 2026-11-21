@@ -4,7 +4,7 @@ pub(super) const RULE: Rule = Rule {
     id: "lint/label-long",
     severity: Severity::Error,
     since: 1,
-    what: "a button, act or chip label over 30 characters, or a badge over 20",
+    what: "a button, act or chip label, or a message's or tool's name, over 30 characters, or a badge over 20",
     fix: "Shorten it to a verb and its object; move the rest to a `confirm` or a `text` block.",
 };
 
@@ -14,6 +14,7 @@ pub(super) fn check(cx: &Cx, out: &mut Vec<Seen>) {
         match b.kind {
             "button" => labels.extend(text(b.o, "label")),
             "chips" => labels.extend(list(b.o, "options").filter_map(|o| text(o, "label"))),
+            "message" | "tool" => labels.extend(text(b.o, "name")),
             _ => {}
         }
         out.extend(

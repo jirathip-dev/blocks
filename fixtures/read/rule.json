@@ -1,0 +1,27 @@
+{
+  "markdown": "one\n\n---\n* * *\ntwo",
+  "parts": [
+    {
+      "part": "para",
+      "spans": [
+        {
+          "text": "one"
+        }
+      ]
+    },
+    {
+      "part": "rule"
+    },
+    {
+      "part": "rule"
+    },
+    {
+      "part": "para",
+      "spans": [
+        {
+          "text": "two"
+        }
+      ]
+    }
+  ]
+}

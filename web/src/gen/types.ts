@@ -16,11 +16,13 @@ export type Answer = { close?: boolean | null; open?: string | null; ops?: Op[] 
 
 export type AppBlock = { fallback?: Fallback | null; id?: string | null; type: string };
 
+export type Attachment = { name: string; src?: string | null; tap: Tap };
+
 export type Band = { blocks?: Block[] | null; header?: string | null; id: string; rows?: SceneRow[] | null; type: string };
 
 export type Bar = { label: string; sub?: string | null; tone?: Tone | null; value: number };
 
-export type Block = ({ type: "screen" } & Screen) | ({ type: "sheet" } & Sheet) | ({ type: "section" } & Section) | ({ type: "list" } & List) | ({ type: "row" } & Row) | ({ type: "card" } & Card) | ({ type: "choice" } & Choice) | ({ type: "form" } & Form) | ({ type: "config" } & Form) | ({ type: "secret" } & Secret) | ({ type: "run" } & Run) | ({ type: "button" } & Button) | ({ type: "chips" } & Chips) | ({ type: "stat" } & Stat) | ({ type: "text" } & Text) | ({ type: "images" } & Images) | ({ type: "web" } & Web) | ({ type: "diff" } & Diff) | ({ type: "editor" } & Editor) | ({ type: "scene" } & Scene) | ({ type: "diagram" } & Diagram) | ({ type: "composer" } & Composer) | ({ type: "lines" } & Lines) | ({ type: "prose" } & Prose) | ({ type: "hero" } & Hero) | ({ type: "media" } & Media) | ({ type: "nav" } & Nav) | ({ type: "island" } & Island) | ({ type: "table" } & Table) | ({ type: "steps" } & Steps) | ({ type: "chart" } & Chart) | ({ type: "toast" } & Toast) | ({ type: "pages" } & Pages) | ({ type: "timeline" } & Timeline) | ({ type: "import" } & Import) | (AppBlock & { [key: string]: unknown });
+export type Block = ({ type: "screen" } & Screen) | ({ type: "sheet" } & Sheet) | ({ type: "section" } & Section) | ({ type: "list" } & List) | ({ type: "row" } & Row) | ({ type: "card" } & Card) | ({ type: "choice" } & Choice) | ({ type: "form" } & Form) | ({ type: "config" } & Form) | ({ type: "secret" } & Secret) | ({ type: "run" } & Run) | ({ type: "button" } & Button) | ({ type: "chips" } & Chips) | ({ type: "stat" } & Stat) | ({ type: "text" } & Text) | ({ type: "images" } & Images) | ({ type: "web" } & Web) | ({ type: "diff" } & Diff) | ({ type: "editor" } & Editor) | ({ type: "scene" } & Scene) | ({ type: "diagram" } & Diagram) | ({ type: "composer" } & Composer) | ({ type: "lines" } & Lines) | ({ type: "prose" } & Prose) | ({ type: "hero" } & Hero) | ({ type: "media" } & Media) | ({ type: "nav" } & Nav) | ({ type: "island" } & Island) | ({ type: "table" } & Table) | ({ type: "steps" } & Steps) | ({ type: "chart" } & Chart) | ({ type: "toast" } & Toast) | ({ type: "pages" } & Pages) | ({ type: "timeline" } & Timeline) | ({ type: "import" } & Import) | ({ type: "message" } & Message) | ({ type: "tool" } & Tool) | (AppBlock & { [key: string]: unknown });
 
 export type Bound = { get: string };
 
@@ -178,6 +180,8 @@ export type Match = { pattern: Pattern; value: Expr };
 
 export type Media = { alt: string; caption?: string | null; draw?: Gesture | null; height: number; id?: string | null; marks?: Mark[] | null; move?: Gesture | null; poster?: string | null; remove?: Gesture | null; show?: Expr | null; src: string; stretch?: Gesture | null; tools?: MarkKind[] | null; video?: boolean | null; width: number };
 
+export type Message = { avatar?: string | null; blocks?: Block[] | null; files?: Attachment[] | null; id?: string | null; name: string; role: Role; show?: Expr | null; time?: string | null };
+
 export type More = string | Page;
 
 export type Nav = { brand?: NavLink | null; id?: string | null; links: NavLink[]; show?: Expr | null };
@@ -190,7 +194,7 @@ export type Nodes = Node[] | Record<string, Node>;
 
 export type OldFrame = { ops: Op[]; seq: number };
 
-export type Op = { op: "merge"; fields: Record<string, unknown>; id: string } | { op: "insert"; after?: string | null; before?: string | null; block: Child; into: string } | { op: "move"; before?: string | null; id: string; into: string } | { op: "remove"; id: string } | { op: "replace"; block: Block; id: string } | { op: "badge"; count: number } | { op: "dot"; on: boolean } | { op: "screen"; screen: Block };
+export type Op = { op: "merge"; fields: Record<string, unknown>; id: string } | { op: "insert"; after?: string | null; before?: string | null; block: Child; into: string } | { op: "move"; before?: string | null; id: string; into: string } | { op: "remove"; id: string } | { op: "replace"; block: Block; id: string } | { op: "append"; id: string; keep?: number | null; parts?: Part[] | null; text?: string | null } | { op: "badge"; count: number } | { op: "dot"; on: boolean } | { op: "screen"; screen: Block };
 
 export type Other = { for?: string | null; placeholder?: string | null };
 
@@ -216,11 +220,13 @@ export type Plan = { out: string; runs: PlanRun[] };
 
 export type PlanRun = { css: string[]; kinds: string[]; name: string; probes: boolean; screen: string; scripts: string[]; size: string; steps: Step[] };
 
-export type Prose = { id?: string | null; parts: Part[]; show?: Expr | null };
+export type Prose = { id?: string | null; parts: Part[]; show?: Expr | null; streaming?: boolean | null };
 
 export type Queued = { q: number; text: string };
 
 export type Report = { dropped: string[]; sent: Action[]; shots: string[]; timings: Timings };
+
+export type Role = "agent" | "owner" | "system";
 
 export type Round = { blocks?: Block[] | null; id: string; lane?: RoundLane | null; links?: Link[] | null; name: string; since?: string | null; state: LaneState; summary?: string | null; tap?: Tap | null };
 
@@ -332,6 +338,10 @@ export type Tone = "ok" | "warn" | "bad" | "info" | "mute" | "accent" | "working
 
 export type Toned = string | Label;
 
+export type Tool = { body?: string | null; id?: string | null; name: string; show?: Expr | null; state: ToolState; summary?: string | null };
+
+export type ToolState = "running" | "done" | "failed";
+
 export type Total = "sum" | "avg" | "count";
 
 export type TreeDrawn = "native" | "fallback" | "hidden";
@@ -352,4 +362,4 @@ export type Why = "evicted" | "unpaired" | "handover";
 
 export type Working = { since: string };
 
-export type Kind = "screen" | "sheet" | "section" | "list" | "row" | "card" | "choice" | "form" | "config" | "secret" | "run" | "button" | "chips" | "stat" | "text" | "images" | "web" | "diff" | "editor" | "scene" | "diagram" | "composer" | "lines" | "prose" | "hero" | "media" | "nav" | "island" | "table" | "steps" | "chart" | "toast" | "pages" | "timeline" | "import";
+export type Kind = "screen" | "sheet" | "section" | "list" | "row" | "card" | "choice" | "form" | "config" | "secret" | "run" | "button" | "chips" | "stat" | "text" | "images" | "web" | "diff" | "editor" | "scene" | "diagram" | "composer" | "lines" | "prose" | "hero" | "media" | "nav" | "island" | "table" | "steps" | "chart" | "toast" | "pages" | "timeline" | "import" | "message" | "tool";

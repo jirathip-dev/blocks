@@ -1,0 +1,13 @@
+{
+  "markdown": "an **open mark and `code",
+  "parts": [
+    {
+      "part": "para",
+      "spans": [
+        {
+          "text": "an **open mark and `code"
+        }
+      ]
+    }
+  ]
+}

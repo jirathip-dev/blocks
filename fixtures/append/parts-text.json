@@ -1,0 +1,48 @@
+{
+  "why": "parts are added, then text goes on the last of them",
+  "parts": [
+    {
+      "part": "para",
+      "spans": [
+        {
+          "text": "one"
+        }
+      ]
+    }
+  ],
+  "op": {
+    "op": "append",
+    "id": "p",
+    "parts": [
+      {
+        "part": "heading",
+        "level": 2,
+        "spans": [
+          {
+            "text": "Tw"
+          }
+        ]
+      }
+    ],
+    "text": "o"
+  },
+  "want": [
+    {
+      "part": "para",
+      "spans": [
+        {
+          "text": "one"
+        }
+      ]
+    },
+    {
+      "part": "heading",
+      "level": 2,
+      "spans": [
+        {
+          "text": "Two"
+        }
+      ]
+    }
+  ]
+}

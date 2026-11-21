@@ -1,0 +1,132 @@
+{
+  "type": "screen",
+  "id": "t",
+  "title": "Thread",
+  "blocks": [
+    {
+      "type": "section",
+      "id": "log",
+      "blocks": [
+        {
+          "type": "message",
+          "id": "t5",
+          "role": "system",
+          "name": "drover",
+          "blocks": [
+            {
+              "type": "prose",
+              "id": "t5-a",
+              "parts": [
+                {
+                  "part": "para",
+                  "spans": [
+                    {
+                      "text": "Scout picked up #296."
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "message",
+          "id": "t6",
+          "role": "owner",
+          "name": "Mira",
+          "avatar": "/media/sample.svg",
+          "blocks": [
+            {
+              "type": "prose",
+              "id": "t6-a",
+              "parts": [
+                {
+                  "part": "para",
+                  "spans": [
+                    {
+                      "text": "Can you read "
+                    },
+                    {
+                      "text": "patch.rs",
+                      "code": true
+                    },
+                    {
+                      "text": " and run the tests?"
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "files": [
+            {
+              "name": "shot.png",
+              "src": "/media/sample.svg",
+              "tap": {
+                "url": "/files/10"
+              }
+            },
+            {
+              "name": "plan-for-the-message-kind-and-streaming.pdf",
+              "tap": {
+                "url": "/files/9"
+              }
+            }
+          ]
+        },
+        {
+          "type": "message",
+          "id": "t7",
+          "role": "agent",
+          "name": "Scout",
+          "blocks": [
+            {
+              "type": "prose",
+              "id": "t7-a",
+              "parts": [
+                {
+                  "part": "para",
+                  "spans": [
+                    {
+                      "text": "Reading both files."
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "tool",
+              "id": "t7-b",
+              "name": "Read",
+              "state": "done",
+              "summary": "patch.rs, 238 lines",
+              "body": "use std::fmt;\n\nuse serde::Serialize;"
+            },
+            {
+              "type": "prose",
+              "id": "t7-c",
+              "parts": [
+                {
+                  "part": "para",
+                  "spans": [
+                    {
+                      "text": "The patcher redraws a block on any merge"
+                    }
+                  ]
+                }
+              ],
+              "streaming": true
+            },
+            {
+              "type": "tool",
+              "id": "t7-d",
+              "name": "Test",
+              "state": "running",
+              "summary": "cargo test -p blocks"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

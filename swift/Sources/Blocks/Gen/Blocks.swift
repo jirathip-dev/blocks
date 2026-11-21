@@ -65,6 +65,12 @@ public struct AppBlock: Codable, Equatable, Sendable {
     public var type: String
 }
 
+public struct Attachment: Codable, Equatable, Sendable {
+    public var name: String
+    public var src: String?
+    public var tap: Tap
+}
+
 public struct Band: Codable, Equatable, Sendable {
     public var blocks: [Block]?
     public var header: String?
@@ -116,9 +122,11 @@ public enum Block: Codable, Equatable, Sendable {
     case pages(Pages)
     case timeline(Timeline)
     case `import`(Import)
+    case message(Message)
+    case tool(Tool)
     case appBlock(JSONValue)
 
-    public static let tags: Set<String> = ["screen", "sheet", "section", "list", "row", "card", "choice", "form", "config", "secret", "run", "button", "chips", "stat", "text", "images", "web", "diff", "editor", "scene", "diagram", "composer", "lines", "prose", "hero", "media", "nav", "island", "table", "steps", "chart", "toast", "pages", "timeline", "import"]
+    public static let tags: Set<String> = ["screen", "sheet", "section", "list", "row", "card", "choice", "form", "config", "secret", "run", "button", "chips", "stat", "text", "images", "web", "diff", "editor", "scene", "diagram", "composer", "lines", "prose", "hero", "media", "nav", "island", "table", "steps", "chart", "toast", "pages", "timeline", "import", "message", "tool"]
 
     private enum Tag: String, CodingKey { case tag = "type" }
 
@@ -159,6 +167,8 @@ public enum Block: Codable, Equatable, Sendable {
         case "pages": self = try (try? Pages(from: decoder)).map(Self.pages) ?? .appBlock(JSONValue(from: decoder))
         case "timeline": self = try (try? Timeline(from: decoder)).map(Self.timeline) ?? .appBlock(JSONValue(from: decoder))
         case "import": self = try (try? Import(from: decoder)).map(Self.`import`) ?? .appBlock(JSONValue(from: decoder))
+        case "message": self = try (try? Message(from: decoder)).map(Self.message) ?? .appBlock(JSONValue(from: decoder))
+        case "tool": self = try (try? Tool(from: decoder)).map(Self.tool) ?? .appBlock(JSONValue(from: decoder))
         default: self = .appBlock(try JSONValue(from: decoder))
         }
     }
@@ -200,6 +210,8 @@ public enum Block: Codable, Equatable, Sendable {
         case .pages(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("pages", forKey: .tag)
         case .timeline(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("timeline", forKey: .tag)
         case .`import`(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("import", forKey: .tag)
+        case .message(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("message", forKey: .tag)
+        case .tool(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("tool", forKey: .tag)
         case .appBlock(let v): try v.encode(to: encoder)
         }
     }
@@ -1024,6 +1036,17 @@ public struct Media: Codable, Equatable, Sendable {
     public var width: UInt32
 }
 
+public struct Message: Codable, Equatable, Sendable {
+    public var avatar: String?
+    public var blocks: [Block]?
+    public var files: [Attachment]?
+    public var id: String?
+    public var name: String
+    public var role: Role
+    public var show: Expr?
+    public var time: String?
+}
+
 public enum More: Codable, Equatable, Sendable {
     case string(String)
     case page(Page)
@@ -1111,6 +1134,13 @@ public struct OpReplace: Codable, Equatable, Sendable {
     public var id: String
 }
 
+public struct OpAppend: Codable, Equatable, Sendable {
+    public var id: String
+    public var keep: Int?
+    public var parts: [Part]?
+    public var text: String?
+}
+
 public struct OpBadge: Codable, Equatable, Sendable {
     public var count: UInt64
 }
@@ -1129,6 +1159,7 @@ public enum Op: Codable, Equatable, Sendable {
     case move(OpMove)
     case remove(OpRemove)
     case replace(OpReplace)
+    case append(OpAppend)
     case badge(OpBadge)
     case dot(OpDot)
     case screen(OpScreen)
@@ -1143,6 +1174,7 @@ public enum Op: Codable, Equatable, Sendable {
         case "move": self = .move(try OpMove(from: decoder))
         case "remove": self = .remove(try OpRemove(from: decoder))
         case "replace": self = .replace(try OpReplace(from: decoder))
+        case "append": self = .append(try OpAppend(from: decoder))
         case "badge": self = .badge(try OpBadge(from: decoder))
         case "dot": self = .dot(try OpDot(from: decoder))
         case "screen": self = .screen(try OpScreen(from: decoder))
@@ -1157,6 +1189,7 @@ public enum Op: Codable, Equatable, Sendable {
         case .move(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("move", forKey: .tag)
         case .remove(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("remove", forKey: .tag)
         case .replace(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("replace", forKey: .tag)
+        case .append(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("append", forKey: .tag)
         case .badge(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("badge", forKey: .tag)
         case .dot(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("dot", forKey: .tag)
         case .screen(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("screen", forKey: .tag)
@@ -1329,6 +1362,7 @@ public struct Prose: Codable, Equatable, Sendable {
     public var id: String?
     public var parts: [Part]
     public var show: Expr?
+    public var streaming: Bool?
 }
 
 public struct Queued: Codable, Equatable, Sendable {
@@ -1341,6 +1375,15 @@ public struct Report: Codable, Equatable, Sendable {
     public var sent: [Action]
     public var shots: [String]
     public var timings: Timings
+}
+
+public struct Role: RawRepresentable, Hashable, Codable, Equatable, Sendable {
+    public let rawValue: String
+    public init(rawValue: String) { self.rawValue = rawValue }
+    public static let agent = Self(rawValue: "agent")
+    public static let owner = Self(rawValue: "owner")
+    public static let system = Self(rawValue: "system")
+    public static let all: [Self] = [.agent, .owner, .system]
 }
 
 public struct Round: Codable, Equatable, Sendable {
@@ -1931,6 +1974,24 @@ public enum Toned: Codable, Equatable, Sendable {
         case .label(let v): try v.encode(to: encoder)
         }
     }
+}
+
+public struct Tool: Codable, Equatable, Sendable {
+    public var body: String?
+    public var id: String?
+    public var name: String
+    public var show: Expr?
+    public var state: ToolState
+    public var summary: String?
+}
+
+public struct ToolState: RawRepresentable, Hashable, Codable, Equatable, Sendable {
+    public let rawValue: String
+    public init(rawValue: String) { self.rawValue = rawValue }
+    public static let running = Self(rawValue: "running")
+    public static let done = Self(rawValue: "done")
+    public static let failed = Self(rawValue: "failed")
+    public static let all: [Self] = [.running, .done, .failed]
 }
 
 public struct Total: RawRepresentable, Hashable, Codable, Equatable, Sendable {

@@ -123,6 +123,48 @@ final class ApplyTests: XCTestCase {
         }
     }
 
+    func testAppendGrowsAProseBlockAsEachAppendFixtureSays() throws {
+        let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent().appendingPathComponent("../../..")
+        let dir = root.appendingPathComponent("fixtures/append")
+        let names = try FileManager.default.contentsOfDirectory(atPath: dir.path)
+            .filter { $0.hasSuffix(".json") && !$0.hasPrefix("thread.") }.sorted()
+        XCTAssertGreaterThanOrEqual(names.count, 10)
+        for name in names {
+            let c = try JSONDecoder().decode(JSONValue.self, from: Data(contentsOf: dir.appendingPathComponent(name)))
+            let prose = JSONValue.object(["type": .string("prose"), "id": .string("p"), "parts": c["parts"] ?? .array([])])
+            let start = try JSONValue.object(["type": .string("screen"), "id": .string("s"), "blocks": .array([prose])]).decode(Block.self)
+            var screen = start
+            do {
+                try screen.apply([try c["op"].map { try $0.decode(Op.self) } ?? .unknown])
+                XCTAssertEqual(try JSONValue(screen).list("blocks").first?["parts"], c["want"], name)
+            } catch {
+                XCTAssertEqual(c["want"], .null, "\(name): \(error)")
+                XCTAssertEqual(screen, start, name)
+            }
+        }
+    }
+
+    func testAppendToABlockThatIsNoProseDoesNotFit() throws {
+        guard case .shape = try failure(#"[{"op": "append", "id": "t", "text": "x"}]"#) else { return XCTFail("a text took an append") }
+        XCTAssertEqual(try failure(#"[{"op": "append", "id": "nope", "text": "x"}]"#), .noBlock("nope"))
+    }
+
+    func testInsertMergeAndRemoveReachAMessagesBlocks() throws {
+        let thread = """
+            {"type": "screen", "id": "s", "blocks": [{"type": "message", "id": "m", "role": "agent", "name": "Scout",
+              "blocks": [{"type": "tool", "id": "a", "name": "Read", "state": "running"}, {"type": "text", "id": "b", "text": "hi"}]}]}
+            """
+        let ops = """
+            [{"op": "merge", "id": "a", "fields": {"state": "done"}}, {"op": "remove", "id": "b"},
+             {"op": "insert", "into": "m", "block": {"type": "prose", "id": "c", "parts": [], "streaming": true}},
+             {"op": "append", "id": "c", "keep": 0, "parts": [{"part": "para", "spans": [{"text": "Hi"}]}]}]
+            """
+        let kids = try JSONValue(try applied(ops, to: thread)).list("blocks")[0].list("blocks")
+        XCTAssertEqual(kids.compactMap(\.id), ["a", "c"])
+        XCTAssertEqual(kids[0].string("state"), "done")
+        XCTAssertEqual(kids[1].list("parts").first?.list("spans").first?.string("text"), "Hi")
+    }
+
     private func decode<T: Decodable>(_ type: T.Type, _ value: JSONValue?) throws -> T {
         try JSONDecoder().decode(type, from: JSONEncoder().encode(value ?? .null))
     }

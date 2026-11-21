@@ -1,0 +1,13 @@
+{
+  "markdown": "a snake_case_name stays",
+  "parts": [
+    {
+      "part": "para",
+      "spans": [
+        {
+          "text": "a snake_case_name stays"
+        }
+      ]
+    }
+  ]
+}

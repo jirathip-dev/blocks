@@ -1,0 +1,15 @@
+{
+  "why": "a paragraph with no spans takes no text",
+  "parts": [
+    {
+      "part": "para",
+      "spans": []
+    }
+  ],
+  "op": {
+    "op": "append",
+    "id": "p",
+    "text": "x"
+  },
+  "want": null
+}

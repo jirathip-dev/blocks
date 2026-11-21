@@ -1,0 +1,17 @@
+{
+  "markdown": "[blocks](https://b.dev) and [bad](javascript:x)",
+  "parts": [
+    {
+      "part": "para",
+      "spans": [
+        {
+          "text": "blocks",
+          "link": "https://b.dev"
+        },
+        {
+          "text": " and bad"
+        }
+      ]
+    }
+  ]
+}

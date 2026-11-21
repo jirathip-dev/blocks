@@ -34,9 +34,11 @@ var hooks = {
   toast: { variant: null, parts: ["title"] },
   pages: { variant: null, parts: ["title"] },
   timeline: { variant: null, parts: ["title"] },
-  import: { variant: null, parts: ["title"] }
+  import: { variant: null, parts: ["title"] },
+  message: { variant: "role", parts: [] },
+  tool: { variant: "state", parts: [] }
 };
-var roles = { section: "region", form: "form", config: "form", nav: "navigation", chart: "figure", toast: "status" };
+var roles = { section: "region", form: "form", config: "form", nav: "navigation", chart: "figure", toast: "status", message: "article" };
 var names = ["label", "title", "header", "question", "alt", "file", "command", "placeholder", "name"];
 
 // src/gen/schemes.ts
@@ -510,6 +512,8 @@ var toast = (fields) => ({ type: "toast", ...fields });
 var pages = (fields) => ({ type: "pages", ...fields });
 var timeline = (fields) => ({ type: "timeline", ...fields });
 var import_ = (fields) => ({ type: "import", ...fields });
+var message = (fields) => ({ type: "message", ...fields });
+var tool = (fields) => ({ type: "tool", ...fields });
 var expr = {
   get: (v) => ({ get: v }),
   not: (v) => ({ not: v }),
@@ -527,6 +531,121 @@ var expr = {
   cat: (...v) => ({ cat: v }),
   pick: (...v) => ({ pick: v })
 };
+
+// src/core/kind/prose.ts
+var tail = (spans) => spans?.[spans.length - 1];
+function grow(parts, op) {
+  if (op.keep != null && op.keep > parts.length) return void 0;
+  const out = [...parts.slice(0, op.keep ?? parts.length), ...structuredClone(op.parts ?? [])];
+  if (!op.text) return out;
+  const last = out[out.length - 1];
+  if (!last || last.part === "rule") return void 0;
+  if (last.part === "code") {
+    out[out.length - 1] = { ...last, text: last.text + op.text };
+    return out;
+  }
+  const spans = last.part === "list" ? last.items[last.items.length - 1] : last.spans;
+  const end = tail(spans);
+  if (!spans || !end) return void 0;
+  const grown = [...spans.slice(0, -1), { ...end, text: end.text + op.text }];
+  out[out.length - 1] = last.part === "list" ? { ...last, items: [...last.items.slice(0, -1), grown] } : { ...last, spans: grown };
+  return out;
+}
+
+// src/core/apply.ts
+var walked = ["blocks", "rows", "buttons", "rounds"];
+var hosts = { screen: "blocks", sheet: "blocks", section: "blocks", card: "blocks", message: "blocks", list: "rows", scene: "lanes", row: "rounds", table: "rows" };
+var isRec = (v) => typeof v === "object" && v !== null && !Array.isArray(v);
+function locate(node2, id) {
+  if (node2["id"] === id) return "root";
+  for (const key of walked) {
+    const list3 = node2[key];
+    if (!Array.isArray(list3)) continue;
+    for (let at2 = 0; at2 < list3.length; at2++) {
+      const x = list3[at2];
+      if (!isRec(x)) continue;
+      if (x["id"] === id) return { list: list3, at: at2 };
+      const deeper = locate(x, id);
+      if (deeper && deeper !== "root") return deeper;
+    }
+  }
+  return void 0;
+}
+function get(root, id) {
+  const s = locate(root, id);
+  const v = s === "root" ? root : s?.list[s.at];
+  return isRec(v) ? v : void 0;
+}
+function place(root, into, child, before2, after) {
+  const host = get(root, into);
+  const key = host && typeof host["type"] === "string" ? hosts[host["type"]] : void 0;
+  if (!host || !key) return false;
+  const list3 = host[key] ?? (host[key] = []);
+  if (!Array.isArray(list3)) return false;
+  const find = (id) => id ? list3.findIndex((x) => isRec(x) && x["id"] === id) : -1;
+  const b = find(before2);
+  const a = find(after);
+  list3.splice(b >= 0 ? b : a >= 0 ? a + 1 : list3.length, 0, child);
+  return true;
+}
+function apply(screen2, ops) {
+  let out = structuredClone(screen2);
+  for (const op of ops) {
+    const root = out;
+    switch (op.op) {
+      case "merge": {
+        const t = get(root, op.id);
+        if (!t) return void 0;
+        for (const [k, v] of Object.entries(op.fields)) if (v === null) delete t[k];
+        else t[k] = v;
+        break;
+      }
+      case "replace": {
+        const s = locate(root, op.id);
+        if (!s) return void 0;
+        if (s === "root") out = structuredClone(op.block);
+        else s.list[s.at] = structuredClone(op.block);
+        break;
+      }
+      case "remove":
+      case "move": {
+        const s = locate(root, op.id);
+        if (!s || s === "root") return void 0;
+        const [b] = s.list.splice(s.at, 1);
+        if (op.op === "move" && !place(root, op.into, b, op.before)) return void 0;
+        break;
+      }
+      case "insert":
+        if (!place(root, op.into, structuredClone(op.block), op.before, op.after)) return void 0;
+        break;
+      case "screen":
+        out = structuredClone(op.screen);
+        break;
+      case "append": {
+        const t = get(root, op.id);
+        const parts = t?.["type"] === "prose" && Array.isArray(t["parts"]) ? grow(t["parts"], op) : void 0;
+        if (!t || !parts) return void 0;
+        t["parts"] = parts;
+        break;
+      }
+      case "badge":
+        if (root["type"] === "screen") root["badge"] = op.count;
+        break;
+      default:
+        if (op.op !== "dot") return void 0;
+    }
+  }
+  return out;
+}
+
+// src/core/kind/message.ts
+var glyph = (state) => ({ running: "\u21BB", done: "\u2713", failed: "\u2715" })[state] ?? "\u2022";
+var roleWord = (role2) => ["agent", "owner", "system"].includes(role2) ? role2 : "agent";
+var ext = (name) => {
+  const dot = name.lastIndexOf(".");
+  return dot > 0 ? [name.slice(dot + 1), name.slice(0, dot)] : ["", name];
+};
+var initial = (name) => [...name.trim()][0] ?? "";
 
 // src/core/table.ts
 var SIGN = { THB: "\u0E3F", USD: "$", EUR: "\u20AC" };
@@ -637,6 +756,7 @@ var kinds = {
   "lines": "Lines",
   "list": "List",
   "media": "Media",
+  "message": "Message",
   "nav": "Nav",
   "pages": "Pages",
   "prose": "Prose",
@@ -653,6 +773,7 @@ var kinds = {
   "text": "Text",
   "timeline": "Timeline",
   "toast": "Toast",
+  "tool": "Tool",
   "web": "Web"
 };
 var defs = {
@@ -834,7 +955,9 @@ var defs = {
             "toast",
             "pages",
             "timeline",
-            "import"
+            "import",
+            "message",
+            "tool"
           ]
         },
         "type": "string"
@@ -842,6 +965,27 @@ var defs = {
     },
     "required": [
       "type"
+    ],
+    "type": "object"
+  },
+  "Attachment": {
+    "properties": {
+      "name": {
+        "type": "string"
+      },
+      "src": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "tap": {
+        "$ref": "#/$defs/Tap"
+      }
+    },
+    "required": [
+      "name",
+      "tap"
     ],
     "type": "object"
   },
@@ -1366,6 +1510,32 @@ var defs = {
         "properties": {
           "type": {
             "const": "import",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      {
+        "$ref": "#/$defs/Message",
+        "properties": {
+          "type": {
+            "const": "message",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      {
+        "$ref": "#/$defs/Tool",
+        "properties": {
+          "type": {
+            "const": "tool",
             "type": "string"
           }
         },
@@ -4223,6 +4393,68 @@ var defs = {
     ],
     "type": "object"
   },
+  "Message": {
+    "additionalProperties": true,
+    "properties": {
+      "avatar": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "blocks": {
+        "items": {
+          "$ref": "#/$defs/Block"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "files": {
+        "items": {
+          "$ref": "#/$defs/Attachment"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "id": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "name": {
+        "type": "string"
+      },
+      "role": {
+        "$ref": "#/$defs/Role"
+      },
+      "show": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "time": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "required": [
+      "role",
+      "name"
+    ],
+    "type": "object"
+  },
   "More": {
     "anyOf": [
       {
@@ -4854,6 +5086,12 @@ var defs = {
             "type": "null"
           }
         ]
+      },
+      "streaming": {
+        "type": [
+          "boolean",
+          "null"
+        ]
       }
     },
     "required": [
@@ -4876,6 +5114,21 @@ var defs = {
       "text"
     ],
     "type": "object"
+  },
+  "Role": {
+    "anyOf": [
+      {
+        "enum": [
+          "agent",
+          "owner",
+          "system"
+        ],
+        "type": "string"
+      },
+      {
+        "type": "string"
+      }
+    ]
   },
   "Round": {
     "properties": {
@@ -7150,6 +7403,65 @@ var defs = {
       }
     ]
   },
+  "Tool": {
+    "additionalProperties": true,
+    "properties": {
+      "body": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "id": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "name": {
+        "type": "string"
+      },
+      "show": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "state": {
+        "$ref": "#/$defs/ToolState"
+      },
+      "summary": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "required": [
+      "name",
+      "state"
+    ],
+    "type": "object"
+  },
+  "ToolState": {
+    "anyOf": [
+      {
+        "enum": [
+          "running",
+          "done",
+          "failed"
+        ],
+        "type": "string"
+      },
+      {
+        "type": "string"
+      }
+    ]
+  },
   "Total": {
     "anyOf": [
       {
@@ -7526,8 +7838,8 @@ function gets(v, out) {
   if (Array.isArray(v)) return v.forEach((x) => gets(x, out));
   if (!isObj3(v)) return;
   const keys = Object.keys(v);
-  const get = str2(v["get"]);
-  if (keys.length === 1 && get !== void 0) return out.push(get);
+  const get2 = str2(v["get"]);
+  if (keys.length === 1 && get2 !== void 0) return out.push(get2);
   for (const k of keys) if (k !== "calc") gets(v[k], out);
 }
 function check(screen2, app = []) {
@@ -7625,6 +7937,7 @@ export {
   accepts,
   actionOf,
   actions,
+  apply,
   built,
   button,
   card,
@@ -7644,11 +7957,13 @@ export {
   evaluate,
   expect,
   expr,
+  ext,
   figured,
   fill2 as fill,
   form,
   gate,
   gated,
+  glyph,
   held,
   hero,
   hint,
@@ -7656,12 +7971,14 @@ export {
   ids,
   images,
   import_,
+  initial,
   island,
   lines,
   linkable,
   list2 as list,
   lit,
   media,
+  message,
   named2 as named,
   names,
   nav,
@@ -7671,6 +7988,7 @@ export {
   prose,
   refused,
   role,
+  roleWord,
   roles,
   row,
   run,
@@ -7696,6 +8014,7 @@ export {
   tiles,
   timeline,
   toast,
+  tool,
   tree,
   value,
   view,

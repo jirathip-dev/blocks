@@ -142,6 +142,17 @@ extension JSONValue {
         case .replace(let r):
             let block = try Self.json(r.block)
             guard edit(r.id, { _ in block }) else { throw .noBlock(r.id) }
+        case .append(let a):
+            var grew = true
+            let found = edit(a.id) { old in
+                guard old.type == "prose", let new = old.grown(a) else {
+                    grew = false
+                    return old
+                }
+                return new
+            }
+            guard found else { throw .noBlock(a.id) }
+            guard grew else { throw .shape("block `\(a.id)` does not take the append") }
         case .badge(let b):
             if type == "screen", case .object(var o) = self {
                 o["badge"] = .number(Double(b.count))
@@ -154,6 +165,44 @@ extension JSONValue {
         case .unknown:
             throw .unknown
         }
+    }
+
+    private func grown(_ a: OpAppend) -> Self? {
+        var parts = list("parts")
+        if let keep = a.keep {
+            guard keep >= 0, keep <= parts.count else { return nil }
+            parts = Array(parts.prefix(keep))
+        }
+        guard let added = try? (a.parts ?? []).map(Self.init) else { return nil }
+        parts += added
+        if let text = a.text {
+            guard let last = parts.last?.withText(text) else { return nil }
+            parts[parts.count - 1] = last
+        }
+        return .object(fields.merging(["parts": .array(parts)]) { $1 })
+    }
+
+    private func withText(_ text: String) -> Self? {
+        var o = fields
+        switch string("part") {
+        case "code": o["text"] = .string((string("text") ?? "") + text)
+        case "heading", "para", "quote":
+            guard let spans = Self.spans(list("spans"), text) else { return nil }
+            o["spans"] = .array(spans)
+        case "list":
+            var items = list("items")
+            guard let last = items.last, let spans = Self.spans(last.items, text) else { return nil }
+            items[items.count - 1] = .array(spans)
+            o["items"] = .array(items)
+        default: return nil
+        }
+        return .object(o)
+    }
+
+    private static func spans(_ spans: [Self], _ text: String) -> [Self]? {
+        guard case .object(var span)? = spans.last else { return nil }
+        span["text"] = .string((span["text"]?.string ?? "") + text)
+        return spans.dropLast() + [.object(span)]
     }
 
     private var fits: Bool {
@@ -173,6 +222,7 @@ extension JSONValue {
             case "screen", "sheet", "section": ["blocks"]
             case "list", "table": ["rows"]
             case "card": ["blocks", "buttons"]
+            case "message": ["blocks"]
             default: []
             }
         for key in keys {
@@ -224,7 +274,7 @@ extension JSONValue {
 
     private mutating func insert(_ child: Self, into: String, before: String?, after: String?) throws(ApplyError) {
         let hosts = [
-            "screen": "blocks", "sheet": "blocks", "section": "blocks", "card": "blocks", "list": "rows",
+            "screen": "blocks", "sheet": "blocks", "section": "blocks", "card": "blocks", "message": "blocks", "list": "rows",
             "scene": "lanes", "row": "rounds", "table": "rows",
         ]
         var fits = true

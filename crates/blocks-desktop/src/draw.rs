@@ -74,4 +74,6 @@ switch! {
     Pages => pages,
     Import => import,
     Timeline => timeline,
+    Message => message,
+    Tool => tool,
 }

@@ -1,0 +1,24 @@
+{
+  "avatar": "media/sample.svg",
+  "blocks": [],
+  "files": [
+    {
+      "name": "page.svg",
+      "tap": {
+        "url": "media/page.svg"
+      }
+    },
+    {
+      "name": "sample.svg",
+      "src": "media/sample.svg",
+      "tap": {
+        "url": "media/sample.svg"
+      }
+    }
+  ],
+  "id": "chat",
+  "name": "Scout",
+  "role": "agent",
+  "time": "14:32",
+  "type": "message"
+}

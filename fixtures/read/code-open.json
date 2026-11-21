@@ -1,0 +1,17 @@
+{
+  "markdown": "text\n```\nstill open\n# not a heading",
+  "parts": [
+    {
+      "part": "para",
+      "spans": [
+        {
+          "text": "text"
+        }
+      ]
+    },
+    {
+      "part": "code",
+      "text": "still open\n# not a heading"
+    }
+  ]
+}

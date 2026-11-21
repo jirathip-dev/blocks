@@ -1,0 +1,10 @@
+{
+  "why": "no part at all takes no text",
+  "parts": [],
+  "op": {
+    "op": "append",
+    "id": "p",
+    "text": "x"
+  },
+  "want": null
+}

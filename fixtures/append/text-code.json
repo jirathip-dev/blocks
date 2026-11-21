@@ -1,0 +1,22 @@
+{
+  "why": "text goes on a code part's own text, new lines and all",
+  "parts": [
+    {
+      "part": "code",
+      "lang": "rust",
+      "text": "fn a() {"
+    }
+  ],
+  "op": {
+    "op": "append",
+    "id": "p",
+    "text": "\n}"
+  },
+  "want": [
+    {
+      "part": "code",
+      "lang": "rust",
+      "text": "fn a() {\n}"
+    }
+  ]
+}

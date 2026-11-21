@@ -1,0 +1,1895 @@
+{
+  "avatar": "media/sample.svg",
+  "blocks": [
+    {
+      "id": "chat-a-0",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-1",
+      "name": "Read-1",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-2",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-3",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-4",
+      "name": "Read-4",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-5",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-6",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-7",
+      "name": "Read-7",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-8",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-9",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-10",
+      "name": "Read-10",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-11",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-12",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-13",
+      "name": "Read-13",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-14",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-15",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-16",
+      "name": "Read-16",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-17",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-18",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-19",
+      "name": "Read-19",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-20",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-21",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-22",
+      "name": "Read-22",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-23",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-24",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-25",
+      "name": "Read-25",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-26",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-27",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-28",
+      "name": "Read-28",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-29",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-30",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-31",
+      "name": "Read-31",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-32",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-33",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-34",
+      "name": "Read-34",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-35",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-36",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-37",
+      "name": "Read-37",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-38",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-39",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-40",
+      "name": "Read-40",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-41",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-42",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-43",
+      "name": "Read-43",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-44",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-45",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-46",
+      "name": "Read-46",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-47",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-48",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-49",
+      "name": "Read-49",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-50",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-51",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-52",
+      "name": "Read-52",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-53",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-54",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-55",
+      "name": "Read-55",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-56",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-57",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-58",
+      "name": "Read-58",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-59",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-60",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-61",
+      "name": "Read-61",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-62",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-63",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-64",
+      "name": "Read-64",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-65",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-66",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-67",
+      "name": "Read-67",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-68",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-69",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-70",
+      "name": "Read-70",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-71",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-72",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-73",
+      "name": "Read-73",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-74",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-75",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-76",
+      "name": "Read-76",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-77",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-78",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-79",
+      "name": "Read-79",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-80",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-81",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-82",
+      "name": "Read-82",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-83",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-84",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-85",
+      "name": "Read-85",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-86",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-87",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-88",
+      "name": "Read-88",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-89",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-90",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-91",
+      "name": "Read-91",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-92",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-93",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-94",
+      "name": "Read-94",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-95",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-96",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-97",
+      "name": "Read-97",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-98",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-99",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-100",
+      "name": "Read-100",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-101",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-102",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-103",
+      "name": "Read-103",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-104",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-105",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-106",
+      "name": "Read-106",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-107",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-108",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-109",
+      "name": "Read-109",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-110",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-111",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-112",
+      "name": "Read-112",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-113",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-114",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-115",
+      "name": "Read-115",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-116",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-117",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-118",
+      "name": "Read-118",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-119",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-120",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-121",
+      "name": "Read-121",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-122",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-123",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-124",
+      "name": "Read-124",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-125",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-126",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-127",
+      "name": "Read-127",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-128",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-129",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-130",
+      "name": "Read-130",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-131",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-132",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-133",
+      "name": "Read-133",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-134",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-135",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-136",
+      "name": "Read-136",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-137",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-138",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-139",
+      "name": "Read-139",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-140",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-141",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-142",
+      "name": "Read-142",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-143",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-144",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-145",
+      "name": "Read-145",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-146",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-147",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-148",
+      "name": "Read-148",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-149",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-150",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-151",
+      "name": "Read-151",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-152",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-153",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-154",
+      "name": "Read-154",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-155",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-156",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-157",
+      "name": "Read-157",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-158",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-159",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-160",
+      "name": "Read-160",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-161",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-162",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-163",
+      "name": "Read-163",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-164",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-165",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-166",
+      "name": "Read-166",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-167",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-168",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-169",
+      "name": "Read-169",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-170",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-171",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-172",
+      "name": "Read-172",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-173",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-174",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-175",
+      "name": "Read-175",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-176",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-177",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-178",
+      "name": "Read-178",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-179",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-180",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-181",
+      "name": "Read-181",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-182",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-183",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-184",
+      "name": "Read-184",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-185",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-186",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-187",
+      "name": "Read-187",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-188",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-189",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-190",
+      "name": "Read-190",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-191",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-192",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-193",
+      "name": "Read-193",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-194",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-195",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-196",
+      "name": "Read-196",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    },
+    {
+      "id": "chat-b-197",
+      "parts": [],
+      "streaming": true,
+      "type": "prose"
+    },
+    {
+      "id": "chat-a-198",
+      "parts": [
+        {
+          "part": "para",
+          "spans": [
+            {
+              "text": "Reading both files."
+            }
+          ]
+        }
+      ],
+      "type": "prose"
+    },
+    {
+      "body": "use std::fmt;",
+      "id": "chat-read-199",
+      "name": "Read-199",
+      "state": "done",
+      "summary": "patch.rs, 238 lines",
+      "type": "tool"
+    }
+  ],
+  "files": [
+    {
+      "name": "page.svg",
+      "tap": {
+        "url": "media/page.svg"
+      }
+    },
+    {
+      "name": "sample.svg",
+      "src": "media/sample.svg",
+      "tap": {
+        "url": "media/sample.svg"
+      }
+    }
+  ],
+  "id": "chat",
+  "name": "Scout",
+  "role": "agent",
+  "time": "14:32",
+  "type": "message"
+}

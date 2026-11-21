@@ -2,6 +2,10 @@ use blocks::theme::{default, LabelCase, LabelRole, Mode, PerMode, Scheme, Style,
 use blocks::Tone;
 use egui::{Color32, Ui};
 
+pub(crate) const TAP: f32 = 44.0;
+pub(crate) const FACE: f32 = 28.0;
+pub(crate) const MARK: f32 = 3.0;
+
 /// The look a stage draws with: the scheme pair, a mode or the OS's, the app's style, and motion off when `still`.
 #[derive(Clone, Debug)]
 pub struct Look {
@@ -48,6 +52,18 @@ impl Look {
 
     pub(crate) fn mute(&self, ui: &Ui) -> Color32 {
         color(self.tokens(ui).mute.as_str())
+    }
+
+    pub(crate) fn line(&self, ui: &Ui) -> Color32 {
+        color(self.tokens(ui).line.as_str())
+    }
+
+    pub(crate) fn card(&self, ui: &Ui) -> Color32 {
+        color(self.tokens(ui).card.as_str())
+    }
+
+    pub(crate) fn link(&self, ui: &Ui) -> Color32 {
+        color(self.tokens(ui).link.as_str())
     }
 
     pub(crate) fn tone(&self, ui: &Ui, tone: Option<&Tone>) -> Color32 {

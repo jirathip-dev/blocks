@@ -81,7 +81,7 @@ public struct Snapshot {
     {
         var screen = self.screen
         let key = try JSONValue(screen).id ?? ""
-        var (edits, picks) = (BlockState(), Picks())
+        var (edits, picks, opened) = (BlockState(), Picks(), Set<String>())
         var (shots, sent, dropped, times) = ([String](), [JSONValue](), [String](), [Double]())
         func hear(_ seen: Drawn) -> Drawn {
             for (id, (name, values)) in seen.heard.sorted(by: { $0.key < $1.key }) {
@@ -95,7 +95,7 @@ public struct Snapshot {
         }
         let clock = ContinuousClock()
         let start = clock.now
-        var seen = hear(draw(screen, edits, picks.rows))
+        var seen = hear(draw(screen, edits, picks.rows, opened))
         let paint = ms(clock.now - start)
         var (pngs, trees, found, faults) = ([String: Data](), [String: TreeNode](), [Seen](), [String]())
         func take(_ shot: String) throws {
@@ -123,6 +123,7 @@ public struct Snapshot {
                 let json = try JSONValue(screen)
                 let state = Behaviour.state(json, edits: edits)
                 let block = Self.find(json, on.id)
+                if block?.type == "tool", block?.string("body") != nil { opened.formSymmetricDifference([on.id]); seen = hear(draw(screen, edits, picks.rows, opened)); break }
                 let names = Set(block?.list("fields").compactMap { $0.string("name") } ?? [])
                 let off = Behaviour(json, state: state).disabled.contains(on.id) || picks.waits(names)
                 let sets = (try? block?["tap"]?["set"]?.decode([SetState].self)) ?? []
@@ -138,31 +139,29 @@ public struct Snapshot {
                 } else if off || set.isEmpty {
                     dropped.append("tap \(on.id)")
                 }
-                if !off, !set.isEmpty { seen = hear(draw(screen, edits, picks.rows)) }
+                if !off, !set.isEmpty { seen = hear(draw(screen, edits, picks.rows, opened)) }
             case .type(let typing):
                 let json = try JSONValue(screen)
                 let field = Self.find(json, typing.id).flatMap { $0.list("fields").first?.string("name") ?? $0.string("name") }
                 let view = Behaviour(json, state: Behaviour.state(json, edits: edits))
                 if let field, !view.hidden.contains(field), !view.disabled.contains(field) {
                     edits[field] = .string(typing.text)
-                    seen = hear(draw(screen, edits, picks.rows))
+                    seen = hear(draw(screen, edits, picks.rows, opened))
                 } else {
                     dropped.append("type \(typing.id)")
                 }
             case .scroll(let on): dropped.append("scroll \(on.id)")
             case .frame(let frame):
                 if let new = frame.screen { screen = new } else { try screen.apply(frame.ops ?? []) }
-                seen = hear(draw(screen, edits, picks.rows))
-            case .answer(let answer):
-                try screen.apply(answer.ops ?? [])
-                seen = hear(draw(screen, edits, picks.rows))
+                seen = hear(draw(screen, edits, picks.rows, opened))
+            case .answer(let answer): try screen.apply(answer.ops ?? []); seen = hear(draw(screen, edits, picks.rows, opened))
             case .shot(let shot): try take(shot.name)
             case .gesture(let g):
                 let block = try? Self.find(try JSONValue(screen), g.id)?.decode(Block.self)
                 let ways = Self.gestured(block, g).map { Self.sent(key, g.id, $0) }
                 if ways.isEmpty { dropped.append("gesture \(g.via.rawValue) \(g.id)") } else { sent += ways }
-            case .refuse: seen = hear(draw(screen, edits, picks.rows))
-            case .file(let f): if picks.pick(f, in: try JSONValue(screen)) { seen = hear(draw(screen, edits, picks.rows)) } else { dropped.append("file \(f.field)") }
+            case .refuse: seen = hear(draw(screen, edits, picks.rows, opened))
+            case .file(let f): if picks.pick(f, in: try JSONValue(screen)) { seen = hear(draw(screen, edits, picks.rows, opened)) } else { dropped.append("file \(f.field)") }
             case .unknown(let value): dropped.append("unknown \(value)")
             }
             times.append(ms(clock.now - begun))
@@ -262,13 +261,13 @@ public struct Snapshot {
         return nil
     }
 
-    private func draw(_ screen: Block, _ edits: BlockState, _ files: [String: [FileRow]]) -> Drawn {
+    private func draw(_ screen: Block, _ edits: BlockState, _ files: [String: [FileRow]], _ opened: Set<String>) -> Drawn {
         let seen = Drawn()
         var view = AnyView(
             BlocksView(screen, source: .core, state: edits).padding(BlocksView.inset)
                 .frame(width: size.width, height: size.height, alignment: .topLeading))
         for wrap in wraps { view = wrap(view) }
-        let root = view.fileRows(files).onFile { _, about in FileRef(about.name) }.islands(["x-echo": Self.echo]).hearsIslands { seen.heard[$0] = ($1, $2) }.reportsBlocks().background(look.palette.background).environment(\.look, look)
+        let root = view.opened(opened).fileRows(files).onFile { _, about in FileRef(about.name) }.islands(["x-echo": Self.echo]).hearsIslands { seen.heard[$0] = ($1, $2) }.reportsBlocks().background(look.palette.background).environment(\.look, look)
             .environment(\.colorScheme, look.palette.dark ? .dark : .light)
             .overlayPreferenceValue(DrawnBlocks.self) { blocks in
                 GeometryReader { proxy in seen.keep(blocks, proxy) }

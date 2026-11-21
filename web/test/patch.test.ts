@@ -1,6 +1,7 @@
 import { deepStrictEqual, notStrictEqual, strictEqual } from "node:assert/strict";
 import { test } from "node:test";
-import { apply, patcher } from "../src/patch.ts";
+import { apply } from "../src/core/apply.ts";
+import { patcher } from "../src/patch.ts";
 
 class El {
   attrs = new Map();

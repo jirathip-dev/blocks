@@ -29,6 +29,9 @@ mod private_selector;
 mod raw_colour;
 mod seed_missing;
 mod sent_differs;
+mod stream_no_id;
+mod summary_long;
+mod tap_empty;
 mod tap_target;
 mod text_wall;
 mod title_long;
@@ -75,6 +78,9 @@ pub static RULES: &[&Rule] = &[
     &raw_colour::RULE,
     &seed_missing::RULE,
     &sent_differs::RULE,
+    &stream_no_id::RULE,
+    &summary_long::RULE,
+    &tap_empty::RULE,
     &tap_target::RULE,
     &text_wall::RULE,
     &title_long::RULE,
@@ -100,6 +106,9 @@ pub(super) const CHECKS: &[fn(&Cx, &mut Vec<Seen>)] = &[
     label_twice::check,
     level_blocks::check,
     primary_twice::check,
+    stream_no_id::check,
+    summary_long::check,
+    tap_empty::check,
     text_wall::check,
     title_long::check,
     untitled::check,

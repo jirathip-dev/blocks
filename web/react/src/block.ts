@@ -16,12 +16,12 @@ const isIsland = (b: Blk): b is Of<"island"> & Blk => b["type"] === "island" && 
 const isFallback = (v: unknown): v is Fallback => isBlk(v) && typeof v["title"] === "string";
 
 /// What a block's root carries in any adapter: its classes, `data-*`, `hidden`, `aria-busy`, role and name.
-export function hooksOf(b: Blk, cx: Ctx, fallback: boolean): Attrs {
+export function hooksOf(b: Blk, cx: Ctx, fallback: boolean, cont = false): Attrs {
   const t = String(b["type"]);
   const id = typeof b["id"] === "string" ? b["id"] : undefined;
   const v = core(b) ? hooks[b.type].variant : null;
   return {
-    className: `b${core(b) ? "" : " b-app"} b-${t}`,
+    className: `b${core(b) ? "" : " b-app"} b-${t}${cont ? " cont" : ""}`,
     "data-block": t,
     "data-id": id,
     "data-variant": v && b[v] != null ? String(b[v]) : undefined,
@@ -42,9 +42,13 @@ export function row(f: Fallback, cx: Ctx): ReactNode {
   return h("div", tap ? "row tap" : "row", pressed, h("span", "rm", null, h("span", "rt b-row__title", null, f.title), sub));
 }
 
+const said = (a: Blk | undefined, b: Blk) => b["type"] === "message" && a?.["type"] === "message" && a["role"] === b["role"] && a["name"] === b["name"];
+
 /// Each block of `bs` drawn by the draw rule, keyed by its id.
-export const kids = (bs: unknown): ReactNode[] =>
-  (Array.isArray(bs) ? bs.filter(isBlk) : []).map((b, i) => createElement(Block, { key: typeof b["id"] === "string" ? b["id"] : `~${i}`, b }));
+export const kids = (bs: unknown): ReactNode[] => {
+  const all = Array.isArray(bs) ? bs.filter(isBlk) : [];
+  return all.map((b, i) => createElement(Block, { key: typeof b["id"] === "string" ? b["id"] : `~${i}`, b, cont: said(all[i - 1], b) }));
+};
 
 /// A block's fallback row, then its children.
 export function Fallen({ b }: { b: Blk }): ReactNode {
@@ -77,18 +81,18 @@ const own = <K extends Kind>(t: K, b: Of<K>, attrs: Attrs): ReactNode => {
   return V ? createElement(V, { b, hooks: attrs }) : undefined;
 };
 
-function Draw({ b }: { b: Blk }): ReactNode {
+function Draw({ b, cont }: { b: Blk; cont: boolean }): ReactNode {
   const cx = useContext(Cx);
   if (isIsland(b)) return createElement(Isle, { b, attrs: hooksOf(b, cx, false) });
-  if (core(b)) return own(b.type, b, hooksOf(b, cx, false)) ?? createElement(Fallen, { b });
+  if (core(b)) return own(b.type, b, hooksOf(b, cx, false, cont)) ?? createElement(Fallen, { b });
   const K = cx.kinds[String(b["type"])];
   const act = (a: Parameters<Ctx["act"]>[0]) => cx.act({ ...a, block: typeof b["id"] === "string" ? b["id"] : null });
   return K ? h("div", "", hooksOf(b, cx, false), createElement(K, { block: { ...b, type: String(b["type"]) }, act })) : createElement(Fallen, { b });
 }
 
 /// One block by the draw rule: its kind's view, else the app's, else its fallback and then its children; one that throws draws its fallback.
-export const Block = memo(function Block({ b }: { b: Blk }): ReactNode {
+export const Block = memo(function Block({ b, cont = false }: { b: Blk; cont?: boolean }): ReactNode {
   const cx = useContext(Cx);
-  return createElement(Boundary, { b, report: cx.report, fallback: createElement(Fallen, { b }) }, createElement(Draw, { b }));
+  return createElement(Boundary, { b, report: cx.report, fallback: createElement(Fallen, { b }) }, createElement(Draw, { b, cont }));
 });
 

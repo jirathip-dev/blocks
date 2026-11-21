@@ -17,6 +17,8 @@ public struct BlocksView: View {
     private let beside: Block?
     private let edits: BlockState
     @State private var own: BlockState = [:]
+    @Environment(\.opened) private var opened
+    @State private var flipped: Set<String> = []
 
     public var body: some View {
         let edited = edits.merging(own) { $1 }
@@ -37,6 +39,7 @@ public struct BlocksView: View {
         .environment(\.card, CardContext(poster: source)).environment(\.screenId, block.id)
         .environment(\.behaved, Behaved(view: Behaviour(json, state: state), state: state, edited: Set(edited.keys)))
         .environment(\.edit) { own.merge($0) { $1 } }
+        .environment(\.folds, Folds(open: opened.symmetricDifference(flipped)) { flipped.formSymmetricDifference([$0]) })
     }
 
     public init(
@@ -88,6 +91,17 @@ private struct OpenThreadKey: EnvironmentKey {
     fileprivate static var defaultValue: @MainActor (String) -> Void { { _ in } }
 }
 
+/// The tools drawn open, by id, and how a head opens or folds its tool.
+internal struct Folds {
+    internal var open: Set<String> = []
+    internal var flip: @MainActor (String) -> Void = { _ in }
+}
+
+extension View {
+    /// Draws the tools of these ids open, as a tap on each head does; for the harness.
+    package func opened(_ ids: Set<String>) -> some View { environment(\.opened, ids) }
+}
+
 /// The local state a screen is drawn in and what it makes of the screen.
 internal struct Behaved {
     internal var view = Behaviour()
@@ -111,6 +125,8 @@ extension EnvironmentValues {
     @Entry internal var form: Binding<[String: JSONValue]>?
     @Entry internal var behaved = Behaved()
     @Entry internal var actionBlock: String?
+    @Entry internal var opened: Set<String> = []
+    @Entry internal var folds = Folds()
 
     internal var edit: @MainActor (BlockState) -> Void {
         get { self[EditKey.self] }

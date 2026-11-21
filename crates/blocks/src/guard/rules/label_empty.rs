@@ -4,7 +4,7 @@ pub(super) const RULE: Rule = Rule {
     id: "lint/label-empty",
     severity: Severity::Error,
     since: 1,
-    what: "a blank button, act, chip, option or field label, or row title",
+    what: "a blank button, act, chip, option or field label, row title, or message, tool or attachment name",
     fix: "Give it a label of one to three words.",
 };
 
@@ -17,6 +17,7 @@ pub(super) fn check(cx: &Cx, out: &mut Vec<Seen>) {
         let own = match b.kind {
             "button" => blank(b.o, "label").then_some("button label"),
             "row" => blank(b.o, "title").then_some("row title"),
+            "message" | "tool" => blank(b.o, "name").then_some("name"),
             _ => None,
         };
         let acts = acts(b.o).into_iter().filter(|a| blank(a, "label")).map(|_| "act label");
@@ -27,8 +28,12 @@ pub(super) fn check(cx: &Cx, out: &mut Vec<Seen>) {
             f.get("label")
                 .is_some_and(|l| l.as_str().is_some_and(|s| s.trim().is_empty()))
         });
+        let files = list(b.o, "files")
+            .filter(|f| blank(f, "name"))
+            .map(|_| "attachment name");
         let all = own
             .into_iter()
+            .chain(files)
             .chain(acts)
             .chain(options)
             .chain(fields.map(|_| "field label"));

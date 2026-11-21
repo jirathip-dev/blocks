@@ -1,0 +1,29 @@
+{
+  "why": "a keep over the number of parts does not fit",
+  "parts": [
+    {
+      "part": "para",
+      "spans": [
+        {
+          "text": "one"
+        }
+      ]
+    }
+  ],
+  "op": {
+    "op": "append",
+    "id": "p",
+    "keep": 2,
+    "parts": [
+      {
+        "part": "para",
+        "spans": [
+          {
+            "text": "two"
+          }
+        ]
+      }
+    ]
+  },
+  "want": null
+}

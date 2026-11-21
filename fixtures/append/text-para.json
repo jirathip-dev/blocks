@@ -1,0 +1,36 @@
+{
+  "why": "text goes on the last span of the last paragraph",
+  "parts": [
+    {
+      "part": "para",
+      "spans": [
+        {
+          "text": "I will "
+        },
+        {
+          "text": "read",
+          "bold": true
+        }
+      ]
+    }
+  ],
+  "op": {
+    "op": "append",
+    "id": "p",
+    "text": " both"
+  },
+  "want": [
+    {
+      "part": "para",
+      "spans": [
+        {
+          "text": "I will "
+        },
+        {
+          "text": "read both",
+          "bold": true
+        }
+      ]
+    }
+  ]
+}

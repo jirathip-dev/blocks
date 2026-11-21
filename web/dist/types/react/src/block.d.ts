@@ -9,7 +9,7 @@ export type Views = {
         hooks: Attrs;
     }) => ReactNode;
 };
-export declare function hooksOf(b: Blk, cx: Ctx, fallback: boolean): Attrs;
+export declare function hooksOf(b: Blk, cx: Ctx, fallback: boolean, cont?: boolean): Attrs;
 export declare function row(f: Fallback, cx: Ctx): ReactNode;
 export declare const kids: (bs: unknown) => ReactNode[];
 export declare function Fallen({ b }: {
@@ -34,7 +34,8 @@ export declare class Boundary extends Component<Caught, {
     componentDidUpdate(was: Caught): void;
     render(): ReactNode;
 }
-export declare const Block: import("react").MemoExoticComponent<({ b }: {
+export declare const Block: import("react").MemoExoticComponent<({ b, cont }: {
     b: Blk;
+    cont?: boolean;
 }) => ReactNode>;
 export {};

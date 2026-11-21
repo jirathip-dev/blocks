@@ -1,0 +1,13 @@
+{
+  "markdown": "not \\*it\\* here",
+  "parts": [
+    {
+      "part": "para",
+      "spans": [
+        {
+          "text": "not *it* here"
+        }
+      ]
+    }
+  ]
+}
