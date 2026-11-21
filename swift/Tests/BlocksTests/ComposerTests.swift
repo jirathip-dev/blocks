@@ -4,7 +4,7 @@ import Foundation
 import XCTest
 
 final class ComposerTests: XCTestCase {
-    func testEachSendCarriesAFreshNonceAndAQueueCarriesOneWithItsQ() throws {
+    @MainActor func testEachSendCarriesAFreshNonceAndAQueueCarriesOneWithItsQ() throws {
         let first = ComposerBlock.sending("hi", picks: ["model": .string("m1")], q: nil)
         let next = ComposerBlock.sending("hi", picks: ["model": .string("m1")], q: nil)
         guard case .string(let a) = first["nonce"], case .string(let b) = next["nonce"] else {
