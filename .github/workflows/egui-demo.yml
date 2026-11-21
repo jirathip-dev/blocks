@@ -1,0 +1,40 @@
+name: egui-demo
+on:
+  push:
+    branches: [main, staging]
+    paths: ["demo/egui/**", "crates/blocks-desktop/**", "crates/blocks/**", ".github/workflows/egui-demo.yml"]
+  pull_request:
+    paths: ["demo/egui/**", "crates/blocks-desktop/**", "crates/blocks/**", ".github/workflows/egui-demo.yml"]
+
+permissions:
+  contents: read
+
+jobs:
+  native:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@1.99.1
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: demo/egui
+      - name: "the demo builds for the desktop; its tests pick and draw every core kind and switch light and dark"
+        working-directory: demo/egui
+        run: cargo build --locked && cargo test --locked
+
+  wasm:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@1.99.1
+        with:
+          targets: wasm32-unknown-unknown
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: demo/egui
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: trunk
+      - name: "the demo builds to wasm with its page"
+        working-directory: demo/egui
+        run: trunk build --release --locked --public-url /blocks/egui/ && test -s dist/index.html

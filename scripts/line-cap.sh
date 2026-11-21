@@ -5,7 +5,7 @@ cap=$(cat ci/cap.toml ci/cap.d/*.toml 2>/dev/null | sed -n 's/^line_cap *= *\([0
 test -n "$cap" || { echo "line_cap missing from ci/cap.toml" >&2; exit 2; }
 warn=$(sed -n 's/^warn_within *= *\([0-9]*\).*/\1/p' ci/cap.toml)
 n=$({
-  find src crates/*/src site/src bench -name '*.rs' ! -path '*/target/*' ! -path '*/node_modules/*' -exec awk '/^[[:space:]]*#\[cfg\(test\)\]/ { exit } { n++ } END { print n + 0 }' {} \; 2>/dev/null || true
+  find src crates/*/src site/src bench demo -name '*.rs' ! -path '*/target/*' ! -path '*/node_modules/*' -exec awk '/^[[:space:]]*#\[cfg\(test\)\]/ { exit } { n++ } END { print n + 0 }' {} \; 2>/dev/null || true
   find web/src web/shot web/react/src -name '*.ts' ! -name '*.test.ts' ! -path 'web/src/gen/*' ! -path 'web/react/src/gen/*' -exec cat {} + 2>/dev/null | wc -l
   find bench -name '*.js' ! -path '*/target/*' ! -path '*/node_modules/*' -exec cat {} + 2>/dev/null | wc -l
   find swift/Sources -name '*.swift' ! -path 'swift/Sources/Blocks/Gen/*' -exec cat {} + 2>/dev/null | wc -l

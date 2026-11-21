@@ -9,3 +9,4 @@ why.md
 .claude/
 shots/
 bench/dist/
+demo/egui/dist/
