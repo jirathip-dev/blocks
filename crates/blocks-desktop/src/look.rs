@@ -1,17 +1,25 @@
 use blocks::theme::{default, LabelCase, LabelRole, Mode, PerMode, Scheme, Style, Tokens};
 use blocks::Tone;
-use egui::{Color32, Ui};
+use egui::emath::Numeric;
+use egui::epaint::text::{FontInsert, FontPriority, InsertFontFamily};
+use egui::{vec2, Color32, FontData, FontFamily, TextStyle, Ui};
 
 pub(crate) const TAP: f32 = 44.0;
 pub(crate) const FACE: f32 = 28.0;
 pub(crate) const MARK: f32 = 3.0;
+const FS: f32 = 13.0;
+const FS_META: f32 = 11.0;
+const S2: f32 = 8.0;
+const S4: f32 = 16.0;
+const TITLE: f32 = 1.7;
 
-/// The look a stage draws with: the scheme pair, a mode or the OS's, the app's style, and motion off when `still`.
+/// The look a stage draws with: the scheme pair, a mode or the OS's, the app's style, its faces first to last, and motion off when `still`.
 #[derive(Clone, Debug)]
 pub struct Look {
     pub schemes: PerMode<Scheme>,
     pub mode: Option<Mode>,
     pub style: Option<Style>,
+    pub faces: Vec<FontData>,
     pub still: bool,
 }
 
@@ -21,6 +29,7 @@ impl Default for Look {
             schemes: default().clone(),
             mode: None,
             style: None,
+            faces: vec![],
             still: false,
         }
     }
@@ -36,6 +45,38 @@ fn color(hex: &str) -> Color32 {
 }
 
 impl Look {
+    fn space(&self) -> f32 {
+        self.style.as_ref().map_or(1.0, |s| f32::from_f64(f64::from(s.space)))
+    }
+
+    pub(crate) fn margin(&self) -> f32 {
+        S4 * self.space()
+    }
+
+    pub(crate) fn dress(&self, ui: &mut Ui) {
+        for (i, face) in self.faces.iter().enumerate().rev() {
+            let first = InsertFontFamily {
+                family: FontFamily::Proportional,
+                priority: FontPriority::Highest,
+            };
+            let name = format!("blocks-face-{i}");
+            if !ui.ctx().fonts(|f| f.definitions().font_data.contains_key(&name)) {
+                ui.ctx().add_font(FontInsert::new(&name, face.clone(), vec![first]));
+                ui.ctx().request_repaint();
+            }
+        }
+        let gap = S2 * self.space();
+        let s = ui.style_mut();
+        s.spacing.item_spacing = vec2(gap, gap);
+        for (style, font) in &mut s.text_styles {
+            font.size = match style {
+                TextStyle::Heading => FS * TITLE,
+                TextStyle::Small => FS_META,
+                _ => FS,
+            };
+        }
+    }
+
     fn tokens(&self, ui: &Ui) -> &Tokens {
         let dark = self.mode.map_or(ui.visuals().dark_mode, |m| m == Mode::Dark);
         let s = if dark { &self.schemes.dark } else { &self.schemes.light };

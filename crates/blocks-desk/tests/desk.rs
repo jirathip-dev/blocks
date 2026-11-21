@@ -416,3 +416,30 @@ fn the_thread_script_lands_its_ops_and_the_opened_tool_stays_open() {
     let (open, shut) = (tall(tree), tall(&folded.shots[0].tree));
     assert!(open > shut + 44.0, "opened {open}, folded {shut}");
 }
+
+#[test]
+fn a_composer_sends_what_was_typed_with_its_values_and_queues_while_a_turn_works() {
+    let sent = |working: bool| {
+        let mut c = json!({"type": "composer", "id": "say", "action": "send", "values": {"to": "team"},
+            "acts": {"queue": "enqueue"}});
+        if working {
+            c["working"] = json!({"since": "2026-01-01T00:00:00Z"});
+        }
+        let screen: Block = serde_json::from_value(json!({"type": "screen", "id": "s", "blocks": [c]})).unwrap();
+        let run = Desk::new(screen).run(&steps(json!([
+            {"tap": {"id": "say"}},
+            {"type": {"id": "say", "text": "hello"}},
+            {"tap": {"id": "say"}}
+        ])));
+        assert_eq!(run.report.dropped, Vec::<String>::new());
+        run.report.sent
+    };
+    let [idle] = sent(false).try_into().unwrap();
+    assert_eq!((idle.block.as_deref(), idle.action.as_str()), (Some("say"), "send"));
+    assert_eq!(
+        idle.values,
+        serde_json::from_value::<blocks::Fields>(json!({"to": "team", "text": "hello"})).unwrap()
+    );
+    let [busy] = sent(true).try_into().unwrap();
+    assert_eq!(busy.action, "enqueue");
+}
