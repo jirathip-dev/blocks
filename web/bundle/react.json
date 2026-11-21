@@ -1,0 +1,1 @@
+{ "entry": "react/src/index.ts", "minify": false, "external": ["react"], "uses": ["core", "import"] }

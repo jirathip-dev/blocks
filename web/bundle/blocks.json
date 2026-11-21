@@ -1,0 +1,1 @@
+{ "entry": "src/shell.ts", "minify": true, "external": [], "uses": ["import"] }
