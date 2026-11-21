@@ -1,0 +1,18 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="../neutral-default/tokens.css"><link rel="stylesheet" href="../../../web/dist/blocks.css"><link rel="stylesheet" href="modal.css"><link rel="stylesheet" href="page.css">
+<script src="bg.js"></script><title>modal: a fixed confirm</title></head>
+<body>
+<div class="stage"><div class="app"></div>
+<div class="mds scrim">
+<div class="md alert" role="alertdialog" aria-modal="true" aria-labelledby="t3" aria-describedby="m3">
+<header class="mdh"><span class="mdt" id="t3">Delete 3 items?</span></header>
+<div class="mdb"><p class="mdm" id="m3">They move to the bin and are gone for good after 30 days.</p></div>
+<footer class="mdf"><button type="button" class="fv" style="outline:var(--ring) solid var(--l);outline-offset:2px"><span>cancel</span></button><button type="button" class="bad"><span>delete</span></button></footer>
+</div></div></div>
+<section class="notes"><h2>A confirm or alert (the <code>alert</code> variant)</h2><ol>
+<li><b>Fixed in the centre</b> at every width, small (400 px, 320 on a phone), over a scrim. Its header has no grip and no ×, and cannot be dragged; no place is kept.</li>
+<li><b>Two buttons make a confirm, one makes an alert</b> (just “ok”). A destructive confirm draws its button red and opens with focus on cancel; any other opens with focus on the main button.</li>
+<li><b>Escape</b> is cancel (or ok, for an alert). Tab stays between its buttons. A screen reader hears it as an alert dialog with its title and message.</li>
+<li>Not a bottom sheet on a phone, and no swipe: a decision is never dismissed by a stray swipe.</li>
+</ol></section>
+<script>bg(); done()</script></body></html>
