@@ -111,6 +111,11 @@ function boot(screen) {
   return new Promise((done) => requestAnimationFrame(() => requestAnimationFrame(() => done(performance.now() - t0))));
 }
 
+const patched = (patch) => {
+  const sorted = [...patch].sort((a, b) => a - b);
+  return { longest_patch_ms: sorted.at(-1), p99_patch_ms: sorted[Math.ceil(sorted.length * 0.99) - 1] };
+};
+
 /// Draws `screen` in WebKit in `scheme`, runs `steps`, and gives each shot's PNG and tree, the report, what the probes saw and the failed checks.
 export async function shot({ screen, steps = [], name = "shot", size = "390x844", css = [], scripts = [], kinds = [], expect, ids, check = false, probes = false, scheme = "light", look = false, adapter = "html", browser }) {
   const [width, height] = size.split("x").map(Number);
@@ -184,11 +189,7 @@ export async function shot({ screen, steps = [], name = "shot", size = "390x844"
       report.timings.frames_over_budget = frames.filter((f) => f > BUDGET_MS).length;
     }
     const patch = await page.evaluate(() => window.h.patch);
-    if (patch.length) {
-      const sorted = [...patch].sort((a, b) => a - b);
-      report.timings.longest_patch_ms = sorted.at(-1);
-      report.timings.p99_patch_ms = sorted[Math.ceil(sorted.length * 0.99) - 1];
-    }
+    if (patch.length) Object.assign(report.timings, patched(patch));
     faults.unshift(...seen.map((s) => `${s.shot}: ${s.rule} ${s.at}: ${s.detail}`), ...leaks(report.sent));
     return { report, pngs, trees, seen, faults };
   } finally {
