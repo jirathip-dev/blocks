@@ -7,6 +7,7 @@ type Frame = { xf: (v: number) => number; yf: (v: number) => number };
 type Mark = { cls: string; at: [string, string][]; text?: string };
 
 const num = (x: number) => String(Math.floor(x * 100 + 0.5) / 100 + 0);
+const px = (f: number) => String(Math.floor(f * 10000 + 0.5) + 0);
 const shapes = new WeakMap<Element, string>();
 const axisLabel = (a: PlotAxis | null | undefined) => [a?.label ?? "", a?.unit ? `(${a.unit})` : ""].filter(Boolean).join(" ");
 const tag = (t: string, cls: string, text: string, attrs = "") => `<${t}${cls ? ` class="${cls}"` : ""}${attrs}>${esc(text)}</${t}>`;
@@ -37,31 +38,31 @@ const xTicks = (d: PlotDrawn, f: Frame): Mark[] =>
   });
 
 function grid(d: PlotDrawn, f: Frame): Mark[] {
-  const across = (y: string): [string, string][] => [["x1", "0"], ["x2", "1000"], ["y1", y], ["y2", y]];
-  const ys = d.yTicks.map((t) => ({ cls: Math.abs(t.at - d.y[0]) < 1e-9 ? "base" : "grid", at: across(num(f.yf(t.at) * 1000)) }));
+  const across = (y: string): [string, string][] => [["x1", "0"], ["x2", "10000"], ["y1", y], ["y2", y]];
+  const ys = d.yTicks.map((t) => ({ cls: Math.abs(t.at - d.y[0]) < 1e-9 ? "base" : "grid", at: across(px(f.yf(t.at))) }));
   const xs = d.xTicks
     .map((t) => f.xf(t.at))
     .filter((at) => at > 0.001 && at < 0.999)
-    .map((at): Mark => ({ cls: "grid", at: [["x1", num(at * 1000)], ["x2", num(at * 1000)], ["y1", "0"], ["y2", "1000"]] }));
+    .map((at): Mark => ({ cls: "grid", at: [["x1", px(at)], ["x2", px(at)], ["y1", "0"], ["y2", "10000"]] }));
   return [...ys, ...xs];
 }
 
 function marks(p: Plot, f: Frame): Mark[] {
-  const across = (y: string): [string, string][] => [["x1", "0"], ["x2", "1000"], ["y1", y], ["y2", y]];
+  const across = (y: string): [string, string][] => [["x1", "0"], ["x2", "10000"], ["y1", y], ["y2", y]];
   const out: Mark[] = [];
   if (p.target) {
-    const [top, bottom] = [f.yf(p.target.max) * 1000, f.yf(p.target.min) * 1000];
-    out.push({ cls: "plb", at: [["x", "0"], ["width", "1000"], ["y", num(top)], ["height", num(Math.max(0, bottom - top))]] });
-    out.push({ cls: "plbe", at: across(num(top)) }, { cls: "plbe", at: across(num(bottom)) });
+    const [top, bottom] = [f.yf(p.target.max), f.yf(p.target.min)];
+    out.push({ cls: "plb", at: [["x", "0"], ["width", "10000"], ["y", px(top)], ["height", px(Math.max(0, bottom - top))]] });
+    out.push({ cls: "plbe", at: across(px(top)) }, { cls: "plbe", at: across(px(bottom)) });
   }
-  if (p.peak) out.push({ cls: "peak", at: across(num(f.yf(p.peak.y) * 1000)) });
+  if (p.peak) out.push({ cls: "peak", at: across(px(f.yf(p.peak.y))) });
   return out;
 }
 
 function path(p: Plot, d: PlotDrawn, f: Frame, i: number): string {
   const [s, line] = [p.series[i], d.lines[i] ?? []];
   let out = "";
-  for (const j of line) out += `${out ? "L" : "M"}${num(f.xf(s?.x[j] ?? 0) * 1000)} ${num(f.yf(s?.y[j] ?? 0) * 1000)}`;
+  for (const j of line) out += `${out ? "L" : "M"}${px(f.xf(s?.x[j] ?? 0))} ${px(f.yf(s?.y[j] ?? 0))}`;
   return out;
 }
 
@@ -82,7 +83,7 @@ function inner(p: Plot, d: PlotDrawn): string {
   if (p.peak) out += `<span><i class="plk peak"></i>${tag("b", "", p.peak.label)}</span>`;
   out += `</div><div class="plg"><div class="plu">${tag("span", "", axisLabel(p.y))}</div><div class="ply">${html("span", yTicks(d, f))}</div><div class="plp">`;
   const m = marks(p, f).map((x) => html(x.cls === "plb" ? "rect" : "line", [x])).join("");
-  out += `<svg viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true"><g class="plgr">${html("line", grid(d, f))}</g>${m}`;
+  out += `<svg viewBox="0 0 10000 10000" preserveAspectRatio="none" aria-hidden="true"><g class="plgr">${html("line", grid(d, f))}</g>${m}`;
   p.series.forEach((s, i) => (out += `<path class="s" d="${path(p, d, f, i)}" style="${colour(s.tone, i)}"/>`));
   out += `</svg>${html("i", dots(p, f))}`;
   if (empty(p)) out += `<div class="ple">${tag("span", "", p.empty ?? "No data yet")}</div>`;

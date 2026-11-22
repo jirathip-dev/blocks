@@ -9,6 +9,10 @@ fn num(x: f64) -> String {
     format!("{}", ((x * 100.0) + 0.5).floor() / 100.0 + 0.0)
 }
 
+fn px(f: f64) -> String {
+    format!("{}", (f * 10000.0 + 0.5).floor() + 0.0)
+}
+
 fn axis_label(a: Option<&PlotAxis>) -> String {
     let label = a.and_then(|a| a.label.as_deref()).filter(|s| !s.is_empty());
     let unit = a.and_then(|a| a.unit.as_deref()).filter(|s| !s.is_empty()).map(|u| format!("({u})"));
@@ -49,35 +53,35 @@ fn legend(w: &mut W<'_>, p: &Plot, d: &PlotDrawn) {
 fn marks(w: &mut W<'_>, p: &Plot, d: &PlotDrawn, xf: &dyn Fn(f64) -> f64, yf: &dyn Fn(f64) -> f64) {
     let y0 = d.y.0;
     w.open("div", "plp", &[]);
-    w.raw("<svg viewBox=\"0 0 1000 1000\" preserveAspectRatio=\"none\" aria-hidden=\"true\"><g class=\"plgr\">");
+    w.raw("<svg viewBox=\"0 0 10000 10000\" preserveAspectRatio=\"none\" aria-hidden=\"true\"><g class=\"plgr\">");
     for t in &d.y_ticks {
         let cls = if (t.at - y0).abs() < 1e-9 { "base" } else { "grid" };
-        let y = num(yf(t.at) * 1000.0);
-        w.raw(&format!("<line class=\"{cls}\" x1=\"0\" x2=\"1000\" y1=\"{y}\" y2=\"{y}\"/>"));
+        let y = px(yf(t.at));
+        w.raw(&format!("<line class=\"{cls}\" x1=\"0\" x2=\"10000\" y1=\"{y}\" y2=\"{y}\"/>"));
     }
     for t in &d.x_ticks {
         let at = xf(t.at);
         if at > 0.001 && at < 0.999 {
-            let x = num(at * 1000.0);
-            w.raw(&format!("<line class=\"grid\" x1=\"{x}\" x2=\"{x}\" y1=\"0\" y2=\"1000\"/>"));
+            let x = px(at);
+            w.raw(&format!("<line class=\"grid\" x1=\"{x}\" x2=\"{x}\" y1=\"0\" y2=\"10000\"/>"));
         }
     }
     w.raw("</g>");
     if let Some(t) = &p.target {
-        let (top, bottom) = (yf(f(&t.max)) * 1000.0, yf(f(&t.min)) * 1000.0);
-        let (y, h, lo, hi) = (num(top), num((bottom - top).max(0.0)), num(bottom), num(top));
+        let (top, bottom) = (yf(f(&t.max)), yf(f(&t.min)));
+        let (y, h, lo, hi) = (px(top), px((bottom - top).max(0.0)), px(bottom), px(top));
         w.raw(&format!(
-            "<rect class=\"plb\" x=\"0\" width=\"1000\" y=\"{y}\" height=\"{h}\"/><line class=\"plbe\" x1=\"0\" x2=\"1000\" y1=\"{hi}\" y2=\"{hi}\"/><line class=\"plbe\" x1=\"0\" x2=\"1000\" y1=\"{lo}\" y2=\"{lo}\"/>"
+            "<rect class=\"plb\" x=\"0\" width=\"10000\" y=\"{y}\" height=\"{h}\"/><line class=\"plbe\" x1=\"0\" x2=\"10000\" y1=\"{hi}\" y2=\"{hi}\"/><line class=\"plbe\" x1=\"0\" x2=\"10000\" y1=\"{lo}\" y2=\"{lo}\"/>"
         ));
     }
     if let Some(peak) = &p.peak {
-        let y = num(yf(f(&peak.y)) * 1000.0);
-        w.raw(&format!("<line class=\"peak\" x1=\"0\" x2=\"1000\" y1=\"{y}\" y2=\"{y}\"/>"));
+        let y = px(yf(f(&peak.y)));
+        w.raw(&format!("<line class=\"peak\" x1=\"0\" x2=\"10000\" y1=\"{y}\" y2=\"{y}\"/>"));
     }
     for (i, (s, line)) in p.series.iter().zip(&d.lines).enumerate() {
         let pt = |j: &usize| {
             let at = |v: &[serde_json::Number]| v.get(*j).map_or(0.0, f);
-            format!("{} {}", num(xf(at(&s.x)) * 1000.0), num(yf(at(&s.y)) * 1000.0))
+            format!("{} {}", px(xf(at(&s.x))), px(yf(at(&s.y))))
         };
         let path = line.iter().map(pt).collect::<Vec<_>>().join("L");
         let d = if path.is_empty() { path } else { format!("M{path}") };
