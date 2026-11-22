@@ -1,0 +1,6 @@
+{
+  "text": "Pro costs $10 a month; see https://plans.example/ for [more](https://plans.example/more).",
+  "refused": [
+    "read/json"
+  ]
+}

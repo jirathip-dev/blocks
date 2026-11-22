@@ -1,0 +1,6 @@
+{
+  "text": "{\"blocks\": [{\"type\": \"row\", \"title\": \"Docs\", \"tap\": {\"url\": \"http://docs.example/\"}}]}",
+  "refused": [
+    "catalog/link"
+  ]
+}

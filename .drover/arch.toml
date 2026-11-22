@@ -18,8 +18,7 @@ generated = [
     "fixtures/css/*.css", "fixtures/client/*.json",
     "crates/blocks/src/guard/rules/mod.rs", "crates/blocks/src/kind/core/mod.rs", "crates/blocks/src/site/kind/drawn.rs", "swift/Sources/BlocksUI/Gen/Kinds.swift",
     "skill/blocks/**", "crates/blocks-cli/src/gen/skill.rs",
-    "web/src/gen/fields.ts", "web/react/src/gen/fields.ts",
-    "web/src/gen/words.ts", "web/src/gen/words-import.ts",
+    "web/src/gen/fields.ts", "web/react/src/gen/fields.ts", "web/src/gen/words.ts", "web/src/gen/words-import.ts",
     "fixtures/fields/*.json", "fixtures/fields/trees/*.json",
 ]
 generate = "sh scripts/arch-gen.sh"
@@ -239,6 +238,12 @@ mods = ["crate::catalog", "blocks::catalog"]
 may_use = ["kind"]
 
 [[layer]]
+name = "model"
+paths = ["crates/blocks/src/model/**"]
+mods = ["crate::model", "blocks::model"]
+may_use = ["kind", "built", "catalog", "guard", "wire"]
+
+[[layer]]
 name = "guard"
 paths = ["crates/blocks/src/guard/**"]
 mods = ["crate::guard", "blocks::guard"]
@@ -254,7 +259,7 @@ may_use = ["expr", "kind", "built", "wire", "patch", "diff", "shelf", "mirror", 
 name = "cli"
 paths = ["crates/blocks-cli/src/**"]
 mods = ["blocks_cli"]
-may_use = ["guard", "kind", "built", "tree", "wire", "catalog"]
+may_use = ["guard", "kind", "built", "tree", "wire", "catalog", "model"]
 
 [[layer]]
 name = "desktop-words"

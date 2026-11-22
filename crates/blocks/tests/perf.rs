@@ -151,3 +151,38 @@ fn linting_the_42_goldens_stays_under_budget() {
         Duration::from_millis(50),
     );
 }
+
+#[test]
+#[ignore = "release only: `just perf`"]
+fn reading_a_16000_character_model_reply_stays_under_budget() {
+    let catalog = blocks::catalog::Catalog::read(
+        r#"{"name": "say", "kinds": {"prose": {}, "row": {}, "button": {"actions": ["pick"]}}, "links": ["https://"]}"#,
+    )
+    .unwrap();
+    let md = "A **plan** with [docs](https://docs.example/) and a list:\n\n- one\n- two\n\n".repeat(13);
+    let mut blocks = vec![];
+    for i in 0..13 {
+        blocks.push(serde_json::json!({"type": "prose", "markdown": md}));
+        blocks.push(serde_json::json!({"type": "row", "title": format!("Row {i}"), "subtitle": "A plan"}));
+    }
+    for i in 0..3 {
+        blocks.push(serde_json::json!({"type": "button", "label": format!("Pick {i}"), "action": "pick"}));
+    }
+    let text = serde_json::json!({ "blocks": blocks }).to_string();
+    assert!((14_000..=16_000).contains(&text.len()), "{} characters", text.len());
+    let cut = &text[..text.len() - 40];
+    let fit = blocks::model::read(&catalog, "r", &text)
+        .map_err(|no| no.say())
+        .unwrap();
+    assert_eq!(fit.blocks.len(), 29);
+    report(
+        "model::read a 16,000-character reply",
+        time(20, || blocks::model::read(&catalog, "r", &text).is_ok()),
+        Duration::from_millis(6),
+    );
+    report(
+        "model::read the same reply cut short",
+        time(20, || blocks::model::read(&catalog, "r", cut).is_ok()),
+        Duration::from_millis(6),
+    );
+}
