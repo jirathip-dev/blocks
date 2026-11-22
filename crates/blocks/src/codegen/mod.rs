@@ -17,7 +17,6 @@ mod theme;
 mod ts;
 
 type Files = Vec<(String, String)>;
-
 /// The JSON Schema of a `Frame`; its `$defs` hold `Block`, `Op` and the stream's other messages.
 pub fn schema() -> Value {
     let mut g = schemars::SchemaGenerator::default();
@@ -35,6 +34,7 @@ pub fn schema() -> Value {
     g.subschema_for::<guard::Finding>();
     g.subschema_for::<guard::Plan>();
     g.subschema_for::<crate::DaySpan>();
+    g.subschema_for::<crate::PointMove>();
     let mut v = g.into_root_schema_for::<Frame>().to_value();
     if let Some(o) = v.as_object_mut() {
         let id = format!("https://github.com/jirathip-dev/blocks/schema/v{SCHEMA_VERSION}");

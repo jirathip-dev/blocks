@@ -1178,7 +1178,7 @@
     },
     "Chart": {
       "additionalProperties": true,
-      "description": "A chart of named series over x values: bar, stacked, line, combo or donut.",
+      "description": "A chart of named series over x values: bar, stacked, line, combo or donut; `move` drags a point's value.",
       "properties": {
         "chart": {
           "$ref": "#/$defs/ChartKind"
@@ -1219,6 +1219,16 @@
           "type": [
             "string",
             "null"
+          ]
+        },
+        "move": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Gesture"
+            },
+            {
+              "type": "null"
+            }
           ]
         },
         "selected": {
@@ -5183,6 +5193,26 @@
       ],
       "type": "object"
     },
+    "PointMove": {
+      "description": "What a point's move gives: its series' name, its x as the chart wrote it, and its new value.",
+      "properties": {
+        "at": {
+          "type": "string"
+        },
+        "series": {
+          "type": "string"
+        },
+        "y": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "series",
+        "at",
+        "y"
+      ],
+      "type": "object"
+    },
     "Prose": {
       "additionalProperties": true,
       "description": "Text as a tree of headings, paragraphs, lists, quotes and code.",
@@ -6331,7 +6361,7 @@
       "type": "object"
     },
     "Series": {
-      "description": "One named series of a chart: a value per x, its tone, a combo's mark and a dashed line.",
+      "description": "One named series of a chart: a value per x, its tone, a combo's mark, a dashed line, a move's step and `fixed`.",
       "properties": {
         "as": {
           "anyOf": [
@@ -6349,8 +6379,20 @@
             "null"
           ]
         },
+        "fixed": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
         "name": {
           "type": "string"
+        },
+        "step": {
+          "type": [
+            "number",
+            "null"
+          ]
         },
         "tone": {
           "anyOf": [

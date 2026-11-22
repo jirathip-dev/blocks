@@ -2,7 +2,7 @@ use serde_json::{Map, Value};
 
 use super::fallback;
 use crate::site::write::{fields, sends, W};
-use crate::{Chart, ChartFormat, ChartKind, Era, Series, SeriesMark, Tone};
+use crate::{Chart, ChartFormat, ChartKind, Era, Series, Tone};
 
 const H: f64 = 180.0;
 const ORDER: [&str; 5] = ["--l", "--c", "--a", "--p", "--g"];
@@ -99,56 +99,8 @@ fn colour(tone: Option<&Tone>, i: usize) -> String {
     format!("--k:var({token})")
 }
 
-fn nice(v: f64) -> f64 {
-    if v <= 0.0 {
-        return 1.0;
-    }
-    let p = 10f64.powf(v.log10().floor());
-    let r = v / p;
-    p * [1.0, 2.0, 2.5, 5.0].into_iter().find(|m| r <= *m).unwrap_or(10.0)
-}
-
 fn at(s: &Series, i: usize) -> Option<f64> {
     s.values.get(i).and_then(serde_json::Number::as_f64)
-}
-
-fn line(c: &Chart, s: &Series) -> bool {
-    c.chart == ChartKind::Line || (c.chart == ChartKind::Combo && s.mark == Some(SeriesMark::Line))
-}
-
-fn scale(c: &Chart) -> (f64, f64) {
-    let all = || {
-        c.series
-            .iter()
-            .flat_map(|s| s.values.iter().filter_map(serde_json::Number::as_f64))
-    };
-    if c.chart == ChartKind::Line {
-        let (lo, hi) = all().fold((f64::MAX, f64::MIN), |(l, h), v| (l.min(v), h.max(v)));
-        if lo > hi {
-            return (0.0, 1.0);
-        }
-        let step = nice(if hi > lo {
-            (hi - lo) / 2.0
-        } else {
-            hi.abs().max(1.0) / 2.0
-        });
-        let lo = (lo / step).floor() * step;
-        let mut top = ((hi / step).ceil() * step).max(lo + step);
-        if ((top - lo) / step).round() % 2.0 > 0.5 {
-            top += step;
-        }
-        return (lo, top);
-    }
-    let stacked = c.chart != ChartKind::Bar;
-    let max = (0..c.x.len())
-        .map(|i| {
-            let bars = c.series.iter().filter(|s| !line(c, s)).filter_map(|s| at(s, i));
-            let lines = c.series.iter().filter(|s| line(c, s)).filter_map(|s| at(s, i));
-            let bar = if stacked { bars.sum() } else { bars.fold(0.0, f64::max) };
-            lines.fold(bar, f64::max)
-        })
-        .fold(0.0, f64::max);
-    (0.0, nice(max * 1.04))
 }
 
 fn svg(c: &Chart, (lo, hi): (f64, f64)) -> String {
@@ -166,7 +118,7 @@ fn svg(c: &Chart, (lo, hi): (f64, f64)) -> String {
         ));
     }
     let gap = if n > 16 { 1.5 } else { 2.5 };
-    let bars: Vec<(usize, &Series)> = c.series.iter().enumerate().filter(|(_, s)| !line(c, s)).collect();
+    let bars: Vec<(usize, &Series)> = c.series.iter().enumerate().filter(|(_, s)| !c.is_line(s)).collect();
     let rect = |x: f64, width: f64, top: f64, bottom: f64, k: &str| {
         format!(
             "<rect class=\"s\" x=\"{}\" width=\"{}\" y=\"{}\" height=\"{}\" style=\"{k}\"/>",
@@ -204,7 +156,7 @@ fn svg(c: &Chart, (lo, hi): (f64, f64)) -> String {
         "<line class=\"base\" x1=\"0\" x2=\"{w}\" y1=\"{0}\" y2=\"{0}\"/>",
         num(H)
     ));
-    for (si, s) in c.series.iter().enumerate().filter(|(_, s)| line(c, s)) {
+    for (si, s) in c.series.iter().enumerate().filter(|(_, s)| c.is_line(s)) {
         let pts: Vec<String> = (0..n)
             .filter_map(|i| Some(format!("{} {}", num(f(i) * 10.0 + 5.0), num(y(at(s, i)?)))))
             .collect();
@@ -246,7 +198,7 @@ fn legend(w: &mut W<'_>, c: &Chart, at_x: Option<usize>) {
     for (i, s) in c.series.iter().enumerate() {
         let cls = format!(
             "chk{}{}",
-            if line(c, s) { " chkl" } else { "" },
+            if c.is_line(s) { " chkl" } else { "" },
             if s.dash == Some(true) { " chkd" } else { "" }
         );
         w.open("span", "", &[]);
@@ -295,7 +247,7 @@ fn plot(w: &mut W<'_>, c: &Chart, b: &Value) {
         .and_then(|s| c.x.iter().position(|x| x == s))
         .filter(|_| !empty);
     legend(w, c, (!empty).then(|| picked.unwrap_or(n.saturating_sub(1))));
-    let (lo, hi) = scale(c);
+    let (lo, hi) = c.axis();
     w.open("div", "chg", &[]);
     ticks(w, c, empty, (lo, hi));
     w.open("div", "chp", &[]);
@@ -305,7 +257,7 @@ fn plot(w: &mut W<'_>, c: &Chart, b: &Value) {
         w.close("i");
     }
     w.raw(&svg(c, (lo, hi)));
-    for (si, s) in c.series.iter().enumerate().filter(|(_, s)| line(c, s)) {
+    for (si, s) in c.series.iter().enumerate().filter(|(_, s)| c.is_line(s)) {
         let Some((i, v)) = picked.and_then(|i| Some((i, at(s, i)?))) else {
             continue;
         };

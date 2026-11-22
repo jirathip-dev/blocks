@@ -1,6 +1,6 @@
 # `chart`
 
-A chart of named series over x values: bar, stacked, line, combo or donut.
+A chart of named series over x values: bar, stacked, line, combo or donut; `move` drags a point's value.
 
 The Rust type `Chart`; in TS, `chart(fields: Chart)` from `web/src/gen/builders.ts`.
 
@@ -14,6 +14,7 @@ The Rust type `Chart`; in TS, `chart(fields: Chart)` from `web/src/gen/builders.
 | `format` | `ChartFormat` | optional |
 | `id` | `string` | optional |
 | `lang` | `string` | optional |
+| `move` | `Gesture` | optional |
 | `selected` | `string` | optional |
 | `series` | `Series[]` | required |
 | `show` | `Expr` | optional |

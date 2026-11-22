@@ -321,3 +321,75 @@ test("a sent bar stays where it was dropped until refused, then goes back; answe
   ok(!kept.pngs.dropped.equals(kept.pngs.kept), "no longer dimmed once answered");
   ok(kept.pngs.kept.equals(there.pngs.there), "drawn from the data");
 });
+
+test("chart rules give fixtures/gesture/chart.json the crate's points, words and steps", async () => {
+  const { chart } = await import("../src/core/kind/chart.ts");
+  const { block, cases, steps } = read("chart.json");
+  ok(cases.length >= 20);
+  for (const c of cases) {
+    const got = c.reach ? chart.candidate(block, c.grab, c.reach) : c.nudges.reduce((from, n) => from && chart.nudge(block, c.grab, from, n), chart.start(block, c.grab));
+    deepStrictEqual(got, c.want, `${JSON.stringify(c.grab)} ${JSON.stringify(c.reach ?? c.nudges)}`);
+    deepStrictEqual(got && chart.says(block, c.grab, got), c.says ?? null, JSON.stringify(c.grab));
+  }
+  for (const s of steps) deepStrictEqual(chart.steps(block, s.grab).map(([n]) => n), s.want, JSON.stringify(s.grab));
+});
+
+const curve = read("chart.json").block;
+const curves = { type: "screen", id: "s", title: "Plan", blocks: [curve] };
+const may = { series: "Target", at: "2026-05" };
+const point = (y) => [{ screen: "s", action: "plan.target", block: "plan", values: { point: { ...may, y } } }];
+
+test("a chart point's move sends one action by pointer, keys and named action, in WebKit; a refused one goes back", async () => {
+  const { shot } = await import("../shot/shot.ts");
+  const ways = [
+    ["pointer", [[0, -7], [0, -14]], 1350000],
+    ["keys", [{ dir: "up" }], 1250000],
+    ["keys", [{ dir: "down", big: true }], 700000],
+    ["action", ["Raise"], 1250000],
+  ];
+  for (const [via, reach, y] of ways) {
+    const { report, faults } = await shot({ screen: curves, css, size: big, check: true, steps: [{ gesture: { id: "plan", grab: may, via, reach } }, { shot: { name: via } }] });
+    deepStrictEqual(report.sent, point(y), `${via} ${JSON.stringify(reach)}`);
+    deepStrictEqual(faults, [], via);
+  }
+  const drop = { gesture: { id: "plan", grab: may, via: "pointer", reach: [[0, -14]] } };
+  const back = await shot({ screen: curves, css, size: big, steps: [{ shot: { name: "before" } }, drop, { shot: { name: "dropped" } }, { refuse: { toast: "Over budget" } }, { shot: { name: "back" } }] });
+  ok(!back.pngs.before.equals(back.pngs.dropped), "dropped somewhere else");
+  ok(back.pngs.before.equals(back.pngs.back), "back where it was");
+  const fixed = await shot({ screen: curves, css, size: big, steps: [{ gesture: { id: "plan", grab: may, via: "pointer", reach: [[0, 0]] } }] });
+  deepStrictEqual(fixed.report.sent, [], "a press released where it was sends nothing");
+});
+
+test("a chart with no move draws no handle; Left and Right walk one series' points, and the ruled-out ones have none", async () => {
+  const { webkit } = await import("playwright");
+  const browser = await webkit.launch();
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  const dist = (f) => readFileSync(new URL(`../dist/${f}`, import.meta.url), "utf8");
+  await page.route("**/*", (r) =>
+    r.request().url().endsWith(".js") ? r.fulfill({ body: dist("blocks.js"), contentType: "text/javascript" }) : r.fulfill({ body: `<!doctype html><style>${dist("blocks.css")}</style><body><main></main>`, contentType: "text/html" }),
+  );
+  await page.goto("http://blocks.test/");
+  const boot = (b) =>
+    page.evaluate(async (b) => {
+      const B = await import("/blocks.js");
+      const ctx = { screen: "s", act: async () => true, tap: () => {}, open: new Set(), theme: B.plain, store: { get: () => null, put: () => {} }, held: new Map(), view: new Map() };
+      document.querySelector("main").replaceChildren(B.render(b, ctx));
+    }, b);
+  const names = () => page.$$eval(".chq", (qs) => qs.map((q) => [q.getAttribute("aria-label"), q.tabIndex]));
+  try {
+    await boot(curve);
+    const all = await names();
+    strictEqual(all.length, 11, "6 Target and 5 Stretch points; Actual is fixed");
+    deepStrictEqual(all[4], ["Target, May 2026: ฿1.20M", -1]);
+    deepStrictEqual(all.filter(([, t]) => t === 0).length, 2, "one stop a series");
+    await page.focus(".chq");
+    await page.keyboard.press("ArrowRight");
+    strictEqual(await page.evaluate(() => document.activeElement.getAttribute("aria-label")), "Target, Feb 2026: ฿1.10M");
+    await boot({ ...curve, move: null });
+    strictEqual(await page.locator(".chq").count(), 0);
+    await boot({ ...curve, chart: "stacked" });
+    strictEqual(await page.locator(".chq").count(), 0);
+  } finally {
+    await browser.close();
+  }
+});

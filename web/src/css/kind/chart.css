@@ -48,3 +48,17 @@
 .chart th,.chart td{padding:2px var(--s2) 2px 0;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
 .chart th:first-child,.chart td:first-child{text-align:left}.chart th{color:var(--mute);font-weight:400}
 .chart .tw{overflow-x:auto}
+.chqw{display:contents}
+.chq{position:absolute;display:grid;place-items:center;height:var(--hit);min-width:0;margin:calc(var(--hit) / -2) 0 0;padding:0;border:0;border-radius:0;background:none;cursor:grab;touch-action:none;z-index:2}
+.chq::after{content:none}
+.chq::before{content:"";width:var(--s2);height:var(--s2);box-sizing:border-box;background:var(--card);border:var(--ring) solid var(--k);transition:transform calc(var(--settle) * var(--motion,1)) var(--ease)}
+.chq:focus-visible{outline:0}
+.chq:focus-visible::before{outline:var(--ring) solid var(--l);outline-offset:var(--ring)}
+.chq[data-phase=pressed]::before{transform:scale(1.5);background:var(--k);box-shadow:0 0 0 var(--ring) var(--card)}
+.chq[data-phase=previewing]::before{transform:scale(1.5);background:var(--k);box-shadow:0 0 0 var(--ring) var(--card);transition:none}
+.chq[data-phase=sent]{opacity:.5;cursor:progress}
+.chq[data-phase=sent]::before{background:var(--k)}
+.chq-g{position:absolute;width:var(--s2);height:var(--s2);margin:calc(var(--s2) / -2) 0 0 calc(var(--s2) / -2);box-sizing:border-box;border:1px dashed var(--mute);pointer-events:none}
+.chy .chq-t{z-index:1;padding:0 var(--s1);background:var(--card);border:1px solid var(--l);color:var(--fg);font-weight:600}
+.chl .chq-d{font-style:normal;color:var(--mute)}
+.chart:has(.chq:focus-visible:is([data-phase=pressed],[data-phase=previewing])) .chg::after{content:"↑ ↓ one step · Shift ten steps · Enter drop · Esc cancel";grid-column:2;margin-top:var(--s2);font-size:var(--fs-meta);color:var(--mute)}

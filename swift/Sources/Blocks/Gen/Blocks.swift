@@ -312,6 +312,7 @@ public struct Chart: Codable, Equatable, Sendable {
     public var format: ChartFormat?
     public var id: String?
     public var lang: String?
+    public var move: Gesture?
     public var selected: String?
     public var series: [Series]
     public var show: Expr?
@@ -1391,6 +1392,12 @@ public struct PlanRun: Codable, Equatable, Sendable {
     public var steps: [Step]
 }
 
+public struct PointMove: Codable, Equatable, Sendable {
+    public var at: String
+    public var series: String
+    public var y: Double
+}
+
 public struct Prose: Codable, Equatable, Sendable {
     public var id: String?
     public var parts: [Part]
@@ -1601,7 +1608,9 @@ public struct Seen: Codable, Equatable, Sendable {
 public struct Series: Codable, Equatable, Sendable {
     public var `as`: SeriesMark?
     public var dash: Bool?
+    public var fixed: Bool?
     public var name: String
+    public var step: Double?
     public var tone: Tone?
     public var values: [Double]
 }
