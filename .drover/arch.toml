@@ -2,7 +2,7 @@ frozen = [
     ".github/workflows/ci.yml", ".github/workflows/swift.yml", "ci/cap.toml", "crates/blocks/src/site/views.rs", "docs/schema.md",
     "swift/Sources/BlocksUI/Blocks.swift", "swift/Sources/BlocksUI/BlockCards.swift", "swift/Sources/BlocksUI/BlockLeaves.swift",
     "swift/Sources/BlocksUI/BlockRows.swift", "swift/Sources/BlocksUI/BlockFields.swift", "swift/Sources/BlocksUI/Components.swift",
-    "web/src/blocks.css", "web/src/render/index.ts", "web/test/render.test.ts",
+    "web/src/blocks.css", "web/src/render/index.ts", "web/test/render.test.ts", "crates/blocks/tests/theme.rs",
 ]
 generated = [
     "schema/blocks.schema.json", "schema/sample.json",
@@ -66,6 +66,7 @@ shared = [
     "swift/Sources/BlocksSnapshot/Snapshot.swift",
     "swift/Tests/BlocksTests/RenderTests.swift",
     "swift/Sources/BlocksUI/BlockNode.swift",
+    "crates/blocks/src/theme/scheme.rs", "web/src/core/look.ts",
 ]
 
 [[collect]]
@@ -139,6 +140,10 @@ glob = "*.rs"
 [[collect]]
 dir = "crates/blocks/tests"
 glob = "site_*.rs"
+
+[[collect]]
+dir = "crates/blocks/tests"
+glob = "theme_*.rs"
 
 [comments]
 policy = "strict"
@@ -559,7 +564,7 @@ paths = [".drover/rules.md", "web/package.json"]
 max_file_lines = 30
 
 [[size]]
-paths = ["swift/Sources/BlocksUI/AppBlocks.swift", "swift/Sources/BlocksUI/BlockNode.swift"]
+paths = ["swift/Sources/BlocksUI/AppBlocks.swift", "swift/Sources/BlocksUI/BlockNode.swift", "web/src/core/look.ts"]
 max_file_lines = 100
 
 [[size]]
@@ -575,7 +580,7 @@ paths = ["swift/Sources/BlocksUI/BlocksView.swift", "site/src/main.rs"]
 max_file_lines = 170
 
 [[size]]
-paths = ["crates/blocks-desktop/src/stage.rs", "site/tests/pages.rs"]
+paths = ["crates/blocks-desktop/src/stage.rs", "site/tests/pages.rs", "crates/blocks/src/theme/scheme.rs"]
 max_file_lines = 250
 
 [[size]]
