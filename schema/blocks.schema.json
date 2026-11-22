@@ -241,7 +241,8 @@
               "import",
               "message",
               "tool",
-              "sidebar"
+              "sidebar",
+              "plot"
             ]
           },
           "type": "string"
@@ -273,6 +274,60 @@
         "tap"
       ],
       "type": "object"
+    },
+    "Axis": {
+      "description": "A plot's axis: its label and unit, a fixed range, and whether its values read as numbers or as seconds.",
+      "properties": {
+        "label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "max": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "min": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "scale": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AxisScale"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "unit": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "AxisScale": {
+      "anyOf": [
+        {
+          "enum": [
+            "number",
+            "time"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "string"
+        }
+      ]
     },
     "Band": {
       "description": "A band of a scene's repo: a header over its rows, or over blocks.",
@@ -850,6 +905,19 @@
           "properties": {
             "type": {
               "const": "sidebar",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/Plot",
+          "properties": {
+            "type": {
+              "const": "plot",
               "type": "string"
             }
           },
@@ -4596,6 +4664,48 @@
         },
         {
           "properties": {
+            "drop": {
+              "format": "uint",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "id": {
+              "type": "string"
+            },
+            "op": {
+              "const": "points",
+              "type": "string"
+            },
+            "series": {
+              "type": "string"
+            },
+            "x": {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            },
+            "y": {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            }
+          },
+          "required": [
+            "op",
+            "id",
+            "series",
+            "x",
+            "y"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
             "count": {
               "format": "uint64",
               "minimum": 0,
@@ -4990,6 +5100,22 @@
       ],
       "description": "A named test of a value; never a regex."
     },
+    "Peak": {
+      "description": "A plot's peak: a line across at `y`, with its label.",
+      "properties": {
+        "label": {
+          "type": "string"
+        },
+        "y": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "y",
+        "label"
+      ],
+      "type": "object"
+    },
     "Pending": {
       "description": "A screen's bar of unsaved changes.",
       "properties": {
@@ -5190,6 +5316,94 @@
         "kinds",
         "steps",
         "probes"
+      ],
+      "type": "object"
+    },
+    "Plot": {
+      "additionalProperties": true,
+      "description": "A line plot of named series over a numeric or time x: points stream in by `points`; a window, a target and a peak.",
+      "properties": {
+        "empty": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "peak": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Peak"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "series": {
+          "items": {
+            "$ref": "#/$defs/Trace"
+          },
+          "type": "array"
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "target": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Target"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "title": {
+          "type": "string"
+        },
+        "window": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "x": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Axis"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "y": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Axis"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "title",
+        "series"
       ],
       "type": "object"
     },
@@ -7462,6 +7676,22 @@
       },
       "type": "object"
     },
+    "Target": {
+      "description": "A plot's target: the y range shaded from `min` to `max`.",
+      "properties": {
+        "max": {
+          "type": "number"
+        },
+        "min": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "min",
+        "max"
+      ],
+      "type": "object"
+    },
     "Text": {
       "additionalProperties": true,
       "description": "Text: markdown, or a plain styled line.",
@@ -8213,6 +8443,42 @@
           "type": "string"
         }
       ]
+    },
+    "Trace": {
+      "description": "One named line of a plot: its tone and its points, an `x` and a `y` each.",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "tone": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Tone"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "x": {
+          "items": {
+            "type": "number"
+          },
+          "type": "array"
+        },
+        "y": {
+          "items": {
+            "type": "number"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "name",
+        "x",
+        "y"
+      ],
+      "type": "object"
     },
     "TreeDrawn": {
       "description": "How a renderer drew a block: its own view, its fallback, or not at all.",

@@ -1,0 +1,105 @@
+{
+  "drawn": {
+    "band": null,
+    "last": [
+      ""
+    ],
+    "lines": [
+      []
+    ],
+    "x": [
+      0.0,
+      30.0
+    ],
+    "xTicks": [
+      {
+        "at": -0.0,
+        "odd": false,
+        "text": "0:00"
+      },
+      {
+        "at": 5.0,
+        "odd": true,
+        "text": "0:05"
+      },
+      {
+        "at": 10.0,
+        "odd": false,
+        "text": "0:10"
+      },
+      {
+        "at": 15.0,
+        "odd": true,
+        "text": "0:15"
+      },
+      {
+        "at": 20.0,
+        "odd": false,
+        "text": "0:20"
+      },
+      {
+        "at": 25.0,
+        "odd": true,
+        "text": "0:25"
+      },
+      {
+        "at": 30.0,
+        "odd": false,
+        "text": "0:30"
+      }
+    ],
+    "y": [
+      0.0,
+      40.0
+    ],
+    "yTicks": [
+      {
+        "at": -0.0,
+        "odd": false,
+        "text": "0"
+      },
+      {
+        "at": 10.0,
+        "odd": true,
+        "text": "10"
+      },
+      {
+        "at": 20.0,
+        "odd": false,
+        "text": "20"
+      },
+      {
+        "at": 30.0,
+        "odd": true,
+        "text": "30"
+      },
+      {
+        "at": 40.0,
+        "odd": false,
+        "text": "40"
+      }
+    ]
+  },
+  "plot": {
+    "empty": "Pull to start",
+    "id": "p",
+    "series": [
+      {
+        "name": "Force",
+        "x": [],
+        "y": []
+      }
+    ],
+    "title": "Pull",
+    "type": "plot",
+    "window": 30,
+    "x": {
+      "scale": "time"
+    },
+    "y": {
+      "max": 40,
+      "min": 0
+    }
+  },
+  "why": "no points: 0 to the window, the fixed y range, no readouts"
+}

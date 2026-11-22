@@ -297,6 +297,11 @@ pub fn apply(root: &mut Block, ops: &[Op]) -> Result<(), ApplyError> {
                 Some(_) => return Err(ApplyError::Shape(format!("`{id}` is no prose block"))),
                 None => return Err(no(id)),
             },
+            Op::Points { id, series, drop, x, y } => match root.find(id) {
+                Some(Block::Plot(p)) => p.grow(series, *drop, x, y).map_err(ApplyError::Shape)?,
+                Some(_) => return Err(ApplyError::Shape(format!("`{id}` is no plot"))),
+                None => return Err(no(id)),
+            },
             Op::Badge { count } => {
                 if let Block::Screen(s) = root {
                     s.badge = Some(*count);

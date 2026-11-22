@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use serde_json::Value;
 
-use crate::kind::{Block, Fields, Part, Prose, Table, TableRow};
+use crate::kind::{Block, Fields, Part, Plot, Prose, Table, TableRow, Trace};
 use crate::patch::apply;
 use crate::wire::{Child, Op};
 
@@ -79,8 +79,15 @@ fn changed(old: &Block, new: &Block, id: &str) -> Vec<Op> {
 fn block_ops(old: &Block, new: &Block, id: &str) -> Option<Vec<Op>> {
     let mut fields = own_fields(old, new)?;
     let grown = match (old, new) {
-        (Block::Prose(a), Block::Prose(b)) if fields.remove("parts").is_some() => Some(append(id, a, b)),
-        _ => None,
+        (Block::Prose(a), Block::Prose(b)) if fields.remove("parts").is_some() => vec![append(id, a, b)],
+        (Block::Plot(a), Block::Plot(b)) if fields.contains_key("series") => {
+            let ops = points(id, a, b);
+            if ops.is_some() {
+                fields.remove("series");
+            }
+            ops.unwrap_or_default()
+        }
+        _ => vec![],
     };
     let merge = (!fields.is_empty()).then(|| Op::Merge { id: id.into(), fields });
     Some(merge.into_iter().chain(grown).chain(kid_ops(old, new)?).collect())
@@ -110,6 +117,42 @@ fn append(id: &str, old: &Prose, new: &Prose) -> Op {
         parts: b.get(keep..).unwrap_or_default().to_vec(),
         text: String::new(),
     }
+}
+
+fn points(id: &str, old: &Plot, new: &Plot) -> Option<Vec<Op>> {
+    let bare = |t: &Trace| (t.name.clone(), t.tone.clone());
+    if !old.series.iter().map(bare).eq(new.series.iter().map(bare)) {
+        return None;
+    }
+    let mut ops = vec![];
+    for (a, b) in old.series.iter().zip(&new.series) {
+        if a == b {
+            continue;
+        }
+        let n = a.x.len();
+        let tail = |d: usize| {
+            let (x, y) = (a.x.get(d..)?, a.y.get(d..)?);
+            (b.x.starts_with(x) && b.y.starts_with(y)).then(|| (b.x.get(x.len()..), b.y.get(y.len()..)))
+        };
+        let first = (b.x.first(), b.y.first());
+        let whole = n == 0 || b.x.is_empty();
+        let drop = (0..=n).find(|&d| {
+            (if d == n {
+                whole
+            } else {
+                (a.x.get(d), a.y.get(d)) == first
+            }) && tail(d).is_some()
+        })?;
+        let (Some(x), Some(y)) = tail(drop)? else { return None };
+        ops.push(Op::Points {
+            id: id.into(),
+            series: b.name.clone(),
+            drop: (drop > 0).then_some(drop),
+            x: x.to_vec(),
+            y: y.to_vec(),
+        });
+    }
+    Some(ops)
 }
 
 fn ids(list: &[Block]) -> Option<HashMap<&str, (usize, &Block)>> {

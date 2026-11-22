@@ -43,6 +43,7 @@ extension Block {
         case .message(let b): ("message", b.id)
         case .tool(let b): ("tool", b.id)
         case .sidebar(let b): ("sidebar", b.id)
+        case .plot(let b): ("plot", b.id)
         case .appBlock(let b): (b.type, b.id)
         }
     }
@@ -115,11 +116,12 @@ extension Block {
         case .message(let b): [b.name]
         case .tool(let b): [b.name]
         case .sidebar(let b): [b.label]
+        case .plot(let b): [b.title]
         default: []
         }
     }
 
-    internal static let roles = ["modal": "dialog", "sheet": "dialog", "section": "region", "form": "form", "config": "form", "nav": "navigation", "chart": "figure", "toast": "status", "message": "article", "sidebar": "navigation"]
+    internal static let roles = ["modal": "dialog", "sheet": "dialog", "section": "region", "form": "form", "config": "form", "nav": "navigation", "chart": "figure", "plot": "figure", "toast": "status", "message": "article", "sidebar": "navigation"]
     internal static let names = ["label", "title", "header", "question", "alt", "file", "command", "placeholder", "name"]
 }
 
@@ -147,6 +149,7 @@ internal struct KindView: View {
         case .modal(let block): ModalBlock(block: block)
         case .nav(let block): NavBlock(block: block)
         case .pages(let block): PagesBlock(block: block)
+        case .plot(let block): PlotBlock(block: block)
         case .prose(let block): ProseBlock(block: block)
         case .row(let block): RowBlock(block: block)
         case .run(let block): RunBlock(block: block)

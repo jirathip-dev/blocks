@@ -21,6 +21,7 @@ kinds! {
     "modal" => modal,
     "nav" => nav,
     "pages" => pages,
+    "plot" => plot,
     "prose" => prose,
     "row" => row,
     "run" => run,

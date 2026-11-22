@@ -31,6 +31,7 @@ generated = [
     "fixtures/fields/html/*.html",
     "fixtures/site/*.html",
     "fixtures/protocol/sim-*.json",
+    "fixtures/plot/stream.json",
     "fixtures/behave/sim.json",
     "fixtures/gesture/sim.json",
     "fixtures/css/*.css",

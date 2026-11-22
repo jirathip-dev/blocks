@@ -77,7 +77,7 @@ pub struct PointReach {
     pub steps: i32,
 }
 
-fn nice(v: f64) -> f64 {
+pub(super) fn nice(v: f64) -> f64 {
     if v <= 0.0 {
         return 1.0;
     }
@@ -86,7 +86,7 @@ fn nice(v: f64) -> f64 {
     p * [1.0, 2.0, 2.5, 5.0].into_iter().find(|m| r <= *m).unwrap_or(10.0)
 }
 
-fn decimals(x: f64) -> i32 {
+pub(super) fn decimals(x: f64) -> i32 {
     (0..6)
         .find(|d| {
             let v = x * 10f64.powi(*d);
@@ -95,7 +95,7 @@ fn decimals(x: f64) -> i32 {
         .unwrap_or(6)
 }
 
-fn fixed(v: f64, d: i32) -> String {
+pub(super) fn fixed(v: f64, d: i32) -> String {
     let p = 10f64.powi(d);
     let n = (v * p + 0.5).floor();
     let whole = (n / p).floor();
@@ -114,7 +114,7 @@ fn fixed(v: f64, d: i32) -> String {
     out
 }
 
-fn whole(f: f64) -> Number {
+pub(super) fn whole(f: f64) -> Number {
     format!("{f}")
         .parse::<i64>()
         .map_or_else(|_| Number::from_f64(f).unwrap_or_else(|| 0.into()), Into::into)

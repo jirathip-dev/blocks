@@ -20,7 +20,7 @@ pub(crate) const VARIANTS: [(&str, &str); 9] = [
     ("tool", "state"),
 ];
 
-pub(crate) const ROLES: [(&str, &str); 10] = [
+pub(crate) const ROLES: [(&str, &str); 11] = [
     ("modal", "dialog"),
     ("sheet", "dialog"),
     ("section", "region"),
@@ -28,6 +28,7 @@ pub(crate) const ROLES: [(&str, &str); 10] = [
     ("config", "form"),
     ("nav", "navigation"),
     ("chart", "figure"),
+    ("plot", "figure"),
     ("toast", "status"),
     ("message", "article"),
     ("sidebar", "navigation"),

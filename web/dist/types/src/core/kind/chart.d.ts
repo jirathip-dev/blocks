@@ -7,6 +7,9 @@ export type PointGrab = {
 export type PointReach = {
     steps: number;
 };
+export declare function nice(v: number): number;
+export declare function decimals(x: number): number;
+export declare function fixed(v: number, d: number): string;
 export declare const isLine: (c: Chart, s: Series) => boolean;
 export declare function axis(c: Chart): [number, number];
 export declare function stepOf(c: Chart, s: Series): number;

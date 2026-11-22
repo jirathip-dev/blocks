@@ -117,6 +117,30 @@ public struct Attachment: Codable, Equatable, Sendable {
     }
 }
 
+public struct Axis: Codable, Equatable, Sendable {
+    public var label: String?
+    public var max: Double?
+    public var min: Double?
+    public var scale: AxisScale?
+    public var unit: String?
+
+    public init(label: String? = nil, max: Double? = nil, min: Double? = nil, scale: AxisScale? = nil, unit: String? = nil) {
+        self.label = label
+        self.max = max
+        self.min = min
+        self.scale = scale
+        self.unit = unit
+    }
+}
+
+public struct AxisScale: RawRepresentable, Hashable, Codable, Equatable, Sendable {
+    public let rawValue: String
+    public init(rawValue: String) { self.rawValue = rawValue }
+    public static let number = Self(rawValue: "number")
+    public static let time = Self(rawValue: "time")
+    public static let all: [Self] = [.number, .time]
+}
+
 public struct Band: Codable, Equatable, Sendable {
     public var blocks: [Block]?
     public var header: String?
@@ -187,9 +211,10 @@ public enum Block: Codable, Equatable, Sendable {
     case message(Message)
     case tool(Tool)
     case sidebar(Sidebar)
+    case plot(Plot)
     case appBlock(JSONValue)
 
-    public static let tags: Set<String> = ["screen", "modal", "sheet", "section", "list", "row", "card", "choice", "form", "config", "secret", "run", "button", "chips", "stat", "text", "images", "web", "diff", "editor", "scene", "diagram", "composer", "lines", "prose", "hero", "media", "nav", "island", "table", "steps", "chart", "toast", "pages", "timeline", "import", "message", "tool", "sidebar"]
+    public static let tags: Set<String> = ["screen", "modal", "sheet", "section", "list", "row", "card", "choice", "form", "config", "secret", "run", "button", "chips", "stat", "text", "images", "web", "diff", "editor", "scene", "diagram", "composer", "lines", "prose", "hero", "media", "nav", "island", "table", "steps", "chart", "toast", "pages", "timeline", "import", "message", "tool", "sidebar", "plot"]
 
     private enum Tag: String, CodingKey { case tag = "type" }
 
@@ -234,6 +259,7 @@ public enum Block: Codable, Equatable, Sendable {
         case "message": self = try (try? Message(from: decoder)).map(Self.message) ?? .appBlock(JSONValue(from: decoder))
         case "tool": self = try (try? Tool(from: decoder)).map(Self.tool) ?? .appBlock(JSONValue(from: decoder))
         case "sidebar": self = try (try? Sidebar(from: decoder)).map(Self.sidebar) ?? .appBlock(JSONValue(from: decoder))
+        case "plot": self = try (try? Plot(from: decoder)).map(Self.plot) ?? .appBlock(JSONValue(from: decoder))
         default: self = .appBlock(try JSONValue(from: decoder))
         }
     }
@@ -279,6 +305,7 @@ public enum Block: Codable, Equatable, Sendable {
         case .message(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("message", forKey: .tag)
         case .tool(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("tool", forKey: .tag)
         case .sidebar(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("sidebar", forKey: .tag)
+        case .plot(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("plot", forKey: .tag)
         case .appBlock(let v): try v.encode(to: encoder)
         }
     }
@@ -1801,6 +1828,22 @@ public struct OpAppend: Codable, Equatable, Sendable {
     }
 }
 
+public struct OpPoints: Codable, Equatable, Sendable {
+    public var drop: Int?
+    public var id: String
+    public var series: String
+    public var x: [Double]
+    public var y: [Double]
+
+    public init(drop: Int? = nil, id: String, series: String, x: [Double], y: [Double]) {
+        self.drop = drop
+        self.id = id
+        self.series = series
+        self.x = x
+        self.y = y
+    }
+}
+
 public struct OpBadge: Codable, Equatable, Sendable {
     public var count: UInt64
 
@@ -1832,6 +1875,7 @@ public enum Op: Codable, Equatable, Sendable {
     case remove(OpRemove)
     case replace(OpReplace)
     case append(OpAppend)
+    case points(OpPoints)
     case badge(OpBadge)
     case dot(OpDot)
     case screen(OpScreen)
@@ -1847,6 +1891,7 @@ public enum Op: Codable, Equatable, Sendable {
         case "remove": self = .remove(try OpRemove(from: decoder))
         case "replace": self = .replace(try OpReplace(from: decoder))
         case "append": self = .append(try OpAppend(from: decoder))
+        case "points": self = .points(try OpPoints(from: decoder))
         case "badge": self = .badge(try OpBadge(from: decoder))
         case "dot": self = .dot(try OpDot(from: decoder))
         case "screen": self = .screen(try OpScreen(from: decoder))
@@ -1862,6 +1907,7 @@ public enum Op: Codable, Equatable, Sendable {
         case .remove(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("remove", forKey: .tag)
         case .replace(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("replace", forKey: .tag)
         case .append(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("append", forKey: .tag)
+        case .points(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("points", forKey: .tag)
         case .badge(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("badge", forKey: .tag)
         case .dot(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("dot", forKey: .tag)
         case .screen(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("screen", forKey: .tag)
@@ -2048,6 +2094,16 @@ public struct Pattern: RawRepresentable, Hashable, Codable, Equatable, Sendable 
     public static let all: [Self] = [.filled, .email, .url, .number]
 }
 
+public struct Peak: Codable, Equatable, Sendable {
+    public var label: String
+    public var y: Double
+
+    public init(label: String, y: Double) {
+        self.label = label
+        self.y = y
+    }
+}
+
 public struct Pending: Codable, Equatable, Sendable {
     public var count: String
     public var discard: Tap
@@ -2130,6 +2186,32 @@ public struct PlanRun: Codable, Equatable, Sendable {
         self.scripts = scripts
         self.size = size
         self.steps = steps
+    }
+}
+
+public struct Plot: Codable, Equatable, Sendable {
+    public var empty: String?
+    public var id: String?
+    public var peak: Peak?
+    public var series: [Trace]
+    public var show: Expr?
+    public var target: Target?
+    public var title: String
+    public var window: Double?
+    public var x: Axis?
+    public var y: Axis?
+
+    public init(empty: String? = nil, id: String? = nil, peak: Peak? = nil, series: [Trace], show: Expr? = nil, target: Target? = nil, title: String, window: Double? = nil, x: Axis? = nil, y: Axis? = nil) {
+        self.empty = empty
+        self.id = id
+        self.peak = peak
+        self.series = series
+        self.show = show
+        self.target = target
+        self.title = title
+        self.window = window
+        self.x = x
+        self.y = y
     }
 }
 
@@ -3021,6 +3103,16 @@ public struct Tap: Codable, Equatable, Sendable {
     }
 }
 
+public struct Target: Codable, Equatable, Sendable {
+    public var max: Double
+    public var min: Double
+
+    public init(max: Double, min: Double) {
+        self.max = max
+        self.min = min
+    }
+}
+
 public struct Text: Codable, Equatable, Sendable {
     public var center: Bool?
     public var font: String?
@@ -3310,6 +3402,20 @@ public struct Total: RawRepresentable, Hashable, Codable, Equatable, Sendable {
     public static let avg = Self(rawValue: "avg")
     public static let count = Self(rawValue: "count")
     public static let all: [Self] = [.sum, .avg, .count]
+}
+
+public struct Trace: Codable, Equatable, Sendable {
+    public var name: String
+    public var tone: Tone?
+    public var x: [Double]
+    public var y: [Double]
+
+    public init(name: String, tone: Tone? = nil, x: [Double], y: [Double]) {
+        self.name = name
+        self.tone = tone
+        self.x = x
+        self.y = y
+    }
 }
 
 public struct TreeDrawn: RawRepresentable, Hashable, Codable, Equatable, Sendable {

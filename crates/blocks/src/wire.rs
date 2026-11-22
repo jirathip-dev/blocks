@@ -3,7 +3,7 @@ use std::fmt;
 
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
+use serde_json::{Number, Value};
 
 use crate::kind::{Block, Fields, Lane, Part, Round, TableRow, Toast};
 use crate::SCHEMA_VERSION;
@@ -57,6 +57,14 @@ pub enum Op {
         parts: Vec<Part>,
         #[serde(default, skip_serializing_if = "String::is_empty")]
         text: String,
+    },
+    Points {
+        id: String,
+        series: String,
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        drop: Option<usize>,
+        x: Vec<Number>,
+        y: Vec<Number>,
     },
     Badge {
         count: u64,
@@ -187,9 +195,9 @@ pub struct OldFrame {
     pub ops: Vec<Op>,
 }
 
-/// The ops the old per-screen stream sends for `ops`: a `move` becomes a `replace` of its parent, of the root a `screen`, an `append` a `merge` of its parts.
+/// The ops the old per-screen stream sends for `ops`: a `move` becomes a `replace` of its parent, of the root a `screen`, an `append` a `merge` of its parts, a plot's `points` one `merge` of its series.
 pub fn old(ops: Vec<Op>, new: &Block) -> Vec<Op> {
-    let mut replaced = HashSet::new();
+    let (mut replaced, mut plots) = (HashSet::new(), HashSet::new());
     let mut out = Vec::with_capacity(ops.len());
     for op in ops {
         match op {
@@ -206,6 +214,17 @@ pub fn old(ops: Vec<Op>, new: &Block) -> Vec<Op> {
                     Ok(parts) => out.push(Op::Merge {
                         id,
                         fields: Fields::from_iter([("parts".into(), parts)]),
+                    }),
+                    Err(_) => return vec![Op::Screen { screen: new.clone() }],
+                },
+                _ => return vec![Op::Screen { screen: new.clone() }],
+            },
+            Op::Points { id, .. } if !plots.insert(id.clone()) => {}
+            Op::Points { id, .. } => match new.get(&id) {
+                Some(Block::Plot(p)) => match serde_json::to_value(&p.series) {
+                    Ok(series) => out.push(Op::Merge {
+                        id,
+                        fields: Fields::from_iter([("series".into(), series)]),
                     }),
                     Err(_) => return vec![Op::Screen { screen: new.clone() }],
                 },

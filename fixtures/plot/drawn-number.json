@@ -1,0 +1,124 @@
+{
+  "drawn": {
+    "band": null,
+    "last": [
+      "43 kg"
+    ],
+    "lines": [
+      [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ]
+    ],
+    "x": [
+      6.0,
+      30.0
+    ],
+    "xTicks": [
+      {
+        "at": 10.0,
+        "odd": false,
+        "text": "10"
+      },
+      {
+        "at": 15.0,
+        "odd": true,
+        "text": "15"
+      },
+      {
+        "at": 20.0,
+        "odd": false,
+        "text": "20"
+      },
+      {
+        "at": 25.0,
+        "odd": true,
+        "text": "25"
+      },
+      {
+        "at": 30.0,
+        "odd": false,
+        "text": "30"
+      }
+    ],
+    "y": [
+      10.0,
+      50.0
+    ],
+    "yTicks": [
+      {
+        "at": 10.0,
+        "odd": true,
+        "text": "10"
+      },
+      {
+        "at": 20.0,
+        "odd": false,
+        "text": "20"
+      },
+      {
+        "at": 30.0,
+        "odd": true,
+        "text": "30"
+      },
+      {
+        "at": 40.0,
+        "odd": false,
+        "text": "40"
+      },
+      {
+        "at": 50.0,
+        "odd": true,
+        "text": "50"
+      }
+    ]
+  },
+  "plot": {
+    "id": "p",
+    "series": [
+      {
+        "name": "Left",
+        "x": [
+          6,
+          8,
+          10,
+          12,
+          15,
+          18,
+          20,
+          25,
+          30
+        ],
+        "y": [
+          14.2,
+          19.8,
+          25.1,
+          29.4,
+          34,
+          37.2,
+          38.9,
+          41.6,
+          43
+        ]
+      }
+    ],
+    "title": "Pull",
+    "type": "plot",
+    "x": {
+      "label": "Edge",
+      "unit": "mm"
+    },
+    "y": {
+      "label": "Force",
+      "unit": "kg"
+    }
+  },
+  "why": "a plain number axis with a unit: the y range follows the points, widened to round steps"
+}

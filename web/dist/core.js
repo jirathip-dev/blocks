@@ -38,9 +38,10 @@ var hooks = {
   import: { variant: null, parts: ["title"] },
   message: { variant: "role", parts: [] },
   tool: { variant: "state", parts: [] },
-  sidebar: { variant: null, parts: [] }
+  sidebar: { variant: null, parts: [] },
+  plot: { variant: null, parts: ["title"] }
 };
-var roles = { modal: "dialog", sheet: "dialog", section: "region", form: "form", config: "form", nav: "navigation", chart: "figure", toast: "status", message: "article", sidebar: "navigation" };
+var roles = { modal: "dialog", sheet: "dialog", section: "region", form: "form", config: "form", nav: "navigation", chart: "figure", plot: "figure", toast: "status", message: "article", sidebar: "navigation" };
 var names = ["label", "title", "header", "question", "alt", "file", "command", "placeholder", "name"];
 var hosts = { screen: "blocks", modal: "blocks", sheet: "blocks", section: "blocks", card: "blocks", message: "blocks", list: "rows", scene: "lanes", row: "rounds", table: "rows" };
 var walked = ["blocks", "rows", "buttons", "rounds", "lanes"];
@@ -521,6 +522,7 @@ var import_ = (fields) => ({ type: "import", ...fields });
 var message = (fields) => ({ type: "message", ...fields });
 var tool = (fields) => ({ type: "tool", ...fields });
 var sidebar = (fields) => ({ type: "sidebar", ...fields });
+var plot = (fields) => ({ type: "plot", ...fields });
 var expr = {
   get: (v) => ({ get: v }),
   not: (v) => ({ not: v }),
@@ -539,9 +541,20 @@ var expr = {
   pick: (...v) => ({ pick: v })
 };
 
+// src/core/kind/plot.ts
+function grow(series, op) {
+  const at2 = series.findIndex((s2) => s2.name === op.series);
+  const s = series[at2];
+  const drop = op.drop ?? 0;
+  if (!s || drop > s.x.length || op.x.length !== op.y.length) return void 0;
+  const out = [...series];
+  out[at2] = { ...s, x: [...s.x.slice(drop), ...op.x], y: [...s.y.slice(drop), ...op.y] };
+  return out;
+}
+
 // src/core/kind/prose.ts
 var tail = (spans) => spans?.[spans.length - 1];
-function grow(parts, op) {
+function grow2(parts, op) {
   if (op.keep != null && op.keep > parts.length) return void 0;
   const out = [...parts.slice(0, op.keep ?? parts.length), ...structuredClone(op.parts ?? [])];
   if (!op.text) return out;
@@ -629,9 +642,16 @@ function apply(screen2, ops) {
         break;
       case "append": {
         const t = get(root, op.id);
-        const parts = t?.["type"] === "prose" && Array.isArray(t["parts"]) ? grow(t["parts"], op) : void 0;
+        const parts = t?.["type"] === "prose" && Array.isArray(t["parts"]) ? grow2(t["parts"], op) : void 0;
         if (!t || !parts) return void 0;
         t["parts"] = parts;
+        break;
+      }
+      case "points": {
+        const t = get(root, op.id);
+        const series = t?.["type"] === "plot" && Array.isArray(t["series"]) ? grow(t["series"], op) : void 0;
+        if (!t || !series) return void 0;
+        t["series"] = series;
         break;
       }
       case "badge":
@@ -662,7 +682,7 @@ var sideCount = (b) => [b.count > 99 ? "99+" : String(b.count), `${b.count} ${b.
 var SIGN = { THB: "\u0E3F", USD: "$", EUR: "\u20AC" };
 var at = (r, id) => r.cells[id];
 var unit = (c) => c.kind === "money" ? c.currency ? SIGN[c.currency] ?? c.currency : null : c.unit;
-var grouped = (v, d, fixed) => v.toLocaleString("en-US", { minimumFractionDigits: fixed ? d : 0, maximumFractionDigits: d });
+var grouped = (v, d, fixed2) => v.toLocaleString("en-US", { minimumFractionDigits: fixed2 ? d : 0, maximumFractionDigits: d });
 var number = (c, v) => c.kind === "money" ? grouped(v, 2, true) : grouped(v, c.digits ?? 2, false);
 function total(c, rows) {
   const cells = rows.map((r) => at(r, c.id)).filter((v) => v !== void 0);
@@ -774,6 +794,7 @@ var kinds = {
   "modal": "Modal",
   "nav": "Nav",
   "pages": "Pages",
+  "plot": "Plot",
   "prose": "Prose",
   "row": "Row",
   "run": "Run",
@@ -975,7 +996,8 @@ var defs = {
             "import",
             "message",
             "tool",
-            "sidebar"
+            "sidebar",
+            "plot"
           ]
         },
         "type": "string"
@@ -1006,6 +1028,59 @@ var defs = {
       "tap"
     ],
     "type": "object"
+  },
+  "Axis": {
+    "properties": {
+      "label": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "max": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "min": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "scale": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/AxisScale"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "unit": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "type": "object"
+  },
+  "AxisScale": {
+    "anyOf": [
+      {
+        "enum": [
+          "number",
+          "time"
+        ],
+        "type": "string"
+      },
+      {
+        "type": "string"
+      }
+    ]
   },
   "Band": {
     "properties": {
@@ -1580,6 +1655,19 @@ var defs = {
         "properties": {
           "type": {
             "const": "sidebar",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      {
+        "$ref": "#/$defs/Plot",
+        "properties": {
+          "type": {
+            "const": "plot",
             "type": "string"
           }
         },
@@ -5115,6 +5203,21 @@ var defs = {
       }
     ]
   },
+  "Peak": {
+    "properties": {
+      "label": {
+        "type": "string"
+      },
+      "y": {
+        "type": "number"
+      }
+    },
+    "required": [
+      "y",
+      "label"
+    ],
+    "type": "object"
+  },
   "Pending": {
     "properties": {
       "count": {
@@ -5242,6 +5345,93 @@ var defs = {
     },
     "required": [
       "name"
+    ],
+    "type": "object"
+  },
+  "Plot": {
+    "additionalProperties": true,
+    "properties": {
+      "empty": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "id": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "peak": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Peak"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "series": {
+        "items": {
+          "$ref": "#/$defs/Trace"
+        },
+        "type": "array"
+      },
+      "show": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "target": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Target"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "title": {
+        "type": "string"
+      },
+      "window": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "x": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Axis"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "y": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Axis"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      }
+    },
+    "required": [
+      "title",
+      "series"
     ],
     "type": "object"
   },
@@ -7110,6 +7300,21 @@ var defs = {
     },
     "type": "object"
   },
+  "Target": {
+    "properties": {
+      "max": {
+        "type": "number"
+      },
+      "min": {
+        "type": "number"
+      }
+    },
+    "required": [
+      "min",
+      "max"
+    ],
+    "type": "object"
+  },
   "Text": {
     "additionalProperties": true,
     "properties": {
@@ -7807,6 +8012,41 @@ var defs = {
       }
     ]
   },
+  "Trace": {
+    "properties": {
+      "name": {
+        "type": "string"
+      },
+      "tone": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Tone"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "x": {
+        "items": {
+          "type": "number"
+        },
+        "type": "array"
+      },
+      "y": {
+        "items": {
+          "type": "number"
+        },
+        "type": "array"
+      }
+    },
+    "required": [
+      "name",
+      "x",
+      "y"
+    ],
+    "type": "object"
+  },
   "Undo": {
     "properties": {
       "action": {
@@ -8318,6 +8558,7 @@ export {
   pages,
   pick,
   picked,
+  plot,
   prose,
   refused,
   role,
