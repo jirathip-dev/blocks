@@ -113,7 +113,7 @@ final class PlotTests: XCTestCase {
                 .merge(OpMerge(fields: ["peak": .object(["y": .number(ys[0]), "label": .string("Peak")])], id: "pull")),
                 .points(OpPoints(id: "pull", series: "Force", x: xs, y: ys)),
             ]
-            let took = try (0..<3).map { _ in
+            let took = try (0..<5).map { _ in
                 var copy = s
                 return try clock.measure { try copy.apply(ops) }
             }.min() ?? .zero
