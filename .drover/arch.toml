@@ -2,38 +2,23 @@ frozen = [
     ".github/workflows/ci.yml", ".github/workflows/swift.yml", "ci/cap.toml", "crates/blocks/src/site/views.rs", "docs/schema.md",
     "swift/Sources/BlocksUI/Blocks.swift", "swift/Sources/BlocksUI/BlockCards.swift", "swift/Sources/BlocksUI/BlockLeaves.swift",
     "swift/Sources/BlocksUI/BlockRows.swift", "swift/Sources/BlocksUI/BlockFields.swift", "swift/Sources/BlocksUI/Components.swift",
-    "web/src/blocks.css", "web/src/render/index.ts", "web/test/render.test.ts",
+    "web/src/blocks.css", "web/src/render/index.ts", "web/test/render.test.ts", "crates/blocks/tests/theme.rs",
 ]
 generated = [
-    "schema/blocks.schema.json",
-    "schema/sample.json",
-    "web/src/gen/types.ts",
-    "web/src/gen/hooks.ts",
-    "web/src/gen/sample.ts",
+    "schema/blocks.schema.json", "schema/sample.json",
+    "web/src/gen/types.ts", "web/src/gen/hooks.ts", "web/src/gen/sample.ts",
     "swift/Sources/Blocks/Gen/*.swift",
-    "web/src/gen/schemes.ts",
-    "web/src/gen/layout.ts",
-    "web/src/gen/kinds.ts",
-    "web/src/gen/builders.ts",
-    "web/src/gen/shapes.ts",
-    "fixtures/check/*.json",
-    "fixtures/built/*.json",
+    "web/src/gen/schemes.ts", "web/src/gen/layout.ts", "web/src/gen/kinds.ts", "web/src/gen/builders.ts", "web/src/gen/shapes.ts",
+    "fixtures/check/*.json", "fixtures/built/*.json",
     "web/dist/*.js", "web/dist/*.css",
     "web/src/gen/scoped.css",
     "web/dist/types/**",
     "web/react/src/gen/views.ts",
-    "fixtures/trees/react/*.json",
-    "fixtures/blocks/*.json",
-    "fixtures/trees/*.json",
-    "fixtures/trees/swift/*.json",
-    "fixtures/trees/swift/fields/*.json",
-    "fixtures/html/*.html",
-    "fixtures/fields/html/*.html",
-    "fixtures/site/*.html",
-    "fixtures/protocol/sim-*.json", "fixtures/plot/stream.json",
-    "fixtures/behave/sim.json",
-    "fixtures/gesture/sim.json",
-    "fixtures/css/*.css",
+    "fixtures/trees/react/*.json", "fixtures/blocks/*.json",
+    "fixtures/trees/*.json", "fixtures/trees/swift/*.json", "fixtures/trees/swift/fields/*.json",
+    "fixtures/html/*.html", "fixtures/fields/html/*.html", "fixtures/site/*.html",
+    "fixtures/protocol/sim-*.json", "fixtures/plot/stream.json", "fixtures/behave/sim.json", "fixtures/gesture/sim.json",
+    "fixtures/css/*.css", "fixtures/client/*.json",
     "crates/blocks/src/guard/rules/mod.rs", "crates/blocks/src/kind/core/mod.rs", "crates/blocks/src/site/kind/drawn.rs", "swift/Sources/BlocksUI/Gen/Kinds.swift",
     "skill/blocks/**",
     "crates/blocks-cli/src/gen/skill.rs",
@@ -81,6 +66,7 @@ shared = [
     "swift/Sources/BlocksSnapshot/Snapshot.swift",
     "swift/Tests/BlocksTests/RenderTests.swift",
     "swift/Sources/BlocksUI/BlockNode.swift",
+    "crates/blocks/src/theme/scheme.rs", "web/src/core/look.ts",
 ]
 
 [[collect]]
@@ -154,6 +140,10 @@ glob = "*.rs"
 [[collect]]
 dir = "crates/blocks/tests"
 glob = "site_*.rs"
+
+[[collect]]
+dir = "crates/blocks/tests"
+glob = "theme_*.rs"
 
 [comments]
 policy = "strict"
@@ -306,6 +296,16 @@ name = "desk"
 paths = ["crates/blocks-desk/src/**"]
 mods = ["blocks_desk"]
 may_use = ["desktop-stage", "expr", "tree"]
+
+[[ban]]
+pattern = "fetch("
+paths = ["web/src/shell/mount.ts", "web/src/shell/local.ts"]
+reason = "the shell draws what a Source hands it: only served() in shell/source.ts talks to a server"
+
+[[ban]]
+pattern = "stream("
+paths = ["web/src/shell/mount.ts", "web/src/shell/local.ts"]
+reason = "the shell draws what a Source hands it: only served() in shell/source.ts opens the stream"
 
 [[ban]]
 pattern = "drover"
@@ -564,7 +564,7 @@ paths = [".drover/rules.md", "web/package.json"]
 max_file_lines = 30
 
 [[size]]
-paths = ["swift/Sources/BlocksUI/AppBlocks.swift", "swift/Sources/BlocksUI/BlockNode.swift"]
+paths = ["swift/Sources/BlocksUI/AppBlocks.swift", "swift/Sources/BlocksUI/BlockNode.swift", "web/src/core/look.ts"]
 max_file_lines = 100
 
 [[size]]
@@ -580,7 +580,7 @@ paths = ["swift/Sources/BlocksUI/BlocksView.swift", "site/src/main.rs"]
 max_file_lines = 170
 
 [[size]]
-paths = ["crates/blocks-desktop/src/stage.rs", "site/tests/pages.rs"]
+paths = ["crates/blocks-desktop/src/stage.rs", "site/tests/pages.rs", "crates/blocks/src/theme/scheme.rs"]
 max_file_lines = 250
 
 [[size]]
