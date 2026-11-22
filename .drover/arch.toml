@@ -20,7 +20,7 @@ generated = [
     "skill/blocks/**", "crates/blocks-cli/src/gen/skill.rs",
     "web/src/gen/fields.ts", "web/react/src/gen/fields.ts",
     "web/src/gen/words.ts", "web/src/gen/words-import.ts",
-    "fixtures/fields/*.json", "fixtures/fields/trees/*.json",
+    "fixtures/fields/*.json", "fixtures/fields/trees/*.json", "crates/blocks/src/catalog/cards.rs",
 ]
 generate = "sh scripts/arch-gen.sh"
 shared = [
@@ -245,16 +245,22 @@ mods = ["crate::guard", "blocks::guard"]
 may_use = ["expr", "kind", "built", "behave", "tree", "wire", "patch", "catalog"]
 
 [[layer]]
+name = "model"
+paths = ["crates/blocks/src/model/**"]
+mods = ["crate::model", "blocks::model"]
+may_use = ["kind", "built", "catalog", "guard"]
+
+[[layer]]
 name = "codegen"
 paths = ["crates/blocks/src/codegen/**", "crates/blocks/src/bin/**"]
 mods = ["crate::codegen", "blocks::codegen"]
-may_use = ["expr", "kind", "built", "wire", "patch", "diff", "shelf", "mirror", "theme", "layout", "behave", "tree", "site", "guard", "gesture"]
+may_use = ["expr", "kind", "built", "wire", "patch", "diff", "shelf", "mirror", "theme", "layout", "behave", "tree", "site", "guard", "gesture", "catalog", "model"]
 
 [[layer]]
 name = "cli"
 paths = ["crates/blocks-cli/src/**"]
 mods = ["blocks_cli"]
-may_use = ["guard", "kind", "built", "tree", "wire", "catalog"]
+may_use = ["guard", "kind", "built", "tree", "wire", "catalog", "model"]
 
 [[layer]]
 name = "desktop-words"

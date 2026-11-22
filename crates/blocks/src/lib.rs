@@ -8,6 +8,7 @@ pub mod guard;
 mod kind;
 pub mod layout;
 mod mirror;
+pub mod model;
 mod patch;
 mod shelf;
 pub mod site;
