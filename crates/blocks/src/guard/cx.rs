@@ -3,7 +3,8 @@ use std::collections::BTreeMap;
 use serde_json::{Map, Value};
 
 use crate::behave::{start, view};
-use crate::built::{children, Built};
+use crate::built::{children, shallow, Built};
+use crate::catalog::Catalog;
 use crate::expr::State;
 
 pub(super) type Fields = Map<String, Value>;
@@ -21,6 +22,7 @@ pub(super) struct Node<'a> {
 pub(super) struct Cx<'a> {
     pub(super) screen: &'a Built,
     pub(super) app: &'a [&'a str],
+    pub(super) catalog: Option<&'a Catalog>,
     pub(super) blocks: Vec<Node<'a>>,
 }
 
@@ -45,6 +47,26 @@ pub(super) fn acts(o: &Fields) -> Vec<&Fields> {
     all
 }
 
+pub(super) fn each(o: &Fields, f: &mut dyn FnMut(&Fields, &str, &Value)) {
+    fn walk(v: &Value, f: &mut dyn FnMut(&Fields, &str, &Value)) {
+        match v {
+            Value::Object(o) => o.iter().for_each(|(k, x)| {
+                f(o, k, x);
+                walk(x, f);
+            }),
+            Value::Array(l) => l.iter().for_each(|x| walk(x, f)),
+            _ => {}
+        }
+    }
+    walk(&shallow(o), f);
+}
+
+pub(super) fn starts(s: &str, with: &[String]) -> bool {
+    let odd = s.chars().any(|c| c.is_whitespace() || c.is_control() || c == '\\');
+    let schemeless = s.starts_with("//") && !with.iter().any(|w| w.starts_with("//"));
+    !odd && !schemeless && with.iter().any(|w| s.starts_with(w.as_str()))
+}
+
 pub(super) fn long(s: &str, max: usize) -> Option<String> {
     let n = s.chars().count();
     (n > max).then(|| format!("{n} characters"))
@@ -60,6 +82,7 @@ impl<'a> Cx<'a> {
         let mut cx = Cx {
             screen,
             app,
+            catalog: None,
             blocks: vec![],
         };
         if let Some(o) = screen.value().as_object() {
@@ -97,6 +120,13 @@ impl<'a> Cx<'a> {
             }
             self.walk(c, Some(i), &at, at_n, hide);
         }
+    }
+
+    pub(super) fn held(&self) -> impl Iterator<Item = (&'a Catalog, &Node<'a>)> {
+        let held = self.blocks.iter().filter(|b| b.depth > 0);
+        self.catalog
+            .into_iter()
+            .flat_map(move |c| held.clone().map(move |b| (c, b)))
     }
 
     pub(super) fn kids<'b>(&'b self, b: &'b Node) -> impl Iterator<Item = &'b Node<'a>> {

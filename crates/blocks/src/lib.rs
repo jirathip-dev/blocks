@@ -1,5 +1,6 @@
 pub mod behave;
 mod built;
+pub mod catalog;
 mod diff;
 pub mod expr;
 pub mod gesture;

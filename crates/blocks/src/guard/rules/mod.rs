@@ -3,6 +3,14 @@ mod actions_many;
 mod baseline_grew;
 mod baseline_stale;
 mod buttons_many;
+mod catalog_action;
+mod catalog_field;
+mod catalog_input;
+mod catalog_kind;
+mod catalog_link;
+mod catalog_media;
+mod catalog_open;
+mod catalog_size;
 mod clipped_text;
 mod console;
 mod contrast;
@@ -52,6 +60,14 @@ pub static RULES: &[&Rule] = &[
     &baseline_grew::RULE,
     &baseline_stale::RULE,
     &buttons_many::RULE,
+    &catalog_action::RULE,
+    &catalog_field::RULE,
+    &catalog_input::RULE,
+    &catalog_kind::RULE,
+    &catalog_link::RULE,
+    &catalog_media::RULE,
+    &catalog_open::RULE,
+    &catalog_size::RULE,
     &clipped_text::RULE,
     &console::RULE,
     &contrast::RULE,
@@ -96,6 +112,14 @@ pub(super) const CHECKS: &[fn(&Cx, &mut Vec<Seen>)] = &[
     action_no_id::check,
     actions_many::check,
     buttons_many::check,
+    catalog_action::check,
+    catalog_field::check,
+    catalog_input::check,
+    catalog_kind::check,
+    catalog_link::check,
+    catalog_media::check,
+    catalog_open::check,
+    catalog_size::check,
     depth::check,
     destructive_unconfirmed::check,
     empty_state::check,

@@ -5,17 +5,10 @@ frozen = [
     "web/src/blocks.css", "web/src/render/index.ts", "web/test/render.test.ts", "crates/blocks/tests/theme.rs",
 ]
 generated = [
-    "schema/blocks.schema.json",
-    "schema/sample.json",
-    "web/src/gen/types.ts",
-    "web/src/gen/hooks.ts",
-    "web/src/gen/sample.ts",
+    "schema/blocks.schema.json", "schema/sample.json",
+    "web/src/gen/types.ts", "web/src/gen/hooks.ts", "web/src/gen/sample.ts",
     "swift/Sources/Blocks/Gen/*.swift",
-    "web/src/gen/schemes.ts",
-    "web/src/gen/layout.ts",
-    "web/src/gen/kinds.ts",
-    "web/src/gen/builders.ts",
-    "web/src/gen/shapes.ts",
+    "web/src/gen/schemes.ts", "web/src/gen/layout.ts", "web/src/gen/kinds.ts", "web/src/gen/builders.ts", "web/src/gen/shapes.ts",
     "fixtures/check/*.json",
     "fixtures/built/*.json",
     "web/dist/*.js", "web/dist/*.css",
@@ -254,10 +247,16 @@ paths = ["crates/blocks/src/web.rs"]
 mods = ["crate::web", "blocks::web"]
 
 [[layer]]
+name = "catalog"
+paths = ["crates/blocks/src/catalog/**"]
+mods = ["crate::catalog", "blocks::catalog"]
+may_use = ["kind"]
+
+[[layer]]
 name = "guard"
 paths = ["crates/blocks/src/guard/**"]
 mods = ["crate::guard", "blocks::guard"]
-may_use = ["expr", "kind", "built", "behave", "tree", "wire", "patch"]
+may_use = ["expr", "kind", "built", "behave", "tree", "wire", "patch", "catalog"]
 
 [[layer]]
 name = "codegen"
@@ -269,7 +268,7 @@ may_use = ["expr", "kind", "built", "wire", "patch", "diff", "shelf", "mirror", 
 name = "cli"
 paths = ["crates/blocks-cli/src/**"]
 mods = ["blocks_cli"]
-may_use = ["guard", "kind", "built", "tree", "wire"]
+may_use = ["guard", "kind", "built", "tree", "wire", "catalog"]
 
 [[layer]]
 name = "desktop-words"

@@ -25,7 +25,7 @@
       {
         "fault": "shape",
         "kind": "row",
-        "why": "data did not match any variant of untagged enum Block"
+        "why": "invalid type: integer `3`, expected a string"
       },
       {
         "fault": "unnamed",
@@ -372,7 +372,7 @@
       {
         "fault": "shape",
         "kind": "island",
-        "why": "data did not match any variant of untagged enum Block"
+        "why": "missing field `fallback`"
       }
     ],
     "name": "app-kinds",
@@ -494,22 +494,22 @@
       {
         "fault": "shape",
         "kind": "row",
-        "why": "data did not match any variant of untagged enum Block"
+        "why": "invalid type: integer `3`, expected a string"
       },
       {
         "fault": "shape",
         "kind": "row",
-        "why": "data did not match any variant of untagged enum Block"
+        "why": "invalid value: integer `300`, expected u8"
       },
       {
         "fault": "shape",
         "kind": "row",
-        "why": "data did not match any variant of untagged enum Block"
+        "why": "invalid value: integer `-1`, expected u8"
       },
       {
         "fault": "shape",
         "kind": "row",
-        "why": "data did not match any variant of untagged enum Block"
+        "why": "invalid type: floating point `2.5`, expected u8"
       },
       {
         "fault": "extra",
@@ -524,12 +524,12 @@
       {
         "fault": "shape",
         "kind": "row",
-        "why": "data did not match any variant of untagged enum Block"
+        "why": "invalid type: string \"nowhere\", expected struct Tap"
       },
       {
         "fault": "shape",
         "kind": "config",
-        "why": "data did not match any variant of untagged enum Block"
+        "why": "data did not match any variant of untagged enum Field"
       },
       {
         "fault": "shape",
