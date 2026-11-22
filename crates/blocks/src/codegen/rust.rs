@@ -4,6 +4,7 @@ use serde_json::Value;
 
 use super::Files;
 
+mod cards;
 mod kinds;
 mod rules;
 mod site;
@@ -12,6 +13,7 @@ pub(super) fn files(root: &Path, s: &Value) -> std::io::Result<Files> {
     let mut out = rules::files(root, s)?;
     out.extend(kinds::files(root, s)?);
     out.extend(site::files(root)?);
+    out.extend(cards::files(root, s)?);
     Ok(out)
 }
 
