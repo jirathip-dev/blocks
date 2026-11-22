@@ -1,0 +1,12 @@
+about = "the blocks crate's default build compiles for wasm32-unknown-unknown and aarch64-apple-ios, so an app's own Rust can link it"
+fix = "keep files, clocks, threads and host-only crates out of the default build: behind the schema feature or in blocks-cli"
+budget_secs = 600
+setup = ["rust"]
+paths = ["crates/blocks/**", "Cargo.*", "rust-toolchain.toml", ".gatekeeper/gates/targets.toml"]
+run = """
+if [ -z "${CI:-}" ]; then echo "targets: CI runs it; a lane's host has neither target"; exit 0; fi
+set -e
+rustup target add wasm32-unknown-unknown aarch64-apple-ios
+cargo build --locked -p blocks --lib --target wasm32-unknown-unknown
+cargo build --locked -p blocks --lib --target aarch64-apple-ios
+"""

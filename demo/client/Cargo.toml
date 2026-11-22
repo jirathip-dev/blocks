@@ -1,0 +1,23 @@
+[package]
+name = "meter"
+description = "A client-built screen: the app's own Rust builds it and its ops, drawn by the HTML shell from wasm and by BlocksUI"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+publish = false
+
+[workspace]
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+blocks = { path = "../../crates/blocks" }
+serde_json = "1"
+
+[profile.release]
+opt-level = "z"
+lto = "thin"
+codegen-units = 1
+panic = "abort"
+strip = true

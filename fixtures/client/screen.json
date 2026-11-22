@@ -1,0 +1,24 @@
+{
+  "blocks": [
+    {
+      "id": "count",
+      "label": "sent",
+      "type": "stat",
+      "value": 0
+    },
+    {
+      "id": "sends",
+      "rows": [],
+      "type": "list"
+    },
+    {
+      "action": "send",
+      "id": "send",
+      "label": "Send one",
+      "type": "button"
+    }
+  ],
+  "id": "meter",
+  "title": "Meter",
+  "type": "screen"
+}
