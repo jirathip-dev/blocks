@@ -4,7 +4,7 @@ use serde_json::Value;
 
 use crate::built::shallow;
 use crate::catalog::{Catalog, NEVER};
-use crate::kind::{Block, Fields, Prose};
+use crate::kind::{Block, Fields};
 use crate::model::{Mend, Wrong};
 
 const HOT: [&str; 16] = [
@@ -52,14 +52,6 @@ impl Mender<'_> {
                 .push(Wrong::new("lint/fault", at, "", "a block that is no object".into()));
         };
         let kind = o.get("type").and_then(Value::as_str).unwrap_or_default().to_string();
-        if kind == "prose" {
-            if let Some(Value::String(md)) = o.remove("markdown") {
-                o.insert(
-                    "parts".into(),
-                    serde_json::to_value(Prose::read(&md)).unwrap_or_default(),
-                );
-            }
-        }
         let id = format!("{}.{}", self.prefix, self.n);
         self.n += 1;
         o.insert("id".into(), Value::String(id.clone()));

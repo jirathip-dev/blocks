@@ -118,11 +118,7 @@ impl Refusal {
 fn sends(v: &Value, out: &mut Vec<(String, Value)>) {
     match v {
         Value::Object(o) => {
-            let prose = o.get("type").is_some_and(|t| t == "prose");
             for (k, x) in o {
-                if let (true, "markdown", Some(md)) = (prose, k.as_str(), x.as_str()) {
-                    sends(&serde_json::to_value(Prose::read(md)).unwrap_or_default(), out);
-                }
                 if KEPT.contains(&k.as_str()) && !x.is_null() && (k != "style" || x == "destructive") {
                     out.push((k.clone(), x.clone()));
                 }
@@ -130,6 +126,22 @@ fn sends(v: &Value, out: &mut Vec<(String, Value)>) {
             }
         }
         Value::Array(l) => l.iter().for_each(|x| sends(x, out)),
+        _ => {}
+    }
+}
+
+fn parts(v: &mut Value) {
+    match v {
+        Value::Object(o) => {
+            let md = o.get("markdown").and_then(Value::as_str);
+            if let Some(md) = md.filter(|_| o.get("type").is_some_and(|t| t == "prose")) {
+                let parts = serde_json::to_value(Prose::read(md)).unwrap_or_default();
+                drop(o.remove("markdown"));
+                o.insert("parts".into(), parts);
+            }
+            o.values_mut().for_each(parts);
+        }
+        Value::Array(l) => l.iter_mut().for_each(parts),
         _ => {}
     }
 }
@@ -221,15 +233,16 @@ pub fn read(catalog: &Catalog, prefix: &str, text: &str) -> Result<Fit, Refusal>
         return Err(refuse("read/json", say, false, vec![text.into()]));
     };
     let cut = found.cut;
-    let (mut raw, extra, mut mends) = root(found);
+    let (mut raw, mut extra, mut mends) = root(found);
     let mut said = vec![];
-    lines(&Value::Array(raw.clone()), &mut said);
+    raw.iter().for_each(|v| lines(v, &mut said));
     if raw.is_empty() && !cut {
         let say = "The reply holds no block: write at least one in \"blocks\".";
         return Err(refuse("read/empty", say, cut, said));
     }
+    raw.iter_mut().chain(extra.values_mut()).for_each(parts);
     let mut wrote = vec![];
-    sends(&Value::Array(raw.clone()), &mut wrote);
+    raw.iter().for_each(|v| sends(v, &mut wrote));
     sends(&Value::Object(extra.clone()), &mut wrote);
     mends.extend(extra.into_iter().map(|(field, _)| Mend::Dropped {
         at: String::new(),
