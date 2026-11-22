@@ -1,0 +1,42 @@
+{
+  "catalog": "ask",
+  "ask": "Offer me the Pro and Team plans and let me pick one.",
+  "expect": {
+    "kinds": [
+      "button"
+    ],
+    "actions": [
+      "pick"
+    ],
+    "says": [
+      "Pro",
+      "Team"
+    ],
+    "blocks": 6
+  },
+  "gold": {
+    "blocks": [
+      {
+        "type": "prose",
+        "markdown": "Pick a plan."
+      },
+      {
+        "type": "button",
+        "label": "Pro, $12 a month",
+        "action": "pick",
+        "values": {
+          "plan": "pro"
+        },
+        "style": "primary"
+      },
+      {
+        "type": "button",
+        "label": "Team, $30 a month",
+        "action": "pick",
+        "values": {
+          "plan": "team"
+        }
+      }
+    ]
+  }
+}

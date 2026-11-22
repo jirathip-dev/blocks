@@ -245,12 +245,6 @@ mods = ["crate::guard", "blocks::guard"]
 may_use = ["expr", "kind", "built", "behave", "tree", "wire", "patch", "catalog"]
 
 [[layer]]
-name = "model"
-paths = ["crates/blocks/src/model/**"]
-mods = ["crate::model", "blocks::model"]
-may_use = ["kind", "built", "catalog", "guard"]
-
-[[layer]]
 name = "codegen"
 paths = ["crates/blocks/src/codegen/**", "crates/blocks/src/bin/**"]
 mods = ["crate::codegen", "blocks::codegen"]

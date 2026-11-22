@@ -1,0 +1,29 @@
+Here are the plans:
+
+```json
+{
+  "blocks": [
+    {
+      "type": "prose",
+      "markdown": "Pick a plan."
+    },
+    {
+      "type": "button",
+      "label": "Pro, $12 a month",
+      "action": "pick",
+      "values": {
+        "plan": "pro"
+      },
+      "style": "primary"
+    },
+    {
+      "type": "button",
+      "label": "Team, $30 a month",
+      "action": "pick",
+      "values": {
+        "plan": "team"
+      }
+    }
+  ]
+}
+```
