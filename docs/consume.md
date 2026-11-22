@@ -4,6 +4,11 @@ An app pins a commit on blocks' `staging`: Cargo `rev`, npm `#<sha>`, SwiftPM `r
 that the pins agree. An app may instead pin the commit a release tag names: SwiftPM `exact:` on the tag
 (`exact: "2.0.0"`) or `revision:` on its sha.
 
+## Client-built from the app's own Rust
+
+An app whose Rust builds its screens (wasm in the page, native behind its FFI on iOS) hands them to `mount` through
+`local({ screen, act })` and to `BlocksView` as a `Block`: `docs/client-built.md`.
+
 ## The npm package
 
 An app's page takes blocks' web code at a 40-hex commit pin; the pin runs no build, the files are the committed
