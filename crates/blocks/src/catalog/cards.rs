@@ -343,6 +343,15 @@ pub(crate) static KINDS: &[Card] = &[
         Slot { name: "empty", ty: "string", need: false, names: &[], sends: false },
         Slot { name: "footer", ty: "SideLink[]", need: false, names: &["SideLink"], sends: false },
     ] },
+    Card { kind: "boxplot", about: "A box plot", fields: &[
+        Slot { name: "axis", ty: "string", need: true, names: &[], sends: false },
+        Slot { name: "boxes", ty: "PlotBox[]", need: true, names: &["PlotBox"], sends: false },
+        Slot { name: "title", ty: "string", need: true, names: &[], sends: false },
+        Slot { name: "empty", ty: "string", need: false, names: &[], sends: false },
+        Slot { name: "selected", ty: "string", need: false, names: &[], sends: false },
+        Slot { name: "tap", ty: "Tap", need: false, names: &["Tap"], sends: true },
+        Slot { name: "unit", ty: "string", need: false, names: &[], sends: false },
+    ] },
 ];
 
 #[rustfmt::skip]
@@ -394,6 +403,7 @@ pub(crate) static PARTS: &[Part] = &[
     Part { name: "Pending", input: "", line: "{count: string, discard: Tap, review: Tap, text: string}", names: &["Tap"] },
     Part { name: "PhonePart", input: "", line: "\"title\"|\"tag\"|\"value\"|\"meta\"|\"hide\"", names: &[] },
     Part { name: "PickerField", input: "picker", line: "{type: \"picker\", name: string, doc?: string, error?: string, label?: string, options?: string[], value?: FieldValue, was?: string}", names: &["FieldValue"] },
+    Part { name: "PlotBox", input: "", line: "{max: number, median: number, min: number, name: string, q1: number, q3: number, outliers?: number[], tone?: Tone}", names: &["Tone"] },
     Part { name: "Queued", input: "", line: "{q: number, text: string}", names: &[] },
     Part { name: "Round", input: "", line: "{id: string, name: string, state: LaneState, blocks?: Block[], lane?: RoundLane, links?: Link[], since?: string, summary?: string, tap?: Tap}", names: &["LaneState", "Link", "RoundLane", "Tap"] },
     Part { name: "RoundLane", input: "", line: "{harness?: string, host?: string, lines?: string[], model?: string, name?: string}", names: &[] },

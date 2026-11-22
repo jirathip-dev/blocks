@@ -1,0 +1,48 @@
+{
+  "type": "boxplot",
+  "id": "fingers",
+  "title": "Force share per finger",
+  "axis": "Share of force",
+  "boxes": [
+    {
+      "name": "Index",
+      "min": 24.0,
+      "q1": 27.5,
+      "median": 29.1,
+      "q3": 31.0,
+      "max": 34.2
+    },
+    {
+      "name": "Middle",
+      "min": 28.1,
+      "q1": 31.2,
+      "median": 33.0,
+      "q3": 34.8,
+      "max": 37.5,
+      "outliers": [
+        41.0
+      ]
+    },
+    {
+      "name": "Ring",
+      "min": 20.3,
+      "q1": 23.0,
+      "median": 24.6,
+      "q3": 26.1,
+      "max": 28.9
+    },
+    {
+      "name": "Little",
+      "min": 8.0,
+      "q1": 10.2,
+      "median": 11.5,
+      "q3": 12.9,
+      "max": 15.1,
+      "outliers": [
+        4.2
+      ],
+      "tone": "warn"
+    }
+  ],
+  "unit": "%"
+}

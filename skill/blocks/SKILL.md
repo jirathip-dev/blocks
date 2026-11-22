@@ -48,6 +48,7 @@ A screen is data: a `screen` or `modal` block of typed blocks, checked, then dra
 - [`message`](kinds/message.md): One message of a conversation: who said it, what was said as blocks, and its attachments.
 - [`tool`](kinds/tool.md): One tool call: its name, a one-line summary, its state, and a body shown when it is opened.
 - [`sidebar`](kinds/sidebar.md): A side navigation: an icon rail that opens on hover or pin, a drawer on a phone.
+- [`boxplot`](kinds/boxplot.md): A box plot: one upright box per category on a value axis with its label and unit; a tap picks a box.
 
 ## More
 

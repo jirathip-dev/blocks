@@ -1,6 +1,7 @@
 import type { Of } from "../gen/builders.ts";
 import { hooks } from "../gen/hooks.ts";
-import type { Fallback, Table } from "../gen/types.ts";
+import type { Boxplot, Fallback, Table } from "../gen/types.ts";
+import { boxFallback } from "./kind/boxplot.ts";
 import { worked } from "./kind/table.ts";
 import { total, unit } from "./table.ts";
 
@@ -17,6 +18,7 @@ const NAMED = ["title", "label", "header", "question", "name", "file", "command"
 
 const isObj = (v: unknown): v is Obj => typeof v === "object" && v !== null && !Array.isArray(v);
 const isTable = (o: Obj): o is Obj & Table => o["type"] === "table" && Array.isArray(o["columns"]) && Array.isArray(o["rows"]);
+const isBoxplot = (o: Obj): o is Obj & Boxplot => o["type"] === "boxplot" && typeof o["title"] === "string" && Array.isArray(o["boxes"]);
 const text = (o: Obj, k: string) => (typeof o[k] === "string" && o[k] !== "" ? o[k] : undefined);
 
 function tabled(t: Table): Fallback {
@@ -31,6 +33,7 @@ function tabled(t: Table): Fallback {
 
 function plain(o: Obj, kind: string): Fallback {
   if (isTable(o)) return tabled(o);
+  if (isBoxplot(o)) return boxFallback(o);
   const subtitle = text(o, "subtitle");
   const f: Fallback = { title: NAMED.map((k) => text(o, k)).find((t) => t !== undefined) ?? kind };
   if (subtitle !== undefined) f.subtitle = subtitle;

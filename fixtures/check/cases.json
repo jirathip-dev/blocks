@@ -816,6 +816,209 @@
   {
     "app": [],
     "faults": [],
+    "name": "fixtures/blocks/boxplot-fingers.json",
+    "screen": {
+      "axis": "Share of force",
+      "boxes": [
+        {
+          "max": 34.2,
+          "median": 29.1,
+          "min": 24.0,
+          "name": "Index",
+          "q1": 27.5,
+          "q3": 31.0
+        },
+        {
+          "max": 37.5,
+          "median": 33.0,
+          "min": 28.1,
+          "name": "Middle",
+          "outliers": [
+            41.0
+          ],
+          "q1": 31.2,
+          "q3": 34.8
+        },
+        {
+          "max": 28.9,
+          "median": 24.6,
+          "min": 20.3,
+          "name": "Ring",
+          "q1": 23.0,
+          "q3": 26.1
+        },
+        {
+          "max": 15.1,
+          "median": 11.5,
+          "min": 8.0,
+          "name": "Little",
+          "outliers": [
+            4.2
+          ],
+          "q1": 10.2,
+          "q3": 12.9,
+          "tone": "warn"
+        }
+      ],
+      "id": "fingers",
+      "title": "Force share per finger",
+      "type": "boxplot",
+      "unit": "%"
+    }
+  },
+  {
+    "app": [],
+    "faults": [],
+    "name": "fixtures/blocks/boxplot-sessions.json",
+    "screen": {
+      "axis": "Peak force",
+      "boxes": [
+        {
+          "max": 35.2,
+          "median": 30.0,
+          "min": 25.0,
+          "name": "14 Oct",
+          "q1": 27.9,
+          "q3": 32.3
+        },
+        {
+          "max": 36.8,
+          "median": 31.6,
+          "min": 26.6,
+          "name": "16 Oct",
+          "outliers": [
+            40.0
+          ],
+          "q1": 29.5,
+          "q3": 33.9,
+          "tone": "bad"
+        },
+        {
+          "max": 38.4,
+          "median": 33.2,
+          "min": 28.2,
+          "name": "21 Oct",
+          "q1": 31.1,
+          "q3": 35.5
+        },
+        {
+          "max": 37.0,
+          "median": 31.8,
+          "min": 26.8,
+          "name": "23 Oct",
+          "q1": 29.7,
+          "q3": 34.1
+        },
+        {
+          "max": 38.6,
+          "median": 33.4,
+          "min": 28.4,
+          "name": "28 Oct",
+          "q1": 31.3,
+          "q3": 35.7
+        },
+        {
+          "max": 40.2,
+          "median": 35.0,
+          "min": 30.0,
+          "name": "30 Oct",
+          "outliers": [
+            43.4
+          ],
+          "q1": 32.9,
+          "q3": 37.3
+        },
+        {
+          "max": 38.8,
+          "median": 33.6,
+          "min": 28.6,
+          "name": "4 Nov",
+          "q1": 31.5,
+          "q3": 35.9
+        },
+        {
+          "max": 40.4,
+          "median": 35.2,
+          "min": 30.2,
+          "name": "11 Nov",
+          "q1": 33.1,
+          "q3": 37.5
+        },
+        {
+          "max": 42.0,
+          "median": 36.8,
+          "min": 31.8,
+          "name": "13 Nov",
+          "q1": 34.7,
+          "q3": 39.1
+        },
+        {
+          "max": 40.6,
+          "median": 35.4,
+          "min": 30.4,
+          "name": "18 Nov",
+          "outliers": [
+            43.8
+          ],
+          "q1": 33.3,
+          "q3": 37.7
+        }
+      ],
+      "empty": "No sessions yet: hang the board to see your force.",
+      "id": "sessions",
+      "selected": "18 Nov",
+      "tap": {
+        "action": "force.session"
+      },
+      "title": "Peak force per session",
+      "type": "boxplot",
+      "unit": "kg"
+    }
+  },
+  {
+    "app": [],
+    "faults": [],
+    "name": "fixtures/blocks/boxplot.json",
+    "screen": {
+      "axis": "Peak force",
+      "boxes": [
+        {
+          "max": 41.2,
+          "median": 33.1,
+          "min": 25.8,
+          "name": "Left",
+          "outliers": [
+            18.0,
+            47.5
+          ],
+          "q1": 30.4,
+          "q3": 36.0
+        },
+        {
+          "max": 43.0,
+          "median": 35.6,
+          "min": 28.2,
+          "name": "Right",
+          "outliers": [
+            21.4
+          ],
+          "q1": 32.9,
+          "q3": 38.1
+        }
+      ],
+      "id": "hands",
+      "selected": "Left",
+      "tap": {
+        "action": "force.hand"
+      },
+      "title": "Peak force per hand",
+      "type": "boxplot",
+      "unit": "kg"
+    }
+  },
+  {
+    "app": [],
+    "faults": [],
     "name": "fixtures/blocks/button.json",
     "screen": {
       "action": "save",
@@ -4234,6 +4437,212 @@
           "id": "side",
           "label": "main",
           "type": "sidebar"
+        },
+        {
+          "axis": "Peak force",
+          "boxes": [
+            {
+              "max": 41.2,
+              "median": 33.1,
+              "min": 25.8,
+              "name": "Left",
+              "outliers": [
+                18.0,
+                47.5
+              ],
+              "q1": 30.4,
+              "q3": 36.0
+            },
+            {
+              "max": 43.0,
+              "median": 35.6,
+              "min": 28.2,
+              "name": "Right",
+              "outliers": [
+                21.4
+              ],
+              "q1": 32.9,
+              "q3": 38.1
+            }
+          ],
+          "fallback": {
+            "subtitle": "Left median 33.1 kg, Right median 35.6 kg",
+            "tap": {
+              "action": "force.hand"
+            },
+            "title": "Peak force per hand"
+          },
+          "id": "hands",
+          "selected": "Left",
+          "tap": {
+            "action": "force.hand"
+          },
+          "title": "Peak force per hand",
+          "type": "boxplot",
+          "unit": "kg"
+        },
+        {
+          "axis": "Share of force",
+          "boxes": [
+            {
+              "max": 34.2,
+              "median": 29.1,
+              "min": 24.0,
+              "name": "Index",
+              "q1": 27.5,
+              "q3": 31.0
+            },
+            {
+              "max": 37.5,
+              "median": 33.0,
+              "min": 28.1,
+              "name": "Middle",
+              "outliers": [
+                41.0
+              ],
+              "q1": 31.2,
+              "q3": 34.8
+            },
+            {
+              "max": 28.9,
+              "median": 24.6,
+              "min": 20.3,
+              "name": "Ring",
+              "q1": 23.0,
+              "q3": 26.1
+            },
+            {
+              "max": 15.1,
+              "median": 11.5,
+              "min": 8.0,
+              "name": "Little",
+              "outliers": [
+                4.2
+              ],
+              "q1": 10.2,
+              "q3": 12.9,
+              "tone": "warn"
+            }
+          ],
+          "fallback": {
+            "subtitle": "Index median 29.1 %, Middle median 33.0 %, Ring median 24.6 %, Little median 11.5 %",
+            "title": "Force share per finger"
+          },
+          "id": "fingers",
+          "title": "Force share per finger",
+          "type": "boxplot",
+          "unit": "%"
+        },
+        {
+          "axis": "Peak force",
+          "boxes": [
+            {
+              "max": 35.2,
+              "median": 30.0,
+              "min": 25.0,
+              "name": "14 Oct",
+              "q1": 27.9,
+              "q3": 32.3
+            },
+            {
+              "max": 36.8,
+              "median": 31.6,
+              "min": 26.6,
+              "name": "16 Oct",
+              "outliers": [
+                40.0
+              ],
+              "q1": 29.5,
+              "q3": 33.9,
+              "tone": "bad"
+            },
+            {
+              "max": 38.4,
+              "median": 33.2,
+              "min": 28.2,
+              "name": "21 Oct",
+              "q1": 31.1,
+              "q3": 35.5
+            },
+            {
+              "max": 37.0,
+              "median": 31.8,
+              "min": 26.8,
+              "name": "23 Oct",
+              "q1": 29.7,
+              "q3": 34.1
+            },
+            {
+              "max": 38.6,
+              "median": 33.4,
+              "min": 28.4,
+              "name": "28 Oct",
+              "q1": 31.3,
+              "q3": 35.7
+            },
+            {
+              "max": 40.2,
+              "median": 35.0,
+              "min": 30.0,
+              "name": "30 Oct",
+              "outliers": [
+                43.4
+              ],
+              "q1": 32.9,
+              "q3": 37.3
+            },
+            {
+              "max": 38.8,
+              "median": 33.6,
+              "min": 28.6,
+              "name": "4 Nov",
+              "q1": 31.5,
+              "q3": 35.9
+            },
+            {
+              "max": 40.4,
+              "median": 35.2,
+              "min": 30.2,
+              "name": "11 Nov",
+              "q1": 33.1,
+              "q3": 37.5
+            },
+            {
+              "max": 42.0,
+              "median": 36.8,
+              "min": 31.8,
+              "name": "13 Nov",
+              "q1": 34.7,
+              "q3": 39.1
+            },
+            {
+              "max": 40.6,
+              "median": 35.4,
+              "min": 30.4,
+              "name": "18 Nov",
+              "outliers": [
+                43.8
+              ],
+              "q1": 33.3,
+              "q3": 37.7
+            }
+          ],
+          "empty": "No sessions yet: hang the board to see your force.",
+          "fallback": {
+            "subtitle": "14 Oct median 30.0 kg, 16 Oct median 31.6 kg, 21 Oct median 33.2 kg, 23 Oct median 31.8 kg, 28 Oct median 33.4 kg, 30 Oct median 35.0 kg, 4 Nov median 33.6 kg, 11 Nov median 35.2 kg, 13 Nov median 36.8 kg, 18 Nov median 35.4 kg",
+            "tap": {
+              "action": "force.session"
+            },
+            "title": "Peak force per session"
+          },
+          "id": "sessions",
+          "selected": "18 Nov",
+          "tap": {
+            "action": "force.session"
+          },
+          "title": "Peak force per session",
+          "type": "boxplot",
+          "unit": "kg"
         }
       ],
       "fallback": {
