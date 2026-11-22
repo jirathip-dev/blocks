@@ -352,7 +352,7 @@ export type TimeRow = { bars: TimeBar[]; id: string; subtitle?: string | null; t
 
 export type Timeline = { draw?: Gesture | null; empty?: string | null; from: string; id?: string | null; move?: Gesture | null; off?: string[] | null; show?: Expr | null; stretch?: Gesture | null; title?: string | null; to: string; tracks: TimeRow[] };
 
-export type Timings = { first_paint_ms: number; frames_over_budget?: number | null; longest_frame_ms?: number | null; longest_patch_ms?: number | null; steps_ms: number[] };
+export type Timings = { first_paint_ms: number; frames_over_budget?: number | null; longest_frame_ms?: number | null; longest_patch_ms?: number | null; p99_patch_ms?: number | null; steps_ms: number[] };
 
 export type Toast = { fallback?: Fallback | null; id?: string | null; show?: Expr | null; title: string; tone?: Tone | null; undo?: Undo | null };
 

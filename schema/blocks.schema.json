@@ -8180,6 +8180,13 @@
             "null"
           ]
         },
+        "p99_patch_ms": {
+          "format": "double",
+          "type": [
+            "number",
+            "null"
+          ]
+        },
         "steps_ms": {
           "items": {
             "format": "double",

@@ -221,6 +221,8 @@ pub struct Timings {
     pub frames_over_budget: Option<u32>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub longest_patch_ms: Option<f64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub p99_patch_ms: Option<f64>,
 }
 
 /// A harness run's `report.json`.

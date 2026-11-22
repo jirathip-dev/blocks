@@ -1280,6 +1280,7 @@ export type Timings = {
     frames_over_budget?: number | null;
     longest_frame_ms?: number | null;
     longest_patch_ms?: number | null;
+    p99_patch_ms?: number | null;
     steps_ms: number[];
 };
 export type Toast = {

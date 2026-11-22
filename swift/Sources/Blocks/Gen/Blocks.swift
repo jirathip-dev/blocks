@@ -3280,13 +3280,15 @@ public struct Timings: Codable, Equatable, Sendable {
     public var frames_over_budget: UInt32?
     public var longest_frame_ms: Double?
     public var longest_patch_ms: Double?
+    public var p99_patch_ms: Double?
     public var steps_ms: [Double]
 
-    public init(first_paint_ms: Double, frames_over_budget: UInt32? = nil, longest_frame_ms: Double? = nil, longest_patch_ms: Double? = nil, steps_ms: [Double]) {
+    public init(first_paint_ms: Double, frames_over_budget: UInt32? = nil, longest_frame_ms: Double? = nil, longest_patch_ms: Double? = nil, p99_patch_ms: Double? = nil, steps_ms: [Double]) {
         self.first_paint_ms = first_paint_ms
         self.frames_over_budget = frames_over_budget
         self.longest_frame_ms = longest_frame_ms
         self.longest_patch_ms = longest_patch_ms
+        self.p99_patch_ms = p99_patch_ms
         self.steps_ms = steps_ms
     }
 }

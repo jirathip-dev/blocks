@@ -184,7 +184,11 @@ export async function shot({ screen, steps = [], name = "shot", size = "390x844"
       report.timings.frames_over_budget = frames.filter((f) => f > BUDGET_MS).length;
     }
     const patch = await page.evaluate(() => window.h.patch);
-    if (patch.length) report.timings.longest_patch_ms = Math.max(...patch);
+    if (patch.length) {
+      const sorted = [...patch].sort((a, b) => a - b);
+      report.timings.longest_patch_ms = sorted.at(-1);
+      report.timings.p99_patch_ms = sorted[Math.ceil(sorted.length * 0.99) - 1];
+    }
     faults.unshift(...seen.map((s) => `${s.shot}: ${s.rule} ${s.at}: ${s.detail}`), ...leaks(report.sent));
     return { report, pngs, trees, seen, faults };
   } finally {
