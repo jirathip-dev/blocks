@@ -78,6 +78,8 @@ shared = [
     "swift/Sources/BlocksUI/Theme.swift",
     "swift/Sources/BlocksUI/Tree.swift", "swift/Sources/Blocks/Apply.swift",
     "web/src/shell.ts",
+    "swift/Sources/BlocksSnapshot/Snapshot.swift",
+    "swift/Tests/BlocksTests/RenderTests.swift",
     "swift/Sources/BlocksUI/BlockNode.swift",
 ]
 
@@ -533,6 +535,7 @@ max_file_lines = 1000
 paths = [
     "web/src/patch.ts", "web/test/patch.test.ts", "web/test/dom.ts", "web/shot/shot.ts", "crates/blocks/tests/site.rs",
     "swift/Sources/BlocksUI/Tree.swift",
+    "swift/Sources/BlocksSnapshot/Snapshot.swift", "swift/Tests/BlocksTests/RenderTests.swift",
 ]
 max_file_lines = 200
 
