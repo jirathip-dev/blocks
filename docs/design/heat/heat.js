@@ -28,7 +28,7 @@ function step(v, r) {
   return Math.max(1, Math.min(5, Math.floor(((v - r.min) / (r.max - r.min)) * 5) + 1));
 }
 function said(b, row, col, c) {
-  const u = b.scale && b.scale.unit ? " " + b.scale.unit : "";
+  const u = b.scale && b.scale.unit ? (b.scale.unit === "%" ? "" : " ") + b.scale.unit : "";
   const val = c && c.value != null ? hfmt(c.value, b.format) + u : (b.lang === "th" ? "ไม่มีข้อมูล" : "no data");
   return `${row}, ${col}: ${val}` + (c && c.label ? `, ${c.label}` : "");
 }
@@ -38,9 +38,10 @@ function readout(o, b, ri, ci, how) {
   if (!r) return;
   if (how) o.append(el("span", null, how));
   o.append(el("span", "at", `${r.name} · ${b.columns[ci]}`));
-  const u = b.scale && b.scale.unit ? " " + b.scale.unit : "";
-  o.append(el("b", null, c && c.value != null ? hfmt(c.value, b.format) + u : "—"));
-  if (c && c.label) o.append(el("span", null, c.label));
+  const u = b.scale && b.scale.unit ? (b.scale.unit === "%" ? "" : " ") + b.scale.unit : "";
+  const n = c && c.value != null ? hfmt(c.value, b.format) : null;
+  o.append(el("b", null, n != null ? n + u : "—"));
+  if (c && c.label && c.label !== n && c.label !== n + u) o.append(el("span", null, c.label));
 }
 
 function heat(b) {
