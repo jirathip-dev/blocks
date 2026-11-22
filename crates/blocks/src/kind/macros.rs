@@ -177,6 +177,17 @@ macro_rules! kinds {
                 }
             }
 
+            /// The block in `v` read as kind `kind`, so a misfit names its field; any other kind reads as an app's.
+            pub fn read(kind: &str, mut v: serde_json::Value) -> Result<Block, serde_json::Error> {
+                if let (true, Some(o)) = (Self::KINDS.contains(&kind), v.as_object_mut()) {
+                    o.remove("type");
+                }
+                match kind {
+                    $($name => serde_json::from_value::<$t>(v).map(|b| Self::$v(Box::new(b))),)*
+                    _ => serde_json::from_value(v),
+                }
+            }
+
             /// The block's id, when it has one.
             pub fn id(&self) -> Option<&str> {
                 match self {

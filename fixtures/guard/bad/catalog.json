@@ -1,0 +1,48 @@
+{
+  "name": "fixture",
+  "kinds": {
+    "text": {
+      "fields": [
+        "markdown"
+      ]
+    },
+    "section": {},
+    "button": {
+      "fields": [
+        "label",
+        "action",
+        "style",
+        "values",
+        "tap"
+      ],
+      "actions": [
+        "pick"
+      ]
+    },
+    "form": {
+      "actions": [
+        "save"
+      ],
+      "inputs": [
+        "text"
+      ]
+    },
+    "row": {
+      "fields": [
+        "title",
+        "subtitle",
+        "tap"
+      ]
+    },
+    "media": {}
+  },
+  "links": [
+    "https://"
+  ],
+  "media": [
+    "https://cdn.example/"
+  ],
+  "max": {
+    "blocks": 4
+  }
+}

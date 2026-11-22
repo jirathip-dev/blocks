@@ -10,23 +10,17 @@ generated = [
     "swift/Sources/Blocks/Gen/*.swift",
     "web/src/gen/schemes.ts", "web/src/gen/layout.ts", "web/src/gen/kinds.ts", "web/src/gen/builders.ts", "web/src/gen/shapes.ts",
     "fixtures/check/*.json", "fixtures/built/*.json",
-    "web/dist/*.js", "web/dist/*.css",
-    "web/src/gen/scoped.css",
-    "web/dist/types/**",
-    "web/react/src/gen/views.ts",
+    "web/dist/*.js", "web/dist/*.css", "web/src/gen/scoped.css", "web/dist/types/**", "web/react/src/gen/views.ts",
     "fixtures/trees/react/*.json", "fixtures/blocks/*.json",
     "fixtures/trees/*.json", "fixtures/trees/swift/*.json", "fixtures/trees/swift/fields/*.json",
     "fixtures/html/*.html", "fixtures/fields/html/*.html", "fixtures/site/*.html",
     "fixtures/protocol/sim-*.json", "fixtures/behave/sim.json", "fixtures/gesture/sim.json",
     "fixtures/css/*.css", "fixtures/client/*.json",
     "crates/blocks/src/guard/rules/mod.rs", "crates/blocks/src/kind/core/mod.rs", "crates/blocks/src/site/kind/drawn.rs", "swift/Sources/BlocksUI/Gen/Kinds.swift",
-    "skill/blocks/**",
-    "crates/blocks-cli/src/gen/skill.rs",
-    "web/src/gen/fields.ts",
-    "web/react/src/gen/fields.ts",
+    "skill/blocks/**", "crates/blocks-cli/src/gen/skill.rs",
+    "web/src/gen/fields.ts", "web/react/src/gen/fields.ts",
     "web/src/gen/words.ts", "web/src/gen/words-import.ts",
-    "fixtures/fields/*.json",
-    "fixtures/fields/trees/*.json",
+    "fixtures/fields/*.json", "fixtures/fields/trees/*.json",
 ]
 generate = "sh scripts/arch-gen.sh"
 shared = [
@@ -239,10 +233,16 @@ paths = ["crates/blocks/src/web.rs"]
 mods = ["crate::web", "blocks::web"]
 
 [[layer]]
+name = "catalog"
+paths = ["crates/blocks/src/catalog/**"]
+mods = ["crate::catalog", "blocks::catalog"]
+may_use = ["kind"]
+
+[[layer]]
 name = "guard"
 paths = ["crates/blocks/src/guard/**"]
 mods = ["crate::guard", "blocks::guard"]
-may_use = ["expr", "kind", "built", "behave", "tree", "wire", "patch"]
+may_use = ["expr", "kind", "built", "behave", "tree", "wire", "patch", "catalog"]
 
 [[layer]]
 name = "codegen"
@@ -254,7 +254,7 @@ may_use = ["expr", "kind", "built", "wire", "patch", "diff", "shelf", "mirror", 
 name = "cli"
 paths = ["crates/blocks-cli/src/**"]
 mods = ["blocks_cli"]
-may_use = ["guard", "kind", "built", "tree", "wire"]
+may_use = ["guard", "kind", "built", "tree", "wire", "catalog"]
 
 [[layer]]
 name = "desktop-words"
