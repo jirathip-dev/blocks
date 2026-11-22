@@ -13,7 +13,7 @@ Guard version 4. A new error fails `blocks check`; a warning never fails.
 | `catalog/field` | error | 4 | a field its kind's catalog entry does not offer, or one no catalog offers | Leave the field out: the kind takes the fields listed in the finding. |
 | `catalog/input` | error | 4 | a form field of a type its catalog entry does not list | Use only the field types the finding lists for this form. |
 | `catalog/kind` | error | 4 | a block of a kind its catalog does not name | Use only the kinds the catalog names, listed in the finding. |
-| `catalog/link` | error | 4 | a `url`, `href` or `link` that starts with none of its catalog's `links` | Start a link with one of the starts the finding lists, or write it as text. |
+| `catalog/link` | error | 4 | a `url`, `href` or `link`, or a link in `markdown` or `text`, that starts with none of its catalog's `links` | Start a link with one of the starts the finding lists, or write it as text. |
 | `catalog/media` | error | 4 | a `src`, `avatar` or `poster` that starts with none of its catalog's `media` | Load a file only from a start the finding lists; else describe it in text. |
 | `catalog/open` | error | 4 | a tap with `open`, `sheet` or `thread` in a block held to a catalog | Send an action instead; the app opens the screen. |
 | `catalog/size` | error | 4 | more blocks than its catalog's `max.blocks` | Say it in fewer blocks. |

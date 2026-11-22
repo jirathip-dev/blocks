@@ -67,6 +67,24 @@ pub(super) fn starts(s: &str, with: &[String]) -> bool {
     !odd && !schemeless && with.iter().any(|w| s.starts_with(w.as_str()))
 }
 
+pub(super) fn md_links(s: &str) -> Vec<&str> {
+    fn words(r: &str) -> impl Iterator<Item = &str> {
+        r.split(|c: char| c.is_whitespace() || "()<>[]".contains(c))
+    }
+    let first = |r| words(r).next().unwrap_or_default();
+    let mut out: Vec<&str> = s
+        .split("](")
+        .skip(1)
+        .map(|r| first(r.trim_start_matches('<')))
+        .collect();
+    out.extend(s.split('<').skip(1).map(first).filter(|u| u.contains(':')));
+    out.extend(words(s).filter(|w| w.contains("://")));
+    out.retain(|u| !u.is_empty());
+    out.sort_unstable();
+    out.dedup();
+    out
+}
+
 pub(super) fn long(s: &str, max: usize) -> Option<String> {
     let n = s.chars().count();
     (n > max).then(|| format!("{n} characters"))

@@ -95,6 +95,25 @@ fn a_screen_inside_its_catalog_fits_and_one_outside_is_told_the_list() {
 }
 
 #[test]
+fn a_link_written_inside_markdown_is_held_to_the_catalog_links() {
+    let md = "[a](http://evil.example/) ![i](javascript:x) <mailto:x@y> ftp://z.example/f [ok](https://docs.example/)";
+    let found: Vec<String> = seen(&json!([{"type": "text", "id": "t", "markdown": md}]))
+        .into_iter()
+        .map(|(r, d)| format!("{r} {d}"))
+        .collect();
+    let told = |u: &str| format!("catalog/link `{u}`; a link may start with: https://");
+    let want: Vec<String> = [
+        "ftp://z.example/f",
+        "http://evil.example/",
+        "javascript:x",
+        "mailto:x@y",
+    ]
+    .map(told)
+    .into();
+    assert_eq!(found, want);
+}
+
+#[test]
 fn local_state_is_offered_by_no_catalog() {
     let shown = json!([{"type": "text", "id": "t", "markdown": "Hi", "show": {"get": "open"}}]);
     let found: Vec<String> = seen(&shown)
