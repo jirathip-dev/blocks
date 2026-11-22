@@ -51,7 +51,7 @@ function boot(screen) {
   h.paint = R ? () => (h.react ? h.react.set(h.model) : (h.react = R.boot(root, h.model, out))) : () => (root.replaceChildren(...[B.render(h.model, ctx)].filter(Boolean)), sync());
   h.ops = (ops) => ((h.model = (ops?.length && B.apply(h.model, ops)) || h.model), h.paint());
   h.patch = [];
-  const p = B.patcher({ root, draw: (b) => B.render(b, ctx), grow: B.grow, model: () => ((h.t = performance.now()), h.model), saved: () => (sync(), h.patch.push(performance.now() - h.t)) });
+  const p = B.patcher({ root, draw: (b) => B.render(b, ctx), grow: B.grow, sync: { plot: B.plotSync }, model: () => ((h.t = performance.now()), h.model), saved: () => (sync(), h.patch.push(performance.now() - h.t)) });
   h.frame = (f) => {
     const next = f.screen ?? (f.ops?.length && B.apply(h.model, f.ops));
     if (next) h.model = next;

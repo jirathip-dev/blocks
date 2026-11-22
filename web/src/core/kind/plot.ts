@@ -1,4 +1,4 @@
-import type { Axis, Op, Plot, Trace } from "../../gen/types.ts";
+import type { Axis, Fallback, Op, Plot, Trace } from "../../gen/types.ts";
 import { decimals, fixed, nice } from "./chart.ts";
 
 export type Points = Extract<Op, { op: "points" }>;
@@ -9,15 +9,16 @@ export type PlotDrawn = { x: [number, number]; y: [number, number]; xTicks: Plot
 
 const TIME_STEPS = [1, 2, 5, 10, 15, 30, 60, 120, 300, 600, 900, 1800, 3600, 7200];
 
-/// Grows the plot's series by a `points` op as the crate's `Plot::grow` does; undefined when it does not fit.
+/// Grows the plot's series in place by a `points` op as the crate's `Plot::grow` does; undefined, and unchanged, when it does not fit.
 export function grow(series: Trace[], op: Points): Trace[] | undefined {
-  const at = series.findIndex((s) => s.name === op.series);
-  const s = series[at];
+  const s = series.find((t) => t.name === op.series);
   const drop = op.drop ?? 0;
   if (!s || drop > s.x.length || op.x.length !== op.y.length) return undefined;
-  const out = [...series];
-  out[at] = { ...s, x: [...s.x.slice(drop), ...op.x], y: [...s.y.slice(drop), ...op.y] };
-  return out;
+  s.x.splice(0, drop);
+  s.y.splice(0, drop);
+  for (const v of op.x) s.x.push(v);
+  for (const v of op.y) s.y.push(v);
+  return series;
 }
 
 const step = (span: number, most: number, time: boolean): number =>
@@ -81,20 +82,27 @@ function line(s: Trace, [lo, hi]: [number, number]): number[] {
     return out;
   }
   const y = (i: number) => s.y[i] ?? 0;
-  let col: { c: number; k: [number, number, number, number] } | undefined;
+  let c = -1, a0 = 0, lo0 = 0, hi0 = 0, z = 0;
+  const add = (i: number) => {
+    if (out[out.length - 1] !== i) out.push(i);
+  };
   const flush = () => {
-    if (!col) return;
-    for (const i of [...col.k].sort((p, q) => p - q)) if (out[out.length - 1] !== i) out.push(i);
+    if (c < 0) return;
+    add(a0);
+    add(Math.min(lo0, hi0));
+    add(Math.max(lo0, hi0));
+    add(z);
   };
   for (let i = from; i < to; i++) {
-    const c = Math.min(999, Math.max(0, Math.floor((((s.x[i] ?? 0) - lo) / (hi - lo)) * 1000)));
-    if (col && Math.abs(col.c - c) < 0.5) {
-      if (y(i) < y(col.k[1])) col.k[1] = i;
-      if (y(i) > y(col.k[2])) col.k[2] = i;
-      col.k[3] = i;
+    const at = Math.min(999, Math.max(0, Math.floor((((s.x[i] ?? 0) - lo) / (hi - lo)) * 1000)));
+    if (Math.abs(c - at) < 0.5) {
+      if (y(i) < y(lo0)) lo0 = i;
+      if (y(i) > y(hi0)) hi0 = i;
+      z = i;
     } else {
       flush();
-      col = { c, k: [i, i, i, i] };
+      c = at;
+      a0 = lo0 = hi0 = z = i;
     }
   }
   flush();
@@ -102,12 +110,15 @@ function line(s: Trace, [lo, hi]: [number, number]): number[] {
 }
 
 function yRange(p: Plot, lines: number[][], time: boolean): [[number, number], number] {
-  const all = p.series.flatMap((s, i) => (lines[i] ?? []).map((j) => s.y[j] ?? 0));
-  if (p.target) all.push(p.target.min, p.target.max);
-  if (p.peak) all.push(p.peak.y);
+  let [l, h] = [Infinity, -Infinity];
+  const see = (v: number) => ((l = Math.min(l, v)), (h = Math.max(h, v)));
+  p.series.forEach((s, i) => {
+    for (const j of lines[i] ?? []) see(s.y[j] ?? 0);
+  });
+  if (p.target) [p.target.min, p.target.max].forEach(see);
+  if (p.peak) see(p.peak.y);
   let [lo, hi] = [0, 1];
-  if (all.length) {
-    const [l, h] = all.reduce(([a, b], v) => [Math.min(a, v), Math.max(b, v)], [Infinity, -Infinity]);
+  if (l <= h) {
     const st = step(h > l ? h - l : 1, 4, time);
     [lo, hi] = [Math.floor(l / st) * st, Math.ceil(h / st) * st];
     if (!(hi > lo)) hi = lo + st;
@@ -136,4 +147,11 @@ export function drawn(p: Plot): PlotDrawn {
     last: p.series.map((s) => (s.y.length ? unit(shown(s.y[s.y.length - 1] ?? 0), u) : "")),
     band: p.target ? unit(`${shown(p.target.min)}–${shown(p.target.max)}`, u) : null,
   };
+}
+
+/// What a client with no plot view draws, as the crate's `Plot::fallback`: the title, and each line's name with its latest value.
+export function fallback(p: Plot): Fallback {
+  const u = p.y?.unit ?? "";
+  const lines = p.series.flatMap((s) => (s.y.length ? [`${s.name} ${unit(shown(s.y[s.y.length - 1] ?? 0), u)}`] : []));
+  return lines.length ? { title: p.title, subtitle: lines.join(", ") } : { title: p.title };
 }

@@ -322,8 +322,8 @@ function node(v, kinds3, state) {
   const kind = str(b, "type") ?? "";
   const field = Object.entries(hooks).find(([k]) => k === kind)?.[1].variant;
   const variant = field ? str(b, field) : null;
-  const shown = "show" in b && isExpr(b["show"]) ? evaluate(b["show"], state) : true;
-  const off = shown === null || shown === false;
+  const shown2 = "show" in b && isExpr(b["show"]) ? evaluate(b["show"], state) : true;
+  const off = shown2 === null || shown2 === false;
   const drawn = off ? "hidden" : kinds3.includes(kind) ? "native" : "fallback";
   return { kind, id: str(b, "id"), variant, drawn, role: role(b, kind), name: named2(b, kind), children: under(b, drawn).map((c) => node(c, kinds3, state)) };
 }
@@ -541,15 +541,44 @@ var expr = {
   pick: (...v) => ({ pick: v })
 };
 
+// src/core/kind/chart.ts
+var round = (v) => Math.floor(v + 0.5);
+function decimals(x) {
+  for (let d = 0; d < 6; d++) {
+    const v = x * Math.pow(10, d);
+    if (Math.abs(v - round(v)) < 1e-6) return d;
+  }
+  return 6;
+}
+function fixed(v, d) {
+  const p = Math.pow(10, d);
+  const n = round(v * p);
+  const whole = Math.floor(n / p);
+  const out = String(whole).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return d > 0 ? `${out}.${String(n - whole * p).padStart(d, "0")}` : out;
+}
+
 // src/core/kind/plot.ts
 function grow(series, op) {
-  const at2 = series.findIndex((s2) => s2.name === op.series);
-  const s = series[at2];
+  const s = series.find((t) => t.name === op.series);
   const drop = op.drop ?? 0;
   if (!s || drop > s.x.length || op.x.length !== op.y.length) return void 0;
-  const out = [...series];
-  out[at2] = { ...s, x: [...s.x.slice(drop), ...op.x], y: [...s.y.slice(drop), ...op.y] };
-  return out;
+  s.x.splice(0, drop);
+  s.y.splice(0, drop);
+  for (const v of op.x) s.x.push(v);
+  for (const v of op.y) s.y.push(v);
+  return series;
+}
+function signed(v, d) {
+  const s = fixed(Math.abs(v), d);
+  return v < 0 && /[1-9]/.test(s) ? `-${s}` : s;
+}
+var shown = (v) => signed(v, Math.min(decimals(v), 2));
+var unit = (text4, u) => u ? `${text4} ${u}` : text4;
+function fallback(p) {
+  const u = p.y?.unit ?? "";
+  const lines2 = p.series.flatMap((s) => s.y.length ? [`${s.name} ${unit(shown(s.y[s.y.length - 1] ?? 0), u)}`] : []);
+  return lines2.length ? { title: p.title, subtitle: lines2.join(", ") } : { title: p.title };
 }
 
 // src/core/kind/prose.ts
@@ -681,7 +710,7 @@ var sideCount = (b) => [b.count > 99 ? "99+" : String(b.count), `${b.count} ${b.
 // src/core/table.ts
 var SIGN = { THB: "\u0E3F", USD: "$", EUR: "\u20AC" };
 var at = (r, id) => r.cells[id];
-var unit = (c) => c.kind === "money" ? c.currency ? SIGN[c.currency] ?? c.currency : null : c.unit;
+var unit2 = (c) => c.kind === "money" ? c.currency ? SIGN[c.currency] ?? c.currency : null : c.unit;
 var grouped = (v, d, fixed2) => v.toLocaleString("en-US", { minimumFractionDigits: fixed2 ? d : 0, maximumFractionDigits: d });
 var number = (c, v) => c.kind === "money" ? grouped(v, 2, true) : grouped(v, c.digits ?? 2, false);
 function total(c, rows) {
@@ -719,6 +748,7 @@ var DRAWN2 = ["row", "text", "island"];
 var NAMED = ["title", "label", "header", "question", "name", "file", "command", "source", "src"];
 var isObj = (v) => typeof v === "object" && v !== null && !Array.isArray(v);
 var isTable = (o) => o["type"] === "table" && Array.isArray(o["columns"]) && Array.isArray(o["rows"]);
+var isPlot = (o) => o["type"] === "plot" && typeof o["title"] === "string" && Array.isArray(o["series"]);
 var text3 = (o, k) => typeof o[k] === "string" && o[k] !== "" ? o[k] : void 0;
 function tabled(t) {
   const rows = t.rows.filter((r) => !r.group).map((r) => worked(t, r));
@@ -726,11 +756,12 @@ function tabled(t) {
   const sum = t.columns.find((c) => c.total === "sum");
   const v = sum && total(sum, rows);
   const count = `${n} row${n === 1 ? "" : "s"}`;
-  const sub = sum && v ? `${count} \xB7 total ${sum.label.toLowerCase()} ${unit(sum) ?? ""}${v[1]}` : count;
+  const sub = sum && v ? `${count} \xB7 total ${sum.label.toLowerCase()} ${unit2(sum) ?? ""}${v[1]}` : count;
   return { title: t.title ?? "Table", subtitle: sub };
 }
 function plain2(o, kind) {
   if (isTable(o)) return tabled(o);
+  if (isPlot(o)) return fallback(o);
   const subtitle = text3(o, "subtitle");
   const f = { title: NAMED.map((k) => text3(o, k)).find((t) => t !== void 0) ?? kind };
   if (subtitle !== void 0) f.subtitle = subtitle;
@@ -8363,8 +8394,8 @@ var Walk = class {
       if (first !== void 0) this.out.push({ fault: "twice", id, at: [first, at2] });
     } else if (kind === "island" || WORDS.some((w) => isObj3(v[w]))) this.out.push({ fault: "unnamed", kind });
     const core = KINDS2.includes(kind);
-    const fallback = isObj3(v["fallback"]) ? str2(v["fallback"]["title"]) : void 0;
-    if ((kind === "island" || this.app.includes(kind) && !core) && !fallback) this.out.push({ fault: "bare", kind, id: id ?? "" });
+    const fallback2 = isObj3(v["fallback"]) ? str2(v["fallback"]["title"]) : void 0;
+    if ((kind === "island" || this.app.includes(kind) && !core) && !fallback2) this.out.push({ fault: "bare", kind, id: id ?? "" });
     if (core) {
       const inner = id || scope;
       const top = shallow(v);

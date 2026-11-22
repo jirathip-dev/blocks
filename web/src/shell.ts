@@ -7,6 +7,7 @@ export { behave } from "./behave.ts";
 export { apply } from "./core/apply.ts";
 export { patcher } from "./patch.ts";
 export { grow } from "./render/kind/prose.ts";
+export { sync as plotSync } from "./render/kind/plot.ts";
 export { settle } from "./motion.ts";
 export { kids, render } from "./render/block.ts";
 export { el, h } from "./render/dom.ts";
