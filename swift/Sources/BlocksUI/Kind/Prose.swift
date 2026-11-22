@@ -29,7 +29,10 @@ internal struct ProseBlock: View {
             }
             if let caret, !inline { Text(Scale.caret).ui(Scale.title, .regular, look).foregroundStyle(caret) }
         }
-        .textSelection(.enabled).frame(maxWidth: 720, alignment: .leading)
+        #if !os(watchOS)
+            .textSelection(.enabled)
+        #endif
+        .frame(maxWidth: 720, alignment: .leading)
     }
 
     @ViewBuilder
