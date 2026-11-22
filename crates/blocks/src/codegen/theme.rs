@@ -53,7 +53,9 @@ fn schemes_swift() -> serde_json::Result<String> {
     let mut out = String::from(
         "public enum SchemeMode: String, Codable, Equatable, Sendable {\n    case dark, light\n}\n\n\
          public struct Scheme: Equatable, Sendable {\n    public let label: String\n    public let mode: SchemeMode\n    \
-         public let tokens: [String: String]\n}\n\n",
+         public let tokens: [String: String]\n\n    \
+         public init(label: String, mode: SchemeMode, tokens: [String: String]) {\n        \
+         self.label = label\n        self.mode = mode\n        self.tokens = tokens\n    }\n}\n\n",
     );
     let pair = theme::default();
     let style = theme::DEFAULT_STYLE

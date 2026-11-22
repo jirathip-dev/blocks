@@ -29,5 +29,6 @@ let package = Package(
         .testTarget(
             name: "AppFixtureTests", dependencies: ["Blocks", "BlocksUI", "BlocksSnapshot"],
             path: "swift/Tests/AppFixtureTests", swiftSettings: strict),
+        .testTarget(name: "BlocksAPITests", dependencies: ["Blocks"], path: "swift/Tests/BlocksAPITests", swiftSettings: strict),
     ]
 )

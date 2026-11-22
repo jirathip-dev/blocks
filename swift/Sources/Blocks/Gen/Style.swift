@@ -11,6 +11,20 @@ public struct Style: Codable, Equatable, Sendable {
     public var space: Double?
     public var surface: Surface
     public var type: TypeDesign
+
+    public init(easing: Easing? = nil, fills: Fills, format: UInt8, labels: [String: StyleLabel], marks: Marks, motion: Double? = nil, radius: Double, sections: Sections, space: Double? = nil, surface: Surface, type: TypeDesign) {
+        self.easing = easing
+        self.fills = fills
+        self.format = format
+        self.labels = labels
+        self.marks = marks
+        self.motion = motion
+        self.radius = radius
+        self.sections = sections
+        self.space = space
+        self.surface = surface
+        self.type = type
+    }
 }
 
 public struct Easing: RawRepresentable, Hashable, Codable, Equatable, Sendable {
@@ -60,6 +74,12 @@ public struct StyleLabel: Codable, Equatable, Sendable {
     public var `case`: LabelCase?
     public var prefix: String?
     public var suffix: String?
+
+    public init(`case`: LabelCase? = nil, prefix: String? = nil, suffix: String? = nil) {
+        self.`case` = `case`
+        self.prefix = prefix
+        self.suffix = suffix
+    }
 }
 
 public struct Surface: RawRepresentable, Hashable, Codable, Equatable, Sendable {

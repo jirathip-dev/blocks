@@ -6,6 +6,12 @@ public struct Scheme: Equatable, Sendable {
     public let label: String
     public let mode: SchemeMode
     public let tokens: [String: String]
+
+    public init(label: String, mode: SchemeMode, tokens: [String: String]) {
+        self.label = label
+        self.mode = mode
+        self.tokens = tokens
+    }
 }
 
 public let blocksDefaultLight = Scheme(label: "Default light", mode: .light, tokens: ["--bg": "#f6f6f6", "--card": "#ffffff", "--edge": "#d0d0d0", "--line": "#e4e4e4", "--scrim": "#0000004d", "--fg": "#1c1c1c", "--mute": "#5e5e5e", "--l": "#3d3d3d", "--link": "#3d3d3d", "--g": "#547850", "--a": "#927236", "--r": "#a75953", "--p": "#74678e", "--c": "#3c797d", "--fk-l": "#3d3d3d", "--fk-p": "#64597c", "--fk-c": "#31666a", "--fk-g": "#456642", "--fk-a": "#775d2c"])
