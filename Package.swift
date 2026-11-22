@@ -7,7 +7,7 @@ let strict: [SwiftSetting] =
 
 let package = Package(
     name: "Blocks",
-    platforms: [.iOS(.v26), .macOS(.v26)],
+    platforms: [.iOS(.v26), .macOS(.v26), .watchOS(.v26)],
     products: [
         .library(name: "Blocks", targets: ["Blocks"]),
         .library(name: "BlocksUI", targets: ["BlocksUI"]),
@@ -29,5 +29,6 @@ let package = Package(
         .testTarget(
             name: "AppFixtureTests", dependencies: ["Blocks", "BlocksUI", "BlocksSnapshot"],
             path: "swift/Tests/AppFixtureTests", swiftSettings: strict),
+        .testTarget(name: "BlocksAPITests", dependencies: ["Blocks"], path: "swift/Tests/BlocksAPITests", swiftSettings: strict),
     ]
 )

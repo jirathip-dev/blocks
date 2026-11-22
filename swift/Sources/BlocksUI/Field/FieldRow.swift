@@ -5,8 +5,10 @@ internal enum FieldEdit {
     case flip
     case type(secure: Bool, hint: String?, number: Bool)
     case pick([String])
-    case files(UploadField)
-    case scan(ScanField)
+    #if !os(watchOS)
+        case files(UploadField)
+        case scan(ScanField)
+    #endif
 }
 
 /// What one field type gives the row every type shares: its own parts, its start value, its edit and its shown text.
@@ -35,8 +37,13 @@ extension Field {
         case .toggle(let f): f
         case .picker(let f): f
         case .secret(let f): f
-        case .upload(let f): f
-        case .scan(let f): f
+        #if os(watchOS)
+            case .upload(let f): PlainField(json: (try? JSONValue(f)) ?? .null)
+            case .scan(let f): PlainField(json: (try? JSONValue(f)) ?? .null)
+        #else
+            case .upload(let f): f
+            case .scan(let f): f
+        #endif
         case .otherField(let v): PlainField(json: v)
         }
     }

@@ -121,7 +121,20 @@ fn swift_struct(name: &str, ps: &[Prop<'_>]) -> String {
         let q = if p.opt { "?" } else { "" };
         format!("    public var {}: {}{q}\n", word(p.name), p.ty.swift())
     });
-    format!("\npublic struct {name}: {CODABLE} {{\n{}}}\n", fs.collect::<String>())
+    let args = ps.iter().map(|p| {
+        let default = if p.opt { "? = nil" } else { "" };
+        format!("{}: {}{default}", word(p.name), p.ty.swift())
+    });
+    let sets = ps.iter().map(|p| {
+        let w = word(p.name);
+        format!("        self.{w} = {w}\n")
+    });
+    format!(
+        "\npublic struct {name}: {CODABLE} {{\n{}\n    public init({}) {{\n{}    }}\n}}\n",
+        fs.collect::<String>(),
+        args.collect::<Vec<_>>().join(", "),
+        sets.collect::<String>()
+    )
 }
 
 fn swift_words(name: &str, ws: &[&str]) -> String {

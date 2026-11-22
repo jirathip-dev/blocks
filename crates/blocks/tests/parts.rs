@@ -57,3 +57,49 @@ fn a_replace_with_another_kind_of_child_does_not_fit() {
     let err = apply(&mut s, &ops(json!([{"op": "merge", "id": "gone", "fields": {}}])));
     assert_eq!(err, Err(ApplyError::NoBlock("gone".into())));
 }
+
+#[test]
+fn a_figures_issue_moment_and_load_round_trip_and_build() {
+    let cases = [
+        (
+            json!({"type": "row", "title": "#341", "figure": {"state": "working", "issue": 341}}),
+            blocks::Figure {
+                state: Some(blocks::Tone::Working),
+                issue: Some(341),
+                ..Default::default()
+            },
+        ),
+        (
+            json!({"type": "row", "title": "merged #341", "figure": {"moment": "merged"}}),
+            blocks::Figure {
+                moment: Some("merged".into()),
+                ..Default::default()
+            },
+        ),
+        (
+            json!({"type": "row", "title": "mini", "figure": {"load": "busy"}}),
+            blocks::Figure {
+                load: Some("busy".into()),
+                ..Default::default()
+            },
+        ),
+    ];
+    for (wire, figure) in cases {
+        let typed: Block = serde_json::from_value(wire.clone()).unwrap();
+        assert_eq!(serde_json::to_value(&typed).unwrap(), wire);
+        let built = blocks::Row::new(wire["title"].as_str().unwrap()).figure(figure);
+        let mut want = wire.clone();
+        want.as_object_mut().unwrap().remove("type");
+        assert_eq!(serde_json::to_value(&built).unwrap(), want);
+    }
+}
+
+#[test]
+fn a_secret_fields_empty_value_round_trips_and_builds() {
+    let wire = json!({"type": "secret", "name": "token", "label": "API token", "value": ""});
+    let typed: blocks::Field = serde_json::from_value(wire.clone()).unwrap();
+    assert!(matches!(&typed, blocks::Field::Secret(f) if f.value.as_deref() == Some("")));
+    assert_eq!(serde_json::to_value(&typed).unwrap(), wire);
+    let built: blocks::Field = blocks::SecretField::new("token").label("API token").value("").into();
+    assert_eq!(serde_json::to_value(&built).unwrap(), wire);
+}

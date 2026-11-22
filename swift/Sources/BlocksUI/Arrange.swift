@@ -46,10 +46,12 @@ private struct Arranged<Slotted: View>: View {
             guard let e = try? a.values["edit"]?.decode(LayoutEdit.self) else { return false }
             return await send(e)
         }
-        .onKeyPress(.escape) {
-            editing = false
-            return .handled
-        }
+        #if !os(watchOS)
+            .onKeyPress(.escape) {
+                editing = false
+                return .handled
+            }
+        #endif
     }
 
     private func read(_ n: LayoutNode<LayoutPlace>, _ d: Int = 0) -> [(LayoutNode<LayoutPlace>, Int)] {

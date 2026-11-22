@@ -376,6 +376,9 @@ export type Figure = {
     coat?: string | null;
     grow?: string | null;
     icon?: string | null;
+    issue?: number | null;
+    load?: string | null;
+    moment?: string | null;
     state?: Tone | null;
     tool?: string | null;
 };
@@ -961,6 +964,7 @@ export type SecretField = {
     placeholder?: string | null;
     set?: boolean | null;
     show?: Expr | null;
+    value?: string | null;
     was?: string | null;
 };
 export type Section = {

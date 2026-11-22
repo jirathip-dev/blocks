@@ -9,7 +9,15 @@ internal struct BlockActs: ViewModifier {
     internal let menu: [Act]
     internal var swipe: [Act] = []
 
-    private var shown: Bool { !swipe.isEmpty && open == true }
+    private var shown: Bool { !swiped.isEmpty && open == true }
+
+    private var swiped: [Act] {
+        #if os(watchOS)
+            swipe + menu
+        #else
+            swipe
+        #endif
+    }
 
     private var acts: [Act] {
         #if os(iOS)
@@ -21,34 +29,36 @@ internal struct BlockActs: ViewModifier {
 
     internal func body(content: Content) -> some View {
         swiping(content)
-            .contextMenu { MenuItems(acts: acts, run: ask) }
+            #if !os(watchOS)
+                .contextMenu { MenuItems(acts: acts, run: ask) }
+            #endif
             .modifier(Confirming(pending: $pending, run: run))
     }
 
     @ViewBuilder
     private func swiping(_ content: Content) -> some View {
-        if swipe.isEmpty {
+        if swiped.isEmpty {
             content
         } else {
-            content.offset(x: shown ? -CGFloat(swipe.count) * SwipeButtons.width : 0)
+            content.offset(x: shown ? -CGFloat(swiped.count) * SwipeButtons.width : 0)
                 .overlay(alignment: .trailing) {
                     if shown {
-                        SwipeButtons(acts: swipe) { item in
+                        SwipeButtons(acts: swiped) { item in
                             open = false
                             ask(item)
                         }
                     }
                 }
                 .clipped()
-                #if os(iOS)
+                #if os(iOS) || os(watchOS)
                     .simultaneousGesture(drag)
                 #endif
                 .animation(.snappy(duration: 0.5 * (look.style.motion ?? 1)), value: shown)
         }
     }
 
-    #if os(iOS)
-        private var drag: some Gesture {
+    #if os(iOS) || os(watchOS)
+        private var drag: some SwiftUI.Gesture {
             DragGesture(minimumDistance: 24).onEnded { drag in
                 let (across, down) = (drag.translation.width, drag.translation.height)
                 if abs(across) > abs(down) { open = across < 0 }

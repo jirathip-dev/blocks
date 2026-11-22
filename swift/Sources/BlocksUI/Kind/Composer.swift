@@ -40,10 +40,13 @@ internal struct ComposerBlock: View {
                     .background(look.palette.background).accessibilityLabel("message")
                 Button { send() } label: { CardButton(title: sendLabel, primary: true).fixedSize() }
                     .modifier(Identified(id: block.action, action: true))
-                    .buttonStyle(.plain).keyboardShortcut(.return, modifiers: .command)
-                    .contextMenu {
-                        if let steer = name("steer"), working != nil { Button("steer now") { send(steer) } }
-                    }
+                    .buttonStyle(.plain)
+                    #if !os(watchOS)
+                        .keyboardShortcut(.return, modifiers: .command)
+                        .contextMenu {
+                            if let steer = name("steer"), working != nil { Button("steer now") { send(steer) } }
+                        }
+                    #endif
             }
             chips
         }
@@ -124,7 +127,10 @@ internal struct ComposerBlock: View {
                         .foregroundStyle(look.palette.foreground).padding(.horizontal, 10).frame(height: 28)
                         .overlay(Rectangle().strokeBorder(look.palette.edge, lineWidth: 1))
                 }
-                .menuIndicator(.hidden).buttonStyle(.plain).fixedSize()
+                #if !os(watchOS)
+                    .menuIndicator(.hidden)
+                #endif
+                .buttonStyle(.plain).fixedSize()
             }
         }
     }

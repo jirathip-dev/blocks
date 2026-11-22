@@ -22,8 +22,10 @@ internal struct FieldRow: View {
 
     @ViewBuilder internal var body: some View {
         switch field.edit {
-        case .files(let f): UploadRow(field: f)
-        case .scan(let f): ScanRow(field: f)
+        #if !os(watchOS)
+            case .files(let f): UploadRow(field: f)
+            case .scan(let f): ScanRow(field: f)
+        #endif
         default: row
         }
     }

@@ -11,7 +11,9 @@ internal struct HeroBlock: View {
             if let subtitle = block.subtitle {
                 Text(subtitle).ui(17, .regular, look).foregroundStyle(look.palette.mute)
             }
-            if let media = block.media { MediaBlock(block: media) }
+            #if !os(watchOS)
+                if let media = block.media { MediaBlock(block: media) }
+            #endif
             HStack(spacing: 8) {
                 ForEach(Array((block.actions ?? []).enumerated()), id: \.offset) { index, item in
                     ActButton(source: Source(item)) { CardButton(title: item.label, primary: index == 0) }

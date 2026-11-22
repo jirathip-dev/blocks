@@ -1,5 +1,5 @@
 import Blocks
-import CoreImage
+import ImageIO
 import SwiftUI
 
 internal struct Picture: View {
@@ -30,8 +30,8 @@ internal struct Picture: View {
     private static func decoded(_ src: String) -> CGImage? {
         guard src.hasPrefix("data:image/"), let comma = src.firstIndex(of: ","),
             let data = Data(base64Encoded: String(src[src.index(after: comma)...])),
-            let image = CIImage(data: data)
+            let source = CGImageSourceCreateWithData(data as CFData, nil)
         else { return nil }
-        return CIContext().createCGImage(image, from: image.extent)
+        return CGImageSourceCreateImageAtIndex(source, 0, nil)
     }
 }
