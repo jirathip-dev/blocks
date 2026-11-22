@@ -1,5 +1,6 @@
 mod close;
 mod mend;
+mod prompt;
 
 use serde::Serialize;
 use serde_json::{Map, Value};
@@ -9,6 +10,8 @@ use crate::catalog::Catalog;
 use crate::guard::{self, Severity};
 use crate::kind::{Block, Fields, Part, Prose};
 use crate::wire::Action;
+
+pub use prompt::prompt;
 
 /// What a model's reply holds once read: its blocks, the mends made, the guard's warnings, and whether it was cut.
 #[derive(Clone, Debug, PartialEq)]
@@ -235,14 +238,18 @@ pub fn read(catalog: &Catalog, prefix: &str, text: &str) -> Result<Fit, Refusal>
     let cut = found.cut;
     let (mut raw, mut extra, mut mends) = root(found);
     let mut said = vec![];
-    raw.iter().for_each(|v| lines(v, &mut said));
+    for v in &raw {
+        lines(v, &mut said);
+    }
     if raw.is_empty() && !cut {
         let say = "The reply holds no block: write at least one in \"blocks\".";
         return Err(refuse("read/empty", say, cut, said));
     }
     raw.iter_mut().chain(extra.values_mut()).for_each(parts);
     let mut wrote = vec![];
-    raw.iter().for_each(|v| sends(v, &mut wrote));
+    for v in &raw {
+        sends(v, &mut wrote);
+    }
     sends(&Value::Object(extra.clone()), &mut wrote);
     mends.extend(extra.into_iter().map(|(field, _)| Mend::Dropped {
         at: String::new(),
