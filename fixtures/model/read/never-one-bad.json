@@ -1,0 +1,6 @@
+{
+  "text": "{\"blocks\": [{\"type\": \"prose\", \"markdown\": \"Pick a plan.\"}, {\"type\": \"button\", \"label\": \"Pro\", \"action\": \"pick\"}, {\"type\": \"button\", \"label\": \"Wipe\", \"action\": \"wipe\"}, {\"type\": \"button\", \"label\": \"Team\", \"action\": \"pick\", \"style\": \"primary\"}]}",
+  "refused": [
+    "catalog/action"
+  ]
+}

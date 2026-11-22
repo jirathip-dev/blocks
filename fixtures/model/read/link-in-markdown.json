@@ -1,0 +1,29 @@
+{
+  "text": "{\"blocks\": [{\"type\": \"prose\", \"markdown\": \"See [the plans](https://plans.example/) or [write](mailto:a@b.example).\"}, {\"type\": \"row\", \"title\": \"Docs\", \"tap\": {\"url\": \"https://docs.example/\"}}]}",
+  "fit": {
+    "mends": [],
+    "cut": false,
+    "sends": [
+      [
+        "link",
+        "https://plans.example/"
+      ],
+      [
+        "link",
+        "mailto:a@b.example"
+      ],
+      [
+        "type",
+        "prose"
+      ],
+      [
+        "url",
+        "https://docs.example/"
+      ],
+      [
+        "type",
+        "row"
+      ]
+    ]
+  }
+}

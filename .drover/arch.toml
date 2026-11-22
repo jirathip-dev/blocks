@@ -18,23 +18,17 @@ generated = [
     "fixtures/css/*.css", "fixtures/client/*.json",
     "crates/blocks/src/guard/rules/mod.rs", "crates/blocks/src/kind/core/mod.rs", "crates/blocks/src/site/kind/drawn.rs", "swift/Sources/BlocksUI/Gen/Kinds.swift",
     "skill/blocks/**", "crates/blocks-cli/src/gen/skill.rs",
-    "web/src/gen/fields.ts", "web/react/src/gen/fields.ts",
-    "web/src/gen/words.ts", "web/src/gen/words-import.ts",
+    "web/src/gen/fields.ts", "web/react/src/gen/fields.ts", "web/src/gen/words.ts", "web/src/gen/words-import.ts",
     "fixtures/fields/*.json", "fixtures/fields/trees/*.json", "crates/blocks/src/catalog/cards.rs",
 ]
 generate = "sh scripts/arch-gen.sh"
 shared = [
-    "crates/blocks/src/lib.rs",
-    "crates/*/tests/support/**",
-    "crates/blocks/src/codegen/mod.rs",
-    "crates/blocks/tests/sim.rs",
-    "web/src/patch.ts",
-    "web/test/patch.test.ts",
-    "web/test/dom.ts",
-    "web/shot/shot.ts",
+    "crates/blocks/src/lib.rs", "crates/*/tests/support/**",
+    "crates/blocks/src/codegen/mod.rs", "crates/blocks/tests/sim.rs",
+    "web/src/patch.ts", "web/test/patch.test.ts",
+    "web/test/dom.ts", "web/shot/shot.ts",
     ".drover/arch.toml",
-    "justfile",
-    "README.md",
+    "justfile", "README.md",
     "crates/blocks/src/kind/field/mod.rs",
     "crates/blocks/src/site/field/mod.rs",
     "swift/Sources/BlocksUI/Field/FieldRow.swift",
@@ -237,6 +231,12 @@ name = "catalog"
 paths = ["crates/blocks/src/catalog/**"]
 mods = ["crate::catalog", "blocks::catalog"]
 may_use = ["kind"]
+
+[[layer]]
+name = "model"
+paths = ["crates/blocks/src/model/**"]
+mods = ["crate::model", "blocks::model"]
+may_use = ["kind", "built", "catalog", "guard", "wire"]
 
 [[layer]]
 name = "guard"

@@ -1,0 +1,6 @@
+{
+  "text": "{\"blocks\": [{\"type\": \"button\", \"label\": \"Wipe\", \"action\": \"pick\", \"confirm\": {\"title\": \"Sure?\"}}]}",
+  "refused": [
+    "catalog/field"
+  ]
+}

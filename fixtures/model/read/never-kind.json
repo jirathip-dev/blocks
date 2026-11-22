@@ -1,0 +1,7 @@
+{
+  "text": "{\"blocks\": [{\"type\": \"buton\", \"label\": \"Pro\", \"action\": \"pick\"}]}",
+  "refused": [
+    "catalog/kind",
+    "lint/fault"
+  ]
+}

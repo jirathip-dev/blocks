@@ -3,7 +3,7 @@ use std::collections::BTreeMap;
 use serde_json::{Map, Value};
 
 use crate::behave::{start, view};
-use crate::built::{children, shallow, Built};
+use crate::built::{children, Built, LISTS};
 use crate::catalog::Catalog;
 use crate::expr::State;
 
@@ -48,17 +48,28 @@ pub(super) fn acts(o: &Fields) -> Vec<&Fields> {
 }
 
 pub(super) fn each(o: &Fields, f: &mut dyn FnMut(&Fields, &str, &Value)) {
+    static EMPTY: Value = Value::Array(Vec::new());
+    fn fields(o: &Fields, f: &mut dyn FnMut(&Fields, &str, &Value), cut: &[&str], top: bool) {
+        for (k, x) in o {
+            let x = if cut.contains(&k.as_str()) { &EMPTY } else { x };
+            f(o, k, x);
+            match x {
+                Value::Array(rounds) if top && k == "rounds" => rounds.iter().for_each(|r| match r {
+                    Value::Object(r) => fields(r, f, &["blocks"], false),
+                    r => walk(r, f),
+                }),
+                x => walk(x, f),
+            }
+        }
+    }
     fn walk(v: &Value, f: &mut dyn FnMut(&Fields, &str, &Value)) {
         match v {
-            Value::Object(o) => o.iter().for_each(|(k, x)| {
-                f(o, k, x);
-                walk(x, f);
-            }),
+            Value::Object(o) => fields(o, f, &[], false),
             Value::Array(l) => l.iter().for_each(|x| walk(x, f)),
             _ => {}
         }
     }
-    walk(&shallow(o), f);
+    fields(o, f, &LISTS, true);
 }
 
 pub(super) fn starts(s: &str, with: &[String]) -> bool {
