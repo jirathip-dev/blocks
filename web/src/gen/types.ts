@@ -18,8 +18,6 @@ export type AppBlock = { fallback?: Fallback | null; id?: string | null; type: s
 
 export type Attachment = { name: string; src?: string | null; tap: Tap };
 
-export type Axis = { label?: string | null; max?: number | null; min?: number | null; scale?: AxisScale | null; unit?: string | null };
-
 export type AxisScale = "number" | "time";
 
 export type Band = { blocks?: Block[] | null; header?: string | null; id: string; rows?: SceneRow[] | null; type: string };
@@ -230,7 +228,9 @@ export type Plan = { out: string; runs: PlanRun[] };
 
 export type PlanRun = { css: string[]; kinds: string[]; name: string; probes: boolean; screen: string; scripts: string[]; size: string; steps: Step[] };
 
-export type Plot = { empty?: string | null; id?: string | null; peak?: Peak | null; series: Trace[]; show?: Expr | null; target?: Target | null; title: string; window?: number | null; x?: Axis | null; y?: Axis | null };
+export type Plot = { empty?: string | null; id?: string | null; peak?: Peak | null; series: Trace[]; show?: Expr | null; target?: Target | null; title: string; window?: number | null; x?: PlotAxis | null; y?: PlotAxis | null };
+
+export type PlotAxis = { label?: string | null; max?: number | null; min?: number | null; scale?: AxisScale | null; unit?: string | null };
 
 export type PointMove = { at: string; series: string; y: number };
 

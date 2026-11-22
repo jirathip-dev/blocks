@@ -117,22 +117,6 @@ public struct Attachment: Codable, Equatable, Sendable {
     }
 }
 
-public struct Axis: Codable, Equatable, Sendable {
-    public var label: String?
-    public var max: Double?
-    public var min: Double?
-    public var scale: AxisScale?
-    public var unit: String?
-
-    public init(label: String? = nil, max: Double? = nil, min: Double? = nil, scale: AxisScale? = nil, unit: String? = nil) {
-        self.label = label
-        self.max = max
-        self.min = min
-        self.scale = scale
-        self.unit = unit
-    }
-}
-
 public struct AxisScale: RawRepresentable, Hashable, Codable, Equatable, Sendable {
     public let rawValue: String
     public init(rawValue: String) { self.rawValue = rawValue }
@@ -2198,10 +2182,10 @@ public struct Plot: Codable, Equatable, Sendable {
     public var target: Target?
     public var title: String
     public var window: Double?
-    public var x: Axis?
-    public var y: Axis?
+    public var x: PlotAxis?
+    public var y: PlotAxis?
 
-    public init(empty: String? = nil, id: String? = nil, peak: Peak? = nil, series: [Trace], show: Expr? = nil, target: Target? = nil, title: String, window: Double? = nil, x: Axis? = nil, y: Axis? = nil) {
+    public init(empty: String? = nil, id: String? = nil, peak: Peak? = nil, series: [Trace], show: Expr? = nil, target: Target? = nil, title: String, window: Double? = nil, x: PlotAxis? = nil, y: PlotAxis? = nil) {
         self.empty = empty
         self.id = id
         self.peak = peak
@@ -2212,6 +2196,22 @@ public struct Plot: Codable, Equatable, Sendable {
         self.window = window
         self.x = x
         self.y = y
+    }
+}
+
+public struct PlotAxis: Codable, Equatable, Sendable {
+    public var label: String?
+    public var max: Double?
+    public var min: Double?
+    public var scale: AxisScale?
+    public var unit: String?
+
+    public init(label: String? = nil, max: Double? = nil, min: Double? = nil, scale: AxisScale? = nil, unit: String? = nil) {
+        self.label = label
+        self.max = max
+        self.min = min
+        self.scale = scale
+        self.unit = unit
     }
 }
 

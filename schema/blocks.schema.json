@@ -275,46 +275,6 @@
       ],
       "type": "object"
     },
-    "Axis": {
-      "description": "A plot's axis: its label and unit, a fixed range, and whether its values read as numbers or as seconds.",
-      "properties": {
-        "label": {
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "max": {
-          "type": [
-            "number",
-            "null"
-          ]
-        },
-        "min": {
-          "type": [
-            "number",
-            "null"
-          ]
-        },
-        "scale": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/AxisScale"
-            },
-            {
-              "type": "null"
-            }
-          ]
-        },
-        "unit": {
-          "type": [
-            "string",
-            "null"
-          ]
-        }
-      },
-      "type": "object"
-    },
     "AxisScale": {
       "anyOf": [
         {
@@ -5383,7 +5343,7 @@
         "x": {
           "anyOf": [
             {
-              "$ref": "#/$defs/Axis"
+              "$ref": "#/$defs/PlotAxis"
             },
             {
               "type": "null"
@@ -5393,7 +5353,7 @@
         "y": {
           "anyOf": [
             {
-              "$ref": "#/$defs/Axis"
+              "$ref": "#/$defs/PlotAxis"
             },
             {
               "type": "null"
@@ -5405,6 +5365,46 @@
         "title",
         "series"
       ],
+      "type": "object"
+    },
+    "PlotAxis": {
+      "description": "A plot's axis: its label and unit, a fixed range, and whether its values read as numbers or as seconds.",
+      "properties": {
+        "label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "max": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "min": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "scale": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AxisScale"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "unit": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
       "type": "object"
     },
     "PointMove": {

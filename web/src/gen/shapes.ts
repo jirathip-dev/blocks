@@ -261,45 +261,6 @@ export const defs: Record<string, Shape> = {
     ],
     "type": "object"
   },
-  "Axis": {
-    "properties": {
-      "label": {
-        "type": [
-          "string",
-          "null"
-        ]
-      },
-      "max": {
-        "type": [
-          "number",
-          "null"
-        ]
-      },
-      "min": {
-        "type": [
-          "number",
-          "null"
-        ]
-      },
-      "scale": {
-        "anyOf": [
-          {
-            "$ref": "#/$defs/AxisScale"
-          },
-          {
-            "type": "null"
-          }
-        ]
-      },
-      "unit": {
-        "type": [
-          "string",
-          "null"
-        ]
-      }
-    },
-    "type": "object"
-  },
   "AxisScale": {
     "anyOf": [
       {
@@ -4643,7 +4604,7 @@ export const defs: Record<string, Shape> = {
       "x": {
         "anyOf": [
           {
-            "$ref": "#/$defs/Axis"
+            "$ref": "#/$defs/PlotAxis"
           },
           {
             "type": "null"
@@ -4653,7 +4614,7 @@ export const defs: Record<string, Shape> = {
       "y": {
         "anyOf": [
           {
-            "$ref": "#/$defs/Axis"
+            "$ref": "#/$defs/PlotAxis"
           },
           {
             "type": "null"
@@ -4665,6 +4626,45 @@ export const defs: Record<string, Shape> = {
       "title",
       "series"
     ],
+    "type": "object"
+  },
+  "PlotAxis": {
+    "properties": {
+      "label": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "max": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "min": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "scale": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/AxisScale"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "unit": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
     "type": "object"
   },
   "Prose": {

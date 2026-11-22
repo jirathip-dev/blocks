@@ -1,7 +1,7 @@
 use std::path::{Path, PathBuf};
 
 use blocks::wire::old;
-use blocks::{apply, diff, ApplyError, Axis, AxisScale, Block, Built, Frame, Op, Peak, Plot, Screen, Trace};
+use blocks::{apply, diff, ApplyError, AxisScale, Block, Built, Frame, Op, Peak, Plot, PlotAxis, Screen, Trace};
 use serde_json::{json, Value};
 
 fn dir() -> PathBuf {
@@ -89,16 +89,16 @@ fn live() -> Plot {
     Plot::new("Pull", vec![trace("Force", &[], &[])])
         .id("pull")
         .window(3)
-        .x(Axis {
+        .x(PlotAxis {
             label: Some("Time".into()),
             scale: Some(AxisScale::Time),
-            ..Axis::default()
+            ..PlotAxis::default()
         })
-        .y(Axis {
+        .y(PlotAxis {
             unit: Some("kg".into()),
             min: Some(0.into()),
             max: Some(60.into()),
-            ..Axis::default()
+            ..PlotAxis::default()
         })
 }
 
@@ -269,10 +269,10 @@ fn unfit_names_each_plot_that_cannot_be_sent() {
         min: 3.into(),
         max: 2.into(),
     });
-    let axis = p(vec![a()]).y(Axis {
+    let axis = p(vec![a()]).y(PlotAxis {
         min: Some(5.into()),
         max: Some(1.into()),
-        ..Axis::default()
+        ..PlotAxis::default()
     });
     for (plot, says) in [
         (
@@ -314,9 +314,9 @@ fn an_older_client_reads_the_title_and_each_lines_latest_value() {
             trace("Idle", &[], &[]),
         ],
     )
-    .y(Axis {
+    .y(PlotAxis {
         unit: Some("kg".into()),
-        ..Axis::default()
+        ..PlotAxis::default()
     });
     let built = Built::of(&Screen::new().id("s").blocks(vec![Block::Plot(Box::new(p))]));
     let fb = &built.value()["blocks"][0]["fallback"];

@@ -1,4 +1,4 @@
-import type { Axis, Fallback, Op, Plot, Trace } from "../../gen/types.ts";
+import type { Fallback, Op, Plot, PlotAxis, Trace } from "../../gen/types.ts";
 import { decimals, fixed, nice } from "./chart.ts";
 
 export type Points = Extract<Op, { op: "points" }>;
@@ -48,7 +48,7 @@ function ticks(range: [number, number], st: number, time: boolean): PlotTick[] {
 
 const shown = (v: number) => signed(v, Math.min(decimals(v), 2));
 const unit = (text: string, u: string) => (u ? `${text} ${u}` : text);
-const isTime = (a: Axis | null | undefined) => a?.scale === "time";
+const isTime = (a: PlotAxis | null | undefined) => a?.scale === "time";
 
 function first(xs: number[], below: (v: number) => boolean): number {
   let [lo, hi] = [0, xs.length];

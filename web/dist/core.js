@@ -1060,45 +1060,6 @@ var defs = {
     ],
     "type": "object"
   },
-  "Axis": {
-    "properties": {
-      "label": {
-        "type": [
-          "string",
-          "null"
-        ]
-      },
-      "max": {
-        "type": [
-          "number",
-          "null"
-        ]
-      },
-      "min": {
-        "type": [
-          "number",
-          "null"
-        ]
-      },
-      "scale": {
-        "anyOf": [
-          {
-            "$ref": "#/$defs/AxisScale"
-          },
-          {
-            "type": "null"
-          }
-        ]
-      },
-      "unit": {
-        "type": [
-          "string",
-          "null"
-        ]
-      }
-    },
-    "type": "object"
-  },
   "AxisScale": {
     "anyOf": [
       {
@@ -5442,7 +5403,7 @@ var defs = {
       "x": {
         "anyOf": [
           {
-            "$ref": "#/$defs/Axis"
+            "$ref": "#/$defs/PlotAxis"
           },
           {
             "type": "null"
@@ -5452,7 +5413,7 @@ var defs = {
       "y": {
         "anyOf": [
           {
-            "$ref": "#/$defs/Axis"
+            "$ref": "#/$defs/PlotAxis"
           },
           {
             "type": "null"
@@ -5464,6 +5425,45 @@ var defs = {
       "title",
       "series"
     ],
+    "type": "object"
+  },
+  "PlotAxis": {
+    "properties": {
+      "label": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "max": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "min": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "scale": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/AxisScale"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "unit": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
     "type": "object"
   },
   "Prose": {

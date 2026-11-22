@@ -42,13 +42,6 @@ export type Attachment = {
     src?: string | null;
     tap: Tap;
 };
-export type Axis = {
-    label?: string | null;
-    max?: number | null;
-    min?: number | null;
-    scale?: AxisScale | null;
-    unit?: string | null;
-};
 export type AxisScale = "number" | "time";
 export type Band = {
     blocks?: Block[] | null;
@@ -833,8 +826,15 @@ export type Plot = {
     target?: Target | null;
     title: string;
     window?: number | null;
-    x?: Axis | null;
-    y?: Axis | null;
+    x?: PlotAxis | null;
+    y?: PlotAxis | null;
+};
+export type PlotAxis = {
+    label?: string | null;
+    max?: number | null;
+    min?: number | null;
+    scale?: AxisScale | null;
+    unit?: string | null;
 };
 export type PointMove = {
     at: string;

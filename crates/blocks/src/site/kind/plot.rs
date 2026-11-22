@@ -3,13 +3,13 @@ use serde_json::Value;
 use super::chart::colour;
 use super::fallback;
 use crate::site::write::W;
-use crate::{Axis, Plot};
+use crate::{PlotAxis, Plot};
 
 fn num(x: f64) -> String {
     format!("{}", ((x * 100.0) + 0.5).floor() / 100.0 + 0.0)
 }
 
-fn axis_label(a: Option<&Axis>) -> String {
+fn axis_label(a: Option<&PlotAxis>) -> String {
     let label = a.and_then(|a| a.label.as_deref()).filter(|s| !s.is_empty());
     let unit = a.and_then(|a| a.unit.as_deref()).filter(|s| !s.is_empty()).map(|u| format!("({u})"));
     label.map(str::to_string).into_iter().chain(unit).collect::<Vec<_>>().join(" ")

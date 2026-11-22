@@ -16,8 +16,8 @@ The Rust type `Plot`; in TS, `plot(fields: Plot)` from `web/src/gen/builders.ts`
 | `target` | `Target` | optional |
 | `title` | `string` | required |
 | `window` | `number` | optional |
-| `x` | `Axis` | optional |
-| `y` | `Axis` | optional |
+| `x` | `PlotAxis` | optional |
+| `y` | `PlotAxis` | optional |
 
 ## A sample
 

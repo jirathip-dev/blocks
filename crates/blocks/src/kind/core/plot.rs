@@ -10,7 +10,7 @@ words!(AxisScale { Number, Time });
 
 wire! {
     /// A plot's axis: its label and unit, a fixed range, and whether its values read as numbers or as seconds.
-    pub struct Axis {
+    pub struct PlotAxis {
         label: Option<String>,
         unit: Option<String>,
         min: Option<Number>,
@@ -51,8 +51,8 @@ kind! {
         id: Option<String>,
         title: String,
         series: Vec<Trace>,
-        x: Option<Axis>,
-        y: Option<Axis>,
+        x: Option<PlotAxis>,
+        y: Option<PlotAxis>,
         window: Option<Number>,
         target: Option<Target>,
         peak: Option<Peak>,
@@ -219,7 +219,7 @@ impl Plot {
                 .filter(|(lo, hi)| num(lo) > num(hi))
                 .map(|_| format!("{what}'s min is over its max"))
         };
-        let axis = |what: &str, a: Option<&Axis>| upside(what, a.and_then(|a| a.min.as_ref()), a.and_then(|a| a.max.as_ref()));
+        let axis = |what: &str, a: Option<&PlotAxis>| upside(what, a.and_then(|a| a.min.as_ref()), a.and_then(|a| a.max.as_ref()));
         let target = self.target.as_ref();
         upside("the target", target.map(|t| &t.min), target.map(|t| &t.max))
             .or_else(|| axis("the x axis", self.x.as_ref()))
@@ -372,7 +372,7 @@ impl Plot {
     /// What every renderer draws: both ranges, their ticks, each series' points to join and latest value, the target's text.
     #[must_use]
     pub fn drawn(&self) -> PlotDrawn {
-        let time = |a: Option<&Axis>| a.and_then(|a| a.scale.as_ref()) == Some(&AxisScale::Time);
+        let time = |a: Option<&PlotAxis>| a.and_then(|a| a.scale.as_ref()) == Some(&AxisScale::Time);
         let (xt, yt) = (time(self.x.as_ref()), time(self.y.as_ref()));
         let x = self.x_range();
         let lines: Vec<Vec<usize>> = self.series.iter().map(|s| Self::line(s, x)).collect();
@@ -423,15 +423,15 @@ fn hang() -> Plot {
     let s = trace("Force", None, points);
     Plot::new("Max hang, 20 mm", vec![s])
         .id("hang")
-        .x(Axis {
+        .x(PlotAxis {
             label: Some("Time".into()),
             scale: Some(AxisScale::Time),
-            ..Axis::default()
+            ..PlotAxis::default()
         })
-        .y(Axis {
+        .y(PlotAxis {
             label: Some("Force".into()),
             unit: Some("kg".into()),
-            ..Axis::default()
+            ..PlotAxis::default()
         })
 }
 
@@ -455,19 +455,19 @@ fn set() -> Plot {
     let best = force.y.iter().map(num).fold(0.0, f64::max);
     Plot::new("Set 3", vec![force, before])
         .id("target")
-        .x(Axis {
+        .x(PlotAxis {
             label: Some("Time".into()),
             scale: Some(AxisScale::Time),
             min: Some(0.into()),
             max: Some(30.into()),
-            ..Axis::default()
+            ..PlotAxis::default()
         })
-        .y(Axis {
+        .y(PlotAxis {
             label: Some("Force".into()),
             unit: Some("kg".into()),
             min: Some(0.into()),
             max: Some(40.into()),
-            ..Axis::default()
+            ..PlotAxis::default()
         })
         .target(Target {
             min: 25.into(),

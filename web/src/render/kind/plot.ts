@@ -1,5 +1,5 @@
 import { drawn, type PlotDrawn } from "../../core/kind/plot.ts";
-import type { Axis, Block, Plot } from "../../gen/types.ts";
+import type { Block, Plot, PlotAxis } from "../../gen/types.ts";
 import { esc, nodes } from "../dom.ts";
 import { colour } from "./chart.ts";
 
@@ -8,7 +8,7 @@ type Mark = { cls: string; at: [string, string][]; text?: string };
 
 const num = (x: number) => String(Math.floor(x * 100 + 0.5) / 100 + 0);
 const shapes = new WeakMap<Element, string>();
-const axisLabel = (a: Axis | null | undefined) => [a?.label ?? "", a?.unit ? `(${a.unit})` : ""].filter(Boolean).join(" ");
+const axisLabel = (a: PlotAxis | null | undefined) => [a?.label ?? "", a?.unit ? `(${a.unit})` : ""].filter(Boolean).join(" ");
 const tag = (t: string, cls: string, text: string, attrs = "") => `<${t}${cls ? ` class="${cls}"` : ""}${attrs}>${esc(text)}</${t}>`;
 const empty = (p: Plot) => p.series.every((s) => !s.x.length);
 const frame = (d: PlotDrawn): Frame => ({ xf: (v) => (v - d.x[0]) / (d.x[1] - d.x[0]), yf: (v) => 1 - (v - d.y[0]) / (d.y[1] - d.y[0]) });
