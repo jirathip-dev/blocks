@@ -17,4 +17,8 @@ export type { AppBlocks } from "./shell/host.ts";
 export type { Worn } from "./shell/look.ts";
 export type { Mount } from "./shell/mount.ts";
 export { mount } from "./shell/mount.ts";
+export type { Local } from "./shell/local.ts";
+export { local } from "./shell/local.ts";
+export type { Source } from "./shell/source.ts";
+export { Refused } from "./shell/source.ts";
 export { adopt };

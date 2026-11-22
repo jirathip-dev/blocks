@@ -1,0 +1,27 @@
+{
+  "action": {
+    "action": "send",
+    "block": "send",
+    "screen": "meter"
+  },
+  "answer": {
+    "ops": [
+      {
+        "block": {
+          "id": "send-0",
+          "title": "Send 0",
+          "type": "row"
+        },
+        "into": "sends",
+        "op": "insert"
+      },
+      {
+        "fields": {
+          "value": 1
+        },
+        "id": "count",
+        "op": "merge"
+      }
+    ]
+  }
+}
