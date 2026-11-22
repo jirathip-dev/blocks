@@ -1,0 +1,9 @@
+{
+  "kind": "heat",
+  "id": "rides",
+  "variant": null,
+  "drawn": "fallback",
+  "role": "figure",
+  "name": "When you ride",
+  "children": []
+}

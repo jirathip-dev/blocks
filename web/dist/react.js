@@ -2235,6 +2235,7 @@ var kinds = {
   "diff": "Diff",
   "editor": "Editor",
   "form": "Form",
+  "heat": "Heat",
   "hero": "Hero",
   "images": "Images",
   "import": "Import",

@@ -14,6 +14,7 @@ export const kinds: Record<string, string> = {
   "diff": "Diff",
   "editor": "Editor",
   "form": "Form",
+  "heat": "Heat",
   "hero": "Hero",
   "images": "Images",
   "import": "Import",
@@ -227,7 +228,8 @@ export const defs: Record<string, Shape> = {
             "import",
             "message",
             "tool",
-            "sidebar"
+            "sidebar",
+            "heat"
           ]
         },
         "type": "string"
@@ -832,6 +834,19 @@ export const defs: Record<string, Shape> = {
         "properties": {
           "type": {
             "const": "sidebar",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      {
+        "$ref": "#/$defs/Heat",
+        "properties": {
+          "type": {
+            "const": "heat",
             "type": "string"
           }
         },
@@ -2547,6 +2562,215 @@ export const defs: Record<string, Shape> = {
       "name"
     ],
     "type": "object"
+  },
+  "Heat": {
+    "additionalProperties": true,
+    "properties": {
+      "columns": {
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "edges": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/HeatEdges"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "empty": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "grid": {
+        "items": {
+          "$ref": "#/$defs/HeatRow"
+        },
+        "type": "array"
+      },
+      "id": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "lang": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "scale": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/HeatScale"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "selected": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/HeatPick"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "show": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "tap": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Tap"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "title": {
+        "type": "string"
+      },
+      "tone": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/HeatTone"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      }
+    },
+    "required": [
+      "title",
+      "columns",
+      "grid"
+    ],
+    "type": "object"
+  },
+  "HeatCell": {
+    "properties": {
+      "label": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "value": {
+        "type": [
+          "number",
+          "null"
+        ]
+      }
+    },
+    "type": "object"
+  },
+  "HeatEdges": {
+    "anyOf": [
+      {
+        "enum": [
+          "steps",
+          "ends"
+        ],
+        "type": "string"
+      },
+      {
+        "type": "string"
+      }
+    ]
+  },
+  "HeatPick": {
+    "properties": {
+      "column": {
+        "type": "string"
+      },
+      "row": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "row",
+      "column"
+    ],
+    "type": "object"
+  },
+  "HeatRow": {
+    "properties": {
+      "cells": {
+        "items": {
+          "$ref": "#/$defs/HeatCell"
+        },
+        "type": "array"
+      },
+      "name": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "name",
+      "cells"
+    ],
+    "type": "object"
+  },
+  "HeatScale": {
+    "properties": {
+      "max": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "min": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "unit": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "type": "object"
+  },
+  "HeatTone": {
+    "anyOf": [
+      {
+        "enum": [
+          "info",
+          "ok",
+          "warn",
+          "bad",
+          "accent",
+          "mute"
+        ],
+        "type": "string"
+      },
+      {
+        "type": "string"
+      }
+    ]
   },
   "Hero": {
     "additionalProperties": true,

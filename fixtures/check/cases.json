@@ -1099,6 +1099,415 @@
   {
     "app": [],
     "faults": [],
+    "name": "fixtures/blocks/heat-rides.json",
+    "screen": {
+      "columns": [
+        "6",
+        "9",
+        "12",
+        "15",
+        "18"
+      ],
+      "edges": "ends",
+      "grid": [
+        {
+          "cells": [
+            {
+              "value": 1
+            },
+            {},
+            {},
+            {},
+            {
+              "value": 5
+            }
+          ],
+          "name": "Mon"
+        },
+        {
+          "cells": [
+            {},
+            {},
+            {},
+            {
+              "value": 5
+            },
+            {}
+          ],
+          "name": "Tue"
+        },
+        {
+          "cells": [
+            {},
+            {},
+            {
+              "value": 5
+            },
+            {},
+            {}
+          ],
+          "name": "Wed"
+        },
+        {
+          "cells": [
+            {},
+            {
+              "value": 5
+            },
+            {},
+            {},
+            {}
+          ],
+          "name": "Thu"
+        },
+        {
+          "cells": [
+            {
+              "value": 5
+            },
+            {},
+            {},
+            {},
+            {
+              "value": 3
+            }
+          ],
+          "name": "Fri"
+        },
+        {
+          "cells": [
+            {},
+            {},
+            {},
+            {
+              "value": 3
+            },
+            {}
+          ],
+          "name": "Sat"
+        },
+        {
+          "cells": [
+            {},
+            {},
+            {
+              "value": 3
+            },
+            {},
+            {}
+          ],
+          "name": "Sun"
+        }
+      ],
+      "id": "rides",
+      "scale": {
+        "unit": "rides"
+      },
+      "title": "When you ride",
+      "tone": "info",
+      "type": "heat"
+    }
+  },
+  {
+    "app": [],
+    "faults": [],
+    "name": "fixtures/blocks/heat-sleep.json",
+    "screen": {
+      "columns": [
+        "Mon",
+        "Tue",
+        "Wed",
+        "Thu",
+        "Fri",
+        "Sat",
+        "Sun"
+      ],
+      "grid": [
+        {
+          "cells": [
+            {
+              "label": "82",
+              "value": 82
+            },
+            {
+              "label": "74",
+              "value": 74
+            },
+            {
+              "label": "91",
+              "value": 91
+            },
+            {
+              "label": "66",
+              "value": 66
+            },
+            {
+              "label": "88",
+              "value": 88
+            },
+            {
+              "label": "95",
+              "value": 95
+            },
+            {
+              "label": "79",
+              "value": 79
+            }
+          ],
+          "name": "This week"
+        }
+      ],
+      "id": "sleep",
+      "scale": {
+        "max": 100,
+        "min": 50
+      },
+      "title": "Sleep score",
+      "tone": "ok",
+      "type": "heat"
+    }
+  },
+  {
+    "app": [],
+    "faults": [],
+    "name": "fixtures/blocks/heat.json",
+    "screen": {
+      "columns": [
+        "Mon",
+        "Tue",
+        "Wed",
+        "Thu",
+        "Fri",
+        "Sat",
+        "Sun"
+      ],
+      "grid": [
+        {
+          "cells": [
+            {
+              "label": "Rest"
+            },
+            {
+              "value": 120
+            },
+            {
+              "value": 53
+            },
+            {
+              "value": 106
+            },
+            {
+              "value": 39
+            },
+            {
+              "value": 92
+            },
+            {
+              "value": 145
+            }
+          ],
+          "name": "Week 1"
+        },
+        {
+          "cells": [
+            {
+              "label": "Rest"
+            },
+            {
+              "value": 37
+            },
+            {
+              "value": 90
+            },
+            {
+              "value": 143
+            },
+            {
+              "value": 76
+            },
+            {
+              "value": 129
+            },
+            {
+              "value": 62
+            }
+          ],
+          "name": "Week 2"
+        },
+        {
+          "cells": [
+            {
+              "label": "Rest"
+            },
+            {
+              "value": 74
+            },
+            {
+              "value": 127
+            },
+            {
+              "value": 60
+            },
+            {
+              "value": 113
+            },
+            {
+              "value": 46
+            },
+            {
+              "value": 99
+            }
+          ],
+          "name": "Week 3"
+        },
+        {
+          "cells": [
+            {
+              "label": "Rest"
+            },
+            {
+              "value": 111
+            },
+            {
+              "value": 44
+            },
+            {
+              "value": 97
+            },
+            {
+              "value": 30
+            },
+            {
+              "value": 83
+            },
+            {
+              "value": 136
+            }
+          ],
+          "name": "Week 4"
+        },
+        {
+          "cells": [
+            {
+              "label": "Rest"
+            },
+            {
+              "value": 148
+            },
+            {
+              "value": 81
+            },
+            {
+              "value": 134
+            },
+            {
+              "value": 67
+            },
+            {
+              "value": 120
+            },
+            {
+              "value": 53
+            }
+          ],
+          "name": "Week 5"
+        },
+        {
+          "cells": [
+            {
+              "label": "Rest"
+            },
+            {
+              "value": 65
+            },
+            {
+              "value": 118
+            },
+            {
+              "value": 51
+            },
+            {
+              "value": 104
+            },
+            {
+              "value": 37
+            },
+            {
+              "value": 90
+            }
+          ],
+          "name": "Week 6"
+        },
+        {
+          "cells": [
+            {
+              "label": "Rest"
+            },
+            {
+              "value": 102
+            },
+            {},
+            {
+              "value": 88
+            },
+            {
+              "value": 141
+            },
+            {
+              "value": 74
+            },
+            {
+              "value": 127
+            }
+          ],
+          "name": "Week 7"
+        },
+        {
+          "cells": [
+            {
+              "label": "Rest"
+            },
+            {
+              "value": 139
+            },
+            {
+              "value": 72
+            },
+            {
+              "value": 125
+            },
+            {
+              "value": 58
+            },
+            {
+              "value": 111
+            },
+            {
+              "value": 44
+            }
+          ],
+          "name": "Week 8"
+        }
+      ],
+      "id": "load",
+      "scale": {
+        "unit": "TSS"
+      },
+      "selected": {
+        "column": "Sat",
+        "row": "Week 8"
+      },
+      "tap": {
+        "action": "training.day"
+      },
+      "title": "Training load by day",
+      "tone": "warn",
+      "type": "heat"
+    }
+  },
+  {
+    "app": [],
+    "faults": [],
     "name": "fixtures/blocks/hero.json",
     "screen": {
       "actions": [
@@ -4234,6 +4643,412 @@
           "id": "side",
           "label": "main",
           "type": "sidebar"
+        },
+        {
+          "columns": [
+            "Mon",
+            "Tue",
+            "Wed",
+            "Thu",
+            "Fri",
+            "Sat",
+            "Sun"
+          ],
+          "fallback": {
+            "tap": {
+              "action": "training.day"
+            },
+            "title": "Training load by day"
+          },
+          "grid": [
+            {
+              "cells": [
+                {
+                  "label": "Rest"
+                },
+                {
+                  "value": 120
+                },
+                {
+                  "value": 53
+                },
+                {
+                  "value": 106
+                },
+                {
+                  "value": 39
+                },
+                {
+                  "value": 92
+                },
+                {
+                  "value": 145
+                }
+              ],
+              "name": "Week 1"
+            },
+            {
+              "cells": [
+                {
+                  "label": "Rest"
+                },
+                {
+                  "value": 37
+                },
+                {
+                  "value": 90
+                },
+                {
+                  "value": 143
+                },
+                {
+                  "value": 76
+                },
+                {
+                  "value": 129
+                },
+                {
+                  "value": 62
+                }
+              ],
+              "name": "Week 2"
+            },
+            {
+              "cells": [
+                {
+                  "label": "Rest"
+                },
+                {
+                  "value": 74
+                },
+                {
+                  "value": 127
+                },
+                {
+                  "value": 60
+                },
+                {
+                  "value": 113
+                },
+                {
+                  "value": 46
+                },
+                {
+                  "value": 99
+                }
+              ],
+              "name": "Week 3"
+            },
+            {
+              "cells": [
+                {
+                  "label": "Rest"
+                },
+                {
+                  "value": 111
+                },
+                {
+                  "value": 44
+                },
+                {
+                  "value": 97
+                },
+                {
+                  "value": 30
+                },
+                {
+                  "value": 83
+                },
+                {
+                  "value": 136
+                }
+              ],
+              "name": "Week 4"
+            },
+            {
+              "cells": [
+                {
+                  "label": "Rest"
+                },
+                {
+                  "value": 148
+                },
+                {
+                  "value": 81
+                },
+                {
+                  "value": 134
+                },
+                {
+                  "value": 67
+                },
+                {
+                  "value": 120
+                },
+                {
+                  "value": 53
+                }
+              ],
+              "name": "Week 5"
+            },
+            {
+              "cells": [
+                {
+                  "label": "Rest"
+                },
+                {
+                  "value": 65
+                },
+                {
+                  "value": 118
+                },
+                {
+                  "value": 51
+                },
+                {
+                  "value": 104
+                },
+                {
+                  "value": 37
+                },
+                {
+                  "value": 90
+                }
+              ],
+              "name": "Week 6"
+            },
+            {
+              "cells": [
+                {
+                  "label": "Rest"
+                },
+                {
+                  "value": 102
+                },
+                {},
+                {
+                  "value": 88
+                },
+                {
+                  "value": 141
+                },
+                {
+                  "value": 74
+                },
+                {
+                  "value": 127
+                }
+              ],
+              "name": "Week 7"
+            },
+            {
+              "cells": [
+                {
+                  "label": "Rest"
+                },
+                {
+                  "value": 139
+                },
+                {
+                  "value": 72
+                },
+                {
+                  "value": 125
+                },
+                {
+                  "value": 58
+                },
+                {
+                  "value": 111
+                },
+                {
+                  "value": 44
+                }
+              ],
+              "name": "Week 8"
+            }
+          ],
+          "id": "load",
+          "scale": {
+            "unit": "TSS"
+          },
+          "selected": {
+            "column": "Sat",
+            "row": "Week 8"
+          },
+          "tap": {
+            "action": "training.day"
+          },
+          "title": "Training load by day",
+          "tone": "warn",
+          "type": "heat"
+        },
+        {
+          "columns": [
+            "6",
+            "9",
+            "12",
+            "15",
+            "18"
+          ],
+          "edges": "ends",
+          "fallback": {
+            "title": "When you ride"
+          },
+          "grid": [
+            {
+              "cells": [
+                {
+                  "value": 1
+                },
+                {},
+                {},
+                {},
+                {
+                  "value": 5
+                }
+              ],
+              "name": "Mon"
+            },
+            {
+              "cells": [
+                {},
+                {},
+                {},
+                {
+                  "value": 5
+                },
+                {}
+              ],
+              "name": "Tue"
+            },
+            {
+              "cells": [
+                {},
+                {},
+                {
+                  "value": 5
+                },
+                {},
+                {}
+              ],
+              "name": "Wed"
+            },
+            {
+              "cells": [
+                {},
+                {
+                  "value": 5
+                },
+                {},
+                {},
+                {}
+              ],
+              "name": "Thu"
+            },
+            {
+              "cells": [
+                {
+                  "value": 5
+                },
+                {},
+                {},
+                {},
+                {
+                  "value": 3
+                }
+              ],
+              "name": "Fri"
+            },
+            {
+              "cells": [
+                {},
+                {},
+                {},
+                {
+                  "value": 3
+                },
+                {}
+              ],
+              "name": "Sat"
+            },
+            {
+              "cells": [
+                {},
+                {},
+                {
+                  "value": 3
+                },
+                {},
+                {}
+              ],
+              "name": "Sun"
+            }
+          ],
+          "id": "rides",
+          "scale": {
+            "unit": "rides"
+          },
+          "title": "When you ride",
+          "tone": "info",
+          "type": "heat"
+        },
+        {
+          "columns": [
+            "Mon",
+            "Tue",
+            "Wed",
+            "Thu",
+            "Fri",
+            "Sat",
+            "Sun"
+          ],
+          "fallback": {
+            "title": "Sleep score"
+          },
+          "grid": [
+            {
+              "cells": [
+                {
+                  "label": "82",
+                  "value": 82
+                },
+                {
+                  "label": "74",
+                  "value": 74
+                },
+                {
+                  "label": "91",
+                  "value": 91
+                },
+                {
+                  "label": "66",
+                  "value": 66
+                },
+                {
+                  "label": "88",
+                  "value": 88
+                },
+                {
+                  "label": "95",
+                  "value": 95
+                },
+                {
+                  "label": "79",
+                  "value": 79
+                }
+              ],
+              "name": "This week"
+            }
+          ],
+          "id": "sleep",
+          "scale": {
+            "max": 100,
+            "min": 50
+          },
+          "title": "Sleep score",
+          "tone": "ok",
+          "type": "heat"
         }
       ],
       "fallback": {

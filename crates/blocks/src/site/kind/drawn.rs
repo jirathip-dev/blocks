@@ -10,6 +10,7 @@ kinds! {
     "diff" => diff,
     "editor" => editor,
     "form" => form,
+    "heat" => heat,
     "hero" => hero,
     "images" => images,
     "import" => import,

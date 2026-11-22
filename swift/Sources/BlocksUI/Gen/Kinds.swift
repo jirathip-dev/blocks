@@ -43,6 +43,7 @@ extension Block {
         case .message(let b): ("message", b.id)
         case .tool(let b): ("tool", b.id)
         case .sidebar(let b): ("sidebar", b.id)
+        case .heat(let b): ("heat", b.id)
         case .appBlock(let b): (b.type, b.id)
         }
     }
@@ -78,6 +79,7 @@ extension Block {
         case .lines(let b): Source(action: b.action)
         case .chart(let b): Source(tap: b.tap)
         case .import(let b): Source(action: b.action)
+        case .heat(let b): Source(tap: b.tap)
         default: Source()
         }
     }
@@ -115,11 +117,12 @@ extension Block {
         case .message(let b): [b.name]
         case .tool(let b): [b.name]
         case .sidebar(let b): [b.label]
+        case .heat(let b): [b.title]
         default: []
         }
     }
 
-    internal static let roles = ["modal": "dialog", "sheet": "dialog", "section": "region", "form": "form", "config": "form", "nav": "navigation", "chart": "figure", "toast": "status", "message": "article", "sidebar": "navigation"]
+    internal static let roles = ["modal": "dialog", "sheet": "dialog", "section": "region", "form": "form", "config": "form", "nav": "navigation", "chart": "figure", "toast": "status", "message": "article", "sidebar": "navigation", "heat": "figure"]
     internal static let names = ["label", "title", "header", "question", "alt", "file", "command", "placeholder", "name"]
 }
 
@@ -138,6 +141,7 @@ internal struct KindView: View {
         case .diagram(let block): DiagramBlock(block: block)
         case .diff(let block): DiffBlock(block: block)
         case .form(let block): FormBlock(block: block)
+        case .heat(let block): HeatBlock(block: block)
         case .hero(let block): HeroBlock(block: block)
         case .images(let block): ImagesBlock(block: block)
         case .island(let block): IslandBlock(block: block)

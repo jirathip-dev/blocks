@@ -1,0 +1,9 @@
+{
+  "kind": "heat",
+  "id": "load",
+  "variant": null,
+  "drawn": "native",
+  "role": "figure",
+  "name": "Training load by day",
+  "children": []
+}

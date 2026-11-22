@@ -133,7 +133,9 @@ export type Block = ({
     type: "tool";
 } & Tool) | ({
     type: "sidebar";
-} & Sidebar) | (AppBlock & {
+} & Sidebar) | ({
+    type: "heat";
+} & Heat) | (AppBlock & {
     [key: string]: unknown;
 });
 export type Bound = {
@@ -430,6 +432,39 @@ export type Have = {
     k: string;
     rev?: number | null;
 };
+export type Heat = {
+    columns: string[];
+    edges?: HeatEdges | null;
+    empty?: string | null;
+    grid: HeatRow[];
+    id?: string | null;
+    lang?: string | null;
+    scale?: HeatScale | null;
+    selected?: HeatPick | null;
+    show?: Expr | null;
+    tap?: Tap | null;
+    title: string;
+    tone?: HeatTone | null;
+};
+export type HeatCell = {
+    label?: string | null;
+    value?: number | null;
+};
+export type HeatEdges = "steps" | "ends";
+export type HeatPick = {
+    column: string;
+    row: string;
+};
+export type HeatRow = {
+    cells: HeatCell[];
+    name: string;
+};
+export type HeatScale = {
+    max?: number | null;
+    min?: number | null;
+    unit?: string | null;
+};
+export type HeatTone = "info" | "ok" | "warn" | "bad" | "accent" | "mute";
 export type Hello = {
     epoch: string;
     keys: number;
@@ -1330,4 +1365,4 @@ export type Why = "evicted" | "unpaired" | "handover";
 export type Working = {
     since: string;
 };
-export type Kind = "screen" | "modal" | "sheet" | "section" | "list" | "row" | "card" | "choice" | "form" | "config" | "secret" | "run" | "button" | "chips" | "stat" | "text" | "images" | "web" | "diff" | "editor" | "scene" | "diagram" | "composer" | "lines" | "prose" | "hero" | "media" | "nav" | "island" | "table" | "steps" | "chart" | "toast" | "pages" | "timeline" | "import" | "message" | "tool" | "sidebar";
+export type Kind = "screen" | "modal" | "sheet" | "section" | "list" | "row" | "card" | "choice" | "form" | "config" | "secret" | "run" | "button" | "chips" | "stat" | "text" | "images" | "web" | "diff" | "editor" | "scene" | "diagram" | "composer" | "lines" | "prose" | "hero" | "media" | "nav" | "island" | "table" | "steps" | "chart" | "toast" | "pages" | "timeline" | "import" | "message" | "tool" | "sidebar" | "heat";

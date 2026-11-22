@@ -40,4 +40,5 @@ kinds! {
     message { Message(Message) = "message" }
     tool { Tool(Tool) = "tool" }
     sidebar { Sidebar(Sidebar) = "sidebar" }
+    heat { Heat(Heat) = "heat" }
 }

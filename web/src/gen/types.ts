@@ -22,7 +22,7 @@ export type Band = { blocks?: Block[] | null; header?: string | null; id: string
 
 export type Bar = { label: string; sub?: string | null; tone?: Tone | null; value: number };
 
-export type Block = ({ type: "screen" } & Screen) | ({ type: "modal" } & Modal) | ({ type: "sheet" } & Modal) | ({ type: "section" } & Section) | ({ type: "list" } & List) | ({ type: "row" } & Row) | ({ type: "card" } & Card) | ({ type: "choice" } & Choice) | ({ type: "form" } & Form) | ({ type: "config" } & Form) | ({ type: "secret" } & Secret) | ({ type: "run" } & Run) | ({ type: "button" } & Button) | ({ type: "chips" } & Chips) | ({ type: "stat" } & Stat) | ({ type: "text" } & Text) | ({ type: "images" } & Images) | ({ type: "web" } & Web) | ({ type: "diff" } & Diff) | ({ type: "editor" } & Editor) | ({ type: "scene" } & Scene) | ({ type: "diagram" } & Diagram) | ({ type: "composer" } & Composer) | ({ type: "lines" } & Lines) | ({ type: "prose" } & Prose) | ({ type: "hero" } & Hero) | ({ type: "media" } & Media) | ({ type: "nav" } & Nav) | ({ type: "island" } & Island) | ({ type: "table" } & Table) | ({ type: "steps" } & Steps) | ({ type: "chart" } & Chart) | ({ type: "toast" } & Toast) | ({ type: "pages" } & Pages) | ({ type: "timeline" } & Timeline) | ({ type: "import" } & Import) | ({ type: "message" } & Message) | ({ type: "tool" } & Tool) | ({ type: "sidebar" } & Sidebar) | (AppBlock & { [key: string]: unknown });
+export type Block = ({ type: "screen" } & Screen) | ({ type: "modal" } & Modal) | ({ type: "sheet" } & Modal) | ({ type: "section" } & Section) | ({ type: "list" } & List) | ({ type: "row" } & Row) | ({ type: "card" } & Card) | ({ type: "choice" } & Choice) | ({ type: "form" } & Form) | ({ type: "config" } & Form) | ({ type: "secret" } & Secret) | ({ type: "run" } & Run) | ({ type: "button" } & Button) | ({ type: "chips" } & Chips) | ({ type: "stat" } & Stat) | ({ type: "text" } & Text) | ({ type: "images" } & Images) | ({ type: "web" } & Web) | ({ type: "diff" } & Diff) | ({ type: "editor" } & Editor) | ({ type: "scene" } & Scene) | ({ type: "diagram" } & Diagram) | ({ type: "composer" } & Composer) | ({ type: "lines" } & Lines) | ({ type: "prose" } & Prose) | ({ type: "hero" } & Hero) | ({ type: "media" } & Media) | ({ type: "nav" } & Nav) | ({ type: "island" } & Island) | ({ type: "table" } & Table) | ({ type: "steps" } & Steps) | ({ type: "chart" } & Chart) | ({ type: "toast" } & Toast) | ({ type: "pages" } & Pages) | ({ type: "timeline" } & Timeline) | ({ type: "import" } & Import) | ({ type: "message" } & Message) | ({ type: "tool" } & Tool) | ({ type: "sidebar" } & Sidebar) | ({ type: "heat" } & Heat) | (AppBlock & { [key: string]: unknown });
 
 export type Bound = { get: string };
 
@@ -113,6 +113,20 @@ export type Gesture = { action: string; enabled?: Expr | null; name: string };
 export type Handler = "answers" | "fails" | "waits";
 
 export type Have = { k: string; rev?: number | null };
+
+export type Heat = { columns: string[]; edges?: HeatEdges | null; empty?: string | null; grid: HeatRow[]; id?: string | null; lang?: string | null; scale?: HeatScale | null; selected?: HeatPick | null; show?: Expr | null; tap?: Tap | null; title: string; tone?: HeatTone | null };
+
+export type HeatCell = { label?: string | null; value?: number | null };
+
+export type HeatEdges = "steps" | "ends";
+
+export type HeatPick = { column: string; row: string };
+
+export type HeatRow = { cells: HeatCell[]; name: string };
+
+export type HeatScale = { max?: number | null; min?: number | null; unit?: string | null };
+
+export type HeatTone = "info" | "ok" | "warn" | "bad" | "accent" | "mute";
 
 export type Hello = { epoch: string; keys: number; sid: string; v: number };
 
@@ -376,4 +390,4 @@ export type Why = "evicted" | "unpaired" | "handover";
 
 export type Working = { since: string };
 
-export type Kind = "screen" | "modal" | "sheet" | "section" | "list" | "row" | "card" | "choice" | "form" | "config" | "secret" | "run" | "button" | "chips" | "stat" | "text" | "images" | "web" | "diff" | "editor" | "scene" | "diagram" | "composer" | "lines" | "prose" | "hero" | "media" | "nav" | "island" | "table" | "steps" | "chart" | "toast" | "pages" | "timeline" | "import" | "message" | "tool" | "sidebar";
+export type Kind = "screen" | "modal" | "sheet" | "section" | "list" | "row" | "card" | "choice" | "form" | "config" | "secret" | "run" | "button" | "chips" | "stat" | "text" | "images" | "web" | "diff" | "editor" | "scene" | "diagram" | "composer" | "lines" | "prose" | "hero" | "media" | "nav" | "island" | "table" | "steps" | "chart" | "toast" | "pages" | "timeline" | "import" | "message" | "tool" | "sidebar" | "heat";
