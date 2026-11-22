@@ -101,3 +101,28 @@ fn old_turns_a_move_into_a_replace_of_its_parent_and_of_the_root_into_the_screen
     assert_eq!(wire::old(vec![mv("s")], &new), vec![Op::Screen { screen: new.clone() }]);
     assert_eq!(wire::old(vec![rm.clone()], &new), vec![rm]);
 }
+
+#[test]
+fn old_sends_the_removes_first_and_the_badge_last() {
+    let with = |badge: u64, rows: &[(&str, &str)]| {
+        let mut v = serde_json::to_value(screen(rows)).unwrap();
+        v["badge"] = json!(badge);
+        serde_json::from_value::<Block>(v).unwrap()
+    };
+    let was = with(3, &[("a", "A"), ("b", "B"), ("c", "C")]);
+    let now = with(1, &[("a", "A2"), ("c", "C2")]);
+    let ops = wire::old(blocks::diff(&was, &now), &now);
+    let ids: Vec<_> = ops
+        .iter()
+        .map(|op| match op {
+            Op::Remove { id } => format!("remove {id}"),
+            Op::Merge { id, .. } => format!("merge {id}"),
+            Op::Badge { count } => format!("badge {count}"),
+            other => panic!("{other:?}"),
+        })
+        .collect();
+    assert_eq!(ids, ["remove b", "merge c", "merge a", "badge 1"]);
+    let mut got = was;
+    blocks::apply(&mut got, &ops).unwrap();
+    assert_eq!(got, now);
+}
