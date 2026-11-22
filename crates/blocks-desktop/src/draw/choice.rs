@@ -1,18 +1,18 @@
 use blocks::Choice;
-use egui::{Button, RichText, TextEdit, Ui};
+use egui::{Button, RichText, Ui};
 use serde_json::Value;
 
+use crate::bidi;
 use crate::act;
 use crate::cx::{Cx, Draw};
 use crate::text::age;
-use crate::words;
 
 pub(super) const DRAW: Option<Draw<Choice>> = Some(draw);
 
 fn draw(b: &Choice, ui: &mut Ui, cx: &mut Cx<'_>) {
     let look = cx.look;
     if let Some(q) = &b.question {
-        words::label(ui, RichText::new(q).strong().color(look.fg(ui)));
+        bidi::label(ui, RichText::new(q).strong().color(look.fg(ui)));
     }
     let mut opts: Vec<_> = b.options.iter().collect();
     opts.sort_by_key(|o| Some(&o.value) != b.recommended.as_ref());
@@ -20,7 +20,7 @@ fn draw(b: &Choice, ui: &mut Ui, cx: &mut Cx<'_>) {
         for o in opts {
             let best = Some(&o.value) == b.recommended.as_ref();
             let label = if best { format!("{} · recommended", o.label) } else { o.label.clone() };
-            if act::press(ui, cx, Some(&b.action), Button::new(label)) {
+            if act::press(ui, cx, Some(&b.action), Button::new(bidi::text(ui, label))) {
                 let mut values = b.values.clone().unwrap_or_default();
                 values.extend(o.values.clone().unwrap_or_default());
                 values.insert("choice".into(), o.value.clone().into());
@@ -34,14 +34,14 @@ fn draw(b: &Choice, ui: &mut Ui, cx: &mut Cx<'_>) {
             label: d.label.clone(),
             since: None,
         };
-        words::label(ui, RichText::new(age(&t, cx.now)).color(look.mute(ui)));
+        bidi::label(ui, RichText::new(age(&t, cx.now)).color(look.mute(ui)));
     }
     let Some(other) = &b.other else { return };
     let id = ui.scope_id().with("other");
     let mut text: String = ui.data_mut(|d| d.get_temp(id)).unwrap_or_default();
     let sent = ui.horizontal(|ui| {
-        let hint = other.placeholder.as_deref().unwrap_or("other…");
-        ui.add_enabled(cx.on, TextEdit::singleline(&mut text).hint_text(hint));
+        let hint = bidi::text(ui, other.placeholder.as_deref().unwrap_or("other…"));
+        bidi::edit(ui, &mut text, cx.on, |e| e.hint_text(hint));
         act::press(ui, cx, Some(&b.action), Button::new("send")) && !text.trim().is_empty()
     });
     if sent.inner {

@@ -12,6 +12,7 @@ blocks = { path = "../blocks" }
 egui.workspace = true
 icu_segmenter.workspace = true
 serde_json.workspace = true
+unicode-bidi.workspace = true
 
 [lints]
 workspace = true
