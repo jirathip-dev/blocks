@@ -39,6 +39,12 @@ fn the_200_row_screen_in_thai_paints_every_pass_in_a_frame() {
     screen("งานสร้างของกิ่งหลัก", "ภาษาไทยไม่มีช่องว่างระหว่างคำ", Some(&font), None);
 }
 
+#[test]
+#[ignore = "release only: desktop.yml's perf step"]
+fn the_200_row_screen_right_to_left_paints_every_pass_in_a_frame() {
+    screen("הזמנה", "נשלחה לפני 2 דקות", None, None);
+}
+
 fn screen(title: &str, subtitle: &str, font: Option<&[u8]>, patch_ms: Option<f64>) {
     let row = |i: usize, title: &str| json!({"type": "row", "id": format!("r{i}"), "title": format!("{title} {i}"), "subtitle": subtitle, "value": "2m"});
     let rows: Vec<_> = (0..200).map(|i| row(i, title)).collect();

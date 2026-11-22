@@ -1,5 +1,6 @@
 mod act;
 mod art;
+pub mod bidi;
 mod cx;
 mod draw;
 mod drawn;

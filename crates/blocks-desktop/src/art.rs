@@ -2,7 +2,7 @@ use blocks::theme::Theme;
 use blocks::{Figure, Tone};
 use egui::Ui;
 
-use crate::words;
+use crate::bidi;
 
 /// The `Theme` port: a figure's art and a pack's words.
 pub trait Art {
@@ -35,7 +35,7 @@ impl Art for Plain {
         let Some((g, word)) = f.state.as_ref().and_then(glyph) else {
             return false;
         };
-        words::label(ui, g).on_hover_text(word);
+        bidi::label(ui, g).on_hover_text(word);
         true
     }
 
