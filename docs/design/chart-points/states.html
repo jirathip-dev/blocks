@@ -1,0 +1,75 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>chart points: every state</title>
+<link rel="stylesheet" href="../neutral-default/tokens.css"><link rel="stylesheet" href="../../../web/dist/blocks.css"><link rel="stylesheet" href="points.css"><link rel="stylesheet" href="page.css">
+<script src="../chart/chart.js"></script><script src="points.js"></script></head>
+<body><main id="page">
+<div class="top"><b>chart points</b><span class="m">every phase of one point's gesture (#136's statechart 1), the ways in, and the charts that take none</span></div>
+<div id="idle" class="half"></div><div id="pressed" class="half"></div>
+<div id="clamp" class="half"></div><div id="same" class="half"></div>
+<div id="sent" class="half"></div><div id="confirmed" class="half"></div>
+<div id="refused" class="half"></div><div id="named" class="half"></div>
+<div id="hits"></div>
+<div id="locked" class="half"></div><div id="ways" class="half card"></div>
+</main>
+<script>
+const six = ["2024-10","2024-11","2024-12","2025-01","2025-02","2025-03"];
+const M = (a) => a.map((v) => (v == null ? null : Math.round(v * 1e6)));
+const base = (o = {}) => Object.assign({ type: "chart", id: "t", chart: "combo", title: "Revenue plan", x: six, era: "be", format: "thb_m",
+  move: { action: "plan.target", name: "point" },
+  series: [{ name: "Actual", fixed: true, values: M([1.02, 1.11, 1.46, 1.08, null, null]) },
+           { name: "Target", as: "line", tone: "warn", step: 50000, values: M([1.0, 1.1, 1.4, 1.1, 1.2, 1.2]) }] }, o);
+const say = (c, lines) => lines.forEach(([who, t]) => note(c, `<b>${who}</b> ${t}`, "heard"));
+let c;
+c = place("idle", points(base(), { focus: 1, focusAt: 4 }));
+note(c, "1 · Idle. Each Target point has a hollow handle; Actual is <code>fixed</code>, so it has none. Tab reaches the series once: Left and Right walk its points (shown: Feb 68 focused). A tap or click on a point without moving is the column's tap.");
+say(c, [["VoiceOver", "“Target, February 2568: ฿1.20M. Editable point. Actions available.”"], ["web", "“Target, Feb 2568: ฿1.20M, editable point. Space to grab.”"]]);
+
+c = place("pressed", points(base(), { grab: { series: 1, at: 4, phase: "pressed", by: "keys" } }));
+note(c, "2 · Pressed: Space, or a pointer down before it has moved 4px. The handle lifts (scale, filled); the legend reads its month. Nothing has changed yet.");
+say(c, [["heard", "“Target, Feb 2568, ฿1.20M, grabbed. Up and Down change it, Shift for ten steps, Enter drops, Escape cancels.”"]]);
+
+c = place("clamp", points(base(), { grab: { series: 1, at: 4, to: 2000000, phase: "previewing", by: "pointer" } }));
+note(c, "3 · Previewing, dragged past the plot's top. The axis holds still during a drag, so a candidate stops at its top (฿2.00M) and at zero. Once the app answers, the axis may grow and the next drag goes further. The tag on the y axis reads the candidate where the finger hides the point.");
+say(c, [["heard", "“฿2.00M, top of the axis.”"]]);
+
+c = place("same", points(base(), { grab: { series: 1, at: 4, to: 1200000, phase: "previewing", by: "pointer" } }));
+note(c, "4 · Back on the value it started with (฿1.20M): no ghost, no tag change. Releasing here sends nothing, and so does Escape anywhere.");
+say(c, [["heard", "“฿1.20M, unchanged.” On release: nothing."]]);
+
+c = place("sent", points(base(), { grab: { series: 1, at: 4, to: 1350000, phase: "sent", by: "pointer" } }));
+note(c, "5 · Sent: the point stays at the candidate, dimmed and busy, the legend value turns ↻. The model is unchanged until the answer. The other points stay usable.");
+say(c, [["heard", "“Sending.”"]]);
+
+const conf = base(); conf.series[1].values[4] = 1350000; conf.series[1].values[5] = 1350000;
+c = place("confirmed", points(conf));
+note(c, "6 · Confirmed: drawn from the data the answer's ops changed. Here the app also raised March to match; it moves there over <code>--settle</code> (at once with reduced motion). If the data still says ฿1.20M (the app opened a confirm sheet), the point goes back, with no reason.");
+say(c, [["heard", "“Target, Feb 2568: ฿1.35M.”"]]);
+
+c = place("refused", points(base(), { toast: "October 2567 is closed: its target can't change." }));
+note(c, "7 · Refused: the app failed the action. Oct's point is back at ฿1.00M (over <code>--settle</code>, or at once), and the failed action's toast gives the reason.");
+say(c, [["heard", "“Not changed, ฿1.00M. October 2567 is closed: its target can't change.”"]]);
+
+c = place("named", points(base(), { focus: 1, focusAt: 4 }));
+note(c, "8 · VoiceOver and TalkBack: each point has two named actions, Raise and Lower. Each is a whole gesture of one step: it sends at once, so Raise on Feb sends <code>{point: {series: \"Target\", at: \"2025-02\", y: 1250000}}</code>, and the point then reads its answer. No grab mode for a screen reader.");
+say(c, [["VoiceOver", "swipe down: “Raise”, double tap → “Sending.” → “Target, February 2568: ฿1.25M.”"]]);
+
+const fy = ["2024-10","2024-11","2024-12","2025-01","2025-02","2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09"];
+c = place("hits", points({ type: "chart", id: "h", chart: "line", title: "Hit areas (outlined here only)", x: fy, era: "be", format: "thb_m",
+  move: { action: "plan.target", name: "point" },
+  series: [{ name: "Target", tone: "warn", step: 50000, values: M([1.0, 1.1, 1.4, 1.1, 1.1, 1.2, 1.2, 1.2, 1.25, 1.3, 1.3, 1.35]) },
+           { name: "Stretch", step: 50000, values: M([1.1, 1.2, 1.5, 1.2, 1.2, 1.3, 1.35, 1.35, 1.4, 1.45, 1.45, 1.5]) }] }, { hits: true }));
+note(c, "9 · Each handle is its column wide and <code>--hit</code> (44px) tall, centred on its point. On a phone a column is about 24px, the WCAG minimum. Where two series' handles overlap, a press takes the point nearest it. Handles have <code>touch-action: none</code>, so a swipe on one drags it; a swipe anywhere else on the plot scrolls the page.");
+
+c = place("locked", points(base({ title: "Revenue plan (locked)", move: { action: "plan.target", name: "point", enabled: false } })));
+note(c, "10 · Takes no gestures: <code>move.enabled</code> does not hold (the plan is locked), or the block has no <code>move</code>, or the series is <code>fixed</code>. No handles, no grab, no focus stop. It is #132's chart: columns still tap. A <code>stacked</code> or <code>donut</code> chart with <code>move</code> fails the block check.");
+
+const w = document.getElementById("ways");
+w.innerHTML = `<div class="cht">11 · Three ways in, one action out</div>
+<p class="note">Raising Feb 2568's Target by three steps from ฿1.20M:</p>
+<p class="act"><b>pointer</b> press on the point, drag up three steps, release<br><b>keys</b> Space, ↑ ↑ ↑, Enter<br><b>named action</b> Raise three times: three actions of one step each, each answered before the next</p>
+<p class="note">The pointer and the keys send the same one action:</p>
+<p class="act"><code>{"action": "plan.target", "values": {"point": {"series": "Target", "at": "2025-02", "y": 1350000}}}</code></p>
+<p class="note">x never moves: <code>at</code> is the point's x as the block wrote it. <code>y</code> is a whole number of the series' <code>step</code> (with no step: what the format shows, ฿100K for <code>thb_m</code>). While grabbed, values read at the step's precision (฿1.35M, not ฿1.4M).</p>
+<p class="note">Reduced motion: the point still follows the finger; the lift, the settle on confirm and the return on refuse happen at once.</p>`;
+document.body.dataset.h = Math.ceil(document.documentElement.scrollHeight);
+</script></body></html>

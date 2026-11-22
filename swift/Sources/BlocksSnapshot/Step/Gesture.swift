@@ -17,6 +17,9 @@ extension Run {
             return ways(m, grab, g).map { (gesture, $0.value) }
         case .table(let t)?: return grid(t, g)
         case .timeline(let t)?: return timed(t, g)
+        case .chart(let c)?:
+            guard let gesture = c.move, let series = g.grab.string("series"), let at = g.grab.string("at") else { return [] }
+            return ways(c, PointGrab(series, at: at), g).compactMap { m in (try? JSONValue(m)).map { (gesture, $0) } }
         default: return []
         }
     }

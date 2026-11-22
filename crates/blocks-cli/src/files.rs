@@ -57,7 +57,10 @@ pub(crate) fn screens(config: &Config, skipped: &mut Vec<String>) -> Result<BTre
         for name in names {
             let path = format!("{dir}/{name}.json");
             let value: Value = read(&path)?.unwrap_or_default();
-            if !matches!(value.get("type").and_then(Value::as_str), Some("screen" | "sheet")) {
+            if !matches!(
+                value.get("type").and_then(Value::as_str),
+                Some("screen" | "modal" | "sheet")
+            ) {
                 skipped.push(format!("{path}: not a screen"));
                 continue;
             }

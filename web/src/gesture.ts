@@ -215,3 +215,67 @@ export function edited<B extends Block, G, C>(input: HTMLInputElement, c: Driven
     leave({ on: how === "stay" ? "cancel" : "release" }, how);
   });
 }
+
+/// What a view hands `steered` for a gesture it answers itself: rules over the item as `now` reads it at each press, how a phase draws, and what a send does.
+export type Steered<B, G, R, C> = {
+  rules: Rules<B, G, R, C>;
+  grab: G;
+  now: () => B;
+  reach: (dx: number, dy: number) => R;
+  show: (c: C | null) => void;
+  send: (c: C) => boolean;
+  tap?: (() => void) | undefined;
+  keys?: HTMLElement | null | undefined;
+  mark?: HTMLElement;
+  skip?: (e: UIEvent) => boolean;
+};
+
+/// Runs one local gesture on `el` through the machine: a press, a drag and a release send once and the view answers at once; each arrow on `keys` is a press, a nudge and a release.
+export function steered<B, G, R, C>(el: HTMLElement, o: Steered<B, G, R, C>): void {
+  let p: Phase<C> = { at: "idle" };
+  let b = o.now();
+  let start: C | null = null;
+  let [x0, y0] = [0, 0];
+  const go = (e: Event<C>) => {
+    if (start === null) return;
+    const [next, fx] = step(p, e, start);
+    p = next;
+    (o.mark ?? el).dataset["phase"] = p.at;
+    if (p.at === "previewing") o.show(p.c);
+    if (p.at === "idle" || p.at === "dragging") o.show(null);
+    if (fx === "tap") o.tap?.();
+    if (!fx || fx === "tap") return;
+    const ok = o.send(fx.send);
+    say(o.rules.says(b, o.grab, ok ? fx.send : start));
+    go({ on: "answer", ok });
+    go({ on: "settled" });
+  };
+  const press = () => {
+    b = o.now();
+    start = o.rules.start(b, o.grab);
+    if (start !== null) go({ on: "press" });
+    return start !== null;
+  };
+  const live = () => p.at === "pressed" || p.at === "dragging" || p.at === "previewing";
+  el.style.touchAction = "none";
+  el.addEventListener("pointerdown", (e) => {
+    if (e.button !== 0 || p.at !== "idle" || o.skip?.(e) || !press()) return;
+    el.setPointerCapture(e.pointerId);
+    [x0, y0] = [e.clientX, e.clientY];
+  });
+  el.addEventListener("pointermove", (e) => {
+    const [dx, dy] = [e.clientX - x0, e.clientY - y0];
+    if (live() && (p.at !== "pressed" || Math.hypot(dx, dy) >= 4)) go({ on: "move", c: o.rules.candidate(b, o.grab, o.reach(dx, dy)) });
+  });
+  el.addEventListener("pointerup", () => live() && go({ on: "release" }));
+  el.addEventListener("pointercancel", () => go({ on: "cancel" }));
+  o.keys?.addEventListener("keydown", (e) => {
+    const dir = ARROWS[e.key];
+    if (!dir || p.at !== "idle" || o.skip?.(e) || !press() || start === null) return;
+    e.preventDefault();
+    const c = o.rules.nudge(b, o.grab, start, { dir, big: e.shiftKey });
+    if (c === null) return go({ on: "cancel" });
+    go({ on: "move", c });
+    go({ on: "release" });
+  });
+}

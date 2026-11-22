@@ -4,6 +4,7 @@ export async function pick(page, f, dropped) {
   if (!(await input.count())) return dropped.push(`file ${f.field}`);
   await page.evaluate((m) => (window.h.handler = m), f.handler);
   await input.setInputFiles({ name: f.name, mimeType: f.mime, buffer: Buffer.alloc(f.size) });
+  if (f.handler !== "waits") await page.locator(`[data-field="${f.field}"] .fui.uploading`).filter({ hasText: f.name }).first().waitFor({ state: "detached" });
 }
 
 /// A fault for each sent action that carries a `data:` URL: files leave through the handler, never inside an action.

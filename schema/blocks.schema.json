@@ -204,6 +204,7 @@
           "not": {
             "enum": [
               "screen",
+              "modal",
               "sheet",
               "section",
               "list",
@@ -364,7 +365,20 @@
           "type": "object"
         },
         {
-          "$ref": "#/$defs/Sheet",
+          "$ref": "#/$defs/Modal",
+          "properties": {
+            "type": {
+              "const": "modal",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/Modal",
           "properties": {
             "type": {
               "const": "sheet",
@@ -1164,7 +1178,7 @@
     },
     "Chart": {
       "additionalProperties": true,
-      "description": "A chart of named series over x values: bar, stacked, line, combo or donut.",
+      "description": "A chart of named series over x values: bar, stacked, line, combo or donut; `move` drags a point's value.",
       "properties": {
         "chart": {
           "$ref": "#/$defs/ChartKind"
@@ -1205,6 +1219,16 @@
           "type": [
             "string",
             "null"
+          ]
+        },
+        "move": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Gesture"
+            },
+            {
+              "type": "null"
+            }
           ]
         },
         "selected": {
@@ -4125,6 +4149,111 @@
       ],
       "type": "object"
     },
+    "Modal": {
+      "additionalProperties": true,
+      "description": "A box over a screen: a dialog dragged by its header, a fixed confirm or alert, or a tool window that resizes and folds to a pill.",
+      "properties": {
+        "blocks": {
+          "items": {
+            "$ref": "#/$defs/Block"
+          },
+          "type": "array"
+        },
+        "cancel": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "destructive": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "done": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Submit"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "locale": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Locale"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "message": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "ok": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "title": {
+          "type": "string"
+        },
+        "variant": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ModalVariant"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "title",
+        "blocks"
+      ],
+      "type": "object"
+    },
+    "ModalVariant": {
+      "anyOf": [
+        {
+          "enum": [
+            "dialog",
+            "alert",
+            "tool"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "string"
+        }
+      ]
+    },
     "More": {
       "anyOf": [
         {
@@ -5041,6 +5170,26 @@
         "kinds",
         "steps",
         "probes"
+      ],
+      "type": "object"
+    },
+    "PointMove": {
+      "description": "What a point's move gives: its series' name, its x as the chart wrote it, and its new value.",
+      "properties": {
+        "at": {
+          "type": "string"
+        },
+        "series": {
+          "type": "string"
+        },
+        "y": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "series",
+        "at",
+        "y"
       ],
       "type": "object"
     },
@@ -6186,7 +6335,7 @@
       "type": "object"
     },
     "Series": {
-      "description": "One named series of a chart: a value per x, its tone, a combo's mark and a dashed line.",
+      "description": "One named series of a chart: a value per x, its tone, a combo's mark, a dashed line, a move's step and `fixed`.",
       "properties": {
         "as": {
           "anyOf": [
@@ -6204,8 +6353,20 @@
             "null"
           ]
         },
+        "fixed": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
         "name": {
           "type": "string"
+        },
+        "step": {
+          "type": [
+            "number",
+            "null"
+          ]
         },
         "tone": {
           "anyOf": [
@@ -6267,68 +6428,6 @@
         "warn"
       ],
       "type": "string"
-    },
-    "Sheet": {
-      "additionalProperties": true,
-      "description": "A sheet over a screen.",
-      "properties": {
-        "blocks": {
-          "items": {
-            "$ref": "#/$defs/Block"
-          },
-          "type": "array"
-        },
-        "cancel": {
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "done": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/Submit"
-            },
-            {
-              "type": "null"
-            }
-          ]
-        },
-        "id": {
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "locale": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/Locale"
-            },
-            {
-              "type": "null"
-            }
-          ]
-        },
-        "show": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/Expr"
-            },
-            {
-              "type": "null"
-            }
-          ]
-        },
-        "title": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "title",
-        "blocks"
-      ],
-      "type": "object"
     },
     "Shown": {
       "anyOf": [

@@ -92,7 +92,7 @@ function paint(s: Shell, v: View) {
   const b = btn("‹ back", "b-back");
   b.onclick = () => back(s, v);
   v.box.replaceChildren(...(v.back.length && v !== s.sheetView ? [b] : []), v.body);
-  if (v === s.sheetView) s.sheet.frame(String(obj(v.model)["title"] ?? ""), v.back.length ? () => back(s, v) : undefined);
+  if (v === s.sheetView) s.sheet.frame(String(obj(v.model)["title"] ?? ""), v.back.length ? () => back(s, v) : undefined, v.model?.type === "modal" || v.model?.type === "sheet");
   if (!e || v.built.has(v.path)) return;
   v.built.add(v.path);
   requestAnimationFrame(() => settle(v.body));
@@ -101,7 +101,7 @@ function paint(s: Shell, v: View) {
 function view(s: Shell, source: string, path: string, box: HTMLElement): View {
   const body = el("div", "b-view");
   const screen = () => String(v.model?.id ?? v.path);
-  const locale = () => (v.model && (v.model.type === "screen" || v.model.type === "sheet") ? (v.model.locale ?? undefined) : undefined);
+  const locale = () => (v.model && (v.model.type === "screen" || v.model.type === "modal" || v.model.type === "sheet") ? (v.model.locale ?? undefined) : undefined);
   const own = { theme: s.theme, store: s.store, apps: s.o.blocks, file: s.o.file };
   const v: View = { source, path, back: [], box, body, built: new Set(), host: host(own, { screen, locale, act: (a, b) => act(s, v, a, b), tap: (t) => tap(s, v, t) }), sync: () => {} };
   v.sync = behave(body, () => v.model);

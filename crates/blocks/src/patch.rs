@@ -78,8 +78,9 @@ enum Spot<'a> {
 }
 
 #[cfg(any(test, feature = "schema"))]
-pub(crate) const HOSTS: [(&str, &str); 9] = [
+pub(crate) const HOSTS: [(&str, &str); 10] = [
     ("screen", "blocks"),
+    ("modal", "blocks"),
     ("sheet", "blocks"),
     ("section", "blocks"),
     ("card", "blocks"),
@@ -104,7 +105,7 @@ impl Block {
     pub(crate) fn kids(&self) -> Option<&Vec<Block>> {
         match self {
             Self::Screen(b) => b.blocks.as_ref(),
-            Self::Sheet(b) => Some(&b.blocks),
+            Self::Modal(b) | Self::Sheet(b) => Some(&b.blocks),
             Self::Section(b) => Some(&b.blocks),
             Self::List(b) => Some(&b.rows),
             Self::Card(b) => b.blocks.as_ref(),
@@ -124,7 +125,7 @@ impl Block {
     fn list(&mut self) -> Option<Kids<'_>> {
         Some(match self {
             Self::Screen(b) => Kids::Blocks(b.blocks.get_or_insert_with(Vec::new)),
-            Self::Sheet(b) => Kids::Blocks(&mut b.blocks),
+            Self::Modal(b) | Self::Sheet(b) => Kids::Blocks(&mut b.blocks),
             Self::Section(b) => Kids::Blocks(&mut b.blocks),
             Self::List(b) => Kids::Blocks(&mut b.rows),
             Self::Card(b) => Kids::Blocks(b.blocks.get_or_insert_with(Vec::new)),
@@ -139,7 +140,7 @@ impl Block {
     fn lists(&mut self) -> Vec<&mut Vec<Block>> {
         match self {
             Self::Screen(b) => b.blocks.iter_mut().collect(),
-            Self::Sheet(b) => vec![&mut b.blocks],
+            Self::Modal(b) | Self::Sheet(b) => vec![&mut b.blocks],
             Self::Section(b) => vec![&mut b.blocks],
             Self::List(b) => vec![&mut b.rows],
             Self::Card(b) => b.blocks.iter_mut().chain(b.buttons.iter_mut()).collect(),

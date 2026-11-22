@@ -1,6 +1,7 @@
 frozen = [
-    ".github/workflows/ci.yml", "ci/cap.toml", "crates/blocks/src/site/views.rs", "docs/schema.md",
+    ".github/workflows/ci.yml", ".github/workflows/swift.yml", "ci/cap.toml", "crates/blocks/src/site/views.rs", "docs/schema.md",
     "swift/Sources/BlocksUI/Blocks.swift", "swift/Sources/BlocksUI/BlockCards.swift", "swift/Sources/BlocksUI/BlockLeaves.swift",
+    "swift/Sources/BlocksUI/BlockRows.swift", "swift/Sources/BlocksUI/BlockFields.swift", "swift/Sources/BlocksUI/Components.swift",
     "web/src/blocks.css", "web/src/render/index.ts", "web/test/render.test.ts",
 ]
 generated = [
@@ -17,14 +18,10 @@ generated = [
     "web/src/gen/shapes.ts",
     "fixtures/check/*.json",
     "fixtures/built/*.json",
-    "web/dist/blocks.js",
-    "web/dist/blocks.css",
-    "web/dist/core.js", "web/dist/play.js", "web/dist/import.js", "web/dist/scan.js",
+    "web/dist/*.js", "web/dist/*.css",
     "web/src/gen/scoped.css",
-    "web/dist/blocks.scoped.css",
     "web/dist/types/**",
     "web/react/src/gen/views.ts",
-    "web/dist/react.js",
     "fixtures/trees/react/*.json",
     "fixtures/blocks/*.json",
     "fixtures/trees/*.json",
@@ -66,6 +63,7 @@ shared = [
     "crates/blocks/src/site/kind/mod.rs",
     "crates/blocks/tests/site.rs",
     ".drover/rules.md",
+    "web/package.json",
     "web/test/shot.test.ts",
     "web/react/test/markup.test.ts",
     "site/src/main.rs",
@@ -82,6 +80,7 @@ shared = [
     "web/src/shell.ts",
     "swift/Sources/BlocksSnapshot/Snapshot.swift",
     "swift/Tests/BlocksTests/RenderTests.swift",
+    "swift/Sources/BlocksUI/BlockNode.swift",
 ]
 
 [[collect]]
@@ -142,6 +141,10 @@ glob = "*.ts"
 
 [[collect]]
 dir = "swift/Sources/BlocksUI/Field"
+glob = "*.swift"
+
+[[collect]]
+dir = "swift/Sources/BlocksUI/Part"
 glob = "*.swift"
 
 [[collect]]
@@ -528,11 +531,11 @@ paths = ["crates/blocks/src/kind/field/mod.rs", "crates/blocks/src/site/field/mo
 max_file_lines = 80
 
 [[size]]
-paths = [".drover/rules.md"]
+paths = [".drover/rules.md", "web/package.json"]
 max_file_lines = 30
 
 [[size]]
-paths = ["swift/Sources/BlocksUI/AppBlocks.swift"]
+paths = ["swift/Sources/BlocksUI/AppBlocks.swift", "swift/Sources/BlocksUI/BlockNode.swift"]
 max_file_lines = 100
 
 [[size]]

@@ -1,0 +1,9 @@
+about = "the Swift package's tests, warnings as errors: op apply, the generated types, a render test per core kind"
+fix = "fix the code or the fixture the failing test names; rerun just gen when a generated file is behind"
+budget_secs = 600
+leg = "swift"
+paths = ["Package.swift", "swift/**", "schema/sample.json", "fixtures/**", ".gatekeeper/gates/swift-test.toml"]
+run = """
+if [ -z "${CI:-}" ]; then echo "swift-test: CI's swift leg runs it"; exit 0; fi
+BLOCKS_STRICT=1 swift test
+"""
