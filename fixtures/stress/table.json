@@ -1,4 +1,5 @@
 {
+  "boxplot": { "long": ["title", "axis"], "empty": "boxes", "many": "boxes" },
   "button": { "long": ["label"], "why": "one control: no content to empty or repeat" },
   "card": { "long": ["title", "subtitle"], "why": "a title and a subtitle: no list to empty or repeat" },
   "chart": { "long": ["title", "name", "x"], "empty": "series", "many": "x" },

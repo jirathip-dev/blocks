@@ -23,7 +23,9 @@ const GROUPS: [(&str, &[&str]); 4] = [
     ),
     (
         "Lists and figures",
-        &["list", "row", "stat", "chart", "table", "steps", "chips", "timeline"],
+        &[
+            "list", "row", "stat", "chart", "boxplot", "table", "steps", "chips", "timeline",
+        ],
     ),
     (
         "Input",
@@ -89,6 +91,7 @@ fn about(kind: &str) -> &'static str {
         "stat" => "Figures: one tile, or a list of tiles.",
         "steps" => "A stepper with its current step, or progress bars.",
         "chart" => "Bars, stacked bars, a line, a combo or a donut, with its legend and table.",
+        "boxplot" => "One box per category: median, quartiles, range and outliers, with its table.",
         "chips" => "A row of chips, one or many picked.",
         "button" => "A button that posts its action.",
         "choice" => "A question with options and a free answer.",
@@ -543,6 +546,7 @@ pub fn samples() -> Vec<(String, Vec<Block>)> {
         picked("tool"),
         picked("modal"),
         picked("sidebar"),
+        picked("boxplot"),
         vec![paperwork()],
     ]
     .concat();

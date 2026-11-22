@@ -1,4 +1,4 @@
-import type { Block, Button, Card, Chart, Chips, Choice, Composer, Diagram, Diff, Editor, Expr, Form, Hero, Images, Import, Island, Kind, Lines, List, Match, Media, Message, Modal, Nav, Pages, Prose, Row, Run, Scene, Screen, Secret, Section, Sidebar, Stat, Steps, Table, Text, Timeline, Toast, Tool, Web } from "./types.ts";
+import type { Block, Boxplot, Button, Card, Chart, Chips, Choice, Composer, Diagram, Diff, Editor, Expr, Form, Hero, Images, Import, Island, Kind, Lines, List, Match, Media, Message, Modal, Nav, Pages, Prose, Row, Run, Scene, Screen, Secret, Section, Sidebar, Stat, Steps, Table, Text, Timeline, Toast, Tool, Web } from "./types.ts";
 
 export type Of<K extends Kind> = Extract<Block, { type: K }>;
 
@@ -41,6 +41,7 @@ export const import_ = (fields: Import): Of<"import"> => ({ type: "import", ...f
 export const message = (fields: Message): Of<"message"> => ({ type: "message", ...fields });
 export const tool = (fields: Tool): Of<"tool"> => ({ type: "tool", ...fields });
 export const sidebar = (fields: Sidebar): Of<"sidebar"> => ({ type: "sidebar", ...fields });
+export const boxplot = (fields: Boxplot): Of<"boxplot"> => ({ type: "boxplot", ...fields });
 
 export const expr = {
   get: (v: string): Expr => ({ get: v }),

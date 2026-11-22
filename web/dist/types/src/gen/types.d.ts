@@ -133,11 +133,24 @@ export type Block = ({
     type: "tool";
 } & Tool) | ({
     type: "sidebar";
-} & Sidebar) | (AppBlock & {
+} & Sidebar) | ({
+    type: "boxplot";
+} & Boxplot) | (AppBlock & {
     [key: string]: unknown;
 });
 export type Bound = {
     get: string;
+};
+export type Boxplot = {
+    axis: string;
+    boxes: PlotBox[];
+    empty?: string | null;
+    id?: string | null;
+    selected?: string | null;
+    show?: Expr | null;
+    tap?: Tap | null;
+    title: string;
+    unit?: string | null;
 };
 export type BulkAction = {
     action: string;
@@ -803,6 +816,16 @@ export type PlanRun = {
     size: string;
     steps: Step[];
 };
+export type PlotBox = {
+    max: number;
+    median: number;
+    min: number;
+    name: string;
+    outliers?: number[] | null;
+    q1: number;
+    q3: number;
+    tone?: Tone | null;
+};
 export type PointMove = {
     at: string;
     series: string;
@@ -1330,4 +1353,4 @@ export type Why = "evicted" | "unpaired" | "handover";
 export type Working = {
     since: string;
 };
-export type Kind = "screen" | "modal" | "sheet" | "section" | "list" | "row" | "card" | "choice" | "form" | "config" | "secret" | "run" | "button" | "chips" | "stat" | "text" | "images" | "web" | "diff" | "editor" | "scene" | "diagram" | "composer" | "lines" | "prose" | "hero" | "media" | "nav" | "island" | "table" | "steps" | "chart" | "toast" | "pages" | "timeline" | "import" | "message" | "tool" | "sidebar";
+export type Kind = "screen" | "modal" | "sheet" | "section" | "list" | "row" | "card" | "choice" | "form" | "config" | "secret" | "run" | "button" | "chips" | "stat" | "text" | "images" | "web" | "diff" | "editor" | "scene" | "diagram" | "composer" | "lines" | "prose" | "hero" | "media" | "nav" | "island" | "table" | "steps" | "chart" | "toast" | "pages" | "timeline" | "import" | "message" | "tool" | "sidebar" | "boxplot";

@@ -1,0 +1,104 @@
+{
+  "type": "boxplot",
+  "id": "sessions",
+  "title": "Peak force per session",
+  "axis": "Peak force",
+  "boxes": [
+    {
+      "name": "14 Oct",
+      "min": 25.0,
+      "q1": 27.9,
+      "median": 30.0,
+      "q3": 32.3,
+      "max": 35.2
+    },
+    {
+      "name": "16 Oct",
+      "min": 26.6,
+      "q1": 29.5,
+      "median": 31.6,
+      "q3": 33.9,
+      "max": 36.8,
+      "outliers": [
+        40.0
+      ],
+      "tone": "bad"
+    },
+    {
+      "name": "21 Oct",
+      "min": 28.2,
+      "q1": 31.1,
+      "median": 33.2,
+      "q3": 35.5,
+      "max": 38.4
+    },
+    {
+      "name": "23 Oct",
+      "min": 26.8,
+      "q1": 29.7,
+      "median": 31.8,
+      "q3": 34.1,
+      "max": 37.0
+    },
+    {
+      "name": "28 Oct",
+      "min": 28.4,
+      "q1": 31.3,
+      "median": 33.4,
+      "q3": 35.7,
+      "max": 38.6
+    },
+    {
+      "name": "30 Oct",
+      "min": 30.0,
+      "q1": 32.9,
+      "median": 35.0,
+      "q3": 37.3,
+      "max": 40.2,
+      "outliers": [
+        43.4
+      ]
+    },
+    {
+      "name": "4 Nov",
+      "min": 28.6,
+      "q1": 31.5,
+      "median": 33.6,
+      "q3": 35.9,
+      "max": 38.8
+    },
+    {
+      "name": "11 Nov",
+      "min": 30.2,
+      "q1": 33.1,
+      "median": 35.2,
+      "q3": 37.5,
+      "max": 40.4
+    },
+    {
+      "name": "13 Nov",
+      "min": 31.8,
+      "q1": 34.7,
+      "median": 36.8,
+      "q3": 39.1,
+      "max": 42.0
+    },
+    {
+      "name": "18 Nov",
+      "min": 30.4,
+      "q1": 33.3,
+      "median": 35.4,
+      "q3": 37.7,
+      "max": 40.6,
+      "outliers": [
+        43.8
+      ]
+    }
+  ],
+  "unit": "kg",
+  "selected": "18 Nov",
+  "empty": "No sessions yet: hang the board to see your force.",
+  "tap": {
+    "action": "force.session"
+  }
+}

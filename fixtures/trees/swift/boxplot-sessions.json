@@ -1,0 +1,9 @@
+{
+  "kind": "boxplot",
+  "id": "sessions",
+  "variant": null,
+  "drawn": "native",
+  "role": "figure",
+  "name": "Peak force per session",
+  "children": []
+}

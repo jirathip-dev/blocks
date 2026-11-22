@@ -1,0 +1,36 @@
+{
+  "axis": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+  "boxes": [
+    {
+      "max": 41.2,
+      "median": 33.1,
+      "min": 25.8,
+      "name": "Left",
+      "outliers": [
+        18.0,
+        47.5
+      ],
+      "q1": 30.4,
+      "q3": 36.0
+    },
+    {
+      "max": 43.0,
+      "median": 35.6,
+      "min": 28.2,
+      "name": "Right",
+      "outliers": [
+        21.4
+      ],
+      "q1": 32.9,
+      "q3": 38.1
+    }
+  ],
+  "id": "hands",
+  "selected": "Left",
+  "tap": {
+    "action": "force.hand"
+  },
+  "title": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+  "type": "boxplot",
+  "unit": "kg"
+}

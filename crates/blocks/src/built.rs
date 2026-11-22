@@ -4,7 +4,7 @@ use serde::Serialize;
 use serde_json::{Map, Value};
 
 use crate::gesture::Word;
-use crate::kind::{linkable, Block, Fallback, Fields, Screen, Steps, Table, Tap};
+use crate::kind::{linkable, Block, Boxplot, Fallback, Fields, Screen, Steps, Table, Tap};
 
 /// What makes a screen unfit to send: a server checks its own before it serves it.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
@@ -95,6 +95,10 @@ fn plain(o: &Fields) -> Fallback {
     let table = (kind(o) == "table").then(|| serde_json::from_value::<Table>(Value::Object(o.clone())).ok());
     if let Some(t) = table.flatten() {
         return t.fallback();
+    }
+    let boxplot = (kind(o) == "boxplot").then(|| serde_json::from_value::<Boxplot>(Value::Object(o.clone())).ok());
+    if let Some(b) = boxplot.flatten() {
+        return b.fallback();
     }
     let text = |k: &str| o.get(k).and_then(Value::as_str).filter(|s| !s.is_empty());
     let named = [
@@ -291,6 +295,7 @@ impl Walk<'_> {
                 let why = match &b {
                     Block::Steps(s) => unplaced(s).map(Into::into),
                     Block::Chart(c) => c.unfit(),
+                    Block::Boxplot(b) => b.unfit(),
                     _ => None,
                 };
                 self.out.extend(why.map(|why| Fault::Shape { kind: k.into(), why }));
