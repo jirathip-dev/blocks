@@ -1,6 +1,6 @@
 # The guard's rules
 
-Guard version 3. A new error fails `blocks check`; a warning never fails.
+Guard version 4. A new error fails `blocks check`; a warning never fails.
 
 | rule | severity | since | fires on | fix |
 |---|---|---|---|---|
@@ -9,6 +9,14 @@ Guard version 3. A new error fails `blocks check`; a warning never fails.
 | `guard/baseline-grew` | error | 1 | a baseline gained an entry for a rule older than the file | Fix the finding, or add an ignore with a reason. |
 | `guard/baseline-stale` | error | 1 | a baseline entry is no longer found | Run `blocks check --tighten`. |
 | `lint/buttons-many` | error | 1 | more than 3 buttons in one group | Keep up to three; move the rest into a `menu`. |
+| `catalog/action` | error | 4 | an action its kind's catalog entry does not list | Send only an action the finding lists for this kind, spelt as written, or none. |
+| `catalog/field` | error | 4 | a field its kind's catalog entry does not offer, or one no catalog offers | Leave the field out: the kind takes the fields listed in the finding. |
+| `catalog/input` | error | 4 | a form field of a type its catalog entry does not list | Use only the field types the finding lists for this form. |
+| `catalog/kind` | error | 4 | a block of a kind its catalog does not name | Use only the kinds the catalog names, listed in the finding. |
+| `catalog/link` | error | 4 | a `url`, `href` or `link`, or a link in `markdown` or `text`, that starts with none of its catalog's `links` | Start a link with one of the starts the finding lists, or write it as text. |
+| `catalog/media` | error | 4 | a `src`, `avatar` or `poster` that starts with none of its catalog's `media` | Load a file only from a start the finding lists; else describe it in text. |
+| `catalog/open` | error | 4 | a tap with `open`, `sheet` or `thread` in a block held to a catalog | Send an action instead; the app opens the screen. |
+| `catalog/size` | error | 4 | more blocks than its catalog's `max.blocks` | Say it in fewer blocks. |
 | `render/clipped-text` | error | 2 | text is cut by its box with no ellipsis | Let the text wrap, or shorten it. |
 | `render/console` | error | 1 | a console error or an uncaught exception | Fix the script error; the message is in the finding. |
 | `render/contrast` | error | 2 | text under 4.5:1 against what is drawn behind it (3:1 from 24 px, or 18.66 px bold); text over an image is skipped and counted | Use a token pair the scheme gate passes: `--fg` on `--bg`, or a tone's own pair. |

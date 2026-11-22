@@ -1,6 +1,7 @@
 use std::collections::BTreeSet;
 use std::path::{Path, PathBuf};
 
+use blocks::catalog::Catalog;
 use blocks::guard::{self, Severity, RULES, VERSION};
 use blocks::Built;
 
@@ -35,7 +36,7 @@ fn every_rule_has_a_what_a_fix_an_engine_and_a_unique_id() {
         assert!((1..=VERSION).contains(&r.since), "{}: since {}", r.id, r.since);
         let (engine, name) = r.id.split_once('/').unwrap();
         assert!(
-            ["lint", "render", "css", "explore", "guard"].contains(&engine),
+            ["lint", "render", "css", "explore", "guard", "catalog"].contains(&engine),
             "{}",
             r.id
         );
@@ -46,7 +47,7 @@ fn every_rule_has_a_what_a_fix_an_engine_and_a_unique_id() {
         );
         assert_eq!(guard::rule(r.id), Some(*r));
     }
-    assert_eq!(RULES.len(), 43);
+    assert_eq!(RULES.len(), 51);
     assert_eq!(guard::rule("lint/nope"), None);
 }
 
@@ -66,6 +67,32 @@ fn every_lint_rule_has_a_bad_fixture_that_fires_it_and_no_other() {
     for id in lint {
         let path = root().join("fixtures/guard/bad").join(format!("{id}.json"));
         assert_eq!(fired(&path), BTreeSet::from([id.clone()]), "{id}");
+    }
+}
+
+#[test]
+fn every_catalog_rule_has_a_bad_fixture_that_fires_it_under_the_catalog_beside_it_and_no_other() {
+    let json = std::fs::read_to_string(root().join("fixtures/guard/bad/catalog.json")).unwrap();
+    let catalog = Catalog::read(&json).unwrap();
+    let ids: BTreeSet<String> = RULES
+        .iter()
+        .filter(|r| r.id.starts_with("catalog/"))
+        .map(|r| r.id.to_string())
+        .collect();
+    assert_eq!(ids.len(), 8);
+    let bad: BTreeSet<String> = files("fixtures/guard/bad/catalog")
+        .iter()
+        .map(|p| format!("catalog/{}", p.file_stem().unwrap().to_string_lossy()))
+        .collect();
+    assert_eq!(bad, ids);
+    for id in ids {
+        let path = root().join("fixtures/guard/bad").join(format!("{id}.json"));
+        let seen: BTreeSet<String> = guard::lint_in(&read(&path), &catalog)
+            .into_iter()
+            .map(|s| s.rule)
+            .collect();
+        assert_eq!(seen, BTreeSet::from([id.clone()]), "{id}");
+        assert_eq!(fired(&path), BTreeSet::new(), "{id}: seen with no catalog");
     }
 }
 

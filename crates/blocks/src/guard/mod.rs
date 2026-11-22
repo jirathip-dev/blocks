@@ -13,9 +13,10 @@ pub use shape::{
 };
 
 use crate::built::Built;
+use crate::catalog::Catalog;
 
 /// The guard version: it moves with any new rule or tighter limit.
-pub const VERSION: u16 = 3;
+pub const VERSION: u16 = 4;
 
 /// The table row of rule `id`.
 pub fn rule(id: &str) -> Option<&'static Rule> {
@@ -24,10 +25,20 @@ pub fn rule(id: &str) -> Option<&'static Rule> {
 
 /// What `Built::check` and the `lint/` rules see on `screen`, given the app's own kinds.
 pub fn lint(screen: &Built, app: &[&str]) -> Vec<Seen> {
-    let cx = cx::Cx::new(screen, app);
+    seen(&cx::Cx::new(screen, app))
+}
+
+/// What `lint` sees on `screen`, plus the `catalog/` rules; no app kinds.
+pub fn lint_in(screen: &Built, catalog: &Catalog) -> Vec<Seen> {
+    let mut cx = cx::Cx::new(screen, &[]);
+    cx.catalog = Some(catalog);
+    seen(&cx)
+}
+
+fn seen(cx: &cx::Cx) -> Vec<Seen> {
     let mut out = vec![];
     for check in rules::CHECKS {
-        check(&cx, &mut out);
+        check(cx, &mut out);
     }
     out
 }

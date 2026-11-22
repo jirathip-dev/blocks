@@ -135,7 +135,7 @@ fn each_block(list: &mut Value) {
     list.as_array_mut().into_iter().flatten().for_each(write_fallbacks);
 }
 
-fn shallow(o: &Fields) -> Value {
+pub(crate) fn shallow(o: &Fields) -> Value {
     let mut top = o.clone();
     for key in LISTS {
         if let Some(l) = top.get_mut(key) {
@@ -280,7 +280,7 @@ impl Walk<'_> {
     }
 
     fn core(&mut self, k: &str, o: &Fields, top: Value) {
-        match serde_json::from_value::<Block>(top) {
+        match Block::read(k, top) {
             Err(e) => self.out.push(Fault::Shape {
                 kind: k.into(),
                 why: e.to_string(),

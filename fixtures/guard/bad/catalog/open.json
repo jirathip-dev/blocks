@@ -1,0 +1,15 @@
+{
+  "type": "screen",
+  "id": "s",
+  "title": "Queue",
+  "blocks": [
+    {
+      "type": "button",
+      "id": "b",
+      "label": "Settings",
+      "tap": {
+        "open": "settings"
+      }
+    }
+  ]
+}
