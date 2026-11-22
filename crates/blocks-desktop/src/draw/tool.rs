@@ -1,12 +1,12 @@
 use blocks::{Tone, Tool, ToolState};
 use egui::{
     vec2, Align, Align2, Color32, Frame, Id, Label, Layout, RichText, Role, ScrollArea, Sense, Shape, Stroke,
-    TextStyle, Ui, UiBuilder, WidgetInfo,
+    TextStyle, TextWrapMode, Ui, UiBuilder, WidgetInfo,
 };
 
+use crate::bidi;
 use crate::cx::{Cx, Draw};
 use crate::look::{MARK, TAP};
-use crate::words;
 
 pub(super) const DRAW: Option<Draw<Tool>> = Some(draw);
 
@@ -43,7 +43,7 @@ fn draw(b: &Tool, ui: &mut Ui, cx: &mut Cx<'_>) {
             .show(ui, |ui| {
                 ui.set_width(ui.available_width());
                 ScrollArea::both().id_salt("body").max_height(tall).show(ui, |ui| {
-                    words::label(ui, RichText::new(body).monospace().color(look.fg(ui)));
+                    bidi::label(ui, RichText::new(body).monospace().color(look.fg(ui)));
                 });
             });
     });
@@ -60,7 +60,11 @@ fn head(b: &Tool, ui: &mut Ui, cx: &mut Cx<'_>, open: bool) -> bool {
     };
     let toned = look.tone(ui, tone.as_ref());
     let fold = b.body.is_some();
-    let quiet = |t: RichText| Label::new(t).truncate().selectable(false);
+    let quiet = |ui: &mut Ui, t: RichText| {
+        ui.style_mut().wrap_mode = Some(TextWrapMode::Truncate);
+        let t = bidi::text(ui, t);
+        ui.add(Label::new(t).truncate().selectable(false))
+    };
     let mut row = ui.new_child(
         UiBuilder::new()
             .max_rect(inner)
@@ -69,15 +73,11 @@ fn head(b: &Tool, ui: &mut Ui, cx: &mut Cx<'_>, open: bool) -> bool {
     mark(&b.state, &mut row, toned);
     row.scope(|ui| {
         ui.set_max_width(inner.width() * NAME_SHARE);
-        ui.add(quiet(RichText::new(&b.name).monospace().strong().color(look.fg(ui))));
+        quiet(ui, RichText::new(&b.name).monospace().strong().color(look.fg(ui)));
     });
     row.with_layout(Layout::right_to_left(Align::Center), |ui| {
         if fold {
-            ui.add(quiet(
-                RichText::new(if open { "⌄" } else { "›" })
-                    .monospace()
-                    .color(look.mute(ui)),
-            ));
+            quiet(ui, RichText::new(if open { "⌄" } else { "›" }).monospace().color(look.mute(ui)));
         }
         let summary = b.summary.as_deref().unwrap_or_default();
         let color = if b.state == ToolState::Failed {
@@ -86,7 +86,7 @@ fn head(b: &Tool, ui: &mut Ui, cx: &mut Cx<'_>, open: bool) -> bool {
             look.mute(ui)
         };
         ui.with_layout(Layout::left_to_right(Align::Center), |ui| {
-            ui.add(quiet(RichText::new(summary).color(color)));
+            quiet(ui, RichText::new(summary).color(color));
         });
     });
     if !fold {

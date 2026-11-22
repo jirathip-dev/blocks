@@ -122,3 +122,26 @@ fn a_wrap_frames_every_drawn_block_of_its_kind_and_is_told_its_id_variant_and_to
     run.check(&Want::default());
     assert!(run.faults.is_empty(), "{:?}", run.faults);
 }
+
+#[test]
+fn the_check_faults_an_app_kind_s_right_to_left_text_drawn_without_bidi() {
+    let s = screen(&json!([{"type": "note", "id": "n", "fallback": {"title": "Note"}}]));
+    let shot = steps(json!([{"shot": {"name": "s"}}]));
+    let kit = |plain: bool| {
+        Kit::default()
+            .kind("note", move |ui, _, _| {
+                if plain {
+                    ui.label("אב גד");
+                } else {
+                    blocks_desktop::bidi::para(ui, "אב גד");
+                }
+            })
+            .unwrap()
+    };
+    let mut run = Desk::new(s.clone()).kit(kit(true)).run(&shot);
+    run.check(&blocks_desk::Want::default());
+    assert_eq!(run.faults, ["s: \"אב גד\" is drawn out of order"]);
+    let mut run = Desk::new(s).kit(kit(false)).run(&shot);
+    run.check(&blocks_desk::Want::default());
+    assert!(run.faults.is_empty(), "{:?}", run.faults);
+}

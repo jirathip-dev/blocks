@@ -1,10 +1,9 @@
 use blocks::{Attachment, Message, Role};
-use egui::{vec2, Align2, Button, Label, RichText, Sense, TextStyle, TextWrapMode, Ui, WidgetText};
+use egui::{vec2, Align2, Button, Label, RichText, Sense, TextStyle, TextWrapMode, Ui};
 
-use crate::act;
+use crate::{act, bidi};
 use crate::cx::{Cx, Draw};
 use crate::look::{FACE, TAP};
-use crate::words;
 
 pub(super) const DRAW: Option<Draw<Message>> = Some(draw);
 
@@ -60,7 +59,7 @@ fn head(b: &Message, ui: &mut Ui, cx: &Cx<'_>) {
     ui.horizontal(|ui| {
         let gap = ui.spacing().item_spacing.x;
         let meta = |ui: &Ui, s: &str| {
-            WidgetText::from(RichText::new(s).small().color(look.mute(ui))).into_galley(
+            bidi::text(ui, RichText::new(s).small().color(look.mute(ui))).into_galley(
                 ui,
                 Some(TextWrapMode::Extend),
                 f32::INFINITY,
@@ -78,10 +77,12 @@ fn head(b: &Message, ui: &mut Ui, cx: &Cx<'_>) {
             .fold(ui.available_width(), |r, g| r - g.size().x - gap);
         ui.scope(|ui| {
             ui.set_max_width(room.max(0.0));
-            ui.add(Label::new(RichText::new(&b.name).strong().color(look.fg(ui))).truncate());
+            ui.style_mut().wrap_mode = Some(TextWrapMode::Truncate);
+            let name = bidi::text(ui, RichText::new(&b.name).strong().color(look.fg(ui)));
+            ui.add(Label::new(name).truncate());
         });
         for g in after {
-            words::label(ui, g);
+            ui.add(Label::new(g));
         }
     });
 }
@@ -89,7 +90,7 @@ fn head(b: &Message, ui: &mut Ui, cx: &Cx<'_>) {
 fn files(all: &[Attachment], ui: &mut Ui, cx: &mut Cx<'_>) {
     let images = all.iter().filter(|f| f.src.is_some());
     for f in images.chain(all.iter().filter(|f| f.src.is_none())) {
-        let press = Button::new(&f.name)
+        let press = Button::new(bidi::text(ui, &f.name))
             .truncate()
             .min_size(vec2(ui.available_width(), TAP));
         let action = f.tap.action.as_deref();

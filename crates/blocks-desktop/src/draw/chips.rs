@@ -2,6 +2,7 @@ use blocks::Chips;
 use egui::{vec2, Button, Ui};
 use serde_json::{Map, Value};
 
+use crate::bidi;
 use crate::act;
 use crate::cx::{Cx, Draw};
 
@@ -15,7 +16,7 @@ fn draw(b: &Chips, ui: &mut Ui, cx: &mut Cx<'_>) {
     ui.horizontal_wrapped(|ui| {
         for o in &b.options {
             let on = now == Some(o.value.as_str());
-            let chip = Button::selectable(on, &o.label);
+            let chip = Button::selectable(on, bidi::text(ui, &o.label));
             if !act::press(ui, cx, b.action.as_deref(), chip) {
                 continue;
             }
