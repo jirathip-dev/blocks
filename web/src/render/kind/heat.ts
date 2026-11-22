@@ -5,12 +5,14 @@ import { el, h } from "../dom.ts";
 
 const num = (x: number) => String(Math.round(x * 100) / 100 + 0);
 const th = (b: Heat) => b.lang === "th";
+const noData = (b: Heat) => (th(b) ? "ไม่มีข้อมูล" : "no data");
+const peakWord = (b: Heat) => (th(b) ? "สูงสุด" : "Peak");
 const NONE: HeatCell = {};
 const TONES = ["ok", "warn", "bad", "accent", "mute"];
 
 function unit(b: Heat): string {
-  const u = b.scale?.unit;
-  return u ? (u === "%" ? u : ` ${u}`) : "";
+  const u = b.scale?.unit ?? "";
+  return u === "%" || !u ? u : ` ${u}`;
 }
 
 function nice(raw: number): number {
@@ -22,8 +24,7 @@ function values(b: Heat): number[] {
   return b.grid.flatMap((r) => r.cells.flatMap((c) => (c.value == null ? [] : [c.value])));
 }
 
-/// The scale's ends: a given min (else 0, or the lowest value below it) and max (else a round number over the highest).
-export function range(b: Heat): [number, number] {
+function range(b: Heat): [number, number] {
   const vs = values(b);
   const lo = Math.min(...vs), hi = Math.max(...vs);
   const min = b.scale?.min ?? (lo < 0 ? lo : 0);
@@ -31,15 +32,14 @@ export function range(b: Heat): [number, number] {
   return [min, b.scale?.max ?? (vs.length && raw > 0 ? min + 5 * nice(raw) : min + 1)];
 }
 
-/// The colour step of a value, 1 (weakest) to 5 (strongest); values beyond the scale take the end step.
-export function step(v: number, [min, max]: [number, number]): number {
+function step(v: number, [min, max]: [number, number]): number {
   if (max <= min) return 3;
   const at = ((v - min) / (max - min)) * 5;
   return [1, 2, 3, 4].reduce((s, k) => (at >= k ? k + 1 : s), 1);
 }
 
 function said(b: Heat, row: string, col: string, c: HeatCell): string {
-  const v = c.value == null ? (th(b) ? "ไม่มีข้อมูล" : "no data") : num(c.value) + unit(b);
+  const v = c.value == null ? noData(b) : num(c.value) + unit(b);
   return `${row}, ${col}: ${v}${c.label ? `, ${c.label}` : ""}`;
 }
 
@@ -78,7 +78,8 @@ function legend(b: Heat): HTMLElement {
   const rx = el("div", "rx");
   for (let i = 0; i <= 5; i++) {
     if (b.edges === "ends" && i > 0 && i < 5) continue;
-    const mark = i === 0 && under ? "≤" : i === 5 && over ? "≥" : "";
+    const low = i === 0 && under ? "≤" : "";
+    const mark = i === 5 && over ? "≥" : low;
     rx.append(h("span", "", mark + num(min + ((max - min) * i) / 5)));
   }
   ramp.append(rx);
@@ -94,7 +95,7 @@ export function heat(b: Heat, ctx: Ctx): HTMLElement {
   o.setAttribute("aria-live", "polite");
   root.append(o);
   let sel = picked(b);
-  const rest = () => readout(o, b, sel ?? peak(b), sel ? "" : th(b) ? "สูงสุด" : "Peak");
+  const rest = () => readout(o, b, sel ?? peak(b), sel ? "" : peakWord(b));
   rest();
   if (!b.grid.some((r) => r.cells.some((c) => c.value != null || c.label != null))) {
     root.append(h("div", "hme", b.empty ?? "No data yet"));
