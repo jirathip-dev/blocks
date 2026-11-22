@@ -5,6 +5,29 @@ use serde_json::Value;
 
 use crate::kind::{samples, Block, Field};
 
+pub(crate) mod cards;
+
+pub(crate) struct Card {
+    pub(crate) kind: &'static str,
+    pub(crate) about: &'static str,
+    pub(crate) fields: &'static [Slot],
+}
+
+pub(crate) struct Slot {
+    pub(crate) name: &'static str,
+    pub(crate) ty: &'static str,
+    pub(crate) need: bool,
+    pub(crate) names: &'static [&'static str],
+    pub(crate) sends: bool,
+}
+
+pub(crate) struct Part {
+    pub(crate) name: &'static str,
+    pub(crate) input: &'static str,
+    pub(crate) line: &'static str,
+    pub(crate) names: &'static [&'static str],
+}
+
 /// The fields no catalog offers: ids, fallbacks and local state are the reader's, `Built`'s and the app's.
 pub const NEVER: &[&str] = &["type", "id", "fallback", "show", "enabled", "checks", "set"];
 
