@@ -247,6 +247,9 @@ wire! {
         coat: Option<String>,
         grow: Option<String>,
         act: Option<String>,
+        issue: Option<u64>,
+        moment: Option<String>,
+        load: Option<String>,
     }
 }
 
