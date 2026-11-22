@@ -89,7 +89,7 @@ fn plot(w: &mut W<'_>, p: &Boxplot, b: &Value, picked: Option<usize>, (lo, hi, s
         (v - v.round()).abs() < 1e-6
     });
     let tick = usize::try_from(tick.unwrap_or(2)).unwrap_or(2);
-    let ticks: Vec<f64> = (0..).map(|i| lo + f(i) * step).take_while(|v| *v <= hi + step / 2.0).collect();
+    let ticks: Vec<f64> = (0..=40).map(|i| lo + f(i) * step).take_while(|v| *v <= hi + step / 2.0).collect();
     w.open("div", "chy", &[]);
     for v in &ticks {
         w.open("span", "", &[("style", &format!("top:{}%", top(*v)))]);

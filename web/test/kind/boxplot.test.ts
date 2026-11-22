@@ -42,9 +42,7 @@ function draw([b, html]) {
       at: ["aria-label", "aria-pressed", "aria-hidden", "style", "role"].map((a) => y.getAttribute(a)),
       text: y.children.length ? "" : y.textContent,
     }));
-  const t = document.createElement("template");
-  t.innerHTML = html;
-  const site = t.content.querySelector("[data-block]");
+  const site = new DOMParser().parseFromString(html, "text/html").body.querySelector("[data-block]");
   return [site && sig(site), sig(e)];
 }
 
