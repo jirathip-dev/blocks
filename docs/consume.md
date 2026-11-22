@@ -1,7 +1,8 @@
 # Consuming blocks
 
 An app pins a commit on blocks' `staging`: Cargo `rev`, npm `#<sha>`, SwiftPM `revision`, with a test in the app
-that the pins agree. No manifest names a tag (ADR part 9, q2100).
+that the pins agree. An app may instead pin the commit a release tag names: SwiftPM `exact:` on the tag
+(`exact: "2.0.0"`) or `revision:` on its sha.
 
 ## The npm package
 
