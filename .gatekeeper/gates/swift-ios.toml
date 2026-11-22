@@ -8,6 +8,6 @@ if [ -z "${CI:-}" ]; then echo "swift-ios: CI's swift leg runs it"; exit 0; fi
 set -e
 sdk="$(xcrun --sdk iphonesimulator --show-sdk-path)"
 for t in Blocks BlocksUI BlocksSnapshot; do
-  swift build --target "$t" --triple arm64-apple-ios26.0-simulator --sdk "$sdk"
+  BLOCKS_STRICT=1 swift build --target "$t" --triple arm64-apple-ios26.0-simulator --sdk "$sdk"
 done
 """

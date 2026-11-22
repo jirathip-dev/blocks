@@ -48,7 +48,7 @@ internal struct BlockActs: ViewModifier {
     }
 
     #if os(iOS)
-        private var drag: some Gesture {
+        private var drag: some SwiftUI.Gesture {
             DragGesture(minimumDistance: 24).onEnded { drag in
                 let (across, down) = (drag.translation.width, drag.translation.height)
                 if abs(across) > abs(down) { open = across < 0 }

@@ -167,7 +167,7 @@ internal struct ScanRow: View {
 
         internal func makeCoordinator() -> Took { Took(took) }
 
-        internal final class Took: NSObject, VNDocumentCameraViewControllerDelegate {
+        @MainActor internal final class Took: NSObject, @MainActor VNDocumentCameraViewControllerDelegate {
             private let took: ([CIImage]) -> Void
 
             internal init(_ took: @escaping ([CIImage]) -> Void) { self.took = took }
