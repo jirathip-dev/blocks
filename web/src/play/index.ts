@@ -3,6 +3,7 @@ import { h, plain, render, type Worn } from "../shell.ts";
 import { type Mark, read } from "./fault.ts";
 import { pack, unpack } from "./pack.ts";
 import { paint } from "./paint.ts";
+import "./stream.ts";
 
 type Rec = Record<string, unknown>;
 type Cut = { file: string; from: number; to: number; code: string; url: string };

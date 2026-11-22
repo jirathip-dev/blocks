@@ -176,3 +176,49 @@ pub fn islands() -> Page {
         ],
     )
 }
+
+pub fn streams() -> Page {
+    let stream: serde_json::Value =
+        serde_json::from_str(include_str!("../../fixtures/plot/stream.json")).unwrap_or_default();
+    let frames: Vec<serde_json::Value> = stream["frames"]
+        .as_array()
+        .into_iter()
+        .flatten()
+        .map(|f| f["ops"].clone())
+        .collect();
+    let props: Fields = [
+        ("screen".to_string(), stream["start"]["blocks"][0].clone()),
+        ("frames".to_string(), serde_json::Value::from(frames)),
+    ]
+    .into_iter()
+    .collect();
+    let fallback = Fallback {
+        title: "The stream plays with JS".into(),
+        subtitle: Some("With JS off, the plot samples are drawn in the gallery".into()),
+        tap: None,
+    };
+    let size = IslandSize {
+        aspect: Some("16:7".into()),
+        ..IslandSize::default()
+    };
+    let island = Island::new("x-stream", fallback).id("stream").props(props).size(size);
+    let p = page(
+        "streams",
+        "streams.html",
+        "Streams",
+        "A plot fed 80 points a second by the points op, drawn once per frame in place: fixtures/plot/stream.json, played in a loop.",
+        vec![
+            text(
+                "intro",
+                "Force at 80 samples a second through a 3 s window, as an app's server streams it: each frame is one `points` op that adds the new samples and drops what left the window, and a `merge` when the peak moves. The page applies each frame and draws the plot once per display frame, into the same elements.",
+            ),
+            b!(Island(island)),
+            b!(Prose(Prose::new(vec![heading("In Rust"), listing(
+                "rust",
+                "if plot.push(\"Force\", seconds, kg) {\n    shelf.put(&key, \"/live\", &screen)?; // diff writes the points op\n}",
+            )])
+            .id("rust"))),
+        ],
+    );
+    Page { js: "play.js", ..p }
+}

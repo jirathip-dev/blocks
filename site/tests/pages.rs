@@ -27,7 +27,7 @@ fn pages(out: &Path) -> Vec<(String, String)> {
 fn every_page_has_its_head_and_no_url_from_the_domain_root() {
     let out = build("pages");
     let all = pages(&out);
-    assert_eq!(all.len(), 8 + blocks::Block::KINDS.len());
+    assert_eq!(all.len(), 9 + blocks::Block::KINDS.len());
     for (f, html) in &all {
         for want in [
             "<title>",
@@ -39,7 +39,7 @@ fn every_page_has_its_head_and_no_url_from_the_domain_root() {
         ] {
             assert!(html.contains(want), "{f}: no {want}");
         }
-        let js = if f == "playground.html" || f.starts_with("kind-") {
+        let js = if f == "playground.html" || f == "streams.html" || f.starts_with("kind-") {
             "play.js"
         } else {
             "blocks.js"

@@ -1056,7 +1056,7 @@
     "max": 30,
     "min": 25
   },
-  "title": "Set 3",
+  "title": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
   "type": "plot",
   "x": {
     "label": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",

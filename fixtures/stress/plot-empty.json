@@ -1,0 +1,14 @@
+{
+  "id": "hang",
+  "series": [],
+  "title": "Max hang, 20 mm",
+  "type": "plot",
+  "x": {
+    "label": "Time",
+    "scale": "time"
+  },
+  "y": {
+    "label": "Force",
+    "unit": "kg"
+  }
+}

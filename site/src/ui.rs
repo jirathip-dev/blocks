@@ -19,12 +19,13 @@ pub struct Page {
     pub js: &'static str,
 }
 
-const LINKS: [(&str, &str); 7] = [
+const LINKS: [(&str, &str); 8] = [
     ("gallery", "gallery.html"),
     ("styles", "styles.html"),
     ("numbers", "numbers.html"),
     ("behaviours", "behaviours.html"),
     ("islands", "islands.html"),
+    ("streams", "streams.html"),
     ("layout", "layout.html"),
     ("playground", "playground.html"),
 ];
