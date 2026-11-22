@@ -4,17 +4,35 @@ public struct LayoutEditMove: Codable, Equatable, Sendable {
     public var id: String
     public var into: String
     public var slot: String
+
+    public init(before: String? = nil, id: String, into: String, slot: String) {
+        self.before = before
+        self.id = id
+        self.into = into
+        self.slot = slot
+    }
 }
 
 public struct LayoutEditSwap: Codable, Equatable, Sendable {
     public var a: String
     public var b: String
+
+    public init(a: String, b: String) {
+        self.a = a
+        self.b = b
+    }
 }
 
 public struct LayoutEditShow: Codable, Equatable, Sendable {
     public var id: String
     public var place: LayoutPlace
     public var size: SizeClass
+
+    public init(id: String, place: LayoutPlace, size: SizeClass) {
+        self.id = id
+        self.place = place
+        self.size = size
+    }
 }
 
 public enum LayoutEdit: Codable, Equatable, Sendable {
