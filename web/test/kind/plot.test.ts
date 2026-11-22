@@ -60,8 +60,7 @@ test("the static writer and render write the same marks for each plot fixture", 
             at: ["style", "d", "x", "y", "width", "height", "x1", "x2", "y1", "y2", "viewBox", "role", "aria-label", "aria-hidden"].map((a) => x.getAttribute(a)),
             text: x.children.length ? "" : x.textContent,
           }));
-        const t = document.createElement("template");
-        t.innerHTML = html;
+        const t = { content: new DOMParser().parseFromString(html, "text/html") };
         const ctx = { screen: "s", act: async () => true, tap: () => {}, open: new Set(), theme: window.B.plain, store: { get: () => null, put: () => {} } };
         return [sig(t.content.querySelector("[data-block]")), sig(window.B.render(b, ctx))];
       },

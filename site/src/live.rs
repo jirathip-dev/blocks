@@ -180,14 +180,18 @@ pub fn islands() -> Page {
 pub fn streams() -> Page {
     let stream: serde_json::Value =
         serde_json::from_str(include_str!("../../fixtures/plot/stream.json")).unwrap_or_default();
-    let frames: Vec<serde_json::Value> = stream["frames"]
-        .as_array()
+    let frames: Vec<serde_json::Value> = stream
+        .get("frames")
+        .and_then(serde_json::Value::as_array)
         .into_iter()
         .flatten()
-        .map(|f| f["ops"].clone())
+        .filter_map(|f| f.get("ops").cloned())
         .collect();
     let props: Fields = [
-        ("screen".to_string(), stream["start"]["blocks"][0].clone()),
+        (
+            "screen".to_string(),
+            stream.pointer("/start/blocks/0").cloned().unwrap_or_default(),
+        ),
         ("frames".to_string(), serde_json::Value::from(frames)),
     ]
     .into_iter()

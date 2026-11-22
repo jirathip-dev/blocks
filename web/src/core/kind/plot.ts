@@ -2,8 +2,7 @@ import type { Fallback, Op, Plot, PlotAxis, Trace } from "../../gen/types.ts";
 import { decimals, fixed, nice } from "./chart.ts";
 
 export type Points = Extract<Op, { op: "points" }>;
-/// A tick, as the crate's `PlotTick`: where it sits, its text, and whether its step is odd.
-export type PlotTick = { at: number; text: string; odd: boolean };
+type PlotTick = { at: number; text: string; odd: boolean };
 /// What every renderer draws of a plot, as the crate's `PlotDrawn`.
 export type PlotDrawn = { x: [number, number]; y: [number, number]; xTicks: PlotTick[]; yTicks: PlotTick[]; lines: number[][]; last: string[]; band: string | null };
 
@@ -60,14 +59,18 @@ function first(xs: number[], below: (v: number) => boolean): number {
   return lo;
 }
 
+function auto(start: number, newest: number, w: number | null | undefined): [number, number] {
+  if (start > newest) return [0, w ?? 1];
+  if (w == null) return [start, newest];
+  return newest - w < start ? [start, start + w] : [newest - w, newest];
+}
+
 function xRange(p: Plot): [number, number] {
   const held = p.series.filter((s) => s.x.length);
   const start = Math.min(Infinity, ...held.map((s) => s.x[0] ?? 0));
   const newest = Math.max(-Infinity, ...held.map((s) => s.x[s.x.length - 1] ?? 0));
-  const w = p.window;
-  let [lo, hi] = start > newest ? [0, w ?? 1] : w == null ? [start, newest] : newest - w < start ? [start, start + w] : [newest - w, newest];
-  lo = p.x?.min ?? lo;
-  hi = p.x?.max ?? hi;
+  const [a, b] = auto(start, newest, p.window);
+  const [lo, hi] = [p.x?.min ?? a, p.x?.max ?? b];
   return [lo, hi > lo ? hi : lo + 1];
 }
 

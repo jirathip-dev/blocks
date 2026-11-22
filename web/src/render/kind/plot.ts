@@ -21,12 +21,18 @@ function shape(p: Plot, d: PlotDrawn): string {
 const html = (t: string, ms: Mark[]) =>
   ms.map((m) => `<${t}${m.cls ? ` class="${m.cls}"` : ""}${m.at.map(([k, v]) => ` ${k}="${v}"`).join("")}${m.text === undefined ? "/>" : `>${esc(m.text)}</${t}>`}`).join("");
 
+function edgeOf(at: number): string {
+  if (at < 0.001) return "lo";
+  if (at > 0.999) return "hi";
+  return at < 0.04 || at > 0.96 ? "near" : "";
+}
+
 const yTicks = (d: PlotDrawn, f: Frame): Mark[] => d.yTicks.map((t) => ({ cls: "", at: [["style", `top:${num(f.yf(t.at) * 100)}%`]], text: t.text }));
 
 const xTicks = (d: PlotDrawn, f: Frame): Mark[] =>
   d.xTicks.map((t) => {
     const at = f.xf(t.at);
-    const edge = at < 0.001 ? "lo" : at > 0.999 ? "hi" : at < 0.04 || at > 0.96 ? "near" : "";
+    const edge = edgeOf(at);
     return { cls: [edge, t.odd ? "odd" : ""].filter(Boolean).join(" "), at: [["style", `left:${num(at * 100)}%`]], text: t.text };
   });
 
@@ -101,10 +107,16 @@ function put(e: Element, m: Mark): void {
   if (m.text !== undefined && e.textContent !== m.text) e.textContent = m.text;
 }
 
-function fit(es: Element[], ms: Mark[], fresh: (ms: Mark[]) => Node[], where: (n: Node[]) => void): void {
+function fit(es: Element[], ms: Mark[], make: () => Element, where: (n: Element[]) => void): void {
   if (es.length !== ms.length) {
     es.forEach((e) => e.remove());
-    return where(fresh(ms));
+    return where(
+      ms.map((m) => {
+        const e = make();
+        put(e, m);
+        return e;
+      }),
+    );
   }
   es.forEach((e, i) => {
     const m = ms[i];
@@ -113,7 +125,6 @@ function fit(es: Element[], ms: Mark[], fresh: (ms: Mark[]) => Node[], where: (n
 }
 
 const kids = (e: Element | null) => Array.from(e?.children ?? []);
-const svgKids = (t: string, ms: Mark[]) => Array.from(nodes(`<svg>${html(t, ms)}</svg>`)[0]?.childNodes ?? []);
 
 /// Draws plot `block` into `root`, the element `plot` drew, keeping its elements; false when its series, target, peak or emptiness changed and it must be drawn again.
 export function sync(root: HTMLElement, block: Block): boolean {
@@ -130,15 +141,16 @@ export function sync(root: HTMLElement, block: Block): boolean {
   });
   if (q(".plt")?.textContent !== b.title) q(".plt")?.replaceChildren(b.title);
   const [ply, plx, plgr] = [q(".ply"), q(".plx"), q(".plgr")];
-  fit(kids(ply), yTicks(d, f), (ms) => nodes(html("span", ms)), (n) => ply?.append(...n));
-  fit(kids(plx), xTicks(d, f), (ms) => nodes(html("span", ms)), (n) => plx?.append(...n));
-  fit(kids(plgr), grid(d, f), (ms) => svgKids("line", ms), (n) => plgr?.append(...n));
+  const span = () => document.createElement("span");
+  fit(kids(ply), yTicks(d, f), span, (n) => ply?.append(...n));
+  fit(kids(plx), xTicks(d, f), span, (n) => plx?.append(...n));
+  fit(kids(plgr), grid(d, f), () => document.createElementNS("http://www.w3.org/2000/svg", "line"), (n) => plgr?.append(...n));
   const m = marks(b, f);
   Array.from(root.querySelectorAll(".plb,.plbe,line.peak")).forEach((e, i) => {
     const x = m[i];
     if (x) put(e, x);
   });
   root.querySelectorAll("path.s").forEach((e, i) => e.setAttribute("d", path(b, d, f, i)));
-  fit(Array.from(root.querySelectorAll(".pld")), dots(b, f), (ms) => nodes(html("i", ms)), (n) => q(".plp svg")?.after(...n));
+  fit(Array.from(root.querySelectorAll(".pld")), dots(b, f), () => document.createElement("i"), (n) => q(".plp svg")?.after(...n));
   return true;
 }

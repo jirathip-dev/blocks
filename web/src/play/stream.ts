@@ -10,12 +10,12 @@ class Stream extends HTMLElement {
   connectedCallback() {
     if (this.dataset["on"]) return;
     const props: unknown = JSON.parse(this.dataset["props"] ?? "{}");
-    const start = isRec(props) ? props["screen"] : undefined;
+    const start: unknown = isRec(props) && props["screen"];
     const frames = isRec(props) && Array.isArray(props["frames"]) ? props["frames"].filter(isOps) : [];
     if (!isBlock(start) || !frames.length) return;
     this.dataset["on"] = "1";
     delete this.dataset["fallback"];
-    const ctx: Ctx = { screen: "stream", act: async () => false, tap: () => undefined, open: new Set(), theme: plain, store: { get: () => null, put: () => undefined } };
+    const ctx: Ctx = { screen: "stream", act: async () => false, tap: () => {}, open: new Set(), theme: plain, store: { get: () => null, put: () => {} } };
     const draw = (b: Block) => render(b, ctx);
     const root = document.createElement("div");
     let [model, at] = [start, 0];

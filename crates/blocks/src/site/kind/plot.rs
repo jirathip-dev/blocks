@@ -3,7 +3,7 @@ use serde_json::Value;
 use super::chart::colour;
 use super::fallback;
 use crate::site::write::W;
-use crate::{PlotAxis, Plot};
+use crate::{Plot, PlotAxis, PlotDrawn};
 
 fn num(x: f64) -> String {
     format!("{}", ((x * 100.0) + 0.5).floor() / 100.0 + 0.0)
@@ -19,16 +19,7 @@ fn f(v: &serde_json::Number) -> f64 {
     v.as_f64().unwrap_or(0.0)
 }
 
-pub(super) fn draw(w: &mut W<'_>, b: &Value) {
-    let Ok(p) = serde_json::from_value::<Plot>(b.clone()) else {
-        return fallback(w, b);
-    };
-    let d = p.drawn();
-    let (x0, x1, y0, y1) = (d.x.0, d.x.1, d.y.0, d.y.1);
-    let xf = |v: f64| (v - x0) / (x1 - x0);
-    let yf = |v: f64| 1.0 - (v - y0) / (y1 - y0);
-    w.open_block("div", "card plot", b, &[]);
-    w.el("div", "plt", &p.title);
+fn legend(w: &mut W<'_>, p: &Plot, d: &PlotDrawn) {
     w.open("div", "pll", &[]);
     for (i, (s, last)) in p.series.iter().zip(&d.last).enumerate() {
         w.open("span", "", &[]);
@@ -53,17 +44,10 @@ pub(super) fn draw(w: &mut W<'_>, b: &Value) {
         w.close("span");
     }
     w.close("div");
-    w.open("div", "plg", &[]);
-    w.open("div", "plu", &[]);
-    w.el("span", "", &axis_label(p.y.as_ref()));
-    w.close("div");
-    w.open("div", "ply", &[]);
-    for t in &d.y_ticks {
-        w.open("span", "", &[("style", &format!("top:{}%", num(yf(t.at) * 100.0)))]);
-        w.text(&t.text);
-        w.close("span");
-    }
-    w.close("div");
+}
+
+fn marks(w: &mut W<'_>, p: &Plot, d: &PlotDrawn, xf: &dyn Fn(f64) -> f64, yf: &dyn Fn(f64) -> f64) {
+    let y0 = d.y.0;
     w.open("div", "plp", &[]);
     w.raw("<svg viewBox=\"0 0 1000 1000\" preserveAspectRatio=\"none\" aria-hidden=\"true\"><g class=\"plgr\">");
     for t in &d.y_ticks {
@@ -115,6 +99,9 @@ pub(super) fn draw(w: &mut W<'_>, b: &Value) {
         w.close("div");
     }
     w.close("div");
+}
+
+fn x_ticks(w: &mut W<'_>, d: &PlotDrawn, xf: &dyn Fn(f64) -> f64) {
     w.open("div", "plx", &[]);
     for t in &d.x_ticks {
         let at = xf(t.at);
@@ -130,6 +117,32 @@ pub(super) fn draw(w: &mut W<'_>, b: &Value) {
         w.close("span");
     }
     w.close("div");
+}
+
+pub(super) fn draw(w: &mut W<'_>, b: &Value) {
+    let Ok(p) = serde_json::from_value::<Plot>(b.clone()) else {
+        return fallback(w, b);
+    };
+    let d = p.drawn();
+    let (x0, x1, y0, y1) = (d.x.0, d.x.1, d.y.0, d.y.1);
+    let xf = |v: f64| (v - x0) / (x1 - x0);
+    let yf = |v: f64| 1.0 - (v - y0) / (y1 - y0);
+    w.open_block("div", "card plot", b, &[]);
+    w.el("div", "plt", &p.title);
+    legend(w, &p, &d);
+    w.open("div", "plg", &[]);
+    w.open("div", "plu", &[]);
+    w.el("span", "", &axis_label(p.y.as_ref()));
+    w.close("div");
+    w.open("div", "ply", &[]);
+    for t in &d.y_ticks {
+        w.open("span", "", &[("style", &format!("top:{}%", num(yf(t.at) * 100.0)))]);
+        w.text(&t.text);
+        w.close("span");
+    }
+    w.close("div");
+    marks(w, &p, &d, &xf, &yf);
+    x_ticks(w, &d, &xf);
     let xl = axis_label(p.x.as_ref());
     if !xl.is_empty() {
         w.open("div", "plu x", &[]);

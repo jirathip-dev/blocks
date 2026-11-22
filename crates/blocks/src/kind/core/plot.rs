@@ -226,7 +226,6 @@ impl Plot {
             .or_else(|| axis("the y axis", self.y.as_ref()))
     }
 
-    /// The `points` op on this plot: drops `drop` points from the front of the series named `series`, then adds `x` and `y`.
     pub(crate) fn grow(&mut self, series: &str, drop: Option<usize>, x: &[Number], y: &[Number]) -> Result<(), String> {
         let s = self
             .series
