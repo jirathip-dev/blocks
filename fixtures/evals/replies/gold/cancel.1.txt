@@ -1,0 +1,1 @@
+{"blocks": [{"type": "prose", "markdown": "Cancelling moves you to the Free plan at the end of the month."}, {"type": "button", "label": "Move to Free", "action": "pick", "style": "destructive", "values": {"plan": "free"}, "confirm": {"title": "Move to the Free plan?", "message": "Your projects stay; sharing stops.", "ok": "Move", "destructive": true}}]}

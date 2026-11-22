@@ -1,0 +1,1 @@
+{"blocks": [{"type": "choice", "question": "Deploy the build now?", "action": "answr", "recommended": "yes", "options": [{"label": "Deploy now", "value": "yes"}, {"label": "Wait", "value": "no"}]}]}

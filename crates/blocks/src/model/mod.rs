@@ -1,6 +1,7 @@
 mod close;
 mod mend;
 mod prompt;
+mod score;
 
 use serde::Serialize;
 use serde_json::{Map, Value};
@@ -12,6 +13,7 @@ use crate::kind::{Block, Fields, Part, Prose};
 use crate::wire::Action;
 
 pub use prompt::prompt;
+pub use score::{score, Case, Expect, Score};
 
 /// What a model's reply holds once read: its blocks, the mends made, the guard's warnings, and whether it was cut.
 #[derive(Clone, Debug, PartialEq)]

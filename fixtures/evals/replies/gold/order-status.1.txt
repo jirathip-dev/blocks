@@ -1,0 +1,1 @@
+{"blocks": [{"type": "prose", "markdown": "Your order is on its way."}, {"type": "steps", "title": "Order 1042", "current": "shipped", "steps": [{"id": "paid", "label": "Paid"}, {"id": "packed", "label": "Packed"}, {"id": "shipped", "label": "Shipped"}, {"id": "delivered", "label": "Delivered"}]}]}

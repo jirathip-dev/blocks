@@ -1,0 +1,14 @@
+case                 fit retry fell mends warns meets  chars
+cancel                 1     0    0     0     0     1    356
+compare                1     0    0     0     0     1    533
+contacts               1     0    0     0     0     1    270
+explain                1     0    0     0     0     1    190
+figures                1     0    0     0     0     1    249
+filter                 1     0    0     0     0     1    222
+order-status           1     0    0     0     0     1    299
+pick-plan              1     0    0     0     0     1    269
+plan-card              1     0    0     0     0     1    339
+sign-up                1     0    0     0     0     1    365
+weekly-sales           1     0    0     0     0     1    581
+yes-no                 1     0    0     0     0     1    199
+12 cases: fit 100%, after one retry 100%, meets 100%, clean 100%, 0.0 mends, 323 characters a reply

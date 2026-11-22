@@ -1,0 +1,1 @@
+{"blocks": [{"type": "stat", "items": [{"label": "Revenue", "value": "$18,400", "tone": "ok"}, {"label": "Orders", "value": 312}, {"label": "Returns", "value": 9, "tone": "warn"}]}, {"type": "prose", "markdown": "Revenue is up 12% on last month."}]}

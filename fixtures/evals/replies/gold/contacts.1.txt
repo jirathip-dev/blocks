@@ -1,0 +1,1 @@
+{"blocks": [{"type": "list", "rows": [{"type": "row", "title": "Ana Silva", "subtitle": "Lead", "badge": {"text": "on call", "tone": "ok"}}, {"type": "row", "title": "Ben Okafor", "subtitle": "Billing"}, {"type": "row", "title": "Chloe Park", "subtitle": "Accounts"}]}]}

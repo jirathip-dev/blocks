@@ -1,0 +1,21 @@
+{
+  "catalog": "say",
+  "ask": "What is a stand-up meeting?",
+  "expect": {
+    "kinds": [
+      "prose"
+    ],
+    "says": [
+      "stand-up"
+    ],
+    "blocks": 2
+  },
+  "gold": {
+    "blocks": [
+      {
+        "type": "prose",
+        "markdown": "A **stand-up** is a short daily meeting where each person says:\n\n- what they did yesterday\n- what they will do today\n- what is in their way"
+      }
+    ]
+  }
+}

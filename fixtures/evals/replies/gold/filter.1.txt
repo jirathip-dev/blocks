@@ -1,0 +1,1 @@
+{"blocks": [{"type": "chips", "name": "status", "action": "filter", "options": [{"label": "Open", "value": "open"}, {"label": "Waiting", "value": "waiting"}, {"label": "Closed", "value": "closed"}], "selected": ["open"]}]}

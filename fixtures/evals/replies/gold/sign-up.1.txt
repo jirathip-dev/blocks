@@ -1,0 +1,1 @@
+{"blocks": [{"type": "prose", "markdown": "Leave your email and we will write once a week."}, {"type": "form", "submit": {"action": "submit", "label": "Sign up"}, "fields": [{"type": "text", "name": "email", "label": "Email", "keyboard": "default", "placeholder": "you@example.com"}, {"type": "toggle", "name": "weekly", "label": "Weekly digest", "value": true}]}]}
