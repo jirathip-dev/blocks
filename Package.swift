@@ -7,7 +7,7 @@ let strict: [SwiftSetting] =
 
 let package = Package(
     name: "Blocks",
-    platforms: [.iOS(.v26), .macOS(.v26)],
+    platforms: [.iOS(.v26), .macOS(.v26), .watchOS(.v26)],
     products: [
         .library(name: "Blocks", targets: ["Blocks"]),
         .library(name: "BlocksUI", targets: ["BlocksUI"]),

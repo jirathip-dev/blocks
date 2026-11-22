@@ -54,7 +54,9 @@ internal struct Gestured<R: Rules>: ViewModifier where R.Change: Sendable {
                 .simultaneousGesture(
                     TapGesture().onEnded { if let tapped { named(base, tapped) } }, including: tapped == nil ? .subviews : .all)
                 .focusable()
-                .onKeyPress(keys: [.space, .return, .escape, .upArrow, .downArrow, .leftArrow, .rightArrow]) { key($0, base) }
+                #if !os(watchOS)
+                    .onKeyPress(keys: [.space, .return, .escape, .upArrow, .downArrow, .leftArrow, .rightArrow]) { key($0, base) }
+                #endif
                 .accessibilityLabel(label)
                 .accessibilityActions {
                     ForEach(rules.steps(grab), id: \.0) { step in
@@ -92,19 +94,21 @@ internal struct Gestured<R: Rules>: ViewModifier where R.Change: Sendable {
         show(nil)
     }
 
-    private func key(_ press: KeyPress, _ base: Driven<R>) -> KeyPress.Result {
-        let dirs: [KeyEquivalent: Nudge.Dir] = [.upArrow: .up, .downArrow: .down, .leftArrow: .left, .rightArrow: .right]
-        switch (press.key, live(driven?.phase)) {
-        case (.space, false): moved(base) { _ in }
-        case (let k, true) where dirs[k] != nil:
-            moved(base) { $0.nudge(Nudge(dirs[k] ?? .up, big: press.modifiers.contains(.shift))) }
-        case (.space, true), (.return, true):
-            if driven?.phase == .pressed { cancel() } else { released() }
-        case (.escape, true): cancel()
-        default: return .ignored
+    #if !os(watchOS)
+        private func key(_ press: KeyPress, _ base: Driven<R>) -> KeyPress.Result {
+            let dirs: [KeyEquivalent: Nudge.Dir] = [.upArrow: .up, .downArrow: .down, .leftArrow: .left, .rightArrow: .right]
+            switch (press.key, live(driven?.phase)) {
+            case (.space, false): moved(base) { _ in }
+            case (let k, true) where dirs[k] != nil:
+                moved(base) { $0.nudge(Nudge(dirs[k] ?? .up, big: press.modifiers.contains(.shift))) }
+            case (.space, true), (.return, true):
+                if driven?.phase == .pressed { cancel() } else { released() }
+            case (.escape, true): cancel()
+            default: return .ignored
+            }
+            return .handled
         }
-        return .handled
-    }
+    #endif
 
     private func cancel() {
         driven = nil
@@ -134,11 +138,13 @@ internal struct Zoomed: ViewModifier {
 
     internal func body(content: Content) -> some View {
         content.scaleEffect(live)
-            .gesture(
-                MagnifyGesture()
-                    .onChanged { live = min(most, max(1, scale * $0.magnification)) / scale }
-                    .onEnded { _ in (scale, live) = (scale * live, 1) }
-            )
+            #if !os(watchOS)
+                .gesture(
+                    MagnifyGesture()
+                        .onChanged { live = min(most, max(1, scale * $0.magnification)) / scale }
+                        .onEnded { _ in (scale, live) = (scale * live, 1) }
+                )
+            #endif
             .onTapGesture(count: 2) { scale = scale > 1 ? 1 : 2.5 }
             .accessibilityAction(named: "Zoom in") { scale = min(most, scale * 1.25) }
             .accessibilityAction(named: "Zoom out") { scale = max(1, scale / 1.25) }
@@ -197,13 +203,15 @@ internal struct Typed: View {
                 release()
                 out.next()
             }
-            .onKeyPress(.escape) {
-                driven?.on(.cancel)
-                driven = nil
-                text = was
-                out.preview(nil)
-                return .handled
-            }
+            #if !os(watchOS)
+                .onKeyPress(.escape) {
+                    driven?.on(.cancel)
+                    driven = nil
+                    text = was
+                    out.preview(nil)
+                    return .handled
+                }
+            #endif
             .accessibilityLabel(label)
     }
 

@@ -137,15 +137,12 @@ internal struct KindView: View {
         case .config(let block): ConfigBlock(block: block)
         case .diagram(let block): DiagramBlock(block: block)
         case .diff(let block): DiffBlock(block: block)
-        case .editor(let block): EditorBlock(block: block)
         case .form(let block): FormBlock(block: block)
         case .hero(let block): HeroBlock(block: block)
         case .images(let block): ImagesBlock(block: block)
-        case .import(let block): ImportBlock(block: block)
         case .island(let block): IslandBlock(block: block)
         case .lines(let block): LinesBlock(block: block)
         case .list(let block): ListBlock(block: block)
-        case .media(let block): MediaBlock(block: block)
         case .message(let block): MessageBlock(block: block)
         case .modal(let block): ModalBlock(block: block)
         case .nav(let block): NavBlock(block: block)
@@ -166,8 +163,15 @@ internal struct KindView: View {
         case .timeline(let block): TimelineBlock(block: block)
         case .toast(let block): ToastBlock(block: block)
         case .tool(let block): ToolBlock(block: block)
-        case .web(let block): WebBlock(block: block)
         case .appBlock(let block): AppBlockView(block: block)
+        #if !os(watchOS)
+            case .editor(let block): EditorBlock(block: block)
+            case .import(let block): ImportBlock(block: block)
+            case .media(let block): MediaBlock(block: block)
+            case .web(let block): WebBlock(block: block)
+        #else
+            default: EmptyView()
+        #endif
         }
     }
 }

@@ -7,17 +7,24 @@ use super::super::Files;
 use crate::{patch, tree, Block};
 
 const DIR: &str = "swift/Sources/BlocksUI/Kind";
+const WATCH_OFF: &str = "#if !os(watchOS)";
 
 pub(in crate::codegen) fn files(root: &Path, s: &Value) -> std::io::Result<Files> {
-    let (mut drawn, mut seen) = (vec![], vec![]);
+    let (mut drawn, mut off, mut seen) = (vec![], vec![], vec![]);
     for e in std::fs::read_dir(root.join(DIR))? {
-        let name = e?.file_name().to_string_lossy().into_owned();
+        let e = e?;
+        let name = e.file_name().to_string_lossy().into_owned();
         let Some(view) = name.strip_suffix(".swift") else {
             continue;
         };
         let kind = view.to_lowercase();
         if Block::KINDS.contains(&kind.as_str()) {
-            drawn.push(format!("        case .{kind}(let block): {view}Block(block: block)\n"));
+            let line = format!("        case .{kind}(let block): {view}Block(block: block)\n");
+            if std::fs::read_to_string(e.path())?.starts_with(WATCH_OFF) {
+                off.push(format!("    {line}"));
+            } else {
+                drawn.push(line);
+            }
             seen.push(kind);
         }
     }
@@ -25,13 +32,22 @@ pub(in crate::codegen) fn files(root: &Path, s: &Value) -> std::io::Result<Files
         return Err(std::io::Error::other(format!("{DIR}: no file draws the {kind} kind")));
     }
     drawn.sort();
+    off.sort();
+    let off = if off.is_empty() {
+        String::new()
+    } else {
+        format!(
+            "        {WATCH_OFF}\n{}        #else\n            default: EmptyView()\n        #endif\n",
+            off.concat()
+        )
+    };
     let named: String = Block::KINDS
         .iter()
         .map(|k| format!("        case .{k}(let b): (\"{k}\", b.id)\n"))
         .collect();
     let facts = facts(s).map_err(std::io::Error::other)?;
     let text = format!(
-        "import Blocks\nimport SwiftUI\n\nextension Block {{\n    internal var typeAndID: (type: String, id: String?) {{\n        switch self {{\n{named}        case .appBlock(let b): (b.type, b.id)\n        }}\n    }}\n{facts}}}\n\ninternal struct KindView: View {{\n    internal let block: Block\n\n    internal var body: some View {{\n        switch block {{\n{}        case .appBlock(let block): AppBlockView(block: block)\n        }}\n    }}\n}}\n",
+        "import Blocks\nimport SwiftUI\n\nextension Block {{\n    internal var typeAndID: (type: String, id: String?) {{\n        switch self {{\n{named}        case .appBlock(let b): (b.type, b.id)\n        }}\n    }}\n{facts}}}\n\ninternal struct KindView: View {{\n    internal let block: Block\n\n    internal var body: some View {{\n        switch block {{\n{}        case .appBlock(let block): AppBlockView(block: block)\n{off}        }}\n    }}\n}}\n",
         drawn.concat()
     );
     let hosts = patch::HOSTS.map(|(k, l)| format!("\"{k}\": \"{l}\""));
