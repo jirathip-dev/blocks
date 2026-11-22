@@ -4,8 +4,8 @@ use blocks::site::fragment;
 use blocks::{
     Accept, Act, Bar, Block, Built, Button, ButtonStyle, Card, CardKind, ChipOption, Chips, Choice, ChoiceOption,
     Composer, ComposerChip, Diagram, Diff, Editor, Fallback, Field, FieldValue, Form, Hero, Hunk, Image, Images,
-    Island, IslandSize, Label, Lane, LaneState, LineError, List, Mark, MarkKind, Media, Nav, NavLink, Node, Other,
-    Pages, Part, PickerField, Prose, Queued, Row, Run, ScanField, Scene, Screen, Secret, SecretField, Sheet, Shown,
+    Island, IslandSize, Label, Lane, LaneState, LineError, List, Mark, MarkKind, Media, Modal, Nav, NavLink, Node,
+    Other, Pages, Part, PickerField, Prose, Queued, Row, Run, ScanField, Scene, Screen, Secret, SecretField, Shown,
     Span, Stage, Stat, Steps, Submit, Tap, Text, TextField, Tile, ToggleField, Tone, UploadField, Web,
 };
 use serde_json::{Number, Value};
@@ -14,7 +14,7 @@ use crate::play;
 use crate::ui::{b, bold, heading, link_row, listing, marked, open, page, para, row, section, span, text, Page};
 
 const GROUPS: [(&str, &[&str]); 4] = [
-    ("Layout", &["screen", "section", "sheet", "card"]),
+    ("Layout", &["screen", "section", "modal", "sheet", "card"]),
     (
         "Words and pictures",
         &[
@@ -70,7 +70,8 @@ fn about(kind: &str) -> &'static str {
     match kind {
         "screen" => "A whole screen: its title and its blocks.",
         "section" => "A titled group of blocks.",
-        "sheet" => "A sheet over a screen.",
+        "modal" => "A box over a screen: a dialog dragged by its header, a fixed confirm, or a tool window that resizes and folds to a pill.",
+        "sheet" => "The modal kind under its older name: it reads as a dialog.",
         "card" => "A card with a title, a line and its actions.",
         "text" => "Markdown, or one plain styled line.",
         "prose" => "Headings, paragraphs, lists, quotes and code.",
@@ -157,7 +158,7 @@ fn holders() -> Vec<Block> {
         text("today-hint", "3 builds ran, 1 needs you."),
         marked("today-deploy", "Deploy", "waiting on review", "", Tone::Needs),
     ]);
-    let sheet = Sheet::new(
+    let sheet = Modal::new(
         "Add a check",
         vec![
             text("add-note", "Pick what runs on each push."),
@@ -540,6 +541,7 @@ pub fn samples() -> Vec<(String, Vec<Block>)> {
         picked("import"),
         picked("message"),
         picked("tool"),
+        picked("modal"),
         picked("sidebar"),
         vec![paperwork()],
     ]

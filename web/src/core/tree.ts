@@ -26,6 +26,7 @@ export function role(b: Blk, kind: string): string {
   const wrapped = ["rounds", "swipe"].some((k) => Array.isArray(b[k]) && b[k].length > 0);
   if ((kind === "button" || kind === "row") && tap?.["url"] != null && !wrapped) return "link";
   if ((kind === "row" && tap && !wrapped) || kind === "button" || kind === "editor") return "button";
+  if ((kind === "modal" || kind === "sheet") && b["variant"] === "alert") return "alertdialog";
   return roles[kind] ?? "group";
 }
 

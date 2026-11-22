@@ -1,33 +1,33 @@
 import type { Blk } from "../core/tree.ts";
 import { btn, el, h } from "../render/dom.ts";
+import { box as modal } from "../render/kind/modal.ts";
 
-/// A sheet: a card with a head and a body over the page; `closed` runs before it closes or shows anew.
+/// A sheet: a modal over the page around a body; `closed` runs before it closes or shows anew.
 export type Sheet = ReturnType<typeof sheet>;
 
-/// The sheet, hidden; a click beside its card closes it.
+/// The sheet, hidden; it closes when its modal does.
 export function sheet(closed: () => void) {
   const box = el("div", "b-sheet");
-  const head = el("header", "b-sheet__head");
   const body = el("div", "b-sheet__body");
   box.hidden = true;
-  box.append(h("div", "b-sheet__card", head, body));
   const close = () => {
     closed();
     box.hidden = true;
+    box.replaceChildren();
   };
-  box.addEventListener("click", (e) => e.target === box && close());
-  const frame = (title: string, prev?: () => void) => {
-    const x = btn("close", "b-sheet__close");
-    x.onclick = close;
+  box.addEventListener("close", close, true);
+  const frame = (title: string, prev?: () => void, own = false) => {
     const b = btn("‹ back", "b-back");
     if (prev) b.onclick = prev;
-    head.replaceChildren(...(prev ? [b] : []), h("b", "b-sheet__title", title), x);
+    const lead = prev ? b : undefined;
+    if (own && lead) body.querySelector(".mdt")?.before(lead);
+    box.replaceChildren(own ? body : modal({ title, blocks: [] }, [body], { done: async () => true, lead }));
+    box.hidden = false;
   };
   const show = (title: string, kids: HTMLElement[], prev?: () => void) => {
     closed();
-    frame(title, prev);
     body.replaceChildren(...kids);
-    box.hidden = false;
+    frame(title, prev);
   };
   return { box, body, close, frame, show };
 }

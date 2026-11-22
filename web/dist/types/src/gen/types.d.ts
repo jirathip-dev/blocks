@@ -58,8 +58,10 @@ export type Bar = {
 export type Block = ({
     type: "screen";
 } & Screen) | ({
+    type: "modal";
+} & Modal) | ({
     type: "sheet";
-} & Sheet) | ({
+} & Modal) | ({
     type: "section";
 } & Section) | ({
     type: "list";
@@ -183,6 +185,7 @@ export type Chart = {
     format?: ChartFormat | null;
     id?: string | null;
     lang?: string | null;
+    move?: Gesture | null;
     selected?: string | null;
     series: Series[];
     show?: Expr | null;
@@ -628,6 +631,20 @@ export type Message = {
     show?: Expr | null;
     time?: string | null;
 };
+export type Modal = {
+    blocks: Block[];
+    cancel?: string | null;
+    destructive?: boolean | null;
+    done?: Submit | null;
+    id?: string | null;
+    locale?: Locale | null;
+    message?: string | null;
+    ok?: string | null;
+    show?: Expr | null;
+    title: string;
+    variant?: ModalVariant | null;
+};
+export type ModalVariant = "dialog" | "alert" | "tool";
 export type More = string | Page;
 export type Nav = {
     brand?: NavLink | null;
@@ -782,6 +799,11 @@ export type PlanRun = {
     scripts: string[];
     size: string;
     steps: Step[];
+};
+export type PointMove = {
+    at: string;
+    series: string;
+    y: number;
 };
 export type Prose = {
     id?: string | null;
@@ -960,7 +982,9 @@ export type Seen = {
 export type Series = {
     as?: SeriesMark | null;
     dash?: boolean | null;
+    fixed?: boolean | null;
     name: string;
+    step?: number | null;
     tone?: Tone | null;
     values: number[];
 };
@@ -970,15 +994,6 @@ export type SetState = {
     to: Expr;
 };
 export type Severity = "error" | "warn";
-export type Sheet = {
-    blocks: Block[];
-    cancel?: string | null;
-    done?: Submit | null;
-    id?: string | null;
-    locale?: Locale | null;
-    show?: Expr | null;
-    title: string;
-};
 export type Shown = string | number | Bound | Time;
 export type SideBadge = {
     count: number;
@@ -1311,4 +1326,4 @@ export type Why = "evicted" | "unpaired" | "handover";
 export type Working = {
     since: string;
 };
-export type Kind = "screen" | "sheet" | "section" | "list" | "row" | "card" | "choice" | "form" | "config" | "secret" | "run" | "button" | "chips" | "stat" | "text" | "images" | "web" | "diff" | "editor" | "scene" | "diagram" | "composer" | "lines" | "prose" | "hero" | "media" | "nav" | "island" | "table" | "steps" | "chart" | "toast" | "pages" | "timeline" | "import" | "message" | "tool" | "sidebar";
+export type Kind = "screen" | "modal" | "sheet" | "section" | "list" | "row" | "card" | "choice" | "form" | "config" | "secret" | "run" | "button" | "chips" | "stat" | "text" | "images" | "web" | "diff" | "editor" | "scene" | "diagram" | "composer" | "lines" | "prose" | "hero" | "media" | "nav" | "island" | "table" | "steps" | "chart" | "toast" | "pages" | "timeline" | "import" | "message" | "tool" | "sidebar";

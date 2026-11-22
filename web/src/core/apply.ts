@@ -1,11 +1,10 @@
+import { hosts, walked } from "../gen/hooks.ts";
 import type { Block, Op } from "../gen/types.ts";
 import { grow } from "./kind/prose.ts";
 
 export type Rec = { [key: string]: unknown };
 type Spot = { list: unknown[]; at: number } | "root";
 
-const walked = ["blocks", "rows", "buttons", "rounds", "lanes"];
-const hosts: Record<string, string> = { screen: "blocks", sheet: "blocks", section: "blocks", card: "blocks", message: "blocks", list: "rows", scene: "lanes", row: "rounds", table: "rows" };
 export const isRec = (v: unknown): v is Rec => typeof v === "object" && v !== null && !Array.isArray(v);
 
 function locate(node: Rec, id: string): Spot | undefined {

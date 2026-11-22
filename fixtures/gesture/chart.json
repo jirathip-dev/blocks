@@ -1,0 +1,44 @@
+{
+  "block": {
+    "type": "chart",
+    "id": "plan",
+    "title": "Revenue plan",
+    "chart": "combo",
+    "x": ["2026-01", "2026-02", "2026-03", "2026-04", "2026-05", "2026-06"],
+    "format": "thb_m",
+    "series": [
+      { "name": "Actual", "values": [1120000, 1080000, 1260000], "fixed": true },
+      { "name": "Target", "values": [1100000, 1100000, 1200000, 1200000, 1200000, 1250000], "as": "line", "tone": "warn", "step": 50000 },
+      { "name": "Stretch", "values": [1150000, 1180000, 1230000, 1260000, 1300000], "as": "line", "dash": true }
+    ],
+    "move": { "action": "plan.target", "name": "point" }
+  },
+  "cases": [
+    { "grab": { "series": "Target", "at": "2026-05" }, "reach": { "steps": 3 }, "want": { "series": "Target", "at": "2026-05", "y": 1350000 }, "says": "Target: ฿1.35M" },
+    { "grab": { "series": "Target", "at": "2026-05" }, "reach": { "steps": 0 }, "want": { "series": "Target", "at": "2026-05", "y": 1200000 }, "says": "Target: ฿1.20M" },
+    { "grab": { "series": "Target", "at": "2026-05" }, "reach": { "steps": -1 }, "want": { "series": "Target", "at": "2026-05", "y": 1150000 }, "says": "Target: ฿1.15M" },
+    { "grab": { "series": "Target", "at": "2026-05" }, "reach": { "steps": 100 }, "want": { "series": "Target", "at": "2026-05", "y": 2000000 }, "says": "Target: ฿2.00M" },
+    { "grab": { "series": "Target", "at": "2026-05" }, "reach": { "steps": -100 }, "want": { "series": "Target", "at": "2026-05", "y": 0 }, "says": "Target: ฿0" },
+    { "grab": { "series": "Target", "at": "2026-01" }, "reach": { "steps": -19 }, "want": { "series": "Target", "at": "2026-01", "y": 150000 }, "says": "Target: ฿150K" },
+    { "grab": { "series": "Stretch", "at": "2026-03" }, "reach": { "steps": 1 }, "want": { "series": "Stretch", "at": "2026-03", "y": 1300000 }, "says": "Stretch: ฿1.3M" },
+    { "grab": { "series": "Stretch", "at": "2026-03" }, "reach": { "steps": -1 }, "want": { "series": "Stretch", "at": "2026-03", "y": 1100000 }, "says": "Stretch: ฿1.1M" },
+    { "grab": { "series": "Stretch", "at": "2026-06" }, "reach": { "steps": 1 }, "want": null },
+    { "grab": { "series": "Actual", "at": "2026-02" }, "reach": { "steps": 1 }, "want": null },
+    { "grab": { "series": "Nope", "at": "2026-02" }, "reach": { "steps": 1 }, "want": null },
+    { "grab": { "series": "Target", "at": "2027-01" }, "reach": { "steps": 1 }, "want": null },
+    { "grab": { "series": "Target", "at": "2026-05" }, "nudges": [{ "dir": "up" }], "want": { "series": "Target", "at": "2026-05", "y": 1250000 }, "says": "Target: ฿1.25M" },
+    { "grab": { "series": "Target", "at": "2026-05" }, "nudges": [{ "dir": "up", "big": true }], "want": { "series": "Target", "at": "2026-05", "y": 1700000 }, "says": "Target: ฿1.70M" },
+    { "grab": { "series": "Target", "at": "2026-05" }, "nudges": [{ "dir": "up", "big": true }, { "dir": "up", "big": true }], "want": { "series": "Target", "at": "2026-05", "y": 2000000 }, "says": "Target: ฿2.00M" },
+    { "grab": { "series": "Target", "at": "2026-05" }, "nudges": [{ "dir": "up", "big": true }, { "dir": "up", "big": true }, { "dir": "up" }], "want": null },
+    { "grab": { "series": "Target", "at": "2026-05" }, "nudges": [{ "dir": "left" }], "want": null },
+    { "grab": { "series": "Target", "at": "2026-01" }, "nudges": [{ "dir": "down", "big": true }, { "dir": "down", "big": true }, { "dir": "down", "big": true }], "want": { "series": "Target", "at": "2026-01", "y": 0 }, "says": "Target: ฿0" },
+    { "grab": { "series": "Target", "at": "2026-01" }, "nudges": [{ "dir": "down", "big": true }, { "dir": "down", "big": true }, { "dir": "down", "big": true }, { "dir": "down" }], "want": null },
+    { "grab": { "series": "Stretch", "at": "2026-03" }, "nudges": [{ "dir": "down" }], "want": { "series": "Stretch", "at": "2026-03", "y": 1100000 }, "says": "Stretch: ฿1.1M" }
+  ],
+  "steps": [
+    { "grab": { "series": "Target", "at": "2026-05" }, "want": ["Raise", "Lower"] },
+    { "grab": { "series": "Stretch", "at": "2026-01" }, "want": ["Raise", "Lower"] },
+    { "grab": { "series": "Actual", "at": "2026-01" }, "want": [] },
+    { "grab": { "series": "Stretch", "at": "2026-06" }, "want": [] }
+  ]
+}

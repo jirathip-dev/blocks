@@ -1,0 +1,31 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="../neutral-default/tokens.css"><link rel="stylesheet" href="../../../web/dist/blocks.css"><link rel="stylesheet" href="modal.css"><link rel="stylesheet" href="page.css">
+<script src="bg.js"></script><title>modal: a dialog, dragged and remembered</title></head>
+<body>
+<div class="stage" inert><div class="app"></div></div>
+<div class="stage" style="position:absolute;inset:0 0 auto 0">
+<div class="ghost"></div>
+<span class="ann d1440" style="left:440px;top:252px">default place: centred</span>
+<span class="ann d1440" style="left:668px;top:155px">kept for “edit-item”, this user, after a drag of the header</span>
+<div class="mds scrim">
+<div class="md dlg" role="dialog" aria-modal="true" aria-labelledby="t1" data-ghost style="--mx:228px;--my:-96px">
+<div class="mdk" role="button" tabindex="-1" aria-label="close, or drag down"></div>
+<header class="mdh"><span class="mdg" aria-hidden="true">⋮⋮</span><span class="mdt" id="t1" tabindex="0" aria-roledescription="movable heading">Edit item · Launch checklist</span><button type="button" aria-label="close"><span>×</span></button></header>
+<div class="mdb">
+<label class="fld"><span>name</span><input value="Launch checklist"></label>
+<label class="fld"><span>owner</span><select><option>Sam Lee</option></select></label>
+<label class="fld"><span>due</span><input value="14 Dec"></label>
+<label class="fld"><span>notes</span><input value="Check the venue and the print run"></label>
+</div>
+<footer class="mdf"><button type="button"><span>cancel</span></button><button type="button"><span>save</span></button></footer>
+</div></div></div>
+<section class="notes"><h2>A dialog (the default variant)</h2><ol>
+<li class="d1440"><b>Drag by the header</b>, anywhere but its buttons. The grip ⋮⋮ is a hint; the whole bar is the handle. Press, move, release: the gesture machine's <i>move</i>, with the offset from centre as its change.</li>
+<li class="d1440"><b>Remembered per modal id, per user</b>: on release the offset is saved in this browser under the app and the modal's id. The next “edit-item” opens where this one was left, on any screen.</li>
+<li class="d1440"><b>Clamped</b>: on open and on every window resize the box is kept inside the viewport with a 16 px margin. Double-click the header to put it back in the centre and forget the place.</li>
+<li class="d1440"><b>Keyboard</b>: the title is focusable; arrows move it 16 px, Shift 64 px, and a screen reader hears “moved right”. Tab stays inside, Escape closes, focus goes back to what opened it.</li>
+<li class="d390"><b>A bottom sheet</b>: full width, up from the bottom, never taller than the screen less two touch heights; its body scrolls.</li>
+<li class="d390"><b>Grab handle</b>: a swipe down on it follows the finger. Let go past a third of the sheet (or 120 px) and it closes, as cancel; short of that it springs back. Only the handle swipes, so the body scrolls freely.</li>
+<li class="d390"><b>Screen readers</b>: the handle is a “close” button; the header's × closes too. Focus stays inside while it is open.</li>
+</ol></section>
+<script>bg(); done()</script></body></html>

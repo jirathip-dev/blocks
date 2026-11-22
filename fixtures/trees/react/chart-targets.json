@@ -1,0 +1,9 @@
+{
+  "kind": "chart",
+  "id": "targets",
+  "variant": null,
+  "drawn": "fallback",
+  "role": "figure",
+  "name": "Revenue plan",
+  "children": []
+}

@@ -41,6 +41,7 @@ macro_rules! switch {
 
 switch! {
     Screen => screen,
+    Modal => modal,
     Sheet => sheet,
     Section => section,
     List => list,

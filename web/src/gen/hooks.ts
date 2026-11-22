@@ -4,7 +4,8 @@ export type Hook = { variant: string | null; parts: readonly string[] };
 
 export const hooks: Record<Kind, Hook> = {
     screen: { variant: null, parts: ["title", "badge", "actions"] },
-    sheet: { variant: null, parts: ["title"] },
+    modal: { variant: "variant", parts: ["title"] },
+    sheet: { variant: "variant", parts: ["title"] },
     section: { variant: null, parts: [] },
     list: { variant: null, parts: [] },
     row: { variant: "style", parts: ["title", "subtitle", "badge", "value", "figure", "actions"] },
@@ -43,6 +44,10 @@ export const hooks: Record<Kind, Hook> = {
     sidebar: { variant: null, parts: [] },
 };
 
-export const roles: Record<string, string> = { section: "region", form: "form", config: "form", nav: "navigation", chart: "figure", toast: "status", message: "article", sidebar: "navigation" };
+export const roles: Record<string, string> = { modal: "dialog", sheet: "dialog", section: "region", form: "form", config: "form", nav: "navigation", chart: "figure", toast: "status", message: "article", sidebar: "navigation" };
 
 export const names = ["label", "title", "header", "question", "alt", "file", "command", "placeholder", "name"] as const;
+
+export const hosts: Record<string, string> = { screen: "blocks", modal: "blocks", sheet: "blocks", section: "blocks", card: "blocks", message: "blocks", list: "rows", scene: "lanes", row: "rounds", table: "rows" };
+
+export const walked = ["blocks", "rows", "buttons", "rounds", "lanes"] as const;

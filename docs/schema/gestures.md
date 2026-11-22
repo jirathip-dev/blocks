@@ -32,6 +32,7 @@ tap and key zoom; the image viewer uses it.
 | `timeline` | `move` | `{bar, part: "body"}` of a bar not `fixed` | `{days}` | `DaySpan` `{id, start, end}`, the same length, inside `from`..`to`, onto no fixed bar | One day earlier, later; One week earlier, later |
 | `timeline` | `stretch` | `{bar, part: "start" or "end"}` | `{days}` | `DaySpan` `{id, start, end}`, at least one day | Start one day earlier, later; End one day earlier, later |
 | `timeline` | `draw` | `{row}` | `{days, from}`, `from` the day pressed, else the row's first free day | `DaySpan` `{row, start, end}` over no bar | Add a bar |
+| `chart` | `move` | `{series, at}`: a point of a `line`, `bar` or `combo` series not `fixed` | `{steps}`, up is more | a `PointMove` `{series, at, y}`: `at` stays, `y` whole steps from the start, between the axis' bottom and top | Raise, Lower |
 
 A `media`'s `marks` are data the app keeps, each `{id, kind, at, to, text, tone, group, path, fixed}` with places from 0
 to 1 of the picture, rounded to 4 decimals and clamped; `tools` lists what can be drawn. A draw under 2 % of the picture
@@ -45,6 +46,13 @@ A `timeline`'s days are ISO, `end` the last one drawn, and its rows are `tracks`
 `subtitle`, `bars`), since `rows` is the field every walker reads as child blocks. Its day width is view state: fit
 (24 to 48 px) by default, then 48, 32, 24, 16, 8 or 4 px from its zoom buttons; on the web the pointer drags from 24 px up, the
 keys and named actions at every width. The static page draws it read-only.
+
+A `chart`'s point moves by its series' `step`, else by what the format shows (100K for `thb_m`, 0.1 for `percent`,
+1 otherwise), and reads at that precision while grabbed (฿1.35M for a 50K step). The axis holds still during a drag,
+so a point stops at its top; the app may grow it after the answer. A `stacked` or `donut` chart with `move` is unfit.
+Each editable series is one Tab stop: Left and Right walk its points, then Space grabs, Up and Down nudge. Where
+handles overlap the nearest point wins; a press released where it was is the chart's tap. The static page and a chart
+with no `move` take no gesture. `fixtures/gesture/chart.json` holds the rules equal in Rust, TS and Swift.
 
 A `table`'s `calc` maps a column to an `Expr` over its row's cells, worked out in column order (so one may read an
 earlier one) as the user types, before anything is sent; group rows (`group: true`) head the items under them, carry

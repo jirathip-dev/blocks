@@ -90,6 +90,6 @@ internal struct FallbackRow: View {
     internal let fallback: any Encodable
 
     internal var body: some View {
-        if let row = try? JSONValue(fallback).decode(Row.self) { RowView(row: row) }
+        if let row = try? JSONValue(fallback).decode(Row.self) { RowBlock(block: row) }
     }
 }

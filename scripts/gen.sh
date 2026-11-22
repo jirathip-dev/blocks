@@ -2,6 +2,7 @@
 set -eu
 cd "$(dirname "$0")/.."
 npm --prefix web ci --no-audit --no-fund
+ls web/dist/*.js >/dev/null 2>&1 || npm --prefix web run build
 cargo run -q --locked -p blocks --features schema --bin blocks-codegen kinds
 cargo run -q --locked -p blocks --features schema --bin blocks-codegen
 npm --prefix web run build
