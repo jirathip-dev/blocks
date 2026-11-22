@@ -1,5 +1,5 @@
 import type { Scheme } from "../gen/schemes.ts";
-import type { Answer, Block, Toast } from "../gen/types.ts";
+import type { Action, Block, Toast } from "../gen/types.ts";
 import { type Editing, editor } from "../arrange.ts";
 import { behave } from "../behave.ts";
 import { apply } from "../core/apply.ts";
@@ -9,20 +9,22 @@ import { settle } from "../motion.ts";
 import { obj, type Post, posted, type Store } from "../render/ctx.ts";
 import { btn, el, h } from "../render/dom.ts";
 import { tick } from "../render/text.ts";
-import { stream } from "../stream.ts";
 import { plain, type Theme } from "../theme.ts";
 import { toasts } from "../toasts.ts";
 import { type AppBlocks, type Host, host } from "./host.ts";
 import { ALWAYS, isScreen, type Layout, type Resolved, resolved, SHEET, walk } from "./layout.ts";
 import { looks, row, wearer } from "./look.ts";
 import { confirmer, type Sheet, sheet } from "./sheet.ts";
+import { type Source, Refused, served } from "./source.ts";
 import { local } from "./store.ts";
 
-/// What a page hands `mount`: where to draw, the layout, where a source's screens live, and the app's own parts.
+type FromServers = { url: (source: string, path: string) => string; sources?: Record<string, Source> };
+type FromTheApp = { url?: undefined; sources: Record<string, Source> };
+
+/// What a page hands `mount`: where to draw, the layout, its sources (a server's `url`, the app's own `sources`), and the app's own parts.
 export type Mount = {
   root: HTMLElement;
   layout: Layout;
-  url: (source: string, path: string) => string;
   blocks?: AppBlocks;
   components?: Record<string, (n: Resolved) => HTMLElement | null>;
   css?: string[];
@@ -31,7 +33,7 @@ export type Mount = {
   store?: Store;
   edit?: Editing;
   file?: OnFile;
-};
+} & (FromServers | FromTheApp);
 
 type Wear = (name: string | null, keep?: Store) => void;
 type View = { source: string; path: string; back: string[]; box: HTMLElement; body: HTMLElement; model?: Block | undefined; built: Set<string>; host: Host; stop?: (() => void) | undefined; sync: () => void };
@@ -40,7 +42,7 @@ type Shell = {
   o: Mount;
   store: Store;
   theme: Theme;
-  live: (source: string) => ReturnType<typeof stream>;
+  live: (source: string) => Source;
   notes: ReturnType<typeof toasts>;
   ask: (c: Blk) => Promise<boolean>;
   sheet: Sheet;
@@ -169,13 +171,8 @@ async function act(s: Shell, v: View, a: Post, b?: HTMLElement, first = false): 
   if (isBlk(a.confirm) && !(await s.ask(a.confirm))) return false;
   b?.setAttribute("aria-busy", "true");
   try {
-    const body = posted(v.host.ctx().screen, a);
-    const r = await fetch(s.o.url(v.source, "/action"), { method: "POST", headers: { "content-type": "application/json" }, body });
-    const j: Answer = await r.json().catch(() => ({}));
-    if (!r.ok) {
-      say(s, v, { title: `action failed: ${r.status}`, ...j.toast, tone: "bad" }, first);
-      return false;
-    }
+    const asked: Action = JSON.parse(posted(v.host.ctx().screen, a));
+    const j = await s.live(v.source).act(v.path, asked);
     const next = v.model && j.ops?.length ? apply(v.model, j.ops) : undefined;
     if (next) {
       v.model = next;
@@ -186,7 +183,7 @@ async function act(s: Shell, v: View, a: Post, b?: HTMLElement, first = false): 
     if (j.toast) say(s, v, j.toast, first);
     return true;
   } catch (e) {
-    say(s, v, { title: e instanceof Error ? e.message : String(e), tone: "bad" }, first);
+    say(s, v, e instanceof Refused ? e.toast : { title: e instanceof Error ? e.message : String(e), tone: "bad" }, first);
     return false;
   } finally {
     b?.removeAttribute("aria-busy");
@@ -252,10 +249,14 @@ function menu(s: Shell, listed: Resolved[], wear: Wear, cur: () => Tab | undefin
 
 function draw(o: Mount, store: Store, theme: Theme, wear: Wear, wide: boolean, extra: HTMLElement[]): { close(): void } {
   const nodes = walk(resolved(o.layout.root, wide)).filter((n) => n.place !== "hidden");
-  const streams = new Map<string, ReturnType<typeof stream>>();
+  const servers = new Map<string, Source>();
   const live = (source: string) => {
-    const st = streams.get(source) ?? stream({ url: o.url(source, "/stream"), state: (x) => (o.root.dataset["stream"] = x) });
-    streams.set(source, st);
+    const url = o.url;
+    const own = o.sources?.[source] ?? servers.get(source);
+    if (own) return own;
+    if (!url) throw new Error(`blocks: the layout's source "${source}" is not in sources and there is no url`);
+    const st = served((path) => url(source, path), (x) => (o.root.dataset["stream"] = x));
+    servers.set(source, st);
     return st;
   };
   const ask = confirmer();

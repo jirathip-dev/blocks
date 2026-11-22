@@ -1,0 +1,20 @@
+about = "the client-built example: demo/client's tests, its wasm under the size ceiling, and its page drawn in WebKit from local code with no request beyond its own files"
+fix = "fix the example or the shell the test names; a wasm over the ceiling means a typed parse or a dependency got in: docs/client-built.md"
+budget_secs = 900
+leg = "web"
+setup = ["rust", "node"]
+paths = ["demo/client/**", "crates/blocks/**", "web/**", "fixtures/client/**", "Cargo.*", "rust-toolchain.toml", ".gatekeeper/gates/client.toml"]
+run = """
+if [ -z "${CI:-}" ]; then echo "client: CI's web leg runs it; a lane's host has no wasm32 target"; exit 0; fi
+set -e
+rustup target add wasm32-unknown-unknown
+cargo test --locked --manifest-path demo/client/Cargo.toml
+cargo build --locked --release --target wasm32-unknown-unknown --manifest-path demo/client/Cargo.toml
+wasm=demo/client/target/wasm32-unknown-unknown/release/meter.wasm
+size=$(gzip -9c "$wasm" | wc -c)
+echo "meter.wasm: $(wc -c < "$wasm") bytes, $size gzipped, ceiling 375000"
+[ "$size" -le 375000 ]
+npm --prefix web ci --no-audit --no-fund
+npx --prefix web playwright install --with-deps webkit
+npm --prefix web run test:client
+"""
