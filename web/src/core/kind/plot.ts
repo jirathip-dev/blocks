@@ -97,7 +97,7 @@ function line(s: Trace, [lo, hi]: [number, number]): number[] {
     add(z);
   };
   for (let i = from; i < to; i++) {
-    const at = Math.min(999, Math.max(0, Math.floor((((s.x[i] ?? 0) - lo) / (hi - lo)) * 1000)));
+    const at = Math.min(499, Math.max(0, Math.floor((((s.x[i] ?? 0) - lo) / (hi - lo)) * 500)));
     if (Math.abs(c - at) < 0.5) {
       if (y(i) < y(lo0)) lo0 = i;
       if (y(i) > y(hi0)) hi0 = i;

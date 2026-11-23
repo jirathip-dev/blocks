@@ -98,7 +98,7 @@ Measured in the crate at 80 frames a second (`measured.md`):
 8. **Older clients and the old stream.** `wire::old` turns a plot's `points` into one `merge` of its `series`.
    The wire version stays 2: a new kind and a new op are additive.
 9. **One `drawn` per language.** `Plot::drawn` gives both ranges, the ticks with their text, and for each
-   series the indices of the points to join, thinned to 1,000 columns past 2,000 points. No renderer works out
+   series the indices of the points to join, thinned to 500 columns past 2,000 points. No renderer works out
    a range, a tick or a thinned line by itself.
 10. **Every renderer draws a plot at most once per display frame, in place** (`boundaries.md`):
     - HTML: the patcher marks a plot touched by `points` or `merge`, and after the pass's ops draws each marked

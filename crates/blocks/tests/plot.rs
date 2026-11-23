@@ -85,6 +85,16 @@ struct Stream {
     end: Block,
 }
 
+#[test]
+fn a_thinned_line_keeps_each_columns_low_and_high_and_never_draws_over_2000_points() {
+    let x: Vec<f64> = (0..20_000).map(f64::from).collect();
+    let y: Vec<f64> = (0..20_000).map(|i| f64::from(i % 7) - 3.0).collect();
+    let line = &Plot::new("Noise", vec![trace("A", &x, &y)]).drawn().lines[0];
+    assert!(line.len() <= 2000, "{} points", line.len());
+    assert!(line.len() > 1000, "{} points", line.len());
+    assert!(line.iter().any(|&i| y[i] == 3.0) && line.iter().any(|&i| y[i] == -3.0));
+}
+
 fn live() -> Plot {
     Plot::new("Pull", vec![trace("Force", &[], &[])])
         .id("pull")

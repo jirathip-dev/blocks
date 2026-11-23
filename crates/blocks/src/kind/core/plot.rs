@@ -309,7 +309,7 @@ impl Plot {
             }
         };
         for i in from..to {
-            let c = ((at(&s.x, i) - lo) / (hi - lo) * 1000.0).floor().clamp(0.0, 999.0);
+            let c = ((at(&s.x, i) - lo) / (hi - lo) * 500.0).floor().clamp(0.0, 499.0);
             match &mut col {
                 Some((at_col, k)) if (*at_col - c).abs() < 0.5 => {
                     if at(&s.y, i) < at(&s.y, k[1]) {

@@ -50,6 +50,8 @@ An SVG of two lines, a target, a peak and tick texts at 390 and 1,440 wide. Each
   and a moving peak are three to six ops in an animation frame. So the decision is one draw per plot per frame.
 - Past a few thousand points the path's text is the cost, and columns bound it. 1,000 columns is 1.3 px a
   column on a 1,440 px page, so nothing is lost to the eye; 500 would show on a wide screen.
+- Later, in CI's WebKit, 1,000 columns went over the 16.7 ms frame at 4,800 points, so `drawn` keeps 500:
+  2.7 px a column on a 1,440 px page, and each column still keeps its lowest and highest point.
 - After every in-place run the element was equal (`isEqualNode`) to a fresh draw of the last model.
 - Redraw and in place cost about the same per draw. In place keeps the elements, so what the design puts on
   them (a pointer's readout, a focus) is not lost 60 times a second.

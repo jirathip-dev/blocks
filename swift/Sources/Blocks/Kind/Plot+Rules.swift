@@ -109,7 +109,7 @@ extension Plot {
             add(z)
         }
         for i in from..<to {
-            let at = min(999, max(0, ((s.x[i] - lo) / (hi - lo) * 1000).rounded(.down)))
+            let at = min(499, max(0, ((s.x[i] - lo) / (hi - lo) * 500).rounded(.down)))
             if abs(c - at) < 0.5 {
                 if s.y[i] < s.y[lo0] { lo0 = i }
                 if s.y[i] > s.y[hi0] { hi0 = i }

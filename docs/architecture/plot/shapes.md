@@ -167,7 +167,7 @@ impl Plot {
 | x range | the axis's `min` and `max` when set; else the last `window` up to the newest x of any series; else the first x to the newest. No points: 0 to the window, or 0 to 1 |
 | y range | the axis's `min` and `max` when set; else the points in the x range, the target and the peak, widened to round steps by the rule `chart` uses for a line (`nice`, shared, not copied) |
 | ticks | round steps of the range; for `time` the steps are 1, 2, 5, 10, 15 and 30 s, then the same in minutes, then hours. The text is the number at the step's decimals, or `m:ss` |
-| lines | the indices of the points in the x range, with one before and one after it. Over 2,000 of them, the x range is cut into 1,000 columns and each column keeps its first, lowest, highest and last point |
+| lines | the indices of the points in the x range, with one before and one after it. Over 2,000 of them, the x range is cut into 500 columns and each column keeps its first, lowest, highest and last point |
 
 `lines` holds indices, not coordinates, so the three languages agree exactly and the fixture holds whole numbers.
 The range depends on the block alone, so it can shrink when a high point leaves the window: an app that wants a
