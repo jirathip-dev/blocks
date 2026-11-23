@@ -1,0 +1,11 @@
+{
+  "format": 2,
+  "type": "default",
+  "radius": 1,
+  "surface": "glass",
+  "fills": "tint",
+  "buttons": "filled",
+  "marks": "symbols",
+  "sections": "title",
+  "labels": { "button": { "case": "as-is" } }
+}

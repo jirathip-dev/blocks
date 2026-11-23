@@ -13,11 +13,15 @@ final class StyleTests: XCTestCase {
 
     func testEveryGoodStyleFixtureDecodes() throws {
         let names = try FileManager.default.contentsOfDirectory(atPath: dir.path).filter { $0.hasSuffix(".json") }
-        XCTAssertEqual(names.sorted(), ["modern.json", "still.json", "terminal.json"])
+        XCTAssertEqual(names.sorted(), ["filled.json", "modern.json", "still.json", "terminal.json"])
+        let filled = try style("filled")
+        XCTAssertEqual(filled.buttons, .filled)
+        XCTAssertEqual(filled.labels["button"]?.apply("Drive now"), "Drive now")
         XCTAssertEqual(try style("modern"), Style.bundled)
         let terminal = try style("terminal")
         XCTAssertEqual(terminal.format, 1)
         XCTAssertNil(terminal.space)
+        XCTAssertNil(terminal.buttons)
         XCTAssertEqual(terminal.surface, .dashed)
         XCTAssertEqual(terminal.labels["kind"]?.apply("Row"), "[row]")
         let still = try style("still")

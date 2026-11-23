@@ -1,7 +1,7 @@
 use std::path::{Path, PathBuf};
 
 use blocks::theme::{
-    css, default, Easing, Fills, LabelCase, LabelRole, Marks, Mode, PerMode, Scheme, Sections, Style, Surface,
+    css, default, Buttons, Easing, Fills, LabelCase, LabelRole, Marks, Mode, PerMode, Scheme, Sections, Style, Surface,
     TypeDesign, DEFAULT_STYLE,
 };
 
@@ -65,7 +65,7 @@ fn css_writes_each_fixtures_css_file_for_the_default_pair_and_each_scheme_in_its
         "default".to_owned(),
         css(default(), &style_of(r#""format": 1, "type": "mono", "radius": 0"#)),
     )];
-    for name in ["modern", "still", "terminal"] {
+    for name in ["filled", "modern", "still", "terminal"] {
         let s = style(&format!("fixtures/styles/{name}.json")).unwrap();
         want.push((format!("default-{name}"), css(default(), &s)));
     }
@@ -147,6 +147,7 @@ fn every_value_of_every_style_enum_writes_its_own_rule_and_nothing_else() {
     walk(TypeDesign::ALL, value("type"), |v| v.css().to_owned());
     walk(Surface::ALL, value("surface"), |v| v.css().to_owned());
     walk(Fills::ALL, value("fills"), |v| v.css().to_owned());
+    walk(Buttons::ALL, value("buttons"), |v| v.css().to_owned());
     walk(Marks::ALL, value("marks"), |v| v.css().to_owned());
     walk(Sections::ALL, value("sections"), |v| v.css().to_owned());
     walk(Easing::ALL, value("easing"), |v| format!("--ease:{};", v.curve()));
