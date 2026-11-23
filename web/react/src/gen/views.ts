@@ -28,10 +28,11 @@ import { section } from "../kinds/section.ts";
 import { sheet } from "../kinds/sheet.ts";
 import { sidebar } from "../kinds/sidebar.ts";
 import { stat } from "../kinds/stat.ts";
+import { steps } from "../kinds/steps.ts";
 import { table } from "../kinds/table.ts";
 import { text } from "../kinds/text.ts";
 import { timeline } from "../kinds/timeline.ts";
 import { tool } from "../kinds/tool.ts";
 import { web } from "../kinds/web.ts";
 
-export const views: Views = { button, card, chips, choice, composer, config, diagram, diff, editor, form, hero, images, import: import_, list, media, message, modal, nav, pages, prose, row, run, scene, screen, secret, section, sheet, sidebar, stat, table, text, timeline, tool, web };
+export const views: Views = { button, card, chips, choice, composer, config, diagram, diff, editor, form, hero, images, import: import_, list, media, message, modal, nav, pages, prose, row, run, scene, screen, secret, section, sheet, sidebar, stat, steps, table, text, timeline, tool, web };

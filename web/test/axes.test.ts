@@ -6,7 +6,7 @@ import { defaultPair } from "../src/gen/schemes.ts";
 import { css } from "../src/core/index.ts";
 
 const read = (p) => readFileSync(new URL(p, import.meta.url), "utf8");
-const body = ["card", "section", "steps", "button", "screen"].map((k) => read(`../../fixtures/html/${k}.html`)).join("") + '<i class="b-late"></i>';
+const body = ["card", "section", "steps", "button", "screen"].map((k) => read(`../../fixtures/html/${k}.html`)).join("") + '<i class="b-late"></i><button class="b b-button primary"><span>Drive now</span></button>';
 const sheet = read("../dist/blocks.css");
 
 const rows = [
@@ -15,6 +15,9 @@ const rows = [
   ["surface dashed", { surface: "dashed" }, ".card", "", "borderTopStyle", (v) => v === "dashed"],
   ["surface solid", { surface: "solid" }, ".card", "", "borderTopWidth", (v) => v === "2px"],
   ["fills", { fills: "outline" }, ".spi.done .spm", "", "backgroundColor", (v) => v === "rgba(0, 0, 0, 0)"],
+  ["buttons unbracketed", { buttons: "filled" }, ".b-button", "::before", "content", (v) => v === "none"],
+  ["buttons filled primary", { buttons: "filled" }, ".primary", "", "backgroundColor", (v) => v !== "rgba(0, 0, 0, 0)"],
+  ["button label case", { labels: { button: { case: "as-is" } } }, ".b-button>span", "", "textTransform", (v) => v === "none"],
   ["marks", { marks: "text" }, ".spi.done .spm", "::after", "content", (v) => v === '"done"'],
   ["sections", { sections: "quiet" }, ".sec>.sh", "", "fontSize", (v) => v === "11px"],
   ["easing calm", { easing: "calm" }, ".b-late", "", "animationTimingFunction", (v) => v === "cubic-bezier(0.4, 0, 0.2, 1)"],
@@ -54,7 +57,7 @@ test("each style axis changes what the tiles draw, from the default look", async
 });
 
 test("an axis adds no animation or transition: motion stays the --motion scaled transforms and fades", () => {
-  const all = { easing: "bouncy", type: "default", radius: 2, surface: "dashed", fills: "outline", marks: "text", sections: "quiet", labels: { header: { prefix: "[" } } };
+  const all = { easing: "bouncy", type: "default", radius: 2, surface: "dashed", fills: "outline", buttons: "filled", marks: "text", sections: "quiet", labels: { header: { prefix: "[" } } };
   const text = css(defaultPair, all);
   strictEqual(/animation|transition|(?<!-)transform/.test(text), false, text);
 });

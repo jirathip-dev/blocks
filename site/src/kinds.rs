@@ -6,8 +6,8 @@ use blocks::{
     Composer, ComposerChip, Diagram, Diff, Editor, Fallback, Field, FieldValue, Form, Hero, Hunk, Image, Images,
     Island, IslandSize, Label, Lane, LaneState, LineError, List, Mark, MarkKind, Media, Modal, Nav, NavLink, Node,
     Other, Pages, Part, PickerField, Prose, Queued, Row, Run, ScanField, Scene, Screen, SearchField, Secret,
-    SecretField, Shown, Span, Stage, Stat, Steps, Submit, Tap, Text, TextField, Tile, ToggleField, Tone, UploadField,
-    Web,
+    SecretField, Shown, SliderField, Span, Stage, Stat, Steps, Submit, Tap, Text, TextField, Tile, ToggleField, Tone,
+    UploadField, Web,
 };
 use serde_json::{Number, Value};
 
@@ -446,6 +446,12 @@ fn others() -> Vec<Block> {
         picker("region", "Region", &["eu-west", "us-east"]),
         field("retries", "Retries", FieldValue::Number(3.into())),
         toggle("notify", "Notify", false),
+        SliderField::new("size", 80, 130)
+            .label("Text size")
+            .step(5)
+            .unit("%")
+            .value(110)
+            .into(),
     ])
     .id("settings")
     .action("save-settings");

@@ -1,5 +1,11 @@
 import { ev, find, list, lit, own, read, rec, sound, start, type State, view } from "./core/eval.ts";
 
+const typed = (i: HTMLInputElement | HTMLSelectElement): string | number | boolean => {
+  if (i instanceof HTMLSelectElement) return i.value;
+  if (i.type === "checkbox") return i.checked;
+  return i.type === "range" ? Number(i.value) : i.value;
+};
+
 /// Keeps the blocks under `root` in step with local state: typing, a toggle, a pick or a tap's `set` changes it, nothing is sent.
 export function behave(root: HTMLElement, model: () => unknown): () => void {
   const edits: State = {};
@@ -26,14 +32,14 @@ export function behave(root: HTMLElement, model: () => unknown): () => void {
       l.hidden = v.hidden.has(i.name);
       i.disabled = v.disabled.has(i.name);
       const say = touched.has(i.name) ? (v.says[i.name] ?? "") : "";
-      const m = l.querySelector(".fe") ?? (say ? l.appendChild(Object.assign(document.createElement("span"), { className: "fe" })) : null);
+      const m = l.querySelector(":scope > .fe") ?? (say ? l.appendChild(Object.assign(document.createElement("span"), { className: "fe" })) : null);
       if (m) m.textContent = say;
     });
   };
   root.addEventListener("input", (e) => {
     const i = e.target;
     if (!(i instanceof HTMLInputElement || i instanceof HTMLSelectElement) || !i.name) return;
-    edits[i.name] = i instanceof HTMLInputElement && i.type === "checkbox" ? i.checked : i.value;
+    edits[i.name] = typed(i);
     touched.add(i.name);
     sync();
   });

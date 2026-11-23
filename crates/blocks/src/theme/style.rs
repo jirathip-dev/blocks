@@ -84,6 +84,24 @@ impl Fills {
 }
 
 pick!(
+    /// How a button is drawn: the renderer's plain button, or a filled primary and quiet ghost buttons with no brackets.
+    pub Buttons { Plain, Filled }
+);
+
+impl Buttons {
+    /// The rule this value adds to the look's CSS.
+    #[must_use]
+    pub const fn css(self) -> &'static str {
+        match self {
+            Self::Plain => "",
+            Self::Filled => {
+                "button::before,a.btn::before{content:none}button::after,a.btn::after{content:\"\"}button.primary,a.btn.primary{background:var(--l);color:var(--bg);padding:0 var(--s3);font-weight:600}"
+            }
+        }
+    }
+}
+
+pick!(
     /// Whether a mark is a symbol or its text.
     pub Marks { Symbols, Text }
 );
@@ -251,7 +269,7 @@ pub struct StyleLabel {
     pub case: LabelCase,
 }
 
-/// An app's style.json: the type, spacing, radius, motion, easing and surface tokens a renderer reads.
+/// An app's style.json: the type, spacing, radius, motion, easing, surface and button tokens a renderer reads.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
 #[serde(deny_unknown_fields)]
@@ -268,6 +286,8 @@ pub struct Style {
     pub easing: Easing,
     pub surface: Surface,
     pub fills: Fills,
+    #[serde(default)]
+    pub buttons: Buttons,
     pub marks: Marks,
     pub sections: Sections,
     #[cfg_attr(feature = "schema", schemars(with = "BTreeMap<String, StyleLabel>"))]

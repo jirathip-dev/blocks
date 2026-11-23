@@ -30,6 +30,7 @@ fn axes(style: &Style) -> String {
         style.type_.css(),
         style.surface.css(),
         style.fills.css(),
+        style.buttons.css(),
         style.marks.css(),
         style.sections.css(),
     ]

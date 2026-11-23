@@ -67,6 +67,6 @@ export function form({ b, hooks }: V<Form>) {
   const off = (b.id != null && cx.v.disabled.has(b.id)) || up > 0 || bad;
   const go = btn(busy ? "sending…" : s.label, "", undefined, s.action, { "data-submit": "", onClick: send }, off);
   const line = bad ? word(cx, "stuck") : up ? fill(word(cx, up > 1 ? "waitN" : "wait1"), { n: up }) : "";
-  const wait = b.fields.some((x) => viewOf(x).group) ? h("span", `say-busy${bad ? " bad" : ""}`, null, line) : null;
+  const wait = b.fields.some((x) => viewOf(x).waits) ? h("span", `say-busy${bad ? " bad" : ""}`, null, line) : null;
   return h("div", "form say", { ...hooks, "data-id": b.id ?? "", onKeyDown: enter }, ...rows, wait, go);
 }
