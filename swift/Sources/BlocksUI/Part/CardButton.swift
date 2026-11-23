@@ -10,10 +10,17 @@ internal struct CardButton: View {
     internal var body: some View {
         let palette = look.palette
         let tint = tint ?? palette.link
+        let (ink, fill): (Color, Color) =
+            look.filled
+            ? (primary ? palette.background : tint, primary ? tint : .clear)
+            : (
+                primary ? (palette.dark ? Color.black : .white) : look.solid ? palette.background : tint,
+                primary || look.solid ? tint : tint.opacity(look.outline ? 0 : 0.12)
+            )
         Text(look.label(.button, title)).ui(15, primary ? .semibold : .regular, look)
-            .foregroundStyle(primary ? (palette.dark ? Color.black : .white) : look.solid ? palette.background : tint)
+            .foregroundStyle(ink)
             .padding(.horizontal, 14).frame(height: 36).frame(maxWidth: .infinity)
-            .background(primary || look.solid ? tint : tint.opacity(look.outline ? 0 : 0.12), in: look.pill)
+            .background(fill, in: look.pill)
             .accessibilityLabel(title)
     }
 }
