@@ -2527,6 +2527,19 @@
           "type": "object"
         },
         {
+          "$ref": "#/$defs/SliderField",
+          "properties": {
+            "type": {
+              "const": "slider",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
           "$ref": "#/$defs/OtherField"
         }
       ],
@@ -7365,6 +7378,108 @@
         }
       ]
     },
+    "SliderField": {
+      "additionalProperties": true,
+      "description": "A number on a track from `min` to `max`: the label over the thumb shows it with its `unit`, and a live form sends it on let go.",
+      "properties": {
+        "checks": {
+          "items": {
+            "$ref": "#/$defs/Check"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "doc": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "enabled": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "max": {
+          "description": "A number on the wire, as JSON wrote it.",
+          "type": "number"
+        },
+        "min": {
+          "description": "A number on the wire, as JSON wrote it.",
+          "type": "number"
+        },
+        "name": {
+          "type": "string"
+        },
+        "open": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "step": {
+          "description": "A number on the wire, as JSON wrote it.",
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "unit": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "value": {
+          "description": "A number on the wire, as JSON wrote it.",
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "was": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "name",
+        "min",
+        "max"
+      ],
+      "type": "object"
+    },
     "SortDir": {
       "anyOf": [
         {
@@ -7630,6 +7745,18 @@
             "file"
           ],
           "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "slide": {
+              "$ref": "#/$defs/StepSlide"
+            }
+          },
+          "required": [
+            "slide"
+          ],
+          "type": "object"
         }
       ]
     },
@@ -7719,6 +7846,22 @@
       },
       "required": [
         "name"
+      ],
+      "type": "object"
+    },
+    "StepSlide": {
+      "description": "A slider field's thumb moved to a number and let go.",
+      "properties": {
+        "field": {
+          "type": "string"
+        },
+        "to": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "field",
+        "to"
       ],
       "type": "object"
     },

@@ -195,6 +195,14 @@ pub struct Picking {
     pub handler: Handler,
 }
 
+/// A slider field's thumb moved to a number and let go.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[cfg_attr(feature = "schema", derive(schemars::JsonSchema), schemars(rename = "StepSlide"))]
+pub struct Sliding {
+    pub field: String,
+    pub to: serde_json::Number,
+}
+
 /// One scripted input: by block id, a stream frame arriving, an action answered, or a shot.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
@@ -209,6 +217,7 @@ pub enum Step {
     Gesture(Gesturing),
     Refuse(Refusal),
     File(Picking),
+    Slide(Sliding),
 }
 
 /// How long the first paint and each step took; the frame fields only where a harness draws real frames.

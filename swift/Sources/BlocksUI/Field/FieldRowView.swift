@@ -22,6 +22,7 @@ internal struct FieldRow: View {
 
     @ViewBuilder internal var body: some View {
         switch field.edit {
+        case .slide(let f): SliderRow(field: f, edits: $edits)
         #if !os(watchOS)
             case .files(let f): UploadRow(field: f)
             case .scan(let f): ScanRow(field: f)

@@ -1,0 +1,25 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="../neutral-default/tokens.css"><link rel="stylesheet" href="../../../web/dist/blocks.css"><link rel="stylesheet" href="slider.css"><link rel="stylesheet" href="page.css">
+<script src="slider.js"></script><title>slider: every state</title></head>
+<body><main class="scr">
+<div class="top"><div class="tabh"><span class="tw">slider · every state</span></div></div>
+<h2>1 · At rest</h2><p class="note">The label rides above the thumb: centred over it in the middle, flush with the track's end at min and max, so it never leaves the field. The ends say min and max with the unit. No value starts at min.</p>
+<div class="cases">
+<div data-f='{"fields":[{"type":"slider","name":"a","label":"Text size","min":80,"max":130,"step":5,"unit":"%","value":110}]}'></div>
+<div data-f='{"fields":[{"type":"slider","name":"b","label":"Text size · at min","min":80,"max":130,"step":5,"unit":"%","value":80}]}'></div>
+<div data-f='{"fields":[{"type":"slider","name":"c","label":"Text size · at max","min":80,"max":130,"step":5,"unit":"%","value":130}]}'></div>
+<div data-f='{"fields":[{"type":"slider","name":"d","label":"Crates · no value, no unit","min":0,"max":24}]}'></div>
+</div>
+<h2>2 · Moving</h2><p class="note">Pressed: a 4 px halo round the thumb and a bold label; the label changes on every step. Keyboard: a 2 px ink ring; arrows move one step, Page Up and Down a tenth, Home and End the ends. A number shows only the places it needs: 7.5 h, 12 h.</p>
+<div class="cases">
+<div data-f='{"fields":[{"type":"slider","name":"e","label":"Text size · dragging","min":80,"max":130,"step":5,"unit":"%","value":95,"look":"drag"}]}'></div>
+<div data-f='{"fields":[{"type":"slider","name":"f","label":"Hours worked · keyboard","min":0,"max":12,"step":0.5,"unit":"h","value":7.5,"look":"kb"}]}'></div>
+</div>
+<h2>3 · Off, the app's error, Thai</h2><p class="note">Off (enabled false): the fill and the thumb go grey and the field fades as a button off does; it still says its value. The app's error: a red edge on the field and the line under it. Thai: only the label changes; the numbers and the unit are the same.</p>
+<div class="cases">
+<div data-f='{"fields":[{"type":"slider","name":"g","label":"Text size","doc":"set by your organisation","min":80,"max":130,"step":5,"unit":"%","value":100,"enabled":false}]}'></div>
+<div data-f='{"fields":[{"type":"slider","name":"h","label":"Hours worked","min":0,"max":12,"step":0.5,"unit":"h","value":11,"error":"Over 10 h needs a manager’s note"}]}'></div>
+<div data-f='{"fields":[{"type":"slider","name":"i","label":"ขนาดตัวอักษร","doc":"ใช้กับทุกหน้าจอบนเครื่องนี้","min":80,"max":130,"step":5,"unit":"%","value":120}]}'></div>
+<div data-f='{"fields":[{"type":"slider","name":"j","label":"How much of the weekly delivery allowance this branch may use before a manager signs","min":0,"max":100,"step":10,"unit":"%","value":60}]}'></div>
+</div>
+</main><script>draw()</script></body></html>

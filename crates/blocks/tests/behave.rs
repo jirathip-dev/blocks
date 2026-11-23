@@ -96,6 +96,17 @@ fn lit_gives_every_fixtures_behave_fields_case_its_local_state() {
     }
 }
 
+#[test]
+fn a_slider_with_no_value_starts_at_its_min_and_one_with_a_value_at_it() {
+    let screen = serde_json::json!({ "type": "form", "id": "f", "fields": [
+        { "type": "slider", "name": "crates", "min": 0, "max": 24 },
+        { "type": "slider", "name": "size", "min": 80, "max": 130, "value": 110 },
+    ] });
+    let s = start(&Built::new(serde_json::from_value(screen).unwrap()));
+    assert_eq!(s.get("crates"), Some(&Lit::Num(0.into())));
+    assert_eq!(s.get("size"), Some(&Lit::Num(110.into())));
+}
+
 fn screen() -> Built {
     let dir = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../fixtures/behave/view.json");
     let file: File = serde_json::from_str(&std::fs::read_to_string(dir).unwrap()).unwrap();

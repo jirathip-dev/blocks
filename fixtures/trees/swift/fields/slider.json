@@ -1,0 +1,63 @@
+{
+  "kind": "screen",
+  "id": "fields-slider",
+  "variant": null,
+  "drawn": "native",
+  "role": "group",
+  "name": "fields-slider",
+  "children": [
+    {
+      "kind": "form",
+      "id": "slider",
+      "variant": null,
+      "drawn": "native",
+      "role": "form",
+      "name": "slider",
+      "fields": [
+        {
+          "name": "size-empty",
+          "type": "slider",
+          "drawn": "native",
+          "role": "slider",
+          "label": "Text size"
+        },
+        {
+          "name": "size",
+          "type": "slider",
+          "drawn": "native",
+          "role": "slider",
+          "label": "Text size"
+        },
+        {
+          "name": "size-error",
+          "type": "slider",
+          "drawn": "native",
+          "role": "slider",
+          "label": "Text size"
+        },
+        {
+          "name": "size-was",
+          "type": "slider",
+          "drawn": "native",
+          "role": "slider",
+          "label": "Text size"
+        },
+        {
+          "name": "size-doc",
+          "type": "slider",
+          "drawn": "native",
+          "role": "slider",
+          "label": "Text size"
+        },
+        {
+          "name": "size-label",
+          "type": "slider",
+          "drawn": "native",
+          "role": "slider",
+          "label": "A label long enough to wrap onto a second line on a phone held upright"
+        }
+      ],
+      "children": []
+    }
+  ]
+}

@@ -261,7 +261,7 @@ var lit = (_field, held2) => Array.isArray(held2) ? held2.length || null : plain
 function start(screen2) {
   const s = {};
   const seed = (b) => {
-    for (const f of named(b)) s[String(f["name"])] = lit(f, f["value"] ?? f["files"] ?? (rec(f["file"]) ? [f["file"]] : null));
+    for (const f of named(b)) s[String(f["name"])] = lit(f, f["value"] ?? f["files"] ?? (rec(f["file"]) ? [f["file"]] : f["type"] === "slider" ? f["min"] : null));
     if (b["type"] === "chips" && typeof b["name"] === "string") s[b["name"]] = plain(Array.isArray(b["selected"]) ? b["selected"][0] : null);
     kids(b).forEach(seed);
   };
@@ -3240,6 +3240,19 @@ var defs = {
         "properties": {
           "type": {
             "const": "scan",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      {
+        "$ref": "#/$defs/SliderField",
+        "properties": {
+          "type": {
+            "const": "slider",
             "type": "string"
           }
         },
@@ -7300,6 +7313,103 @@ var defs = {
       }
     ]
   },
+  "SliderField": {
+    "additionalProperties": true,
+    "properties": {
+      "checks": {
+        "items": {
+          "$ref": "#/$defs/Check"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "doc": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "enabled": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "error": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "label": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "max": {
+        "type": "number"
+      },
+      "min": {
+        "type": "number"
+      },
+      "name": {
+        "type": "string"
+      },
+      "open": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "show": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "step": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "unit": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "value": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "was": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "required": [
+      "name",
+      "min",
+      "max"
+    ],
+    "type": "object"
+  },
   "SortDir": {
     "anyOf": [
       {
@@ -9042,6 +9152,13 @@ function seeks(screen2, state) {
   return out;
 }
 
+// src/core/field/slider.ts
+var reads = (x, n) => {
+  const t = String(Number(n.toFixed(6)));
+  return x.unit ? `${t}\xA0${x.unit}` : t;
+};
+var along = (x, n) => x.max > x.min ? Math.min(1, Math.max(0, (n - x.min) / (x.max - x.min))) : 0;
+
 // src/core/field/files.ts
 var OWN = {
   image: (_, m) => m.startsWith("image/"),
@@ -9111,6 +9228,7 @@ export {
   accepts,
   actionOf,
   actions,
+  along,
   apply,
   boxplot,
   built,
@@ -9170,6 +9288,7 @@ export {
   picked,
   plot,
   prose,
+  reads,
   refused,
   role,
   roleWord,

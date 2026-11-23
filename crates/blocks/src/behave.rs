@@ -118,7 +118,10 @@ fn seed(b: &Value, s: &mut State) {
             .get("file")
             .filter(|x| x.is_object())
             .map(|x| Value::Array(vec![x.clone()]));
-        let held = f.get("value").or_else(|| f.get("files")).or(one.as_ref());
+        let low = f
+            .get("min")
+            .filter(|_| f.get("type").and_then(Value::as_str) == Some("slider"));
+        let held = f.get("value").or_else(|| f.get("files")).or(one.as_ref()).or(low);
         s.insert(name.into(), lit(f, held.unwrap_or(&Value::Null)));
     }
     if let (Some("chips"), Some(Value::String(name))) = (o.get("type").and_then(Value::as_str), o.get("name")) {

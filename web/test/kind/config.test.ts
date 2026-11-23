@@ -24,7 +24,7 @@ const later = () => new Promise((r) => setImmediate(r));
 
 test("each fixtures/fields form draws every field with its type's view, its words in the screen's language", () => {
   const at = new URL("../../../fixtures/fields/", import.meta.url);
-  const want = { text: ["text", null], toggle: ["checkbox", "switch"], check: ["checkbox", null], picker: [undefined, null], secret: ["password", null], search: ["search", null], upload: ["file", null] };
+  const want = { text: ["text", null], toggle: ["checkbox", "switch"], check: ["checkbox", null], picker: [undefined, null], secret: ["password", null], search: ["search", null], upload: ["file", null], slider: ["range", null] };
   for (const f of readdirSync(at).filter((n) => n.endsWith(".json"))) {
     const screen = JSON.parse(readFileSync(new URL(f, at), "utf8"));
     const form = screen.blocks[0];
@@ -43,6 +43,22 @@ test("each fixtures/fields form draws every field with its type's view, its word
   const th = rows(render(secret, ctx({ locale: { lang: "th" } })));
   deepStrictEqual([ctl(th[0]).placeholder, part(th[1], "fn").textContent], ["ยังไม่ได้ตั้ง", "เดิม Ada"]);
   deepStrictEqual(ctl(rows(render(secret, ctx()))[0]).placeholder, "not set");
+});
+
+test("a slider's label follows the thumb with nothing sent, keeps a draft, and a live config sends the number once, on let go", async () => {
+  const [sent, kept] = [[], new Map()];
+  const store = { get: (k) => kept.get(k) ?? null, put: (k, v) => (v == null ? kept.delete(k) : kept.set(k, v)) };
+  const size = { type: "config", id: "text-size", action: "text-size", fields: [{ type: "slider", name: "size", label: "Text size", min: 80, max: 130, step: 5, unit: "%", value: 110 }] };
+  const [r] = rows(render(size, ctx({ store, act: async (a) => (sent.push(a), true) })));
+  const i = ctl(r);
+  deepStrictEqual([r.className, i.type, i.min, i.max, i.step, i.getAttribute("aria-label"), i.getAttribute("aria-valuetext"), part(r, "fsv").textContent], ["fd sl", "range", "80", "130", "5", "Text size", "110\u00a0%", "110\u00a0%"]);
+  i.value = "120";
+  for (const [t, f] of i.listeners) if (t === "input") f();
+  deepStrictEqual([part(r, "fsv").textContent, i.getAttribute("aria-valuetext"), part(r, "fs").getAttribute("style"), sent], ["120\u00a0%", "120\u00a0%", "--v:0.8", []]);
+  deepStrictEqual(part(rows(render(size, ctx({ store })))[0], "fsv").textContent, "120\u00a0%", "a redraw takes the draft");
+  i.onchange();
+  await later();
+  deepStrictEqual(sent, [{ action: "text-size", block: "text-size", values: { size: 120 } }]);
 });
 
 test("a config draws every field as a settings row: name, one note, its control", () => {

@@ -12,6 +12,7 @@
     { "field": { "type": "rating", "name": "stars" }, "held": "4", "want": "4" },
     { "field": { "type": "text", "name": "who" }, "held": { "from": "a" }, "want": null },
     { "field": { "type": "upload", "name": "photos" }, "held": [{ "id": "f-1" }, { "id": "f-2" }], "want": 2 },
-    { "field": { "type": "upload", "name": "photos" }, "held": [], "want": null }
+    { "field": { "type": "upload", "name": "photos" }, "held": [], "want": null },
+    { "field": { "type": "slider", "name": "size", "min": 80, "max": 130 }, "held": 110, "want": 110 }
   ]
 }

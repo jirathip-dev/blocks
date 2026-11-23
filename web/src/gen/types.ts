@@ -90,7 +90,7 @@ export type Expr = { get: string } | { not: Expr } | { all: Expr[] } | { any: Ex
 
 export type Fallback = { subtitle?: string | null; tap?: Tap | null; title: string };
 
-export type Field = ({ type: "text" } & TextField) | ({ type: "toggle" } & ToggleField) | ({ type: "picker" } & PickerField) | ({ type: "secret" } & SecretField) | ({ type: "search" } & SearchField) | ({ type: "upload" } & UploadField) | ({ type: "scan" } & ScanField) | (OtherField & { [key: string]: unknown });
+export type Field = ({ type: "text" } & TextField) | ({ type: "toggle" } & ToggleField) | ({ type: "picker" } & PickerField) | ({ type: "secret" } & SecretField) | ({ type: "search" } & SearchField) | ({ type: "upload" } & UploadField) | ({ type: "scan" } & ScanField) | ({ type: "slider" } & SliderField) | (OtherField & { [key: string]: unknown });
 
 export type FieldDrawn = "native" | "plain" | "hidden";
 
@@ -314,6 +314,8 @@ export type Sidebar = { brand?: SideLink | null; empty?: string | null; footer?:
 
 export type Sky = "clear" | "windy" | "fog" | "storm";
 
+export type SliderField = { checks?: Check[] | null; doc?: string | null; enabled?: Expr | null; error?: string | null; label?: string | null; max: number; min: number; name: string; open?: boolean | null; show?: Expr | null; step?: number | null; unit?: string | null; value?: number | null; was?: string | null };
+
 export type SortDir = "asc" | "desc";
 
 export type Span = { bold?: boolean | null; code?: boolean | null; italic?: boolean | null; link?: string | null; text: string };
@@ -322,7 +324,7 @@ export type Stage = { id: string; label: string; sub?: string | null; tap?: Tap 
 
 export type Stat = { id?: string | null; items?: Tile[] | null; label?: string | null; show?: Expr | null; spark?: number[] | null; tone?: Tone | null; unit?: string | null; value?: Shown | null };
 
-export type Step = { tap: StepOn } | { type: StepType } | { scroll: StepOn } | { frame: Frame } | { answer: Answer } | { shot: StepShot } | { gesture: StepGesture } | { refuse: StepRefuse } | { file: StepFile };
+export type Step = { tap: StepOn } | { type: StepType } | { scroll: StepOn } | { frame: Frame } | { answer: Answer } | { shot: StepShot } | { gesture: StepGesture } | { refuse: StepRefuse } | { file: StepFile } | { slide: StepSlide };
 
 export type StepFile = { field: string; handler: Handler; mime: string; name: string; size: number };
 
@@ -333,6 +335,8 @@ export type StepOn = { id: string };
 export type StepRefuse = { toast: string };
 
 export type StepShot = { name: string };
+
+export type StepSlide = { field: string; to: number };
 
 export type StepType = { id: string; text: string };
 
