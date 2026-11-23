@@ -447,6 +447,7 @@ pub(crate) static PARTS: &[Part] = &[
     Part { name: "SideGroup", input: "", line: "{links: SideItem[], title?: string}", names: &["SideItem"] },
     Part { name: "SideItem", input: "", line: "{label: string, badge?: SideBadge, children?: SideLink[], current?: bool, href?: string, icon?: string}", names: &["SideBadge", "SideLink"] },
     Part { name: "SideLink", input: "", line: "{href: string, label: string, badge?: SideBadge, current?: bool, icon?: string}", names: &["SideBadge"] },
+    Part { name: "SliderField", input: "slider", line: "{type: \"slider\", max: number, min: number, name: string, doc?: string, error?: string, label?: string, step?: number, unit?: string, value?: number, was?: string}", names: &[] },
     Part { name: "Stage", input: "", line: "{id: string, label: string, sub?: string, tap?: Tap}", names: &["Tap"] },
     Part { name: "Submit", input: "", line: "{action: string, label: string, off?: bool, values?: {}}", names: &[] },
     Part { name: "TableRow", input: "", line: "{cells: {}, id: string, fixed?: bool, group?: bool, tap?: Tap}", names: &["Tap"] },

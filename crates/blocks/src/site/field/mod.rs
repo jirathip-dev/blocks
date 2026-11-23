@@ -6,6 +6,7 @@ mod picker;
 mod plain;
 mod scan;
 mod secret;
+mod slider;
 mod text;
 mod toggle;
 mod upload;
@@ -19,6 +20,7 @@ const VIEWS: &[(&str, &str, View)] = &[
     ("secret", "", secret::view),
     ("upload", " up", upload::view),
     ("scan", " up", scan::view),
+    ("slider", " sl", slider::view),
 ];
 
 fn note(w: &W<'_>, x: &Value) -> (&'static str, String) {

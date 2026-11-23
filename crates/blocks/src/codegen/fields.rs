@@ -56,7 +56,8 @@ fn screen(kind: &str, filled: &Value) -> std::io::Result<Screen> {
     let name = filled.get("name").and_then(Value::as_str).unwrap_or_default();
     let mut empty = filled.clone();
     if let Some(o) = empty.as_object_mut() {
-        o.retain(|k, _| ["type", "name", "label", "options"].contains(&k.as_str()));
+        let need: &[&str] = if kind == "slider" { &["min", "max"] } else { &[] };
+        o.retain(|k, _| ["type", "name", "label", "options"].contains(&k.as_str()) || need.contains(&k.as_str()));
         o.insert("name".into(), format!("{name}-empty").into());
     }
     let mut fields = vec![empty, filled.clone()];

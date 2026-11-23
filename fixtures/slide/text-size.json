@@ -1,0 +1,29 @@
+{
+  "screen": {
+    "type": "screen",
+    "id": "settings",
+    "title": "Settings",
+    "blocks": [
+      {
+        "type": "config",
+        "id": "text-size",
+        "action": "text-size",
+        "fields": [{ "type": "slider", "name": "size", "label": "Text size", "min": 80, "max": 130, "step": 5, "unit": "%", "value": 110 }]
+      }
+    ]
+  },
+  "cases": [
+    {
+      "name": "let go",
+      "steps": [{ "slide": { "field": "size", "to": 120 } }],
+      "sent": [{ "screen": "settings", "action": "text-size", "block": "text-size", "values": { "size": 120 } }],
+      "dropped": []
+    },
+    {
+      "name": "gone",
+      "steps": [{ "slide": { "field": "nowhere", "to": 90 } }],
+      "sent": [],
+      "dropped": ["slide nowhere"]
+    }
+  ]
+}

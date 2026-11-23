@@ -376,7 +376,9 @@ export type Field = ({
     type: "upload";
 } & UploadField) | ({
     type: "scan";
-} & ScanField) | (OtherField & {
+} & ScanField) | ({
+    type: "slider";
+} & SliderField) | (OtherField & {
     [key: string]: unknown;
 });
 export type FieldDrawn = "native" | "plain" | "hidden";
@@ -1124,6 +1126,22 @@ export type Sidebar = {
     show?: Expr | null;
 };
 export type Sky = "clear" | "windy" | "fog" | "storm";
+export type SliderField = {
+    checks?: Check[] | null;
+    doc?: string | null;
+    enabled?: Expr | null;
+    error?: string | null;
+    label?: string | null;
+    max: number;
+    min: number;
+    name: string;
+    open?: boolean | null;
+    show?: Expr | null;
+    step?: number | null;
+    unit?: string | null;
+    value?: number | null;
+    was?: string | null;
+};
 export type SortDir = "asc" | "desc";
 export type Span = {
     bold?: boolean | null;
@@ -1166,6 +1184,8 @@ export type Step = {
     refuse: StepRefuse;
 } | {
     file: StepFile;
+} | {
+    slide: StepSlide;
 };
 export type StepFile = {
     field: string;
@@ -1188,6 +1208,10 @@ export type StepRefuse = {
 };
 export type StepShot = {
     name: string;
+};
+export type StepSlide = {
+    field: string;
+    to: number;
 };
 export type StepType = {
     id: string;

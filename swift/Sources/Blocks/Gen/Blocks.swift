@@ -896,9 +896,10 @@ public enum Field: Codable, Equatable, Sendable {
     case secret(SecretField)
     case upload(UploadField)
     case scan(ScanField)
+    case slider(SliderField)
     case otherField(JSONValue)
 
-    public static let tags: Set<String> = ["text", "toggle", "picker", "secret", "upload", "scan"]
+    public static let tags: Set<String> = ["text", "toggle", "picker", "secret", "upload", "scan", "slider"]
 
     private enum Tag: String, CodingKey { case tag = "type" }
 
@@ -910,6 +911,7 @@ public enum Field: Codable, Equatable, Sendable {
         case "secret": self = try (try? SecretField(from: decoder)).map(Self.secret) ?? .otherField(JSONValue(from: decoder))
         case "upload": self = try (try? UploadField(from: decoder)).map(Self.upload) ?? .otherField(JSONValue(from: decoder))
         case "scan": self = try (try? ScanField(from: decoder)).map(Self.scan) ?? .otherField(JSONValue(from: decoder))
+        case "slider": self = try (try? SliderField(from: decoder)).map(Self.slider) ?? .otherField(JSONValue(from: decoder))
         default: self = .otherField(try JSONValue(from: decoder))
         }
     }
@@ -922,6 +924,7 @@ public enum Field: Codable, Equatable, Sendable {
         case .secret(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("secret", forKey: .tag)
         case .upload(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("upload", forKey: .tag)
         case .scan(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("scan", forKey: .tag)
+        case .slider(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("slider", forKey: .tag)
         case .otherField(let v): try v.encode(to: encoder)
         }
     }
@@ -2920,6 +2923,40 @@ public struct Sky: RawRepresentable, Hashable, Codable, Equatable, Sendable {
     public static let all: [Self] = [.clear, .windy, .fog, .storm]
 }
 
+public struct SliderField: Codable, Equatable, Sendable {
+    public var checks: [Check]?
+    public var doc: String?
+    public var enabled: Expr?
+    public var error: String?
+    public var label: String?
+    public var max: Double
+    public var min: Double
+    public var name: String
+    public var open: Bool?
+    public var show: Expr?
+    public var step: Double?
+    public var unit: String?
+    public var value: Double?
+    public var was: String?
+
+    public init(checks: [Check]? = nil, doc: String? = nil, enabled: Expr? = nil, error: String? = nil, label: String? = nil, max: Double, min: Double, name: String, open: Bool? = nil, show: Expr? = nil, step: Double? = nil, unit: String? = nil, value: Double? = nil, was: String? = nil) {
+        self.checks = checks
+        self.doc = doc
+        self.enabled = enabled
+        self.error = error
+        self.label = label
+        self.max = max
+        self.min = min
+        self.name = name
+        self.open = open
+        self.show = show
+        self.step = step
+        self.unit = unit
+        self.value = value
+        self.was = was
+    }
+}
+
 public struct SortDir: RawRepresentable, Hashable, Codable, Equatable, Sendable {
     public let rawValue: String
     public init(rawValue: String) { self.rawValue = rawValue }
@@ -2990,6 +3027,7 @@ public indirect enum Step: Codable, Equatable, Sendable {
     case gesture(StepGesture)
     case refuse(StepRefuse)
     case file(StepFile)
+    case slide(StepSlide)
     case unknown(JSONValue)
 
     private struct Key: CodingKey {
@@ -3012,6 +3050,7 @@ public indirect enum Step: Codable, Equatable, Sendable {
             case "gesture": if let v = try? c.decode(StepGesture.self, forKey: k) { self = .gesture(v); return }
             case "refuse": if let v = try? c.decode(StepRefuse.self, forKey: k) { self = .refuse(v); return }
             case "file": if let v = try? c.decode(StepFile.self, forKey: k) { self = .file(v); return }
+            case "slide": if let v = try? c.decode(StepSlide.self, forKey: k) { self = .slide(v); return }
             default: break
             }
             self = .unknown(try JSONValue(from: decoder)); return
@@ -3030,6 +3069,7 @@ public indirect enum Step: Codable, Equatable, Sendable {
         case .gesture(let v): var c = encoder.container(keyedBy: Key.self); try c.encode(v, forKey: Key("gesture"))
         case .refuse(let v): var c = encoder.container(keyedBy: Key.self); try c.encode(v, forKey: Key("refuse"))
         case .file(let v): var c = encoder.container(keyedBy: Key.self); try c.encode(v, forKey: Key("file"))
+        case .slide(let v): var c = encoder.container(keyedBy: Key.self); try c.encode(v, forKey: Key("slide"))
         case .unknown(let v): try v.encode(to: encoder)
         }
     }
@@ -3086,6 +3126,16 @@ public struct StepShot: Codable, Equatable, Sendable {
 
     public init(name: String) {
         self.name = name
+    }
+}
+
+public struct StepSlide: Codable, Equatable, Sendable {
+    public var field: String
+    public var to: Double
+
+    public init(field: String, to: Double) {
+        self.field = field
+        self.to = to
     }
 }
 

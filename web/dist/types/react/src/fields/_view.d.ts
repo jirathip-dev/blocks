@@ -16,6 +16,7 @@ export type FieldCx = {
 export type FieldView<F = Field> = {
     row?: string;
     group?: boolean;
+    waits?: boolean;
     draw(field: F, c: FieldCx, attrs: Record<string, unknown>): ReactNode;
     sent?(field: F, value: Lit): unknown;
 };
