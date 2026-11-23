@@ -1,11 +1,17 @@
+use serde::{Deserialize, Serialize};
+
 use super::Word;
 use crate::expr::Expr;
 use crate::kind::{Check, FieldValue};
 
+words!(ToggleLook { Switch, Check });
+
 field! {
-    /// An on or off switch.
+    /// An on or off switch; `as: "check"` draws it as a checkbox.
     pub struct ToggleField {
         value: Option<FieldValue>,
+        #[serde(rename = "as")]
+        look: Option<ToggleLook>,
     }
 }
 

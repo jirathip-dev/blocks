@@ -24,7 +24,7 @@ const later = () => new Promise((r) => setImmediate(r));
 
 test("each fixtures/fields form draws every field with its type's view, its words in the screen's language", () => {
   const at = new URL("../../../fixtures/fields/", import.meta.url);
-  const want = { text: ["text", null], toggle: ["checkbox", "switch"], picker: [undefined, null], secret: ["password", null], search: ["search", null], upload: ["file", null] };
+  const want = { text: ["text", null], toggle: ["checkbox", "switch"], check: ["checkbox", null], picker: [undefined, null], secret: ["password", null], search: ["search", null], upload: ["file", null] };
   for (const f of readdirSync(at).filter((n) => n.endsWith(".json"))) {
     const screen = JSON.parse(readFileSync(new URL(f, at), "utf8"));
     const form = screen.blocks[0];
@@ -36,7 +36,7 @@ test("each fixtures/fields form draws every field with its type's view, its word
         continue;
       }
       const name = x.type === "upload" ? part(r[i], "fu").dataset.field : ctl(r[i]).name;
-      deepStrictEqual([name, ctl(r[i]).type, ctl(r[i]).getAttribute("role")], [x.name, ...want[x.type]], `${f} ${x.name}`);
+      deepStrictEqual([name, ctl(r[i]).type, ctl(r[i]).getAttribute("role")], [x.name, ...want[x.as ?? x.type]], `${f} ${x.name}`);
     }
   }
   const secret = { type: "form", id: "keys", fields: [{ type: "secret", name: "key" }, { type: "text", name: "who", was: "Ada" }] };

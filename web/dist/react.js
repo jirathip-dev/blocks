@@ -1037,7 +1037,7 @@ var secret = {
 import { createElement as createElement8 } from "react";
 var toggle = {
   row: " tg",
-  draw: (_x, c, attrs) => createElement8("input", { ...attrs, type: "checkbox", role: "switch", checked: !!c.value, onChange: (e) => c.put(e.target.checked) }),
+  draw: (x, c, attrs) => createElement8("input", { ...attrs, type: "checkbox", role: x.as === "check" ? void 0 : "switch", checked: !!c.value, onChange: (e) => c.put(e.target.checked) }),
   sent: (_x, v) => !!v
 };
 

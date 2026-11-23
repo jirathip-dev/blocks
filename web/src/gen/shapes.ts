@@ -7517,6 +7517,16 @@ export const defs: Record<string, Shape> = {
   "ToggleField": {
     "additionalProperties": true,
     "properties": {
+      "as": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/ToggleLook"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
       "checks": {
         "items": {
           "$ref": "#/$defs/Check"
@@ -7594,6 +7604,20 @@ export const defs: Record<string, Shape> = {
       "name"
     ],
     "type": "object"
+  },
+  "ToggleLook": {
+    "anyOf": [
+      {
+        "enum": [
+          "switch",
+          "check"
+        ],
+        "type": "string"
+      },
+      {
+        "type": "string"
+      }
+    ]
   },
   "Tone": {
     "anyOf": [
