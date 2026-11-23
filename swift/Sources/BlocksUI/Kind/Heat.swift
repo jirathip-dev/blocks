@@ -190,7 +190,9 @@ internal struct HeatBlock: View {
                 face.contentShape(Rectangle())
             }
             .buttonStyle(.plain).accessibilityLabel(m.said(r, c)).accessibilityAddTraits(on ? .isSelected : [])
+            #if !os(watchOS)
             .onHover { hover = $0 ? (r, c) : nil }
+            #endif
         } else {
             face.accessibilityElement().accessibilityLabel(m.said(r, c))
         }
