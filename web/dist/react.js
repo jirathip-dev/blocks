@@ -2931,16 +2931,18 @@ function stat({ b, hooks: hooks4 }) {
 
 // react/src/kinds/steps.ts
 import { createElement as createElement13, useContext as useContext22 } from "react";
+var WORD = { done: "done", now: "current", todo: "to do" };
 function stage(s, i, n, at2, cx) {
-  const state3 = i < at2 ? "done" : i === at2 ? "now" : "todo";
+  const state3 = ["done", "now", "todo"][Math.sign(i - at2) + 1] ?? "todo";
   const tap = state3 === "done" ? s.tap ?? null : null;
   const url2 = urlOf(tap);
-  const own3 = { "aria-label": `${s.label}, step ${i + 1} of ${n}, ${state3 === "done" ? "done" : state3 === "now" ? "current" : "to do"}`, title: s.label };
+  const own3 = { "aria-label": `${s.label}, step ${i + 1} of ${n}, ${WORD[state3]}`, title: s.label };
   const mark2 = h("span", "spr", { "aria-hidden": "true" }, h("i", "spm", null, i < at2 ? "\u2713" : String(i + 1)), h("span", "spk", null));
   const sub = s.sub || (i === at2 ? `step ${i + 1} of ${n}` : "");
   const kids3 = [mark2, h("span", "spn", null, s.label), sub ? h("span", "sps", null, sub) : null];
   const pressed = tap && !url2 ? { "data-action": sends(tap), ...press(() => cx.tap(tap)) } : null;
-  const x = url2 ? h("a", "spc tap", { ...own3, ...out(url2) }, ...kids3) : h("div", tap ? "spc tap" : "spc", { ...own3, ...pressed }, ...kids3);
+  const cls = tap ? "spc tap" : "spc";
+  const x = url2 ? h("a", cls, { ...own3, ...out(url2) }, ...kids3) : h("div", cls, { ...own3, ...pressed }, ...kids3);
   return h("li", `spi ${state3}`, { "aria-current": i === at2 ? "step" : void 0 }, x);
 }
 function bar2(r) {
@@ -2954,12 +2956,14 @@ function steps({ b, hooks: hooks4 }) {
   const list3 = b.steps ?? [];
   const bars = b.bars ?? [];
   const n = list3.length;
-  const at2 = b.current != null ? list3.findIndex((s) => s.id === b.current) : b.done ? n : -1;
+  const end = b.done ? n : -1;
+  const at2 = b.current != null ? list3.findIndex((s) => s.id === b.current) : end;
   if (n ? at2 < 0 : !bars.length) return createElement13(Fallen, { b });
   const title = b.title ? h("div", "sh", null, b.title) : null;
   if (!n) return h("div", "pg", hooks4, title, h("div", bars.length > 1 ? "pgl rows" : "pgl", null, ...bars.map(bar2)));
   const cur = list3[at2];
-  const x = cur ? [h("b", "", null, cur.label), h("span", "m", null, `step ${at2 + 1} of ${n}${cur.sub ? ` \xB7 ${cur.sub}` : ""}`)] : [h("b", "", null, "All done"), h("span", "m", null, `${n} of ${n}`)];
+  const tail = cur?.sub ? ` \xB7 ${cur.sub}` : "";
+  const x = cur ? [h("b", "", null, cur.label), h("span", "m", null, `step ${at2 + 1} of ${n}${tail}`)] : [h("b", "", null, "All done"), h("span", "m", null, `${n} of ${n}`)];
   return h("div", "sp", hooks4, title, h("ol", "spl", null, ...list3.map((s, i) => stage(s, i, n, at2, cx))), h("div", "spx", { "aria-hidden": "true" }, ...x));
 }
 
