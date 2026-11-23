@@ -1,0 +1,26 @@
+{
+  "type": "screen",
+  "id": "delivery",
+  "title": "Delivery",
+  "blocks": [
+    {
+      "type": "card",
+      "id": "stop",
+      "title": "Stop 3 of 8",
+      "subtitle": "Unload 12 crates at the back door"
+    },
+    {
+      "type": "button",
+      "id": "check",
+      "label": "Check quantities",
+      "action": "check",
+      "style": "primary"
+    },
+    {
+      "type": "button",
+      "id": "call",
+      "label": "Call customer",
+      "action": "call"
+    }
+  ]
+}

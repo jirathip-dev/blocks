@@ -75,6 +75,7 @@ export const rules = {
   type: { "default": ":root{font-family:system-ui,-apple-system,\"Segoe UI\",Roboto,sans-serif}", "mono": "", "serif": ":root{font-family:ui-serif,Georgia,Cambria,serif}" },
   surface: { "glass": "", "dashed": ":is(.card,.st,.list>.row,.list>.rw,.form:not(.say),.choice,.secret,.run,.tbl){border-style:dashed}", "solid": ":is(.card,.st,.list>.row,.list>.rw,.form:not(.say),.choice,.secret,.run,.tbl){border-width:2px}" },
   fills: { "tint": "", "outline": ".chips button.on,.spi.done .spm{background:none;color:var(--l);box-shadow:inset 0 0 0 1px var(--l)}", "solid": "" },
+  buttons: { "plain": "", "filled": "button::before,a.btn::before{content:none}button::after,a.btn::after{content:\"\"}button.primary,a.btn.primary{background:var(--l);color:var(--bg);padding:0 var(--s3);font-weight:600}" },
   marks: { "symbols": "", "text": ".spi.done .spm{width:auto;font-size:0}.spi.done .spm::after{content:\"done\";font-size:var(--fs-meta)}" },
   sections: { "title": "", "quiet": ".sh{font-size:var(--fs-meta);font-weight:400}" },
 };
