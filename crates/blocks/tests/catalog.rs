@@ -55,8 +55,8 @@ fn a_catalog_that_could_allow_more_than_it_says_does_not_load() {
             "`button` takes no inputs",
         ),
         (
-            r#"{"name": "x", "kinds": {"form": {"inputs": ["slider"]}}}"#,
-            "`form`: `slider` is no field type",
+            r#"{"name": "x", "kinds": {"form": {"inputs": ["dial"]}}}"#,
+            "`form`: `dial` is no field type",
         ),
         (
             r#"{"name": "x", "kinds": {}, "links": ["https://a.example"]}"#,

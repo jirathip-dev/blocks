@@ -8,6 +8,7 @@ import { tiles, css as wear } from "../src/theme.ts";
 import { tree } from "../src/core/tree.ts";
 import { at, blocks } from "./at.ts";
 import { leaks, pick } from "./file.ts";
+import { slide } from "./slide.ts";
 import { gesture } from "./gesture.ts";
 import { declared, measure } from "./look.ts";
 
@@ -165,7 +166,7 @@ export async function shot({ screen, steps = [], name = "shot", size = "390x844"
       if (type) await ((await live(type)) ? (await type.fill(s.type.text), s.type.enter && (await type.press("Enter"))) : report.dropped.push(`type ${s.type.id}`));
       if (s.scroll) frames.push(...(await page.evaluate((id) => window.h.scroll(id), s.scroll.id)));
       if (s.answer) await page.evaluate((ops) => (window.h.ops(ops), window.h.wait?.(true)), s.answer.ops ?? []);
-      await (s.gesture || s.refuse ? gesture(page, s) : s.file ? pick(page, s.file, report.dropped) : s.wait ? page.clock.runFor(s.wait.ms) : null);
+      await (s.gesture || s.refuse ? gesture(page, s) : s.file ? pick(page, s.file, report.dropped) : s.slide ? slide(page, s.slide, report.dropped) : s.wait ? page.clock.runFor(s.wait.ms) : null);
       if (s.shot) {
         const n = s.shot.name;
         pngs[n] = await page.screenshot();

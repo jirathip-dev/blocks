@@ -2,5 +2,6 @@
 .fd .fk{flex:1}
 .fd .fe{color:var(--r);font-size:var(--fs-meta)}
 .fd input:not([type=checkbox]),.fd select{flex:2}
+.fd>input[type=checkbox]:not([role]){order:-1}
 .fl{display:contents}
 .fn{display:none}

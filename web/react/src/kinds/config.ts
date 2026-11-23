@@ -5,6 +5,12 @@ import { btn, type V } from "../draw.ts";
 import { h } from "../h.ts";
 import { field, type Held, values } from "./form.ts";
 
+const typed = (i: HTMLInputElement | HTMLSelectElement): string | number | boolean => {
+  if (i instanceof HTMLSelectElement) return i.value;
+  if (i.type === "checkbox") return i.checked;
+  return i.type === "range" ? Number(i.value) : i.value;
+};
+
 export function config({ b, hooks }: V<Form>) {
   const cx = useContext(Cx);
   const live = useRef(cx);
@@ -27,7 +33,7 @@ export function config({ b, hooks }: V<Form>) {
     if (open) f?.querySelector<HTMLElement>(`[name="${CSS.escape(open.name)}"]`)?.focus();
     const heard = (e: Event) => {
       const t = e.target;
-      if (t instanceof HTMLSelectElement || (t instanceof HTMLInputElement && t.type !== "file")) commit.current(t.name, t instanceof HTMLInputElement && t.type === "checkbox" ? t.checked : t.value);
+      if (t instanceof HTMLSelectElement || (t instanceof HTMLInputElement && t.type !== "file")) commit.current(t.name, typed(t));
     };
     f?.addEventListener("change", heard);
     return () => f?.removeEventListener("change", heard);

@@ -1,5 +1,6 @@
 
 public struct Style: Codable, Equatable, Sendable {
+    public var buttons: Buttons?
     public var easing: Easing?
     public var fills: Fills
     public var format: UInt8
@@ -12,7 +13,8 @@ public struct Style: Codable, Equatable, Sendable {
     public var surface: Surface
     public var type: TypeDesign
 
-    public init(easing: Easing? = nil, fills: Fills, format: UInt8, labels: [String: StyleLabel], marks: Marks, motion: Double? = nil, radius: Double, sections: Sections, space: Double? = nil, surface: Surface, type: TypeDesign) {
+    public init(buttons: Buttons? = nil, easing: Easing? = nil, fills: Fills, format: UInt8, labels: [String: StyleLabel], marks: Marks, motion: Double? = nil, radius: Double, sections: Sections, space: Double? = nil, surface: Surface, type: TypeDesign) {
+        self.buttons = buttons
         self.easing = easing
         self.fills = fills
         self.format = format
@@ -25,6 +27,14 @@ public struct Style: Codable, Equatable, Sendable {
         self.surface = surface
         self.type = type
     }
+}
+
+public struct Buttons: RawRepresentable, Hashable, Codable, Equatable, Sendable {
+    public let rawValue: String
+    public init(rawValue: String) { self.rawValue = rawValue }
+    public static let plain = Self(rawValue: "plain")
+    public static let filled = Self(rawValue: "filled")
+    public static let all: [Self] = [.plain, .filled]
 }
 
 public struct Easing: RawRepresentable, Hashable, Codable, Equatable, Sendable {

@@ -64,6 +64,7 @@ function Upload({ x, c, attrs }: { x: UploadField; c: FieldCx; attrs: Record<str
 export const upload: FieldView<UploadField> = {
   row: " up",
   group: true,
+  waits: true,
   draw: (x, c, attrs) => createElement(Upload, { x, c, attrs }),
   sent: (x) => ids(held(x)),
 };

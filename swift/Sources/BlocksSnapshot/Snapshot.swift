@@ -96,6 +96,7 @@ public struct Snapshot {
             case .gesture(let g): try run.gesture(g)
             case .refuse(let refuse): run.refuse(refuse)
             case .file(let f): try run.file(f)
+            case .slide(let s): try run.slide(s)
             case .unknown(let value): run.unknown(value)
             }
             run.out.times.append(ms(clock.now - begun))

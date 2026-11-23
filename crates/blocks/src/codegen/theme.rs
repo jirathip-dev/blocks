@@ -24,7 +24,7 @@ fn schemes_ts() -> serde_json::Result<String> {
          export type Scheme = {{ label: string; \"color-scheme\": Mode; tokens: Record<Token, string> }};\n\n\
          export const defaultPair: Record<Mode, Scheme> = {};\n\n\
          export const defaultStyle: Record<string, string> = {};\n\n\
-         export const rules = {{\n  type: {},\n  surface: {},\n  fills: {},\n  marks: {},\n  sections: {},\n}};\n\n\
+         export const rules = {{\n  type: {},\n  surface: {},\n  fills: {},\n  buttons: {},\n  marks: {},\n  sections: {},\n}};\n\n\
          export const curves = {};\n\n\
          export const cases = {};\n\n\
          export const drawn = {};\n\n\
@@ -36,6 +36,7 @@ fn schemes_ts() -> serde_json::Result<String> {
         table(theme::TypeDesign::ALL, |v| Some(v.css()))?,
         table(theme::Surface::ALL, |v| Some(v.css()))?,
         table(theme::Fills::ALL, |v| Some(v.css()))?,
+        table(theme::Buttons::ALL, |v| Some(v.css()))?,
         table(theme::Marks::ALL, |v| Some(v.css()))?,
         table(theme::Sections::ALL, |v| Some(v.css()))?,
         table(theme::Easing::ALL, |v| Some(v.curve()))?,

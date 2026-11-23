@@ -1,5 +1,5 @@
-use blocks::{Field, Fields, Form, SecretField};
-use egui::{vec2, Button, Checkbox, ComboBox, Response, RichText, Ui};
+use blocks::{Field, Fields, Form, Num, SecretField, SliderField};
+use egui::{vec2, Button, Checkbox, ComboBox, Response, RichText, Slider, Ui};
 use serde_json::Value;
 
 use crate::{act, bidi};
@@ -17,6 +17,7 @@ macro_rules! each {
             Field::Search($x) => $e,
             Field::Upload($x) => $e,
             Field::Scan($x) => $e,
+            Field::Slider($x) => $e,
             Field::Other($x) => $e,
         }
     };
@@ -87,6 +88,7 @@ fn input(f: &Field, ui: &mut Ui, cx: &mut Cx<'_>, on: bool) -> (Response, Value)
             (r, Value::from(v))
         }
         Field::Secret(s) => return secret(s, ui, cx, on),
+        Field::Slider(s) => slider(s, held, ui, cx, on),
         Field::Text(_) | Field::Search(_) | Field::Upload(_) | Field::Scan(_) | Field::Other(_) => {
             let mut v = text;
             let hint = match f {
@@ -104,6 +106,15 @@ fn input(f: &Field, ui: &mut Ui, cx: &mut Cx<'_>, on: bool) -> (Response, Value)
         act::pick(cx, name, v.clone());
     }
     (r, v)
+}
+
+fn slider(s: &SliderField, held: &Value, ui: &mut Ui, cx: &Cx<'_>, on: bool) -> (Response, Value) {
+    let mut v = held.as_f64().unwrap_or_else(|| s.start());
+    bidi::para(ui, RichText::new(s.said(v)).color(cx.look.fg(ui)));
+    let step = s.step.as_ref().map_or(1.0, Num::get);
+    let bar = Slider::new(&mut v, s.min.get()..=s.max.get()).step_by(step).show_value(false);
+    let r = ui.add_enabled(on, bar);
+    (r, serde_json::from_str(&SliderField::number(v)).unwrap_or_default())
 }
 
 fn secret(s: &SecretField, ui: &mut Ui, cx: &mut Cx<'_>, on: bool) -> (Response, Value) {
@@ -133,11 +144,15 @@ fn draw(b: &Form, ui: &mut Ui, cx: &mut Cx<'_>) {
         if let Some(n) = note(f, ui, cx) {
             bidi::para(ui, n);
         }
-        let typed = !matches!(f, Field::Toggle(_) | Field::Picker(_));
+        let typed = !matches!(f, Field::Toggle(_) | Field::Picker(_) | Field::Slider(_));
         if let Some(me) = cx.me.filter(|_| typed) {
             cx.rec.field(me, r.rect, open);
         }
-        let commit = if typed { r.lost_focus() } else { r.changed() };
+        let commit = match f {
+            Field::Slider(_) => r.drag_stopped() || (r.changed() && !r.dragged()),
+            _ if typed => r.lost_focus(),
+            _ => r.changed(),
+        };
         if let Some(a) = live.filter(|_| commit && !blank(&v)) {
             forget(ui, name);
             act::send(cx, a, Fields::from_iter([(name.to_owned(), v.clone())]));

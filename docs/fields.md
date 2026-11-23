@@ -14,6 +14,7 @@ A `form`'s `fields` (and a `lines` block's `columns`) are a union tagged by `typ
 | `search` | `SearchField` | `value`, `placeholder`, `filters` (a list's or table's id) | `searchbox` |
 | `upload` | `UploadField` | `accept` (`image`, `pdf`, `sheet`), `capture`, `many`, `mb`, `files` | `group` |
 | `scan` | `ScanField` | `max` (pages, default 20), `file` (the PDF it holds) | `group` |
+| `slider` | `SliderField` | `min`, `max` (both required), `step` (default 1), `value` (default `min`), `unit` | `slider` |
 
 Every type also has `name` (required), `label`, `doc`, `was`, `error`, `open`, `show`, `enabled` and `checks`.
 Any other `type` is kept whole and drawn as a one-line text input; the drawn tree records it as `plain`.
@@ -59,6 +60,15 @@ browser's `toBlob` encodes each JPEG. One page, shutter to corrected image, has 
 document camera on an iPhone or iPad that has one, else the photo picker with Vision's rectangle and Core Image's
 perspective correction; PDFKit writes the PDF. With JS off the static page writes the browser's own image input. A
 held `file` has no pages to edit, only [remove] and [scan again].
+
+## Slider
+
+A slider holds a number from `min` to `max` on `step`s. The label over the thumb follows it as it moves: the number
+with only the places it needs, then a no-break space and `unit` ("110 %", "7.5 h"); it is also the control's value
+text. Nothing is sent while the thumb moves; a live form (`config`, or a SwiftUI `form` with an `action`) sends
+`{ name: number }` once, when it is let go. It keeps a draft as text does. The harness step `{ "slide": { "field":
+"size", "to": 120 } }` moves it and lets go in `blocks-shot` and `blocks-snap`; `fixtures/slide/text-size.json` is
+hub's text-size slider.
 
 ## Search
 

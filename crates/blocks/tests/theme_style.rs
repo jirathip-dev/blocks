@@ -12,7 +12,7 @@ fn style(path: &str) -> Result<Style, String> {
 
 #[test]
 fn every_good_style_fixture_reads_and_format_1_gets_the_default_space_motion_and_easing() {
-    for name in ["modern", "still", "terminal"] {
+    for name in ["filled", "modern", "still", "terminal"] {
         style(&format!("fixtures/styles/{name}.json")).unwrap();
     }
     let t = style("fixtures/styles/terminal.json").unwrap();
