@@ -74,6 +74,7 @@ fn pages(bench: Option<&Value>, looks: &[Named]) -> Result<Vec<Page>, String> {
         pages::numbers(bench),
         live::behaviours(),
         live::islands(),
+        live::streams(),
         sizes::layout()?,
     ];
     out.extend((0..all.len()).filter_map(|i| kinds::kind_page(&all, i)));

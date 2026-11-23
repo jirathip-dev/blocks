@@ -1,4 +1,5 @@
 {
+  "boxplot": { "long": ["title", "axis"], "empty": "boxes", "many": "boxes" },
   "button": { "long": ["label"], "why": "one control: no content to empty or repeat" },
   "card": { "long": ["title", "subtitle"], "why": "a title and a subtitle: no list to empty or repeat" },
   "chart": { "long": ["title", "name", "x"], "empty": "series", "many": "x" },
@@ -22,6 +23,7 @@
   "modal": { "long": ["title", "message", "markdown"], "empty": "blocks", "many": "blocks" },
   "nav": { "long": ["label"], "empty": "links", "why": "a nav bar holds a few links, never hundreds" },
   "pages": { "long": ["title", "note", "alt"], "empty": "pages", "many": "pages" },
+  "plot": { "long": ["title", "label"], "empty": "series", "why": "at most 5 series, so no many-row: many points are fixtures/plot/drawn-thin.json and the 60 s check in web/test/kind/plot.test.ts" },
   "prose": { "long": ["text"], "empty": "parts", "many": "parts" },
   "row": { "long": ["title", "subtitle", "value"], "why": "one row: its list is the list kind's many" },
   "run": { "long": ["command", "dir"], "why": "one command: nothing to empty or repeat" },

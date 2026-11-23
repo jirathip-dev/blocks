@@ -1,0 +1,12 @@
+{
+  "axis": "Peak force",
+  "boxes": [],
+  "id": "hands",
+  "selected": "Left",
+  "tap": {
+    "action": "force.hand"
+  },
+  "title": "Peak force per hand",
+  "type": "boxplot",
+  "unit": "kg"
+}

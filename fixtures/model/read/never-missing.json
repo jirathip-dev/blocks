@@ -1,0 +1,6 @@
+{
+  "text": "{\"blocks\": [{\"type\": \"button\", \"action\": \"pick\"}]}",
+  "refused": [
+    "lint/fault"
+  ]
+}

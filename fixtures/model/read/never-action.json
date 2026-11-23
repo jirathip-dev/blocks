@@ -1,0 +1,6 @@
+{
+  "text": "{\"blocks\": [{\"type\": \"prose\", \"markdown\": \"Pick a plan.\"}, {\"type\": \"button\", \"label\": \"Pro\", \"action\": \"pikc\"}]}",
+  "refused": [
+    "catalog/action"
+  ]
+}

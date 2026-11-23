@@ -1,0 +1,24 @@
+/* What `boxplot` adds to blocks.css on top of chart.css's classes: tokens only, square corners, positions in percent. */
+.bxp .chg{grid-template-rows:auto auto auto}
+.bxp .bxa{grid-column:1/-1;font-size:var(--fs-meta);color:var(--mute);margin-bottom:var(--s2)}
+.bxp .chy{min-width:32px;width:auto}
+.bxg{position:absolute;left:0;right:0;border-top:1px solid var(--line)}
+.bxg.base{border-top-color:var(--edge)}
+.bx{position:absolute;top:0;bottom:0;width:min(48px,calc(56% / var(--n)));min-width:6px;transform:translateX(-50%);pointer-events:none}
+.bx i{position:absolute;display:block}
+.bx .w{left:50%;width:0;border-left:1px solid var(--k)}
+.bx .cap{left:25%;right:25%;border-top:1px solid var(--k)}
+.bx .q{left:0;right:0;box-sizing:border-box;border:var(--ring) solid var(--k);background:color-mix(in srgb,var(--k) 18%,var(--card))}
+.bx .m{left:0;right:0;height:0;border-top:3px solid var(--k);margin-top:-1px}
+.bx .o{left:50%;width:7px;height:7px;margin:-3.5px 0 0 -3.5px;box-sizing:border-box;border:1.5px solid var(--k);background:var(--card)}
+.bxx span{max-width:calc(100% * var(--sw) / var(--n) - var(--s1));overflow:hidden;text-overflow:ellipsis}
+@container (max-width:700px){.bxx span{max-width:calc(100% * var(--sp) / var(--n) - var(--s1))}}
+.bxb{width:min(calc(100% / var(--n)),calc(2 * min(48px,calc(56% / var(--n))) + var(--s4)));transform:translateX(-50%)}
+.bxl .chk{background:var(--k)}
+.bxk{position:relative;display:inline-block;flex:none;align-self:center;width:12px;height:10px;--k:var(--l)}
+.bxk.kr{width:1px;margin:0 6px;background:var(--k)}
+.bxk.kb{border:var(--ring) solid var(--k);box-sizing:border-box;background:color-mix(in srgb,var(--k) 18%,var(--card))}
+.bxk.km{height:0;border-top:3px solid var(--k)}
+.bxk.ko{width:7px;height:7px;border:1.5px solid var(--k);box-sizing:border-box}
+.bxp .chc:focus-visible{outline-offset:-2px}
+.bxp td:last-child,.bxp th:last-child{text-align:left;white-space:normal}

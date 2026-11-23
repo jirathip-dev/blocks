@@ -48,11 +48,11 @@ const tree = (page) =>
 const files = SITE ? readdirSync(SITE).filter((f) => f.endsWith(".html")).sort() : [];
 
 test("every page is the same PNG and tree before and after blocks.js adopts it, all under /blocks/", async () => {
-  strictEqual(files.length, 48);
+  strictEqual(files.length, 51);
   const warm = await open("index.html", { js: false });
   await warm.page.screenshot({ fullPage: true });
   await warm.close();
-  for (const f of files.filter((f) => f !== "playground.html")) {
+  for (const f of files.filter((f) => f !== "playground.html" && f !== "streams.html")) {
     const off = await open(f, { js: false });
     const png = await off.page.screenshot({ fullPage: true });
     deepStrictEqual(off.stray, [], f);
@@ -73,6 +73,21 @@ test("every page is the same PNG and tree before and after blocks.js adopts it, 
     deepStrictEqual(on.stray, [], f);
     await on.close();
   }
+});
+
+test("streams: JS off shows the fallback; JS on, play.js swaps in the plot in place", async () => {
+  const off = await open("streams.html", { js: false });
+  ok((await off.page.textContent('[data-id="stream"]')).includes("The stream plays with JS"));
+  strictEqual(await off.page.$$eval('[data-id="stream"] .plot', (e) => e.length), 0);
+  deepStrictEqual(off.stray, []);
+  await off.close();
+  const on = await open("streams.html");
+  await on.page.waitForSelector('[data-id="stream"] .plot');
+  ok((await on.page.textContent('[data-id="stream"] .plot')).includes("Pull"));
+  ok(!(await on.page.textContent('[data-id="stream"]')).includes("The stream plays with JS"));
+  deepStrictEqual(on.warned, []);
+  deepStrictEqual(on.stray, []);
+  await on.close();
 });
 
 test("with JS off a link bar link goes to its page under the sub-path", async () => {

@@ -71,7 +71,8 @@ fn pull<T: Id>(list: &mut Vec<T>, id: &str) -> bool {
     true
 }
 
-enum Spot<'a> {
+pub(crate) enum Spot<'a> {
+    Block(&'a mut Block),
     Lane(&'a mut Lane),
     Round(&'a mut Round),
     Row(&'a mut TableRow),
@@ -112,6 +113,21 @@ impl Block {
             Self::Message(b) => b.blocks.as_ref(),
             _ => None,
         }
+    }
+
+    pub(crate) fn with_lists_of(&self, from: &Block) -> Self {
+        let mut b = self.clone();
+        match (&mut b, from) {
+            (Self::Screen(a), Self::Screen(o)) => a.blocks.clone_from(&o.blocks),
+            (Self::Modal(a), Self::Modal(o)) | (Self::Sheet(a), Self::Sheet(o)) => a.blocks.clone_from(&o.blocks),
+            (Self::Section(a), Self::Section(o)) => a.blocks.clone_from(&o.blocks),
+            (Self::List(a), Self::List(o)) => a.rows.clone_from(&o.rows),
+            (Self::Card(a), Self::Card(o)) => a.blocks.clone_from(&o.blocks),
+            (Self::Message(a), Self::Message(o)) => a.blocks.clone_from(&o.blocks),
+            (Self::Prose(a), Self::Prose(o)) => a.parts.clone_from(&o.parts),
+            _ => {}
+        }
+        b
     }
 
     pub(crate) fn bare(&self) -> Self {
@@ -155,10 +171,7 @@ impl Block {
         }
     }
 
-    pub(crate) fn get(&self, id: &str) -> Option<&Block> {
-        if self.id() == Some(id) {
-            return Some(self);
-        }
+    fn walked(&self) -> Vec<&Block> {
         let mut kids: Vec<&Block> = self.kids().into_iter().flatten().collect();
         if let Self::Card(c) = self {
             kids.extend(c.buttons.iter().flatten());
@@ -166,7 +179,21 @@ impl Block {
         if let Self::Row(r) = self {
             kids.extend(r.rounds.iter().flatten().filter_map(|x| x.blocks.as_ref()).flatten());
         }
-        kids.into_iter().find_map(|b| b.get(id))
+        kids
+    }
+
+    pub(crate) fn get(&self, id: &str) -> Option<&Block> {
+        if self.id() == Some(id) {
+            return Some(self);
+        }
+        self.walked().into_iter().find_map(|b| b.get(id))
+    }
+
+    pub(crate) fn row(&self, id: &str) -> Option<&TableRow> {
+        if let Self::Table(t) = self {
+            return t.rows.iter().find(|r| r.id == id);
+        }
+        self.walked().into_iter().find_map(|b| b.row(id))
     }
 
     fn find(&mut self, id: &str) -> Option<&mut Block> {
@@ -221,11 +248,21 @@ impl Block {
 fn merge<T: Serialize + DeserializeOwned>(b: &mut T, fields: &Fields) -> Result<(), ApplyError> {
     let shape = |e: serde_json::Error| ApplyError::Shape(e.to_string());
     let mut v = serde_json::to_value(&*b).map_err(shape)?;
-    if let Value::Object(o) = &mut v {
-        o.extend(fields.iter().map(|(k, x)| (k.clone(), x.clone())));
-    }
+    merge_value(&mut v, fields);
     *b = serde_json::from_value(v).map_err(shape)?;
     Ok(())
+}
+
+pub(crate) fn merge_value(v: &mut Value, fields: &Fields) {
+    if let Value::Object(o) = v {
+        for (k, x) in fields {
+            if x.is_null() {
+                o.remove(k);
+            } else {
+                o.insert(k.clone(), x.clone());
+            }
+        }
+    }
 }
 
 fn insert(
@@ -265,17 +302,29 @@ fn replace(root: &mut Block, id: &str, child: &Child) -> Result<(), ApplyError> 
 
 /// Applies `ops` in order; on an error the ops before it stay applied; `badge` sets a screen's badge, `dot` leaves the screen as is.
 pub fn apply(root: &mut Block, ops: &[Op]) -> Result<(), ApplyError> {
+    apply_with(root, ops, |spot, fields| match spot {
+        Spot::Block(b) => merge(b, fields),
+        Spot::Lane(x) => merge(x, fields),
+        Spot::Round(x) => merge(x, fields),
+        Spot::Row(x) => merge(x, fields),
+    })
+}
+
+pub(crate) fn apply_with(
+    root: &mut Block,
+    ops: &[Op],
+    mut merge_at: impl FnMut(Spot<'_>, &Fields) -> Result<(), ApplyError>,
+) -> Result<(), ApplyError> {
     let no = |id: &str| ApplyError::NoBlock(id.into());
     for op in ops {
         match op {
-            Op::Merge { id, fields } => match root.find(id) {
-                Some(b) => merge(b, fields)?,
-                None => match root.spot(id).ok_or_else(|| no(id))? {
-                    Spot::Lane(x) => merge(x, fields)?,
-                    Spot::Round(x) => merge(x, fields)?,
-                    Spot::Row(x) => merge(x, fields)?,
-                },
-            },
+            Op::Merge { id, fields } => {
+                let spot = match root.find(id) {
+                    Some(b) => Spot::Block(b),
+                    None => root.spot(id).ok_or_else(|| no(id))?,
+                };
+                merge_at(spot, fields)?;
+            }
             Op::Insert {
                 into,
                 before,
@@ -295,6 +344,11 @@ pub fn apply(root: &mut Block, ops: &[Op]) -> Result<(), ApplyError> {
             Op::Append { id, keep, parts, text } => match root.find(id) {
                 Some(Block::Prose(p)) => p.grow(*keep, parts, text).map_err(ApplyError::Shape)?,
                 Some(_) => return Err(ApplyError::Shape(format!("`{id}` is no prose block"))),
+                None => return Err(no(id)),
+            },
+            Op::Points { id, series, drop, x, y } => match root.find(id) {
+                Some(Block::Plot(p)) => p.grow(series, *drop, x, y).map_err(ApplyError::Shape)?,
+                Some(_) => return Err(ApplyError::Shape(format!("`{id}` is no plot"))),
                 None => return Err(no(id)),
             },
             Op::Badge { count } => {

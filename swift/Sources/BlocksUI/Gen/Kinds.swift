@@ -2,52 +2,6 @@ import Blocks
 import SwiftUI
 
 extension Block {
-    internal var typeAndID: (type: String, id: String?) {
-        switch self {
-        case .screen(let b): ("screen", b.id)
-        case .modal(let b): ("modal", b.id)
-        case .sheet(let b): ("sheet", b.id)
-        case .section(let b): ("section", b.id)
-        case .list(let b): ("list", b.id)
-        case .row(let b): ("row", b.id)
-        case .card(let b): ("card", b.id)
-        case .choice(let b): ("choice", b.id)
-        case .form(let b): ("form", b.id)
-        case .config(let b): ("config", b.id)
-        case .secret(let b): ("secret", b.id)
-        case .run(let b): ("run", b.id)
-        case .button(let b): ("button", b.id)
-        case .chips(let b): ("chips", b.id)
-        case .stat(let b): ("stat", b.id)
-        case .text(let b): ("text", b.id)
-        case .images(let b): ("images", b.id)
-        case .web(let b): ("web", b.id)
-        case .diff(let b): ("diff", b.id)
-        case .editor(let b): ("editor", b.id)
-        case .scene(let b): ("scene", b.id)
-        case .diagram(let b): ("diagram", b.id)
-        case .composer(let b): ("composer", b.id)
-        case .lines(let b): ("lines", b.id)
-        case .prose(let b): ("prose", b.id)
-        case .hero(let b): ("hero", b.id)
-        case .media(let b): ("media", b.id)
-        case .nav(let b): ("nav", b.id)
-        case .island(let b): ("island", b.id)
-        case .table(let b): ("table", b.id)
-        case .steps(let b): ("steps", b.id)
-        case .chart(let b): ("chart", b.id)
-        case .toast(let b): ("toast", b.id)
-        case .pages(let b): ("pages", b.id)
-        case .timeline(let b): ("timeline", b.id)
-        case .import(let b): ("import", b.id)
-        case .message(let b): ("message", b.id)
-        case .tool(let b): ("tool", b.id)
-        case .sidebar(let b): ("sidebar", b.id)
-        case .heat(let b): ("heat", b.id)
-        case .appBlock(let b): (b.type, b.id)
-        }
-    }
-
     internal var variant: String? {
         switch self {
         case .modal(let b): b.variant?.rawValue
@@ -79,6 +33,7 @@ extension Block {
         case .lines(let b): Source(action: b.action)
         case .chart(let b): Source(tap: b.tap)
         case .import(let b): Source(action: b.action)
+        case .boxplot(let b): Source(tap: b.tap)
         case .heat(let b): Source(tap: b.tap)
         default: Source()
         }
@@ -117,12 +72,14 @@ extension Block {
         case .message(let b): [b.name]
         case .tool(let b): [b.name]
         case .sidebar(let b): [b.label]
+        case .boxplot(let b): [b.title]
         case .heat(let b): [b.title]
+        case .plot(let b): [b.title]
         default: []
         }
     }
 
-    internal static let roles = ["modal": "dialog", "sheet": "dialog", "section": "region", "form": "form", "config": "form", "nav": "navigation", "chart": "figure", "toast": "status", "message": "article", "sidebar": "navigation", "heat": "figure"]
+    internal static let roles = ["modal": "dialog", "sheet": "dialog", "section": "region", "form": "form", "config": "form", "nav": "navigation", "chart": "figure", "plot": "figure", "toast": "status", "message": "article", "sidebar": "navigation", "heat": "figure", "boxplot": "figure"]
     internal static let names = ["label", "title", "header", "question", "alt", "file", "command", "placeholder", "name"]
 }
 
@@ -131,6 +88,7 @@ internal struct KindView: View {
 
     internal var body: some View {
         switch block {
+        case .boxplot(let block): BoxplotBlock(block: block)
         case .button(let block): ButtonBlock(block: block)
         case .card(let block): CardBlock(block: block)
         case .chart(let block): ChartBlock(block: block)
@@ -151,6 +109,7 @@ internal struct KindView: View {
         case .modal(let block): ModalBlock(block: block)
         case .nav(let block): NavBlock(block: block)
         case .pages(let block): PagesBlock(block: block)
+        case .plot(let block): PlotBlock(block: block)
         case .prose(let block): ProseBlock(block: block)
         case .row(let block): RowBlock(block: block)
         case .run(let block): RunBlock(block: block)

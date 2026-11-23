@@ -1,0 +1,64 @@
+{
+  "catalog": {
+    "name": "reply",
+    "kinds": {
+      "prose": {},
+      "row": {
+        "fields": [
+          "title",
+          "subtitle",
+          "tap"
+        ]
+      },
+      "card": {
+        "fields": [
+          "title",
+          "subtitle",
+          "blocks",
+          "buttons"
+        ]
+      },
+      "button": {
+        "fields": [
+          "label",
+          "action",
+          "style"
+        ],
+        "actions": [
+          "pick",
+          "open-plan"
+        ]
+      },
+      "chips": {
+        "actions": [
+          "filter"
+        ]
+      },
+      "form": {
+        "actions": [
+          "submit"
+        ],
+        "inputs": [
+          "text",
+          "toggle"
+        ]
+      },
+      "media": {}
+    },
+    "links": [
+      "https://",
+      "mailto:"
+    ],
+    "media": [
+      "https://cdn.example/"
+    ],
+    "max": {
+      "blocks": 40,
+      "chars": 40
+    }
+  },
+  "text": "{\"blocks\": [{\"type\": \"prose\", \"markdown\": \"Pick a plan.\"}, {\"type\": \"button\", \"label\": \"Pro\", \"action\": \"pick\"}]}",
+  "refused": [
+    "read/size"
+  ]
+}

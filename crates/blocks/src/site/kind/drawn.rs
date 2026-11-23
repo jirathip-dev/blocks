@@ -1,4 +1,5 @@
 kinds! {
+    "boxplot" => boxplot,
     "button" => button,
     "card" => card,
     "chart" => chart,
@@ -22,6 +23,7 @@ kinds! {
     "modal" => modal,
     "nav" => nav,
     "pages" => pages,
+    "plot" => plot,
     "prose" => prose,
     "row" => row,
     "run" => run,

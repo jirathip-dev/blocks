@@ -1,0 +1,8 @@
+{
+  "axis": "Share of force",
+  "boxes": [],
+  "id": "fingers",
+  "title": "Force share per finger",
+  "type": "boxplot",
+  "unit": "%"
+}

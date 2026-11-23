@@ -1,0 +1,13 @@
+{
+  "axis": "Peak force",
+  "boxes": [],
+  "empty": "No sessions yet: hang the board to see your force.",
+  "id": "sessions",
+  "selected": "18 Nov",
+  "tap": {
+    "action": "force.session"
+  },
+  "title": "Peak force per session",
+  "type": "boxplot",
+  "unit": "kg"
+}

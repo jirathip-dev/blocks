@@ -1,0 +1,17 @@
+{
+  "text": "{\"blocks\": [{\"type\": \"prose\", \"markdown\": \"Pick a plan.\"},\n",
+  "fit": {
+    "mends": [
+      {
+        "mend": "closed"
+      }
+    ],
+    "cut": true,
+    "sends": [
+      [
+        "type",
+        "prose"
+      ]
+    ]
+  }
+}

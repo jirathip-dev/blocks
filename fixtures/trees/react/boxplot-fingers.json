@@ -1,0 +1,9 @@
+{
+  "kind": "boxplot",
+  "id": "fingers",
+  "variant": null,
+  "drawn": "fallback",
+  "role": "figure",
+  "name": "Force share per finger",
+  "children": []
+}

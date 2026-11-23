@@ -12,8 +12,8 @@ cargo test --locked --manifest-path demo/client/Cargo.toml
 cargo build --locked --release --target wasm32-unknown-unknown --manifest-path demo/client/Cargo.toml
 wasm=demo/client/target/wasm32-unknown-unknown/release/meter.wasm
 size=$(gzip -9c "$wasm" | wc -c)
-echo "meter.wasm: $(wc -c < "$wasm") bytes, $size gzipped, ceiling 375000"
-[ "$size" -le 375000 ]
+echo "meter.wasm: $(wc -c < "$wasm") bytes, $size gzipped, ceiling 140000"
+[ "$size" -le 140000 ]
 npm --prefix web ci --no-audit --no-fund
 npx --prefix web playwright install --with-deps webkit
 npm --prefix web run test:client

@@ -3,6 +3,7 @@ export type Fault = { fault: "twice"; at: string[]; id: string } | { fault: "act
 export type Shape = boolean | { type?: string | string[]; $ref?: string; properties?: Record<string, Shape>; required?: string[]; anyOf?: Shape[]; oneOf?: Shape[]; items?: Shape; additionalProperties?: Shape; const?: unknown; enum?: unknown[]; not?: Shape; minimum?: number; maximum?: number; minItems?: number; maxItems?: number };
 
 export const kinds: Record<string, string> = {
+  "boxplot": "Boxplot",
   "button": "Button",
   "card": "Card",
   "chart": "Chart",
@@ -26,6 +27,7 @@ export const kinds: Record<string, string> = {
   "modal": "Modal",
   "nav": "Nav",
   "pages": "Pages",
+  "plot": "Plot",
   "prose": "Prose",
   "row": "Row",
   "run": "Run",
@@ -229,7 +231,9 @@ export const defs: Record<string, Shape> = {
             "message",
             "tool",
             "sidebar",
-            "heat"
+            "boxplot",
+            "heat",
+            "plot"
           ]
         },
         "type": "string"
@@ -260,6 +264,20 @@ export const defs: Record<string, Shape> = {
       "tap"
     ],
     "type": "object"
+  },
+  "AxisScale": {
+    "anyOf": [
+      {
+        "enum": [
+          "number",
+          "time"
+        ],
+        "type": "string"
+      },
+      {
+        "type": "string"
+      }
+    ]
   },
   "Band": {
     "properties": {
@@ -843,10 +861,36 @@ export const defs: Record<string, Shape> = {
         "type": "object"
       },
       {
+        "$ref": "#/$defs/Boxplot",
+        "properties": {
+          "type": {
+            "const": "boxplot",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      {
         "$ref": "#/$defs/Heat",
         "properties": {
           "type": {
             "const": "heat",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      {
+        "$ref": "#/$defs/Plot",
+        "properties": {
+          "type": {
+            "const": "plot",
             "type": "string"
           }
         },
@@ -868,6 +912,73 @@ export const defs: Record<string, Shape> = {
     },
     "required": [
       "get"
+    ],
+    "type": "object"
+  },
+  "Boxplot": {
+    "additionalProperties": true,
+    "properties": {
+      "axis": {
+        "type": "string"
+      },
+      "boxes": {
+        "items": {
+          "$ref": "#/$defs/PlotBox"
+        },
+        "type": "array"
+      },
+      "empty": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "id": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "selected": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "show": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "tap": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Tap"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "title": {
+        "type": "string"
+      },
+      "unit": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "required": [
+      "title",
+      "axis",
+      "boxes"
     ],
     "type": "object"
   },
@@ -4591,6 +4702,21 @@ export const defs: Record<string, Shape> = {
       }
     ]
   },
+  "Peak": {
+    "properties": {
+      "label": {
+        "type": "string"
+      },
+      "y": {
+        "type": "number"
+      }
+    },
+    "required": [
+      "y",
+      "label"
+    ],
+    "type": "object"
+  },
   "Pending": {
     "properties": {
       "count": {
@@ -4718,6 +4844,182 @@ export const defs: Record<string, Shape> = {
     },
     "required": [
       "name"
+    ],
+    "type": "object"
+  },
+  "Plot": {
+    "additionalProperties": true,
+    "properties": {
+      "empty": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "id": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "peak": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Peak"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "series": {
+        "items": {
+          "$ref": "#/$defs/Trace"
+        },
+        "type": "array"
+      },
+      "show": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "target": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Target"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "title": {
+        "type": "string"
+      },
+      "window": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "x": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/PlotAxis"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "y": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/PlotAxis"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      }
+    },
+    "required": [
+      "title",
+      "series"
+    ],
+    "type": "object"
+  },
+  "PlotAxis": {
+    "properties": {
+      "label": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "max": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "min": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "scale": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/AxisScale"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "unit": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "type": "object"
+  },
+  "PlotBox": {
+    "properties": {
+      "max": {
+        "type": "number"
+      },
+      "median": {
+        "type": "number"
+      },
+      "min": {
+        "type": "number"
+      },
+      "name": {
+        "type": "string"
+      },
+      "outliers": {
+        "items": {
+          "type": "number"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "q1": {
+        "type": "number"
+      },
+      "q3": {
+        "type": "number"
+      },
+      "tone": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Tone"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      }
+    },
+    "required": [
+      "name",
+      "min",
+      "q1",
+      "median",
+      "q3",
+      "max"
     ],
     "type": "object"
   },
@@ -6586,6 +6888,21 @@ export const defs: Record<string, Shape> = {
     },
     "type": "object"
   },
+  "Target": {
+    "properties": {
+      "max": {
+        "type": "number"
+      },
+      "min": {
+        "type": "number"
+      }
+    },
+    "required": [
+      "min",
+      "max"
+    ],
+    "type": "object"
+  },
   "Text": {
     "additionalProperties": true,
     "properties": {
@@ -7282,6 +7599,41 @@ export const defs: Record<string, Shape> = {
         "type": "string"
       }
     ]
+  },
+  "Trace": {
+    "properties": {
+      "name": {
+        "type": "string"
+      },
+      "tone": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Tone"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "x": {
+        "items": {
+          "type": "number"
+        },
+        "type": "array"
+      },
+      "y": {
+        "items": {
+          "type": "number"
+        },
+        "type": "array"
+      }
+    },
+    "required": [
+      "name",
+      "x",
+      "y"
+    ],
+    "type": "object"
   },
   "Undo": {
     "properties": {

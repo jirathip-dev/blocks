@@ -1,0 +1,52 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>boxplot: every state</title>
+<link rel="stylesheet" href="../neutral-default/tokens.css"><link rel="stylesheet" href="../../../web/dist/blocks.css"><link rel="stylesheet" href="boxplot.css"><link rel="stylesheet" href="page.css"><script src="boxplot.js"></script></head>
+<body><main id="page">
+<div class="top"><b>boxplot</b><span class="m">every state, the stress fixtures, and what the check refuses</span></div>
+<div id="tap" class="half"></div><div id="none" class="half"></div>
+<div id="many"></div>
+<div id="long" class="half"></div><div id="tones" class="half"></div>
+<div id="flat" class="half"></div><div id="empty" class="half"></div>
+<div id="table"></div>
+<div id="refuse" class="half card case"></div><div id="fallback" class="half card case"></div>
+</main>
+<script>
+const B = (name, min, q1, median, q3, max, outliers, tone) => ({ name, min, q1, median, q3, max, outliers, tone });
+const two = [B("Left", 25.8, 30.4, 33.1, 36.0, 41.2, [18.0, 47.5]), B("Right", 28.2, 32.9, 35.6, 38.1, 43.0, [21.4])];
+const base = (o) => Object.assign({ type: "boxplot", id: "t", title: "Peak force per hand", axis: "Peak force", unit: "kg", boxes: two, tap: { action: "force.hand" } }, o);
+function note(c, html, cls = "note") { const p = document.createElement("p"); p.className = cls; p.innerHTML = html; c.append(p); return p; }
+function place(id, node) { const t = document.getElementById(id); node.className += " " + t.className; t.replaceWith(node); return node; }
+let c;
+c = place("tap", boxplot(base({ selected: "Right" })));
+note(c, "1 · Picked. A tap anywhere in a box's column picks it: a <code>--line</code> band, a bold label, and the readout row gives its median, quartiles, range and outliers. It sends <code>force.hand</code> with <code>{x: \"Right\"}</code>.");
+note(c, "<b>VoiceOver</b> “Right: median 35.6 kg, quartiles 32.9 to 38.1, range 28.2 to 43.0, 1 outlier: 21.4. Selected. Button.”", "heard");
+c = place("none", boxplot(base({ tap: undefined })));
+note(c, "2 · Nothing picked: the readout row is a key to the marks instead. With no <code>tap</code> the columns are still reachable to read each box, and send nothing.");
+const days = Array.from({ length: 24 }, (_, i) => { const m = 30 + Math.sin(i / 3) * 3 + i * 0.25, s = 2.2 + (i % 4) * 0.3;
+  return B(String(i + 1), +(m - 2.2 * s).toFixed(1), +(m - s).toFixed(1), +m.toFixed(1), +(m + s).toFixed(1), +(m + 2.3 * s).toFixed(1), i % 5 === 2 ? [+(m - 3.4 * s).toFixed(1)] : i % 7 === 4 ? [+(m + 3.2 * s).toFixed(1)] : []); });
+c = place("many", boxplot({ type: "boxplot", id: "m", title: "Peak force per session, 24 sessions", axis: "Peak force", unit: "kg", boxes: days, selected: "17", tap: { action: "force.session" } }));
+note(c, "3 · Many boxes (the many-row fixture). Boxes narrow to fit, never under 6px; labels thin to 12 (wide) or 8 (narrow); every column stays tappable, and the readout names the picked one even when its label is thinned out.");
+c = place("long", boxplot(base({ title: "Peak force on the 20 mm edge, half-crimp, both hands, last ten sessions", selected: "Right hand, after the pulley injury",
+  boxes: [B("Left hand, half-crimp", 25.8, 30.4, 33.1, 36.0, 41.2, [18.0]), B("Right hand, after the pulley injury", 18.2, 22.9, 25.6, 28.1, 33.0, [])] })));
+note(c, "4 · Long text (the long-text fixture). The title wraps; a long label ends in an ellipsis under its box, and the readout gives it in full.");
+c = place("tones", boxplot({ type: "boxplot", id: "tn", title: "Tones", axis: "Peak force", unit: "kg",
+  boxes: [B("none", 25, 29, 31, 33, 37, [21]), B("ok", 26, 30, 32, 34, 38, []), B("warn", 24, 28, 30, 32, 36, [41]), B("bad", 20, 24, 26, 28, 32, [16]), B("info", 27, 30, 33, 35, 39, []), B("accent", 25, 28, 30, 33, 36, []), B("mute", 23, 27, 29, 31, 35, [])].map(x => (x.tone = x.name === "none" ? undefined : x.name, x)) }));
+note(c, "5 · A tone per box. No tone draws ink, so a plain plot is one colour and a tone means something (say, the injured hand). The outline, whiskers, median and outliers take the tone; the box fill is it at 18% over the card.");
+c = place("flat", boxplot({ type: "boxplot", id: "f", title: "Edge cases of a single box", axis: "Peak force", unit: "kg",
+  boxes: [B("one rep", 31, 31, 31, 31, 31, []), B("median on Q1", 27, 30, 30, 34, 38, []), B("no whiskers", 30, 30, 32, 35, 35, [24, 41])] }));
+note(c, "6 · Equal values are allowed (min ≤ Q1 ≤ median ≤ Q3 ≤ max). A single rep is one median bar; a median on a quartile sits on the box edge; whiskers of zero length draw no cap.");
+c = place("empty", boxplot(base({ boxes: [], empty: "No sessions yet: hang the board to see your force." })));
+note(c, "7 · Empty (the empty fixture): the axis label and the block's <code>empty</code> text, no ticks, nothing tappable.");
+c = place("table", boxplot(base({ tableOpen: true, title: "Peak force per hand, table open" })));
+note(c, "8 · Every box plot ends with a closed Table holding all its numbers, the outliers included; the static site writes the same element.");
+const r = document.getElementById("refuse");
+r.innerHTML = '<h3>9 · What the check refuses</h3><p class="note">The Rust type does not build a box out of order, so no client draws one:</p>' +
+ '<p class="act"><code>Right: q1 38.1 is over the median 35.6; a box needs min ≤ q1 ≤ median ≤ q3 ≤ max</code></p>' +
+ '<p class="act"><code>Left: outlier 33.0 is inside min 25.8 to max 41.2; an outlier lies beyond the whiskers</code></p>' +
+ '<p class="act"><code>a box plot with two boxes named Left</code></p>' +
+ '<p class="note">A NaN or infinite value is refused the same way. There is no cap on the number of boxes; past about 40 the columns get too thin to tap, which is the app\'s call.</p>';
+const f = document.getElementById("fallback");
+f.innerHTML = '<h3>10 · Fallback</h3><p class="note">An older client that does not know <code>boxplot</code> draws the block\'s fallback row: its title and summary line.</p>' +
+ '<div class="card" style="padding:var(--s2) var(--s3);margin-top:var(--s2)"><b>Peak force per hand</b><div class="note" style="margin:0">Left median 33.1 kg, Right median 35.6 kg</div></div>';
+document.body.dataset.h = Math.ceil(document.documentElement.scrollHeight);
+</script></body></html>

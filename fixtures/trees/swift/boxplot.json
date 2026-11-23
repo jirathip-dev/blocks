@@ -1,0 +1,9 @@
+{
+  "kind": "boxplot",
+  "id": "hands",
+  "variant": null,
+  "drawn": "native",
+  "role": "figure",
+  "name": "Peak force per hand",
+  "children": []
+}

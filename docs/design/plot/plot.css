@@ -1,0 +1,28 @@
+/* What `plot` adds to the web CSS: tokens only, square corners, chart's sizes; nothing measured in JS. */
+.plot{container-type:inline-size}
+.plot .plt{font-weight:600}
+.pll{display:flex;flex-wrap:wrap;align-items:baseline;gap:var(--s1) var(--s4);margin:var(--s1) 0 var(--s2);font-size:var(--fs-meta);color:var(--mute)}
+.pll span{display:inline-flex;align-items:baseline;gap:var(--s1);min-width:0}
+.pll b{color:var(--fg);font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+.plk{width:12px;height:2px;flex:none;align-self:center;background:var(--k)}
+.plk.peak{background:repeating-linear-gradient(90deg,var(--fg) 0 4px,transparent 4px 7px)}
+.plk.band{width:8px;height:8px;background:color-mix(in srgb,var(--g) 22%,transparent);box-shadow:inset 0 1px 0 var(--g),inset 0 -1px 0 var(--g)}
+.plg{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:var(--s2)}
+.plu{grid-column:1/-1;display:flex;justify-content:space-between;gap:var(--s2);font-size:var(--fs-meta);color:var(--mute);margin-bottom:var(--s1)}
+.plu.x{grid-column:2;justify-content:flex-end;margin:0}
+.ply{position:relative;width:32px;height:var(--plh,200px);font-size:var(--fs-meta);color:var(--mute);text-align:right;font-variant-numeric:tabular-nums}
+.ply span{position:absolute;right:0;transform:translateY(-50%);white-space:nowrap}
+.plp{position:relative;height:var(--plh,200px)}
+.plp svg{position:absolute;inset:0;width:100%;height:100%;overflow:hidden}
+.plp line,.plp path{vector-effect:non-scaling-stroke;fill:none}
+.plp .peak{stroke:var(--fg);stroke-width:1;stroke-dasharray:4 3}
+.plp .grid{stroke:var(--line);stroke-width:1}.plp .base{stroke:var(--edge);stroke-width:1}
+.plp path.s{stroke:var(--k);stroke-width:2;stroke-linejoin:round;stroke-linecap:square}
+.plb{position:absolute;left:0;right:0;background:color-mix(in srgb,var(--g) 14%,transparent);border-top:1px solid var(--g);border-bottom:1px solid var(--g)}
+.pld{position:absolute;width:8px;height:8px;margin:-4px 0 0 -4px;background:var(--k);box-shadow:0 0 0 2px var(--card)}
+.plx{position:relative;grid-column:2;height:18px;font-size:var(--fs-meta);color:var(--mute)}
+.plx span{position:absolute;top:var(--s1);transform:translateX(-50%);white-space:nowrap;font-variant-numeric:tabular-nums}
+.plx span.lo{transform:none}.plx span.hi{transform:translateX(-100%)}.plx span.near{display:none}
+.ple{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--mute)}
+.ple span{padding:0 var(--s1);background:var(--card)}
+@container (max-width:520px){.plot{--plh:150px}.plx span.odd{display:none}}

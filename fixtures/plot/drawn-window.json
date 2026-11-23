@@ -1,0 +1,120 @@
+{
+  "drawn": {
+    "band": null,
+    "last": [
+      "34 kg"
+    ],
+    "lines": [
+      [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ]
+    ],
+    "x": [
+      3.0,
+      6.0
+    ],
+    "xTicks": [
+      {
+        "at": 3.0,
+        "odd": true,
+        "text": "0:03"
+      },
+      {
+        "at": 4.0,
+        "odd": false,
+        "text": "0:04"
+      },
+      {
+        "at": 5.0,
+        "odd": true,
+        "text": "0:05"
+      },
+      {
+        "at": 6.0,
+        "odd": false,
+        "text": "0:06"
+      }
+    ],
+    "y": [
+      20.0,
+      35.0
+    ],
+    "yTicks": [
+      {
+        "at": 20.0,
+        "odd": false,
+        "text": "20"
+      },
+      {
+        "at": 25.0,
+        "odd": true,
+        "text": "25"
+      },
+      {
+        "at": 30.0,
+        "odd": false,
+        "text": "30"
+      },
+      {
+        "at": 35.0,
+        "odd": true,
+        "text": "35"
+      }
+    ]
+  },
+  "plot": {
+    "id": "p",
+    "series": [
+      {
+        "name": "Force",
+        "x": [
+          0.0,
+          0.5,
+          1.0,
+          1.5,
+          2.0,
+          2.5,
+          3.0,
+          3.5,
+          4.0,
+          4.5,
+          5.0,
+          5.5,
+          6.0
+        ],
+        "y": [
+          10,
+          12,
+          14,
+          16,
+          18,
+          20,
+          22,
+          24,
+          26,
+          28,
+          30,
+          32,
+          34
+        ]
+      }
+    ],
+    "title": "Pull",
+    "type": "plot",
+    "window": 3,
+    "x": {
+      "scale": "time"
+    },
+    "y": {
+      "unit": "kg"
+    }
+  },
+  "why": "a full window: the last 3 s up to the newest x, one point before it kept; time ticks"
+}

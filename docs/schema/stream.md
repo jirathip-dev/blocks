@@ -14,6 +14,13 @@ when only the last text grew, else `keep` and the parts after it; other changed 
 each such frame, so an app ships its clients before its server streams. The cases are `fixtures/append/`, outside
 `fixtures/protocol/`, so the compat job's last release is not asked to know it.
 
+`points` grows a `plot`'s series named `series`: it drops `drop` points from the series' front, then adds `x` and
+`y` at its end. It counts and copies, never works out a value; a `drop` over the points held, an `x` and a `y` of two
+lengths, no series of that name or an id that is no plot does not fit. Only `diff` writes it (or a core that hands
+ops to its own view), for a plot whose series kept their names and tones in order and each grew by a tail after
+losing a front; any other change to `series` is a `merge`. `wire::old` turns a frame's `points` on one plot into one
+`merge` of its `series`. The cases and a 6 s stream are `fixtures/plot/`, outside `fixtures/protocol/`.
+
 One stream per device carries every key (a screen's path) it opens. The server's `Shelf` keeps each key's rev, its
 JSON and a ring of its last 16 deltas (or 64 KB); the client's `Mirror` (the crate's, `web/src/stream.ts`'s) keeps
 the rev it holds and the screen. The stream starts with `hello` (`v`, `sid`, `epoch`, `keys`); the client answers

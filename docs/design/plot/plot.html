@@ -1,0 +1,32 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>plot: a live hang session</title>
+<link rel="stylesheet" href="../neutral-default/tokens.css"><link rel="stylesheet" href="../../../web/dist/blocks.css"><link rel="stylesheet" href="page.css"><link rel="stylesheet" href="plot.css">
+<script src="plot.js"></script></head>
+<body><main>
+<div class="tile"><b>Repeaters</b> <span class="m">set 3 of 6 · 7 s on, 3 s off · 20 mm edge · live</span></div>
+<div class="tile st one"><b id="v-now"></b><div class="m">now</div></div>
+<div class="tile st one"><b id="v-peak"></b><div class="m">peak this set</div></div>
+<div class="tile st one"><b id="v-hr"></b><div class="m">heart rate</div></div>
+<div id="pull"></div>
+<div id="heart"></div>
+</main>
+<script>
+const now = series(0, 21.4, 80, repeaters(30.2, 0)), last = series(0, 30, 80, repeaters(26.1, -0.3));
+const best = Math.max(...now.y);
+const hr = series(0, 1470, 1, t => 92 + 48 * Math.min(1, t / 300) + 14 * Math.sin(t / 38) * Math.min(1, t / 300) + (t > 1150 && t < 1260 ? 18 * Math.sin((t - 1150) / 110 * Math.PI) : 0) + (hash(t) - 0.5) * 3);
+const hmax = Math.max(...hr.y);
+window.blocks = {
+  pull: { type: "plot", id: "pull", title: "Set 3", cls: "tile plot",
+    x: { label: "Time", scale: "time", min: 0, max: 30 }, y: { label: "Force", unit: "kg", min: 0, max: 40 },
+    target: { min: 25, max: 30 }, peak: { y: best, label: `Peak ${best.toFixed(1)} kg` },
+    series: [{ name: "Force", ...now }, { name: "Set 2", ...last }] },
+  heart: { type: "plot", id: "heart", title: "Heart rate", cls: "tile plot",
+    x: { label: "Session", scale: "time" }, y: { label: "Heart rate", unit: "bpm" },
+    peak: { y: hmax, label: `Max ${Math.round(hmax)} bpm` },
+    series: [{ name: "Heart rate", ...hr }] },
+};
+document.getElementById("v-now").textContent = now.y[now.y.length - 1].toFixed(1) + " kg";
+document.getElementById("v-peak").textContent = best.toFixed(1) + " kg";
+document.getElementById("v-hr").textContent = Math.round(hr.y[hr.y.length - 1]) + " bpm";
+mount();
+</script></body></html>

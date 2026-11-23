@@ -1,0 +1,99 @@
+{
+  "text": "{\"blocks\": [{\"type\": \"prose\", \"id\": \"mine\", \"markdown\": \"**Hi**\"}, {\"type\": \"card\", \"title\": \"Plans\", \"buttons\": [{\"type\": \"button\", \"label\": \"Pro\", \"action\": \"pick\"}]}, {\"type\": \"chips\", \"name\": \"plan\", \"action\": \"filter\", \"options\": [{\"value\": \"pro\", \"label\": \"Pro\"}]}, {\"type\": \"form\", \"action\": \"submit\", \"fields\": [{\"type\": \"text\", \"name\": \"email\", \"label\": \"Email\"}]}]}",
+  "fit": {
+    "mends": [],
+    "cut": false,
+    "sends": [
+      [
+        "type",
+        "prose"
+      ],
+      [
+        "action",
+        "pick"
+      ],
+      [
+        "type",
+        "button"
+      ],
+      [
+        "type",
+        "card"
+      ],
+      [
+        "action",
+        "filter"
+      ],
+      [
+        "type",
+        "chips"
+      ],
+      [
+        "action",
+        "submit"
+      ],
+      [
+        "type",
+        "text"
+      ],
+      [
+        "type",
+        "form"
+      ]
+    ],
+    "blocks": [
+      {
+        "type": "prose",
+        "id": "r.0",
+        "parts": [
+          {
+            "part": "para",
+            "spans": [
+              {
+                "text": "Hi",
+                "bold": true
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "card",
+        "id": "r.1",
+        "title": "Plans",
+        "buttons": [
+          {
+            "type": "button",
+            "id": "r.2",
+            "label": "Pro",
+            "action": "pick"
+          }
+        ]
+      },
+      {
+        "type": "chips",
+        "id": "r.3",
+        "name": "r.plan",
+        "action": "filter",
+        "options": [
+          {
+            "value": "pro",
+            "label": "Pro"
+          }
+        ]
+      },
+      {
+        "type": "form",
+        "id": "r.4",
+        "action": "submit",
+        "fields": [
+          {
+            "type": "text",
+            "name": "r.email",
+            "label": "Email"
+          }
+        ]
+      }
+    ]
+  }
+}

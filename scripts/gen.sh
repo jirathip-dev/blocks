@@ -12,3 +12,4 @@ BLOCKS_GEN=1 cargo test -q --locked -p blocks --test check generated
 BLOCKS_GEN=1 cargo test -q --locked -p blocks --test fixtures every_kind_has_a_stress_row
 BLOCKS_GEN=1 cargo test -q --locked -p blocks --test theme_css css_writes_each_fixtures_css_file
 BLOCKS_GEN=1 cargo test -q --locked --manifest-path demo/client/Cargo.toml generated
+BLOCKS_GEN=1 cargo test -q --locked -p blocks --test plot generated

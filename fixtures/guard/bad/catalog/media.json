@@ -1,0 +1,15 @@
+{
+  "type": "screen",
+  "id": "s",
+  "title": "Queue",
+  "blocks": [
+    {
+      "type": "media",
+      "id": "m",
+      "src": "https://evil.example/a.png",
+      "alt": "A cat",
+      "width": 10,
+      "height": 10
+    }
+  ]
+}
