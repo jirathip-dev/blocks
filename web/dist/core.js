@@ -316,9 +316,18 @@ var named2 = (b, t) => String(names.map((k) => b[k]).find((v) => typeof v === "s
 var isLit = (v) => v === null || ["boolean", "number", "string"].includes(typeof v);
 var isExpr = (v) => v !== void 0 && !Array.isArray(v);
 var str = (b, k) => typeof b[k] === "string" && b[k] !== "" ? String(b[k]) : null;
+var aside = (x) => x["type"] === "section" && x["side"] === true;
+function columns(b) {
+  if (b["type"] !== "screen" || b["focus"] === true) return null;
+  const all = blks(b["blocks"]);
+  const side = all.filter(aside);
+  return side.length && side.length < all.length ? [all.filter((x) => !aside(x)), side] : null;
+}
 function under(b, drawn2) {
   if (drawn2 === "fallback") return Array.isArray(b["blocks"]) ? b["blocks"] : [];
   if (drawn2 === "hidden") return [];
+  const split = columns(b);
+  if (split) return split.flat();
   const lists = ["blocks", b["type"] === "table" ? "" : "rows", "buttons"].flatMap((k) => Array.isArray(b[k]) ? b[k] : []);
   return lists.concat(blks(b["rounds"]).flatMap((r) => Array.isArray(r["blocks"]) ? r["blocks"] : []));
 }
@@ -9251,6 +9260,7 @@ export {
   chips,
   choice,
   choose,
+  columns,
   composer,
   config,
   css,

@@ -281,7 +281,6 @@ fn field(f: &Value, types: &[&str], hide: &BTreeSet<String>) -> FieldNode {
     }
 }
 
-/// A screen's main and side blocks when its side sections split it in two columns, each in source order.
 pub(crate) fn columns(v: &Value) -> Option<(Vec<&Value>, Vec<&Value>)> {
     if text_of(v, "type") != Some("screen") || v.get("focus") == Some(&Value::Bool(true)) {
         return None;

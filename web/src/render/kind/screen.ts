@@ -1,10 +1,9 @@
-import type { Block, Screen, Section } from "../../gen/types.ts";
+import { columns } from "../../core/tree.ts";
+import type { Screen } from "../../gen/types.ts";
 import { offable, sends, urlOf } from "../act.ts";
 import { kids } from "../block.ts";
 import type { Ctx } from "../ctx.ts";
 import { btn, el } from "../dom.ts";
-
-const aside = (x: Block): x is Section & { type: "section" } => x.type === "section" && x.side === true;
 
 export function screen(b: Screen, c: Ctx): HTMLElement {
   const s = el("div", "scr");
@@ -19,14 +18,14 @@ export function screen(b: Screen, c: Ctx): HTMLElement {
       x.onclick = () => (m.tap ? c.tap(m.tap) : c.act({ action: m.action, values: m.values, confirm: m.confirm }, x));
       head.append(offable(x, m));
     }
-  const bs = b.blocks ?? [];
-  const side = b.focus ? [] : bs.filter(aside);
-  if (side.length && side.length < bs.length) {
+  const split = columns(b);
+  if (split) {
+    const [mains, side] = split;
     const main = el("div", "scr-main");
     main.dataset["kids"] = "";
-    main.append(...kids(bs.filter((x) => !aside(x)), c));
+    main.append(...kids(mains, c));
     const col = el("aside", "scr-side");
-    col.setAttribute("aria-label", side.map((x) => x.header ?? "").join(", "));
+    col.setAttribute("aria-label", side.map((x) => String(x["header"] ?? "")).join(", "));
     col.append(...kids(side, c));
     const cols = el("div", "scr-cols");
     cols.append(main, col);
@@ -34,7 +33,7 @@ export function screen(b: Screen, c: Ctx): HTMLElement {
     s.append(head, cols);
     return s;
   }
-  s.append(head, ...kids(bs, c));
+  s.append(head, ...kids(b.blocks, c));
   if (b.focus) {
     const m = el("div", "msgs");
     m.append(...Array.from(s.children).filter((e) => !e.matches(".row.sticky, .cmp")));

@@ -2671,7 +2671,7 @@ function scene({ b, hooks: hooks4 }) {
 
 // react/src/kinds/screen.ts
 import { useContext as useContext19 } from "react";
-var aside = (x) => x.type === "section" && x.side === true;
+import { columns } from "./core.js";
 var stays = (x) => x.type === "row" && x.sticky === true || x.type === "composer";
 function screen({ b, hooks: hooks4 }) {
   const cx = useContext19(Cx);
@@ -2680,8 +2680,8 @@ function screen({ b, hooks: hooks4 }) {
   const head4 = h("p", "tabh", null, h("span", "tw b-screen__title", null, (b.title ?? "").toLowerCase()), ...acts2);
   const attrs = { ...hooks4, "data-id": String(b.id) };
   const bs = b.blocks ?? [];
-  const side = bs.filter(aside);
-  if (!b.focus && side.length && side.length < bs.length)
+  const split = columns(b);
+  if (split)
     return h(
       "div",
       "scr split",
@@ -2691,8 +2691,8 @@ function screen({ b, hooks: hooks4 }) {
         "div",
         "scr-cols",
         null,
-        h("div", "scr-main", { "data-kids": "" }, ...kids2(bs.filter((x) => !aside(x)))),
-        h("aside", "scr-side", { "aria-label": side.map((x) => x.header ?? "").join(", ") }, ...kids2(side))
+        h("div", "scr-main", { "data-kids": "" }, ...kids2(split[0])),
+        h("aside", "scr-side", { "aria-label": split[1].map((x) => String(x["header"] ?? "")).join(", ") }, ...kids2(split[1]))
       )
     );
   if (!b.focus) return h("div", "scr", attrs, head4, ...kids2(bs));

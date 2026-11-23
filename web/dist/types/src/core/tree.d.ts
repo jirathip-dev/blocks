@@ -6,6 +6,7 @@ export type Blk = {
 export declare const isBlk: (v: unknown) => v is Blk;
 export declare const blks: (v: unknown) => Blk[];
 export declare const named: (b: Blk, t: string) => string;
+export declare function columns(b: Blk): [Blk[], Blk[]] | null;
 export declare function role(b: Blk, kind: string): string;
 export declare function tree(screen: Block, kinds: readonly string[], state?: State): TreeNode;
 export declare function expect(got: TreeNode | undefined, want: TreeNode, at?: string, out?: string[]): string[];

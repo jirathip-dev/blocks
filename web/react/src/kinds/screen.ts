@@ -1,11 +1,10 @@
 import { useContext } from "react";
-import type { Block, Screen } from "../../../src/core/index.ts";
+import { type Block, columns, type Screen } from "../../../src/core/index.ts";
 import { Cx } from "../act.ts";
 import { kids } from "../block.ts";
 import { act, urlOf, type V } from "../draw.ts";
 import { h } from "../h.ts";
 
-const aside = (x: Block): x is Extract<Block, { type: "section" }> => x.type === "section" && x.side === true;
 const stays = (x: Block) => (x.type === "row" && x.sticky === true) || x.type === "composer";
 
 export function screen({ b, hooks }: V<Screen>) {
@@ -15,8 +14,8 @@ export function screen({ b, hooks }: V<Screen>) {
   const head = h("p", "tabh", null, h("span", "tw b-screen__title", null, (b.title ?? "").toLowerCase()), ...acts);
   const attrs = { ...hooks, "data-id": String(b.id) };
   const bs = b.blocks ?? [];
-  const side = bs.filter(aside);
-  if (!b.focus && side.length && side.length < bs.length)
+  const split = columns(b);
+  if (split)
     return h(
       "div",
       "scr split",
@@ -26,8 +25,8 @@ export function screen({ b, hooks }: V<Screen>) {
         "div",
         "scr-cols",
         null,
-        h("div", "scr-main", { "data-kids": "" }, ...kids(bs.filter((x) => !aside(x)))),
-        h("aside", "scr-side", { "aria-label": side.map((x) => x.header ?? "").join(", ") }, ...kids(side)),
+        h("div", "scr-main", { "data-kids": "" }, ...kids(split[0])),
+        h("aside", "scr-side", { "aria-label": split[1].map((x) => String(x["header"] ?? "")).join(", ") }, ...kids(split[1])),
       ),
     );
   if (!b.focus) return h("div", "scr", attrs, head, ...kids(bs));
