@@ -33,7 +33,7 @@ test("parts carry their hook class and the block's own text", () => {
   strictEqual(part(k, "b-card__subtitle")?.textContent, "waiting");
   strictEqual(k.dataset.variant, "ask");
   strictEqual(part(render(fixture("stat"), ctx()), "b-stat__value")?.textContent, "3");
-  strictEqual(part(render(fixture("screen"), ctx()), "b-screen__title")?.textContent, "home");
+  strictEqual(part(render(fixture("screen"), ctx()), "b-screen__title")?.textContent, "Home");
   strictEqual(render({ type: "button", label: "Go", action: "go", style: "primary" }, ctx()).dataset.variant, "primary");
   strictEqual(render({ type: "card", title: "t", tone: "bad" }, ctx()).dataset.tone, "bad");
 });
