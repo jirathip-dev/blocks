@@ -28,7 +28,7 @@ type St = {
   bad: Set<string>;
   fields: Map<string, number>;
 };
-type View = { b: Table; c: Driven; tap: (t: Tap) => void; st: St; box: RefObject<HTMLDivElement | null>; wired: WeakSet<Element>; draw: () => void };
+type View = { b: Table; c: Driven; tap: (t: Tap) => void; unseek: () => void; st: St; box: RefObject<HTMLDivElement | null>; wired: WeakSet<Element>; draw: () => void };
 type Shown = { cols: Column[]; role: string[]; rows: TableRow[]; items: TableRow[]; pick: boolean; sel: number; all: boolean; handles: boolean; ed: boolean; tab: string };
 
 const FORMAT: Record<string, string> = { csv: "CSV", xlsx: "Excel" };
@@ -245,7 +245,7 @@ function body(v: View, d: Shown): ReactNode {
   const { b, st } = v;
   const rows = d.rows.map((r, i) => (r.group ? group(v, d, i) : item(v, d, r)));
   if (!d.items.length) {
-    const clear = b.rows.length ? btn("clear", "", undefined, undefined, go(v, () => (st.q = ""))) : null;
+    const clear = b.rows.length ? btn("clear", "", undefined, undefined, go(v, () => ((st.q = ""), v.unseek()))) : null;
     const td = h("td", "", { colSpan: d.cols.length + (d.pick ? 1 : 0) + (d.handles ? 1 : 0) }, b.rows.length ? `No rows match “${st.q}”. ` : (b.empty ?? "No rows yet."), clear);
     rows.push(h("tr", "tbe", { key: "~" }, td));
   }
@@ -396,7 +396,9 @@ export function table({ b, hooks }: V<Table>) {
   const kept = useRef<St | null>(null);
   const [, draw] = useReducer((n: number) => n + 1, 0);
   const st = state(b, (kept.current ??= init(b)));
-  const v: View = { b, c: { act: (a) => live.current.act(a), held: keep.current }, tap: (t) => live.current.tap(t), st, box, wired: wired.current, draw };
+  const sought = cx.seek[b.id ?? ""];
+  if (sought) st.q = sought.q;
+  const v: View = { b, c: { act: (a) => live.current.act(a), held: keep.current }, tap: (t) => live.current.tap(t), unseek: () => sought && cx.put(sought.name, ""), st, box, wired: wired.current, draw };
   useLayoutEffect(() => {
     if (!st.focus || !st.cur) return;
     st.focus = false;

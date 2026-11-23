@@ -24,6 +24,86 @@
     {
       "blocks": [
         {
+          "action": "find",
+          "fallback": {
+            "title": "form"
+          },
+          "fields": [
+            {
+              "label": "Search",
+              "name": "q",
+              "placeholder": "Search every app",
+              "type": "search",
+              "value": "ops"
+            }
+          ],
+          "id": "find",
+          "type": "form"
+        },
+        {
+          "blocks": [
+            {
+              "fallback": {
+                "title": "list"
+              },
+              "id": "rows-hr",
+              "rows": [
+                {
+                  "id": "hr-1",
+                  "title": "Ops shift swaps",
+                  "type": "row"
+                },
+                {
+                  "id": "hr-2",
+                  "title": "Ops leave requests",
+                  "type": "row"
+                }
+              ],
+              "type": "list"
+            }
+          ],
+          "fallback": {
+            "title": "HR"
+          },
+          "header": "HR",
+          "id": "hits-hr",
+          "type": "section"
+        },
+        {
+          "blocks": [
+            {
+              "fallback": {
+                "title": "list"
+              },
+              "id": "rows-fleet",
+              "rows": [
+                {
+                  "id": "fl-1",
+                  "title": "Ops trucks in Bangkok",
+                  "type": "row"
+                }
+              ],
+              "type": "list"
+            }
+          ],
+          "fallback": {
+            "title": "Fleet"
+          },
+          "header": "Fleet",
+          "id": "hits-fleet",
+          "type": "section"
+        }
+      ],
+      "fallback": {
+        "title": "Apps"
+      },
+      "id": "hub",
+      "title": "Apps",
+      "type": "screen"
+    },
+    {
+      "blocks": [
+        {
           "id": "modal-note",
           "markdown": "Pick a name",
           "type": "text"

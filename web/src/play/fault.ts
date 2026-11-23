@@ -81,6 +81,8 @@ function said(f: Fault): [string, number, string] {
       return [typed(f.kind), 0, `a ${f.kind} with no id`];
     case "bare":
       return [typed(f.kind), 0, `the ${f.kind} ${f.id} has no fallback`];
+    case "aim":
+      return [`"filters"\\s*:\\s*${q(f.id)}`, 1, `the search ${f.field} filters ${f.id}, which is no list or table here`];
     case "shape":
     case "clash":
       return [typed(f.kind), 0, `${f.kind || "the screen"}: ${f.fault === "shape" ? f.why : "an app kind with a core kind's name"}`];

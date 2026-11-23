@@ -11,6 +11,7 @@ A `form`'s `fields` (and a `lines` block's `columns`) are a union tagged by `typ
 | `toggle` | `ToggleField` | `value` | `switch` |
 | `picker` | `PickerField` | `value`, `options` | `combobox` |
 | `secret` | `SecretField` | `placeholder`, `set` | `textbox` |
+| `search` | `SearchField` | `value`, `placeholder`, `filters` (a list's or table's id) | `searchbox` |
 | `upload` | `UploadField` | `accept` (`image`, `pdf`, `sheet`), `capture`, `many`, `mb`, `files` | `group` |
 | `scan` | `ScanField` | `max` (pages, default 20), `file` (the PDF it holds) | `group` |
 
@@ -58,6 +59,17 @@ browser's `toBlob` encodes each JPEG. One page, shutter to corrected image, has 
 document camera on an iPhone or iPad that has one, else the photo picker with Vision's rectangle and Core Image's
 perspective correction; PDFKit writes the PDF. With JS off the static page writes the browser's own image input. A
 held `file` has no pages to edit, only [remove] and [scan again].
+
+## Search
+
+With `filters`, a search hides the rows of that list or table that miss any typed word, in any case (a list row's
+title, subtitle and value, a table row's cells), says "3 of 12" or "no match", and sends nothing; a table's own filter
+follows it. `check` reports `{ fault: "aim", field, id }` when `filters` names no list or table on the screen.
+Without `filters`, in a live form (an `action` and no `submit`), it sends `{ name: text }` 250 ms after the last key,
+at once on Enter and on [clear]. One text is in flight at a time and only the newest waits behind it; the field says
+"searching" and stays usable meanwhile. blocks never touches the URL: the app answers with a new screen and hands the
+text back as the field's `value`. The harness steps `{ wait: { ms } }` (a fake clock) and `type`'s `enter` prove it
+(`web/test/kind/search.test.ts`).
 
 ## Locale and words
 

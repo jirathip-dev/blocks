@@ -373,6 +373,8 @@ export type Field = ({
 } & PickerField) | ({
     type: "secret";
 } & SecretField) | ({
+    type: "search";
+} & SearchField) | ({
     type: "upload";
 } & UploadField) | ({
     type: "scan";
@@ -1033,6 +1035,20 @@ export type Screen = {
     threads?: Record<string, unknown>[] | null;
     title?: string | null;
     url?: string | null;
+};
+export type SearchField = {
+    checks?: Check[] | null;
+    doc?: string | null;
+    enabled?: Expr | null;
+    error?: string | null;
+    filters?: string | null;
+    label?: string | null;
+    name: string;
+    open?: boolean | null;
+    placeholder?: string | null;
+    show?: Expr | null;
+    value?: string | null;
+    was?: string | null;
 };
 export type Secret = {
     action: string;

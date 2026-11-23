@@ -650,6 +650,76 @@
     "app": [],
     "faults": [
       {
+        "fault": "aim",
+        "field": "r",
+        "id": "nowhere"
+      },
+      {
+        "fault": "aim",
+        "field": "s",
+        "id": "t"
+      }
+    ],
+    "name": "aim",
+    "screen": {
+      "blocks": [
+        {
+          "fields": [
+            {
+              "filters": "people",
+              "name": "q",
+              "type": "search"
+            },
+            {
+              "filters": "nowhere",
+              "name": "r",
+              "type": "search"
+            },
+            {
+              "filters": "t",
+              "name": "s",
+              "type": "search"
+            },
+            {
+              "filters": "l",
+              "name": "u",
+              "type": "search"
+            }
+          ],
+          "id": "f",
+          "type": "form"
+        },
+        {
+          "columns": [],
+          "id": "people",
+          "rows": [],
+          "type": "table"
+        },
+        {
+          "blocks": [
+            {
+              "id": "l",
+              "rows": [],
+              "type": "list"
+            }
+          ],
+          "id": "sec",
+          "type": "section"
+        },
+        {
+          "id": "t",
+          "markdown": "x",
+          "type": "text"
+        }
+      ],
+      "id": "s",
+      "type": "screen"
+    }
+  },
+  {
+    "app": [],
+    "faults": [
+      {
         "fault": "shape",
         "kind": "steps",
         "why": "a stepper whose current names no step"
@@ -3603,6 +3673,73 @@
   {
     "app": [],
     "faults": [],
+    "name": "fixtures/blocks/screen-hub.json",
+    "screen": {
+      "blocks": [
+        {
+          "action": "find",
+          "fields": [
+            {
+              "label": "Search",
+              "name": "q",
+              "placeholder": "Search every app",
+              "type": "search",
+              "value": "ops"
+            }
+          ],
+          "id": "find",
+          "type": "form"
+        },
+        {
+          "blocks": [
+            {
+              "id": "rows-hr",
+              "rows": [
+                {
+                  "id": "hr-1",
+                  "title": "Ops shift swaps",
+                  "type": "row"
+                },
+                {
+                  "id": "hr-2",
+                  "title": "Ops leave requests",
+                  "type": "row"
+                }
+              ],
+              "type": "list"
+            }
+          ],
+          "header": "HR",
+          "id": "hits-hr",
+          "type": "section"
+        },
+        {
+          "blocks": [
+            {
+              "id": "rows-fleet",
+              "rows": [
+                {
+                  "id": "fl-1",
+                  "title": "Ops trucks in Bangkok",
+                  "type": "row"
+                }
+              ],
+              "type": "list"
+            }
+          ],
+          "header": "Fleet",
+          "id": "hits-fleet",
+          "type": "section"
+        }
+      ],
+      "id": "hub",
+      "title": "Apps",
+      "type": "screen"
+    }
+  },
+  {
+    "app": [],
+    "faults": [],
     "name": "fixtures/blocks/screen.json",
     "screen": {
       "blocks": [
@@ -4506,6 +4643,86 @@
             "ready": true
           },
           "title": "Home",
+          "type": "screen"
+        },
+        {
+          "blocks": [
+            {
+              "action": "find",
+              "fallback": {
+                "title": "form"
+              },
+              "fields": [
+                {
+                  "label": "Search",
+                  "name": "q",
+                  "placeholder": "Search every app",
+                  "type": "search",
+                  "value": "ops"
+                }
+              ],
+              "id": "find",
+              "type": "form"
+            },
+            {
+              "blocks": [
+                {
+                  "fallback": {
+                    "title": "list"
+                  },
+                  "id": "rows-hr",
+                  "rows": [
+                    {
+                      "id": "hr-1",
+                      "title": "Ops shift swaps",
+                      "type": "row"
+                    },
+                    {
+                      "id": "hr-2",
+                      "title": "Ops leave requests",
+                      "type": "row"
+                    }
+                  ],
+                  "type": "list"
+                }
+              ],
+              "fallback": {
+                "title": "HR"
+              },
+              "header": "HR",
+              "id": "hits-hr",
+              "type": "section"
+            },
+            {
+              "blocks": [
+                {
+                  "fallback": {
+                    "title": "list"
+                  },
+                  "id": "rows-fleet",
+                  "rows": [
+                    {
+                      "id": "fl-1",
+                      "title": "Ops trucks in Bangkok",
+                      "type": "row"
+                    }
+                  ],
+                  "type": "list"
+                }
+              ],
+              "fallback": {
+                "title": "Fleet"
+              },
+              "header": "Fleet",
+              "id": "hits-fleet",
+              "type": "section"
+            }
+          ],
+          "fallback": {
+            "title": "Apps"
+          },
+          "id": "hub",
+          "title": "Apps",
           "type": "screen"
         },
         {

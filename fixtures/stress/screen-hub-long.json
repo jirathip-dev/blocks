@@ -1,0 +1,62 @@
+{
+  "blocks": [
+    {
+      "action": "find",
+      "fields": [
+        {
+          "label": "Search",
+          "name": "q",
+          "placeholder": "Search every app",
+          "type": "search",
+          "value": "ops"
+        }
+      ],
+      "id": "find",
+      "type": "form"
+    },
+    {
+      "blocks": [
+        {
+          "id": "rows-hr",
+          "rows": [
+            {
+              "id": "hr-1",
+              "title": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+              "type": "row"
+            },
+            {
+              "id": "hr-2",
+              "title": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+              "type": "row"
+            }
+          ],
+          "type": "list"
+        }
+      ],
+      "header": "HR",
+      "id": "hits-hr",
+      "type": "section"
+    },
+    {
+      "blocks": [
+        {
+          "id": "rows-fleet",
+          "rows": [
+            {
+              "id": "fl-1",
+              "title": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+              "type": "row"
+            }
+          ],
+          "type": "list"
+        }
+      ],
+      "header": "Fleet",
+      "id": "hits-fleet",
+      "type": "section"
+    }
+  ],
+  "id": "hub",
+  "title": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+  "type": "screen"
+}

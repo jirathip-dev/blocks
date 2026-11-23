@@ -222,7 +222,7 @@ function body(v: View, d: Shown): HTMLElement {
   if (!d.items.length) {
     const td = h("td", "", b.rows.length ? `No rows match “${st.q}”. ` : (b.empty ?? "No rows yet."));
     td.colSpan = d.cols.length + (d.pick ? 1 : 0) + (d.handles ? 1 : 0);
-    if (b.rows.length) td.append(go(v, btn("clear"), () => (st.q = v.q.value = "")));
+    if (b.rows.length) td.append(go(v, btn("clear"), () => ((st.q = v.q.value = ""), v.box.dispatchEvent(new Event("unseek")))));
     out.append(h("tr", "tbe", td));
   }
   return out;
@@ -416,6 +416,7 @@ export function table(b: Table, c: Ctx): HTMLElement {
     const focused = document.activeElement === q;
     const inside = document.activeElement?.tagName === "TD" && box.contains(document.activeElement);
     const d = shows(v);
+    if (box.dataset["seek"] != null) box.dataset["hits"] = `${d.items.length}/${b.rows.filter((r) => !r.group).length}`;
     box.classList.toggle("bulk", d.sel > 0);
     box.classList.toggle("ed", !!b.edit || !!b.reorder);
     const tb = body(v, d);
@@ -436,6 +437,7 @@ export function table(b: Table, c: Ctx): HTMLElement {
     if (inside && st.cur) cursor(v, st.cur);
   };
   q.oninput = () => ((st.q = q.value), v.draw());
+  box.addEventListener("seek", () => ((st.q = q.value = box.dataset["seek"] ?? ""), v.draw()));
   v.draw();
   return box;
 }

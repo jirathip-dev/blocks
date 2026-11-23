@@ -35,6 +35,10 @@ export type Fault = {
     fault: "link";
     at: string;
     url: string;
+} | {
+    fault: "aim";
+    field: string;
+    id: string;
 };
 export type Shape = boolean | {
     type?: string | string[];

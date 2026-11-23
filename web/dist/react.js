@@ -430,17 +430,17 @@ function Arrange(p) {
 }
 
 // react/src/view.ts
-import { createElement as createElement14, useMemo as useMemo3, useRef as useRef19, useSyncExternalStore } from "react";
+import { createElement as createElement15, useMemo as useMemo3, useRef as useRef20, useSyncExternalStore } from "react";
 import { hooks as hooks3, share } from "./core.js";
 
 // react/src/act.ts
 import { createContext, useEffect, useMemo, useRef as useRef2, useState as useState2 } from "react";
-import { check, evaluate, linkable, start, view } from "./core.js";
+import { check, evaluate, linkable, seeks, start, view } from "./core.js";
 var none = { hidden: /* @__PURE__ */ new Set(), disabled: /* @__PURE__ */ new Set(), says: {}, acts: /* @__PURE__ */ new Set(), values: {} };
 var Cx = createContext({ screen: "", locale: {}, v: none, state: {}, edits: {}, put: () => {
 }, busy: /* @__PURE__ */ new Set(), act: async () => false, tap: () => {
 }, report: () => {
-}, kinds: {}, islands: {} });
+}, kinds: {}, islands: {}, seek: {} });
 var goOf = (t) => t.open != null ? { open: t.open } : t.sheet != null ? { sheet: t.sheet } : t.thread != null ? { thread: t.thread } : null;
 function useCx(p, screen2) {
   const props = useRef2(p);
@@ -493,7 +493,7 @@ function useCx(p, screen2) {
       if (!go2 && t.action) void act2({ action: t.action, values: t.values });
     };
     const put = (k, to) => setEdits((e) => ({ ...Object.fromEntries(Object.entries(e).filter(([x]) => x !== k)), ...to === void 0 ? null : { [k]: to } }));
-    return { screen: String(screen2.id ?? ""), locale: screen2.locale ?? {}, v, state: state3, edits, put, busy, act: act2, tap, report, kinds: p.kinds ?? {}, islands: p.islands ?? {}, file: p.onFile };
+    return { screen: String(screen2.id ?? ""), locale: screen2.locale ?? {}, v, state: state3, edits, put, busy, act: act2, tap, report, kinds: p.kinds ?? {}, islands: p.islands ?? {}, file: p.onFile, seek: seeks(screen2, state3) };
   }, [key3, screen2.id, p.kinds, p.islands, p.onFile]);
   const end = (ok) => {
     asking?.done(ok);
@@ -505,7 +505,7 @@ function useCx(p, screen2) {
 }
 
 // react/src/block.ts
-import { Component, createElement as createElement13, memo, useContext as useContext26 } from "react";
+import { Component, createElement as createElement14, memo, useContext as useContext26 } from "react";
 import { hooks as hooks2, named as named3, role } from "./core.js";
 
 // react/src/draw.ts
@@ -647,8 +647,8 @@ function Pill({ b, post }) {
   };
   if (!navigator.onLine) return h("div", "pill", { onClick: () => tick2((n) => n + 1) }, h("span", "r", null, "offline \xB7 tap to retry"));
   const s = Math.max(0, Math.floor((Date.now() - Date.parse(String(b.working?.since))) / 1e3));
-  const said4 = stopping ? "stopping\u2026" : `working ${s >= 60 ? `${Math.floor(s / 60)}m ` : ""}${s % 60}s`;
-  return h("div", "pill", null, figure({ state: "working" }, ""), h("span", "pt", null, said4), stop && !stopping ? btn("stop", "bad", void 0, stop, { onClick: halt }) : null);
+  const said5 = stopping ? "stopping\u2026" : `working ${s >= 60 ? `${Math.floor(s / 60)}m ` : ""}${s % 60}s`;
+  return h("div", "pill", null, figure({ state: "working" }, ""), h("span", "pt", null, said5), stop && !stopping ? btn("stop", "bad", void 0, stop, { onClick: halt }) : null);
 }
 function queued({ q, text: text4 }, steer, unqueue, post, edit2) {
   const now = btn("send now", "primary", void 0, steer, { onClick: () => void post(steer, { q }) });
@@ -745,8 +745,8 @@ function composer({ b, hooks: hooks4 }) {
     nonce.current = void 0;
     ta.current?.focus();
   };
-  const said4 = q != null ? "save" : b.working ? "queue" : b.label ?? "";
-  const go2 = btn(said4, "primary", void 0, b.action, { "aria-label": said4 || "send", "aria-busy": st === "sending" || void 0, ...held3 });
+  const said5 = q != null ? "save" : b.working ? "queue" : b.label ?? "";
+  const go2 = btn(said5, "primary", void 0, b.action, { "aria-label": said5 || "send", "aria-busy": st === "sending" || void 0, ...held3 });
   const typed = (e) => {
     setText(e.target.value);
     nonce.current = void 0;
@@ -776,17 +776,22 @@ function composer({ b, hooks: hooks4 }) {
 }
 
 // react/src/kinds/config.ts
-import { useContext as useContext7, useEffect as useEffect3, useRef as useRef7, useState as useState9 } from "react";
+import { useContext as useContext7, useEffect as useEffect3, useRef as useRef8, useState as useState10 } from "react";
 
 // react/src/kinds/form.ts
-import { useContext as useContext6, useRef as useRef6, useState as useState8 } from "react";
-import { fill as fill2, lit } from "./core.js";
+import { useContext as useContext6, useRef as useRef7, useState as useState9 } from "react";
+import { fill as fill3, lit } from "./core.js";
 
 // src/gen/words.ts
 var words = {
   was: ["was", "\u0E40\u0E14\u0E34\u0E21"],
   set: ["set \u2713 \xB7 type to replace", "\u0E15\u0E31\u0E49\u0E07\u0E44\u0E27\u0E49\u0E41\u0E25\u0E49\u0E27 \u2713 \xB7 \u0E1E\u0E34\u0E21\u0E1E\u0E4C\u0E40\u0E1E\u0E37\u0E48\u0E2D\u0E41\u0E17\u0E19\u0E17\u0E35\u0E48"],
   unset: ["not set", "\u0E22\u0E31\u0E07\u0E44\u0E21\u0E48\u0E44\u0E14\u0E49\u0E15\u0E31\u0E49\u0E07"],
+  clear: ["clear", "\u0E25\u0E49\u0E32\u0E07"],
+  hits: ["{n} of {m}", "{n} \u0E08\u0E32\u0E01 {m}"],
+  none: ["no match", "\u0E44\u0E21\u0E48\u0E1E\u0E1A"],
+  busy: ["searching", "\u0E01\u0E33\u0E25\u0E31\u0E07\u0E04\u0E49\u0E19\u0E2B\u0E32"],
+  nomatch: ["No rows match \u201C{q}\u201D.", "\u0E44\u0E21\u0E48\u0E21\u0E35\u0E41\u0E16\u0E27\u0E17\u0E35\u0E48\u0E15\u0E23\u0E07\u0E01\u0E31\u0E1A \u201C{q}\u201D"],
   file1: ["choose file", "\u0E40\u0E25\u0E37\u0E2D\u0E01\u0E44\u0E1F\u0E25\u0E4C"],
   fileN: ["add files", "\u0E40\u0E1E\u0E34\u0E48\u0E21\u0E44\u0E1F\u0E25\u0E4C"],
   photo1: ["choose photo", "\u0E40\u0E25\u0E37\u0E2D\u0E01\u0E23\u0E39\u0E1B"],
@@ -983,6 +988,45 @@ var scan = {
   sent: (x) => ids2(scanHeld(x))
 };
 
+// react/src/fields/search.ts
+import { createElement as createElement7, useRef as useRef6, useState as useState8 } from "react";
+import { fill as fill2, typing } from "./core.js";
+function Search({ x, c, attrs }) {
+  const w = (k) => word(c, k);
+  const [busy, setBusy] = useState8(false);
+  const out2 = useRef6(c.send);
+  out2.current = c.send;
+  const sender = useRef6(null);
+  const send4 = sender.current ??= typing((q2) => out2.current?.(q2), setBusy);
+  const input3 = useRef6(null);
+  const live3 = !!c.send && x.filters == null;
+  const q = c.value == null ? "" : String(c.value);
+  const f = c.found;
+  const hit = f && q && (f.n ? fill2(w("hits"), { n: f.n, m: f.m }) : w("none"));
+  const line = busy ? w("busy") : hit || "";
+  const wipe = () => {
+    c.put("");
+    if (live3) send4.now("");
+    input3.current?.focus();
+  };
+  const enter = (e) => {
+    if (e.key !== "Enter" || !live3) return;
+    e.preventDefault();
+    send4.now(q);
+  };
+  const own3 = { ref: input3, type: "search", value: q, placeholder: x.placeholder ?? "", autoComplete: "off", "data-draft": c.key + x.name, "data-was": String(x.value ?? "") };
+  const typed = (e) => (c.put(e.target.value), live3 && send4.key(e.target.value));
+  return h(
+    "span",
+    "sb",
+    { "aria-busy": busy ? "true" : void 0, "aria-invalid": attrs["aria-invalid"] },
+    h("input", "", { ...attrs, ...own3, onChange: typed, onKeyDown: enter }),
+    h("span", "sbn", { "aria-live": "polite" }, line),
+    btn(w("clear"), "sbx", void 0, void 0, { hidden: !q, onClick: wipe })
+  );
+}
+var search = { row: " sr", draw: (x, c, attrs) => createElement7(Search, { x, c, attrs }) };
+
 // react/src/fields/secret.ts
 var secret = {
   draw: (x, c, attrs) => input({ name: x.name }, c, attrs, true, x.set ? word(c, "set") : x.placeholder ?? word(c, "unset")),
@@ -990,15 +1034,15 @@ var secret = {
 };
 
 // react/src/fields/toggle.ts
-import { createElement as createElement7 } from "react";
+import { createElement as createElement8 } from "react";
 var toggle = {
   row: " tg",
-  draw: (_x, c, attrs) => createElement7("input", { ...attrs, type: "checkbox", role: "switch", checked: !!c.value, onChange: (e) => c.put(e.target.checked) }),
+  draw: (_x, c, attrs) => createElement8("input", { ...attrs, type: "checkbox", role: "switch", checked: !!c.value, onChange: (e) => c.put(e.target.checked) }),
   sent: (_x, v) => !!v
 };
 
 // react/src/gen/fields.ts
-var views = { picker, scan, secret, text, toggle, upload: upload2 };
+var views = { picker, scan, search, secret, text, toggle, upload: upload2 };
 
 // react/src/kinds/form.ts
 var viewOf = (x) => views[x.type] ?? text;
@@ -1006,17 +1050,17 @@ var note = (x, was) => x.error ? ["fn err", x.error] : x.was != null ? ["fn was"
 function field(x, key3, cx, held3, shown4) {
   const v = viewOf(x);
   const [cls, say2] = shown4 ?? note(v.group ? { ...x, error: null } : x, word(cx, "was"));
-  const said4 = Object.prototype.hasOwnProperty.call(cx.edits, x.name) ? cx.v.says[x.name] : void 0;
+  const said5 = Object.prototype.hasOwnProperty.call(cx.edits, x.name) ? cx.v.says[x.name] : void 0;
   const attrs = { name: x.name, disabled: cx.v.disabled.has(x.name) || void 0, "aria-invalid": x.error ? "true" : void 0 };
   const hold = (sent2, w) => {
     held3.sent[x.name] = sent2;
     held3.wait(x.name, w);
     cx.put(x.name, lit(x, sent2));
   };
-  const c = { locale: cx.locale, key: key3, value: cx.state[x.name] ?? null, put: (to) => cx.put(x.name, to), screen: cx.screen, block: held3.block, file: cx.file, hold };
+  const c = { locale: cx.locale, key: key3, value: cx.state[x.name] ?? null, put: (to) => cx.put(x.name, to), screen: cx.screen, block: held3.block, file: cx.file, hold, send: held3.send && ((v2) => held3.send?.(x.name, v2)), found: "filters" in x && typeof x.filters === "string" ? cx.seek[x.filters] : void 0 };
   const control = v.draw(x, c, attrs);
-  const l = `fd${v.row ?? ""}${x.error ? " err" : ""}${x.open ? " open" : ""}`;
-  return h(v.group ? "div" : "label", l, { key: x.name, hidden: cx.v.hidden.has(x.name) || void 0 }, h("span", "fl", null, h("span", "fk", null, x.label ?? x.name), h("span", cls, null, say2)), control, said4 ? h("span", "fe", null, said4) : null);
+  const l = `fd${v.row ?? ""}${held3.solo ? " solo" : ""}${x.error ? " err" : ""}${x.open ? " open" : ""}`;
+  return h(v.group ? "div" : "label", l, { key: x.name, hidden: cx.v.hidden.has(x.name) || void 0 }, h("span", "fl", null, h("span", "fk", null, x.label ?? x.name), h("span", cls, null, say2)), control, said5 ? h("span", "fe", null, said5) : null);
 }
 function values(fields2, sent2, cx) {
   const v = {};
@@ -1030,9 +1074,11 @@ function values(fields2, sent2, cx) {
 function form({ b, hooks: hooks4 }) {
   const cx = useContext6(Cx);
   const s = b.submit;
-  const sent2 = useRef6({});
-  const [waits4, setWaits] = useState8({});
-  const held3 = { sent: sent2.current, wait: (n, w) => setWaits((o) => ({ ...o, [n]: w })), block: b.id ?? void 0 };
+  const sent2 = useRef7({});
+  const [waits4, setWaits] = useState9({});
+  const live3 = s ? void 0 : b.action;
+  const out2 = live3 ? (name, v) => cx.act({ action: live3, block: b.id, values: { [name]: v } }) : void 0;
+  const held3 = { sent: sent2.current, wait: (n, w) => setWaits((o) => ({ ...o, [n]: w })), block: b.id ?? void 0, send: out2, solo: !s && b.fields.length === 1 };
   const rows2 = b.fields.map((x) => field(x, `draft:${cx.screen}:${String(b.id)}:`, cx, held3));
   if (!s) return h("div", "form", { ...hooks4, "data-id": b.id ?? "" }, ...rows2);
   const send4 = () => {
@@ -1049,7 +1095,7 @@ function form({ b, hooks: hooks4 }) {
   const all = Object.values(waits4), up = all.reduce((n, w) => n + w.up, 0), bad = all.some((w) => w.failed > 0);
   const off = b.id != null && cx.v.disabled.has(b.id) || up > 0 || bad;
   const go2 = btn(busy ? "sending\u2026" : s.label, "", void 0, s.action, { "data-submit": "", onClick: send4 }, off);
-  const line = bad ? word(cx, "stuck") : up ? fill2(word(cx, up > 1 ? "waitN" : "wait1"), { n: up }) : "";
+  const line = bad ? word(cx, "stuck") : up ? fill3(word(cx, up > 1 ? "waitN" : "wait1"), { n: up }) : "";
   const wait = b.fields.some((x) => viewOf(x).group) ? h("span", `say-busy${bad ? " bad" : ""}`, null, line) : null;
   return h("div", "form say", { ...hooks4, "data-id": b.id ?? "", onKeyDown: enter }, ...rows2, wait, go2);
 }
@@ -1057,11 +1103,11 @@ function form({ b, hooks: hooks4 }) {
 // react/src/kinds/config.ts
 function config({ b, hooks: hooks4 }) {
   const cx = useContext7(Cx);
-  const live3 = useRef7(cx);
+  const live3 = useRef8(cx);
   live3.current = cx;
-  const root = useRef7(null);
-  const sent2 = useRef7({});
-  const [notes, setNotes] = useState9({});
+  const root = useRef8(null);
+  const sent2 = useRef8({});
+  const [notes, setNotes] = useState10({});
   const save2 = (name, v) => {
     const a = b.action;
     if (!a || v === "" || v === void 0) return;
@@ -1069,7 +1115,7 @@ function config({ b, hooks: hooks4 }) {
     say2(["fn", "saving\u2026"]);
     void live3.current.act({ action: a, block: b.id, values: { [name]: v } }).then((ok) => ok ? (say2(null), live3.current.put(name, void 0)) : say2(["fn err", "not saved"]));
   };
-  const commit = useRef7(save2);
+  const commit = useRef8(save2);
   commit.current = save2;
   useEffect3(() => {
     const f = root.current;
@@ -1091,7 +1137,7 @@ function config({ b, hooks: hooks4 }) {
 }
 
 // react/src/kinds/diagram.ts
-import { createElement as createElement8, useContext as useContext8, useMemo as useMemo2 } from "react";
+import { createElement as createElement9, useContext as useContext8, useMemo as useMemo2 } from "react";
 
 // src/core/kind/diagram.ts
 var WIDE = { cls: "wide", widths: [156, 176, 140], gap: 40, gutter: 18, height: 54, rowGap: 22 };
@@ -1251,28 +1297,28 @@ function map(p, cx) {
 function diagram({ b, hooks: hooks4 }) {
   const cx = useContext8(Cx);
   const plans = useMemo2(() => diagrams(b), [b]);
-  return plans.length ? h("div", "dg", hooks4, ...plans.map((p) => map(p, cx))) : createElement8(Fallen, { b });
+  return plans.length ? h("div", "dg", hooks4, ...plans.map((p) => map(p, cx))) : createElement9(Fallen, { b });
 }
 
 // react/src/kinds/diff.ts
-import { createElement as createElement9 } from "react";
+import { createElement as createElement10 } from "react";
 var mark = (line) => line.startsWith("+") ? "add" : line.startsWith("-") ? "del" : "ctx";
 function diff({ b, hooks: hooks4 }) {
-  if (typeof b.file !== "string" || !Array.isArray(b.hunks)) return createElement9(Fallen, { b });
+  if (typeof b.file !== "string" || !Array.isArray(b.hunks)) return createElement10(Fallen, { b });
   const head4 = h("div", "dfh", null, h("span", "dff", null, b.file), b.summary != null ? h("span", "dfs", null, b.summary) : null);
   const lines = b.hunks.flatMap((k) => [h("div", "dfk", null, k.at), ...k.lines.map((l) => h("div", `dfl ${mark(l)}`, null, h("i", "dfm", null, l.slice(0, 1) || " "), l.slice(1)))]);
   return h("div", "df", hooks4, head4, b.hunks.length ? h("div", "dfb", null, ...lines) : null);
 }
 
 // react/src/kinds/editor.ts
-import { useContext as useContext9, useEffect as useEffect4, useRef as useRef8, useState as useState10 } from "react";
+import { useContext as useContext9, useEffect as useEffect4, useRef as useRef9, useState as useState11 } from "react";
 function editor({ b, hooks: hooks4 }) {
   const cx = useContext9(Cx);
-  const [text4, setText] = useState10(null);
-  const live3 = useRef8({ b, cx });
+  const [text4, setText] = useState11(null);
+  const live3 = useRef9({ b, cx });
   live3.current = { b, cx };
-  const timer = useRef8(void 0);
-  const area = useRef8(null);
+  const timer = useRef9(void 0);
+  const area = useRef9(null);
   useEffect4(() => area.current?.focus(), [text4 === null]);
   useEffect4(() => () => clearTimeout(timer.current), []);
   const first2 = b.first ?? 1;
@@ -1311,7 +1357,7 @@ function editor({ b, hooks: hooks4 }) {
 import { useContext as useContext11 } from "react";
 
 // react/src/kinds/media.ts
-import { createElement as createElement10, Fragment, useContext as useContext10, useLayoutEffect as useLayoutEffect3, useReducer, useRef as useRef9, useState as useState11 } from "react";
+import { createElement as createElement11, Fragment, useContext as useContext10, useLayoutEffect as useLayoutEffect3, useReducer, useRef as useRef10, useState as useState12 } from "react";
 
 // src/core/kind/media.ts
 var SMALL = 0.02;
@@ -1504,14 +1550,14 @@ function still(b, hooks4) {
 }
 function media2({ b, hooks: hooks4 }) {
   const cx = useContext10(Cx);
-  const live3 = useRef9(cx);
+  const live3 = useRef10(cx);
   live3.current = cx;
-  const keep = useRef9(/* @__PURE__ */ new Map());
-  const v = useRef9({}).current;
+  const keep = useRef10(/* @__PURE__ */ new Map());
+  const v = useRef10({}).current;
   const [, redraw] = useReducer((n) => n + 1, 0);
-  const [now, show] = useState11(null);
-  const [root, z] = [useRef9(null), useRef9(null)];
-  const after = useRef9({});
+  const [now, show] = useState12(null);
+  const [root, z] = [useRef10(null), useRef10(null)];
+  const after = useRef10({});
   const k = JSON.stringify([b, v["tool"], v["into"], v["sel"], v["typing"]]);
   const c = { act: (a) => live3.current.act(a), held: keep.current };
   const wires = [];
@@ -1537,7 +1583,7 @@ function media2({ b, hooks: hooks4 }) {
     return { from: at2(x, y), to: at2(x + dx, y + dy) };
   };
   const o = { b, k, v, shown: now?.k === k ? now : null, show, reach, again, wires };
-  return h("figure", "media mkm", { ...hooks4, ref: root }, createElement10(Fragment, { key: k }, ...marked(o, c, z)));
+  return h("figure", "media mkm", { ...hooks4, ref: root }, createElement11(Fragment, { key: k }, ...marked(o, c, z)));
 }
 function marked(o, c, z) {
   const { b, v, shown: shown4 } = o;
@@ -1571,7 +1617,7 @@ function marked(o, c, z) {
   const w = ref();
   const tools = b.draw && b.tools?.length ? bar(o, { tool: tool2, groups, into, sel, pen, zoom: zooms2 ? { w, z } : null }) : null;
   const under = b.draw && tool2 ? surface(o, { tool: tool2, pen: pen(tool2) }) : null;
-  if (b.draw && tool2 === "text" && Array.isArray(v["typing"])) top.push(typing(o, { at: v["typing"], pen: pen("text") }));
+  if (b.draw && tool2 === "text" && Array.isArray(v["typing"])) top.push(typing2(o, { at: v["typing"], pen: pen("text") }));
   const parts2 = [tools, frame(b, h("img", "", { src: b.src, alt: b.alt, width: b.width, height: b.height }), art, top, { w, z, cls: zooms2 ? " zoom" : "", under })];
   if (!marks.length && b.draw) parts2.push(h("p", "mkhint", null, HINT));
   if (b.caption) parts2.push(h("figcaption", "", null, b.caption));
@@ -1699,7 +1745,7 @@ function surface(o, s) {
     });
   return h("div", "mks", { ref: r });
 }
-function typing(o, t) {
+function typing2(o, t) {
   const { b, v } = o;
   const draw3 = b.draw;
   const at2 = [Number(t.at[0]) || 0, Number(t.at[1]) || 0];
@@ -1776,10 +1822,10 @@ function images({ b, hooks: hooks4 }) {
 }
 
 // react/src/kinds/import.ts
-import { useContext as useContext12, useLayoutEffect as useLayoutEffect4, useRef as useRef10 } from "react";
+import { useContext as useContext12, useLayoutEffect as useLayoutEffect4, useRef as useRef11 } from "react";
 function import_({ b, hooks: hooks4 }) {
   const cx = useContext12(Cx);
-  const root = useRef10(null);
+  const root = useRef11(null);
   useLayoutEffect4(() => {
     const box = root.current;
     if (box) void import("./import.js").then((m) => m.draw(box, b, cx));
@@ -1788,7 +1834,8 @@ function import_({ b, hooks: hooks4 }) {
 }
 
 // react/src/kinds/list.ts
-import { useContext as useContext13, useLayoutEffect as useLayoutEffect5, useRef as useRef11 } from "react";
+import { useContext as useContext13, useLayoutEffect as useLayoutEffect5, useRef as useRef12 } from "react";
+import { fill as fill4, hits, said as said2 } from "./core.js";
 
 // src/core/kind/list.ts
 var STEPS2 = [
@@ -1831,8 +1878,8 @@ var list = {
 var rec2 = (v) => typeof v === "object" && v !== null;
 function list2({ b, hooks: hooks4 }) {
   const cx = useContext13(Cx);
-  const ref3 = useRef11(null);
-  const act2 = useRef11(cx.act);
+  const ref3 = useRef12(null);
+  const act2 = useRef12(cx.act);
   act2.current = cx.act;
   useLayoutEffect5(() => {
     const l = ref3.current;
@@ -1867,7 +1914,10 @@ function list2({ b, hooks: hooks4 }) {
       show(null);
     };
   }, [b]);
-  return h("div", "list", { ...hooks4, ref: ref3 }, ...kids2(b.rows));
+  const s = cx.seek[b.id ?? ""];
+  const rows2 = s?.q ? b.rows.filter((r) => hits(said2(r), s.q)) : b.rows;
+  const none2 = s?.q && !s.n ? h("div", "lsm sm", null, fill4(word(cx, "nomatch"), { q: s.q }), " ", btn(word(cx, "clear"), "", void 0, void 0, { onClick: () => cx.put(s.name, "") })) : null;
+  return h("div", "list", { ...hooks4, ref: ref3 }, ...kids2(rows2), none2);
 }
 
 // react/src/kinds/message.ts
@@ -1894,7 +1944,7 @@ function message({ b, hooks: hooks4 }) {
 }
 
 // react/src/kinds/modal.ts
-import { useContext as useContext15, useLayoutEffect as useLayoutEffect6, useRef as useRef12 } from "react";
+import { useContext as useContext15, useLayoutEffect as useLayoutEffect6, useRef as useRef13 } from "react";
 
 // src/core/kind/modal.ts
 var MIN = { w: 280, h: 200, margin: 16 };
@@ -1933,7 +1983,7 @@ var toward2 = (n) => {
   const [x, y] = BY[n.dir];
   return { dx: x * d2, dy: y * d2 };
 };
-var said2 = (d2, less, more) => {
+var said3 = (d2, less, more) => {
   if (d2 === 0) return "";
   return d2 < 0 ? less : more;
 };
@@ -1968,7 +2018,7 @@ var modal = {
   says: (f, g, c) => {
     if (g === "handle") return c.y >= gone(f) ? "closes" : "springs back";
     if (g !== "head") return `${c.w} by ${c.h}`;
-    const where = [said2(c.x - f.at.x, "left", "right"), said2(c.y - f.at.y, "up", "down")].filter(Boolean).join(" and ");
+    const where = [said3(c.x - f.at.x, "left", "right"), said3(c.y - f.at.y, "up", "down")].filter(Boolean).join(" and ");
     return where ? `moved ${where}` : "in place";
   }
 };
@@ -2177,8 +2227,8 @@ function framed(d2, b, o) {
 // react/src/kinds/modal.ts
 function modal2({ b, hooks: hooks4 }) {
   const cx = useContext15(Cx);
-  const d2 = useRef12(null);
-  const act2 = useRef12(cx.act);
+  const d2 = useRef13(null);
+  const act2 = useRef13(cx.act);
   act2.current = cx.act;
   useLayoutEffect6(() => {
     const e = d2.current;
@@ -2219,7 +2269,7 @@ function nav({ b, hooks: hooks4 }) {
 }
 
 // react/src/kinds/pages.ts
-import { createElement as createElement11, Fragment as Fragment2, useLayoutEffect as useLayoutEffect7, useRef as useRef13 } from "react";
+import { createElement as createElement12, Fragment as Fragment2, useLayoutEffect as useLayoutEffect7, useRef as useRef14 } from "react";
 import { linkable as linkable7 } from "./core.js";
 
 // src/gen/shapes.ts
@@ -2479,7 +2529,7 @@ function paging(s, b, had) {
 // react/src/kinds/pages.ts
 var key2 = (label2, name) => h("button", "", { type: "button", "aria-label": name }, h("span", "", null, label2));
 function pages({ b, hooks: hooks4 }) {
-  const root = useRef13(null);
+  const root = useRef14(null);
   const a = typeof document === "undefined" ? null : document.activeElement;
   const had = a && root.current?.contains(a) ? a.getAttribute("aria-label") : null;
   useLayoutEffect7(() => void (root.current && paging(root.current, b, had)), [b]);
@@ -2490,7 +2540,7 @@ function pages({ b, hooks: hooks4 }) {
   const sheet2 = (p, i) => h("figure", "dc", { style: { "--pw": p.width / wide, "--a": `${p.width} / ${p.height}` } }, h("img", "", { loading: "lazy", alt: `Page ${i + 1} of ${n}. ${p.alt}`, width: p.width, height: p.height, src: linkable7(p.src) ? p.src : "" }));
   const body2 = n ? h("div", "dcw", { role: "region", "aria-label": `${title}, ${n} pages`, tabIndex: 0 }, h("div", "dck", null, ...b.pages.map(sheet2))) : h("div", "dce", null, "No pages yet");
   const head4 = h("div", "dch", null, h("b", "dct", null, title), h("span", "dcc", null, n ? null : "no pages"), bar5.length ? h("div", "dcb", null, ...bar5) : null);
-  return h("section", "dcs", { ...hooks4, ref: root }, createElement11(Fragment2, { key: JSON.stringify(b) }, head4, b.note ? h("p", "dcn", null, b.note) : null, body2));
+  return h("section", "dcs", { ...hooks4, ref: root }, createElement12(Fragment2, { key: JSON.stringify(b) }, head4, b.note ? h("p", "dcn", null, b.note) : null, body2));
 }
 
 // react/src/kinds/prose.ts
@@ -2522,7 +2572,7 @@ function prose({ b, hooks: hooks4 }) {
 }
 
 // react/src/kinds/row.ts
-import { useContext as useContext16, useRef as useRef14, useState as useState12 } from "react";
+import { useContext as useContext16, useRef as useRef15, useState as useState13 } from "react";
 function round2(d2, now, cx) {
   const tap = now ? null : d2.tap ?? null;
   const url2 = urlOf(tap);
@@ -2539,8 +2589,8 @@ function round2(d2, now, cx) {
 }
 function row2({ b, hooks: hooks4 }) {
   const cx = useContext16(Cx);
-  const [flip, setFlip] = useState12(false);
-  const x0 = useRef14(0);
+  const [flip, setFlip] = useState13(false);
+  const x0 = useRef15(0);
   const toggle2 = () => setFlip((f) => !f);
   const cls = `row${b.style === "link" ? " link" : ""}${b.sticky ? " sticky" : ""}${b.indent ? " in" + Math.min(b.indent, 3) : ""}`;
   const rounds = b.rounds ?? [];
@@ -2613,12 +2663,12 @@ function screen({ b, hooks: hooks4 }) {
 }
 
 // react/src/kinds/secret.ts
-import { useContext as useContext20, useRef as useRef15, useState as useState13 } from "react";
+import { useContext as useContext20, useRef as useRef16, useState as useState14 } from "react";
 function secret2({ b, hooks: hooks4 }) {
   const cx = useContext20(Cx);
-  const [v, setV] = useState13("");
-  const [sending, setSending] = useState13(false);
-  const field2 = useRef15(null);
+  const [v, setV] = useState14("");
+  const [sending, setSending] = useState14(false);
+  const field2 = useRef16(null);
   const send4 = () => {
     if (!v) return field2.current?.focus();
     setSending(true);
@@ -2646,7 +2696,7 @@ function section({ b, hooks: hooks4 }) {
 }
 
 // react/src/kinds/sidebar.ts
-import { useLayoutEffect as useLayoutEffect8, useRef as useRef16 } from "react";
+import { useLayoutEffect as useLayoutEffect8, useRef as useRef17 } from "react";
 import { linkable as linkable9, sideCount, sideIcon, sideTitle } from "./core.js";
 
 // src/sidebar.ts
@@ -2804,8 +2854,8 @@ var kept = {
 };
 var badge = (b) => {
   if (!b) return null;
-  const [shown4, said4] = sideCount(b);
-  return h("span", b.tone === "bad" ? "tag bad" : "tag", null, h("span", "", { "aria-hidden": "true" }, shown4), h("span", "b-sr", null, said4));
+  const [shown4, said5] = sideCount(b);
+  return h("span", b.tone === "bad" ? "tag bad" : "tag", null, h("span", "", { "aria-hidden": "true" }, shown4), h("span", "b-sr", null, said5));
 };
 var icon = (l) => {
   const [g, initials] = sideIcon(l);
@@ -2830,7 +2880,7 @@ function parent(l, id) {
 }
 var button2 = (cls, name, ...text4) => h("button", cls, { type: "button", "aria-label": name }, ...text4.map((t) => h("span", "", null, t)));
 function sidebar({ b, hooks: hooks4 }) {
-  const ref3 = useRef16(null);
+  const ref3 = useRef17(null);
   const id = `sd-${b.id ?? "side"}`;
   useLayoutEffect8(() => ref3.current ? behave(ref3.current, `sidebar-pin:${b.id ?? "side"}`, kept) : void 0, [b]);
   const groups = b.groups.flatMap(
@@ -2880,7 +2930,7 @@ function stat({ b, hooks: hooks4 }) {
 }
 
 // react/src/kinds/table.ts
-import { useContext as useContext22, useLayoutEffect as useLayoutEffect9, useReducer as useReducer2, useRef as useRef17 } from "react";
+import { useContext as useContext22, useLayoutEffect as useLayoutEffect9, useReducer as useReducer2, useRef as useRef18 } from "react";
 
 // src/core/table.ts
 var SIGN = { THB: "\u0E3F", USD: "$", EUR: "\u20AC" };
@@ -3271,8 +3321,8 @@ function item2(v, d2, r) {
   const wait = waits3(v, r);
   const tds = d2.cols.map((x, i) => {
     const c = at(r, x.id), t = shown2(x, c), k = cellRole(b, x), p = { row: r.id, col: x.id };
-    const fill3 = h("i", "", { style: { width: `${Math.min(1, Math.max(0, Number(c) / max(x))) * 100}%` } });
-    const kids3 = c === void 0 ? [] : typeof c === "object" ? [h("span", `tag ${c.tone ?? ""}`, null, t)] : x.kind === "bar" ? [h("span", `tbb ${x.tone ?? ""}`, null, fill3), t] : [t];
+    const fill5 = h("i", "", { style: { width: `${Math.min(1, Math.max(0, Number(c) / max(x))) * 100}%` } });
+    const kids3 = c === void 0 ? [] : typeof c === "object" ? [h("span", `tag ${c.tone ?? ""}`, null, t)] : x.kind === "bar" ? [h("span", `tbb ${x.tone ?? ""}`, null, fill5), t] : [t];
     const typed = k === "ed" && !r.fixed;
     const out2 = sent(v, r.id, x.id) !== void 0;
     const ing = st.open !== null && pk(st.open) === pk(p);
@@ -3299,7 +3349,7 @@ function body(v, d2) {
   const { b, st } = v;
   const rows2 = d2.rows.map((r, i) => r.group ? group(v, d2, i) : item2(v, d2, r));
   if (!d2.items.length) {
-    const clear = b.rows.length ? btn("clear", "", void 0, void 0, go(v, () => st.q = "")) : null;
+    const clear = b.rows.length ? btn("clear", "", void 0, void 0, go(v, () => (st.q = "", v.unseek()))) : null;
     const td = h("td", "", { colSpan: d2.cols.length + (d2.pick ? 1 : 0) + (d2.handles ? 1 : 0) }, b.rows.length ? `No rows match \u201C${st.q}\u201D. ` : b.empty ?? "No rows yet.", clear);
     rows2.push(h("tr", "tbe", { key: "~" }, td));
   }
@@ -3430,15 +3480,17 @@ var init = (b) => ({
 });
 function table({ b, hooks: hooks4 }) {
   const cx = useContext22(Cx);
-  const live3 = useRef17(cx);
+  const live3 = useRef18(cx);
   live3.current = cx;
-  const keep = useRef17(/* @__PURE__ */ new Map());
-  const wired = useRef17(/* @__PURE__ */ new WeakSet());
-  const box = useRef17(null);
-  const kept2 = useRef17(null);
+  const keep = useRef18(/* @__PURE__ */ new Map());
+  const wired = useRef18(/* @__PURE__ */ new WeakSet());
+  const box = useRef18(null);
+  const kept2 = useRef18(null);
   const [, draw3] = useReducer2((n) => n + 1, 0);
   const st = state2(b, kept2.current ??= init(b));
-  const v = { b, c: { act: (a) => live3.current.act(a), held: keep.current }, tap: (t2) => live3.current.tap(t2), st, box, wired: wired.current, draw: draw3 };
+  const sought = cx.seek[b.id ?? ""];
+  if (sought) st.q = sought.q;
+  const v = { b, c: { act: (a) => live3.current.act(a), held: keep.current }, tap: (t2) => live3.current.tap(t2), unseek: () => sought && cx.put(sought.name, ""), st, box, wired: wired.current, draw: draw3 };
   useLayoutEffect9(() => {
     if (!st.focus || !st.cur) return;
     st.focus = false;
@@ -3458,7 +3510,7 @@ function text3({ b, hooks: hooks4 }) {
 }
 
 // react/src/kinds/timeline.ts
-import { useContext as useContext24, useLayoutEffect as useLayoutEffect10, useRef as useRef18, useState as useState14 } from "react";
+import { useContext as useContext24, useLayoutEffect as useLayoutEffect10, useRef as useRef19, useState as useState15 } from "react";
 
 // src/core/kind/timeline.ts
 var MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -3740,12 +3792,12 @@ function rove(root) {
 }
 function timeline2({ b, hooks: hooks4 }) {
   const cx = useContext24(Cx);
-  const live3 = useRef18(cx);
+  const live3 = useRef19(cx);
   live3.current = cx;
-  const keep = useRef18(/* @__PURE__ */ new Map());
-  const done = useRef18(/* @__PURE__ */ new WeakSet());
-  const [root, wrap, grid2] = [useRef18(null), useRef18(null), useRef18(null)];
-  const [px, setPx] = useState14(null);
+  const keep = useRef19(/* @__PURE__ */ new Map());
+  const done = useRef19(/* @__PURE__ */ new WeakSet());
+  const [root, wrap, grid2] = [useRef19(null), useRef19(null), useRef19(null)];
+  const [px, setPx] = useState15(null);
   const [f, t] = [day(b.from), day(b.to)];
   const on = b.move != null || b.stretch != null || b.draw != null;
   const z = px === null || px >= 24 ? 1 : px >= 12 ? 2 : 3;
@@ -3782,10 +3834,10 @@ function zooms(ax, px, set, wrap, grid2) {
 }
 
 // react/src/kinds/tool.ts
-import { useState as useState15 } from "react";
+import { useState as useState16 } from "react";
 import { glyph } from "./core.js";
 function tool({ b, hooks: hooks4 }) {
-  const [open2, setOpen] = useState15(false);
+  const [open2, setOpen] = useState16(false);
   const attrs = { ...hooks4, ...b.state === "running" ? { "aria-busy": "true" } : null };
   const parts2 = [h("i", "tog", { key: "g", "aria-hidden": "true" }, glyph(b.state)), h("span", "ton b-tool__name", { key: "n" }, b.name), h("span", "tos b-tool__summary", { key: "s" }, b.summary ?? "")];
   if (b.body == null) return h("div", "tol", attrs, h("div", "toh", null, ...parts2));
@@ -3815,7 +3867,7 @@ function web({ b, hooks: hooks4 }) {
 var views3 = { button, card, chips, choice, composer, config, diagram, diff, editor, form, hero, images, import: import_, list: list2, media: media2, message, modal: modal2, nav, pages, prose, row: row2, run, scene, screen, secret: secret2, section, sheet: modal2, sidebar, stat, table, text: text3, timeline: timeline2, tool, web };
 
 // react/src/island.ts
-import { createElement as createElement12, Suspense, useContext as useContext25, useLayoutEffect as useLayoutEffect11, useState as useState16 } from "react";
+import { createElement as createElement13, Suspense, useContext as useContext25, useLayoutEffect as useLayoutEffect11, useState as useState17 } from "react";
 function Mark({ on }) {
   useLayoutEffect11(() => {
     on(true);
@@ -3825,13 +3877,13 @@ function Mark({ on }) {
 }
 function Isle({ b, attrs }) {
   const cx = useContext25(Cx);
-  const [live3, setLive] = useState16(false);
+  const [live3, setLive] = useState17(false);
   const C = Object.prototype.hasOwnProperty.call(cx.islands, b.name) ? cx.islands[b.name] : void 0;
   const fallback = row4(b.fallback, cx);
   const id = b.id ?? "";
   const emit = (name, values2) => b.events?.includes(name) ? void cx.act({ action: name, block: id, values: values2 ?? {} }) : cx.report({ what: "dropped", block: id, event: name });
   const style = { overflow: "hidden", aspectRatio: b.size?.aspect ?? void 0, width: b.size?.width ?? void 0, height: b.size?.height ?? void 0 };
-  const inner = C && createElement12(Boundary, { b, report: cx.report, fallback }, createElement12(Suspense, { fallback }, createElement12(Mark, { on: setLive }), createElement12(C, { props: b.props ?? {}, emit })));
+  const inner = C && createElement13(Boundary, { b, report: cx.report, fallback }, createElement13(Suspense, { fallback }, createElement13(Mark, { on: setLive }), createElement13(C, { props: b.props ?? {}, emit })));
   return h("div", "", { ...attrs, "data-fallback": C && live3 ? void 0 : "", style }, inner || fallback);
 }
 
@@ -3863,10 +3915,10 @@ function row4(f, cx) {
   const sub = f.subtitle != null ? h("span", "rs b-row__subtitle", null, f.subtitle) : null;
   return h("div", tap ? "row tap" : "row", pressed, h("span", "rm", null, h("span", "rt b-row__title", null, f.title), sub));
 }
-var said3 = (a, b) => b["type"] === "message" && a?.["type"] === "message" && a["role"] === b["role"] && a["name"] === b["name"];
+var said4 = (a, b) => b["type"] === "message" && a?.["type"] === "message" && a["role"] === b["role"] && a["name"] === b["name"];
 var kids2 = (bs) => {
   const all = Array.isArray(bs) ? bs.filter(isBlk2) : [];
-  return all.map((b, i) => createElement13(Block, { key: typeof b["id"] === "string" ? b["id"] : `~${i}`, b, cont: said3(all[i - 1], b) }));
+  return all.map((b, i) => createElement14(Block, { key: typeof b["id"] === "string" ? b["id"] : `~${i}`, b, cont: said4(all[i - 1], b) }));
 };
 function Fallen({ b }) {
   const cx = useContext26(Cx);
@@ -3893,19 +3945,19 @@ var Boundary = class extends Component {
 };
 var own2 = (t, b, attrs) => {
   const V = views3[t];
-  return V ? createElement13(V, { b, hooks: attrs }) : void 0;
+  return V ? createElement14(V, { b, hooks: attrs }) : void 0;
 };
 function Draw({ b, cont }) {
   const cx = useContext26(Cx);
-  if (isIsland(b)) return createElement13(Isle, { b, attrs: hooksOf(b, cx, false) });
-  if (core(b)) return own2(b.type, b, hooksOf(b, cx, false, cont)) ?? createElement13(Fallen, { b });
+  if (isIsland(b)) return createElement14(Isle, { b, attrs: hooksOf(b, cx, false) });
+  if (core(b)) return own2(b.type, b, hooksOf(b, cx, false, cont)) ?? createElement14(Fallen, { b });
   const K = cx.kinds[String(b["type"])];
   const act2 = (a) => cx.act({ ...a, block: typeof b["id"] === "string" ? b["id"] : null });
-  return K ? h("div", "", hooksOf(b, cx, false), createElement13(K, { block: { ...b, type: String(b["type"]) }, act: act2 })) : createElement13(Fallen, { b });
+  return K ? h("div", "", hooksOf(b, cx, false), createElement14(K, { block: { ...b, type: String(b["type"]) }, act: act2 })) : createElement14(Fallen, { b });
 }
 var Block = memo(function Block2({ b, cont = false }) {
   const cx = useContext26(Cx);
-  return createElement13(Boundary, { b, report: cx.report, fallback: createElement13(Fallen, { b }) }, createElement13(Draw, { b, cont }));
+  return createElement14(Boundary, { b, report: cx.report, fallback: createElement14(Fallen, { b }) }, createElement14(Draw, { b, cont }));
 });
 
 // react/src/view.ts
@@ -3917,13 +3969,13 @@ var watch = (on) => {
   return () => m.removeEventListener("change", on);
 };
 function BlocksView(p) {
-  const last = useRef19(void 0);
+  const last = useRef20(void 0);
   const screen2 = useMemo3(() => last.current = share(last.current, p.screen), [p.screen]);
   const { cx, ask } = useCx(p, screen2);
   const dark = useSyncExternalStore(watch, () => matchMedia(DARK).matches, () => false);
   const s = p.look?.[p.mode === "dark" || p.mode !== "light" && dark ? "dark" : "light"];
   const style = s ? { ...s.tokens, colorScheme: s["color-scheme"] } : void 0;
-  return h("div", "b-view", { style }, createElement14(Cx.Provider, { value: cx }, createElement14(Block, { b: screen2 })), ask);
+  return h("div", "b-view", { style }, createElement15(Cx.Provider, { value: cx }, createElement15(Block, { b: screen2 })), ask);
 }
 export {
   Arrange,

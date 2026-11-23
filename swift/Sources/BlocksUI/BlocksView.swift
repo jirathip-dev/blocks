@@ -40,7 +40,7 @@ public struct BlocksView: View {
         .environment(\.openBeside, openBeside).environment(\.pending, pending)
         .environment(\.openThread, openThread).environment(\.focus, focus).environment(\.picked, picked)
         .environment(\.card, CardContext(poster: source)).environment(\.screenId, block.id)
-        .environment(\.behaved, Behaved(view: Behaviour(json, state: state), state: state, edited: Set(edited.keys)))
+        .environment(\.behaved, Behaved(view: Behaviour(json, state: state), state: state, edited: Set(edited.keys), seek: seeks(json, state: state)))
         .environment(\.edit) { own.merge($0) { $1 } }
         .environment(\.folds, Folds(open: opened.symmetricDifference(flipped)) { flipped.formSymmetricDifference([$0]) })
     }
@@ -114,6 +114,7 @@ internal struct Behaved {
     internal var view = Behaviour()
     internal var state: BlockState = [:]
     internal var edited: Set<String> = []
+    internal var seek: [String: Seek] = [:]
 }
 
 private struct EditKey: EnvironmentKey {

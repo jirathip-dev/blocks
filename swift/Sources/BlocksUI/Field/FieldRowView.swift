@@ -26,6 +26,7 @@ internal struct FieldRow: View {
             case .files(let f): UploadRow(field: f)
             case .scan(let f): ScanRow(field: f)
         #endif
+        case .search(let f): SearchRow(field: f, edits: $edits)
         default: row
         }
     }

@@ -2488,6 +2488,19 @@
           "type": "object"
         },
         {
+          "$ref": "#/$defs/SearchField",
+          "properties": {
+            "type": {
+              "const": "search",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
           "$ref": "#/$defs/UploadField",
           "properties": {
             "type": {
@@ -6695,6 +6708,96 @@
           ]
         }
       },
+      "type": "object"
+    },
+    "SearchField": {
+      "additionalProperties": true,
+      "description": "A search box: filters a list or table on the screen, or sends its text in a live form.",
+      "properties": {
+        "checks": {
+          "items": {
+            "$ref": "#/$defs/Check"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "doc": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "enabled": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "filters": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "open": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "placeholder": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "value": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "was": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "name"
+      ],
       "type": "object"
     },
     "Secret": {

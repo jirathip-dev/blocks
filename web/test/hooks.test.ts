@@ -10,7 +10,7 @@ const gaps = ["island"];
 
 test("every fixture is drawn with its hooks, natively or as its fallback", () => {
   const kinds = readdirSync(dir).map((f) => f.replace(/\.json$/, ""));
-  strictEqual(kinds.length, 52);
+  strictEqual(kinds.length, 53);
   for (const kind of kinds) {
     const b = fixture(kind);
     const e = render(b, ctx());

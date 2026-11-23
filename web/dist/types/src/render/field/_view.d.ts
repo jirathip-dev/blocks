@@ -8,7 +8,7 @@ export type FieldCtx = {
     screen: string;
     block?: string | undefined;
     file?: OnFile | undefined;
-    set?: ((value: unknown) => void) | undefined;
+    set?: ((value: unknown) => unknown) | undefined;
 };
 export type FieldOut = {
     el: HTMLElement;
