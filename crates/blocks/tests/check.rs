@@ -123,6 +123,21 @@ fn faulty() -> Vec<(&'static str, Value, Vec<&'static str>)> {
             ]}),
             vec![],
         ),
+        (
+            "aim",
+            json!({"type": "screen", "id": "s", "blocks": [
+                {"type": "form", "id": "f", "fields": [
+                    {"type": "search", "name": "q", "filters": "people"},
+                    {"type": "search", "name": "r", "filters": "nowhere"},
+                    {"type": "search", "name": "s", "filters": "t"},
+                    {"type": "search", "name": "u", "filters": "l"}
+                ]},
+                {"type": "table", "id": "people", "columns": [], "rows": []},
+                {"type": "section", "id": "sec", "blocks": [{"type": "list", "id": "l", "rows": []}]},
+                {"type": "text", "id": "t", "markdown": "x"}
+            ]}),
+            vec![],
+        ),
         ("steps-no-current", steps(json!({"current": "zz"})), vec![]),
         (
             "steps-done-and-current",
@@ -192,6 +207,7 @@ fn the_cases_cover_every_fault() {
     seen.dedup();
     let want = [
         "act-twice",
+        "aim",
         "bare",
         "clash",
         "extra",
@@ -203,4 +219,14 @@ fn the_cases_cover_every_fault() {
         "unnamed",
     ];
     assert_eq!(seen, want);
+}
+
+#[test]
+fn a_search_aimed_at_no_list_or_table_is_an_aim_fault() {
+    let (_, screen, _) = faulty().into_iter().find(|(n, ..)| *n == "aim").unwrap();
+    let faults = serde_json::to_value(Built::new(screen).check(&[])).unwrap();
+    assert_eq!(
+        faults,
+        json!([{"fault": "aim", "field": "r", "id": "nowhere"}, {"fault": "aim", "field": "s", "id": "t"}])
+    );
 }

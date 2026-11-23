@@ -440,6 +440,7 @@ pub(crate) static PARTS: &[Part] = &[
     Part { name: "ScanField", input: "scan", line: "{type: \"scan\", name: string, doc?: string, error?: string, file?: FileRef, label?: string, max?: number, was?: string}", names: &["FileRef"] },
     Part { name: "SceneRepo", input: "", line: "{blocks: Band[], id: string, title: string, color?: string, subtitle?: string}", names: &["Band"] },
     Part { name: "SceneRow", input: "", line: "{id: string, title: string, blocked_by?: number, figure?: Figure, host?: string, needs?: number, subtitle?: string, tap?: Tap, tone?: Tone, value?: string}", names: &["Figure", "Tap", "Tone"] },
+    Part { name: "SearchField", input: "search", line: "{type: \"search\", name: string, doc?: string, error?: string, filters?: string, label?: string, placeholder?: string, value?: string, was?: string}", names: &[] },
     Part { name: "SecretField", input: "secret", line: "{type: \"secret\", name: string, doc?: string, error?: string, label?: string, placeholder?: string, value?: string, was?: string}", names: &[] },
     Part { name: "Series", input: "", line: "{name: string, values: number[], as?: \"bar\"|\"line\", dash?: bool, fixed?: bool, step?: number, tone?: Tone}", names: &["Tone"] },
     Part { name: "Shown", input: "", line: "string | number | Time", names: &["Time"] },

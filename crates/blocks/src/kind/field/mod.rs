@@ -5,6 +5,7 @@ use crate::expr::Expr;
 
 mod picker;
 mod scan;
+mod search;
 mod secret;
 mod slider;
 mod text;
@@ -13,6 +14,7 @@ mod upload;
 
 pub use picker::PickerField;
 pub use scan::ScanField;
+pub use search::SearchField;
 pub use secret::SecretField;
 pub use slider::{Num, SliderField};
 pub use text::TextField;
@@ -29,6 +31,7 @@ fields! {
     Toggle(ToggleField) = "toggle",
     Picker(PickerField) = "picker",
     Secret(SecretField) = "secret",
+    Search(SearchField) = "search",
     Upload(UploadField) = "upload",
     Scan(ScanField) = "scan",
     Slider(SliderField) = "slider",

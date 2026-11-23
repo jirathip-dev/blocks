@@ -1,7 +1,7 @@
 import type { SliderField } from "../../gen/types.ts";
 
 /// The label over a slider's thumb at `n`: the number with only the places it needs, then a no-break space and the unit.
-export const said = (x: SliderField, n: number): string => {
+export const reads = (x: SliderField, n: number): string => {
   const t = String(Number(n.toFixed(6)));
   return x.unit ? `${t}\u00a0${x.unit}` : t;
 };

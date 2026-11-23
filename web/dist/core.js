@@ -428,10 +428,10 @@ function gate(s, fills) {
   const [bg, r, a] = [c("--bg"), c("--r"), c("--a")];
   const needs = ["the needs-you card", over(r, bg, 0.15)];
   const tints = [["--r", ...needs], ["--r", "a red group header", over(r, bg, 0.12)], ["--a", "an amber group header", over(a, bg, 0.12)]];
-  const text4 = ["--fg", "--mute", "--l", "--link", "--fk-l", "--fk-p", "--fk-c", "--fk-g", "--fk-a"];
+  const text5 = ["--fg", "--mute", "--l", "--link", "--fk-l", "--fk-p", "--fk-c", "--fk-g", "--fk-a"];
   const states = ["--g", "--a", "--r"];
   for (const b of ["--bg", "--card"]) {
-    for (const k of text4) checks.push({ what: `${k} on ${b}`, got: ratio(c(k), c(b)), min: 4.5 });
+    for (const k of text5) checks.push({ what: `${k} on ${b}`, got: ratio(c(k), c(b)), min: 4.5 });
     for (const k of states) checks.push({ what: `${k} on ${b}`, got: ratio(c(k), c(b)), min: 3 });
   }
   checks.push({ what: "--bg on --l", got: ratio(bg, c("--l")), min: 4.5 });
@@ -577,7 +577,7 @@ function signed(v, d) {
   return v < 0 && /[1-9]/.test(s) ? `-${s}` : s;
 }
 var shown = (v) => signed(v, Math.min(decimals(v), 2));
-var unit = (text4, u) => u ? `${text4} ${u}` : text4;
+var unit = (text5, u) => u ? `${text5} ${u}` : text5;
 function fallback(p) {
   const u = p.y?.unit ?? "";
   const lines2 = p.series.flatMap((s) => s.y.length ? [`${s.name} ${unit(shown(s.y[s.y.length - 1] ?? 0), u)}`] : []);
@@ -3200,6 +3200,19 @@ var defs = {
         "properties": {
           "type": {
             "const": "secret",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      {
+        "$ref": "#/$defs/SearchField",
+        "properties": {
+          "type": {
+            "const": "search",
             "type": "string"
           }
         },
@@ -6711,6 +6724,95 @@ var defs = {
     },
     "type": "object"
   },
+  "SearchField": {
+    "additionalProperties": true,
+    "properties": {
+      "checks": {
+        "items": {
+          "$ref": "#/$defs/Check"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "doc": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "enabled": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "error": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "filters": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "label": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "name": {
+        "type": "string"
+      },
+      "open": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "placeholder": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "show": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "value": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "was": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "required": [
+      "name"
+    ],
+    "type": "object"
+  },
   "Secret": {
     "additionalProperties": true,
     "properties": {
@@ -8863,6 +8965,8 @@ var Walk = class {
     this.ids = /* @__PURE__ */ new Map();
     this.acts = /* @__PURE__ */ new Map();
     this.keys = [];
+    this.rows = /* @__PURE__ */ new Set();
+    this.aims = [];
     this.out = [];
     this.app = app;
   }
@@ -8919,6 +9023,9 @@ var Walk = class {
     const fields = kind === "form" || kind === "config" ? Array.isArray(o["fields"]) ? o["fields"] : [] : [];
     const names2 = kind === "chips" ? [o["name"]] : fields.map((f) => isObj3(f) ? f["name"] : void 0);
     for (const n of names2) if (typeof n === "string") this.keys.push(n);
+    const id = str2(o["id"]);
+    if ((kind === "list" || kind === "table") && id !== void 0) this.rows.add(id);
+    for (const f of fields) if (isObj3(f) && f["type"] === "search" && typeof f["name"] === "string" && typeof f["filters"] === "string") this.aims.push([f["name"], f["filters"]]);
   }
 };
 function gets(v, out) {
@@ -8934,6 +9041,7 @@ function check(screen2, app = []) {
   for (const kind of app) if (KINDS2.includes(kind)) w.out.push({ fault: "clash", kind });
   if (isObj3(screen2) && isObj3(screen2["state"])) w.keys.push(...sorted(screen2["state"]));
   w.block(screen2, "", "");
+  for (const [field, id] of w.aims) if (!w.rows.has(id)) w.out.push({ fault: "aim", field, id });
   const declared = /* @__PURE__ */ new Set();
   const twice = w.keys.filter((k) => declared.has(k) || !declared.add(k));
   const used = [];
@@ -8955,8 +9063,72 @@ function actions(screen2) {
   return [...out].sort();
 }
 
+// src/core/field/match.ts
+function hits(text5, q) {
+  const t = text5.toLowerCase();
+  return q.toLowerCase().split(/\s+/).filter(Boolean).every((w) => t.includes(w));
+}
+function typing(send2, busy) {
+  let wait;
+  let flying = false;
+  let next;
+  const go = (q) => {
+    flying = true;
+    busy(true);
+    void Promise.resolve(send2(q)).then(land, land);
+  };
+  const land = () => {
+    flying = false;
+    const q = next;
+    next = void 0;
+    if (q === void 0) busy(false);
+    else go(q);
+  };
+  const now = (q) => {
+    clearTimeout(wait);
+    if (flying) next = q;
+    else go(q);
+  };
+  const key = (q) => {
+    clearTimeout(wait);
+    wait = setTimeout(() => now(q), 250);
+  };
+  return { key, now };
+}
+var rec2 = (v) => typeof v === "object" && v !== null && !Array.isArray(v);
+function text4(v) {
+  if (typeof v === "string" || typeof v === "number") return String(v);
+  return rec2(v) ? text4(v["text"]) : "";
+}
+function said(r) {
+  if (!rec2(r)) return "";
+  return (rec2(r["cells"]) ? Object.values(r["cells"]) : [r["title"], r["subtitle"], r["value"]]).map(text4).join(" ");
+}
+function each2(v, f) {
+  if (Array.isArray(v)) return v.forEach((x) => each2(x, f));
+  if (!rec2(v)) return;
+  f(v);
+  each2(v["blocks"], f);
+}
+function seeks(screen2, state) {
+  const rows = {};
+  const aims = [];
+  each2(screen2, (b) => {
+    if ((b["type"] === "list" || b["type"] === "table") && typeof b["id"] === "string" && Array.isArray(b["rows"])) rows[b["id"]] = b["rows"];
+    const fields = b["type"] === "form" || b["type"] === "config" ? b["fields"] : [];
+    for (const x of Array.isArray(fields) ? fields : []) if (rec2(x) && x["type"] === "search" && typeof x["name"] === "string" && typeof x["filters"] === "string") aims.push([x["name"], x["filters"]]);
+  });
+  const out = {};
+  for (const [name, id] of aims) {
+    const all = (rows[id] ?? []).filter((r) => !(rec2(r) && r["group"]));
+    const q = String(state[name] ?? "");
+    out[id] = { name, q, n: all.filter((r) => hits(said(r), q)).length, m: all.length };
+  }
+  return out;
+}
+
 // src/core/field/slider.ts
-var said = (x, n) => {
+var reads = (x, n) => {
   const t = String(Number(n.toFixed(6)));
   return x.unit ? `${t}\xA0${x.unit}` : t;
 };
@@ -8969,7 +9141,7 @@ var OWN = {
   sheet: (n, m) => m === "text/csv" || m.endsWith("spreadsheetml.sheet") || /\.(csv|xlsx)$/i.test(n)
 };
 var MIME = { image: "image/*", pdf: ".pdf,application/pdf", sheet: ".csv,.xlsx,text/csv" };
-var fill2 = (text4, v) => text4.replace(/\{(\w+)\}/g, (_, k) => String(v[k] ?? ""));
+var fill2 = (text5, v) => text5.replace(/\{(\w+)\}/g, (_, k) => String(v[k] ?? ""));
 var accepts = (accept = []) => accept.map((a) => MIME[a] ?? a).join(",");
 function refused(x, name, mime, size) {
   const kinds3 = x.accept ?? [];
@@ -9067,6 +9239,7 @@ export {
   held,
   hero,
   hint,
+  hits,
   hooks,
   hosts,
   ids,
@@ -9090,6 +9263,7 @@ export {
   picked,
   plot,
   prose,
+  reads,
   refused,
   role,
   roleWord,
@@ -9107,6 +9281,7 @@ export {
   screen,
   secret,
   section,
+  seeks,
   send,
   share,
   sheet,
@@ -9126,6 +9301,7 @@ export {
   toast,
   tool,
   tree,
+  typing,
   value,
   view,
   waits,

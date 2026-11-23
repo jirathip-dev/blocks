@@ -1,0 +1,86 @@
+{
+  "kind": "screen",
+  "id": "hub",
+  "variant": null,
+  "drawn": "native",
+  "role": "group",
+  "name": "Apps",
+  "children": [
+    {
+      "kind": "form",
+      "id": "find",
+      "variant": null,
+      "drawn": "native",
+      "role": "form",
+      "name": "find",
+      "children": []
+    },
+    {
+      "kind": "section",
+      "id": "hits-hr",
+      "variant": null,
+      "drawn": "native",
+      "role": "region",
+      "name": "HR",
+      "children": [
+        {
+          "kind": "list",
+          "id": "rows-hr",
+          "variant": null,
+          "drawn": "native",
+          "role": "group",
+          "name": "rows-hr",
+          "children": [
+            {
+              "kind": "row",
+              "id": "hr-1",
+              "variant": null,
+              "drawn": "native",
+              "role": "group",
+              "name": "Ops shift swaps",
+              "children": []
+            },
+            {
+              "kind": "row",
+              "id": "hr-2",
+              "variant": null,
+              "drawn": "native",
+              "role": "group",
+              "name": "Ops leave requests",
+              "children": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "section",
+      "id": "hits-fleet",
+      "variant": null,
+      "drawn": "native",
+      "role": "region",
+      "name": "Fleet",
+      "children": [
+        {
+          "kind": "list",
+          "id": "rows-fleet",
+          "variant": null,
+          "drawn": "native",
+          "role": "group",
+          "name": "rows-fleet",
+          "children": [
+            {
+              "kind": "row",
+              "id": "fl-1",
+              "variant": null,
+              "drawn": "native",
+              "role": "group",
+              "name": "Ops trucks in Bangkok",
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-import { along, said } from "../../core/field/slider.ts";
+import { along, reads } from "../../core/field/slider.ts";
 import type { Field } from "../../gen/types.ts";
 import { draft } from "../ctx.ts";
 import { el, h } from "../dom.ts";
@@ -11,7 +11,7 @@ export const slider: FieldView<Extract<Field, { type: "slider" }>> = {
     const box = el("div", "fs");
     box.dataset["field"] = x.name;
     const v = el("output", "fsv");
-    const parts = [v, h("span", "fst", el("b")), el("span", "fsb"), h("span", "fse", h("span", "", said(x, x.min)), h("span", "", said(x, x.max)))];
+    const parts = [v, h("span", "fst", el("b")), el("span", "fsb"), h("span", "fse", h("span", "", reads(x, x.min)), h("span", "", reads(x, x.max)))];
     for (const p of parts) p.setAttribute("aria-hidden", "true");
     const now = String(x.value ?? x.min);
     const i = Object.assign(el("input"), { type: "range", name: x.name, min: String(x.min), max: String(x.max), step: String(x.step ?? 1), value: now });
@@ -21,7 +21,7 @@ export const slider: FieldView<Extract<Field, { type: "slider" }>> = {
     draft(i, c.key + x.name, c.store);
     const paint = () => {
       box.setAttribute("style", `--v:${along(x, Number(i.value))}`);
-      v.textContent = said(x, Number(i.value));
+      v.textContent = reads(x, Number(i.value));
       i.setAttribute("aria-valuetext", v.textContent);
     };
     i.addEventListener("input", paint);

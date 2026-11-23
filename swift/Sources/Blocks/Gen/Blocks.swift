@@ -894,12 +894,13 @@ public enum Field: Codable, Equatable, Sendable {
     case toggle(ToggleField)
     case picker(PickerField)
     case secret(SecretField)
+    case search(SearchField)
     case upload(UploadField)
     case scan(ScanField)
     case slider(SliderField)
     case otherField(JSONValue)
 
-    public static let tags: Set<String> = ["text", "toggle", "picker", "secret", "upload", "scan", "slider"]
+    public static let tags: Set<String> = ["text", "toggle", "picker", "secret", "search", "upload", "scan", "slider"]
 
     private enum Tag: String, CodingKey { case tag = "type" }
 
@@ -909,6 +910,7 @@ public enum Field: Codable, Equatable, Sendable {
         case "toggle": self = try (try? ToggleField(from: decoder)).map(Self.toggle) ?? .otherField(JSONValue(from: decoder))
         case "picker": self = try (try? PickerField(from: decoder)).map(Self.picker) ?? .otherField(JSONValue(from: decoder))
         case "secret": self = try (try? SecretField(from: decoder)).map(Self.secret) ?? .otherField(JSONValue(from: decoder))
+        case "search": self = try (try? SearchField(from: decoder)).map(Self.search) ?? .otherField(JSONValue(from: decoder))
         case "upload": self = try (try? UploadField(from: decoder)).map(Self.upload) ?? .otherField(JSONValue(from: decoder))
         case "scan": self = try (try? ScanField(from: decoder)).map(Self.scan) ?? .otherField(JSONValue(from: decoder))
         case "slider": self = try (try? SliderField(from: decoder)).map(Self.slider) ?? .otherField(JSONValue(from: decoder))
@@ -922,6 +924,7 @@ public enum Field: Codable, Equatable, Sendable {
         case .toggle(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("toggle", forKey: .tag)
         case .picker(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("picker", forKey: .tag)
         case .secret(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("secret", forKey: .tag)
+        case .search(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("search", forKey: .tag)
         case .upload(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("upload", forKey: .tag)
         case .scan(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("scan", forKey: .tag)
         case .slider(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("slider", forKey: .tag)
@@ -2680,6 +2683,36 @@ public struct Screen: Codable, Equatable, Sendable {
         self.threads = threads
         self.title = title
         self.url = url
+    }
+}
+
+public struct SearchField: Codable, Equatable, Sendable {
+    public var checks: [Check]?
+    public var doc: String?
+    public var enabled: Expr?
+    public var error: String?
+    public var filters: String?
+    public var label: String?
+    public var name: String
+    public var open: Bool?
+    public var placeholder: String?
+    public var show: Expr?
+    public var value: String?
+    public var was: String?
+
+    public init(checks: [Check]? = nil, doc: String? = nil, enabled: Expr? = nil, error: String? = nil, filters: String? = nil, label: String? = nil, name: String, open: Bool? = nil, placeholder: String? = nil, show: Expr? = nil, value: String? = nil, was: String? = nil) {
+        self.checks = checks
+        self.doc = doc
+        self.enabled = enabled
+        self.error = error
+        self.filters = filters
+        self.label = label
+        self.name = name
+        self.open = open
+        self.placeholder = placeholder
+        self.show = show
+        self.value = value
+        self.was = was
     }
 }
 

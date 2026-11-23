@@ -1,5 +1,5 @@
 import { type ReactNode } from "react";
-import { type Action, type Built, type Confirm, type Fault, type Lit, type Locale, type OnFile, type State, type Tap, type View } from "../../src/core/index.ts";
+import { type Action, type Built, type Confirm, type Fault, type Lit, type Locale, type OnFile, type Seek, type State, type Tap, type View } from "../../src/core/index.ts";
 export type Go = {
     open: string;
 } | {
@@ -54,6 +54,7 @@ export type Ctx = {
     kinds: Record<string, (p: KindProps) => ReactNode>;
     islands: Islands;
     file?: OnFile | undefined;
+    seek: Record<string, Seek>;
 };
 export type Props = {
     onAction: (a: Action) => Promise<boolean | void> | boolean | void;

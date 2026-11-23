@@ -4,11 +4,13 @@ import SwiftUI
 internal struct ListBlock: View {
     @Environment(\.look) private var look
     @Environment(\.accessibilityReduceMotion) private var still
+    @Environment(\.behaved) private var behaved
     @State private var held: [String]?
     internal let block: Blocks.List
 
     private var rows: [(key: String, row: Block)] {
-        let all = block.rows.enumerated().map { (key: $1.id ?? "#\($0)", row: $1) }
+        let q = block.id.flatMap { behaved.seek[$0]?.q } ?? ""
+        let all = block.rows.enumerated().map { (key: $1.id ?? "#\($0)", row: $1) }.filter { q.isEmpty || hits(said((try? JSONValue($0.row)) ?? .null), q) }
         guard let held else { return all }
         return held.compactMap { id in all.first { $0.key == id } } + all.filter { !held.contains($0.key) }
     }

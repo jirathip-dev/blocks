@@ -90,7 +90,7 @@ export type Expr = { get: string } | { not: Expr } | { all: Expr[] } | { any: Ex
 
 export type Fallback = { subtitle?: string | null; tap?: Tap | null; title: string };
 
-export type Field = ({ type: "text" } & TextField) | ({ type: "toggle" } & ToggleField) | ({ type: "picker" } & PickerField) | ({ type: "secret" } & SecretField) | ({ type: "upload" } & UploadField) | ({ type: "scan" } & ScanField) | ({ type: "slider" } & SliderField) | (OtherField & { [key: string]: unknown });
+export type Field = ({ type: "text" } & TextField) | ({ type: "toggle" } & ToggleField) | ({ type: "picker" } & PickerField) | ({ type: "secret" } & SecretField) | ({ type: "search" } & SearchField) | ({ type: "upload" } & UploadField) | ({ type: "scan" } & ScanField) | ({ type: "slider" } & SliderField) | (OtherField & { [key: string]: unknown });
 
 export type FieldDrawn = "native" | "plain" | "hidden";
 
@@ -281,6 +281,8 @@ export type SceneRepo = { blocks: Band[]; color?: string | null; id: string; sub
 export type SceneRow = { blocked_by?: number | null; figure?: Figure | null; host?: string | null; id: string; needs?: number | null; subtitle?: string | null; tap?: Tap | null; title: string; tone?: Tone | null; value?: string | null };
 
 export type Screen = { actions?: Act[] | null; back?: string | null; badge?: number | null; blocks?: Block[] | null; done?: Submit | null; focus?: boolean | null; id?: string | null; large?: boolean | null; locale?: Locale | null; pending?: Pending | null; personas?: Record<string, unknown>[] | null; refresh?: boolean | null; show?: Expr | null; sites?: number | null; source?: string | null; state?: Record<string, Lit> | null; stream?: string | null; threads?: Record<string, unknown>[] | null; title?: string | null; url?: string | null };
+
+export type SearchField = { checks?: Check[] | null; doc?: string | null; enabled?: Expr | null; error?: string | null; filters?: string | null; label?: string | null; name: string; open?: boolean | null; placeholder?: string | null; show?: Expr | null; value?: string | null; was?: string | null };
 
 export type Secret = { action: string; id?: string | null; label?: string | null; name: string; placeholder?: string | null; set?: boolean | null; show?: Expr | null; values?: Record<string, unknown> | null };
 
