@@ -1,0 +1,1 @@
+{"blocks":[{"type":"prose","markdown":"I don’t have this month’s shop data, so I can’t tell how it did. Share the sales or performance figures and I can summarize them."}]}

@@ -1,0 +1,1 @@
+{"blocks":[{"type":"prose","markdown":"A stand-up meeting is a short team check-in, often held daily. People typically share what they worked on, what they plan to do next, and any blockers. It’s called a “stand-up” because participants may stand to help keep the meeting brief."}]}
