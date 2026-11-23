@@ -83,7 +83,7 @@ export const curves = { "standard": "cubic-bezier(0.2, 0, 0, 1)", "calm": "cubic
 
 export const cases = { "as-is": "none", "lower": "lowercase", "upper": "uppercase" };
 
-export const drawn = { "header": ".sec>.sh", "section": ":is(.sp,.pg,.scn)>.sh", "title": ":is(.ch>b,.rt)", "button": ".b-button>span", "chip": ".chips button>span", "picked": ".dgn.picked .dgl" };
+export const drawn = { "header": ".sec>.sh", "section": ":is(.sp,.pg,.scn)>.sh", "title": ":is(.ch>b,.rt)", "button": ".b-button>span", "chip": ".chips button>span", "picked": ".dgn.picked .dgl", "screen": ".tabh>.b-screen__title" };
 
 type Label = { prefix?: string; suffix?: string; case?: keyof typeof cases };
 

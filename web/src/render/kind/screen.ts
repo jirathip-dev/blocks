@@ -8,7 +8,7 @@ export function screen(b: Screen, c: Ctx): HTMLElement {
   const s = el("div", "scr");
   s.dataset["id"] = String(b.id);
   const title = el("span", "tw b-screen__title");
-  title.append(c.theme.word(`tab-${b.id}`, (b.title ?? "").toLowerCase()));
+  title.append(c.theme.word(`tab-${b.id}`, b.title ?? ""));
   const head = el("p", "tabh");
   head.append(title);
   for (const a of b.actions ?? [])

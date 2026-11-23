@@ -123,7 +123,7 @@ var rules = {
 };
 var curves = { "standard": "cubic-bezier(0.2, 0, 0, 1)", "calm": "cubic-bezier(0.4, 0, 0.2, 1)", "bouncy": "cubic-bezier(0.34, 1.3, 0.64, 1)" };
 var cases = { "as-is": "none", "lower": "lowercase", "upper": "uppercase" };
-var drawn = { "header": ".sec>.sh", "section": ":is(.sp,.pg,.scn)>.sh", "title": ":is(.ch>b,.rt)", "button": ".b-button>span", "chip": ".chips button>span", "picked": ".dgn.picked .dgl" };
+var drawn = { "header": ".sec>.sh", "section": ":is(.sp,.pg,.scn)>.sh", "title": ":is(.ch>b,.rt)", "button": ".b-button>span", "chip": ".chips button>span", "picked": ".dgn.picked .dgl", "screen": ".tabh>.b-screen__title" };
 
 // src/core/gesture.ts
 var WORDS = ["reorder", "move", "stretch", "edit", "draw", "remove"];

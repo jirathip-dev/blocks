@@ -113,5 +113,6 @@ public struct LabelRole: RawRepresentable, Hashable, Codable, Equatable, Sendabl
     public static let back = Self(rawValue: "back")
     public static let said = Self(rawValue: "said")
     public static let picked = Self(rawValue: "picked")
-    public static let all: [Self] = [.kind, .header, .group, .section, .title, .button, .chip, .back, .said, .picked]
+    public static let screen = Self(rawValue: "screen")
+    public static let all: [Self] = [.kind, .header, .group, .section, .title, .button, .chip, .back, .said, .picked, .screen]
 }

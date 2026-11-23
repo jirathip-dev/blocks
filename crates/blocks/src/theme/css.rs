@@ -61,6 +61,7 @@ impl LabelRole {
             Self::Button => Some(".b-button>span"),
             Self::Chip => Some(".chips button>span"),
             Self::Picked => Some(".dgn.picked .dgl"),
+            Self::Screen => Some(".tabh>.b-screen__title"),
             Self::Kind | Self::Group | Self::Back | Self::Said => None,
         }
     }

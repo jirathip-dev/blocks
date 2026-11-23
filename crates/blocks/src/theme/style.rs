@@ -153,7 +153,7 @@ impl LabelCase {
 
 pick!(
     /// A label a style may decorate.
-    pub LabelRole { Kind, Header, Group, Section, Title, Button, Chip, Back, Said, Picked }
+    pub LabelRole { Kind, Header, Group, Section, Title, Button, Chip, Back, Said, Picked, Screen }
 );
 
 /// The style.json formats a reader takes: 1, and 2 which adds `space` and `motion`.

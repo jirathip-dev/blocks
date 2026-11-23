@@ -767,6 +767,7 @@ dialog.md:not([data-live]){position:relative;z-index:auto;inset:auto;transform:n
 .tabh{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s4) var(--s4);margin:var(--s3) 0 var(--s2);padding:0 var(--s2)}
 .tabh>.tw{margin-right:auto}
 .scr>.msgs{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding-bottom:var(--s2)}
+.b-screen__title{text-transform:lowercase}
 .secret .fd input{border-radius:var(--radius);letter-spacing:.12em}
 .secret .fd input::placeholder{letter-spacing:0;color:var(--mute)}
 .secret .fd input:focus{outline:2px solid var(--l);outline-offset:-1px;border-color:var(--l)}

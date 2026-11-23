@@ -6,6 +6,8 @@ import { buildSync } from "esbuild";
 import { webkit } from "playwright";
 import { reactJs } from "../../shot/shot.ts";
 import { native } from "../src/view.ts";
+import { css } from "../../src/core/index.ts";
+import { defaultPair } from "../../src/gen/schemes.ts";
 
 const web = fileURLToPath(new URL("../../", import.meta.url));
 const fixture = (k) => JSON.parse(readFileSync(new URL(`../../../fixtures/blocks/${k}.json`, import.meta.url), "utf8"));
@@ -116,5 +118,21 @@ test("React's composer puts a fresh nonce on each send and repeats it on a retry
   ok(/^[0-9a-f]{32}$/.test(first), first);
   deepStrictEqual(retry, first);
   ok(next !== first && /^[0-9a-f]{32}$/.test(next), next);
+  await p.close();
+});
+
+test("a screen title keeps its case in the markup and the look sets it: lowercase by default, as written with labels.screen as-is", async () => {
+  const p = await page();
+  await markup(p, { type: "screen", id: "s", title: "Delivery · Trips", blocks: [] });
+  await p.evaluate(([sheet, site]) => {
+    document.head.append(Object.assign(document.createElement("style"), { textContent: sheet }), Object.assign(document.createElement("style"), { id: "look" }));
+    document.body.insertAdjacentHTML("beforeend", `<div id=site>${site}</div>`);
+  }, [readFileSync(new URL("../../dist/blocks.css", import.meta.url), "utf8"), readFileSync(new URL("../../../fixtures/html/screen.html", import.meta.url), "utf8")]);
+  const titles = (look) => p.evaluate((l) => {
+    document.getElementById("look").textContent = l;
+    return ["#html", "#react", "#site"].map((r) => document.querySelector(`${r} .b-screen__title`).innerText);
+  }, look);
+  deepStrictEqual(await titles(css(defaultPair)), ["delivery · trips", "delivery · trips", "home"]);
+  deepStrictEqual(await titles(css(defaultPair, { labels: { screen: { case: "as-is" } } })), ["Delivery · Trips", "Delivery · Trips", "Home"]);
   await p.close();
 });
