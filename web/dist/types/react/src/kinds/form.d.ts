@@ -9,6 +9,8 @@ export type Held = {
     sent: Record<string, unknown>;
     wait(name: string, w: Wait): void;
     block?: string | undefined;
+    send?: ((name: string, v: unknown) => unknown) | undefined;
+    solo?: boolean;
 };
 export declare function field(x: Field, key: string, cx: Ctx, held: Held, shown?: [string, string]): import("react").ReactElement<{
     className: string | undefined;

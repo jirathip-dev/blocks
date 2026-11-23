@@ -1,0 +1,39 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="../neutral-default/tokens.css"><link rel="stylesheet" href="../../../web/dist/blocks.css"><link rel="stylesheet" href="search.css"><link rel="stylesheet" href="page.css">
+<script src="search.js"></script><title>search: every state</title></head>
+<body><main class="scr">
+<div class="top"><div class="tabh"><span class="tw">search · every state</span></div></div>
+
+<h2>1 · The box</h2><p class="note">No icon: the look draws controls as text. Empty, the placeholder (or the label) says what it searches. With text, [clear] sits at the box's end; it is named "clear" and its hit area is the full row height. The browser's own × is turned off.</p>
+<div class="cases">
+<div data-scope="a"><h3>empty</h3><div data-b='{"kind":"form","fields":[{"type":"search","name":"q","label":"Search","placeholder":"Search every app"}]}'></div></div>
+<div data-scope="b" class="ring"><h3>typed, focused</h3><div data-b='{"kind":"form","fields":[{"type":"search","name":"q","label":"Search","placeholder":"Search every app","value":"marlow invoice"}]}'></div></div>
+</div>
+
+<h2>2 · Working, "3 of 12", no match</h2><p class="note">One slot before [clear] says what is happening. Live form: "searching ↻" while the app answers (the ↻ stands still with reduced motion); the box stays usable and a new key restarts the 250 ms. With filters: how many rows are left, or "no match". Muted, never red: no match is not an error. Read out politely to a screen reader.</p>
+<div class="cases">
+<div data-scope="c" class="ring"><h3>live, the app is answering</h3><div data-b='{"kind":"form","action":"find","fields":[{"type":"search","name":"q","label":"Search","value":"invoi","busy":true}]}'></div></div>
+<div data-scope="d"><h3>filters, 3 rows left</h3><div data-b='{"kind":"form","fields":[{"type":"search","name":"q","label":"Search people","filters":"people","value":"ops bangkok","count":{"n":3,"m":12}}]}'></div></div>
+<div data-scope="e"><h3>filters, none left</h3><div data-b='{"kind":"form","fields":[{"type":"search","name":"q","label":"Search people","filters":"people","value":"ops hanoi","count":{"n":0,"m":12}}]}'></div></div>
+<div data-scope="f"><h3>a long text</h3><div data-b='{"kind":"form","fields":[{"type":"search","name":"q","label":"Search people","filters":"people","value":"finance chiang mai 2017 ira tanaka contract","count":{"n":1,"m":12}}]}'></div></div>
+</div>
+
+<h2>3 · Among other fields</h2><p class="note">When the form has more than the search, it is an ordinary field row: the label on the left, as text and picker draw it. Here a picker sits beside it; both narrow the same table.</p>
+<div class="cases">
+<div data-scope="g"><div data-b='{"kind":"form","fields":[{"type":"search","name":"q","label":"Name or site","placeholder":"type to narrow","filters":"people","value":"bangkok","count":{"n":7,"m":12}},{"type":"picker","name":"team","label":"Team","options":["every team","Ops","Finance"],"value":"every team"}]}'></div></div>
+</div>
+
+<h2>4 · The app's error, and off</h2><p class="note">The app's error is the field's red note, as on any field, with the red edge inside the box. With enabled false the box is drawn on the page colour and takes no text; [clear] is gone.</p>
+<div class="cases">
+<div data-scope="h"><div data-b='{"kind":"form","action":"find","fields":[{"type":"search","name":"q","label":"Search orders","value":"a","error":"type at least 2 letters"},{"type":"toggle","name":"open","label":"Open orders only","value":true}]}'></div></div>
+<div data-scope="i"><div data-b='{"kind":"form","fields":[{"type":"search","name":"q","label":"Search","placeholder":"search is off while the import runs","off":true}]}'></div></div>
+</div>
+
+<h2>5 · Thai</h2><p class="note">The words come from the screen's locale: ล้าง, กำลังค้นหา, "3 จาก 12", ไม่พบ. Matching ignores case only; Thai has none, so it compares the text as drawn.</p>
+<div class="cases">
+<div data-scope="j" data-lang="th"><div data-b='{"kind":"form","action":"find","fields":[{"type":"search","name":"q","label":"ค้นหา","value":"ใบแจ้งหนี้","busy":true}]}'></div></div>
+<div data-scope="k" data-lang="th"><div data-b='{"kind":"form","fields":[{"type":"search","name":"q","label":"ค้นหาพนักงาน","filters":"people","value":"กรุงเทพ","count":{"n":3,"m":12}}]}'></div></div>
+<div data-scope="l" data-lang="th"><div data-b='{"kind":"form","fields":[{"type":"search","name":"q","label":"ค้นหาพนักงาน","filters":"people","value":"เชียงราย","count":{"n":0,"m":12}}]}'></div></div>
+<div data-scope="m" data-lang="th"><div data-b='{"kind":"form","fields":[{"type":"search","name":"q","label":"ค้นหา","placeholder":"ค้นหาทุกแอป"}]}'></div></div>
+</div>
+</main><script>draw()</script></body></html>

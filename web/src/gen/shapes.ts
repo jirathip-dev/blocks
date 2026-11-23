@@ -1,4 +1,4 @@
-export type Fault = { fault: "twice"; at: string[]; id: string } | { fault: "act-twice"; action: string; at: string[]; block: string } | { fault: "unnamed"; kind: string } | { fault: "unknown"; kind: string } | { fault: "shape"; kind: string; why: string } | { fault: "extra"; field: string; kind: string } | { fault: "clash"; kind: string } | { fault: "bare"; id: string; kind: string } | { fault: "state"; key: string } | { fault: "link"; at: string; url: string };
+export type Fault = { fault: "twice"; at: string[]; id: string } | { fault: "act-twice"; action: string; at: string[]; block: string } | { fault: "unnamed"; kind: string } | { fault: "unknown"; kind: string } | { fault: "shape"; kind: string; why: string } | { fault: "extra"; field: string; kind: string } | { fault: "clash"; kind: string } | { fault: "bare"; id: string; kind: string } | { fault: "state"; key: string } | { fault: "link"; at: string; url: string } | { fault: "aim"; field: string; id: string };
 
 export type Shape = boolean | { type?: string | string[]; $ref?: string; properties?: Record<string, Shape>; required?: string[]; anyOf?: Shape[]; oneOf?: Shape[]; items?: Shape; additionalProperties?: Shape; const?: unknown; enum?: unknown[]; not?: Shape; minimum?: number; maximum?: number; minItems?: number; maxItems?: number };
 
@@ -2381,6 +2381,19 @@ export const defs: Record<string, Shape> = {
         "properties": {
           "type": {
             "const": "secret",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      {
+        "$ref": "#/$defs/SearchField",
+        "properties": {
+          "type": {
+            "const": "search",
             "type": "string"
           }
         },
@@ -5877,6 +5890,95 @@ export const defs: Record<string, Shape> = {
         ]
       }
     },
+    "type": "object"
+  },
+  "SearchField": {
+    "additionalProperties": true,
+    "properties": {
+      "checks": {
+        "items": {
+          "$ref": "#/$defs/Check"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "doc": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "enabled": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "error": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "filters": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "label": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "name": {
+        "type": "string"
+      },
+      "open": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "placeholder": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "show": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "value": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "was": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "required": [
+      "name"
+    ],
     "type": "object"
   },
   "Secret": {

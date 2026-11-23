@@ -1,0 +1,46 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="../neutral-default/tokens.css"><link rel="stylesheet" href="../../../web/dist/blocks.css"><link rel="stylesheet" href="search.css"><link rel="stylesheet" href="page.css">
+<script src="search.js"></script><title>search: hub's header, a live form</title></head>
+<body><main class="scr">
+<div class="top"><div class="tabh"><span class="tw">Apps · the hub's home, usage.md part 1</span></div></div>
+
+<h2>1 · Before a search <small>· the form's one field: the box spans the column, its label is the box's name</small></h2>
+<div data-scope="a">
+<div data-b='{"kind":"form","id":"find","action":"find","fields":[{"type":"search","name":"q","label":"Search","placeholder":"Search every app"}]}'></div>
+<div data-b='{"kind":"list","id":"tiles","rows":[
+ {"title":"Ledger","subtitle":"invoices, payments, suppliers","tap":1},
+ {"title":"Delivery","subtitle":"today’s stops and proofs","tap":1},
+ {"title":"Manpower","subtitle":"requests and shifts","tap":1},
+ {"title":"Projects","subtitle":"prospects, quotations, sites","tap":1}]}'></div>
+</div>
+
+<h2>2 · While the app answers <small>· 250 ms after the last key; "searching ↻" in the box, the old rows stay, typing goes on</small></h2>
+<div data-scope="b">
+<div data-b='{"kind":"form","id":"find","action":"find","fields":[{"type":"search","name":"q","label":"Search","placeholder":"Search every app","value":"invoi","busy":true}]}'></div>
+<div data-b='{"kind":"list","id":"tiles","rows":[
+ {"title":"Ledger","subtitle":"invoices, payments, suppliers","tap":1},
+ {"title":"Delivery","subtitle":"today’s stops and proofs","tap":1},
+ {"title":"Manpower","subtitle":"requests and shifts","tap":1},
+ {"title":"Projects","subtitle":"prospects, quotations, sites","tap":1}]}'></div>
+</div>
+
+<h2>3 · Grouped results <small>· the app's answer: a section of rows per app, no new shape; the text is handed back as value</small></h2>
+<div data-scope="c">
+<div data-b='{"kind":"form","id":"find","action":"find","fields":[{"type":"search","name":"q","label":"Search","placeholder":"Search every app","value":"invoice"}]}'></div>
+<div data-b='{"kind":"section","header":"Ledger","blocks":[{"kind":"list","id":"rows-ledger","rows":[
+ {"title":"INV-2026-0419 · Marlow Bakery","subtitle":"due 30 Nov · unpaid","value":"12,400.00","tap":1},
+ {"title":"INV-2026-0402 · Harbour Tiles","subtitle":"paid 14 Nov","value":"3,180.00","tap":1},
+ {"title":"Supplier invoice SI-881 · North Steel","subtitle":"waiting for approval","value":"48,900.00","tap":1}]}]}'></div>
+<div data-b='{"kind":"section","header":"Delivery","blocks":[{"kind":"list","id":"rows-delivery","rows":[
+ {"title":"Stop 3 · Marlow Bakery","subtitle":"invoice copy handed over","tap":1}]}]}'></div>
+<div data-b='{"kind":"section","header":"Projects","blocks":[{"kind":"list","id":"rows-projects","rows":[
+ {"title":"Quotation Q-118 · Riverside clinic","subtitle":"invoiced in two parts","tap":1},
+ {"title":"Quotation Q-121 · Old Town school","subtitle":"invoice on handover","tap":1}]}]}'></div>
+</div>
+
+<h2>4 · No match <small>· the app's own line, as hub writes it; [clear] empties the box and sends q: "" at once</small></h2>
+<div data-scope="d">
+<div data-b='{"kind":"form","id":"find","action":"find","fields":[{"type":"search","name":"q","label":"Search","placeholder":"Search every app","value":"zebra crossing"}]}'></div>
+<div data-b='{"kind":"text","text":"Nothing matches “zebra crossing”"}'></div>
+</div>
+</main><script>draw()</script></body></html>

@@ -5,8 +5,9 @@ use blocks::{
     Accept, Act, Bar, Block, Built, Button, ButtonStyle, Card, CardKind, ChipOption, Chips, Choice, ChoiceOption,
     Composer, ComposerChip, Diagram, Diff, Editor, Fallback, Field, FieldValue, Form, Hero, Hunk, Image, Images,
     Island, IslandSize, Label, Lane, LaneState, LineError, List, Mark, MarkKind, Media, Modal, Nav, NavLink, Node,
-    Other, Pages, Part, PickerField, Prose, Queued, Row, Run, ScanField, Scene, Screen, Secret, SecretField, Shown,
-    Span, Stage, Stat, Steps, Submit, Tap, Text, TextField, Tile, ToggleField, Tone, UploadField, Web,
+    Other, Pages, Part, PickerField, Prose, Queued, Row, Run, ScanField, Scene, Screen, SearchField, Secret,
+    SecretField, Shown, Span, Stage, Stat, Steps, Submit, Tap, Text, TextField, Tile, ToggleField, Tone, UploadField,
+    Web,
 };
 use serde_json::{Number, Value};
 
@@ -782,8 +783,9 @@ fn paperwork() -> Block {
         .mb(10u32);
     let note = ScanField::new("note").label("Delivery note").max(20u32);
     let pin = SecretField::new("pin").label("Order PIN").placeholder("4 digits");
+    let order = SearchField::new("order").label("Order").placeholder("Search orders");
     b!(Form(
-        Form::new(vec![photos.into(), note.into(), pin.into()])
+        Form::new(vec![order.into(), photos.into(), note.into(), pin.into()])
             .id("claim")
             .submit(Submit {
                 label: "send claim".into(),

@@ -1,5 +1,5 @@
 import { createContext, type ReactNode, useEffect, useMemo, useRef, useState } from "react";
-import { type Action, type Built, check, type Confirm, evaluate, type Fault, type Lit, linkable, type Locale, type OnFile, start, type State, type Tap, view, type View } from "../../src/core/index.ts";
+import { type Action, type Built, check, type Confirm, evaluate, type Fault, type Lit, linkable, type Locale, type OnFile, type Seek, seeks, start, type State, type Tap, view, type View } from "../../src/core/index.ts";
 import { h } from "./h.ts";
 
 export type Go = { open: string } | { sheet: string } | { thread: string };
@@ -26,6 +26,7 @@ export type Ctx = {
   kinds: Record<string, (p: KindProps) => ReactNode>;
   islands: Islands;
   file?: OnFile | undefined;
+  seek: Record<string, Seek>;
 };
 export type Props = {
   onAction: (a: Action) => Promise<boolean | void> | boolean | void;
@@ -38,7 +39,7 @@ export type Props = {
 
 const none: View = { hidden: new Set(), disabled: new Set(), says: {}, acts: new Set(), values: {} };
 /// What every block under a view reads: the local state's view, the busy senders and the way out.
-export const Cx = createContext<Ctx>({ screen: "", locale: {}, v: none, state: {}, edits: {}, put: () => {}, busy: new Set(), act: async () => false, tap: () => {}, report: () => {}, kinds: {}, islands: {} });
+export const Cx = createContext<Ctx>({ screen: "", locale: {}, v: none, state: {}, edits: {}, put: () => {}, busy: new Set(), act: async () => false, tap: () => {}, report: () => {}, kinds: {}, islands: {}, seek: {} });
 
 const goOf = (t: Tap): Go | null => (t.open != null ? { open: t.open } : t.sheet != null ? { sheet: t.sheet } : t.thread != null ? { thread: t.thread } : null);
 
@@ -95,7 +96,7 @@ export function useCx(p: Props, screen: Built): { cx: Ctx; ask: ReactNode } {
     };
     const put = (k: string, to: Lit | undefined) =>
       setEdits((e) => ({ ...Object.fromEntries(Object.entries(e).filter(([x]) => x !== k)), ...(to === undefined ? null : { [k]: to }) }));
-    return { screen: String(screen.id ?? ""), locale: screen.locale ?? {}, v, state, edits, put, busy, act, tap, report, kinds: p.kinds ?? {}, islands: p.islands ?? {}, file: p.onFile };
+    return { screen: String(screen.id ?? ""), locale: screen.locale ?? {}, v, state, edits, put, busy, act, tap, report, kinds: p.kinds ?? {}, islands: p.islands ?? {}, file: p.onFile, seek: seeks(screen, state) };
   }, [key, screen.id, p.kinds, p.islands, p.onFile]);
   const end = (ok: boolean) => {
     asking?.done(ok);

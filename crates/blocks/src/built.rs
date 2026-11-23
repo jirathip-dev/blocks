@@ -48,6 +48,10 @@ pub enum Fault {
         at: String,
         url: String,
     },
+    Aim {
+        field: String,
+        id: String,
+    },
 }
 
 /// A screen as it goes on the wire: typed in with its fallbacks written, or read in as JSON.
@@ -197,6 +201,8 @@ struct Walk<'a> {
     ids: BTreeMap<String, String>,
     acts: BTreeMap<(String, String), String>,
     keys: Vec<String>,
+    rows: BTreeSet<String>,
+    aims: Vec<(String, String)>,
     out: Vec<Fault>,
 }
 
@@ -312,8 +318,14 @@ impl Walk<'_> {
         match k {
             "chips" => self.keys.extend(chip.map(Into::into)),
             "form" | "config" => self.keys.extend(names.map(Into::into)),
+            "list" | "table" => self.rows.extend(o.get("id").and_then(Value::as_str).map(Into::into)),
             _ => {}
         }
+        let fields = o.get("fields").and_then(Value::as_array).into_iter().flatten();
+        let fields = fields.filter(|_| matches!(k, "form" | "config"));
+        let aims = fields.filter(|f| f.get("type").and_then(Value::as_str) == Some("search"));
+        let aims = aims.filter_map(|f| Some((f.get("name")?.as_str()?.into(), f.get("filters")?.as_str()?.into())));
+        self.aims.extend(aims.collect::<Vec<_>>());
     }
 }
 
@@ -353,6 +365,8 @@ impl Built {
             ids: BTreeMap::new(),
             acts: BTreeMap::new(),
             keys: vec![],
+            rows: BTreeSet::new(),
+            aims: vec![],
             out: vec![],
         };
         let clash = app.iter().filter(|k| Block::KINDS.contains(k));
@@ -360,6 +374,12 @@ impl Built {
         let state = self.0.get("state").and_then(Value::as_object).into_iter().flatten();
         w.keys.extend(state.map(|(k, _)| k.clone()));
         w.block(&self.0, "", "");
+        let aims = w.aims.iter().filter(|(_, id)| !w.rows.contains(id));
+        let aims = aims.map(|(field, id)| Fault::Aim {
+            field: field.clone(),
+            id: id.clone(),
+        });
+        w.out.extend(aims.collect::<Vec<_>>());
         let mut declared = BTreeSet::new();
         let twice: Vec<String> = w
             .keys

@@ -1,0 +1,62 @@
+{
+  "type": "screen",
+  "id": "hub",
+  "title": "Apps",
+  "blocks": [
+    {
+      "type": "form",
+      "id": "find",
+      "action": "find",
+      "fields": [
+        {
+          "type": "search",
+          "name": "q",
+          "label": "Search",
+          "value": "ops",
+          "placeholder": "Search every app"
+        }
+      ]
+    },
+    {
+      "type": "section",
+      "id": "hits-hr",
+      "header": "HR",
+      "blocks": [
+        {
+          "type": "list",
+          "id": "rows-hr",
+          "rows": [
+            {
+              "type": "row",
+              "id": "hr-1",
+              "title": "Ops shift swaps"
+            },
+            {
+              "type": "row",
+              "id": "hr-2",
+              "title": "Ops leave requests"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "section",
+      "id": "hits-fleet",
+      "header": "Fleet",
+      "blocks": [
+        {
+          "type": "list",
+          "id": "rows-fleet",
+          "rows": [
+            {
+              "type": "row",
+              "id": "fl-1",
+              "title": "Ops trucks in Bangkok"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

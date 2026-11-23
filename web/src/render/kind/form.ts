@@ -13,9 +13,11 @@ export type Drawn = { row: HTMLElement; name: string; sent(): unknown; busy?: ((
 export function form(b: Form, c: Ctx): HTMLElement {
   const f = el("div", `form${b.submit ? " say" : ""}`);
   f.dataset["id"] = b.id ?? "";
-  const all = b.fields.map((x) => field(x, `draft:${c.screen}:${String(b.id)}:`, c, undefined, b.id ?? undefined));
-  f.append(...all.map((d) => d.row));
   const s = b.submit;
+  const live = s ? undefined : b.action;
+  const all = b.fields.map((x) => field(x, `draft:${c.screen}:${String(b.id)}:`, c, live ? (v) => c.act({ action: live, block: b.id, values: { [x.name]: v } }) : undefined, b.id ?? undefined));
+  f.append(...all.map((d) => d.row));
+  if (!s && all.length === 1) all[0]?.row.classList.add("solo");
   if (!s) return f;
   const go = btn(s.label, "", undefined, s.action);
   go.dataset["submit"] = "";
@@ -53,7 +55,7 @@ export function form(b: Form, c: Ctx): HTMLElement {
 const note = (x: Field, was: string): [string, string] => (x.error ? ["fn err", x.error] : x.was != null ? ["fn was", `${was} ${x.was}`] : ["fn", x.doc ?? ""]);
 
 /// A field as a `.fd` label: its name and note, then the control its type's view draws; `set` hears each committed value.
-export function field(x: Field, key: string, c: Ctx, set?: (v: unknown) => void, block?: string): Drawn {
+export function field(x: Field, key: string, c: Ctx, set?: (v: unknown) => unknown, block?: string): Drawn {
   const fc = { locale: c.locale ?? {}, store: c.store, key, set, screen: c.screen, block, file: c.file };
   const v: FieldView = views[x.type] ?? text;
   const [cls, say] = note(v.group ? { ...x, error: null } : x, word(fc, "was"));

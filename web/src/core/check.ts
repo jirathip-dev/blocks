@@ -87,6 +87,8 @@ class Walk {
   ids = new Map<string, string>();
   acts = new Map<string, string>();
   keys: string[] = [];
+  rows = new Set<string>();
+  aims: [string, string][] = [];
   out: Fault[] = [];
   app: readonly string[];
   constructor(app: readonly string[]) {
@@ -148,6 +150,9 @@ class Walk {
     const fields = kind === "form" || kind === "config" ? (Array.isArray(o["fields"]) ? o["fields"] : []) : [];
     const names = kind === "chips" ? [o["name"]] : fields.map((f) => (isObj(f) ? f["name"] : undefined));
     for (const n of names) if (typeof n === "string") this.keys.push(n);
+    const id = str(o["id"]);
+    if ((kind === "list" || kind === "table") && id !== undefined) this.rows.add(id);
+    for (const f of fields) if (isObj(f) && f["type"] === "search" && typeof f["name"] === "string" && typeof f["filters"] === "string") this.aims.push([f["name"], f["filters"]]);
   }
 }
 
@@ -166,6 +171,7 @@ export function check(screen: unknown, app: readonly string[] = []): Fault[] {
   for (const kind of app) if (KINDS.includes(kind)) w.out.push({ fault: "clash", kind });
   if (isObj(screen) && isObj(screen["state"])) w.keys.push(...sorted(screen["state"]));
   w.block(screen, "", "");
+  for (const [field, id] of w.aims) if (!w.rows.has(id)) w.out.push({ fault: "aim", field, id });
   const declared = new Set<string>();
   const twice = w.keys.filter((k) => declared.has(k) || !declared.add(k));
   const used: string[] = [];

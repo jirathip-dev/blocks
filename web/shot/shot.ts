@@ -134,11 +134,11 @@ export async function shot({ screen, steps = [], name = "shot", size = "390x844"
       return r.fulfill({ status: 404 });
     });
     const logged = [];
-    if (probes || check) page.on("pageerror", (e) => logged.push(e.message));
-    if (probes || check) page.on("console", (m) => m.type() === "error" && !m.text().startsWith("Failed to load resource") && logged.push(m.text()));
+    if (probes || check) page.on("pageerror", (e) => logged.push(e.message)).on("console", (m) => m.type() === "error" && !m.text().startsWith("Failed to load resource") && logged.push(m.text()));
     await page.goto(BASE);
     await page.waitForFunction(() => window.B);
     const report = { shots: [], sent: [], dropped: [], timings: { first_paint_ms: await page.evaluate(boot, screen), steps_ms: [] } };
+    if (steps.some((s) => s.wait)) await page.clock.install({ time: 0 }).then(() => page.clock.pauseAt(1000));
     const pngs = {}, trees = {}, seen = [], faults = [], frames = [];
     const script = steps.some((s) => s.shot) ? steps : [...steps, { shot: { name } }];
     for (let i = 0; i < script.length; i++) {
@@ -162,10 +162,10 @@ export async function shot({ screen, steps = [], name = "shot", size = "390x844"
       const tap = s.tap && ((await on(s.tap.id).locator("[data-submit]").count()) ? on(s.tap.id).locator("[data-submit]").first() : await hit(s.tap.id, "self::button or self::a or @role='button'"));
       const type = s.type && (await hit(s.type.id, "self::input or self::textarea"));
       if (tap) await ((await live(tap)) ? tap.click() : report.dropped.push(`tap ${s.tap.id}`));
-      if (type) await ((await live(type)) ? type.fill(s.type.text) : report.dropped.push(`type ${s.type.id}`));
+      if (type) await ((await live(type)) ? (await type.fill(s.type.text), s.type.enter && (await type.press("Enter"))) : report.dropped.push(`type ${s.type.id}`));
       if (s.scroll) frames.push(...(await page.evaluate((id) => window.h.scroll(id), s.scroll.id)));
       if (s.answer) await page.evaluate((ops) => (window.h.ops(ops), window.h.wait?.(true)), s.answer.ops ?? []);
-      await (s.gesture || s.refuse ? gesture(page, s) : s.file ? pick(page, s.file, report.dropped) : null);
+      await (s.gesture || s.refuse ? gesture(page, s) : s.file ? pick(page, s.file, report.dropped) : s.wait ? page.clock.runFor(s.wait.ms) : null);
       if (s.shot) {
         const n = s.shot.name;
         pngs[n] = await page.screenshot();

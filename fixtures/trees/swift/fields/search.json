@@ -1,0 +1,63 @@
+{
+  "kind": "screen",
+  "id": "fields-search",
+  "variant": null,
+  "drawn": "native",
+  "role": "group",
+  "name": "fields-search",
+  "children": [
+    {
+      "kind": "form",
+      "id": "search",
+      "variant": null,
+      "drawn": "native",
+      "role": "form",
+      "name": "search",
+      "fields": [
+        {
+          "name": "q-empty",
+          "type": "search",
+          "drawn": "native",
+          "role": "searchbox",
+          "label": "Search"
+        },
+        {
+          "name": "q",
+          "type": "search",
+          "drawn": "native",
+          "role": "searchbox",
+          "label": "Search"
+        },
+        {
+          "name": "q-error",
+          "type": "search",
+          "drawn": "native",
+          "role": "searchbox",
+          "label": "Search"
+        },
+        {
+          "name": "q-was",
+          "type": "search",
+          "drawn": "native",
+          "role": "searchbox",
+          "label": "Search"
+        },
+        {
+          "name": "q-doc",
+          "type": "search",
+          "drawn": "native",
+          "role": "searchbox",
+          "label": "Search"
+        },
+        {
+          "name": "q-label",
+          "type": "search",
+          "drawn": "native",
+          "role": "searchbox",
+          "label": "A label long enough to wrap onto a second line on a phone held upright"
+        }
+      ],
+      "children": []
+    }
+  ]
+}
