@@ -19,3 +19,22 @@ extension RenderTests {
         XCTAssertGreaterThan(try pixels(BlocksView(block(card("a")), source: .core), amber), 0)
     }
 }
+
+extension RenderTests {
+    func testAnOpenCardTintsItsAccentWithItsFleetColourUnlessItsKindWins() throws {
+        let palette = Look(still: true).palette
+        let (purple, amber) = (try near(palette.purple), try near(palette.amber))
+        let card = { (color: String, kind: String) in
+            #"{"type": "card", "id": "c", "title": "Deploy", "meta": "paused", "color": "\#(color)"\#(kind)}"#
+        }
+        let p = BlocksView(try block(card("p", "")), source: .core)
+        let a = BlocksView(try block(card("a", "")), source: .core)
+        XCTAssertGreaterThan(try pixels(p, purple), 0)
+        XCTAssertEqual(try pixels(p, amber), 0)
+        XCTAssertGreaterThan(try pixels(a, amber), 0)
+        XCTAssertEqual(try pixels(a, purple), 0)
+        let asked = BlocksView(try block(card("a", #", "kind": "ask""#)), source: .core)
+        XCTAssertGreaterThan(try pixels(asked, try near(palette.red)), 0)
+        XCTAssertEqual(try pixels(asked, amber), 0)
+    }
+}
