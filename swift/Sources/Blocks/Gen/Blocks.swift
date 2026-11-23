@@ -3539,6 +3539,7 @@ public struct Toast: Codable, Equatable, Sendable {
 }
 
 public struct ToggleField: Codable, Equatable, Sendable {
+    public var `as`: ToggleLook?
     public var checks: [Check]?
     public var doc: String?
     public var enabled: Expr?
@@ -3550,7 +3551,8 @@ public struct ToggleField: Codable, Equatable, Sendable {
     public var value: FieldValue?
     public var was: String?
 
-    public init(checks: [Check]? = nil, doc: String? = nil, enabled: Expr? = nil, error: String? = nil, label: String? = nil, name: String, open: Bool? = nil, show: Expr? = nil, value: FieldValue? = nil, was: String? = nil) {
+    public init(`as`: ToggleLook? = nil, checks: [Check]? = nil, doc: String? = nil, enabled: Expr? = nil, error: String? = nil, label: String? = nil, name: String, open: Bool? = nil, show: Expr? = nil, value: FieldValue? = nil, was: String? = nil) {
+        self.`as` = `as`
         self.checks = checks
         self.doc = doc
         self.enabled = enabled
@@ -3562,6 +3564,14 @@ public struct ToggleField: Codable, Equatable, Sendable {
         self.value = value
         self.was = was
     }
+}
+
+public struct ToggleLook: RawRepresentable, Hashable, Codable, Equatable, Sendable {
+    public let rawValue: String
+    public init(rawValue: String) { self.rawValue = rawValue }
+    public static let `switch` = Self(rawValue: "switch")
+    public static let check = Self(rawValue: "check")
+    public static let all: [Self] = [.`switch`, .check]
 }
 
 public struct Tone: RawRepresentable, Hashable, Codable, Equatable, Sendable {

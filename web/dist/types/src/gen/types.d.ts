@@ -1390,6 +1390,7 @@ export type Toast = {
     undo?: Undo | null;
 };
 export type ToggleField = {
+    as?: ToggleLook | null;
     checks?: Check[] | null;
     doc?: string | null;
     enabled?: Expr | null;
@@ -1401,6 +1402,7 @@ export type ToggleField = {
     value?: FieldValue | null;
     was?: string | null;
 };
+export type ToggleLook = "switch" | "check";
 export type Tone = "ok" | "warn" | "bad" | "info" | "mute" | "accent" | "working" | "needs" | "done" | "fail" | "idle";
 export type Toned = string | Label;
 export type Tool = {

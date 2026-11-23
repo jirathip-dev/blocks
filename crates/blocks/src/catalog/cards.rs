@@ -461,7 +461,7 @@ pub(crate) static PARTS: &[Part] = &[
     Part { name: "Time", input: "", line: "{label?: string, since?: string, until?: string}", names: &[] },
     Part { name: "TimeBar", input: "", line: "{end: string, id: string, start: string, fixed?: bool, label?: string, progress?: number, tap?: Tap, tone?: Tone}", names: &["Tap", "Tone"] },
     Part { name: "TimeRow", input: "", line: "{bars: TimeBar[], id: string, title: string, subtitle?: string, tap?: Tap}", names: &["Tap", "TimeBar"] },
-    Part { name: "ToggleField", input: "toggle", line: "{type: \"toggle\", name: string, doc?: string, error?: string, label?: string, value?: FieldValue, was?: string}", names: &["FieldValue"] },
+    Part { name: "ToggleField", input: "toggle", line: "{type: \"toggle\", name: string, as?: \"switch\"|\"check\", doc?: string, error?: string, label?: string, value?: FieldValue, was?: string}", names: &["FieldValue"] },
     Part { name: "Tone", input: "", line: "\"ok\"|\"warn\"|\"bad\"|\"info\"|\"mute\"|\"accent\"|\"working\"|\"needs\"|\"done\"|\"fail\"|\"idle\"", names: &[] },
     Part { name: "Toned", input: "", line: "string | Label", names: &["Label"] },
     Part { name: "Trace", input: "", line: "{name: string, x: number[], y: number[], tone?: Tone}", names: &["Tone"] },

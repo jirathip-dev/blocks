@@ -85,7 +85,7 @@ final class SnapshotTests: XCTestCase {
             let swift = try Data(contentsOf: fixtures.appendingPathComponent("trees/swift/fields/\(name).json"))
             XCTAssertEqual(swift, try Data(contentsOf: fixtures.appendingPathComponent("fields/trees/\(name).json")), name)
             let form = try XCTUnwrap(try load(TreeNode.self, "trees/swift/fields/\(name).json").children.first)
-            XCTAssertEqual(Set(form.fields?.map { "\($0.type) \($0.drawn.rawValue)" } ?? []), ["\(name) native"], name)
+            XCTAssertEqual(Set(form.fields?.map { "\($0.type) \($0.drawn.rawValue)" } ?? []), ["\(name.prefix { $0 != "-" }) native"], name)
         }
     }
 

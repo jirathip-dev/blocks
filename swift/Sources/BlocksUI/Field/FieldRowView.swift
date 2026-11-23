@@ -36,12 +36,13 @@ internal struct FieldRow: View {
         let palette = look.palette
         return Button(action: tap) {
             HStack {
+                if tick { Image(systemName: value?.bool == true ? "checkmark.square.fill" : "square").foregroundStyle(palette.lead) }
                 VStack(alignment: .leading, spacing: 2) {
                     Text(field.label ?? name).ui(14, .regular, look).foregroundStyle(palette.mute)
                     if let note { Text(note.text).ui(11, .regular, look).foregroundStyle(note.tint) }
                 }
                 Spacer()
-                Text(field.shown(value, edited: edits[name] != nil)).ui(14, .regular, look)
+                if !tick { Text(field.shown(value, edited: edits[name] != nil)).ui(14, .regular, look) }
             }
             .padding(.horizontal, 12).frame(minHeight: 38).padding(.vertical, note == nil ? 0 : 4)
             .background(palette.background.opacity(0.5), in: .rect(cornerRadius: look.radius(10)))
@@ -57,6 +58,8 @@ internal struct FieldRow: View {
             }
         }
     }
+
+    private var tick: Bool { (field as? ToggleField)?.as == .check }
 
     private var note: (text: String, tint: Color)? {
         let palette = look.palette

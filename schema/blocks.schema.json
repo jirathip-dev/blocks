@@ -8869,8 +8869,18 @@
     },
     "ToggleField": {
       "additionalProperties": true,
-      "description": "An on or off switch.",
+      "description": "An on or off switch; `as: \"check\"` draws it as a checkbox.",
       "properties": {
+        "as": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ToggleLook"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
         "checks": {
           "items": {
             "$ref": "#/$defs/Check"
@@ -8948,6 +8958,20 @@
         "name"
       ],
       "type": "object"
+    },
+    "ToggleLook": {
+      "anyOf": [
+        {
+          "enum": [
+            "switch",
+            "check"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "string"
+        }
+      ]
     },
     "Tone": {
       "anyOf": [
