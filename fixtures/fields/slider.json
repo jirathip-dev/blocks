@@ -1,0 +1,85 @@
+{
+  "blocks": [
+    {
+      "fallback": {
+        "title": "form"
+      },
+      "fields": [
+        {
+          "label": "Text size",
+          "max": 130,
+          "min": 80,
+          "name": "size-empty",
+          "type": "slider"
+        },
+        {
+          "label": "Text size",
+          "max": 130,
+          "min": 80,
+          "name": "size",
+          "step": 5,
+          "type": "slider",
+          "unit": "%",
+          "value": 110
+        },
+        {
+          "error": "Check this one",
+          "label": "Text size",
+          "max": 130,
+          "min": 80,
+          "name": "size-error",
+          "step": 5,
+          "type": "slider",
+          "unit": "%",
+          "value": 110
+        },
+        {
+          "label": "Text size",
+          "max": 130,
+          "min": 80,
+          "name": "size-was",
+          "step": 5,
+          "type": "slider",
+          "unit": "%",
+          "value": 110,
+          "was": "the old value"
+        },
+        {
+          "doc": "A line that says what it is for",
+          "label": "Text size",
+          "max": 130,
+          "min": 80,
+          "name": "size-doc",
+          "step": 5,
+          "type": "slider",
+          "unit": "%",
+          "value": 110
+        },
+        {
+          "label": "A label long enough to wrap onto a second line on a phone held upright",
+          "max": 130,
+          "min": 80,
+          "name": "size-label",
+          "step": 5,
+          "type": "slider",
+          "unit": "%",
+          "value": 110
+        }
+      ],
+      "id": "slider",
+      "submit": {
+        "action": "send",
+        "label": "send"
+      },
+      "type": "form"
+    }
+  ],
+  "fallback": {
+    "title": "screen"
+  },
+  "id": "fields-slider",
+  "locale": {
+    "lang": "en"
+  },
+  "type": "screen"
+}

@@ -3,8 +3,9 @@ import { picker } from "../fields/picker.ts";
 import { scan } from "../fields/scan.ts";
 import { search } from "../fields/search.ts";
 import { secret } from "../fields/secret.ts";
+import { slider } from "../fields/slider.ts";
 import { text } from "../fields/text.ts";
 import { toggle } from "../fields/toggle.ts";
 import { upload } from "../fields/upload.ts";
 
-export const views: Record<string, FieldView | undefined> = { picker, scan, search, secret, text, toggle, upload };
+export const views: Record<string, FieldView | undefined> = { picker, scan, search, secret, slider, text, toggle, upload };

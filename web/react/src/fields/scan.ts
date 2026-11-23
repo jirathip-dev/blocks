@@ -40,6 +40,7 @@ function Scan({ x, c, attrs }: { x: ScanField; c: FieldCx; attrs: Record<string,
 export const scan: FieldView<ScanField> = {
   row: " up",
   group: true,
+  waits: true,
   draw: (x, c, attrs) => createElement(Scan, { x, c, attrs }),
   sent: (x) => ids(scanHeld(x)),
 };
