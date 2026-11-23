@@ -1,0 +1,43 @@
+/* What `heat` adds to blocks.css: tokens only, square corners, nothing measured in JS. --k is the ramp's tone token. */
+.heat{container-type:inline-size;padding:var(--s2) var(--s3) var(--s3);--k:var(--c)}
+.heat .hmt{font-weight:600}
+.heat .hmo{display:flex;flex-wrap:wrap;align-items:baseline;gap:var(--s1) var(--s3);min-height:18px;margin:var(--s1) 0 var(--s2);font-size:var(--fs-meta);color:var(--mute)}
+.heat .hmo .at{color:var(--fg);font-weight:600}
+.heat .hmo b{color:var(--fg);font-weight:600;font-variant-numeric:tabular-nums}
+.heat .hmw{overflow-x:auto;overscroll-behavior-x:contain}
+.heat table{border-collapse:separate;border-spacing:var(--seam);width:100%;table-layout:fixed;margin:calc(-1 * var(--seam))}
+.heat col.rh{width:var(--hm-rh,88px)}
+.heat col.c{width:auto}
+.heat thead th{font-size:var(--fs-meta);font-weight:400;color:var(--mute);text-align:center;padding:0 0 var(--s1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.heat tbody th{position:sticky;left:0;z-index:1;background:var(--card);font-size:var(--fs-meta);font-weight:400;color:var(--mute);text-align:left;padding:0 var(--s2) 0 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.heat td{height:var(--hit);min-width:var(--ctl);padding:0;position:relative;background:var(--hm-bg);color:var(--hm-ink,var(--fg))}
+.heat td.s1{--hm-bg:color-mix(in oklab,var(--k) 18%,var(--card))}
+.heat td.s2{--hm-bg:color-mix(in oklab,var(--k) 38%,var(--card))}
+.heat td.s3{--hm-bg:color-mix(in oklab,var(--k) 58%,var(--card))}
+.heat td.s4{--hm-bg:var(--k);--hm-ink:var(--card)}
+.heat td.s5{--hm-bg:color-mix(in oklab,var(--fg) 55%,var(--k));--hm-ink:var(--card)}
+.heat td.e{--hm-bg:repeating-linear-gradient(135deg,var(--line) 0 1px,transparent 1px 6px);background:var(--hm-bg);box-shadow:inset 0 0 0 1px var(--line);--hm-ink:var(--mute)}
+.heat td .v,.heat td>button{display:flex;align-items:center;justify-content:center;width:100%;height:100%;min-height:0;padding:0 var(--s1);border:0;border-radius:0;background:none;font:inherit;font-size:var(--fs-meta);color:inherit;text-transform:none;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;cursor:pointer}
+.heat td>button::before,.heat td>button::after{content:none}
+.heat td>button:hover,.heat td.hov>button{box-shadow:inset 0 0 0 1px var(--fg)}
+.heat td>button:focus-visible,.heat td.foc>button{outline:var(--ring) solid var(--fg);outline-offset:calc(-1 * var(--ring))}
+.heat td.sel>button{box-shadow:inset 0 0 0 var(--ring) var(--fg),inset 0 0 0 calc(2 * var(--ring)) var(--card)}
+.heat td .lb{overflow:hidden;text-overflow:ellipsis}
+.heat .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.heat .hml{display:flex;flex-wrap:wrap;align-items:flex-start;gap:var(--s2) var(--s4);margin-top:var(--s3);font-size:var(--fs-meta);color:var(--mute)}
+.heat .hml .u{color:var(--fg);font-weight:600;line-height:12px}
+.heat .ramp{display:grid;grid-template-columns:repeat(5,minmax(28px,48px));column-gap:var(--seam)}
+.heat .ramp i{height:12px;background:var(--hm-bg)}
+.heat .ramp i.s1{--hm-bg:color-mix(in oklab,var(--k) 18%,var(--card))}
+.heat .ramp i.s2{--hm-bg:color-mix(in oklab,var(--k) 38%,var(--card))}
+.heat .ramp i.s3{--hm-bg:color-mix(in oklab,var(--k) 58%,var(--card))}
+.heat .ramp i.s4{--hm-bg:var(--k)}
+.heat .ramp i.s5{--hm-bg:color-mix(in oklab,var(--fg) 55%,var(--k))}
+.heat .ramp .rx{grid-row:2;display:flex;justify-content:space-between;grid-column:1/-1;position:relative;height:16px;font-variant-numeric:tabular-nums}
+.heat .ramp .rx span{position:absolute;top:2px;transform:translateX(-50%);white-space:nowrap}
+.heat .ramp .rx span:first-child{transform:none}.heat .ramp .rx span:last-child{transform:translateX(-100%)}
+.heat .nd{display:inline-flex;align-items:center;gap:var(--s1);align-self:flex-start}
+.heat .nd i{width:20px;height:12px;background:repeating-linear-gradient(135deg,var(--line) 0 1px,transparent 1px 6px);box-shadow:inset 0 0 0 1px var(--line)}
+.heat .hme{display:flex;align-items:center;justify-content:center;min-height:120px;color:var(--mute);box-shadow:inset 0 0 0 1px var(--line)}
+.heat.hk-ok{--k:var(--g)}.heat.hk-warn{--k:var(--a)}.heat.hk-bad{--k:var(--r)}.heat.hk-info{--k:var(--c)}.heat.hk-accent{--k:var(--p)}
+@container (max-width:520px){.heat{--hm-rh:56px}}

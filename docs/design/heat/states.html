@@ -1,0 +1,47 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>heat: every state</title>
+<link rel="stylesheet" href="../neutral-default/tokens.css"><link rel="stylesheet" href="../../../web/dist/blocks.css"><link rel="stylesheet" href="heat.css"><link rel="stylesheet" href="page.css">
+<script src="heat.js"></script></head>
+<body><main id="page">
+<div class="top"><b>heat: states</b><span class="m">each card is one block; the note under it says what it shows</span></div>
+<div><div id="tap"></div><p class="note">1 Tap a cell: it is picked (ink ring), the row under the title reads it, and the block's action is sent.</p><p class="act">sends <code>{"action":"training.day","row":"Week 3","column":"Wed"}</code></p></div>
+<div class="half"><div id="hover"></div><p class="note">2 Hover (web) and keyboard focus: a 1px ink edge on hover, the focus ring on the focused cell; the row under the title follows. Arrow keys move between cells.</p></div>
+<div class="half"><div id="sparse"></div><p class="note">3 A sparse grid: most cells empty. Empty cells are hatched, never a ramp colour, and the legend adds "No data".</p></div>
+<div class="half"><div id="clamp"></div><p class="note">4 A fixed scale (min 60, max 90): values outside it take the end colour and the legend reads ≤ and ≥.</p></div>
+<div class="half"><div id="labels"></div><p class="note">5 A label per cell instead of a number; tones: <code>ok</code> here, <code>bad</code> in 7.</p></div>
+<div><div id="wide"></div><p class="note">6 Many columns: 31 days. Cells keep their tap size; the grid scrolls sideways and the row labels stay put.</p></div>
+<div class="half"><div id="th"></div><p class="note">7 A Thai screen: Thai labels, long row names cut with an ellipsis (full name read out).</p></div>
+<div class="half"><div id="empty"></div><p class="note">8 No values at all: the block's empty text, no grid, nothing tappable.</p></div>
+</main>
+<script>
+const days = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+let seed = 11; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+const grid = (n, f) => Array.from({ length: n }, (_, w) => ({ name: "Week " + (w + 1), cells: days.map((_, d) => f(w, d)) }));
+const tapRows = grid(4, (w, d) => d === 0 ? { label: "Rest" } : { value: Math.round(30 + rnd() * 90) });
+const sparse = grid(5, () => rnd() < 0.25 ? { value: Math.round(1 + rnd() * 9) } : null);
+const clampRows = [{ name: "Resting HR", cells: [58, 62, 66, 71, 77, 84, 93].map(v => ({ value: v })) }];
+const zones = ["Z1","Z2","Z3","Z4","Z5"];
+const labelRows = ["Ride","Run","Swim"].map((name, i) => ({ name, cells: zones.map((_, z) => { const v = Math.round(rnd() * 100); return { value: v, label: v + "%" }; }) }));
+const dates = Array.from({ length: 31 }, (_, i) => String(i + 1));
+const wideRows = ["Ride","Run"].map(name => ({ name, cells: dates.map(() => rnd() < 0.6 ? { value: Math.round(rnd() * 120) } : null) }));
+const thDays = ["จ.","อ.","พ.","พฤ.","ศ.","ส.","อา."];
+const thRows = ["สัปดาห์ที่หนึ่งของการฝึกซ้อม","สัปดาห์ที่สอง"].map(name => ({ name, cells: thDays.map(() => ({ value: Math.round(rnd() * 10) })) }));
+const blocks = {
+  tap: { type: "heat", id: "tap", title: "Training load by day", tone: "warn", columns: days, rows: tapRows, scale: { unit: "TSS" }, selected: { row: "Week 3", column: "Wed" }, tap: { action: "training.day" } },
+  hover: { type: "heat", id: "hover", title: "Training load by day", tone: "warn", columns: days, rows: tapRows.slice(0, 3), scale: { unit: "TSS" }, tap: { action: "training.day" }, hov: [1, 4], foc: [0, 2] },
+  sparse: { type: "heat", id: "sparse", title: "Races entered", tone: "info", columns: days, rows: sparse, scale: { unit: "races" }, edges: "ends" },
+  clamp: { type: "heat", id: "clamp", title: "Resting heart rate", tone: "bad", columns: days, rows: clampRows, scale: { min: 60, max: 90, unit: "bpm" } },
+  labels: { type: "heat", id: "labels", title: "Time in zone", tone: "ok", columns: zones, rows: labelRows, scale: { min: 0, max: 100, unit: "%" } },
+  wide: { type: "heat", id: "wide", title: "October, minutes per day", tone: "accent", columns: dates, rows: wideRows, scale: { unit: "min" }, edges: "ends", tap: { action: "day" } },
+  th: { type: "heat", id: "th", lang: "th", title: "ความเหนื่อยรายวัน", tone: "bad", columns: thDays, rows: thRows, scale: { min: 0, max: 10, unit: "ระดับ" } },
+  empty: { type: "heat", id: "empty", title: "Training load by day", columns: days, rows: grid(3, () => null), scale: { unit: "TSS" }, empty: "No rides logged yet" },
+};
+for (const id in blocks) {
+  const b = blocks[id], t = document.getElementById(id), c = heat(b);
+  const cell = ([r, k]) => c.querySelectorAll("tbody tr")[r].querySelectorAll("td")[k];
+  if (b.hov) { cell(b.hov).classList.add("hov"); readout(c.querySelector(".hmo"), b, b.hov[0], b.hov[1]); }
+  if (b.foc) cell(b.foc).classList.add("foc");
+  t.replaceWith(c);
+}
+document.body.dataset.h = Math.ceil(document.documentElement.scrollHeight);
+</script></body></html>

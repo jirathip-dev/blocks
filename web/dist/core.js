@@ -40,9 +40,10 @@ var hooks = {
   tool: { variant: "state", parts: [] },
   sidebar: { variant: null, parts: [] },
   boxplot: { variant: null, parts: ["title"] },
+  heat: { variant: null, parts: ["title"] },
   plot: { variant: null, parts: ["title"] }
 };
-var roles = { modal: "dialog", sheet: "dialog", section: "region", form: "form", config: "form", nav: "navigation", chart: "figure", plot: "figure", toast: "status", message: "article", sidebar: "navigation", boxplot: "figure" };
+var roles = { modal: "dialog", sheet: "dialog", section: "region", form: "form", config: "form", nav: "navigation", chart: "figure", plot: "figure", toast: "status", message: "article", sidebar: "navigation", heat: "figure", boxplot: "figure" };
 var names = ["label", "title", "header", "question", "alt", "file", "command", "placeholder", "name"];
 var hosts = { screen: "blocks", modal: "blocks", sheet: "blocks", section: "blocks", card: "blocks", message: "blocks", list: "rows", scene: "lanes", row: "rounds", table: "rows" };
 var walked = ["blocks", "rows", "buttons", "rounds", "lanes"];
@@ -523,6 +524,7 @@ var message = (fields) => ({ type: "message", ...fields });
 var tool = (fields) => ({ type: "tool", ...fields });
 var sidebar = (fields) => ({ type: "sidebar", ...fields });
 var boxplot = (fields) => ({ type: "boxplot", ...fields });
+var heat = (fields) => ({ type: "heat", ...fields });
 var plot = (fields) => ({ type: "plot", ...fields });
 var expr = {
   get: (v) => ({ get: v }),
@@ -833,6 +835,7 @@ var kinds = {
   "diff": "Diff",
   "editor": "Editor",
   "form": "Form",
+  "heat": "Heat",
   "hero": "Hero",
   "images": "Images",
   "import": "Import",
@@ -1048,6 +1051,7 @@ var defs = {
             "tool",
             "sidebar",
             "boxplot",
+            "heat",
             "plot"
           ]
         },
@@ -1680,6 +1684,19 @@ var defs = {
         "properties": {
           "type": {
             "const": "boxplot",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      {
+        "$ref": "#/$defs/Heat",
+        "properties": {
+          "type": {
+            "const": "heat",
             "type": "string"
           }
         },
@@ -3475,6 +3492,215 @@ var defs = {
       "name"
     ],
     "type": "object"
+  },
+  "Heat": {
+    "additionalProperties": true,
+    "properties": {
+      "columns": {
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "edges": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/HeatEdges"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "empty": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "grid": {
+        "items": {
+          "$ref": "#/$defs/HeatRow"
+        },
+        "type": "array"
+      },
+      "id": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "lang": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "scale": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/HeatScale"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "selected": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/HeatPick"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "show": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "tap": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Tap"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "title": {
+        "type": "string"
+      },
+      "tone": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/HeatTone"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      }
+    },
+    "required": [
+      "title",
+      "columns",
+      "grid"
+    ],
+    "type": "object"
+  },
+  "HeatCell": {
+    "properties": {
+      "label": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "value": {
+        "type": [
+          "number",
+          "null"
+        ]
+      }
+    },
+    "type": "object"
+  },
+  "HeatEdges": {
+    "anyOf": [
+      {
+        "enum": [
+          "steps",
+          "ends"
+        ],
+        "type": "string"
+      },
+      {
+        "type": "string"
+      }
+    ]
+  },
+  "HeatPick": {
+    "properties": {
+      "column": {
+        "type": "string"
+      },
+      "row": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "row",
+      "column"
+    ],
+    "type": "object"
+  },
+  "HeatRow": {
+    "properties": {
+      "cells": {
+        "items": {
+          "$ref": "#/$defs/HeatCell"
+        },
+        "type": "array"
+      },
+      "name": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "name",
+      "cells"
+    ],
+    "type": "object"
+  },
+  "HeatScale": {
+    "properties": {
+      "max": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "min": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "unit": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "type": "object"
+  },
+  "HeatTone": {
+    "anyOf": [
+      {
+        "enum": [
+          "info",
+          "ok",
+          "warn",
+          "bad",
+          "accent",
+          "mute"
+        ],
+        "type": "string"
+      },
+      {
+        "type": "string"
+      }
+    ]
   },
   "Hero": {
     "additionalProperties": true,
@@ -8719,6 +8945,7 @@ export {
   gate,
   gated,
   glyph,
+  heat,
   held,
   hero,
   hint,

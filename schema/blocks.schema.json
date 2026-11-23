@@ -243,6 +243,7 @@
               "tool",
               "sidebar",
               "boxplot",
+              "heat",
               "plot"
             ]
           },
@@ -879,6 +880,19 @@
           "properties": {
             "type": {
               "const": "boxplot",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/Heat",
+          "properties": {
+            "type": {
+              "const": "heat",
               "type": "string"
             }
           },
@@ -2924,6 +2938,220 @@
         "k"
       ],
       "type": "object"
+    },
+    "Heat": {
+      "additionalProperties": true,
+      "description": "A grid of cells coloured by value on five steps of one tone, with row and column labels and a legend.",
+      "properties": {
+        "columns": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "edges": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/HeatEdges"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "empty": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "grid": {
+          "items": {
+            "$ref": "#/$defs/HeatRow"
+          },
+          "type": "array"
+        },
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "lang": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "scale": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/HeatScale"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "selected": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/HeatPick"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "tap": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Tap"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "title": {
+          "type": "string"
+        },
+        "tone": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/HeatTone"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "title",
+        "columns",
+        "grid"
+      ],
+      "type": "object"
+    },
+    "HeatCell": {
+      "description": "One cell: a value, a short label, both, or neither for no data.",
+      "properties": {
+        "label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "value": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "HeatEdges": {
+      "anyOf": [
+        {
+          "enum": [
+            "steps",
+            "ends"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "string"
+        }
+      ]
+    },
+    "HeatPick": {
+      "description": "A cell by its row's name and its column.",
+      "properties": {
+        "column": {
+          "type": "string"
+        },
+        "row": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "row",
+        "column"
+      ],
+      "type": "object"
+    },
+    "HeatRow": {
+      "description": "A row of the grid: its name and one cell per column.",
+      "properties": {
+        "cells": {
+          "items": {
+            "$ref": "#/$defs/HeatCell"
+          },
+          "type": "array"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "cells"
+      ],
+      "type": "object"
+    },
+    "HeatScale": {
+      "description": "The value scale: a fixed min and max (else from the values) and the unit the legend shows.",
+      "properties": {
+        "max": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "min": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "unit": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "HeatTone": {
+      "anyOf": [
+        {
+          "enum": [
+            "info",
+            "ok",
+            "warn",
+            "bad",
+            "accent",
+            "mute"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "string"
+        }
+      ]
     },
     "Hello": {
       "description": "The stream's first event: the version it runs at, the stream's id, the server's epoch and its key limit.",

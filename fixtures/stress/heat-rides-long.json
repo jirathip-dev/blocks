@@ -1,0 +1,107 @@
+{
+  "columns": [
+    "6A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+    "9A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+    "1A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+    "1A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+    "1A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it"
+  ],
+  "edges": "ends",
+  "grid": [
+    {
+      "cells": [
+        {
+          "value": 1
+        },
+        {},
+        {},
+        {},
+        {
+          "value": 5
+        }
+      ],
+      "name": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it"
+    },
+    {
+      "cells": [
+        {},
+        {},
+        {},
+        {
+          "value": 5
+        },
+        {}
+      ],
+      "name": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it"
+    },
+    {
+      "cells": [
+        {},
+        {},
+        {
+          "value": 5
+        },
+        {},
+        {}
+      ],
+      "name": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it"
+    },
+    {
+      "cells": [
+        {},
+        {
+          "value": 5
+        },
+        {},
+        {},
+        {}
+      ],
+      "name": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it"
+    },
+    {
+      "cells": [
+        {
+          "value": 5
+        },
+        {},
+        {},
+        {},
+        {
+          "value": 3
+        }
+      ],
+      "name": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it"
+    },
+    {
+      "cells": [
+        {},
+        {},
+        {},
+        {
+          "value": 3
+        },
+        {}
+      ],
+      "name": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it"
+    },
+    {
+      "cells": [
+        {},
+        {},
+        {
+          "value": 3
+        },
+        {},
+        {}
+      ],
+      "name": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it"
+    }
+  ],
+  "id": "rides",
+  "scale": {
+    "unit": "rides"
+  },
+  "title": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+  "tone": "info",
+  "type": "heat"
+}

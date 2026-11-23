@@ -44,6 +44,7 @@ extension Block {
         case .tool(let b): ("tool", b.id)
         case .sidebar(let b): ("sidebar", b.id)
         case .boxplot(let b): ("boxplot", b.id)
+        case .heat(let b): ("heat", b.id)
         case .plot(let b): ("plot", b.id)
         case .appBlock(let b): (b.type, b.id)
         }

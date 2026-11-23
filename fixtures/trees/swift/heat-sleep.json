@@ -1,0 +1,9 @@
+{
+  "kind": "heat",
+  "id": "sleep",
+  "variant": null,
+  "drawn": "native",
+  "role": "figure",
+  "name": "Sleep score",
+  "children": []
+}

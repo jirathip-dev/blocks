@@ -196,10 +196,11 @@ public enum Block: Codable, Equatable, Sendable {
     case tool(Tool)
     case sidebar(Sidebar)
     case boxplot(Boxplot)
+    case heat(Heat)
     case plot(Plot)
     case appBlock(JSONValue)
 
-    public static let tags: Set<String> = ["screen", "modal", "sheet", "section", "list", "row", "card", "choice", "form", "config", "secret", "run", "button", "chips", "stat", "text", "images", "web", "diff", "editor", "scene", "diagram", "composer", "lines", "prose", "hero", "media", "nav", "island", "table", "steps", "chart", "toast", "pages", "timeline", "import", "message", "tool", "sidebar", "boxplot", "plot"]
+    public static let tags: Set<String> = ["screen", "modal", "sheet", "section", "list", "row", "card", "choice", "form", "config", "secret", "run", "button", "chips", "stat", "text", "images", "web", "diff", "editor", "scene", "diagram", "composer", "lines", "prose", "hero", "media", "nav", "island", "table", "steps", "chart", "toast", "pages", "timeline", "import", "message", "tool", "sidebar", "boxplot", "heat", "plot"]
 
     private enum Tag: String, CodingKey { case tag = "type" }
 
@@ -245,6 +246,7 @@ public enum Block: Codable, Equatable, Sendable {
         case "tool": self = try (try? Tool(from: decoder)).map(Self.tool) ?? .appBlock(JSONValue(from: decoder))
         case "sidebar": self = try (try? Sidebar(from: decoder)).map(Self.sidebar) ?? .appBlock(JSONValue(from: decoder))
         case "boxplot": self = try (try? Boxplot(from: decoder)).map(Self.boxplot) ?? .appBlock(JSONValue(from: decoder))
+        case "heat": self = try (try? Heat(from: decoder)).map(Self.heat) ?? .appBlock(JSONValue(from: decoder))
         case "plot": self = try (try? Plot(from: decoder)).map(Self.plot) ?? .appBlock(JSONValue(from: decoder))
         default: self = .appBlock(try JSONValue(from: decoder))
         }
@@ -292,6 +294,7 @@ public enum Block: Codable, Equatable, Sendable {
         case .tool(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("tool", forKey: .tag)
         case .sidebar(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("sidebar", forKey: .tag)
         case .boxplot(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("boxplot", forKey: .tag)
+        case .heat(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("heat", forKey: .tag)
         case .plot(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("plot", forKey: .tag)
         case .appBlock(let v): try v.encode(to: encoder)
         }
@@ -1110,6 +1113,98 @@ public struct Have: Codable, Equatable, Sendable {
         self.k = k
         self.rev = rev
     }
+}
+
+public struct Heat: Codable, Equatable, Sendable {
+    public var columns: [String]
+    public var edges: HeatEdges?
+    public var empty: String?
+    public var grid: [HeatRow]
+    public var id: String?
+    public var lang: String?
+    public var scale: HeatScale?
+    public var selected: HeatPick?
+    public var show: Expr?
+    public var tap: Tap?
+    public var title: String
+    public var tone: HeatTone?
+
+    public init(columns: [String], edges: HeatEdges? = nil, empty: String? = nil, grid: [HeatRow], id: String? = nil, lang: String? = nil, scale: HeatScale? = nil, selected: HeatPick? = nil, show: Expr? = nil, tap: Tap? = nil, title: String, tone: HeatTone? = nil) {
+        self.columns = columns
+        self.edges = edges
+        self.empty = empty
+        self.grid = grid
+        self.id = id
+        self.lang = lang
+        self.scale = scale
+        self.selected = selected
+        self.show = show
+        self.tap = tap
+        self.title = title
+        self.tone = tone
+    }
+}
+
+public struct HeatCell: Codable, Equatable, Sendable {
+    public var label: String?
+    public var value: Double?
+
+    public init(label: String? = nil, value: Double? = nil) {
+        self.label = label
+        self.value = value
+    }
+}
+
+public struct HeatEdges: RawRepresentable, Hashable, Codable, Equatable, Sendable {
+    public let rawValue: String
+    public init(rawValue: String) { self.rawValue = rawValue }
+    public static let steps = Self(rawValue: "steps")
+    public static let ends = Self(rawValue: "ends")
+    public static let all: [Self] = [.steps, .ends]
+}
+
+public struct HeatPick: Codable, Equatable, Sendable {
+    public var column: String
+    public var row: String
+
+    public init(column: String, row: String) {
+        self.column = column
+        self.row = row
+    }
+}
+
+public struct HeatRow: Codable, Equatable, Sendable {
+    public var cells: [HeatCell]
+    public var name: String
+
+    public init(cells: [HeatCell], name: String) {
+        self.cells = cells
+        self.name = name
+    }
+}
+
+public struct HeatScale: Codable, Equatable, Sendable {
+    public var max: Double?
+    public var min: Double?
+    public var unit: String?
+
+    public init(max: Double? = nil, min: Double? = nil, unit: String? = nil) {
+        self.max = max
+        self.min = min
+        self.unit = unit
+    }
+}
+
+public struct HeatTone: RawRepresentable, Hashable, Codable, Equatable, Sendable {
+    public let rawValue: String
+    public init(rawValue: String) { self.rawValue = rawValue }
+    public static let info = Self(rawValue: "info")
+    public static let ok = Self(rawValue: "ok")
+    public static let warn = Self(rawValue: "warn")
+    public static let bad = Self(rawValue: "bad")
+    public static let accent = Self(rawValue: "accent")
+    public static let mute = Self(rawValue: "mute")
+    public static let all: [Self] = [.info, .ok, .warn, .bad, .accent, .mute]
 }
 
 public struct Hello: Codable, Equatable, Sendable {

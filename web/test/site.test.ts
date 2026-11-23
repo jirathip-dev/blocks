@@ -54,7 +54,7 @@ test("the static page draws a table with more as the rows it has: no loading row
 test("site and render give the same element per kind: tag, classes, hooks, role, name and text", async () => {
   const { page, close } = await open({ page: "<!doctype html><body>" });
   const kinds = readdirSync(at("../../fixtures/blocks/")).map((f) => f.replace(/\.json$/, ""));
-  strictEqual(kinds.length, 49);
+  strictEqual(kinds.length, 52);
   for (const k of kinds) {
     const [written, drawn] = await page.evaluate(
       async ([html, b]) => {

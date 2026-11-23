@@ -1,0 +1,54 @@
+{
+  "type": "heat",
+  "id": "sleep",
+  "title": "Sleep score",
+  "columns": [
+    "Mon",
+    "Tue",
+    "Wed",
+    "Thu",
+    "Fri",
+    "Sat",
+    "Sun"
+  ],
+  "grid": [
+    {
+      "name": "This week",
+      "cells": [
+        {
+          "value": 82,
+          "label": "82"
+        },
+        {
+          "value": 74,
+          "label": "74"
+        },
+        {
+          "value": 91,
+          "label": "91"
+        },
+        {
+          "value": 66,
+          "label": "66"
+        },
+        {
+          "value": 88,
+          "label": "88"
+        },
+        {
+          "value": 95,
+          "label": "95"
+        },
+        {
+          "value": 79,
+          "label": "79"
+        }
+      ]
+    }
+  ],
+  "scale": {
+    "min": 50,
+    "max": 100
+  },
+  "tone": "ok"
+}
