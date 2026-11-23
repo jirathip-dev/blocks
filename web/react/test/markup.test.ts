@@ -1,4 +1,4 @@
-import { deepStrictEqual, ok } from "node:assert/strict";
+import { deepStrictEqual, ok, strictEqual } from "node:assert/strict";
 import { readdirSync, readFileSync } from "node:fs";
 import { after, before, test } from "node:test";
 import { fileURLToPath } from "node:url";
@@ -63,6 +63,26 @@ test("a form filled the same way sends the same action from React as from the HT
   const [posts, sent] = await p.evaluate(() => [window.posts, window.sent]);
   deepStrictEqual(posts, [{ action: "go", block: "f", values: { k: 1, q: "hi", pw: "x", p: "b", t: false } }]);
   deepStrictEqual(sent, [{ screen: "s", ...posts[0] }]);
+  await p.close();
+});
+
+test("a checkbox toggle's row is a tap target at least 44 px tall in HTML and React: a tap on its label ticks it and the form sends true", async () => {
+  const p = await page();
+  await p.addStyleTag({ content: readFileSync(new URL("../../dist/blocks.css", import.meta.url), "utf8") });
+  const f = { type: "form", id: "f", submit: { action: "go", label: "Go" }, fields: [{ type: "toggle", name: "full", label: "Received in full", as: "check" }] };
+  await markup(p, { type: "screen", id: "s", title: "S", blocks: [f] });
+  for (const root of ["#html", "#react"]) {
+    const row = p.locator(`${root} label.fd`);
+    ok((await row.boundingBox()).height >= 44, `${root} row height`);
+    strictEqual(await p.locator(`${root} input[name="full"]`).getAttribute("role"), null);
+    await p.click(`${root} label.fd .fk`);
+    strictEqual(await p.locator(`${root} input[name="full"]`).isChecked(), true);
+    await p.click(`${root} [data-submit]`);
+  }
+  await p.waitForFunction(() => window.sent.length === 1);
+  const [posts, sent] = await p.evaluate(() => [window.posts.map(({ action, block, values }) => ({ action, block, values })), window.sent.map(({ screen: _s, ...a }) => a)]);
+  deepStrictEqual(posts, [{ action: "go", block: "f", values: { full: true } }]);
+  deepStrictEqual(sent, posts);
   await p.close();
 });
 

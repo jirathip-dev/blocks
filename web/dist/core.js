@@ -8336,6 +8336,16 @@ var defs = {
   "ToggleField": {
     "additionalProperties": true,
     "properties": {
+      "as": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/ToggleLook"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
       "checks": {
         "items": {
           "$ref": "#/$defs/Check"
@@ -8413,6 +8423,20 @@ var defs = {
       "name"
     ],
     "type": "object"
+  },
+  "ToggleLook": {
+    "anyOf": [
+      {
+        "enum": [
+          "switch",
+          "check"
+        ],
+        "type": "string"
+      },
+      {
+        "type": "string"
+      }
+    ]
   },
   "Tone": {
     "anyOf": [

@@ -258,14 +258,16 @@ fn field(f: &Value, types: &[&str], hide: &BTreeSet<String>) -> FieldNode {
         (false, true) => FieldDrawn::Native,
         (false, false) => FieldDrawn::Plain,
     };
+    let check = kind == "toggle" && text_of(f, "as") == Some("check");
     let role = known
         .filter(|_| drawn == FieldDrawn::Native)
-        .and_then(|i| crate::Field::ROLES.get(i));
+        .and_then(|i| crate::Field::ROLES.get(i))
+        .map(|r| if check { "checkbox" } else { r });
     FieldNode {
         name: name.into(),
         kind: kind.into(),
         drawn,
-        role: role.copied().unwrap_or("textbox").into(),
+        role: role.unwrap_or("textbox").into(),
         label: text_of(f, "label").unwrap_or(name).into(),
     }
 }

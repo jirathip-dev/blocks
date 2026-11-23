@@ -376,7 +376,9 @@ export type Timings = { first_paint_ms: number; frames_over_budget?: number | nu
 
 export type Toast = { fallback?: Fallback | null; id?: string | null; show?: Expr | null; title: string; tone?: Tone | null; undo?: Undo | null };
 
-export type ToggleField = { checks?: Check[] | null; doc?: string | null; enabled?: Expr | null; error?: string | null; label?: string | null; name: string; open?: boolean | null; show?: Expr | null; value?: FieldValue | null; was?: string | null };
+export type ToggleField = { as?: ToggleLook | null; checks?: Check[] | null; doc?: string | null; enabled?: Expr | null; error?: string | null; label?: string | null; name: string; open?: boolean | null; show?: Expr | null; value?: FieldValue | null; was?: string | null };
+
+export type ToggleLook = "switch" | "check";
 
 export type Tone = "ok" | "warn" | "bad" | "info" | "mute" | "accent" | "working" | "needs" | "done" | "fail" | "idle";
 

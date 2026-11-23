@@ -16,7 +16,7 @@ pub use scan::ScanField;
 pub use search::SearchField;
 pub use secret::SecretField;
 pub use text::TextField;
-pub use toggle::ToggleField;
+pub use toggle::{ToggleField, ToggleLook};
 pub use upload::{Accept, FileRef, UploadField};
 
 /// One word a field draws itself: its key, then English and Thai.
