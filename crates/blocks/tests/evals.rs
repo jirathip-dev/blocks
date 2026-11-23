@@ -123,7 +123,7 @@ fn every_action_and_link_in_an_eval_reply_that_fits_is_one_the_model_wrote() {
             sent(&json!(fit.blocks), &mut wrote);
             for (k, v) in wrote {
                 assert!(
-                    text.contains(&format!("\"{v}\"")),
+                    text.contains(&format!("\"{v}\"")) || text.contains(&format!("]({v})")),
                     "{file}: {k} {v} is not in the reply"
                 );
             }
