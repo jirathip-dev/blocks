@@ -5,6 +5,7 @@ import { kids } from "../block.ts";
 import { act, urlOf, type V } from "../draw.ts";
 import { h } from "../h.ts";
 
+const aside = (x: Block): x is Extract<Block, { type: "section" }> => x.type === "section" && x.side === true;
 const stays = (x: Block) => (x.type === "row" && x.sticky === true) || x.type === "composer";
 
 export function screen({ b, hooks }: V<Screen>) {
@@ -14,6 +15,21 @@ export function screen({ b, hooks }: V<Screen>) {
   const head = h("p", "tabh", null, h("span", "tw b-screen__title", null, (b.title ?? "").toLowerCase()), ...acts);
   const attrs = { ...hooks, "data-id": String(b.id) };
   const bs = b.blocks ?? [];
+  const side = bs.filter(aside);
+  if (!b.focus && side.length && side.length < bs.length)
+    return h(
+      "div",
+      "scr split",
+      attrs,
+      head,
+      h(
+        "div",
+        "scr-cols",
+        null,
+        h("div", "scr-main", { "data-kids": "" }, ...kids(bs.filter((x) => !aside(x)))),
+        h("aside", "scr-side", { "aria-label": side.map((x) => x.header ?? "").join(", ") }, ...kids(side)),
+      ),
+    );
   if (!b.focus) return h("div", "scr", attrs, head, ...kids(bs));
   const kept = bs.filter(stays);
   const at = kept.findIndex((x) => x.type === "composer");

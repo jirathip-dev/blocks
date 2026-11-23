@@ -147,6 +147,22 @@ fn faulty() -> Vec<(&'static str, Value, Vec<&'static str>)> {
         ("steps-neither", steps(json!({})), vec![]),
         ("steps-and-bars", steps(json!({"current": "a", "bars": []})), vec![]),
         ("steps-placed", steps(json!({"current": "b"})), vec![]),
+        (
+            "side",
+            json!({"type": "screen", "id": "s", "blocks": [
+                {"type": "section", "id": "a", "side": true, "blocks": [
+                    {"type": "section", "id": "b", "side": true, "blocks": []}
+                ]},
+                {"type": "section", "id": "c", "side": false, "blocks": []},
+                {"type": "sheet", "id": "d", "title": "D", "blocks": [{"type": "section", "id": "e", "side": true, "blocks": []}]}
+            ]}),
+            vec![],
+        ),
+        (
+            "side-focus",
+            json!({"type": "screen", "id": "s", "focus": true, "blocks": [{"type": "section", "id": "a", "side": true, "blocks": []}]}),
+            vec![],
+        ),
         ("no-object", json!("screen"), vec![]),
     ]
 }
@@ -229,4 +245,16 @@ fn a_search_aimed_at_no_list_or_table_is_an_aim_fault() {
         faults,
         json!([{"fault": "aim", "field": "r", "id": "nowhere"}, {"fault": "aim", "field": "s", "id": "t"}])
     );
+}
+
+#[test]
+fn side_counts_only_on_a_non_focus_screens_own_section() {
+    let sides = |name: &str| {
+        let (_, screen, _) = faulty().into_iter().find(|(n, ..)| *n == name).unwrap();
+        let faults = serde_json::to_value(Built::new(screen).check(&[])).unwrap();
+        let why = |f: &&Value| f["why"].as_str().is_some_and(|w| w.starts_with("side is set"));
+        faults.as_array().unwrap().iter().filter(why).count()
+    };
+    assert_eq!(sides("side"), 2);
+    assert_eq!(sides("side-focus"), 1);
 }

@@ -116,7 +116,12 @@ class Walk {
       const top = shallow(v);
       this.sends(sentOnce(top), at, inner);
       this.core(kind, v, top);
-      for (const [p, c] of placed(v)) this.block(c, `${at}/${p}`, inner);
+      const own = kind === "screen" && v["focus"] !== true;
+      for (const [p, c] of placed(v)) {
+        if (isObj(c) && c["type"] === "section" && c["side"] === true && !(own && p.startsWith("blocks/")))
+          this.out.push({ fault: "shape", kind: "section", why: "side is set on a section that is not a non-focus screen's own block" });
+        this.block(c, `${at}/${p}`, inner);
+      }
     } else if (!this.app.includes(kind)) this.out.push({ fault: "unknown", kind });
   }
 

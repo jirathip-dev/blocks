@@ -2671,6 +2671,7 @@ function scene({ b, hooks: hooks4 }) {
 
 // react/src/kinds/screen.ts
 import { useContext as useContext19 } from "react";
+var aside = (x) => x.type === "section" && x.side === true;
 var stays = (x) => x.type === "row" && x.sticky === true || x.type === "composer";
 function screen({ b, hooks: hooks4 }) {
   const cx = useContext19(Cx);
@@ -2679,6 +2680,21 @@ function screen({ b, hooks: hooks4 }) {
   const head4 = h("p", "tabh", null, h("span", "tw b-screen__title", null, (b.title ?? "").toLowerCase()), ...acts2);
   const attrs = { ...hooks4, "data-id": String(b.id) };
   const bs = b.blocks ?? [];
+  const side = bs.filter(aside);
+  if (!b.focus && side.length && side.length < bs.length)
+    return h(
+      "div",
+      "scr split",
+      attrs,
+      head4,
+      h(
+        "div",
+        "scr-cols",
+        null,
+        h("div", "scr-main", { "data-kids": "" }, ...kids2(bs.filter((x) => !aside(x)))),
+        h("aside", "scr-side", { "aria-label": side.map((x) => x.header ?? "").join(", ") }, ...kids2(side))
+      )
+    );
   if (!b.focus) return h("div", "scr", attrs, head4, ...kids2(bs));
   const kept2 = bs.filter(stays);
   const at2 = kept2.findIndex((x) => x.type === "composer");

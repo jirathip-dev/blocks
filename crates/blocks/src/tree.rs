@@ -281,6 +281,17 @@ fn field(f: &Value, types: &[&str], hide: &BTreeSet<String>) -> FieldNode {
     }
 }
 
+/// A screen's main and side blocks when its side sections split it in two columns, each in source order.
+pub(crate) fn columns(v: &Value) -> Option<(Vec<&Value>, Vec<&Value>)> {
+    if text_of(v, "type") != Some("screen") || v.get("focus") == Some(&Value::Bool(true)) {
+        return None;
+    }
+    let all = v.get("blocks")?.as_array()?;
+    let aside = |b: &&Value| text_of(b, "type") == Some("section") && b.get("side") == Some(&Value::Bool(true));
+    let (side, main): (Vec<&Value>, Vec<&Value>) = all.iter().partition(aside);
+    (!side.is_empty() && !main.is_empty()).then_some((main, side))
+}
+
 fn node(v: &Value, kinds: &[&str], types: Option<&[&str]>, hide: &BTreeSet<String>) -> Node {
     let text = |k: &str| text_of(v, k).map(String::from);
     let kind = text("type").unwrap_or_default();
@@ -294,7 +305,9 @@ fn node(v: &Value, kinds: &[&str], types: Option<&[&str]>, hide: &BTreeSet<Strin
         (false, false) => Drawn::Fallback,
     };
     let under: Vec<&Value> = match (drawn, v.as_object()) {
-        (Drawn::Native, Some(o)) => children(o).collect(),
+        (Drawn::Native, Some(o)) => {
+            columns(v).map_or_else(|| children(o).collect(), |(m, s)| m.into_iter().chain(s).collect())
+        }
         (Drawn::Fallback, _) => v
             .get("blocks")
             .and_then(Value::as_array)

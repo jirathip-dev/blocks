@@ -6996,6 +6996,12 @@ var defs = {
             "type": "null"
           }
         ]
+      },
+      "side": {
+        "type": [
+          "boolean",
+          "null"
+        ]
       }
     },
     "required": [
@@ -9016,7 +9022,12 @@ var Walk = class {
       const top = shallow(v);
       this.sends(sentOnce(top), at2, inner);
       this.core(kind, v, top);
-      for (const [p, c] of placed(v)) this.block(c, `${at2}/${p}`, inner);
+      const own2 = kind === "screen" && v["focus"] !== true;
+      for (const [p, c] of placed(v)) {
+        if (isObj3(c) && c["type"] === "section" && c["side"] === true && !(own2 && p.startsWith("blocks/")))
+          this.out.push({ fault: "shape", kind: "section", why: "side is set on a section that is not a non-focus screen's own block" });
+        this.block(c, `${at2}/${p}`, inner);
+      }
     } else if (!this.app.includes(kind)) this.out.push({ fault: "unknown", kind });
   }
   sends(v, at2, scope) {

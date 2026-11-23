@@ -13,6 +13,7 @@ The Rust type `Section`; in TS, `section(fields: Section)` from `web/src/gen/bui
 | `header` | `string` | optional |
 | `id` | `string` | optional |
 | `show` | `Expr` | optional |
+| `side` | `boolean` | optional |
 
 ## A sample
 
