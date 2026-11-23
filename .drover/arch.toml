@@ -10,37 +10,25 @@ generated = [
     "swift/Sources/Blocks/Gen/*.swift",
     "web/src/gen/schemes.ts", "web/src/gen/layout.ts", "web/src/gen/kinds.ts", "web/src/gen/builders.ts", "web/src/gen/shapes.ts",
     "fixtures/check/*.json", "fixtures/built/*.json",
-    "web/dist/*.js", "web/dist/*.css",
-    "web/src/gen/scoped.css",
-    "web/dist/types/**",
-    "web/react/src/gen/views.ts",
+    "web/dist/*.js", "web/dist/*.css", "web/src/gen/scoped.css", "web/dist/types/**", "web/react/src/gen/views.ts",
     "fixtures/trees/react/*.json", "fixtures/blocks/*.json",
     "fixtures/trees/*.json", "fixtures/trees/swift/*.json", "fixtures/trees/swift/fields/*.json",
     "fixtures/html/*.html", "fixtures/fields/html/*.html", "fixtures/site/*.html",
     "fixtures/protocol/sim-*.json", "fixtures/plot/stream.json", "fixtures/behave/sim.json", "fixtures/gesture/sim.json",
     "fixtures/css/*.css", "fixtures/client/*.json",
     "crates/blocks/src/guard/rules/mod.rs", "crates/blocks/src/kind/core/mod.rs", "crates/blocks/src/site/kind/drawn.rs", "swift/Sources/BlocksUI/Gen/Kinds.swift",
-    "skill/blocks/**",
-    "crates/blocks-cli/src/gen/skill.rs",
-    "web/src/gen/fields.ts",
-    "web/react/src/gen/fields.ts",
-    "web/src/gen/words.ts", "web/src/gen/words-import.ts",
-    "fixtures/fields/*.json",
-    "fixtures/fields/trees/*.json",
+    "skill/blocks/**", "crates/blocks-cli/src/gen/skill.rs",
+    "web/src/gen/fields.ts", "web/react/src/gen/fields.ts", "web/src/gen/words.ts", "web/src/gen/words-import.ts",
+    "fixtures/fields/*.json", "fixtures/fields/trees/*.json", "crates/blocks/src/catalog/cards.rs",
 ]
 generate = "sh scripts/arch-gen.sh"
 shared = [
-    "crates/blocks/src/lib.rs",
-    "crates/*/tests/support/**",
-    "crates/blocks/src/codegen/mod.rs",
-    "crates/blocks/tests/sim.rs",
-    "web/src/patch.ts",
-    "web/test/patch.test.ts",
-    "web/test/dom.ts",
-    "web/shot/shot.ts",
+    "crates/blocks/src/lib.rs", "crates/*/tests/support/**",
+    "crates/blocks/src/codegen/mod.rs", "crates/blocks/tests/sim.rs",
+    "web/src/patch.ts", "web/test/patch.test.ts",
+    "web/test/dom.ts", "web/shot/shot.ts",
     ".drover/arch.toml",
-    "justfile",
-    "README.md",
+    "justfile", "README.md",
     "crates/blocks/src/kind/field/mod.rs",
     "crates/blocks/src/site/field/mod.rs",
     "swift/Sources/BlocksUI/Field/FieldRow.swift",
@@ -239,22 +227,34 @@ paths = ["crates/blocks/src/web.rs"]
 mods = ["crate::web", "blocks::web"]
 
 [[layer]]
+name = "catalog"
+paths = ["crates/blocks/src/catalog/**"]
+mods = ["crate::catalog", "blocks::catalog"]
+may_use = ["kind"]
+
+[[layer]]
+name = "model"
+paths = ["crates/blocks/src/model/**"]
+mods = ["crate::model", "blocks::model"]
+may_use = ["kind", "built", "catalog", "guard", "wire"]
+
+[[layer]]
 name = "guard"
 paths = ["crates/blocks/src/guard/**"]
 mods = ["crate::guard", "blocks::guard"]
-may_use = ["expr", "kind", "built", "behave", "tree", "wire", "patch"]
+may_use = ["expr", "kind", "built", "behave", "tree", "wire", "patch", "catalog"]
 
 [[layer]]
 name = "codegen"
 paths = ["crates/blocks/src/codegen/**", "crates/blocks/src/bin/**"]
 mods = ["crate::codegen", "blocks::codegen"]
-may_use = ["expr", "kind", "built", "wire", "patch", "diff", "shelf", "mirror", "theme", "layout", "behave", "tree", "site", "guard", "gesture"]
+may_use = ["expr", "kind", "built", "wire", "patch", "diff", "shelf", "mirror", "theme", "layout", "behave", "tree", "site", "guard", "gesture", "catalog", "model"]
 
 [[layer]]
 name = "cli"
 paths = ["crates/blocks-cli/src/**"]
 mods = ["blocks_cli"]
-may_use = ["guard", "kind", "built", "tree", "wire"]
+may_use = ["guard", "kind", "built", "tree", "wire", "catalog", "model"]
 
 [[layer]]
 name = "desktop-words"

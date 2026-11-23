@@ -1,5 +1,6 @@
 pub mod behave;
 mod built;
+pub mod catalog;
 mod diff;
 pub mod expr;
 pub mod gesture;
@@ -7,6 +8,7 @@ pub mod guard;
 mod kind;
 pub mod layout;
 mod mirror;
+pub mod model;
 mod patch;
 mod shelf;
 pub mod site;

@@ -1,0 +1,15 @@
+{
+  "type": "screen",
+  "id": "s",
+  "title": "Queue",
+  "blocks": [
+    {
+      "type": "row",
+      "id": "r",
+      "title": "Docs",
+      "tap": {
+        "url": "http://docs.example/"
+      }
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "text": "{\"blocks\": [{\"type\": \"row\", \"title\": \"Pro\", \"colour\": \"blue\"}, {\"type\": \"card\", \"title\": \"Plans\", \"tone\": \"ok\", \"buttons\": [{\"type\": \"button\", \"label\": \"Pro\", \"action\": \"pick\"}]}]}",
+  "fit": {
+    "mends": [
+      {
+        "mend": "dropped",
+        "at": "blocks[0]",
+        "field": "colour"
+      },
+      {
+        "mend": "dropped",
+        "at": "blocks[1]",
+        "field": "tone"
+      }
+    ],
+    "cut": false,
+    "sends": [
+      [
+        "type",
+        "row"
+      ],
+      [
+        "action",
+        "pick"
+      ],
+      [
+        "type",
+        "button"
+      ],
+      [
+        "type",
+        "card"
+      ]
+    ]
+  }
+}

@@ -375,11 +375,11 @@ fn every_golden_parses_with_no_fault() {
     assert!(bad.is_empty(), "{}", bad.join("\n"));
 }
 
-const KINDS: [&str; 40] = [
+const KINDS: [&str; 41] = [
     "screen", "modal", "sheet", "section", "list", "row", "card", "choice", "form", "config", "secret", "run",
     "button", "chips", "stat", "text", "images", "web", "diff", "editor", "scene", "diagram", "composer", "prose",
     "hero", "media", "nav", "island", "lines", "steps", "table", "chart", "toast", "pages", "timeline", "import",
-    "message", "tool", "sidebar", "plot",
+    "message", "tool", "sidebar", "plot", "boxplot",
 ];
 
 #[test]

@@ -195,10 +195,11 @@ public enum Block: Codable, Equatable, Sendable {
     case message(Message)
     case tool(Tool)
     case sidebar(Sidebar)
+    case boxplot(Boxplot)
     case plot(Plot)
     case appBlock(JSONValue)
 
-    public static let tags: Set<String> = ["screen", "modal", "sheet", "section", "list", "row", "card", "choice", "form", "config", "secret", "run", "button", "chips", "stat", "text", "images", "web", "diff", "editor", "scene", "diagram", "composer", "lines", "prose", "hero", "media", "nav", "island", "table", "steps", "chart", "toast", "pages", "timeline", "import", "message", "tool", "sidebar", "plot"]
+    public static let tags: Set<String> = ["screen", "modal", "sheet", "section", "list", "row", "card", "choice", "form", "config", "secret", "run", "button", "chips", "stat", "text", "images", "web", "diff", "editor", "scene", "diagram", "composer", "lines", "prose", "hero", "media", "nav", "island", "table", "steps", "chart", "toast", "pages", "timeline", "import", "message", "tool", "sidebar", "boxplot", "plot"]
 
     private enum Tag: String, CodingKey { case tag = "type" }
 
@@ -243,6 +244,7 @@ public enum Block: Codable, Equatable, Sendable {
         case "message": self = try (try? Message(from: decoder)).map(Self.message) ?? .appBlock(JSONValue(from: decoder))
         case "tool": self = try (try? Tool(from: decoder)).map(Self.tool) ?? .appBlock(JSONValue(from: decoder))
         case "sidebar": self = try (try? Sidebar(from: decoder)).map(Self.sidebar) ?? .appBlock(JSONValue(from: decoder))
+        case "boxplot": self = try (try? Boxplot(from: decoder)).map(Self.boxplot) ?? .appBlock(JSONValue(from: decoder))
         case "plot": self = try (try? Plot(from: decoder)).map(Self.plot) ?? .appBlock(JSONValue(from: decoder))
         default: self = .appBlock(try JSONValue(from: decoder))
         }
@@ -289,6 +291,7 @@ public enum Block: Codable, Equatable, Sendable {
         case .message(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("message", forKey: .tag)
         case .tool(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("tool", forKey: .tag)
         case .sidebar(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("sidebar", forKey: .tag)
+        case .boxplot(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("boxplot", forKey: .tag)
         case .plot(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("plot", forKey: .tag)
         case .appBlock(let v): try v.encode(to: encoder)
         }
@@ -300,6 +303,30 @@ public struct Bound: Codable, Equatable, Sendable {
 
     public init(get: String) {
         self.get = get
+    }
+}
+
+public struct Boxplot: Codable, Equatable, Sendable {
+    public var axis: String
+    public var boxes: [PlotBox]
+    public var empty: String?
+    public var id: String?
+    public var selected: String?
+    public var show: Expr?
+    public var tap: Tap?
+    public var title: String
+    public var unit: String?
+
+    public init(axis: String, boxes: [PlotBox], empty: String? = nil, id: String? = nil, selected: String? = nil, show: Expr? = nil, tap: Tap? = nil, title: String, unit: String? = nil) {
+        self.axis = axis
+        self.boxes = boxes
+        self.empty = empty
+        self.id = id
+        self.selected = selected
+        self.show = show
+        self.tap = tap
+        self.title = title
+        self.unit = unit
     }
 }
 
@@ -2212,6 +2239,28 @@ public struct PlotAxis: Codable, Equatable, Sendable {
         self.min = min
         self.scale = scale
         self.unit = unit
+    }
+}
+
+public struct PlotBox: Codable, Equatable, Sendable {
+    public var max: Double
+    public var median: Double
+    public var min: Double
+    public var name: String
+    public var outliers: [Double]?
+    public var q1: Double
+    public var q3: Double
+    public var tone: Tone?
+
+    public init(max: Double, median: Double, min: Double, name: String, outliers: [Double]? = nil, q1: Double, q3: Double, tone: Tone? = nil) {
+        self.max = max
+        self.median = median
+        self.min = min
+        self.name = name
+        self.outliers = outliers
+        self.q1 = q1
+        self.q3 = q3
+        self.tone = tone
     }
 }
 

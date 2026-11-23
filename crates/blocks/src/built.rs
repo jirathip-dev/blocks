@@ -4,7 +4,7 @@ use serde::Serialize;
 use serde_json::{Map, Value};
 
 use crate::gesture::Word;
-use crate::kind::{linkable, Block, Fallback, Fields, Plot, Screen, Steps, Table, Tap};
+use crate::kind::{linkable, Block, Boxplot, Fallback, Fields, Plot, Screen, Steps, Table, Tap};
 
 /// What makes a screen unfit to send: a server checks its own before it serves it.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
@@ -54,7 +54,7 @@ pub enum Fault {
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Built(Value);
 
-const LISTS: [&str; 3] = ["blocks", "rows", "buttons"];
+pub(crate) const LISTS: [&str; 3] = ["blocks", "rows", "buttons"];
 const DRAWN: [&str; 3] = ["row", "text", "island"];
 const LINKS: [&str; 5] = ["url", "href", "link", "open", "src"];
 
@@ -100,6 +100,10 @@ fn plain(o: &Fields) -> Fallback {
     if let Some(p) = plot.flatten() {
         return p.fallback();
     }
+    let boxplot = (kind(o) == "boxplot").then(|| serde_json::from_value::<Boxplot>(Value::Object(o.clone())).ok());
+    if let Some(b) = boxplot.flatten() {
+        return b.fallback();
+    }
     let text = |k: &str| o.get(k).and_then(Value::as_str).filter(|s| !s.is_empty());
     let named = [
         "title", "label", "header", "question", "name", "file", "command", "source", "src",
@@ -135,24 +139,24 @@ fn each_block(list: &mut Value) {
     list.as_array_mut().into_iter().flatten().for_each(write_fallbacks);
 }
 
-fn shallow(o: &Fields) -> Value {
-    let mut top = o.clone();
-    for key in LISTS {
-        if let Some(l) = top.get_mut(key) {
-            *l = Value::Array(vec![]);
-        }
+pub(crate) fn shallow(o: &Fields) -> Value {
+    fn bare(o: &Fields, cut: &[&str], top: bool) -> Value {
+        let field = |(k, v): (&String, &Value)| {
+            let v = match v {
+                _ if cut.contains(&k.as_str()) => Value::Array(vec![]),
+                Value::Array(rounds) if top && k == "rounds" => Value::Array(
+                    rounds
+                        .iter()
+                        .map(|r| r.as_object().map_or_else(|| r.clone(), |r| bare(r, &["blocks"], false)))
+                        .collect(),
+                ),
+                v => v.clone(),
+            };
+            (k.clone(), v)
+        };
+        Value::Object(o.iter().map(field).collect())
     }
-    for r in top
-        .get_mut("rounds")
-        .and_then(Value::as_array_mut)
-        .into_iter()
-        .flatten()
-    {
-        if let Some(l) = r.get_mut("blocks") {
-            *l = Value::Array(vec![]);
-        }
-    }
-    Value::Object(top)
+    bare(o, &LISTS, true)
 }
 
 fn sent_once(top: &Value) -> Option<Value> {
@@ -280,7 +284,7 @@ impl Walk<'_> {
     }
 
     fn core(&mut self, k: &str, o: &Fields, top: Value) {
-        match serde_json::from_value::<Block>(top) {
+        match Block::read(k, top) {
             Err(e) => self.out.push(Fault::Shape {
                 kind: k.into(),
                 why: e.to_string(),
@@ -296,6 +300,7 @@ impl Walk<'_> {
                     Block::Steps(s) => unplaced(s).map(Into::into),
                     Block::Chart(c) => c.unfit(),
                     Block::Plot(p) => p.unfit(),
+                    Block::Boxplot(b) => b.unfit(),
                     _ => None,
                 };
                 self.out.extend(why.map(|why| Fault::Shape { kind: k.into(), why }));

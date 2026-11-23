@@ -1,0 +1,21 @@
+{
+  "text": "{\"type\": \"button\", \"label\": \"Pro\", \"action\": \"pick\"}",
+  "fit": {
+    "mends": [
+      {
+        "mend": "root"
+      }
+    ],
+    "cut": false,
+    "sends": [
+      [
+        "action",
+        "pick"
+      ],
+      [
+        "type",
+        "button"
+      ]
+    ]
+  }
+}

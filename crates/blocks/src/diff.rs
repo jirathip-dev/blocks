@@ -1,9 +1,10 @@
 use std::collections::HashMap;
 
+use serde::Serialize;
 use serde_json::Value;
 
 use crate::kind::{Block, Fields, Part, Plot, Prose, Table, TableRow, Trace};
-use crate::patch::apply;
+use crate::patch::{apply_with, merge_value, ApplyError, Spot};
 use crate::wire::{Child, Op};
 
 /// The smallest ops that turn `old` into `new`, recursing into nested lists by id, else one `screen` op.
@@ -15,7 +16,32 @@ pub fn diff(old: &Block, new: &Block) -> Vec<Op> {
 
 fn applies(old: &Block, ops: &[Op], new: &Block) -> bool {
     let mut s = old.clone();
-    apply(&mut s, ops).is_ok() && &s == new
+    let untyped = |spot: Spot<'_>, fields: &Fields| match spot {
+        Spot::Block(b) => {
+            let want = b.id().and_then(|id| new.get(id)).map(|w| w.with_lists_of(b));
+            rebuilt(b, want, fields)
+        }
+        Spot::Row(r) => {
+            let want = new.row(&r.id).cloned();
+            rebuilt(r, want, fields)
+        }
+        Spot::Lane(_) | Spot::Round(_) => Err(ApplyError::Unknown),
+    };
+    apply_with(&mut s, ops, untyped).is_ok() && &s == new
+}
+
+fn rebuilt<T: Serialize>(now: &mut T, want: Option<T>, fields: &Fields) -> Result<(), ApplyError> {
+    let merged = serde_json::to_value(&*now).ok().map(|mut v| {
+        merge_value(&mut v, fields);
+        v
+    });
+    match want.filter(|w| merged.is_some() && serde_json::to_value(w).ok() == merged) {
+        Some(w) => {
+            *now = w;
+            Ok(())
+        }
+        None => Err(ApplyError::Shape("the merge does not rebuild the new block".into())),
+    }
 }
 
 fn root_ops(old: &Block, new: &Block) -> Option<Vec<Op>> {
@@ -80,13 +106,19 @@ fn block_ops(old: &Block, new: &Block, id: &str) -> Option<Vec<Op>> {
     let mut fields = own_fields(old, new)?;
     let grown = match (old, new) {
         (Block::Prose(a), Block::Prose(b)) if fields.remove("parts").is_some() => vec![append(id, a, b)],
-        (Block::Plot(a), Block::Plot(b)) if fields.contains_key("series") => {
-            let ops = points(id, a, b);
-            if ops.is_some() {
+        (Block::Plot(a), Block::Plot(b)) if fields.contains_key("series") => match points(id, a, b) {
+            Some(mut ops) => {
                 fields.remove("series");
+                if !fields.is_empty() {
+                    ops.push(Op::Merge {
+                        id: id.into(),
+                        fields: std::mem::take(&mut fields),
+                    });
+                }
+                ops
             }
-            ops.unwrap_or_default()
-        }
+            None => vec![],
+        },
         _ => vec![],
     };
     let merge = (!fields.is_empty()).then(|| Op::Merge { id: id.into(), fields });

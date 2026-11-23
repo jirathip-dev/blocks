@@ -1,0 +1,6 @@
+{
+  "text": "{\"blocks\": [{\"type\": \"media\", \"src\": \"https://cdn.example.evil.net/a.png\", \"alt\": \"A plan\", \"width\": 4, \"height\": 3}]}",
+  "refused": [
+    "catalog/media"
+  ]
+}

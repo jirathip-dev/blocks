@@ -1,0 +1,46 @@
+{
+  "catalog": "ask",
+  "ask": "Sign me up for the newsletter.",
+  "expect": {
+    "kinds": [
+      "form"
+    ],
+    "actions": [
+      "submit"
+    ],
+    "says": [
+      "email"
+    ],
+    "blocks": 3
+  },
+  "gold": {
+    "blocks": [
+      {
+        "type": "prose",
+        "markdown": "Leave your email and we will write once a week."
+      },
+      {
+        "type": "form",
+        "submit": {
+          "action": "submit",
+          "label": "Sign up"
+        },
+        "fields": [
+          {
+            "type": "text",
+            "name": "email",
+            "label": "Email",
+            "keyboard": "default",
+            "placeholder": "you@example.com"
+          },
+          {
+            "type": "toggle",
+            "name": "weekly",
+            "label": "Weekly digest",
+            "value": true
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,4 +1,5 @@
 kinds! {
+    "boxplot" => boxplot,
     "button" => button,
     "card" => card,
     "chart" => chart,

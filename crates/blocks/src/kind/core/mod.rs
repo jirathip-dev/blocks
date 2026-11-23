@@ -40,5 +40,6 @@ kinds! {
     message { Message(Message) = "message" }
     tool { Tool(Tool) = "tool" }
     sidebar { Sidebar(Sidebar) = "sidebar" }
+    boxplot { Boxplot(Boxplot) = "boxplot" }
     plot { Plot(Plot) = "plot" }
 }

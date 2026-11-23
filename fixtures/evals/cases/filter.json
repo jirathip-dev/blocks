@@ -1,0 +1,43 @@
+{
+  "catalog": "ask",
+  "ask": "Let me filter the tickets by status.",
+  "expect": {
+    "kinds": [
+      "chips"
+    ],
+    "actions": [
+      "filter"
+    ],
+    "says": [
+      "open",
+      "closed"
+    ],
+    "blocks": 3
+  },
+  "gold": {
+    "blocks": [
+      {
+        "type": "chips",
+        "name": "status",
+        "action": "filter",
+        "options": [
+          {
+            "label": "Open",
+            "value": "open"
+          },
+          {
+            "label": "Waiting",
+            "value": "waiting"
+          },
+          {
+            "label": "Closed",
+            "value": "closed"
+          }
+        ],
+        "selected": [
+          "open"
+        ]
+      }
+    ]
+  }
+}

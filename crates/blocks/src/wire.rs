@@ -195,7 +195,7 @@ pub struct OldFrame {
     pub ops: Vec<Op>,
 }
 
-/// The ops the old per-screen stream sends for `ops`: a `move` becomes a `replace` of its parent, of the root a `screen`, an `append` a `merge` of its parts, a plot's `points` one `merge` of its series.
+/// The ops the old per-screen stream sends for `ops`: a `move` becomes a `replace` of its parent, of the root a `screen`, an `append` a `merge` of its parts, a plot's `points` one `merge` of its series; removes go first and the badge last.
 pub fn old(ops: Vec<Op>, new: &Block) -> Vec<Op> {
     let (mut replaced, mut plots) = (HashSet::new(), HashSet::new());
     let mut out = Vec::with_capacity(ops.len());
@@ -234,6 +234,11 @@ pub fn old(ops: Vec<Op>, new: &Block) -> Vec<Op> {
             other => out.push(other),
         }
     }
+    out.sort_by_key(|op| match op {
+        Op::Remove { .. } => 0,
+        Op::Badge { .. } => 2,
+        _ => 1,
+    });
     out
 }
 

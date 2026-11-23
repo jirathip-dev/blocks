@@ -1,0 +1,9 @@
+case                 fit retry fell mends warns meets  chars
+compare                1     0    0     1     0     1    521
+explain                0     0    1     0     0     0     42
+filter                 1     0    0     1     0     1    250
+pick-plan              1     0    0     1     0     1    439
+sign-up                1     0    0     1     0     1    364
+weekly-sales           1     0    0     0     0     0    520
+yes-no                 0     1    0     0     0     1    199
+7 cases: fit 71%, after one retry 86%, meets 71%, clean 14%, 0.6 mends, 334 characters a reply

@@ -1,0 +1,6 @@
+{
+  "text": "{\"blocks\": [{\"type\": \"button\", \"label\": \"Pro\", \"action\": \"pick\", \"values\": {\"plan\": \"pro\"}}]}",
+  "refused": [
+    "catalog/field"
+  ]
+}

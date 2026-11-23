@@ -39,9 +39,10 @@ var hooks = {
   message: { variant: "role", parts: [] },
   tool: { variant: "state", parts: [] },
   sidebar: { variant: null, parts: [] },
+  boxplot: { variant: null, parts: ["title"] },
   plot: { variant: null, parts: ["title"] }
 };
-var roles = { modal: "dialog", sheet: "dialog", section: "region", form: "form", config: "form", nav: "navigation", chart: "figure", plot: "figure", toast: "status", message: "article", sidebar: "navigation" };
+var roles = { modal: "dialog", sheet: "dialog", section: "region", form: "form", config: "form", nav: "navigation", chart: "figure", plot: "figure", toast: "status", message: "article", sidebar: "navigation", boxplot: "figure" };
 var names = ["label", "title", "header", "question", "alt", "file", "command", "placeholder", "name"];
 var hosts = { screen: "blocks", modal: "blocks", sheet: "blocks", section: "blocks", card: "blocks", message: "blocks", list: "rows", scene: "lanes", row: "rounds", table: "rows" };
 var walked = ["blocks", "rows", "buttons", "rounds", "lanes"];
@@ -521,6 +522,7 @@ var import_ = (fields) => ({ type: "import", ...fields });
 var message = (fields) => ({ type: "message", ...fields });
 var tool = (fields) => ({ type: "tool", ...fields });
 var sidebar = (fields) => ({ type: "sidebar", ...fields });
+var boxplot = (fields) => ({ type: "boxplot", ...fields });
 var plot = (fields) => ({ type: "plot", ...fields });
 var expr = {
   get: (v) => ({ get: v }),
@@ -706,6 +708,21 @@ var sideTitle = (b) => [...b.groups.flatMap((g) => g.links.flatMap((l) => [l, ..
 var sideIcon = (l) => [l.icon || l.label.slice(0, 1).toUpperCase(), /^[A-Z]{2}$/.test(l.icon ?? "")];
 var sideCount = (b) => [b.count > 99 ? "99+" : String(b.count), `${b.count} ${b.tone === "bad" ? "need attention" : "new"}`];
 
+// src/core/kind/boxplot.ts
+var close = (v) => Math.abs(v - Math.round(v)) < 1e-6;
+var decimals2 = (v) => [0, 1].find((d) => close(v * 10 ** d)) ?? 2;
+var values = (x) => [x.min, x.q1, x.median, x.q3, x.max, ...x.outliers ?? []];
+function places(p) {
+  return p.boxes.reduce((d, x) => Math.max(d, ...values(x).map(decimals2)), 0);
+}
+function boxFallback(p) {
+  const d = places(p), u = p.unit ? ` ${p.unit}` : "";
+  const f = { title: p.title };
+  if (p.boxes.length) f.subtitle = p.boxes.map((x) => `${x.name} median ${x.median.toFixed(d)}${u}`).join(", ");
+  if (p.tap) f.tap = p.tap;
+  return f;
+}
+
 // src/core/table.ts
 var SIGN = { THB: "\u0E3F", USD: "$", EUR: "\u20AC" };
 var at = (r, id) => r.cells[id];
@@ -748,6 +765,7 @@ var NAMED = ["title", "label", "header", "question", "name", "file", "command", 
 var isObj = (v) => typeof v === "object" && v !== null && !Array.isArray(v);
 var isTable = (o) => o["type"] === "table" && Array.isArray(o["columns"]) && Array.isArray(o["rows"]);
 var isPlot = (o) => o["type"] === "plot" && typeof o["title"] === "string" && Array.isArray(o["series"]);
+var isBoxplot = (o) => o["type"] === "boxplot" && typeof o["title"] === "string" && Array.isArray(o["boxes"]);
 var text3 = (o, k) => typeof o[k] === "string" && o[k] !== "" ? o[k] : void 0;
 function tabled(t) {
   const rows = t.rows.filter((r) => !r.group).map((r) => worked(t, r));
@@ -761,6 +779,7 @@ function tabled(t) {
 function plain2(o, kind) {
   if (isTable(o)) return tabled(o);
   if (isPlot(o)) return fallback(o);
+  if (isBoxplot(o)) return boxFallback(o);
   const subtitle = text3(o, "subtitle");
   const f = { title: NAMED.map((k) => text3(o, k)).find((t) => t !== void 0) ?? kind };
   if (subtitle !== void 0) f.subtitle = subtitle;
@@ -802,6 +821,7 @@ var nonce = () => Array.from(crypto.getRandomValues(new Uint8Array(16)), (n) => 
 
 // src/gen/shapes.ts
 var kinds = {
+  "boxplot": "Boxplot",
   "button": "Button",
   "card": "Card",
   "chart": "Chart",
@@ -1027,6 +1047,7 @@ var defs = {
             "message",
             "tool",
             "sidebar",
+            "boxplot",
             "plot"
           ]
         },
@@ -1655,6 +1676,19 @@ var defs = {
         "type": "object"
       },
       {
+        "$ref": "#/$defs/Boxplot",
+        "properties": {
+          "type": {
+            "const": "boxplot",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      {
         "$ref": "#/$defs/Plot",
         "properties": {
           "type": {
@@ -1680,6 +1714,73 @@ var defs = {
     },
     "required": [
       "get"
+    ],
+    "type": "object"
+  },
+  "Boxplot": {
+    "additionalProperties": true,
+    "properties": {
+      "axis": {
+        "type": "string"
+      },
+      "boxes": {
+        "items": {
+          "$ref": "#/$defs/PlotBox"
+        },
+        "type": "array"
+      },
+      "empty": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "id": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "selected": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "show": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "tap": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Tap"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "title": {
+        "type": "string"
+      },
+      "unit": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "required": [
+      "title",
+      "axis",
+      "boxes"
     ],
     "type": "object"
   },
@@ -5465,6 +5566,56 @@ var defs = {
     },
     "type": "object"
   },
+  "PlotBox": {
+    "properties": {
+      "max": {
+        "type": "number"
+      },
+      "median": {
+        "type": "number"
+      },
+      "min": {
+        "type": "number"
+      },
+      "name": {
+        "type": "string"
+      },
+      "outliers": {
+        "items": {
+          "type": "number"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "q1": {
+        "type": "number"
+      },
+      "q3": {
+        "type": "number"
+      },
+      "tone": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Tone"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      }
+    },
+    "required": [
+      "name",
+      "min",
+      "q1",
+      "median",
+      "q3",
+      "max"
+    ],
+    "type": "object"
+  },
   "Prose": {
     "additionalProperties": true,
     "properties": {
@@ -8538,6 +8689,7 @@ export {
   actionOf,
   actions,
   apply,
+  boxplot,
   built,
   button,
   card,

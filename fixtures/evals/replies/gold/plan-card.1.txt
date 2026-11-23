@@ -1,0 +1,1 @@
+{"blocks": [{"type": "card", "title": "Team", "subtitle": "$30 a month for five people", "badge": {"text": "popular", "tone": "accent"}, "blocks": [{"type": "prose", "markdown": "Shared projects, roles and an audit log."}], "buttons": [{"type": "button", "label": "See the Team plan", "action": "open-plan", "values": {"plan": "team"}}]}]}

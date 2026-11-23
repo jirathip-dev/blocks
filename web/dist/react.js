@@ -2224,6 +2224,7 @@ import { linkable as linkable7 } from "./core.js";
 
 // src/gen/shapes.ts
 var kinds = {
+  "boxplot": "Boxplot",
   "button": "Button",
   "card": "Card",
   "chart": "Chart",

@@ -1,0 +1,25 @@
+{
+  "text": "[{\"type\": \"prose\", \"markdown\": \"Pick a plan.\"}, {\"type\": \"button\", \"label\": \"Team\", \"action\": \"pick\", \"style\": \"primary\"}]",
+  "fit": {
+    "mends": [
+      {
+        "mend": "root"
+      }
+    ],
+    "cut": false,
+    "sends": [
+      [
+        "type",
+        "prose"
+      ],
+      [
+        "action",
+        "pick"
+      ],
+      [
+        "type",
+        "button"
+      ]
+    ]
+  }
+}

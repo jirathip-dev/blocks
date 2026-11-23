@@ -1,0 +1,25 @@
+{
+  "text": "Here are the plans:\n```json\n{\"blocks\": [{\"type\": \"prose\", \"markdown\": \"Pick a plan.\"}, {\"type\": \"button\", \"label\": \"Pro\", \"action\": \"pick\"}]}\n```\nAsk if you need more.",
+  "fit": {
+    "mends": [
+      {
+        "mend": "around"
+      }
+    ],
+    "cut": false,
+    "sends": [
+      [
+        "type",
+        "prose"
+      ],
+      [
+        "action",
+        "pick"
+      ],
+      [
+        "type",
+        "button"
+      ]
+    ]
+  }
+}

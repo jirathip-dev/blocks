@@ -56,10 +56,11 @@ example's fixtures this way.
 
 ## Size
 
-The example's wasm, built with its release profile (`opt-level = "z"`, `lto = "thin"`), is 1,334,810 bytes,
-297,138 gzipped. The `client` gate fails it over 375,000 bytes gzipped. Most of that is the typed parse `diff`'s
-self-check brings in; a new kind adds its reader and writer. A wasm over the ceiling means a typed parse or a
-dependency got in, or the ceiling is raised in its own issue.
+The example's wasm, built with its release profile (`opt-level = "z"`, `lto = "thin"`), is 485,434 bytes,
+130,958 gzipped. The `client` gate fails it over 140,000 bytes gzipped. `diff`'s self-check compares the blocks'
+JSON values and parses no kind, so the wasm carries the kinds' writers, the builders and `diff`; a new kind adds
+its writer. A wasm over the ceiling means a typed parse or a dependency got in, or the ceiling is raised in its
+own issue.
 
 ## What stays the app's job
 

@@ -1,0 +1,36 @@
+{
+  "catalog": "ask",
+  "ask": "Should I deploy now? Ask me.",
+  "expect": {
+    "kinds": [
+      "choice"
+    ],
+    "actions": [
+      "answer"
+    ],
+    "says": [
+      "deploy"
+    ],
+    "blocks": 3
+  },
+  "gold": {
+    "blocks": [
+      {
+        "type": "choice",
+        "question": "Deploy the build now?",
+        "action": "answer",
+        "recommended": "yes",
+        "options": [
+          {
+            "label": "Deploy now",
+            "value": "yes"
+          },
+          {
+            "label": "Wait",
+            "value": "no"
+          }
+        ]
+      }
+    ]
+  }
+}

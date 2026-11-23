@@ -97,6 +97,28 @@ runs in `just check`, and the `ci` job runs it with `BASE=HEAD^1` on a pull requ
 with `--all --render` each night on macOS, the WebKit the committed baselines were drawn in, then walks them with
 `--explore` for ten minutes from the day number as the seed; a failure uploads `shots/` with its `steps.json`.
 
+## Catalogs
+
+A host that draws a screen it did not write, such as a model's reply, holds it to a catalog: a JSON file in the
+host's repo naming the kinds allowed, the fields and actions per kind, a form's field types, the starts a link or a
+loaded file may have, and the most blocks. `Catalog::read` refuses an unknown key, kind or field, a field no catalog
+offers (`id`, `fallback`, `show`, `enabled`, `checks`, `set`), inputs on a kind that is no form, and a start that does
+not end in `/` or `:`. `guard::lint_in(screen, catalog)` is `lint` plus these rules, on every block under the root;
+with no catalog they see nothing.
+
+| Rule | Fires on |
+|---|---|
+| `catalog/kind` | a block of a kind the catalog does not name |
+| `catalog/field` | a field outside its kind's `fields`, a never-offered one, a tap's `focus` or `keep`, or a `{"get": key}` |
+| `catalog/action` | an `action` anywhere in a block that its kind's entry does not list |
+| `catalog/input` | a form field whose type the entry's `inputs` does not list |
+| `catalog/link` | a `url`, `href` or `link` that starts with no `links` entry, or holds a space, a control or a backslash |
+| `catalog/media` | a `src`, `avatar` or `poster` that starts with no `media` entry, or holds the same |
+| `catalog/open` | a tap with `open`, `sheet` or `thread` |
+| `catalog/size` | more blocks than `max.blocks` |
+
+The bad fixtures are `fixtures/guard/bad/catalog/`, judged under `fixtures/guard/bad/catalog.json`.
+
 ## The harness
 
 `blocks-shot --plan <file>` draws every run of a `Plan` in one WebKit launch, writes `<out>/<run>/<shot>.png`,

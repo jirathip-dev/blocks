@@ -1,5 +1,6 @@
 import type { Block, Kind } from "./types.ts";
 import type { Ctx } from "../render/ctx.ts";
+import { boxplot } from "../render/kind/boxplot.ts";
 import { button } from "../render/kind/button.ts";
 import { card } from "../render/kind/card.ts";
 import { chart } from "../render/kind/chart.ts";
@@ -83,7 +84,8 @@ export const R: { [K in Kind]: (b: Of<K>, c: Ctx) => HTMLElement | null } = {
   message,
   tool,
   sidebar,
+  boxplot,
   plot,
 };
 
-export const native: readonly Kind[] = ["screen", "modal", "sheet", "section", "list", "row", "card", "choice", "form", "config", "secret", "run", "button", "chips", "stat", "text", "images", "web", "diff", "editor", "scene", "diagram", "composer", "lines", "prose", "hero", "media", "nav", "table", "steps", "chart", "toast", "pages", "timeline", "import", "message", "tool", "sidebar", "plot"];
+export const native: readonly Kind[] = ["screen", "modal", "sheet", "section", "list", "row", "card", "choice", "form", "config", "secret", "run", "button", "chips", "stat", "text", "images", "web", "diff", "editor", "scene", "diagram", "composer", "lines", "prose", "hero", "media", "nav", "table", "steps", "chart", "toast", "pages", "timeline", "import", "message", "tool", "sidebar", "boxplot", "plot"];

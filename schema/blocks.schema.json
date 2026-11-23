@@ -242,6 +242,7 @@
               "message",
               "tool",
               "sidebar",
+              "boxplot",
               "plot"
             ]
           },
@@ -874,6 +875,19 @@
           "type": "object"
         },
         {
+          "$ref": "#/$defs/Boxplot",
+          "properties": {
+            "type": {
+              "const": "boxplot",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
           "$ref": "#/$defs/Plot",
           "properties": {
             "type": {
@@ -901,6 +915,74 @@
       },
       "required": [
         "get"
+      ],
+      "type": "object"
+    },
+    "Boxplot": {
+      "additionalProperties": true,
+      "description": "A box plot: one upright box per category on a value axis with its label and unit; a tap picks a box.",
+      "properties": {
+        "axis": {
+          "type": "string"
+        },
+        "boxes": {
+          "items": {
+            "$ref": "#/$defs/PlotBox"
+          },
+          "type": "array"
+        },
+        "empty": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "selected": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "tap": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Tap"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "title": {
+          "type": "string"
+        },
+        "unit": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "title",
+        "axis",
+        "boxes"
       ],
       "type": "object"
     },
@@ -5405,6 +5487,57 @@
           ]
         }
       },
+      "type": "object"
+    },
+    "PlotBox": {
+      "description": "One category's box: its five numbers in order, the outliers beyond its whiskers and its tone.",
+      "properties": {
+        "max": {
+          "type": "number"
+        },
+        "median": {
+          "type": "number"
+        },
+        "min": {
+          "type": "number"
+        },
+        "name": {
+          "type": "string"
+        },
+        "outliers": {
+          "items": {
+            "type": "number"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "q1": {
+          "type": "number"
+        },
+        "q3": {
+          "type": "number"
+        },
+        "tone": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Tone"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "name",
+        "min",
+        "q1",
+        "median",
+        "q3",
+        "max"
+      ],
       "type": "object"
     },
     "PointMove": {

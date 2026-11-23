@@ -43,6 +43,7 @@ extension Block {
         case .message(let b): ("message", b.id)
         case .tool(let b): ("tool", b.id)
         case .sidebar(let b): ("sidebar", b.id)
+        case .boxplot(let b): ("boxplot", b.id)
         case .plot(let b): ("plot", b.id)
         case .appBlock(let b): (b.type, b.id)
         }

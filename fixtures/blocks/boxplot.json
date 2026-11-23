@@ -1,0 +1,36 @@
+{
+  "type": "boxplot",
+  "id": "hands",
+  "title": "Peak force per hand",
+  "axis": "Peak force",
+  "boxes": [
+    {
+      "name": "Left",
+      "min": 25.8,
+      "q1": 30.4,
+      "median": 33.1,
+      "q3": 36.0,
+      "max": 41.2,
+      "outliers": [
+        18.0,
+        47.5
+      ]
+    },
+    {
+      "name": "Right",
+      "min": 28.2,
+      "q1": 32.9,
+      "median": 35.6,
+      "q3": 38.1,
+      "max": 43.0,
+      "outliers": [
+        21.4
+      ]
+    }
+  ],
+  "unit": "kg",
+  "selected": "Left",
+  "tap": {
+    "action": "force.hand"
+  }
+}
