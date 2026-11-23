@@ -184,6 +184,7 @@ impl Live {
                 longest_frame_ms: None,
                 frames_over_budget: None,
                 longest_patch_ms: None,
+                p99_patch_ms: None,
             },
         };
         let run = Run {

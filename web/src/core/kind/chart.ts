@@ -8,13 +8,13 @@ export type PointReach = { steps: number };
 
 const round = (v: number) => Math.floor(v + 0.5);
 
-function nice(v: number): number {
+export function nice(v: number): number {
   if (v <= 0) return 1;
   const p = Math.pow(10, Math.floor(Math.log10(v)));
   return p * ([1, 2, 2.5, 5].find((m) => v / p <= m) ?? 10);
 }
 
-function decimals(x: number): number {
+export function decimals(x: number): number {
   for (let d = 0; d < 6; d++) {
     const v = x * Math.pow(10, d);
     if (Math.abs(v - round(v)) < 1e-6) return d;
@@ -22,7 +22,7 @@ function decimals(x: number): number {
   return 6;
 }
 
-function fixed(v: number, d: number): string {
+export function fixed(v: number, d: number): string {
   const p = Math.pow(10, d);
   const n = round(v * p);
   const whole = Math.floor(n / p);

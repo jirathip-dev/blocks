@@ -22,6 +22,14 @@ call: its `name`, its `state` (`running`, `done`, `failed`), a one-line `summary
 folded until opened. A `prose` with `streaming` is still being written: renderers draw a caret after it and mark it
 busy, and `diff` grows it by `append` (stream.md). `Prose::read` turns markdown into parts once, on the server.
 
+A `plot` draws up to five named `series`, each two columns of numbers, `x` and `y`, over a number or time `x` axis
+(`scale: time` reads seconds as `m:ss`, `h:mm:ss` from an hour). `window` shows the last span of x (none: every
+point held), `target` shades a y range, `peak` draws a dashed line whose `label` sits in the legend, and the legend
+reads each line's latest value. An axis's `min` and `max` fix its range. `Plot::push` adds a sample and keeps a series
+bounded (one point before the window kept; with no window, halved at 20,000 points, keeping each four's lowest and
+highest), and `diff` sends the change as `points` (stream.md). `Plot::drawn` (and its TS and Swift ports) gives every
+renderer the ranges, ticks, the points to join and the readouts.
+
 A `composer` sends its `action` (or its `acts`' `queue` or `steer`) with `values` of the picked chips, the `text`,
 the `files` and a `nonce`: a random id, fresh for each send, that a retry of a failed send (its draft unchanged)
 repeats, so an app stores a retried send once. A new send, or an edit to the draft, gets a new one.

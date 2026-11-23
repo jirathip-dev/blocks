@@ -14,7 +14,7 @@ generated = [
     "fixtures/trees/react/*.json", "fixtures/blocks/*.json",
     "fixtures/trees/*.json", "fixtures/trees/swift/*.json", "fixtures/trees/swift/fields/*.json",
     "fixtures/html/*.html", "fixtures/fields/html/*.html", "fixtures/site/*.html",
-    "fixtures/protocol/sim-*.json", "fixtures/behave/sim.json", "fixtures/gesture/sim.json",
+    "fixtures/protocol/sim-*.json", "fixtures/plot/stream.json", "fixtures/behave/sim.json", "fixtures/gesture/sim.json",
     "fixtures/css/*.css", "fixtures/client/*.json",
     "crates/blocks/src/guard/rules/mod.rs", "crates/blocks/src/kind/core/mod.rs", "crates/blocks/src/site/kind/drawn.rs", "swift/Sources/BlocksUI/Gen/Kinds.swift",
     "skill/blocks/**", "crates/blocks-cli/src/gen/skill.rs",

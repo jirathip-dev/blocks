@@ -86,7 +86,7 @@ fn label(c: &Chart, x: &str, long: bool) -> String {
     }
 }
 
-fn colour(tone: Option<&Tone>, i: usize) -> String {
+pub(super) fn colour(tone: Option<&Tone>, i: usize) -> String {
     let token = match tone {
         Some(Tone::Ok) => "--g",
         Some(Tone::Warn) => "--a",

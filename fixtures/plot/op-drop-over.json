@@ -1,0 +1,45 @@
+{
+  "why": "a drop over the points held does not fit",
+  "plot": {
+    "type": "plot",
+    "id": "p",
+    "title": "Pull",
+    "series": [
+      {
+        "name": "Force",
+        "x": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "y": [
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "name": "Set 2",
+        "x": [
+          0,
+          1
+        ],
+        "y": [
+          5,
+          6
+        ]
+      }
+    ]
+  },
+  "op": {
+    "op": "points",
+    "id": "p",
+    "series": "Set 2",
+    "drop": 3,
+    "x": [],
+    "y": []
+  },
+  "want": null
+}

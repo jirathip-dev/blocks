@@ -9,6 +9,14 @@ public enum ApplyError: Error, Equatable, Sendable {
 extension Block {
     /// Applies `ops` in order, as the crate's `apply` does; on an error the block is left as it was.
     public mutating func apply(_ ops: [Op]) throws(ApplyError) {
+        var next = self, tree: [Op] = []
+        for op in ops where try !next.direct(op, after: &tree) { tree.append(op) }
+        try next.throughTree(tree)
+        self = next
+    }
+
+    package mutating func throughTree(_ ops: [Op]) throws(ApplyError) {
+        guard !ops.isEmpty else { return }
         var tree: JSONValue
         do { tree = try JSONValue(self) } catch { throw .shape("\(error)") }
         for op in ops { try tree.apply(op) }
@@ -153,6 +161,8 @@ extension JSONValue {
             }
             guard found else { throw .noBlock(a.id) }
             guard grew else { throw .shape("block `\(a.id)` does not take the append") }
+        case .points(let p):
+            throw .shape("block `\(p.id)` does not take the points")
         case .badge(let b):
             if type == "screen", case .object(var o) = self {
                 o["badge"] = .number(Double(b.count))

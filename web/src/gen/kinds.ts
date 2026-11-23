@@ -23,6 +23,7 @@ import { message } from "../render/kind/message.ts";
 import { modal } from "../render/kind/modal.ts";
 import { nav } from "../render/kind/nav.ts";
 import { pages } from "../render/kind/pages.ts";
+import { plot } from "../render/kind/plot.ts";
 import { prose } from "../render/kind/prose.ts";
 import { row } from "../render/kind/row.ts";
 import { run } from "../render/kind/run.ts";
@@ -84,6 +85,7 @@ export const R: { [K in Kind]: (b: Of<K>, c: Ctx) => HTMLElement | null } = {
   tool,
   sidebar,
   boxplot,
+  plot,
 };
 
-export const native: readonly Kind[] = ["screen", "modal", "sheet", "section", "list", "row", "card", "choice", "form", "config", "secret", "run", "button", "chips", "stat", "text", "images", "web", "diff", "editor", "scene", "diagram", "composer", "lines", "prose", "hero", "media", "nav", "table", "steps", "chart", "toast", "pages", "timeline", "import", "message", "tool", "sidebar", "boxplot"];
+export const native: readonly Kind[] = ["screen", "modal", "sheet", "section", "list", "row", "card", "choice", "form", "config", "secret", "run", "button", "chips", "stat", "text", "images", "web", "diff", "editor", "scene", "diagram", "composer", "lines", "prose", "hero", "media", "nav", "table", "steps", "chart", "toast", "pages", "timeline", "import", "message", "tool", "sidebar", "boxplot", "plot"];

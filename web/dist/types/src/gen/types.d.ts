@@ -42,6 +42,7 @@ export type Attachment = {
     src?: string | null;
     tap: Tap;
 };
+export type AxisScale = "number" | "time";
 export type Band = {
     blocks?: Block[] | null;
     header?: string | null;
@@ -135,7 +136,9 @@ export type Block = ({
     type: "sidebar";
 } & Sidebar) | ({
     type: "boxplot";
-} & Boxplot) | (AppBlock & {
+} & Boxplot) | ({
+    type: "plot";
+} & Plot) | (AppBlock & {
     [key: string]: unknown;
 });
 export type Bound = {
@@ -716,6 +719,13 @@ export type Op = {
     parts?: Part[] | null;
     text?: string | null;
 } | {
+    op: "points";
+    drop?: number | null;
+    id: string;
+    series: string;
+    x: number[];
+    y: number[];
+} | {
     op: "badge";
     count: number;
 } | {
@@ -782,6 +792,10 @@ export type Part = {
     part: "rule";
 };
 export type Pattern = "filled" | "email" | "url" | "number";
+export type Peak = {
+    label: string;
+    y: number;
+};
 export type Pending = {
     count: string;
     discard: Tap;
@@ -815,6 +829,25 @@ export type PlanRun = {
     scripts: string[];
     size: string;
     steps: Step[];
+};
+export type Plot = {
+    empty?: string | null;
+    id?: string | null;
+    peak?: Peak | null;
+    series: Trace[];
+    show?: Expr | null;
+    target?: Target | null;
+    title: string;
+    window?: number | null;
+    x?: PlotAxis | null;
+    y?: PlotAxis | null;
+};
+export type PlotAxis = {
+    label?: string | null;
+    max?: number | null;
+    min?: number | null;
+    scale?: AxisScale | null;
+    unit?: string | null;
 };
 export type PlotBox = {
     max: number;
@@ -1190,6 +1223,10 @@ export type Tap = {
     url?: string | null;
     values?: Record<string, unknown> | null;
 };
+export type Target = {
+    max: number;
+    min: number;
+};
 export type Text = {
     center?: boolean | null;
     font?: string | null;
@@ -1266,6 +1303,7 @@ export type Timings = {
     frames_over_budget?: number | null;
     longest_frame_ms?: number | null;
     longest_patch_ms?: number | null;
+    p99_patch_ms?: number | null;
     steps_ms: number[];
 };
 export type Toast = {
@@ -1300,6 +1338,12 @@ export type Tool = {
 };
 export type ToolState = "running" | "done" | "failed";
 export type Total = "sum" | "avg" | "count";
+export type Trace = {
+    name: string;
+    tone?: Tone | null;
+    x: number[];
+    y: number[];
+};
 export type TreeDrawn = "native" | "fallback" | "hidden";
 export type TreeNode = {
     children: TreeNode[];
@@ -1353,4 +1397,4 @@ export type Why = "evicted" | "unpaired" | "handover";
 export type Working = {
     since: string;
 };
-export type Kind = "screen" | "modal" | "sheet" | "section" | "list" | "row" | "card" | "choice" | "form" | "config" | "secret" | "run" | "button" | "chips" | "stat" | "text" | "images" | "web" | "diff" | "editor" | "scene" | "diagram" | "composer" | "lines" | "prose" | "hero" | "media" | "nav" | "island" | "table" | "steps" | "chart" | "toast" | "pages" | "timeline" | "import" | "message" | "tool" | "sidebar" | "boxplot";
+export type Kind = "screen" | "modal" | "sheet" | "section" | "list" | "row" | "card" | "choice" | "form" | "config" | "secret" | "run" | "button" | "chips" | "stat" | "text" | "images" | "web" | "diff" | "editor" | "scene" | "diagram" | "composer" | "lines" | "prose" | "hero" | "media" | "nav" | "island" | "table" | "steps" | "chart" | "toast" | "pages" | "timeline" | "import" | "message" | "tool" | "sidebar" | "boxplot" | "plot";

@@ -4,6 +4,7 @@ import type { Block, Kind, Locale } from "../gen/types.ts";
 import { patcher } from "../patch.ts";
 import { render } from "../render/block.ts";
 import type { Ctx, Renderer, Store } from "../render/ctx.ts";
+import { sync } from "../render/kind/plot.ts";
 import { grow } from "../render/kind/prose.ts";
 import type { Theme } from "../theme.ts";
 
@@ -23,6 +24,6 @@ export function host(own: Own, s: Screen) {
   const view = new Map<string, Record<string, unknown>>();
   const ctx = (): Ctx => ({ screen: s.screen(), locale: s.locale?.(), act: s.act, tap: s.tap, open, theme: own.theme, store: own.store, apps: own.apps, held, view, file: own.file });
   const draw = (b: Block) => render(b, ctx());
-  const patch = (root: HTMLElement, model: () => Block, saved?: () => void) => patcher({ root, model, draw, grow, ...(saved && { saved }) });
+  const patch = (root: HTMLElement, model: () => Block, saved?: () => void) => patcher({ root, model, draw, grow, sync: { plot: sync }, ...(saved && { saved }) });
   return { open, ctx, draw, patch };
 }

@@ -22,20 +22,20 @@ public struct PointReach: Equatable, Sendable {
 
 private func round(_ v: Double) -> Double { (v + 0.5).rounded(.down) }
 
-private func nice(_ v: Double) -> Double {
+func nice(_ v: Double) -> Double {
     guard v > 0 else { return 1 }
     let p = pow(10, log10(v).rounded(.down))
     return p * ([1, 2, 2.5, 5].first { v / p <= $0 } ?? 10)
 }
 
-private func decimals(_ x: Double) -> Int {
+func decimals(_ x: Double) -> Int {
     (0..<6).first { d in
         let v = x * pow(10, Double(d))
         return abs(v - round(v)) < 1e-6
     } ?? 6
 }
 
-private func fixed(_ v: Double, _ d: Int) -> String {
+func fixed(_ v: Double, _ d: Int) -> String {
     let p = pow(10, Double(d)), n = round(v * p), whole = (n / p).rounded(.down)
     let digits = String(Int(whole))
     var out = ""

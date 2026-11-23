@@ -40,7 +40,7 @@ function label(c: Chart, x: string, long: boolean): string {
   return `${name} ${long ? y : String(y % 100).padStart(2, "0")}`;
 }
 
-const colour = (tone: Tone | null | undefined, i: number) => `--k:var(${TONES[tone ?? ""] ?? ORDER[i % ORDER.length]})`;
+export const colour = (tone: Tone | null | undefined, i: number) => `--k:var(${TONES[tone ?? ""] ?? ORDER[i % ORDER.length]})`;
 
 const at = (s: Series, i: number): number | undefined => s.values[i];
 

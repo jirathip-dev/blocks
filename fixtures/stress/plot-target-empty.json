@@ -1,0 +1,26 @@
+{
+  "id": "target",
+  "peak": {
+    "label": "Peak 31 kg",
+    "y": 31
+  },
+  "series": [],
+  "target": {
+    "max": 30,
+    "min": 25
+  },
+  "title": "Set 3",
+  "type": "plot",
+  "x": {
+    "label": "Time",
+    "max": 30,
+    "min": 0,
+    "scale": "time"
+  },
+  "y": {
+    "label": "Force",
+    "max": 40,
+    "min": 0,
+    "unit": "kg"
+  }
+}

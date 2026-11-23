@@ -5,6 +5,8 @@ import { enter } from "./motion.ts";
 
 export type Draw = (block: Block) => HTMLElement | null;
 export type Grow = (el: HTMLElement, op: Append) => boolean;
+/// A kind's in-place view: draws `block` into the element it drew before; false when it must be drawn again.
+export type Sync = (el: HTMLElement, block: Block) => boolean;
 
 function node(el: Element, id: string): Element | undefined {
   if (el.getAttribute("data-id") === id) return el;
@@ -17,7 +19,7 @@ function node(el: Element, id: string): Element | undefined {
 
 const home = (el: Element): Element => Array.from(el.children).find((c) => c.hasAttribute("data-kids")) ?? el;
 
-type View = { root: HTMLElement; draw: Draw; grow?: Grow | undefined; fresh: Set<Element> };
+type View = { root: HTMLElement; draw: Draw; grow?: Grow | undefined; sync?: Record<string, Sync> | undefined; fresh: Set<Element>; late: Set<string> };
 
 function whole(v: View, model: Block): void {
   const n = v.draw(model);
@@ -25,23 +27,41 @@ function whole(v: View, model: Block): void {
   if (n) v.fresh.add(n);
 }
 
+function redrawn(v: View, id: string, model: Block): void {
+  const el = node(v.root, id);
+  const b = get(model, id);
+  if (!el) return;
+  if (el === v.root || b === model) return whole(v, model);
+  const n = b && isBlock(b) ? v.draw(b) : null;
+  if (el.querySelector("iframe") && n?.isEqualNode(el)) return;
+  if (n) el.replaceWith(n), v.fresh.add(n);
+  else el.remove();
+}
+
+const isFresh = (v: View, el: Element | undefined) => {
+  for (let e: Element | null | undefined = el; e && e !== v.root; e = e.parentElement) if (v.fresh.has(e)) return true;
+  return false;
+};
+
+function late(v: View, id: string, model: Block): void {
+  const el = node(v.root, id);
+  const b = get(model, id);
+  if (!(el instanceof HTMLElement) || isFresh(v, el)) return;
+  if (!(b && isBlock(b) && v.sync?.[b.type]?.(el, b))) redrawn(v, id, model);
+}
+
 function one(v: View, op: Op, model: Block): void {
-  const redraw = (id: string): void => {
-    const el = node(v.root, id);
-    const b = get(model, id);
-    if (!el) return;
-    if (el === v.root || b === model) return whole(v, model);
-    const n = b && isBlock(b) ? v.draw(b) : null;
-    if (el.querySelector("iframe") && n?.isEqualNode(el)) return;
-    if (n) el.replaceWith(n), v.fresh.add(n);
-    else el.remove();
-  };
+  const redraw = (id: string) => redrawn(v, id, model);
   const at = "id" in op ? node(v.root, op.id) : undefined;
   const host = at && !at.hasAttribute("data-block") ? at.parentElement?.closest<HTMLElement>("[data-block][data-id]")?.dataset["id"] : undefined;
   if (host && op.op !== "move") return redraw(host);
   switch (op.op) {
+    case "points":
+      return void v.late.add(op.id);
     case "merge": {
       const el = node(v.root, op.id);
+      const kind = el?.getAttribute("data-block");
+      if (kind && v.sync?.[kind]) return void v.late.add(op.id);
       if (el?.getAttribute("data-block") !== "island" || Object.keys(op.fields).some((k) => k !== "props")) return redraw(op.id);
       return void Reflect.set(el, "props", get(model, op.id)?.["props"] ?? {});
     }
@@ -49,7 +69,7 @@ function one(v: View, op: Op, model: Block): void {
       return redraw(op.id);
     case "append": {
       const el = node(v.root, op.id);
-      for (let e: Element | null | undefined = el; e && e !== v.root; e = e.parentElement) if (v.fresh.has(e)) return;
+      if (isFresh(v, el)) return;
       if (!(el instanceof HTMLElement && v.grow?.(el, op))) redraw(op.id);
       return;
     }
@@ -90,17 +110,18 @@ const refocus = (root: HTMLElement, k: Kept, i = root.querySelector(`.form[data-
   i instanceof HTMLInputElement && i !== document.activeElement && ((i.value = k.value), i.focus(), k.from === null || i.setSelectionRange(k.from, k.to));
 
 /// Patches the view in `root` with every op queued within one animation frame, in one pass; over 500 it redraws.
-export function patcher(o: { root: HTMLElement; model: () => Block; draw: Draw; grow?: Grow; saved?: () => void }) {
+export function patcher(o: { root: HTMLElement; model: () => Block; draw: Draw; grow?: Grow; sync?: Record<string, Sync>; saved?: () => void }) {
   let ops: Op[] = [];
   let over = false;
   let due = false;
   const run = (): void => {
     due = false;
     if (!ops.length && !over) return;
-    const [model, todo, k, v] = [o.model(), ops, kept(o.root), { ...o, fresh: new Set<Element>() }];
+    const [model, todo, k, v] = [o.model(), ops, kept(o.root), { ...o, fresh: new Set<Element>(), late: new Set<string>() }];
     ops = [];
     if (over) whole(v, model);
     else for (const op of todo) one(v, op, model);
+    for (const id of v.late) late(v, id, model);
     if (k) refocus(o.root, k);
     over = false;
     o.saved?.();

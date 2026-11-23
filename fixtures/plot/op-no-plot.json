@@ -1,0 +1,48 @@
+{
+  "why": "an id that is no plot does not fit",
+  "plot": {
+    "type": "plot",
+    "id": "p",
+    "title": "Pull",
+    "series": [
+      {
+        "name": "Force",
+        "x": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "y": [
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "name": "Set 2",
+        "x": [
+          0,
+          1
+        ],
+        "y": [
+          5,
+          6
+        ]
+      }
+    ]
+  },
+  "op": {
+    "op": "points",
+    "id": "s",
+    "series": "Force",
+    "x": [
+      4
+    ],
+    "y": [
+      5
+    ]
+  },
+  "want": null
+}

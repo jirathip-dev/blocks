@@ -1,0 +1,9 @@
+{
+  "kind": "plot",
+  "id": "hang",
+  "variant": null,
+  "drawn": "fallback",
+  "role": "figure",
+  "name": "Max hang, 20 mm",
+  "children": []
+}

@@ -20,7 +20,7 @@ pub(crate) const VARIANTS: [(&str, &str); 9] = [
     ("tool", "state"),
 ];
 
-pub(crate) const ROLES: [(&str, &str); 11] = [
+pub(crate) const ROLES: [(&str, &str); 12] = [
     ("modal", "dialog"),
     ("sheet", "dialog"),
     ("section", "region"),
@@ -28,6 +28,7 @@ pub(crate) const ROLES: [(&str, &str); 11] = [
     ("config", "form"),
     ("nav", "navigation"),
     ("chart", "figure"),
+    ("plot", "figure"),
     ("toast", "status"),
     ("message", "article"),
     ("sidebar", "navigation"),
@@ -221,6 +222,8 @@ pub struct Timings {
     pub frames_over_budget: Option<u32>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub longest_patch_ms: Option<f64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub p99_patch_ms: Option<f64>,
 }
 
 /// A harness run's `report.json`.
