@@ -6,6 +6,7 @@ export { figured, value } from "./text.ts";
 export { columns, expect, named, role, tree } from "./tree.ts";
 export { gate, type Miss } from "./gate.ts";
 export { choose, css, gated, tiles, type Look, type Pair, type Scale } from "./look.ts";
+export * as lookCode from "./code.ts";
 export * from "../gen/builders.ts";
 export { apply } from "./apply.ts";
 export { ext, glyph, initial, roleWord } from "./kind/message.ts";
