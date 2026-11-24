@@ -1,0 +1,19 @@
+{
+  "type": "screen",
+  "id": "s",
+  "title": "Queue",
+  "blocks": [
+    {
+      "type": "form",
+      "id": "f",
+      "action": "save",
+      "fields": [
+        {
+          "type": "text",
+          "name": "on",
+          "label": "On"
+        }
+      ]
+    }
+  ]
+}

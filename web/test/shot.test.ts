@@ -28,7 +28,8 @@ const plan = (name, runs) => {
 const bad = at("../../fixtures/guard/bad/");
 const rules = (seen) => [...new Set(seen.map((s) => s.rule))];
 
-test("each bad fixture fires its probe and no other in WebKit, all in one --plan launch; every probe has one", () => {
+test("each bad fixture fires its probe and no other in WebKit, its fixed one (rules.md's Correct) none, all in one --plan launch", () => {
+  const fixed = at("../../fixtures/guard/fixed/");
   const draw = readdirSync(join(bad, "render")).filter((f) => f.endsWith(".json")).map((f) => f.replace(/\.json$/, ""));
   const sheets = readdirSync(join(bad, "css")).map((f) => f.replace(/\.css$/, ""));
   const probes = readdirSync(at("../shot/probe/")).map((f) => f.replace(/\.ts$/, ""));
@@ -37,8 +38,12 @@ test("each bad fixture fires its probe and no other in WebKit, all in one --plan
   const runs = [
     ...draw.map((n) => ({ ...RUN, name: n, screen: join(bad, "render", `${n}.json`), css: own(n, "css"), scripts: own(n, "js"), kinds: ["gauge"] })),
     ...sheets.map((n) => ({ ...RUN, name: n, screen: join(blocks, "text.json"), css: [join(bad, "css", `${n}.css`)] })),
+    ...draw.map((n) => ({ ...RUN, name: `fixed/${n}`, screen: join(fixed, "render", `${n}.json`), kinds: ["gauge"] })),
+    ...sheets.map((n) => ({ ...RUN, name: `fixed/${n}`, screen: join(blocks, "text.json"), css: [join(fixed, "css", `${n}.css`)] })),
   ];
+  deepStrictEqual(readdirSync(join(fixed, "render")).length + readdirSync(join(fixed, "css")).length, draw.length + sheets.length);
   const seen = plan("bad", runs);
+  deepStrictEqual(seen.filter((s) => s.run?.startsWith("fixed/") || s.file?.startsWith(fixed)).map((s) => [s.run, s.rule]), []);
   for (const n of draw) deepStrictEqual(rules(seen.filter((s) => s.run === n)), [`render/${n}`], n);
   for (const n of sheets) deepStrictEqual(rules(seen.filter((s) => s.run === n || s.file === join(bad, "css", `${n}.css`))), [`css/${n}`], n);
   deepStrictEqual(seen.filter((s) => s.file).map((s) => [s.rule, s.line, s.at]), sheets.map((n) => [`css/${n}`, 3, ""]));

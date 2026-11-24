@@ -1,0 +1,43 @@
+{
+  "type": "screen",
+  "id": "refunds",
+  "title": "Refunds",
+  "blocks": [
+    {
+      "type": "section",
+      "id": "who",
+      "header": "Who can ask",
+      "blocks": [
+        {
+          "type": "text",
+          "id": "who-a",
+          "markdown": "Anyone who paid in the last 30 days."
+        }
+      ]
+    },
+    {
+      "type": "section",
+      "id": "how",
+      "header": "How to ask",
+      "blocks": [
+        {
+          "type": "text",
+          "id": "how-a",
+          "markdown": "Open the order and tap **Refund**."
+        }
+      ]
+    },
+    {
+      "type": "section",
+      "id": "when",
+      "header": "When it lands",
+      "blocks": [
+        {
+          "type": "text",
+          "id": "when-a",
+          "markdown": "Within five working days, on the card you paid with."
+        }
+      ]
+    }
+  ]
+}
