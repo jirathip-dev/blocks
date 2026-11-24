@@ -311,7 +311,14 @@ fn swift_defs(s: &Value) -> Out {
 
 fn style_swift() -> Out {
     let style = swift_defs(&schemars::schema_for!(theme::Style).to_value())?;
-    Ok(style + &swift_defs(&schemars::schema_for!(theme::LabelRole).to_value())?)
+    let finishes: String = theme::Finish::ALL
+        .map(|f| format!("    case {} = \"{}\"\n", camel(f.name(), false), f.name()))
+        .concat();
+    Ok(style
+        + &swift_defs(&schemars::schema_for!(theme::LabelRole).to_value())?
+        + "\npublic enum Finish: String, Sendable, CaseIterable {\n"
+        + &finishes
+        + "}\n")
 }
 
 fn layout_swift() -> Out {

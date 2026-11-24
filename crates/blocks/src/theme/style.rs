@@ -2,34 +2,7 @@ use std::collections::BTreeMap;
 
 use serde::{Deserialize, Serialize};
 
-macro_rules! pick {
-    ($(#[$m:meta])* pub $name:ident { $first:ident $(, $v:ident)* $(,)? }) => {
-        $(#[$m])*
-        #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
-        #[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
-        #[serde(rename_all = "kebab-case")]
-        pub enum $name {
-            #[default]
-            $first,
-            $($v,)*
-        }
-
-        impl $name {
-            /// Every value, in the order the schema lists them.
-            pub const ALL: &'static [Self] = &[Self::$first, $(Self::$v),*];
-        }
-    };
-}
-
-macro_rules! tiles {
-    ($decl:literal) => {
-        concat!(
-            ":is(.card,.st,.list>.row,.list>.rw,.form:not(.say),.choice,.secret,.run,.tbl){",
-            $decl,
-            "}"
-        )
-    };
-}
+use super::{Buttons, Fills, LabelCase, LabelRole, Marks, Sections, Surface};
 
 pick!(
     /// The font design every label is set in.
@@ -44,93 +17,6 @@ impl TypeDesign {
             Self::Default => ":root{font-family:system-ui,-apple-system,\"Segoe UI\",Roboto,sans-serif}",
             Self::Mono => "",
             Self::Serif => ":root{font-family:ui-serif,Georgia,Cambria,serif}",
-        }
-    }
-}
-
-pick!(
-    /// How a card's surface is drawn.
-    pub Surface { Glass, Dashed, Solid }
-);
-
-impl Surface {
-    /// The rule this value adds to the look's CSS.
-    #[must_use]
-    pub const fn css(self) -> &'static str {
-        match self {
-            Self::Glass => "",
-            Self::Dashed => tiles!("border-style:dashed"),
-            Self::Solid => tiles!("border-width:2px"),
-        }
-    }
-}
-
-pick!(
-    /// How a tinted part is filled.
-    pub Fills { Tint, Outline, Solid }
-);
-
-impl Fills {
-    /// The rule this value adds to the look's CSS.
-    #[must_use]
-    pub const fn css(self) -> &'static str {
-        match self {
-            Self::Tint | Self::Solid => "",
-            Self::Outline => {
-                ".chips button.on,.spi.done .spm{background:none;color:var(--l);box-shadow:inset 0 0 0 1px var(--l)}"
-            }
-        }
-    }
-}
-
-pick!(
-    /// How a button is drawn: the renderer's plain button, or a filled primary and quiet ghost buttons with no brackets.
-    pub Buttons { Plain, Filled }
-);
-
-impl Buttons {
-    /// The rule this value adds to the look's CSS.
-    #[must_use]
-    pub const fn css(self) -> &'static str {
-        match self {
-            Self::Plain => "",
-            Self::Filled => {
-                "button::before,a.btn::before{content:none}button::after,a.btn::after{content:\"\"}button.primary,a.btn.primary{background:var(--l);color:var(--bg);padding:0 var(--s3);font-weight:600}"
-            }
-        }
-    }
-}
-
-pick!(
-    /// Whether a mark is a symbol or its text.
-    pub Marks { Symbols, Text }
-);
-
-impl Marks {
-    /// The rule this value adds to the look's CSS.
-    #[must_use]
-    pub const fn css(self) -> &'static str {
-        match self {
-            Self::Symbols => "",
-            Self::Text => {
-                ".spi.done .spm{width:auto;font-size:0}.spi.done .spm::after{content:\"done\";font-size:var(--fs-meta)}"
-            }
-        }
-    }
-}
-
-pick!(
-    /// How a section's header shows.
-    pub Sections { Title, Quiet }
-);
-
-impl Sections {
-    /// The rule this value adds to the look's CSS.
-    #[must_use]
-    pub const fn css(self) -> &'static str {
-        match self {
-            Self::Title => "",
-            Self::Quiet => ".sh{font-size:var(--fs-meta);font-weight:400}",
         }
     }
 }
@@ -151,28 +37,6 @@ impl Easing {
         }
     }
 }
-
-pick!(
-    /// The case a label is set in.
-    pub LabelCase { AsIs, Lower, Upper }
-);
-
-impl LabelCase {
-    /// The `text-transform` this case draws with.
-    #[must_use]
-    pub const fn css(self) -> &'static str {
-        match self {
-            Self::AsIs => "none",
-            Self::Lower => "lowercase",
-            Self::Upper => "uppercase",
-        }
-    }
-}
-
-pick!(
-    /// A label a style may decorate.
-    pub LabelRole { Kind, Header, Group, Section, Title, Button, Chip, Back, Said, Picked }
-);
 
 /// The style.json formats a reader takes: 1, and 2 which adds `space` and `motion`.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]

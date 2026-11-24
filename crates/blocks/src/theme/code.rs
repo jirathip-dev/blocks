@@ -2,7 +2,7 @@ use std::collections::BTreeMap;
 use std::fmt;
 use std::str::FromStr;
 
-use super::style::{
+use super::{
     Affix, Buttons, Easing, Fills, Format, LabelCase, LabelRole, Marks, Scale, Sections, Style, StyleLabel, Surface,
     TypeDesign,
 };
