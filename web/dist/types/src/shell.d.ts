@@ -4,6 +4,7 @@ export { evaluate, start, view } from "./core/eval.ts";
 export { dump } from "./dump.ts";
 export { behave } from "./behave.ts";
 export { apply } from "./core/apply.ts";
+export * as lookCode from "./core/code.ts";
 export { patcher } from "./patch.ts";
 export { grow } from "./render/kind/prose.ts";
 export { sync as plotSync } from "./render/kind/plot.ts";
