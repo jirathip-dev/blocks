@@ -7,9 +7,11 @@ egui. Instead 14 named finishes (surface, tint, button, mark and the ten labels)
 style value is written against finishes only, never a renderer's private names. style.json does not change.
 Slices: five: finishes and one file per axis in the crate; the web tags; the SwiftUI finish folder and its ban; the
 guard; then the look gaps the new check lists. About 250 counted lines.
-Open questions: may an app's CSS style `.as-<finish>` from the start (recommended)? Close the gaps found (recommended)?
+Open questions, answered by the owner (2026-11-24): an app's CSS may style `.as-<finish>` from the start; S5 closes the
+gaps found, each S5 issue naming every baseline line as close or keep for the owner's yes.
 
-Status: proposed (architect lane, 2026-11-24). `README.md` has the tables; this page has the reasons.
+Status: approved by the owner (2026-11-24). Slices filed: S1 #398, S2 #399, S3 #400, S4 #401; S5 once S2 and S3
+have written the baseline. `README.md` has the tables; this page has the reasons.
 
 ## Question
 
@@ -128,6 +130,8 @@ D. Eight parts.
 - Revisit B when a look needs a difference no finish can carry on two renderers; no style file does today.
 
 ## Open questions
+
+Both answered yes by the owner (2026-11-24).
 
 1. **May an app's CSS style `.as-<finish>` from the start?** Recommended: yes. They are 14 names, they are in the
    markup anyway, and without them an app that wants a shadow on every tile selects `.card,.st,…`, which the guard

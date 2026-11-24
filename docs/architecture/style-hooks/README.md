@@ -7,7 +7,8 @@ egui. Instead 14 named finishes (surface, tint, button, mark and the ten labels)
 style value is written against finishes only, never a renderer's private names. style.json does not change.
 Slices: five: finishes and one file per axis in the crate; the web tags; the SwiftUI finish folder and its ban; the
 guard; then the look gaps the new check lists. About 250 counted lines.
-Open questions: may an app's CSS style `.as-<finish>` from the start (recommended)? Close the gaps found (recommended)?
+Open questions, answered by the owner (2026-11-24): an app's CSS may style `.as-<finish>` from the start; S5 closes the
+gaps found, each S5 issue naming every baseline line as close or keep for the owner's yes.
 
 ## Read in this order
 
