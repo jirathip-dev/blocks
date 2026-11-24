@@ -504,7 +504,7 @@ var BUTTONS = ["plain", "filled"];
 var MARKS = ["symbols", "text"];
 var SECTIONS = ["title", "quiet"];
 var CASES = ["as-is", "lower", "upper"];
-var ROLES = ["kind", "header", "group", "section", "title", "button", "chip", "back", "said", "picked"];
+var ROLES = ["kind", "header", "group", "section", "title", "button", "chip", "back", "said", "picked", "screen"];
 var STEPS = Array.from({ length: 17 }, (_, i) => i / 4);
 var SPAN = 3 * 17 ** 3 * 3 ** 3 * 2 ** 3;
 var MARK = /^[!-/:-@[-`{-~ ‹›·•]{0,4}$/u;

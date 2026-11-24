@@ -9,7 +9,7 @@ const BUTTONS = ["plain", "filled"] as const satisfies readonly (keyof typeof ru
 const MARKS = ["symbols", "text"] as const satisfies readonly (keyof typeof rules.marks)[];
 const SECTIONS = ["title", "quiet"] as const satisfies readonly (keyof typeof rules.sections)[];
 const CASES = ["as-is", "lower", "upper"] as const satisfies readonly Case[];
-const ROLES = ["kind", "header", "group", "section", "title", "button", "chip", "back", "said", "picked"];
+const ROLES = ["kind", "header", "group", "section", "title", "button", "chip", "back", "said", "picked", "screen"];
 const STEPS = Array.from({ length: 17 }, (_, i) => i / 4);
 const SPAN = 3 * 17 ** 3 * 3 ** 3 * 2 ** 3;
 const MARK = /^[!-/:-@[-`{-~ ‹›·•]{0,4}$/u;
