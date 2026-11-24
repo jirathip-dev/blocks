@@ -37,32 +37,14 @@ const listing = (lang, body) => `<div class="prose b b-prose" data-block="prose"
 const toast = (tone, glyph, words, action) =>
   `<div class="tst inl ${tone} b b-toast" data-block="toast" data-tone="${tone}" role="status" aria-label="${esc(words)}"><i class="tsg" aria-hidden="true">${glyph}</i><span class="tsx">${esc(words)}</span>${action ? button(`t-${action}`, action) : ""}</div>`;
 
-function described(code, label) {
-  const p = parts(code);
-  const bits = [`version ${p.version}`, `style ${p.axes}`];
-  if (p.labels) bits.push("labels");
-  bits.push(p.scheme ? `scheme ${p.scheme.slice(1)}` : "default colours");
-  return `${label} · ${bits.join(" · ")}`;
-}
-
 function codeSection(look) {
   const code = codeOf(look);
-  const label = NAMES.find(([n]) => n === look)[1];
-  const p = parts(code);
-  const partRows = [
-    row("part-v", "version", "which reader takes it", `<span class="lc"><span class="v">${p.version}</span></span>`, true),
-    row("part-x", "style", "type, space, radius, motion, easing, surface, fills, buttons, marks, sections", `<span class="lc"><span class="x">${p.axes}</span></span>`, true),
-    row("part-l", "labels", "only when a role is decorated", p.labels ? `<span class="lc"><span class="lb">${esc(p.labels)}</span></span>` : "none", true),
-    row("part-s", "scheme", "a name the app resolves; none is blocks' own pair", p.scheme ? `<span class="lc"><span class="sc">${esc(p.scheme)}</span></span>` : "none", true),
-  ];
-  const four = NAMES.map(([n, l]) => row(`code-${n}`, l, n === look ? "worn" : "", `<a class="lc" href="styles.html?look=${encodeURIComponent(codeOf(n))}">${painted(codeOf(n))}</a>`, true));
+  const four = NAMES.map(([n, l]) => row(`code-${n}`, l, n === look ? "worn" : "", `<a class="lc" href="styles.html?look=${encodeURIComponent(codeOf(n))}">${esc(codeOf(n))}</a>`, true));
   return sec(
     "code",
     "Code",
-    txt("code-what", "The look you wear as one short code. Copy it to share it, or copy a link that opens this site wearing it. An app wears it with <code>mount({ look })</code>.") +
-      stat(`<span class="lc">${painted(code)}</span>`, described(code, label)) +
+    `<span class="lc lc-big" data-id="code-value" role="group" aria-label="look code">${esc(code)}</span>` +
       `<div class="bar">${button("copy-code", "copy code", "primary")}${button("copy-link", "copy link")}</div>` +
-      sec("code-parts", "", list("parts", partRows)) +
       sec("code-four", "The four", list("four", four)),
   );
 }
