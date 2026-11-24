@@ -167,6 +167,24 @@ test("the menu lists the menu's screens but hidden ones, and the look sheet wear
   shell.close();
 });
 
+test("mount's look code is the app's own look, worn until the owner picks a scheme and again on the app's own", () => {
+  const root = fresh();
+  kept.delete("b:look");
+  const schemes = { "app-dark": { ...defaultPair.dark, label: "App dark" } };
+  const shell = mount({ root, layout, url, schemes, look: "108bd0" });
+  const worn = () => document.head.children.findLast((e) => e.id === "b-look").textContent;
+  ok(worn().includes("--radius:24px;"), worn());
+  strictEqual(document.documentElement.dataset.look, "default");
+  find(root, (x) => x.classList.contains("b-menu")).onclick();
+  const sheet = find(root, (x) => x.classList.contains("b-sheet"));
+  all(sheet).filter((e) => e.classList.contains("rt"))[1].parentNode.parentNode.onclick();
+  find(sheet, (x) => x.classList.contains("rt") && x.textContent === "App dark").parentNode.parentNode.onclick();
+  ok(!worn().includes("--radius:24px;"), worn());
+  find(sheet, (x) => x.classList.contains("rt") && x.textContent === "the app's own").parentNode.parentNode.onclick();
+  deepStrictEqual([kept.get("b:look"), worn().includes("--radius:24px;")], [undefined, true]);
+  shell.close();
+});
+
 const fire = (e, type, ev = {}) => e.listeners.filter(([t]) => t === type).forEach(([, f]) => f({ preventDefault() {}, ...ev }));
 const editable = () => {
   const saved = [];
