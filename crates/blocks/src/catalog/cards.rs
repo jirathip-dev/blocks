@@ -32,7 +32,7 @@ pub(crate) static KINDS: &[Card] = &[
         Slot { name: "ok", ty: "string", need: false, names: &[], sends: false },
         Slot { name: "variant", ty: "\"dialog\"|\"alert\"|\"tool\"", need: false, names: &[], sends: false },
     ] },
-    Card { kind: "sheet", about: "A box over a screen", fields: &[
+    Card { kind: "sheet", about: "The modal kind under its older name, drawn the same way", fields: &[
         Slot { name: "blocks", ty: "Block[]", need: true, names: &[], sends: false },
         Slot { name: "title", ty: "string", need: true, names: &[], sends: false },
         Slot { name: "cancel", ty: "string", need: false, names: &[], sends: false },
@@ -102,7 +102,7 @@ pub(crate) static KINDS: &[Card] = &[
         Slot { name: "more", ty: "string", need: false, names: &[], sends: false },
         Slot { name: "submit", ty: "Submit", need: false, names: &["Submit"], sends: true },
     ] },
-    Card { kind: "config", about: "A form of fields", fields: &[
+    Card { kind: "config", about: "Settings as fields", fields: &[
         Slot { name: "fields", ty: "Field[]", need: true, names: &["Field"], sends: false },
         Slot { name: "action", ty: "string", need: false, names: &[], sends: true },
         Slot { name: "more", ty: "string", need: false, names: &[], sends: false },

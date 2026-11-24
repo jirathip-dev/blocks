@@ -72,6 +72,18 @@ pub(super) fn alts(v: &Value) -> Option<&Vec<Value>> {
     v.get("oneOf").or_else(|| v.get("anyOf"))?.as_array()
 }
 
+pub(super) fn about<'a>(s: &'a Value, kind: &str) -> &'a str {
+    let defs = s.get("$defs");
+    let alt = defs
+        .and_then(|d| alts(d.get("Block")?))
+        .into_iter()
+        .flatten()
+        .find(|a| a.pointer("/properties/type/const").and_then(Value::as_str) == Some(kind));
+    let own = alt.and_then(|a| a.get("description"));
+    let shared = alt.and_then(named).and_then(|n| defs?.get(n)?.get("description"));
+    own.or(shared).and_then(Value::as_str).unwrap_or_default()
+}
+
 pub(super) fn named(v: &Value) -> Option<&str> {
     v.get("$ref")?.as_str()?.strip_prefix("#/$defs/")
 }

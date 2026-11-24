@@ -396,6 +396,7 @@
         },
         {
           "$ref": "#/$defs/Modal",
+          "description": "The modal kind under its older name, drawn the same way: write `modal` in a new screen.",
           "properties": {
             "type": {
               "const": "sheet",
@@ -487,6 +488,7 @@
         },
         {
           "$ref": "#/$defs/Form",
+          "description": "Settings as fields: the form kind under its settings name.",
           "properties": {
             "type": {
               "const": "config",
