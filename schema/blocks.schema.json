@@ -4130,6 +4130,12 @@
       "additionalProperties": true,
       "description": "A list of rows.",
       "properties": {
+        "empty": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "id": {
           "type": [
             "string",

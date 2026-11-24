@@ -83,7 +83,7 @@ internal struct LinesBlock: View {
     internal var body: some View {
         let palette = look.palette
         VStack(alignment: .leading, spacing: 10) {
-            if rows.isEmpty { Text(block.empty ?? "no lines yet").ui(13, .regular, look).foregroundStyle(palette.mute) }
+            if rows.isEmpty { EmptyText(text: block.empty ?? "no lines yet") }
             ForEach(Array(rows.enumerated()), id: \.element.id) { index, row in line(index, row) }
             ForEach(Array(errors.filter { $0.row == nil }.enumerated()), id: \.offset) { _, e in
                 Text(e.message).ui(11, .semibold, look).foregroundStyle(palette.red)

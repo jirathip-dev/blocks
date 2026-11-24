@@ -633,6 +633,7 @@ export type Link = {
     tap: Tap;
 };
 export type List = {
+    empty?: string | null;
     id?: string | null;
     more?: More | null;
     reorder?: Gesture | null;

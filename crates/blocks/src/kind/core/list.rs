@@ -10,6 +10,7 @@ kind! {
         id: Option<String>,
         rows: Vec<Block>,
         reorder: Option<Gesture>,
+        empty: Option<String>,
         #[serde(rename = "more")]
         next: Option<More>,
     }
@@ -128,6 +129,8 @@ pub(super) fn sample() -> Vec<Block> {
     };
     let row = super::row::build().id("row").rounds(vec![past, now]);
     vec![Block::List(Box::new(
-        List::new(vec![Block::Row(Box::new(row))]).id("rows"),
+        List::new(vec![Block::Row(Box::new(row))])
+            .id("rows")
+            .empty("No rows yet."),
     ))]
 }

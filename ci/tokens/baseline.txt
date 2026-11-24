@@ -181,7 +181,6 @@ swift/Sources/BlocksUI/Kind/Lines.swift .ui(11
 swift/Sources/BlocksUI/Kind/Lines.swift .ui(11
 swift/Sources/BlocksUI/Kind/Lines.swift .ui(12
 swift/Sources/BlocksUI/Kind/Lines.swift .ui(13
-swift/Sources/BlocksUI/Kind/Lines.swift .ui(13
 swift/Sources/BlocksUI/Kind/Lines.swift .ui(14
 swift/Sources/BlocksUI/Kind/Lines.swift .ui(14
 swift/Sources/BlocksUI/Kind/Lines.swift .ui(14
@@ -326,13 +325,11 @@ swift/Sources/BlocksUI/Kind/Table.swift .padding(12
 swift/Sources/BlocksUI/Kind/Table.swift .padding(12
 swift/Sources/BlocksUI/Kind/Table.swift .padding(12
 swift/Sources/BlocksUI/Kind/Table.swift .padding(12
-swift/Sources/BlocksUI/Kind/Table.swift .padding(12
 swift/Sources/BlocksUI/Kind/Table.swift .ui(11
 swift/Sources/BlocksUI/Kind/Table.swift .ui(12
 swift/Sources/BlocksUI/Kind/Table.swift .ui(12
 swift/Sources/BlocksUI/Kind/Table.swift .ui(12
 swift/Sources/BlocksUI/Kind/Table.swift .ui(13
-swift/Sources/BlocksUI/Kind/Table.swift .ui(14
 swift/Sources/BlocksUI/Kind/Table.swift .ui(14
 swift/Sources/BlocksUI/Kind/Table.swift .ui(14
 swift/Sources/BlocksUI/Kind/Table.swift .ui(15

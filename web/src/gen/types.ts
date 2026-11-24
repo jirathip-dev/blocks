@@ -182,7 +182,7 @@ export type Lines = { action?: string | null; add?: string | null; balance?: str
 
 export type Link = { label: string; tap: Tap };
 
-export type List = { id?: string | null; more?: More | null; reorder?: Gesture | null; rows: Block[]; show?: Expr | null };
+export type List = { empty?: string | null; id?: string | null; more?: More | null; reorder?: Gesture | null; rows: Block[]; show?: Expr | null };
 
 export type Lit = null | boolean | number | string;
 

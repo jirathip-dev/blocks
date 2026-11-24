@@ -70,6 +70,6 @@ test("lines add a row at the end, remove one down to the minimum, and post the c
 
 test("lines with no rows say so and total zero", () => {
   const e = render({ ...fixture("lines"), items: [], errors: [] }, ctx({ screen: "lq3" }));
-  strictEqual(all(e).find((x) => x.classList.contains("lqz")).textContent, "no lines yet");
+  strictEqual(all(e).find((x) => x.classList.contains("empty")).textContent, "no lines yet");
   strictEqual(all(e).find((x) => x.classList.contains("lqt")).textContent, "totalDebit0.00Credit0.00");
 });

@@ -188,6 +188,7 @@
       "type": "section"
     },
     {
+      "empty": "No rows yet.",
       "fallback": {
         "title": "list"
       },
