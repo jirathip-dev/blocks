@@ -1,0 +1,169 @@
+{
+  "kind": "screen",
+  "id": "side",
+  "variant": null,
+  "drawn": "native",
+  "role": "group",
+  "name": "Run 14 · Harbour Rd",
+  "children": [
+    {
+      "kind": "section",
+      "id": "lines",
+      "variant": null,
+      "drawn": "native",
+      "role": "region",
+      "name": "Lines · 4 of 6",
+      "children": [
+        {
+          "kind": "list",
+          "id": "line-rows",
+          "variant": null,
+          "drawn": "native",
+          "role": "group",
+          "name": "line-rows",
+          "children": [
+            {
+              "kind": "row",
+              "id": "l1",
+              "variant": null,
+              "drawn": "native",
+              "role": "group",
+              "name": "Sourdough loaf × 24",
+              "children": []
+            },
+            {
+              "kind": "row",
+              "id": "l2",
+              "variant": null,
+              "drawn": "native",
+              "role": "group",
+              "name": "Rye bread × 12",
+              "children": []
+            },
+            {
+              "kind": "row",
+              "id": "l3",
+              "variant": null,
+              "drawn": "native",
+              "role": "group",
+              "name": "Croissant tray × 4",
+              "children": []
+            },
+            {
+              "kind": "row",
+              "id": "l4",
+              "variant": null,
+              "drawn": "native",
+              "role": "group",
+              "name": "Oat milk 1 L × 10",
+              "children": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "button",
+      "id": "report",
+      "variant": null,
+      "drawn": "native",
+      "role": "button",
+      "name": "Report a problem",
+      "children": []
+    },
+    {
+      "kind": "button",
+      "id": "next",
+      "variant": null,
+      "drawn": "native",
+      "role": "button",
+      "name": "Next: proof",
+      "children": []
+    },
+    {
+      "kind": "section",
+      "id": "trip",
+      "variant": null,
+      "drawn": "native",
+      "role": "region",
+      "name": "Trip summary",
+      "children": [
+        {
+          "kind": "stat",
+          "id": "trip-stops",
+          "variant": null,
+          "drawn": "native",
+          "role": "group",
+          "name": "stops left",
+          "children": []
+        },
+        {
+          "kind": "list",
+          "id": "trip-rows",
+          "variant": null,
+          "drawn": "native",
+          "role": "group",
+          "name": "trip-rows",
+          "children": [
+            {
+              "kind": "row",
+              "id": "trip-van",
+              "variant": null,
+              "drawn": "native",
+              "role": "group",
+              "name": "Vehicle",
+              "children": []
+            },
+            {
+              "kind": "row",
+              "id": "trip-km",
+              "variant": null,
+              "drawn": "native",
+              "role": "group",
+              "name": "Distance",
+              "children": []
+            },
+            {
+              "kind": "row",
+              "id": "trip-next",
+              "variant": null,
+              "drawn": "native",
+              "role": "group",
+              "name": "Next stop",
+              "children": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "section",
+      "id": "customer",
+      "variant": null,
+      "drawn": "native",
+      "role": "region",
+      "name": "Customer",
+      "children": [
+        {
+          "kind": "list",
+          "id": "cust-rows",
+          "variant": null,
+          "drawn": "native",
+          "role": "group",
+          "name": "cust-rows",
+          "children": [
+            {
+              "kind": "row",
+              "id": "cust-who",
+              "variant": null,
+              "drawn": "native",
+              "role": "group",
+              "name": "Ana Marlow",
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

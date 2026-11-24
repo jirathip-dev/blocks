@@ -21,7 +21,7 @@ internal struct ScreenBlock: View {
                 }
                 if let done = block.done { DoneButton(done: done) }
             }
-            BlockStack(blocks: block.blocks ?? [], spacing: look.tiles.map { $0.dotGap * 2 } ?? 14)
+            stack
         }
         .background {
             if let tiles = look.tiles {
@@ -29,6 +29,32 @@ internal struct ScreenBlock: View {
             }
         }
         .modifier(BuildsUp())
+    }
+
+    @ViewBuilder private var stack: some View {
+        let all = block.blocks ?? []
+        let gap = look.tiles.map { $0.dotGap * 2 } ?? 14
+        let side = block.focus == true ? [] : all.filter(Self.aside)
+        if side.isEmpty || side.count == all.count {
+            BlockStack(blocks: all, spacing: gap)
+        } else {
+            let main = BlockStack(blocks: all.filter { !Self.aside($0) }, spacing: gap)
+            let column = BlockStack(blocks: side, spacing: gap)
+            ViewThatFits(in: .horizontal) {
+                HStack(alignment: .top, spacing: gap) {
+                    main.frame(minWidth: Token.s4 * 23, idealWidth: Token.s4 * 23, maxWidth: .infinity, alignment: .leading)
+                    column.frame(width: Token.s4 * 20, alignment: .leading)
+                }
+                VStack(alignment: .leading, spacing: gap) {
+                    main
+                    column
+                }
+            }
+        }
+    }
+
+    private static func aside(_ block: Block) -> Bool {
+        if case .section(let s) = block { s.side == true } else { false }
     }
 }
 
