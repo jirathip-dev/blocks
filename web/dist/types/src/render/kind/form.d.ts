@@ -10,5 +10,5 @@ export type Drawn = {
     }) | undefined;
 };
 export declare function form(b: Form, c: Ctx): HTMLElement;
-export declare function field(x: Field, key: string, c: Ctx, set?: (v: unknown) => void, block?: string): Drawn;
+export declare function field(x: Field, key: string, c: Ctx, set?: (v: unknown) => unknown, block?: string): Drawn;
 export declare function values(all: Drawn[]): Record<string, unknown>;

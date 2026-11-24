@@ -4,7 +4,7 @@ use serde::Serialize;
 use serde_json::{Map, Value};
 
 use crate::gesture::Word;
-use crate::kind::{linkable, Block, Boxplot, Fallback, Fields, Screen, Steps, Table, Tap};
+use crate::kind::{linkable, Block, Boxplot, Fallback, Fields, Plot, Screen, Steps, Table, Tap};
 
 /// What makes a screen unfit to send: a server checks its own before it serves it.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
@@ -47,6 +47,10 @@ pub enum Fault {
     Link {
         at: String,
         url: String,
+    },
+    Aim {
+        field: String,
+        id: String,
     },
 }
 
@@ -95,6 +99,10 @@ fn plain(o: &Fields) -> Fallback {
     let table = (kind(o) == "table").then(|| serde_json::from_value::<Table>(Value::Object(o.clone())).ok());
     if let Some(t) = table.flatten() {
         return t.fallback();
+    }
+    let plot = (kind(o) == "plot").then(|| serde_json::from_value::<Plot>(Value::Object(o.clone())).ok());
+    if let Some(p) = plot.flatten() {
+        return p.fallback();
     }
     let boxplot = (kind(o) == "boxplot").then(|| serde_json::from_value::<Boxplot>(Value::Object(o.clone())).ok());
     if let Some(b) = boxplot.flatten() {
@@ -193,6 +201,8 @@ struct Walk<'a> {
     ids: BTreeMap<String, String>,
     acts: BTreeMap<(String, String), String>,
     keys: Vec<String>,
+    rows: BTreeSet<String>,
+    aims: Vec<(String, String)>,
     out: Vec<Fault>,
 }
 
@@ -295,6 +305,7 @@ impl Walk<'_> {
                 let why = match &b {
                     Block::Steps(s) => unplaced(s).map(Into::into),
                     Block::Chart(c) => c.unfit(),
+                    Block::Plot(p) => p.unfit(),
                     Block::Boxplot(b) => b.unfit(),
                     _ => None,
                 };
@@ -307,8 +318,14 @@ impl Walk<'_> {
         match k {
             "chips" => self.keys.extend(chip.map(Into::into)),
             "form" | "config" => self.keys.extend(names.map(Into::into)),
+            "list" | "table" => self.rows.extend(o.get("id").and_then(Value::as_str).map(Into::into)),
             _ => {}
         }
+        let fields = o.get("fields").and_then(Value::as_array).into_iter().flatten();
+        let fields = fields.filter(|_| matches!(k, "form" | "config"));
+        let aims = fields.filter(|f| f.get("type").and_then(Value::as_str) == Some("search"));
+        let aims = aims.filter_map(|f| Some((f.get("name")?.as_str()?.into(), f.get("filters")?.as_str()?.into())));
+        self.aims.extend(aims.collect::<Vec<_>>());
     }
 }
 
@@ -348,6 +365,8 @@ impl Built {
             ids: BTreeMap::new(),
             acts: BTreeMap::new(),
             keys: vec![],
+            rows: BTreeSet::new(),
+            aims: vec![],
             out: vec![],
         };
         let clash = app.iter().filter(|k| Block::KINDS.contains(k));
@@ -355,6 +374,12 @@ impl Built {
         let state = self.0.get("state").and_then(Value::as_object).into_iter().flatten();
         w.keys.extend(state.map(|(k, _)| k.clone()));
         w.block(&self.0, "", "");
+        let aims = w.aims.iter().filter(|(_, id)| !w.rows.contains(id));
+        let aims = aims.map(|(field, id)| Fault::Aim {
+            field: field.clone(),
+            id: id.clone(),
+        });
+        w.out.extend(aims.collect::<Vec<_>>());
         let mut declared = BTreeSet::new();
         let twice: Vec<String> = w
             .keys

@@ -20,7 +20,7 @@ pub(crate) const VARIANTS: [(&str, &str); 9] = [
     ("tool", "state"),
 ];
 
-pub(crate) const ROLES: [(&str, &str); 11] = [
+pub(crate) const ROLES: [(&str, &str); 13] = [
     ("modal", "dialog"),
     ("sheet", "dialog"),
     ("section", "region"),
@@ -28,9 +28,11 @@ pub(crate) const ROLES: [(&str, &str); 11] = [
     ("config", "form"),
     ("nav", "navigation"),
     ("chart", "figure"),
+    ("plot", "figure"),
     ("toast", "status"),
     ("message", "article"),
     ("sidebar", "navigation"),
+    ("heat", "figure"),
     ("boxplot", "figure"),
 ];
 pub(crate) const NAMES: [&str; 9] = [
@@ -193,6 +195,14 @@ pub struct Picking {
     pub handler: Handler,
 }
 
+/// A slider field's thumb moved to a number and let go.
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[cfg_attr(feature = "schema", derive(schemars::JsonSchema), schemars(rename = "StepSlide"))]
+pub struct Sliding {
+    pub field: String,
+    pub to: serde_json::Number,
+}
+
 /// One scripted input: by block id, a stream frame arriving, an action answered, or a shot.
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
@@ -207,6 +217,7 @@ pub enum Step {
     Gesture(Gesturing),
     Refuse(Refusal),
     File(Picking),
+    Slide(Sliding),
 }
 
 /// How long the first paint and each step took; the frame fields only where a harness draws real frames.
@@ -221,6 +232,8 @@ pub struct Timings {
     pub frames_over_budget: Option<u32>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub longest_patch_ms: Option<f64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub p99_patch_ms: Option<f64>,
 }
 
 /// A harness run's `report.json`.
@@ -254,14 +267,16 @@ fn field(f: &Value, types: &[&str], hide: &BTreeSet<String>) -> FieldNode {
         (false, true) => FieldDrawn::Native,
         (false, false) => FieldDrawn::Plain,
     };
+    let check = kind == "toggle" && text_of(f, "as") == Some("check");
     let role = known
         .filter(|_| drawn == FieldDrawn::Native)
-        .and_then(|i| crate::Field::ROLES.get(i));
+        .and_then(|i| crate::Field::ROLES.get(i))
+        .map(|r| if check { "checkbox" } else { r });
     FieldNode {
         name: name.into(),
         kind: kind.into(),
         drawn,
-        role: role.copied().unwrap_or("textbox").into(),
+        role: role.unwrap_or("textbox").into(),
         label: text_of(f, "label").unwrap_or(name).into(),
     }
 }

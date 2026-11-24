@@ -1,0 +1,18 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="../neutral-default/tokens.css"><link rel="stylesheet" href="../../../web/dist/blocks.css"><link rel="stylesheet" href="slider.css"><link rel="stylesheet" href="page.css">
+<script src="slider.js"></script><title>slider: hub settings and an hours request</title></head>
+<body><main class="scr">
+<div class="top"><div class="tabh"><span class="tw">Hub · Settings</span><button type="button"><span>back</span></button></div></div>
+<h2>Text size <small>· a live form: the label follows the thumb, the action goes once, on let go</small></h2>
+<div data-f='{"id":"text-size","action":"text-size","fields":[
+ {"type":"slider","name":"size","label":"Text size","doc":"for every screen on this device","min":80,"max":130,"step":5,"unit":"%","value":110}]}'></div>
+<p class="note">Sent when the thumb is let go: <code id="sent">text-size { size: 110 }</code>. Nothing is sent while it moves.</p>
+<div data-f='{"id":"look","action":"look","fields":[
+ {"type":"picker","name":"lang","label":"Language","options":["English","ไทย"],"value":"English"},
+ {"type":"toggle","name":"dark","label":"Dark mode, always","value":false}]}'></div>
+<h2>Hours worked <small>· the same field in a form with a submit: a half-hour step, nothing leaves until the submit</small></h2>
+<div data-f='{"id":"manpower","submit":"send request","fields":[
+ {"type":"text","name":"who","label":"Worker","value":"S. Wongsa"},
+ {"type":"slider","name":"hours","label":"Hours worked","min":0,"max":12,"step":0.5,"unit":"h","value":7.5},
+ {"type":"text","name":"note","label":"Note","placeholder":"what the hours were for"}]}'></div>
+</main><script>draw()</script></body></html>

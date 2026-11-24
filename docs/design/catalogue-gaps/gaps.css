@@ -1,0 +1,12 @@
+/* What the two additions add to web/src/css, in the blocks layer. */
+.empty{display:flex;align-items:center;min-height:var(--hit);margin:var(--seam) 0;padding:var(--s3) var(--s4);background:var(--card);border:1px solid var(--edge);border-radius:var(--radius);color:var(--mute);font-size:var(--fs);white-space:normal;overflow-wrap:anywhere}
+.b-trail{display:flex;align-items:center;min-width:0;margin:var(--s2) 0 0;padding:0 var(--s2);font-size:var(--fs);color:var(--mute)}
+.b-trail ol{display:flex;align-items:center;min-width:0;list-style:none;margin:0;padding:0}
+.b-trail li{display:flex;align-items:center;min-width:0;flex:0 1 auto}
+.b-trail li+li::before{content:"›";flex:none;padding:0 1ch;color:var(--mute)}
+.b-trail a,.b-trail [aria-current]{display:block;max-width:20ch;line-height:var(--hit);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.b-trail a{color:var(--link);text-decoration:underline;text-underline-offset:2px}
+.b-trail a.fv{outline:var(--ring) solid var(--l);outline-offset:-2px}
+.b-trail [aria-current]{color:var(--fg);font-weight:600}
+.b-trail .b-back{display:none;text-transform:none}
+@media (max-width:600px){.b-trail ol{display:none}.b-trail .b-back{display:inline-flex}}

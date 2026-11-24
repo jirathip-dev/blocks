@@ -81,7 +81,7 @@ internal struct ChartModel {
         return Array(parts.prefix(4)) + [other]
     }
 
-    internal func colour(_ tone: Tone?, _ i: Int, _ p: Palette) -> Color {
+    internal static func colour(_ tone: Tone?, _ i: Int, _ p: Palette) -> Color {
         switch tone {
         case .ok: p.green
         case .warn: p.amber
@@ -137,7 +137,7 @@ private struct ChartLegend: View {
         let c = model.chart
         let items = ForEach(Array(c.series.enumerated()), id: \.offset) { i, s in
             HStack(spacing: 4) {
-                Rectangle().fill(model.colour(s.tone, i, look.palette))
+                Rectangle().fill(ChartModel.colour(s.tone, i, look.palette))
                     .frame(width: model.chart.isLine(s) ? 12 : 8, height: model.chart.isLine(s) ? 2 : 8)
                 Text(s.name).foregroundStyle(look.palette.mute)
                 if let p = model.preview, p.series == s.name {
@@ -235,7 +235,7 @@ private struct ChartPlot: View {
                 var base = 0.0
                 for (k, (si, s)) in bars.enumerated() {
                     guard let v = model.at(s, i) else { continue }
-                    let colour = GraphicsContext.Shading.color(model.colour(s.tone, si, p))
+                    let colour = GraphicsContext.Shading.color(ChartModel.colour(s.tone, si, p))
                     if c.chart == .bar {
                         let each = (col - 2 * gap) / CGFloat(bars.count)
                         let top = y(max(v, lo))
@@ -250,7 +250,7 @@ private struct ChartPlot: View {
             ctx.stroke(Path { $0.addLines([CGPoint(x: 0, y: size.height), CGPoint(x: size.width, y: size.height)]) }, with: .color(p.edge))
             for (si, s) in c.series.enumerated() where model.chart.isLine(s) {
                 let pts = c.x.indices.compactMap { i in model.at(s, i).map { CGPoint(x: (CGFloat(i) + 0.5) * col, y: y($0)) } }
-                let colour = model.colour(s.tone, si, p)
+                let colour = ChartModel.colour(s.tone, si, p)
                 ctx.stroke(Path { $0.addLines(pts) }, with: .color(colour), style: StrokeStyle(lineWidth: 2, lineJoin: .round, dash: s.dash == true ? [4, 3] : []))
                 if let i = model.picked, let v = model.at(s, i) {
                     let dot = CGRect(x: (CGFloat(i) + 0.5) * col - 4, y: y(v) - 4, width: 8, height: 8)
@@ -279,7 +279,7 @@ private struct ChartPoints: View {
                         let grab = PointGrab(s.name, at: p.0)
                         let now = model.preview.flatMap { $0.series == s.name && $0.at == p.0 ? $0.y : nil } ?? p.1
                         if c.word(grab) != nil {
-                            Rectangle().strokeBorder(model.colour(s.tone, si, look.palette), lineWidth: Token.s2 / 4).background(look.palette.card)
+                            Rectangle().strokeBorder(ChartModel.colour(s.tone, si, look.palette), lineWidth: Token.s2 / 4).background(look.palette.card)
                                 .frame(width: Token.s2, height: Token.s2).frame(width: col, height: 44).contentShape(Rectangle())
                                 .modifier(
                                     Gestured(
@@ -310,7 +310,7 @@ private struct ChartDonut: View {
             ZStack {
                 ForEach(Array(parts.enumerated()), id: \.offset) { i, s in
                     Circle().trim(from: starts[i], to: max(starts[i], starts[i] + share(s.value) - 0.008))
-                        .stroke(model.colour(s.tone, i, p), lineWidth: sel == s ? 18 : 14).rotationEffect(.degrees(-90))
+                        .stroke(ChartModel.colour(s.tone, i, p), lineWidth: sel == s ? 18 : 14).rotationEffect(.degrees(-90))
                 }
                 VStack(spacing: 2) {
                     Text(model.value(sel?.value ?? total)).ui(17, .semibold, look).foregroundStyle(p.foreground)
@@ -322,7 +322,7 @@ private struct ChartDonut: View {
                 let pct = "\(Int((share(s.value) * 100).rounded()))%"
                 Button { pick(s.name) } label: {
                     HStack(spacing: 8) {
-                        Rectangle().fill(model.colour(s.tone, i, p)).frame(width: 8, height: 8)
+                        Rectangle().fill(ChartModel.colour(s.tone, i, p)).frame(width: 8, height: 8)
                         Text(s.name).lineLimit(1).frame(maxWidth: .infinity, alignment: .leading)
                         Text(model.value(s.value)).fontWeight(.semibold)
                         Text(pct).foregroundStyle(p.mute).frame(width: 44, alignment: .trailing)

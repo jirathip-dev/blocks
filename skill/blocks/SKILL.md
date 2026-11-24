@@ -49,8 +49,11 @@ A screen is data: a `screen` or `modal` block of typed blocks, checked, then dra
 - [`tool`](kinds/tool.md): One tool call: its name, a one-line summary, its state, and a body shown when it is opened.
 - [`sidebar`](kinds/sidebar.md): A side navigation: an icon rail that opens on hover or pin, a drawer on a phone.
 - [`boxplot`](kinds/boxplot.md): A box plot: one upright box per category on a value axis with its label and unit; a tap picks a box.
+- [`heat`](kinds/heat.md): A grid of cells coloured by value on five steps of one tone, with row and column labels and a legend.
+- [`plot`](kinds/plot.md): A line plot of named series over a numeric or time x: points stream in by `points`; a window, a target and a peak.
 
 ## More
 
 - `rules.md`: every guard rule, what fires it and its fix
 - `examples/`: whole screens with no finding
+- `evals/`: prompts and what a screen built for each must hold

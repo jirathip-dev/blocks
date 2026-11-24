@@ -23,6 +23,10 @@ export declare const rules: {
         outline: string;
         solid: string;
     };
+    buttons: {
+        plain: string;
+        filled: string;
+    };
     marks: {
         symbols: string;
         text: string;

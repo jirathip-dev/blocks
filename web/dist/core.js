@@ -1,3 +1,9 @@
+var __defProp = Object.defineProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+
 // src/gen/hooks.ts
 var hooks = {
   screen: { variant: null, parts: ["title", "badge", "actions"] },
@@ -39,9 +45,11 @@ var hooks = {
   message: { variant: "role", parts: [] },
   tool: { variant: "state", parts: [] },
   sidebar: { variant: null, parts: [] },
-  boxplot: { variant: null, parts: ["title"] }
+  boxplot: { variant: null, parts: ["title"] },
+  heat: { variant: null, parts: ["title"] },
+  plot: { variant: null, parts: ["title"] }
 };
-var roles = { modal: "dialog", sheet: "dialog", section: "region", form: "form", config: "form", nav: "navigation", chart: "figure", toast: "status", message: "article", sidebar: "navigation", boxplot: "figure" };
+var roles = { modal: "dialog", sheet: "dialog", section: "region", form: "form", config: "form", nav: "navigation", chart: "figure", plot: "figure", toast: "status", message: "article", sidebar: "navigation", heat: "figure", boxplot: "figure" };
 var names = ["label", "title", "header", "question", "alt", "file", "command", "placeholder", "name"];
 var hosts = { screen: "blocks", modal: "blocks", sheet: "blocks", section: "blocks", card: "blocks", message: "blocks", list: "rows", scene: "lanes", row: "rounds", table: "rows" };
 var walked = ["blocks", "rows", "buttons", "rounds", "lanes"];
@@ -116,6 +124,7 @@ var rules = {
   type: { "default": ':root{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}', "mono": "", "serif": ":root{font-family:ui-serif,Georgia,Cambria,serif}" },
   surface: { "glass": "", "dashed": ":is(.card,.st,.list>.row,.list>.rw,.form:not(.say),.choice,.secret,.run,.tbl){border-style:dashed}", "solid": ":is(.card,.st,.list>.row,.list>.rw,.form:not(.say),.choice,.secret,.run,.tbl){border-width:2px}" },
   fills: { "tint": "", "outline": ".chips button.on,.spi.done .spm{background:none;color:var(--l);box-shadow:inset 0 0 0 1px var(--l)}", "solid": "" },
+  buttons: { "plain": "", "filled": 'button::before,a.btn::before{content:none}button::after,a.btn::after{content:""}button.primary,a.btn.primary{background:var(--l);color:var(--bg);padding:0 var(--s3);font-weight:600}' },
   marks: { "symbols": "", "text": '.spi.done .spm{width:auto;font-size:0}.spi.done .spm::after{content:"done";font-size:var(--fs-meta)}' },
   sections: { "title": "", "quiet": ".sh{font-size:var(--fs-meta);font-weight:400}" }
 };
@@ -258,7 +267,7 @@ var lit = (_field, held2) => Array.isArray(held2) ? held2.length || null : plain
 function start(screen2) {
   const s = {};
   const seed = (b) => {
-    for (const f of named(b)) s[String(f["name"])] = lit(f, f["value"] ?? f["files"] ?? (rec(f["file"]) ? [f["file"]] : null));
+    for (const f of named(b)) s[String(f["name"])] = lit(f, f["value"] ?? f["files"] ?? (rec(f["file"]) ? [f["file"]] : f["type"] === "slider" ? f["min"] : null));
     if (b["type"] === "chips" && typeof b["name"] === "string") s[b["name"]] = plain(Array.isArray(b["selected"]) ? b["selected"][0] : null);
     kids(b).forEach(seed);
   };
@@ -332,8 +341,8 @@ function node(v, kinds3, state) {
   const kind = str(b, "type") ?? "";
   const field = Object.entries(hooks).find(([k]) => k === kind)?.[1].variant;
   const variant = field ? str(b, field) : null;
-  const shown = "show" in b && isExpr(b["show"]) ? evaluate(b["show"], state) : true;
-  const off = shown === null || shown === false;
+  const shown2 = "show" in b && isExpr(b["show"]) ? evaluate(b["show"], state) : true;
+  const off = shown2 === null || shown2 === false;
   const drawn2 = off ? "hidden" : kinds3.includes(kind) ? "native" : "fallback";
   return { kind, id: str(b, "id"), variant, drawn: drawn2, role: role(b, kind), name: named2(b, kind), children: under(b, drawn2).map((c) => node(c, kinds3, state)) };
 }
@@ -426,10 +435,10 @@ function gate(s, fills) {
   const [bg, r, a] = [c("--bg"), c("--r"), c("--a")];
   const needs = ["the needs-you card", over(r, bg, 0.15)];
   const tints = [["--r", ...needs], ["--r", "a red group header", over(r, bg, 0.12)], ["--a", "an amber group header", over(a, bg, 0.12)]];
-  const text4 = ["--fg", "--mute", "--l", "--link", "--fk-l", "--fk-p", "--fk-c", "--fk-g", "--fk-a"];
+  const text5 = ["--fg", "--mute", "--l", "--link", "--fk-l", "--fk-p", "--fk-c", "--fk-g", "--fk-a"];
   const states = ["--g", "--a", "--r"];
   for (const b of ["--bg", "--card"]) {
-    for (const k of text4) checks.push({ what: `${k} on ${b}`, got: ratio(c(k), c(b)), min: 4.5 });
+    for (const k of text5) checks.push({ what: `${k} on ${b}`, got: ratio(c(k), c(b)), min: 4.5 });
     for (const k of states) checks.push({ what: `${k} on ${b}`, got: ratio(c(k), c(b)), min: 3 });
   }
   checks.push({ what: "--bg on --l", got: ratio(bg, c("--l")), min: 4.5 });
@@ -481,6 +490,103 @@ function css(look, style = {}) {
 var tiles = `:where(:root){${vars(defaultStyle).join(";")}}`;
 var choose = (setting, dark, schemes = {}) => (setting !== null && Object.prototype.hasOwnProperty.call(schemes, setting) ? schemes[setting] : void 0) ?? defaultPair[dark ? "dark" : "light"];
 
+// src/core/code.ts
+var code_exports = {};
+__export(code_exports, {
+  decode: () => decode,
+  encode: () => encode
+});
+var TYPES = ["default", "mono", "serif"];
+var EASINGS = ["standard", "calm", "bouncy"];
+var SURFACES = ["glass", "dashed", "solid"];
+var FILLS = ["tint", "outline", "solid"];
+var BUTTONS = ["plain", "filled"];
+var MARKS = ["symbols", "text"];
+var SECTIONS = ["title", "quiet"];
+var CASES = ["as-is", "lower", "upper"];
+var ROLES = ["kind", "header", "group", "section", "title", "button", "chip", "back", "said", "picked"];
+var STEPS = Array.from({ length: 17 }, (_, i) => i / 4);
+var SPAN = 3 * 17 ** 3 * 3 ** 3 * 2 ** 3;
+var MARK = /^[!-/:-@[-`{-~ ‹›·•]{0,4}$/u;
+var b64 = (bytes) => btoa(String.fromCharCode(...bytes)).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+var unb64 = (t) => Array.from(atob(t.replace(/-/g, "+").replace(/_/g, "/")), (c) => c.charCodeAt(0));
+function step(x, axis) {
+  const i = STEPS.indexOf(x);
+  if (i < 0) throw new Error(`${axis} is off the code's quarter steps`);
+  return i;
+}
+function encode(style, scheme = null) {
+  const digits = [
+    [TYPES.indexOf(style.type ?? "default"), 3],
+    [step(style.space ?? 1, "space"), 17],
+    [step(style.radius ?? 0, "radius"), 17],
+    [step(style.motion ?? 1, "motion"), 17],
+    [EASINGS.indexOf(style.easing ?? "standard"), 3],
+    [SURFACES.indexOf(style.surface ?? "glass"), 3],
+    [FILLS.indexOf(style.fills ?? "tint"), 3],
+    [BUTTONS.indexOf(style.buttons ?? "plain"), 2],
+    [MARKS.indexOf(style.marks ?? "symbols"), 2],
+    [SECTIONS.indexOf(style.sections ?? "title"), 2]
+  ];
+  let out = "1" + digits.reduceRight((n, [d, radix]) => n * radix + d, 0).toString(36).padStart(5, "0");
+  const bytes = [];
+  const utf8 = new TextEncoder();
+  for (const [r, role2] of ROLES.entries()) {
+    const l = style.labels?.[role2];
+    if (!l) continue;
+    bytes.push(r * 3 + CASES.indexOf(l.case ?? "as-is"));
+    for (const t of [l.prefix ?? "", l.suffix ?? ""]) bytes.push(utf8.encode(t).length, ...utf8.encode(t));
+  }
+  if (bytes.length) out += "~" + b64(bytes);
+  return scheme === null ? out : `${out}.${scheme}`;
+}
+function labels(bytes) {
+  const out = {};
+  const utf8 = new TextDecoder("utf-8", { fatal: true });
+  let at2 = 0;
+  const take = () => {
+    const len = bytes[at2++];
+    if (len === void 0 || at2 + len > bytes.length) throw new Error();
+    const t = utf8.decode(new Uint8Array(bytes.slice(at2, at2 + len)));
+    at2 += len;
+    if (!MARK.test(t)) throw new Error();
+    return t;
+  };
+  while (at2 < bytes.length) {
+    const rc = bytes[at2++] ?? 0;
+    const role2 = ROLES[Math.floor(rc / 3)];
+    const c = CASES[rc % 3];
+    if (!role2 || !c) throw new Error();
+    out[role2] = { prefix: take(), suffix: take(), case: c };
+  }
+  return out;
+}
+function decode(code) {
+  const m = /^([0-9a-z])([0-9a-z]{5})(?:~([A-Za-z0-9_-]+))?(?:\.(.*))?$/.exec(code);
+  if (!m || m[1] === void 0 || m[2] === void 0) throw new Error("not a look code");
+  if (m[1] !== "1") throw new Error(`version ${m[1]}: this reader takes 1`);
+  const scheme = m[4] ?? null;
+  if (scheme !== null && (scheme === "default" || !/^[a-z0-9][a-z0-9-]{0,31}$/.test(scheme)))
+    throw new Error("a scheme name is a-z, 0-9 and -, at most 32, and never default");
+  let n = parseInt(m[2], 36);
+  if (n >= SPAN) throw new Error("an axis value this reader does not know: made by a newer blocks");
+  const take = (all) => {
+    const v = all[n % all.length];
+    n = Math.floor(n / all.length);
+    if (v === void 0) throw new Error("not a look code");
+    return v;
+  };
+  const style = { type: take(TYPES), space: take(STEPS), radius: take(STEPS), motion: take(STEPS), easing: take(EASINGS), surface: take(SURFACES), fills: take(FILLS), buttons: take(BUTTONS), marks: take(MARKS), sections: take(SECTIONS), labels: {} };
+  const bad = new Error("the labels part does not decode");
+  try {
+    if (m[3]) style.labels = labels(unb64(m[3]));
+  } catch {
+    throw bad;
+  }
+  if (encode(style, scheme) !== code) throw bad;
+  return { style, scheme };
+}
+
 // src/gen/builders.ts
 var screen = (fields) => ({ type: "screen", ...fields });
 var modal = (fields) => ({ type: "modal", ...fields });
@@ -522,6 +628,8 @@ var message = (fields) => ({ type: "message", ...fields });
 var tool = (fields) => ({ type: "tool", ...fields });
 var sidebar = (fields) => ({ type: "sidebar", ...fields });
 var boxplot = (fields) => ({ type: "boxplot", ...fields });
+var heat = (fields) => ({ type: "heat", ...fields });
+var plot = (fields) => ({ type: "plot", ...fields });
 var expr = {
   get: (v) => ({ get: v }),
   not: (v) => ({ not: v }),
@@ -540,9 +648,49 @@ var expr = {
   pick: (...v) => ({ pick: v })
 };
 
+// src/core/kind/chart.ts
+var round = (v) => Math.floor(v + 0.5);
+function decimals(x) {
+  for (let d = 0; d < 6; d++) {
+    const v = x * Math.pow(10, d);
+    if (Math.abs(v - round(v)) < 1e-6) return d;
+  }
+  return 6;
+}
+function fixed(v, d) {
+  const p = Math.pow(10, d);
+  const n = round(v * p);
+  const whole = Math.floor(n / p);
+  const out = String(whole).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return d > 0 ? `${out}.${String(n - whole * p).padStart(d, "0")}` : out;
+}
+
+// src/core/kind/plot.ts
+function grow(series, op) {
+  const s = series.find((t) => t.name === op.series);
+  const drop = op.drop ?? 0;
+  if (!s || drop > s.x.length || op.x.length !== op.y.length) return void 0;
+  s.x.splice(0, drop);
+  s.y.splice(0, drop);
+  for (const v of op.x) s.x.push(v);
+  for (const v of op.y) s.y.push(v);
+  return series;
+}
+function signed(v, d) {
+  const s = fixed(Math.abs(v), d);
+  return v < 0 && /[1-9]/.test(s) ? `-${s}` : s;
+}
+var shown = (v) => signed(v, Math.min(decimals(v), 2));
+var unit = (text5, u) => u ? `${text5} ${u}` : text5;
+function fallback(p) {
+  const u = p.y?.unit ?? "";
+  const lines2 = p.series.flatMap((s) => s.y.length ? [`${s.name} ${unit(shown(s.y[s.y.length - 1] ?? 0), u)}`] : []);
+  return lines2.length ? { title: p.title, subtitle: lines2.join(", ") } : { title: p.title };
+}
+
 // src/core/kind/prose.ts
 var tail = (spans) => spans?.[spans.length - 1];
-function grow(parts, op) {
+function grow2(parts, op) {
   if (op.keep != null && op.keep > parts.length) return void 0;
   const out = [...parts.slice(0, op.keep ?? parts.length), ...structuredClone(op.parts ?? [])];
   if (!op.text) return out;
@@ -630,9 +778,16 @@ function apply(screen2, ops) {
         break;
       case "append": {
         const t = get(root, op.id);
-        const parts = t?.["type"] === "prose" && Array.isArray(t["parts"]) ? grow(t["parts"], op) : void 0;
+        const parts = t?.["type"] === "prose" && Array.isArray(t["parts"]) ? grow2(t["parts"], op) : void 0;
         if (!t || !parts) return void 0;
         t["parts"] = parts;
+        break;
+      }
+      case "points": {
+        const t = get(root, op.id);
+        const series = t?.["type"] === "plot" && Array.isArray(t["series"]) ? grow(t["series"], op) : void 0;
+        if (!t || !series) return void 0;
+        t["series"] = series;
         break;
       }
       case "badge":
@@ -661,10 +816,10 @@ var sideCount = (b) => [b.count > 99 ? "99+" : String(b.count), `${b.count} ${b.
 
 // src/core/kind/boxplot.ts
 var close = (v) => Math.abs(v - Math.round(v)) < 1e-6;
-var decimals = (v) => [0, 1].find((d) => close(v * 10 ** d)) ?? 2;
+var decimals2 = (v) => [0, 1].find((d) => close(v * 10 ** d)) ?? 2;
 var values = (x) => [x.min, x.q1, x.median, x.q3, x.max, ...x.outliers ?? []];
 function places(p) {
-  return p.boxes.reduce((d, x) => Math.max(d, ...values(x).map(decimals)), 0);
+  return p.boxes.reduce((d, x) => Math.max(d, ...values(x).map(decimals2)), 0);
 }
 function boxFallback(p) {
   const d = places(p), u = p.unit ? ` ${p.unit}` : "";
@@ -677,8 +832,8 @@ function boxFallback(p) {
 // src/core/table.ts
 var SIGN = { THB: "\u0E3F", USD: "$", EUR: "\u20AC" };
 var at = (r, id) => r.cells[id];
-var unit = (c) => c.kind === "money" ? c.currency ? SIGN[c.currency] ?? c.currency : null : c.unit;
-var grouped = (v, d, fixed) => v.toLocaleString("en-US", { minimumFractionDigits: fixed ? d : 0, maximumFractionDigits: d });
+var unit2 = (c) => c.kind === "money" ? c.currency ? SIGN[c.currency] ?? c.currency : null : c.unit;
+var grouped = (v, d, fixed2) => v.toLocaleString("en-US", { minimumFractionDigits: fixed2 ? d : 0, maximumFractionDigits: d });
 var number = (c, v) => c.kind === "money" ? grouped(v, 2, true) : grouped(v, c.digits ?? 2, false);
 function total(c, rows) {
   const cells = rows.map((r) => at(r, c.id)).filter((v) => v !== void 0);
@@ -715,6 +870,7 @@ var DRAWN = ["row", "text", "island"];
 var NAMED = ["title", "label", "header", "question", "name", "file", "command", "source", "src"];
 var isObj = (v) => typeof v === "object" && v !== null && !Array.isArray(v);
 var isTable = (o) => o["type"] === "table" && Array.isArray(o["columns"]) && Array.isArray(o["rows"]);
+var isPlot = (o) => o["type"] === "plot" && typeof o["title"] === "string" && Array.isArray(o["series"]);
 var isBoxplot = (o) => o["type"] === "boxplot" && typeof o["title"] === "string" && Array.isArray(o["boxes"]);
 var text3 = (o, k) => typeof o[k] === "string" && o[k] !== "" ? o[k] : void 0;
 function tabled(t) {
@@ -723,11 +879,12 @@ function tabled(t) {
   const sum = t.columns.find((c) => c.total === "sum");
   const v = sum && total(sum, rows);
   const count = `${n} row${n === 1 ? "" : "s"}`;
-  const sub = sum && v ? `${count} \xB7 total ${sum.label.toLowerCase()} ${unit(sum) ?? ""}${v[1]}` : count;
+  const sub = sum && v ? `${count} \xB7 total ${sum.label.toLowerCase()} ${unit2(sum) ?? ""}${v[1]}` : count;
   return { title: t.title ?? "Table", subtitle: sub };
 }
 function plain2(o, kind) {
   if (isTable(o)) return tabled(o);
+  if (isPlot(o)) return fallback(o);
   if (isBoxplot(o)) return boxFallback(o);
   const subtitle = text3(o, "subtitle");
   const f = { title: NAMED.map((k) => text3(o, k)).find((t) => t !== void 0) ?? kind };
@@ -782,6 +939,7 @@ var kinds = {
   "diff": "Diff",
   "editor": "Editor",
   "form": "Form",
+  "heat": "Heat",
   "hero": "Hero",
   "images": "Images",
   "import": "Import",
@@ -793,6 +951,7 @@ var kinds = {
   "modal": "Modal",
   "nav": "Nav",
   "pages": "Pages",
+  "plot": "Plot",
   "prose": "Prose",
   "row": "Row",
   "run": "Run",
@@ -995,7 +1154,9 @@ var defs = {
             "message",
             "tool",
             "sidebar",
-            "boxplot"
+            "boxplot",
+            "heat",
+            "plot"
           ]
         },
         "type": "string"
@@ -1026,6 +1187,20 @@ var defs = {
       "tap"
     ],
     "type": "object"
+  },
+  "AxisScale": {
+    "anyOf": [
+      {
+        "enum": [
+          "number",
+          "time"
+        ],
+        "type": "string"
+      },
+      {
+        "type": "string"
+      }
+    ]
   },
   "Band": {
     "properties": {
@@ -1613,6 +1788,32 @@ var defs = {
         "properties": {
           "type": {
             "const": "boxplot",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      {
+        "$ref": "#/$defs/Heat",
+        "properties": {
+          "type": {
+            "const": "heat",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      {
+        "$ref": "#/$defs/Plot",
+        "properties": {
+          "type": {
+            "const": "plot",
             "type": "string"
           }
         },
@@ -3112,6 +3313,19 @@ var defs = {
         "type": "object"
       },
       {
+        "$ref": "#/$defs/SearchField",
+        "properties": {
+          "type": {
+            "const": "search",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      {
         "$ref": "#/$defs/UploadField",
         "properties": {
           "type": {
@@ -3129,6 +3343,19 @@ var defs = {
         "properties": {
           "type": {
             "const": "scan",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      {
+        "$ref": "#/$defs/SliderField",
+        "properties": {
+          "type": {
+            "const": "slider",
             "type": "string"
           }
         },
@@ -3395,6 +3622,215 @@ var defs = {
       "name"
     ],
     "type": "object"
+  },
+  "Heat": {
+    "additionalProperties": true,
+    "properties": {
+      "columns": {
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "edges": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/HeatEdges"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "empty": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "grid": {
+        "items": {
+          "$ref": "#/$defs/HeatRow"
+        },
+        "type": "array"
+      },
+      "id": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "lang": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "scale": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/HeatScale"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "selected": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/HeatPick"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "show": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "tap": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Tap"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "title": {
+        "type": "string"
+      },
+      "tone": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/HeatTone"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      }
+    },
+    "required": [
+      "title",
+      "columns",
+      "grid"
+    ],
+    "type": "object"
+  },
+  "HeatCell": {
+    "properties": {
+      "label": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "value": {
+        "type": [
+          "number",
+          "null"
+        ]
+      }
+    },
+    "type": "object"
+  },
+  "HeatEdges": {
+    "anyOf": [
+      {
+        "enum": [
+          "steps",
+          "ends"
+        ],
+        "type": "string"
+      },
+      {
+        "type": "string"
+      }
+    ]
+  },
+  "HeatPick": {
+    "properties": {
+      "column": {
+        "type": "string"
+      },
+      "row": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "row",
+      "column"
+    ],
+    "type": "object"
+  },
+  "HeatRow": {
+    "properties": {
+      "cells": {
+        "items": {
+          "$ref": "#/$defs/HeatCell"
+        },
+        "type": "array"
+      },
+      "name": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "name",
+      "cells"
+    ],
+    "type": "object"
+  },
+  "HeatScale": {
+    "properties": {
+      "max": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "min": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "unit": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "type": "object"
+  },
+  "HeatTone": {
+    "anyOf": [
+      {
+        "enum": [
+          "info",
+          "ok",
+          "warn",
+          "bad",
+          "accent",
+          "mute"
+        ],
+        "type": "string"
+      },
+      {
+        "type": "string"
+      }
+    ]
   },
   "Hero": {
     "additionalProperties": true,
@@ -5215,6 +5651,21 @@ var defs = {
       }
     ]
   },
+  "Peak": {
+    "properties": {
+      "label": {
+        "type": "string"
+      },
+      "y": {
+        "type": "number"
+      }
+    },
+    "required": [
+      "y",
+      "label"
+    ],
+    "type": "object"
+  },
   "Pending": {
     "properties": {
       "count": {
@@ -5343,6 +5794,132 @@ var defs = {
     "required": [
       "name"
     ],
+    "type": "object"
+  },
+  "Plot": {
+    "additionalProperties": true,
+    "properties": {
+      "empty": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "id": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "peak": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Peak"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "series": {
+        "items": {
+          "$ref": "#/$defs/Trace"
+        },
+        "type": "array"
+      },
+      "show": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "target": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Target"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "title": {
+        "type": "string"
+      },
+      "window": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "x": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/PlotAxis"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "y": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/PlotAxis"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      }
+    },
+    "required": [
+      "title",
+      "series"
+    ],
+    "type": "object"
+  },
+  "PlotAxis": {
+    "properties": {
+      "label": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "max": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "min": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "scale": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/AxisScale"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "unit": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
     "type": "object"
   },
   "PlotBox": {
@@ -6251,6 +6828,95 @@ var defs = {
     },
     "type": "object"
   },
+  "SearchField": {
+    "additionalProperties": true,
+    "properties": {
+      "checks": {
+        "items": {
+          "$ref": "#/$defs/Check"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "doc": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "enabled": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "error": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "filters": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "label": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "name": {
+        "type": "string"
+      },
+      "open": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "placeholder": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "show": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "value": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "was": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "required": [
+      "name"
+    ],
+    "type": "object"
+  },
   "Secret": {
     "additionalProperties": true,
     "properties": {
@@ -6749,6 +7415,103 @@ var defs = {
         "type": "string"
       }
     ]
+  },
+  "SliderField": {
+    "additionalProperties": true,
+    "properties": {
+      "checks": {
+        "items": {
+          "$ref": "#/$defs/Check"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "doc": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "enabled": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "error": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "label": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "max": {
+        "type": "number"
+      },
+      "min": {
+        "type": "number"
+      },
+      "name": {
+        "type": "string"
+      },
+      "open": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "show": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "step": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "unit": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "value": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "was": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "required": [
+      "name",
+      "min",
+      "max"
+    ],
+    "type": "object"
   },
   "SortDir": {
     "anyOf": [
@@ -7258,6 +8021,21 @@ var defs = {
         ]
       }
     },
+    "type": "object"
+  },
+  "Target": {
+    "properties": {
+      "max": {
+        "type": "number"
+      },
+      "min": {
+        "type": "number"
+      }
+    },
+    "required": [
+      "min",
+      "max"
+    ],
     "type": "object"
   },
   "Text": {
@@ -7772,6 +8550,16 @@ var defs = {
   "ToggleField": {
     "additionalProperties": true,
     "properties": {
+      "as": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/ToggleLook"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
       "checks": {
         "items": {
           "$ref": "#/$defs/Check"
@@ -7849,6 +8637,20 @@ var defs = {
       "name"
     ],
     "type": "object"
+  },
+  "ToggleLook": {
+    "anyOf": [
+      {
+        "enum": [
+          "switch",
+          "check"
+        ],
+        "type": "string"
+      },
+      {
+        "type": "string"
+      }
+    ]
   },
   "Tone": {
     "anyOf": [
@@ -7956,6 +8758,41 @@ var defs = {
         "type": "string"
       }
     ]
+  },
+  "Trace": {
+    "properties": {
+      "name": {
+        "type": "string"
+      },
+      "tone": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Tone"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "x": {
+        "items": {
+          "type": "number"
+        },
+        "type": "array"
+      },
+      "y": {
+        "items": {
+          "type": "number"
+        },
+        "type": "array"
+      }
+    },
+    "required": [
+      "name",
+      "x",
+      "y"
+    ],
+    "type": "object"
   },
   "Undo": {
     "properties": {
@@ -8256,6 +9093,8 @@ var Walk = class {
     this.ids = /* @__PURE__ */ new Map();
     this.acts = /* @__PURE__ */ new Map();
     this.keys = [];
+    this.rows = /* @__PURE__ */ new Set();
+    this.aims = [];
     this.out = [];
     this.app = app;
   }
@@ -8273,8 +9112,8 @@ var Walk = class {
       if (first !== void 0) this.out.push({ fault: "twice", id, at: [first, at2] });
     } else if (kind === "island" || WORDS.some((w) => isObj3(v[w]))) this.out.push({ fault: "unnamed", kind });
     const core = KINDS2.includes(kind);
-    const fallback = isObj3(v["fallback"]) ? str2(v["fallback"]["title"]) : void 0;
-    if ((kind === "island" || this.app.includes(kind) && !core) && !fallback) this.out.push({ fault: "bare", kind, id: id ?? "" });
+    const fallback2 = isObj3(v["fallback"]) ? str2(v["fallback"]["title"]) : void 0;
+    if ((kind === "island" || this.app.includes(kind) && !core) && !fallback2) this.out.push({ fault: "bare", kind, id: id ?? "" });
     if (core) {
       const inner = id || scope;
       const top = shallow(v);
@@ -8312,6 +9151,9 @@ var Walk = class {
     const fields = kind === "form" || kind === "config" ? Array.isArray(o["fields"]) ? o["fields"] : [] : [];
     const names2 = kind === "chips" ? [o["name"]] : fields.map((f) => isObj3(f) ? f["name"] : void 0);
     for (const n of names2) if (typeof n === "string") this.keys.push(n);
+    const id = str2(o["id"]);
+    if ((kind === "list" || kind === "table") && id !== void 0) this.rows.add(id);
+    for (const f of fields) if (isObj3(f) && f["type"] === "search" && typeof f["name"] === "string" && typeof f["filters"] === "string") this.aims.push([f["name"], f["filters"]]);
   }
 };
 function gets(v, out) {
@@ -8327,6 +9169,7 @@ function check(screen2, app = []) {
   for (const kind of app) if (KINDS2.includes(kind)) w.out.push({ fault: "clash", kind });
   if (isObj3(screen2) && isObj3(screen2["state"])) w.keys.push(...sorted(screen2["state"]));
   w.block(screen2, "", "");
+  for (const [field, id] of w.aims) if (!w.rows.has(id)) w.out.push({ fault: "aim", field, id });
   const declared = /* @__PURE__ */ new Set();
   const twice = w.keys.filter((k) => declared.has(k) || !declared.add(k));
   const used = [];
@@ -8348,6 +9191,77 @@ function actions(screen2) {
   return [...out].sort();
 }
 
+// src/core/field/match.ts
+function hits(text5, q) {
+  const t = text5.toLowerCase();
+  return q.toLowerCase().split(/\s+/).filter(Boolean).every((w) => t.includes(w));
+}
+function typing(send2, busy) {
+  let wait;
+  let flying = false;
+  let next;
+  const go = (q) => {
+    flying = true;
+    busy(true);
+    void Promise.resolve(send2(q)).then(land, land);
+  };
+  const land = () => {
+    flying = false;
+    const q = next;
+    next = void 0;
+    if (q === void 0) busy(false);
+    else go(q);
+  };
+  const now = (q) => {
+    clearTimeout(wait);
+    if (flying) next = q;
+    else go(q);
+  };
+  const key = (q) => {
+    clearTimeout(wait);
+    wait = setTimeout(() => now(q), 250);
+  };
+  return { key, now };
+}
+var rec2 = (v) => typeof v === "object" && v !== null && !Array.isArray(v);
+function text4(v) {
+  if (typeof v === "string" || typeof v === "number") return String(v);
+  return rec2(v) ? text4(v["text"]) : "";
+}
+function said(r) {
+  if (!rec2(r)) return "";
+  return (rec2(r["cells"]) ? Object.values(r["cells"]) : [r["title"], r["subtitle"], r["value"]]).map(text4).join(" ");
+}
+function each2(v, f) {
+  if (Array.isArray(v)) return v.forEach((x) => each2(x, f));
+  if (!rec2(v)) return;
+  f(v);
+  each2(v["blocks"], f);
+}
+function seeks(screen2, state) {
+  const rows = {};
+  const aims = [];
+  each2(screen2, (b) => {
+    if ((b["type"] === "list" || b["type"] === "table") && typeof b["id"] === "string" && Array.isArray(b["rows"])) rows[b["id"]] = b["rows"];
+    const fields = b["type"] === "form" || b["type"] === "config" ? b["fields"] : [];
+    for (const x of Array.isArray(fields) ? fields : []) if (rec2(x) && x["type"] === "search" && typeof x["name"] === "string" && typeof x["filters"] === "string") aims.push([x["name"], x["filters"]]);
+  });
+  const out = {};
+  for (const [name, id] of aims) {
+    const all = (rows[id] ?? []).filter((r) => !(rec2(r) && r["group"]));
+    const q = String(state[name] ?? "");
+    out[id] = { name, q, n: all.filter((r) => hits(said(r), q)).length, m: all.length };
+  }
+  return out;
+}
+
+// src/core/field/slider.ts
+var reads = (x, n) => {
+  const t = String(Number(n.toFixed(6)));
+  return x.unit ? `${t}\xA0${x.unit}` : t;
+};
+var along = (x, n) => x.max > x.min ? Math.min(1, Math.max(0, (n - x.min) / (x.max - x.min))) : 0;
+
 // src/core/field/files.ts
 var OWN = {
   image: (_, m) => m.startsWith("image/"),
@@ -8355,7 +9269,7 @@ var OWN = {
   sheet: (n, m) => m === "text/csv" || m.endsWith("spreadsheetml.sheet") || /\.(csv|xlsx)$/i.test(n)
 };
 var MIME = { image: "image/*", pdf: ".pdf,application/pdf", sheet: ".csv,.xlsx,text/csv" };
-var fill2 = (text4, v) => text4.replace(/\{(\w+)\}/g, (_, k) => String(v[k] ?? ""));
+var fill2 = (text5, v) => text5.replace(/\{(\w+)\}/g, (_, k) => String(v[k] ?? ""));
 var accepts = (accept = []) => accept.map((a) => MIME[a] ?? a).join(",");
 function refused(x, name, mime, size) {
   const kinds3 = x.accept ?? [];
@@ -8417,6 +9331,7 @@ export {
   accepts,
   actionOf,
   actions,
+  along,
   apply,
   boxplot,
   built,
@@ -8448,9 +9363,11 @@ export {
   gate,
   gated,
   glyph,
+  heat,
   held,
   hero,
   hint,
+  hits,
   hooks,
   hosts,
   ids,
@@ -8462,6 +9379,7 @@ export {
   linkable,
   list2 as list,
   lit,
+  code_exports as lookCode,
   media,
   message,
   modal,
@@ -8472,7 +9390,9 @@ export {
   pages,
   pick,
   picked,
+  plot,
   prose,
+  reads,
   refused,
   role,
   roleWord,
@@ -8480,6 +9400,7 @@ export {
   row,
   rules,
   run,
+  said,
   scanHeld,
   scanHint,
   scanLine,
@@ -8489,6 +9410,7 @@ export {
   screen,
   secret,
   section,
+  seeks,
   send,
   share,
   sheet,
@@ -8508,6 +9430,7 @@ export {
   toast,
   tool,
   tree,
+  typing,
   value,
   view,
   waits,

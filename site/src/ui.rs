@@ -17,14 +17,16 @@ pub struct Page {
     pub description: String,
     pub screen: Screen,
     pub js: &'static str,
+    pub md: Option<String>,
 }
 
-const LINKS: [(&str, &str); 7] = [
+const LINKS: [(&str, &str); 8] = [
     ("gallery", "gallery.html"),
     ("styles", "styles.html"),
     ("numbers", "numbers.html"),
     ("behaviours", "behaviours.html"),
     ("islands", "islands.html"),
+    ("streams", "streams.html"),
     ("layout", "layout.html"),
     ("playground", "playground.html"),
 ];
@@ -40,6 +42,7 @@ fn nav(current: &str) -> Block {
     let nav = b!(Nav(Nav::new(links).id("site-nav").brand(link("blocks", "index.html"))));
     let looks = NAMES
         .iter()
+        .chain([&("shared", "Shared")])
         .map(|(name, label)| {
             let tap = Tap {
                 sheet: Some(format!("look:{name}")),
@@ -63,6 +66,7 @@ pub fn page(id: &str, file: &str, title: &str, description: &str, body: Vec<Bloc
         description: description.into(),
         screen: Screen::new().id(id).title(title).blocks(blocks),
         js: "blocks.js",
+        md: None,
     }
 }
 

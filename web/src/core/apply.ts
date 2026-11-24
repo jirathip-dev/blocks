@@ -1,5 +1,6 @@
 import { hosts, walked } from "../gen/hooks.ts";
 import type { Block, Op } from "../gen/types.ts";
+import { grow as points } from "./kind/plot.ts";
 import { grow } from "./kind/prose.ts";
 
 export type Rec = { [key: string]: unknown };
@@ -82,6 +83,13 @@ export function apply(screen: Block, ops: Op[]): Block | undefined {
         const parts = t?.["type"] === "prose" && Array.isArray(t["parts"]) ? grow(t["parts"], op) : undefined;
         if (!t || !parts) return undefined;
         t["parts"] = parts;
+        break;
+      }
+      case "points": {
+        const t = get(root, op.id);
+        const series = t?.["type"] === "plot" && Array.isArray(t["series"]) ? points(t["series"], op) : undefined;
+        if (!t || !series) return undefined;
+        t["series"] = series;
         break;
       }
       case "badge":

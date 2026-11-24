@@ -85,7 +85,7 @@ final class SnapshotTests: XCTestCase {
             let swift = try Data(contentsOf: fixtures.appendingPathComponent("trees/swift/fields/\(name).json"))
             XCTAssertEqual(swift, try Data(contentsOf: fixtures.appendingPathComponent("fields/trees/\(name).json")), name)
             let form = try XCTUnwrap(try load(TreeNode.self, "trees/swift/fields/\(name).json").children.first)
-            XCTAssertEqual(Set(form.fields?.map { "\($0.type) \($0.drawn.rawValue)" } ?? []), ["\(name) native"], name)
+            XCTAssertEqual(Set(form.fields?.map { "\($0.type) \($0.drawn.rawValue)" } ?? []), ["\(name.prefix { $0 != "-" }) native"], name)
         }
     }
 
@@ -107,6 +107,29 @@ final class SnapshotTests: XCTestCase {
             XCTAssertEqual(run.report.sent, c.sent, c.name)
             XCTAssertEqual(run.report.dropped, c.dropped, c.name)
         }
+    }
+
+    func testTheSlideFixtureSendsAndDropsWhatBlocksShotDoesAndTheLabelSaysTheNumber() throws {
+        struct Case: Decodable {
+            let name: String
+            let steps: [Step]
+            let sent: [Action]
+            let dropped: [String]
+        }
+        struct Cases: Decodable {
+            let screen: Block
+            let cases: [Case]
+        }
+        let all = try load(Cases.self, "slide/text-size.json")
+        XCTAssertEqual(all.cases.map(\.name), ["let go", "gone"])
+        for c in all.cases {
+            let run = try Snapshot(all.screen).run(c.steps, name: c.name)
+            XCTAssertEqual(run.report.sent, c.sent, c.name)
+            XCTAssertEqual(run.report.dropped, c.dropped, c.name)
+        }
+        let size = SliderField(max: 130, min: 80, name: "size", step: 5, unit: "%")
+        XCTAssertEqual([size.said(110), size.said(size.snapped(112)), size.said(size.snapped(200))], ["110\u{a0}%", "110\u{a0}%", "130\u{a0}%"])
+        XCTAssertEqual(SliderField(max: 12, min: 0, name: "hours", step: 0.5, unit: "h").said(7.5), "7.5\u{a0}h")
     }
 
     func testAnUploadRefusesBeforeTheHandlerAndItsSubmitSaysWhyItWaits() throws {

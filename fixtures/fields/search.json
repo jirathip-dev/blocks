@@ -1,0 +1,68 @@
+{
+  "blocks": [
+    {
+      "fallback": {
+        "title": "form"
+      },
+      "fields": [
+        {
+          "label": "Search",
+          "name": "q-empty",
+          "type": "search"
+        },
+        {
+          "label": "Search",
+          "name": "q",
+          "placeholder": "Search every app",
+          "type": "search",
+          "value": "ops"
+        },
+        {
+          "error": "Check this one",
+          "label": "Search",
+          "name": "q-error",
+          "placeholder": "Search every app",
+          "type": "search",
+          "value": "ops"
+        },
+        {
+          "label": "Search",
+          "name": "q-was",
+          "placeholder": "Search every app",
+          "type": "search",
+          "value": "ops",
+          "was": "the old value"
+        },
+        {
+          "doc": "A line that says what it is for",
+          "label": "Search",
+          "name": "q-doc",
+          "placeholder": "Search every app",
+          "type": "search",
+          "value": "ops"
+        },
+        {
+          "label": "A label long enough to wrap onto a second line on a phone held upright",
+          "name": "q-label",
+          "placeholder": "Search every app",
+          "type": "search",
+          "value": "ops"
+        }
+      ],
+      "id": "search",
+      "submit": {
+        "action": "send",
+        "label": "send"
+      },
+      "type": "form"
+    }
+  ],
+  "fallback": {
+    "title": "screen"
+  },
+  "id": "fields-search",
+  "locale": {
+    "lang": "en"
+  },
+  "type": "screen"
+}

@@ -298,3 +298,81 @@ fn a_message_widens_label_long_label_empty_and_empty_state() {
         []
     );
 }
+
+fn pairs() -> (Catalog, Vec<(String, String, String)>) {
+    let md = std::fs::read_to_string(root().join("skill/blocks/rules.md")).unwrap();
+    let (_, tail) = md.split_once("\n## Incorrect and Correct\n").unwrap();
+    let json = |t: &str| {
+        t.split_once("```json\n")
+            .unwrap()
+            .1
+            .split_once("\n```")
+            .unwrap()
+            .0
+            .to_string()
+    };
+    let mut parts = tail.split("\n### `");
+    let catalog = Catalog::read(&json(parts.next().unwrap())).unwrap();
+    let pairs = parts
+        .map(|p| {
+            let (id, rest) = p.split_once('`').unwrap();
+            let (bad, good) = rest.split_once("\nCorrect:\n").unwrap();
+            let bad = bad.split_once("\nIncorrect:\n").unwrap().1;
+            (id.to_string(), bad.to_string(), good.to_string())
+        })
+        .collect();
+    (catalog, pairs)
+}
+
+#[test]
+fn rules_md_shows_a_pair_for_every_rule_a_screen_can_hit_and_the_guard_flags_each_incorrect_alone() {
+    let (catalog, pairs) = pairs();
+    let paired: BTreeSet<&str> = pairs.iter().map(|(id, _, _)| id.as_str()).collect();
+    let none = [
+        "guard/baseline-grew",
+        "guard/baseline-stale",
+        "guard/seed-missing",
+        "guard/unused-ignore",
+        "explore/error-screen",
+        "explore/sent-differs",
+        "explore/unanswered",
+        "explore/unstable",
+        "render/frame-budget",
+    ];
+    let want: BTreeSet<&str> = RULES.iter().map(|r| r.id).filter(|id| !none.contains(id)).collect();
+    assert_eq!(paired, want);
+    let md = std::fs::read_to_string(root().join("skill/blocks/rules.md")).unwrap();
+    let listed = RULES
+        .iter()
+        .filter(|r| none.contains(&r.id))
+        .map(|r| format!("`{}`", r.id))
+        .collect::<Vec<_>>()
+        .join(", ");
+    assert!(md.contains(&format!("\nNo pair: {listed}.")), "the rules with no pair");
+    let mut judged = 0;
+    for (id, bad, good) in &pairs {
+        let lint = |half: &str| -> BTreeSet<String> {
+            let text = half.split_once("```json\n").unwrap().1.split_once("\n```").unwrap().0;
+            let screen = Built::new(serde_json::from_str(text).unwrap());
+            let seen = if id.starts_with("catalog/") {
+                guard::lint_in(&screen, &catalog)
+            } else {
+                guard::lint(&screen, &[])
+            };
+            seen.into_iter().map(|s| s.rule).collect()
+        };
+        if id.starts_with("css/") {
+            assert!(bad.starts_with("\n```css\n") && good.starts_with("\n```css\n"), "{id}");
+            continue;
+        }
+        if id.starts_with("render/") {
+            assert!(bad.starts_with("\n```json\n"), "{id}");
+            assert_eq!(lint(good), BTreeSet::new(), "{id}");
+            continue;
+        }
+        assert_eq!(lint(bad), BTreeSet::from([id.clone()]), "{id}: Incorrect");
+        assert_eq!(lint(good), BTreeSet::new(), "{id}: Correct");
+        judged += 1;
+    }
+    assert_eq!(judged, 27);
+}

@@ -1,0 +1,20 @@
+{
+  "columns": [
+    "Mon",
+    "Tue",
+    "Wed",
+    "Thu",
+    "Fri",
+    "Sat",
+    "Sun"
+  ],
+  "grid": [],
+  "id": "sleep",
+  "scale": {
+    "max": 100,
+    "min": 50
+  },
+  "title": "Sleep score",
+  "tone": "ok",
+  "type": "heat"
+}

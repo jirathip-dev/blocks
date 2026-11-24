@@ -1,4 +1,4 @@
-export type Fault = { fault: "twice"; at: string[]; id: string } | { fault: "act-twice"; action: string; at: string[]; block: string } | { fault: "unnamed"; kind: string } | { fault: "unknown"; kind: string } | { fault: "shape"; kind: string; why: string } | { fault: "extra"; field: string; kind: string } | { fault: "clash"; kind: string } | { fault: "bare"; id: string; kind: string } | { fault: "state"; key: string } | { fault: "link"; at: string; url: string };
+export type Fault = { fault: "twice"; at: string[]; id: string } | { fault: "act-twice"; action: string; at: string[]; block: string } | { fault: "unnamed"; kind: string } | { fault: "unknown"; kind: string } | { fault: "shape"; kind: string; why: string } | { fault: "extra"; field: string; kind: string } | { fault: "clash"; kind: string } | { fault: "bare"; id: string; kind: string } | { fault: "state"; key: string } | { fault: "link"; at: string; url: string } | { fault: "aim"; field: string; id: string };
 
 export type Shape = boolean | { type?: string | string[]; $ref?: string; properties?: Record<string, Shape>; required?: string[]; anyOf?: Shape[]; oneOf?: Shape[]; items?: Shape; additionalProperties?: Shape; const?: unknown; enum?: unknown[]; not?: Shape; minimum?: number; maximum?: number; minItems?: number; maxItems?: number };
 
@@ -15,6 +15,7 @@ export const kinds: Record<string, string> = {
   "diff": "Diff",
   "editor": "Editor",
   "form": "Form",
+  "heat": "Heat",
   "hero": "Hero",
   "images": "Images",
   "import": "Import",
@@ -26,6 +27,7 @@ export const kinds: Record<string, string> = {
   "modal": "Modal",
   "nav": "Nav",
   "pages": "Pages",
+  "plot": "Plot",
   "prose": "Prose",
   "row": "Row",
   "run": "Run",
@@ -229,7 +231,9 @@ export const defs: Record<string, Shape> = {
             "message",
             "tool",
             "sidebar",
-            "boxplot"
+            "boxplot",
+            "heat",
+            "plot"
           ]
         },
         "type": "string"
@@ -260,6 +264,20 @@ export const defs: Record<string, Shape> = {
       "tap"
     ],
     "type": "object"
+  },
+  "AxisScale": {
+    "anyOf": [
+      {
+        "enum": [
+          "number",
+          "time"
+        ],
+        "type": "string"
+      },
+      {
+        "type": "string"
+      }
+    ]
   },
   "Band": {
     "properties": {
@@ -847,6 +865,32 @@ export const defs: Record<string, Shape> = {
         "properties": {
           "type": {
             "const": "boxplot",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      {
+        "$ref": "#/$defs/Heat",
+        "properties": {
+          "type": {
+            "const": "heat",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      {
+        "$ref": "#/$defs/Plot",
+        "properties": {
+          "type": {
+            "const": "plot",
             "type": "string"
           }
         },
@@ -2346,6 +2390,19 @@ export const defs: Record<string, Shape> = {
         "type": "object"
       },
       {
+        "$ref": "#/$defs/SearchField",
+        "properties": {
+          "type": {
+            "const": "search",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      {
         "$ref": "#/$defs/UploadField",
         "properties": {
           "type": {
@@ -2363,6 +2420,19 @@ export const defs: Record<string, Shape> = {
         "properties": {
           "type": {
             "const": "scan",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      {
+        "$ref": "#/$defs/SliderField",
+        "properties": {
+          "type": {
+            "const": "slider",
             "type": "string"
           }
         },
@@ -2629,6 +2699,215 @@ export const defs: Record<string, Shape> = {
       "name"
     ],
     "type": "object"
+  },
+  "Heat": {
+    "additionalProperties": true,
+    "properties": {
+      "columns": {
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "edges": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/HeatEdges"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "empty": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "grid": {
+        "items": {
+          "$ref": "#/$defs/HeatRow"
+        },
+        "type": "array"
+      },
+      "id": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "lang": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "scale": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/HeatScale"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "selected": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/HeatPick"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "show": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "tap": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Tap"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "title": {
+        "type": "string"
+      },
+      "tone": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/HeatTone"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      }
+    },
+    "required": [
+      "title",
+      "columns",
+      "grid"
+    ],
+    "type": "object"
+  },
+  "HeatCell": {
+    "properties": {
+      "label": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "value": {
+        "type": [
+          "number",
+          "null"
+        ]
+      }
+    },
+    "type": "object"
+  },
+  "HeatEdges": {
+    "anyOf": [
+      {
+        "enum": [
+          "steps",
+          "ends"
+        ],
+        "type": "string"
+      },
+      {
+        "type": "string"
+      }
+    ]
+  },
+  "HeatPick": {
+    "properties": {
+      "column": {
+        "type": "string"
+      },
+      "row": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "row",
+      "column"
+    ],
+    "type": "object"
+  },
+  "HeatRow": {
+    "properties": {
+      "cells": {
+        "items": {
+          "$ref": "#/$defs/HeatCell"
+        },
+        "type": "array"
+      },
+      "name": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "name",
+      "cells"
+    ],
+    "type": "object"
+  },
+  "HeatScale": {
+    "properties": {
+      "max": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "min": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "unit": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "type": "object"
+  },
+  "HeatTone": {
+    "anyOf": [
+      {
+        "enum": [
+          "info",
+          "ok",
+          "warn",
+          "bad",
+          "accent",
+          "mute"
+        ],
+        "type": "string"
+      },
+      {
+        "type": "string"
+      }
+    ]
   },
   "Hero": {
     "additionalProperties": true,
@@ -4449,6 +4728,21 @@ export const defs: Record<string, Shape> = {
       }
     ]
   },
+  "Peak": {
+    "properties": {
+      "label": {
+        "type": "string"
+      },
+      "y": {
+        "type": "number"
+      }
+    },
+    "required": [
+      "y",
+      "label"
+    ],
+    "type": "object"
+  },
   "Pending": {
     "properties": {
       "count": {
@@ -4577,6 +4871,132 @@ export const defs: Record<string, Shape> = {
     "required": [
       "name"
     ],
+    "type": "object"
+  },
+  "Plot": {
+    "additionalProperties": true,
+    "properties": {
+      "empty": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "id": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "peak": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Peak"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "series": {
+        "items": {
+          "$ref": "#/$defs/Trace"
+        },
+        "type": "array"
+      },
+      "show": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "target": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Target"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "title": {
+        "type": "string"
+      },
+      "window": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "x": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/PlotAxis"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "y": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/PlotAxis"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      }
+    },
+    "required": [
+      "title",
+      "series"
+    ],
+    "type": "object"
+  },
+  "PlotAxis": {
+    "properties": {
+      "label": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "max": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "min": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "scale": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/AxisScale"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "unit": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
     "type": "object"
   },
   "PlotBox": {
@@ -5485,6 +5905,95 @@ export const defs: Record<string, Shape> = {
     },
     "type": "object"
   },
+  "SearchField": {
+    "additionalProperties": true,
+    "properties": {
+      "checks": {
+        "items": {
+          "$ref": "#/$defs/Check"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "doc": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "enabled": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "error": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "filters": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "label": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "name": {
+        "type": "string"
+      },
+      "open": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "placeholder": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "show": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "value": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "was": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "required": [
+      "name"
+    ],
+    "type": "object"
+  },
   "Secret": {
     "additionalProperties": true,
     "properties": {
@@ -5983,6 +6492,103 @@ export const defs: Record<string, Shape> = {
         "type": "string"
       }
     ]
+  },
+  "SliderField": {
+    "additionalProperties": true,
+    "properties": {
+      "checks": {
+        "items": {
+          "$ref": "#/$defs/Check"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "doc": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "enabled": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "error": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "label": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "max": {
+        "type": "number"
+      },
+      "min": {
+        "type": "number"
+      },
+      "name": {
+        "type": "string"
+      },
+      "open": {
+        "type": [
+          "boolean",
+          "null"
+        ]
+      },
+      "show": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "step": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "unit": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "value": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "was": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "required": [
+      "name",
+      "min",
+      "max"
+    ],
+    "type": "object"
   },
   "SortDir": {
     "anyOf": [
@@ -6492,6 +7098,21 @@ export const defs: Record<string, Shape> = {
         ]
       }
     },
+    "type": "object"
+  },
+  "Target": {
+    "properties": {
+      "max": {
+        "type": "number"
+      },
+      "min": {
+        "type": "number"
+      }
+    },
+    "required": [
+      "min",
+      "max"
+    ],
     "type": "object"
   },
   "Text": {
@@ -7006,6 +7627,16 @@ export const defs: Record<string, Shape> = {
   "ToggleField": {
     "additionalProperties": true,
     "properties": {
+      "as": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/ToggleLook"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
       "checks": {
         "items": {
           "$ref": "#/$defs/Check"
@@ -7083,6 +7714,20 @@ export const defs: Record<string, Shape> = {
       "name"
     ],
     "type": "object"
+  },
+  "ToggleLook": {
+    "anyOf": [
+      {
+        "enum": [
+          "switch",
+          "check"
+        ],
+        "type": "string"
+      },
+      {
+        "type": "string"
+      }
+    ]
   },
   "Tone": {
     "anyOf": [
@@ -7190,6 +7835,41 @@ export const defs: Record<string, Shape> = {
         "type": "string"
       }
     ]
+  },
+  "Trace": {
+    "properties": {
+      "name": {
+        "type": "string"
+      },
+      "tone": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Tone"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "x": {
+        "items": {
+          "type": "number"
+        },
+        "type": "array"
+      },
+      "y": {
+        "items": {
+          "type": "number"
+        },
+        "type": "array"
+      }
+    },
+    "required": [
+      "name",
+      "x",
+      "y"
+    ],
+    "type": "object"
   },
   "Undo": {
     "properties": {

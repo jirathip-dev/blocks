@@ -1,0 +1,5 @@
+[
+  {"type":"steps","id":"sn","title":"Stop","current":"items","steps":[{"id":"stop","label":"Stop","sub":"arrived","tap":{"url":"https://x.test/s"}},{"id":"lines","label":"Lines","tap":{"action":"back"}},{"id":"items","label":"Items"},{"id":"done","label":"Done","sub":"later"}]},
+  {"type":"steps","id":"sb","title":"Load","bars":[{"label":"Disk","value":42.4,"tone":"warn","sub":"of 1 TB"},{"label":"Net","value":0}]},
+  {"type":"steps","id":"s1","bars":[{"label":"One","value":120}]}
+]

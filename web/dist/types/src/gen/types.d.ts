@@ -42,6 +42,7 @@ export type Attachment = {
     src?: string | null;
     tap: Tap;
 };
+export type AxisScale = "number" | "time";
 export type Band = {
     blocks?: Block[] | null;
     header?: string | null;
@@ -135,7 +136,11 @@ export type Block = ({
     type: "sidebar";
 } & Sidebar) | ({
     type: "boxplot";
-} & Boxplot) | (AppBlock & {
+} & Boxplot) | ({
+    type: "heat";
+} & Heat) | ({
+    type: "plot";
+} & Plot) | (AppBlock & {
     [key: string]: unknown;
 });
 export type Bound = {
@@ -368,10 +373,14 @@ export type Field = ({
 } & PickerField) | ({
     type: "secret";
 } & SecretField) | ({
+    type: "search";
+} & SearchField) | ({
     type: "upload";
 } & UploadField) | ({
     type: "scan";
-} & ScanField) | (OtherField & {
+} & ScanField) | ({
+    type: "slider";
+} & SliderField) | (OtherField & {
     [key: string]: unknown;
 });
 export type FieldDrawn = "native" | "plain" | "hidden";
@@ -443,6 +452,39 @@ export type Have = {
     k: string;
     rev?: number | null;
 };
+export type Heat = {
+    columns: string[];
+    edges?: HeatEdges | null;
+    empty?: string | null;
+    grid: HeatRow[];
+    id?: string | null;
+    lang?: string | null;
+    scale?: HeatScale | null;
+    selected?: HeatPick | null;
+    show?: Expr | null;
+    tap?: Tap | null;
+    title: string;
+    tone?: HeatTone | null;
+};
+export type HeatCell = {
+    label?: string | null;
+    value?: number | null;
+};
+export type HeatEdges = "steps" | "ends";
+export type HeatPick = {
+    column: string;
+    row: string;
+};
+export type HeatRow = {
+    cells: HeatCell[];
+    name: string;
+};
+export type HeatScale = {
+    max?: number | null;
+    min?: number | null;
+    unit?: string | null;
+};
+export type HeatTone = "info" | "ok" | "warn" | "bad" | "accent" | "mute";
 export type Hello = {
     epoch: string;
     keys: number;
@@ -716,6 +758,13 @@ export type Op = {
     parts?: Part[] | null;
     text?: string | null;
 } | {
+    op: "points";
+    drop?: number | null;
+    id: string;
+    series: string;
+    x: number[];
+    y: number[];
+} | {
     op: "badge";
     count: number;
 } | {
@@ -782,6 +831,10 @@ export type Part = {
     part: "rule";
 };
 export type Pattern = "filled" | "email" | "url" | "number";
+export type Peak = {
+    label: string;
+    y: number;
+};
 export type Pending = {
     count: string;
     discard: Tap;
@@ -815,6 +868,25 @@ export type PlanRun = {
     scripts: string[];
     size: string;
     steps: Step[];
+};
+export type Plot = {
+    empty?: string | null;
+    id?: string | null;
+    peak?: Peak | null;
+    series: Trace[];
+    show?: Expr | null;
+    target?: Target | null;
+    title: string;
+    window?: number | null;
+    x?: PlotAxis | null;
+    y?: PlotAxis | null;
+};
+export type PlotAxis = {
+    label?: string | null;
+    max?: number | null;
+    min?: number | null;
+    scale?: AxisScale | null;
+    unit?: string | null;
 };
 export type PlotBox = {
     max: number;
@@ -966,6 +1038,20 @@ export type Screen = {
     title?: string | null;
     url?: string | null;
 };
+export type SearchField = {
+    checks?: Check[] | null;
+    doc?: string | null;
+    enabled?: Expr | null;
+    error?: string | null;
+    filters?: string | null;
+    label?: string | null;
+    name: string;
+    open?: boolean | null;
+    placeholder?: string | null;
+    show?: Expr | null;
+    value?: string | null;
+    was?: string | null;
+};
 export type Secret = {
     action: string;
     id?: string | null;
@@ -1056,6 +1142,22 @@ export type Sidebar = {
     show?: Expr | null;
 };
 export type Sky = "clear" | "windy" | "fog" | "storm";
+export type SliderField = {
+    checks?: Check[] | null;
+    doc?: string | null;
+    enabled?: Expr | null;
+    error?: string | null;
+    label?: string | null;
+    max: number;
+    min: number;
+    name: string;
+    open?: boolean | null;
+    show?: Expr | null;
+    step?: number | null;
+    unit?: string | null;
+    value?: number | null;
+    was?: string | null;
+};
 export type SortDir = "asc" | "desc";
 export type Span = {
     bold?: boolean | null;
@@ -1098,6 +1200,8 @@ export type Step = {
     refuse: StepRefuse;
 } | {
     file: StepFile;
+} | {
+    slide: StepSlide;
 };
 export type StepFile = {
     field: string;
@@ -1120,6 +1224,10 @@ export type StepRefuse = {
 };
 export type StepShot = {
     name: string;
+};
+export type StepSlide = {
+    field: string;
+    to: number;
 };
 export type StepType = {
     id: string;
@@ -1189,6 +1297,10 @@ export type Tap = {
     thread?: string | null;
     url?: string | null;
     values?: Record<string, unknown> | null;
+};
+export type Target = {
+    max: number;
+    min: number;
 };
 export type Text = {
     center?: boolean | null;
@@ -1266,6 +1378,7 @@ export type Timings = {
     frames_over_budget?: number | null;
     longest_frame_ms?: number | null;
     longest_patch_ms?: number | null;
+    p99_patch_ms?: number | null;
     steps_ms: number[];
 };
 export type Toast = {
@@ -1277,6 +1390,7 @@ export type Toast = {
     undo?: Undo | null;
 };
 export type ToggleField = {
+    as?: ToggleLook | null;
     checks?: Check[] | null;
     doc?: string | null;
     enabled?: Expr | null;
@@ -1288,6 +1402,7 @@ export type ToggleField = {
     value?: FieldValue | null;
     was?: string | null;
 };
+export type ToggleLook = "switch" | "check";
 export type Tone = "ok" | "warn" | "bad" | "info" | "mute" | "accent" | "working" | "needs" | "done" | "fail" | "idle";
 export type Toned = string | Label;
 export type Tool = {
@@ -1300,6 +1415,12 @@ export type Tool = {
 };
 export type ToolState = "running" | "done" | "failed";
 export type Total = "sum" | "avg" | "count";
+export type Trace = {
+    name: string;
+    tone?: Tone | null;
+    x: number[];
+    y: number[];
+};
 export type TreeDrawn = "native" | "fallback" | "hidden";
 export type TreeNode = {
     children: TreeNode[];
@@ -1353,4 +1474,4 @@ export type Why = "evicted" | "unpaired" | "handover";
 export type Working = {
     since: string;
 };
-export type Kind = "screen" | "modal" | "sheet" | "section" | "list" | "row" | "card" | "choice" | "form" | "config" | "secret" | "run" | "button" | "chips" | "stat" | "text" | "images" | "web" | "diff" | "editor" | "scene" | "diagram" | "composer" | "lines" | "prose" | "hero" | "media" | "nav" | "island" | "table" | "steps" | "chart" | "toast" | "pages" | "timeline" | "import" | "message" | "tool" | "sidebar" | "boxplot";
+export type Kind = "screen" | "modal" | "sheet" | "section" | "list" | "row" | "card" | "choice" | "form" | "config" | "secret" | "run" | "button" | "chips" | "stat" | "text" | "images" | "web" | "diff" | "editor" | "scene" | "diagram" | "composer" | "lines" | "prose" | "hero" | "media" | "nav" | "island" | "table" | "steps" | "chart" | "toast" | "pages" | "timeline" | "import" | "message" | "tool" | "sidebar" | "boxplot" | "heat" | "plot";

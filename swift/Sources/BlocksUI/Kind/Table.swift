@@ -89,6 +89,7 @@ internal struct TableBlock: View {
     @Environment(\.look) private var look
     @Environment(\.act) private var act
     @Environment(\.locale) private var locale
+    @Environment(\.behaved) private var behaved
     internal let block: Blocks.Table
     @State private var sort: TableOrder?
     @State private var q = ""
@@ -104,8 +105,9 @@ internal struct TableBlock: View {
 
     private var thai: Bool { locale.language.languageCode == .thai }
     private var cols: [Column] { block.columns.enumerated().filter { $0.offset == 0 || !hidden.contains($0.element.id) }.map(\.element) }
+    private var sought: String { block.id.flatMap { behaved.seek[$0]?.q } ?? q }
     private var kept: [Blocks.TableRow] {
-        let words = q.lowercased().split(whereSeparator: \.isWhitespace).map(String.init)
+        let words = sought.lowercased().split(whereSeparator: \.isWhitespace).map(String.init)
         let hit = { (r: Blocks.TableRow) in
             words.allSatisfy { w in cols.contains { $0.shown(r.cells[$0.id], thai: thai).lowercased().contains(w) } }
         }
@@ -121,7 +123,7 @@ internal struct TableBlock: View {
             TableBar(block: block, cols: cols, shown: items.count, sort: $sort, q: $q, hidden: $hidden, ticked: $ticked, ticks: ticks, send: send)
             Rectangle().fill(look.palette.line).frame(height: 1)
             if items.isEmpty {
-                Text(block.rows.isEmpty ? block.empty ?? "No rows yet." : "No rows match “\(q)”.")
+                Text(block.rows.isEmpty ? block.empty ?? "No rows yet." : "No rows match “\(sought)”.")
                     .ui(14, .regular, look).foregroundStyle(look.palette.mute).padding(12)
             } else {
                 let handles = block.reorder != nil && sort == nil && q.isEmpty

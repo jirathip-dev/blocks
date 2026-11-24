@@ -1,0 +1,22 @@
+{
+  "type": "screen",
+  "id": "s",
+  "title": "Thread",
+  "blocks": [
+    {
+      "type": "message",
+      "id": "t1",
+      "role": "agent",
+      "name": "Scout",
+      "blocks": [
+        {
+          "type": "tool",
+          "id": "t1-b",
+          "name": "Test",
+          "state": "done",
+          "summary": "ran every test, all passed"
+        }
+      ]
+    }
+  ]
+}

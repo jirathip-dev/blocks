@@ -1,0 +1,152 @@
+{
+  "drawn": {
+    "band": "25–30 kg",
+    "last": [
+      "30 kg",
+      "0.2 kg"
+    ],
+    "lines": [
+      [
+        0,
+        1,
+        2,
+        3
+      ],
+      [
+        0,
+        1,
+        2,
+        3
+      ]
+    ],
+    "x": [
+      0.0,
+      30.0
+    ],
+    "xTicks": [
+      {
+        "at": -0.0,
+        "odd": false,
+        "text": "0:00"
+      },
+      {
+        "at": 5.0,
+        "odd": true,
+        "text": "0:05"
+      },
+      {
+        "at": 10.0,
+        "odd": false,
+        "text": "0:10"
+      },
+      {
+        "at": 15.0,
+        "odd": true,
+        "text": "0:15"
+      },
+      {
+        "at": 20.0,
+        "odd": false,
+        "text": "0:20"
+      },
+      {
+        "at": 25.0,
+        "odd": true,
+        "text": "0:25"
+      },
+      {
+        "at": 30.0,
+        "odd": false,
+        "text": "0:30"
+      }
+    ],
+    "y": [
+      0.0,
+      40.0
+    ],
+    "yTicks": [
+      {
+        "at": -0.0,
+        "odd": false,
+        "text": "0"
+      },
+      {
+        "at": 10.0,
+        "odd": true,
+        "text": "10"
+      },
+      {
+        "at": 20.0,
+        "odd": false,
+        "text": "20"
+      },
+      {
+        "at": 30.0,
+        "odd": true,
+        "text": "30"
+      },
+      {
+        "at": 40.0,
+        "odd": false,
+        "text": "40"
+      }
+    ]
+  },
+  "plot": {
+    "id": "p",
+    "peak": {
+      "label": "Peak 31.3 kg",
+      "y": 31.25
+    },
+    "series": [
+      {
+        "name": "Force",
+        "x": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "y": [
+          0,
+          18.5,
+          31.25,
+          30
+        ]
+      },
+      {
+        "name": "Set 2",
+        "x": [
+          0,
+          10,
+          20,
+          30
+        ],
+        "y": [
+          0,
+          26,
+          26.1,
+          0.2
+        ]
+      }
+    ],
+    "target": {
+      "max": 30,
+      "min": 25
+    },
+    "title": "Pull",
+    "type": "plot",
+    "window": 5,
+    "x": {
+      "max": 30,
+      "min": 0,
+      "scale": "time"
+    },
+    "y": {
+      "max": 40,
+      "min": 0,
+      "unit": "kg"
+    }
+  },
+  "why": "a fixed x and y range wins over the window; a target and a peak; readouts at their own decimals"
+}

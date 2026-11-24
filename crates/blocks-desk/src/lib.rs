@@ -184,6 +184,7 @@ impl Live {
                 longest_frame_ms: None,
                 frames_over_budget: None,
                 longest_patch_ms: None,
+                p99_patch_ms: None,
             },
         };
         let run = Run {
@@ -277,6 +278,7 @@ impl Live {
             Step::Gesture(g) => format!("gesture {}", g.id),
             Step::Refuse(r) => format!("refuse {}", r.toast),
             Step::File(f) => format!("file {}", f.field),
+            Step::Slide(s) => format!("slide {}", s.field),
         };
         self.run.report.dropped.push(dropped);
     }

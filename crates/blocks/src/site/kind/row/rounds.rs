@@ -62,13 +62,13 @@ fn round(w: &mut W<'_>, d: &Value, now: bool) {
             w.open("a", cls, &[("href", u)]);
             "a"
         }
-        Go::Post(..) | Go::Sheet(_) | Go::Stay if tap.is_some() => {
+        Go::Post(..) | Go::Sheet(_) | Go::Copy(_) | Go::Stay if tap.is_some() => {
             let mut at = vec![("tabindex", "0"), ("role", "button")];
             at.extend(sends(tap).map(|a| ("data-action", a)));
             w.open("div", cls, &at);
             "div"
         }
-        Go::Post(..) | Go::Sheet(_) | Go::Stay => {
+        Go::Post(..) | Go::Sheet(_) | Go::Copy(_) | Go::Stay => {
             w.open("div", cls, &[]);
             "div"
         }

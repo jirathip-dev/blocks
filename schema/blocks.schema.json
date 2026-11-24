@@ -242,7 +242,9 @@
               "message",
               "tool",
               "sidebar",
-              "boxplot"
+              "boxplot",
+              "heat",
+              "plot"
             ]
           },
           "type": "string"
@@ -274,6 +276,20 @@
         "tap"
       ],
       "type": "object"
+    },
+    "AxisScale": {
+      "anyOf": [
+        {
+          "enum": [
+            "number",
+            "time"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "string"
+        }
+      ]
     },
     "Band": {
       "description": "A band of a scene's repo: a header over its rows, or over blocks.",
@@ -864,6 +880,32 @@
           "properties": {
             "type": {
               "const": "boxplot",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/Heat",
+          "properties": {
+            "type": {
+              "const": "heat",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/Plot",
+          "properties": {
+            "type": {
+              "const": "plot",
               "type": "string"
             }
           },
@@ -2446,6 +2488,19 @@
           "type": "object"
         },
         {
+          "$ref": "#/$defs/SearchField",
+          "properties": {
+            "type": {
+              "const": "search",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
           "$ref": "#/$defs/UploadField",
           "properties": {
             "type": {
@@ -2463,6 +2518,19 @@
           "properties": {
             "type": {
               "const": "scan",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/SliderField",
+          "properties": {
+            "type": {
+              "const": "slider",
               "type": "string"
             }
           },
@@ -2896,6 +2964,220 @@
         "k"
       ],
       "type": "object"
+    },
+    "Heat": {
+      "additionalProperties": true,
+      "description": "A grid of cells coloured by value on five steps of one tone, with row and column labels and a legend.",
+      "properties": {
+        "columns": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "edges": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/HeatEdges"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "empty": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "grid": {
+          "items": {
+            "$ref": "#/$defs/HeatRow"
+          },
+          "type": "array"
+        },
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "lang": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "scale": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/HeatScale"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "selected": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/HeatPick"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "tap": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Tap"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "title": {
+          "type": "string"
+        },
+        "tone": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/HeatTone"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "title",
+        "columns",
+        "grid"
+      ],
+      "type": "object"
+    },
+    "HeatCell": {
+      "description": "One cell: a value, a short label, both, or neither for no data.",
+      "properties": {
+        "label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "value": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "HeatEdges": {
+      "anyOf": [
+        {
+          "enum": [
+            "steps",
+            "ends"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "string"
+        }
+      ]
+    },
+    "HeatPick": {
+      "description": "A cell by its row's name and its column.",
+      "properties": {
+        "column": {
+          "type": "string"
+        },
+        "row": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "row",
+        "column"
+      ],
+      "type": "object"
+    },
+    "HeatRow": {
+      "description": "A row of the grid: its name and one cell per column.",
+      "properties": {
+        "cells": {
+          "items": {
+            "$ref": "#/$defs/HeatCell"
+          },
+          "type": "array"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "cells"
+      ],
+      "type": "object"
+    },
+    "HeatScale": {
+      "description": "The value scale: a fixed min and max (else from the values) and the unit the legend shows.",
+      "properties": {
+        "max": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "min": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "unit": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "HeatTone": {
+      "anyOf": [
+        {
+          "enum": [
+            "info",
+            "ok",
+            "warn",
+            "bad",
+            "accent",
+            "mute"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "string"
+        }
+      ]
     },
     "Hello": {
       "description": "The stream's first event: the version it runs at, the stream's id, the server's epoch and its key limit.",
@@ -4678,6 +4960,48 @@
         },
         {
           "properties": {
+            "drop": {
+              "format": "uint",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "id": {
+              "type": "string"
+            },
+            "op": {
+              "const": "points",
+              "type": "string"
+            },
+            "series": {
+              "type": "string"
+            },
+            "x": {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            },
+            "y": {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            }
+          },
+          "required": [
+            "op",
+            "id",
+            "series",
+            "x",
+            "y"
+          ],
+          "type": "object"
+        },
+        {
+          "properties": {
             "count": {
               "format": "uint64",
               "minimum": 0,
@@ -5072,6 +5396,22 @@
       ],
       "description": "A named test of a value; never a regex."
     },
+    "Peak": {
+      "description": "A plot's peak: a line across at `y`, with its label.",
+      "properties": {
+        "label": {
+          "type": "string"
+        },
+        "y": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "y",
+        "label"
+      ],
+      "type": "object"
+    },
     "Pending": {
       "description": "A screen's bar of unsaved changes.",
       "properties": {
@@ -5273,6 +5613,134 @@
         "steps",
         "probes"
       ],
+      "type": "object"
+    },
+    "Plot": {
+      "additionalProperties": true,
+      "description": "A line plot of named series over a numeric or time x: points stream in by `points`; a window, a target and a peak.",
+      "properties": {
+        "empty": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "peak": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Peak"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "series": {
+          "items": {
+            "$ref": "#/$defs/Trace"
+          },
+          "type": "array"
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "target": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Target"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "title": {
+          "type": "string"
+        },
+        "window": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "x": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PlotAxis"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "y": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PlotAxis"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "title",
+        "series"
+      ],
+      "type": "object"
+    },
+    "PlotAxis": {
+      "description": "A plot's axis: its label and unit, a fixed range, and whether its values read as numbers or as seconds.",
+      "properties": {
+        "label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "max": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "min": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "scale": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AxisScale"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "unit": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
       "type": "object"
     },
     "PlotBox": {
@@ -6255,6 +6723,96 @@
       },
       "type": "object"
     },
+    "SearchField": {
+      "additionalProperties": true,
+      "description": "A search box: filters a list or table on the screen, or sends its text in a live form.",
+      "properties": {
+        "checks": {
+          "items": {
+            "$ref": "#/$defs/Check"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "doc": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "enabled": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "filters": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "open": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "placeholder": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "value": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "was": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object"
+    },
     "Secret": {
       "additionalProperties": true,
       "description": "A secret's input: its value is never sent back.",
@@ -6820,6 +7378,108 @@
         }
       ]
     },
+    "SliderField": {
+      "additionalProperties": true,
+      "description": "A number on a track from `min` to `max`: the label over the thumb shows it with its `unit`, and a live form sends it on let go.",
+      "properties": {
+        "checks": {
+          "items": {
+            "$ref": "#/$defs/Check"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "doc": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "enabled": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "error": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "max": {
+          "description": "A number on the wire, as JSON wrote it.",
+          "type": "number"
+        },
+        "min": {
+          "description": "A number on the wire, as JSON wrote it.",
+          "type": "number"
+        },
+        "name": {
+          "type": "string"
+        },
+        "open": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "step": {
+          "description": "A number on the wire, as JSON wrote it.",
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "unit": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "value": {
+          "description": "A number on the wire, as JSON wrote it.",
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "was": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "name",
+        "min",
+        "max"
+      ],
+      "type": "object"
+    },
     "SortDir": {
       "anyOf": [
         {
@@ -7085,6 +7745,18 @@
             "file"
           ],
           "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "slide": {
+              "$ref": "#/$defs/StepSlide"
+            }
+          },
+          "required": [
+            "slide"
+          ],
+          "type": "object"
         }
       ]
     },
@@ -7174,6 +7846,22 @@
       },
       "required": [
         "name"
+      ],
+      "type": "object"
+    },
+    "StepSlide": {
+      "description": "A slider field's thumb moved to a number and let go.",
+      "properties": {
+        "field": {
+          "type": "string"
+        },
+        "to": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "field",
+        "to"
       ],
       "type": "object"
     },
@@ -7593,6 +8281,22 @@
           ]
         }
       },
+      "type": "object"
+    },
+    "Target": {
+      "description": "A plot's target: the y range shaded from `min` to `max`.",
+      "properties": {
+        "max": {
+          "type": "number"
+        },
+        "min": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "min",
+        "max"
+      ],
       "type": "object"
     },
     "Text": {
@@ -8083,6 +8787,13 @@
             "null"
           ]
         },
+        "p99_patch_ms": {
+          "format": "double",
+          "type": [
+            "number",
+            "null"
+          ]
+        },
         "steps_ms": {
           "items": {
             "format": "double",
@@ -8158,8 +8869,18 @@
     },
     "ToggleField": {
       "additionalProperties": true,
-      "description": "An on or off switch.",
+      "description": "An on or off switch; `as: \"check\"` draws it as a checkbox.",
       "properties": {
+        "as": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ToggleLook"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
         "checks": {
           "items": {
             "$ref": "#/$defs/Check"
@@ -8237,6 +8958,20 @@
         "name"
       ],
       "type": "object"
+    },
+    "ToggleLook": {
+      "anyOf": [
+        {
+          "enum": [
+            "switch",
+            "check"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "string"
+        }
+      ]
     },
     "Tone": {
       "anyOf": [
@@ -8346,6 +9081,42 @@
           "type": "string"
         }
       ]
+    },
+    "Trace": {
+      "description": "One named line of a plot: its tone and its points, an `x` and a `y` each.",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "tone": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Tone"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "x": {
+          "items": {
+            "type": "number"
+          },
+          "type": "array"
+        },
+        "y": {
+          "items": {
+            "type": "number"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "name",
+        "x",
+        "y"
+      ],
+      "type": "object"
     },
     "TreeDrawn": {
       "description": "How a renderer drew a block: its own view, its fallback, or not at all.",

@@ -46,14 +46,15 @@ pub(in crate::codegen) fn files(root: &Path, s: &Value) -> std::io::Result<Files
         .map(|k| format!("        case .{k}(let b): (\"{k}\", b.id)\n"))
         .collect();
     let facts = facts(s).map_err(std::io::Error::other)?;
+    let facts = facts.strip_prefix('\n').unwrap_or(&facts);
     let text = format!(
-        "import Blocks\nimport SwiftUI\n\nextension Block {{\n    internal var typeAndID: (type: String, id: String?) {{\n        switch self {{\n{named}        case .appBlock(let b): (b.type, b.id)\n        }}\n    }}\n{facts}}}\n\ninternal struct KindView: View {{\n    internal let block: Block\n\n    internal var body: some View {{\n        switch block {{\n{}        case .appBlock(let block): AppBlockView(block: block)\n{off}        }}\n    }}\n}}\n",
+        "import Blocks\nimport SwiftUI\n\nextension Block {{\n{facts}}}\n\ninternal struct KindView: View {{\n    internal let block: Block\n\n    internal var body: some View {{\n        switch block {{\n{}        case .appBlock(let block): AppBlockView(block: block)\n{off}        }}\n    }}\n}}\n",
         drawn.concat()
     );
     let hosts = patch::HOSTS.map(|(k, l)| format!("\"{k}\": \"{l}\""));
     let walked = patch::WALKED.map(|l| format!("\"{l}\""));
     let lists = format!(
-        "extension Block {{\n    package static let hosts: [String: String] = [{}]\n    package static let walked = [{}]\n}}\n",
+        "extension Block {{\n    package static let hosts: [String: String] = [{}]\n    package static let walked = [{}]\n\n    package var typeAndID: (type: String, id: String?) {{\n        switch self {{\n{named}        case .appBlock(let b): (b.type, b.id)\n        }}\n    }}\n}}\n",
         hosts.join(", "),
         walked.join(", ")
     );

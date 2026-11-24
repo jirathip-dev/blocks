@@ -1,0 +1,44 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>plot: states</title>
+<link rel="stylesheet" href="../neutral-default/tokens.css"><link rel="stylesheet" href="../../../web/dist/blocks.css"><link rel="stylesheet" href="page.css"><link rel="stylesheet" href="plot.css">
+<style>main{grid-template-columns:repeat(2,minmax(0,1fr))}.tile.one .plot{margin-top:var(--s1)}</style>
+<script src="plot.js"></script></head>
+<body><main>
+<div class="tile"><b>plot</b> <span class="m">every state the renderers draw</span></div>
+<div class="tile case"><h3>1 · Live in a 10 s window</h3><p class="note">Until the window is full the line fills from the left. Then the newest point stays on the right edge and the line leaves on the left. The point before the window is kept, so the line meets the left edge cut off cleanly. Tick labels move with the line and hide as they reach an edge.</p>
+<div class="film"><div id="w1"></div><div id="w2"></div><div id="w3"></div></div></div>
+<div class="tile one case"><h3>2 · Static, time axis</h3><p class="note">One series, no window, no fixed range: the whole span shows. Seconds read as <code>m:ss</code>. One series still gets a legend, as the readout of its last value.</p><div id="s1"></div></div>
+<div class="tile one case"><h3>3 · Static, number axis with a unit</h3><p class="note">A plain number axis: the label and unit go under the right end of the x axis, and above the y ticks for y. Tick texts are bare numbers.</p><div id="s2"></div></div>
+<div class="tile one case"><h3>4 · A long session: h:mm:ss</h3><p class="note">Past an hour the ticks read <code>h:mm:ss</code>, in 15 minute steps here. At most 6 x ticks and 5 y ticks at any width. Under 520 px every other x label is hidden, picked by the tick's value so the labels do not jump as the line moves.</p><div id="s3"></div></div>
+<div class="tile one case"><h3>5 · Peak near the top edge</h3><p class="note">The peak is a 1 px dashed ink line across the plot, under the series. Its label is in the legend, beside a dashed key, so it never covers the line or the newest point at the right edge, and it never runs into the top edge.</p><div id="s4"></div></div>
+<div class="tile one case"><h3>6 · Peak inside the target</h3><p class="note">The dashed peak line is drawn over the band. The band is shaded moss green with a 1 px edge, and the legend names it with its range. The legend lists the series, then the target, then the peak.</p><div id="s5"></div></div>
+<div class="tile one case"><h3>7 · Long title, long series names, three series</h3><p class="note">The title and the legend wrap and are never cut. Series with no tone take ink, teal, ochre, purple, moss green in that order, as in <code>chart</code>.</p><div id="s6"></div></div>
+<div class="tile one case"><h3>8 · Empty</h3><p class="note">No points yet: the grid at its fixed range (or 0 to the window), and the block's <code>empty</code> text in the middle. No last values in the legend.</p><div id="s7"></div></div>
+<div class="tile one case"><h3>9 · An older client</h3><p class="note">A client built before <code>plot</code> draws the fallback row: the title and the block's summary. A client built before <code>points</code> asks for the whole screen each frame.</p>
+<div class="fb"><b>Set 3</b><span class="m">plot · 2 series</span></div></div>
+</main>
+<script>
+const live = to => series(Math.max(0, to - 12), to, 80, repeaters(24, 0));
+const W = (t, title) => ({ type: "plot", title, window: 10, x: { scale: "time" }, y: { unit: "kg", min: 0, max: 40 }, target: { min: 20, max: 30 }, series: [{ name: "Force", ...live(t) }] });
+const hang = series(0, 10, 80, t => t < 0.5 ? 0 : t < 8.5 ? 30 + 12 * Math.exp(-(t - 1.2) * (t - 1.2) * 3) - 0.9 * (t - 1) + (hash(t) - 0.5) : 0);
+const hb = Math.max(...hang.y);
+const depth = { x: [6, 8, 10, 12, 15, 18, 20, 25, 30], y: [14.2, 19.8, 25.1, 29.4, 34.0, 37.2, 38.9, 41.6, 43.0] };
+const depth2 = { x: depth.x, y: depth.y.map((v, i) => +(v * 0.9 + i * 0.25).toFixed(1)) };
+const long = series(0, 4350, 0.2, t => 90 + 40 * Math.min(1, t / 900) + 10 * Math.sin(t / 300) + (hash(t) - 0.5) * 4);
+const near = series(0, 20, 20, t => 20 + 18 * Math.sin(t / 3.2) ** 2 + (hash(t) - 0.5));
+const nmax = Math.max(...near.y);
+const inT = series(0, 20, 20, t => 18 + 6 * Math.sin(t / 2.5) + (hash(t) - 0.5));
+const imax = Math.max(...inT.y);
+window.blocks = {
+  w1: W(4, "At 0:04"), w2: W(10, "At 0:10"), w3: W(17.3, "At 0:17"),
+  s1: { type: "plot", title: "Max hang, 20 mm", x: { label: "Time", scale: "time" }, y: { label: "Force", unit: "kg" }, peak: { y: hb, label: `Peak ${hb.toFixed(1)} kg` }, series: [{ name: "Force", ...hang }] },
+  s2: { type: "plot", title: "Max hang by edge depth", x: { label: "Edge", unit: "mm" }, y: { label: "Force", unit: "kg" }, series: [{ name: "Left hand", ...depth }, { name: "Right hand", ...depth2 }] },
+  s3: { type: "plot", title: "Heart rate, long session", x: { label: "Session", scale: "time" }, y: { unit: "bpm" }, series: [{ name: "Heart rate", ...long }] },
+  s4: { type: "plot", title: "Peak near the top", x: { scale: "time" }, y: { unit: "kg", min: 0, max: 40 }, peak: { y: nmax, label: `Peak ${nmax.toFixed(1)} kg` }, series: [{ name: "Force", ...near }] },
+  s5: { type: "plot", title: "Peak in the target", x: { scale: "time" }, y: { unit: "kg", min: 0, max: 40 }, target: { min: 20, max: 30 }, peak: { y: imax, label: `Peak ${imax.toFixed(1)} kg` }, series: [{ name: "Force", ...inT }] },
+  s6: { type: "plot", title: "Half-crimp repeaters on the 18 mm edge, both hands, week 6 of the strength block", x: { label: "Time", scale: "time" }, y: { label: "Force", unit: "kg" },
+    series: [{ name: "Left hand, half crimp", ...series(0, 20, 40, repeaters(22, 0)) }, { name: "Right hand, half crimp after the shoulder rest", ...series(0, 20, 40, repeaters(19.5, 0)) }, { name: "Target pace from the coach's plan", ...series(0, 20, 40, repeaters(21, -0.5)) }] },
+  s7: { type: "plot", title: "Set 1", empty: "Pull to start", window: 30, x: { label: "Time", scale: "time" }, y: { label: "Force", unit: "kg", min: 0, max: 40 }, target: { min: 20, max: 30 }, series: [{ name: "Force", x: [], y: [] }] },
+};
+mount();
+</script></body></html>

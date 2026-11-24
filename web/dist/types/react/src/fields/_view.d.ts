@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import type { Field, Lit, Locale, OnFile } from "../../../src/core/index.ts";
+import type { Field, Lit, Locale, OnFile, Seek } from "../../../src/core/index.ts";
 export type FieldCx = {
     locale: Locale;
     key: string;
@@ -12,10 +12,13 @@ export type FieldCx = {
         up: number;
         failed: number;
     }): void;
+    send?: ((value: unknown) => unknown) | undefined;
+    found?: Seek | undefined;
 };
 export type FieldView<F = Field> = {
     row?: string;
     group?: boolean;
+    waits?: boolean;
     draw(field: F, c: FieldCx, attrs: Record<string, unknown>): ReactNode;
     sent?(field: F, value: Lit): unknown;
 };

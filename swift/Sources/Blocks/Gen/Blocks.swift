@@ -117,6 +117,14 @@ public struct Attachment: Codable, Equatable, Sendable {
     }
 }
 
+public struct AxisScale: RawRepresentable, Hashable, Codable, Equatable, Sendable {
+    public let rawValue: String
+    public init(rawValue: String) { self.rawValue = rawValue }
+    public static let number = Self(rawValue: "number")
+    public static let time = Self(rawValue: "time")
+    public static let all: [Self] = [.number, .time]
+}
+
 public struct Band: Codable, Equatable, Sendable {
     public var blocks: [Block]?
     public var header: String?
@@ -188,9 +196,11 @@ public enum Block: Codable, Equatable, Sendable {
     case tool(Tool)
     case sidebar(Sidebar)
     case boxplot(Boxplot)
+    case heat(Heat)
+    case plot(Plot)
     case appBlock(JSONValue)
 
-    public static let tags: Set<String> = ["screen", "modal", "sheet", "section", "list", "row", "card", "choice", "form", "config", "secret", "run", "button", "chips", "stat", "text", "images", "web", "diff", "editor", "scene", "diagram", "composer", "lines", "prose", "hero", "media", "nav", "island", "table", "steps", "chart", "toast", "pages", "timeline", "import", "message", "tool", "sidebar", "boxplot"]
+    public static let tags: Set<String> = ["screen", "modal", "sheet", "section", "list", "row", "card", "choice", "form", "config", "secret", "run", "button", "chips", "stat", "text", "images", "web", "diff", "editor", "scene", "diagram", "composer", "lines", "prose", "hero", "media", "nav", "island", "table", "steps", "chart", "toast", "pages", "timeline", "import", "message", "tool", "sidebar", "boxplot", "heat", "plot"]
 
     private enum Tag: String, CodingKey { case tag = "type" }
 
@@ -236,6 +246,8 @@ public enum Block: Codable, Equatable, Sendable {
         case "tool": self = try (try? Tool(from: decoder)).map(Self.tool) ?? .appBlock(JSONValue(from: decoder))
         case "sidebar": self = try (try? Sidebar(from: decoder)).map(Self.sidebar) ?? .appBlock(JSONValue(from: decoder))
         case "boxplot": self = try (try? Boxplot(from: decoder)).map(Self.boxplot) ?? .appBlock(JSONValue(from: decoder))
+        case "heat": self = try (try? Heat(from: decoder)).map(Self.heat) ?? .appBlock(JSONValue(from: decoder))
+        case "plot": self = try (try? Plot(from: decoder)).map(Self.plot) ?? .appBlock(JSONValue(from: decoder))
         default: self = .appBlock(try JSONValue(from: decoder))
         }
     }
@@ -282,6 +294,8 @@ public enum Block: Codable, Equatable, Sendable {
         case .tool(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("tool", forKey: .tag)
         case .sidebar(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("sidebar", forKey: .tag)
         case .boxplot(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("boxplot", forKey: .tag)
+        case .heat(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("heat", forKey: .tag)
+        case .plot(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("plot", forKey: .tag)
         case .appBlock(let v): try v.encode(to: encoder)
         }
     }
@@ -880,11 +894,13 @@ public enum Field: Codable, Equatable, Sendable {
     case toggle(ToggleField)
     case picker(PickerField)
     case secret(SecretField)
+    case search(SearchField)
     case upload(UploadField)
     case scan(ScanField)
+    case slider(SliderField)
     case otherField(JSONValue)
 
-    public static let tags: Set<String> = ["text", "toggle", "picker", "secret", "upload", "scan"]
+    public static let tags: Set<String> = ["text", "toggle", "picker", "secret", "search", "upload", "scan", "slider"]
 
     private enum Tag: String, CodingKey { case tag = "type" }
 
@@ -894,8 +910,10 @@ public enum Field: Codable, Equatable, Sendable {
         case "toggle": self = try (try? ToggleField(from: decoder)).map(Self.toggle) ?? .otherField(JSONValue(from: decoder))
         case "picker": self = try (try? PickerField(from: decoder)).map(Self.picker) ?? .otherField(JSONValue(from: decoder))
         case "secret": self = try (try? SecretField(from: decoder)).map(Self.secret) ?? .otherField(JSONValue(from: decoder))
+        case "search": self = try (try? SearchField(from: decoder)).map(Self.search) ?? .otherField(JSONValue(from: decoder))
         case "upload": self = try (try? UploadField(from: decoder)).map(Self.upload) ?? .otherField(JSONValue(from: decoder))
         case "scan": self = try (try? ScanField(from: decoder)).map(Self.scan) ?? .otherField(JSONValue(from: decoder))
+        case "slider": self = try (try? SliderField(from: decoder)).map(Self.slider) ?? .otherField(JSONValue(from: decoder))
         default: self = .otherField(try JSONValue(from: decoder))
         }
     }
@@ -906,8 +924,10 @@ public enum Field: Codable, Equatable, Sendable {
         case .toggle(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("toggle", forKey: .tag)
         case .picker(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("picker", forKey: .tag)
         case .secret(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("secret", forKey: .tag)
+        case .search(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("search", forKey: .tag)
         case .upload(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("upload", forKey: .tag)
         case .scan(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("scan", forKey: .tag)
+        case .slider(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("slider", forKey: .tag)
         case .otherField(let v): try v.encode(to: encoder)
         }
     }
@@ -1099,6 +1119,98 @@ public struct Have: Codable, Equatable, Sendable {
         self.k = k
         self.rev = rev
     }
+}
+
+public struct Heat: Codable, Equatable, Sendable {
+    public var columns: [String]
+    public var edges: HeatEdges?
+    public var empty: String?
+    public var grid: [HeatRow]
+    public var id: String?
+    public var lang: String?
+    public var scale: HeatScale?
+    public var selected: HeatPick?
+    public var show: Expr?
+    public var tap: Tap?
+    public var title: String
+    public var tone: HeatTone?
+
+    public init(columns: [String], edges: HeatEdges? = nil, empty: String? = nil, grid: [HeatRow], id: String? = nil, lang: String? = nil, scale: HeatScale? = nil, selected: HeatPick? = nil, show: Expr? = nil, tap: Tap? = nil, title: String, tone: HeatTone? = nil) {
+        self.columns = columns
+        self.edges = edges
+        self.empty = empty
+        self.grid = grid
+        self.id = id
+        self.lang = lang
+        self.scale = scale
+        self.selected = selected
+        self.show = show
+        self.tap = tap
+        self.title = title
+        self.tone = tone
+    }
+}
+
+public struct HeatCell: Codable, Equatable, Sendable {
+    public var label: String?
+    public var value: Double?
+
+    public init(label: String? = nil, value: Double? = nil) {
+        self.label = label
+        self.value = value
+    }
+}
+
+public struct HeatEdges: RawRepresentable, Hashable, Codable, Equatable, Sendable {
+    public let rawValue: String
+    public init(rawValue: String) { self.rawValue = rawValue }
+    public static let steps = Self(rawValue: "steps")
+    public static let ends = Self(rawValue: "ends")
+    public static let all: [Self] = [.steps, .ends]
+}
+
+public struct HeatPick: Codable, Equatable, Sendable {
+    public var column: String
+    public var row: String
+
+    public init(column: String, row: String) {
+        self.column = column
+        self.row = row
+    }
+}
+
+public struct HeatRow: Codable, Equatable, Sendable {
+    public var cells: [HeatCell]
+    public var name: String
+
+    public init(cells: [HeatCell], name: String) {
+        self.cells = cells
+        self.name = name
+    }
+}
+
+public struct HeatScale: Codable, Equatable, Sendable {
+    public var max: Double?
+    public var min: Double?
+    public var unit: String?
+
+    public init(max: Double? = nil, min: Double? = nil, unit: String? = nil) {
+        self.max = max
+        self.min = min
+        self.unit = unit
+    }
+}
+
+public struct HeatTone: RawRepresentable, Hashable, Codable, Equatable, Sendable {
+    public let rawValue: String
+    public init(rawValue: String) { self.rawValue = rawValue }
+    public static let info = Self(rawValue: "info")
+    public static let ok = Self(rawValue: "ok")
+    public static let warn = Self(rawValue: "warn")
+    public static let bad = Self(rawValue: "bad")
+    public static let accent = Self(rawValue: "accent")
+    public static let mute = Self(rawValue: "mute")
+    public static let all: [Self] = [.info, .ok, .warn, .bad, .accent, .mute]
 }
 
 public struct Hello: Codable, Equatable, Sendable {
@@ -1828,6 +1940,22 @@ public struct OpAppend: Codable, Equatable, Sendable {
     }
 }
 
+public struct OpPoints: Codable, Equatable, Sendable {
+    public var drop: Int?
+    public var id: String
+    public var series: String
+    public var x: [Double]
+    public var y: [Double]
+
+    public init(drop: Int? = nil, id: String, series: String, x: [Double], y: [Double]) {
+        self.drop = drop
+        self.id = id
+        self.series = series
+        self.x = x
+        self.y = y
+    }
+}
+
 public struct OpBadge: Codable, Equatable, Sendable {
     public var count: UInt64
 
@@ -1859,6 +1987,7 @@ public enum Op: Codable, Equatable, Sendable {
     case remove(OpRemove)
     case replace(OpReplace)
     case append(OpAppend)
+    case points(OpPoints)
     case badge(OpBadge)
     case dot(OpDot)
     case screen(OpScreen)
@@ -1874,6 +2003,7 @@ public enum Op: Codable, Equatable, Sendable {
         case "remove": self = .remove(try OpRemove(from: decoder))
         case "replace": self = .replace(try OpReplace(from: decoder))
         case "append": self = .append(try OpAppend(from: decoder))
+        case "points": self = .points(try OpPoints(from: decoder))
         case "badge": self = .badge(try OpBadge(from: decoder))
         case "dot": self = .dot(try OpDot(from: decoder))
         case "screen": self = .screen(try OpScreen(from: decoder))
@@ -1889,6 +2019,7 @@ public enum Op: Codable, Equatable, Sendable {
         case .remove(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("remove", forKey: .tag)
         case .replace(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("replace", forKey: .tag)
         case .append(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("append", forKey: .tag)
+        case .points(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("points", forKey: .tag)
         case .badge(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("badge", forKey: .tag)
         case .dot(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("dot", forKey: .tag)
         case .screen(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("screen", forKey: .tag)
@@ -2075,6 +2206,16 @@ public struct Pattern: RawRepresentable, Hashable, Codable, Equatable, Sendable 
     public static let all: [Self] = [.filled, .email, .url, .number]
 }
 
+public struct Peak: Codable, Equatable, Sendable {
+    public var label: String
+    public var y: Double
+
+    public init(label: String, y: Double) {
+        self.label = label
+        self.y = y
+    }
+}
+
 public struct Pending: Codable, Equatable, Sendable {
     public var count: String
     public var discard: Tap
@@ -2157,6 +2298,48 @@ public struct PlanRun: Codable, Equatable, Sendable {
         self.scripts = scripts
         self.size = size
         self.steps = steps
+    }
+}
+
+public struct Plot: Codable, Equatable, Sendable {
+    public var empty: String?
+    public var id: String?
+    public var peak: Peak?
+    public var series: [Trace]
+    public var show: Expr?
+    public var target: Target?
+    public var title: String
+    public var window: Double?
+    public var x: PlotAxis?
+    public var y: PlotAxis?
+
+    public init(empty: String? = nil, id: String? = nil, peak: Peak? = nil, series: [Trace], show: Expr? = nil, target: Target? = nil, title: String, window: Double? = nil, x: PlotAxis? = nil, y: PlotAxis? = nil) {
+        self.empty = empty
+        self.id = id
+        self.peak = peak
+        self.series = series
+        self.show = show
+        self.target = target
+        self.title = title
+        self.window = window
+        self.x = x
+        self.y = y
+    }
+}
+
+public struct PlotAxis: Codable, Equatable, Sendable {
+    public var label: String?
+    public var max: Double?
+    public var min: Double?
+    public var scale: AxisScale?
+    public var unit: String?
+
+    public init(label: String? = nil, max: Double? = nil, min: Double? = nil, scale: AxisScale? = nil, unit: String? = nil) {
+        self.label = label
+        self.max = max
+        self.min = min
+        self.scale = scale
+        self.unit = unit
     }
 }
 
@@ -2503,6 +2686,36 @@ public struct Screen: Codable, Equatable, Sendable {
     }
 }
 
+public struct SearchField: Codable, Equatable, Sendable {
+    public var checks: [Check]?
+    public var doc: String?
+    public var enabled: Expr?
+    public var error: String?
+    public var filters: String?
+    public var label: String?
+    public var name: String
+    public var open: Bool?
+    public var placeholder: String?
+    public var show: Expr?
+    public var value: String?
+    public var was: String?
+
+    public init(checks: [Check]? = nil, doc: String? = nil, enabled: Expr? = nil, error: String? = nil, filters: String? = nil, label: String? = nil, name: String, open: Bool? = nil, placeholder: String? = nil, show: Expr? = nil, value: String? = nil, was: String? = nil) {
+        self.checks = checks
+        self.doc = doc
+        self.enabled = enabled
+        self.error = error
+        self.filters = filters
+        self.label = label
+        self.name = name
+        self.open = open
+        self.placeholder = placeholder
+        self.show = show
+        self.value = value
+        self.was = was
+    }
+}
+
 public struct Secret: Codable, Equatable, Sendable {
     public var action: String
     public var id: String?
@@ -2743,6 +2956,40 @@ public struct Sky: RawRepresentable, Hashable, Codable, Equatable, Sendable {
     public static let all: [Self] = [.clear, .windy, .fog, .storm]
 }
 
+public struct SliderField: Codable, Equatable, Sendable {
+    public var checks: [Check]?
+    public var doc: String?
+    public var enabled: Expr?
+    public var error: String?
+    public var label: String?
+    public var max: Double
+    public var min: Double
+    public var name: String
+    public var open: Bool?
+    public var show: Expr?
+    public var step: Double?
+    public var unit: String?
+    public var value: Double?
+    public var was: String?
+
+    public init(checks: [Check]? = nil, doc: String? = nil, enabled: Expr? = nil, error: String? = nil, label: String? = nil, max: Double, min: Double, name: String, open: Bool? = nil, show: Expr? = nil, step: Double? = nil, unit: String? = nil, value: Double? = nil, was: String? = nil) {
+        self.checks = checks
+        self.doc = doc
+        self.enabled = enabled
+        self.error = error
+        self.label = label
+        self.max = max
+        self.min = min
+        self.name = name
+        self.open = open
+        self.show = show
+        self.step = step
+        self.unit = unit
+        self.value = value
+        self.was = was
+    }
+}
+
 public struct SortDir: RawRepresentable, Hashable, Codable, Equatable, Sendable {
     public let rawValue: String
     public init(rawValue: String) { self.rawValue = rawValue }
@@ -2813,6 +3060,7 @@ public indirect enum Step: Codable, Equatable, Sendable {
     case gesture(StepGesture)
     case refuse(StepRefuse)
     case file(StepFile)
+    case slide(StepSlide)
     case unknown(JSONValue)
 
     private struct Key: CodingKey {
@@ -2835,6 +3083,7 @@ public indirect enum Step: Codable, Equatable, Sendable {
             case "gesture": if let v = try? c.decode(StepGesture.self, forKey: k) { self = .gesture(v); return }
             case "refuse": if let v = try? c.decode(StepRefuse.self, forKey: k) { self = .refuse(v); return }
             case "file": if let v = try? c.decode(StepFile.self, forKey: k) { self = .file(v); return }
+            case "slide": if let v = try? c.decode(StepSlide.self, forKey: k) { self = .slide(v); return }
             default: break
             }
             self = .unknown(try JSONValue(from: decoder)); return
@@ -2853,6 +3102,7 @@ public indirect enum Step: Codable, Equatable, Sendable {
         case .gesture(let v): var c = encoder.container(keyedBy: Key.self); try c.encode(v, forKey: Key("gesture"))
         case .refuse(let v): var c = encoder.container(keyedBy: Key.self); try c.encode(v, forKey: Key("refuse"))
         case .file(let v): var c = encoder.container(keyedBy: Key.self); try c.encode(v, forKey: Key("file"))
+        case .slide(let v): var c = encoder.container(keyedBy: Key.self); try c.encode(v, forKey: Key("slide"))
         case .unknown(let v): try v.encode(to: encoder)
         }
     }
@@ -2909,6 +3159,16 @@ public struct StepShot: Codable, Equatable, Sendable {
 
     public init(name: String) {
         self.name = name
+    }
+}
+
+public struct StepSlide: Codable, Equatable, Sendable {
+    public var field: String
+    public var to: Double
+
+    public init(field: String, to: Double) {
+        self.field = field
+        self.to = to
     }
 }
 
@@ -3067,6 +3327,16 @@ public struct Tap: Codable, Equatable, Sendable {
         self.thread = thread
         self.url = url
         self.values = values
+    }
+}
+
+public struct Target: Codable, Equatable, Sendable {
+    public var max: Double
+    public var min: Double
+
+    public init(max: Double, min: Double) {
+        self.max = max
+        self.min = min
     }
 }
 
@@ -3237,13 +3507,15 @@ public struct Timings: Codable, Equatable, Sendable {
     public var frames_over_budget: UInt32?
     public var longest_frame_ms: Double?
     public var longest_patch_ms: Double?
+    public var p99_patch_ms: Double?
     public var steps_ms: [Double]
 
-    public init(first_paint_ms: Double, frames_over_budget: UInt32? = nil, longest_frame_ms: Double? = nil, longest_patch_ms: Double? = nil, steps_ms: [Double]) {
+    public init(first_paint_ms: Double, frames_over_budget: UInt32? = nil, longest_frame_ms: Double? = nil, longest_patch_ms: Double? = nil, p99_patch_ms: Double? = nil, steps_ms: [Double]) {
         self.first_paint_ms = first_paint_ms
         self.frames_over_budget = frames_over_budget
         self.longest_frame_ms = longest_frame_ms
         self.longest_patch_ms = longest_patch_ms
+        self.p99_patch_ms = p99_patch_ms
         self.steps_ms = steps_ms
     }
 }
@@ -3267,6 +3539,7 @@ public struct Toast: Codable, Equatable, Sendable {
 }
 
 public struct ToggleField: Codable, Equatable, Sendable {
+    public var `as`: ToggleLook?
     public var checks: [Check]?
     public var doc: String?
     public var enabled: Expr?
@@ -3278,7 +3551,8 @@ public struct ToggleField: Codable, Equatable, Sendable {
     public var value: FieldValue?
     public var was: String?
 
-    public init(checks: [Check]? = nil, doc: String? = nil, enabled: Expr? = nil, error: String? = nil, label: String? = nil, name: String, open: Bool? = nil, show: Expr? = nil, value: FieldValue? = nil, was: String? = nil) {
+    public init(`as`: ToggleLook? = nil, checks: [Check]? = nil, doc: String? = nil, enabled: Expr? = nil, error: String? = nil, label: String? = nil, name: String, open: Bool? = nil, show: Expr? = nil, value: FieldValue? = nil, was: String? = nil) {
+        self.`as` = `as`
         self.checks = checks
         self.doc = doc
         self.enabled = enabled
@@ -3290,6 +3564,14 @@ public struct ToggleField: Codable, Equatable, Sendable {
         self.value = value
         self.was = was
     }
+}
+
+public struct ToggleLook: RawRepresentable, Hashable, Codable, Equatable, Sendable {
+    public let rawValue: String
+    public init(rawValue: String) { self.rawValue = rawValue }
+    public static let `switch` = Self(rawValue: "switch")
+    public static let check = Self(rawValue: "check")
+    public static let all: [Self] = [.`switch`, .check]
 }
 
 public struct Tone: RawRepresentable, Hashable, Codable, Equatable, Sendable {
@@ -3359,6 +3641,20 @@ public struct Total: RawRepresentable, Hashable, Codable, Equatable, Sendable {
     public static let avg = Self(rawValue: "avg")
     public static let count = Self(rawValue: "count")
     public static let all: [Self] = [.sum, .avg, .count]
+}
+
+public struct Trace: Codable, Equatable, Sendable {
+    public var name: String
+    public var tone: Tone?
+    public var x: [Double]
+    public var y: [Double]
+
+    public init(name: String, tone: Tone? = nil, x: [Double], y: [Double]) {
+        self.name = name
+        self.tone = tone
+        self.x = x
+        self.y = y
+    }
 }
 
 public struct TreeDrawn: RawRepresentable, Hashable, Codable, Equatable, Sendable {

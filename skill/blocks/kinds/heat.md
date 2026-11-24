@@ -1,0 +1,274 @@
+# `heat`
+
+A grid of cells coloured by value on five steps of one tone, with row and column labels and a legend.
+
+The Rust type `Heat`; in TS, `heat(fields: Heat)` from `web/src/gen/builders.ts`.
+
+## Fields
+
+| field | type | |
+|---|---|---|
+| `columns` | `string[]` | required |
+| `edges` | `HeatEdges` | optional |
+| `empty` | `string` | optional |
+| `grid` | `HeatRow[]` | required |
+| `id` | `string` | optional |
+| `lang` | `string` | optional |
+| `scale` | `HeatScale` | optional |
+| `selected` | `HeatPick` | optional |
+| `show` | `Expr` | optional |
+| `tap` | `Tap` | optional |
+| `title` | `string` | required |
+| `tone` | `HeatTone` | optional |
+
+## A sample
+
+```json
+{
+  "type": "heat",
+  "id": "load",
+  "title": "Training load by day",
+  "columns": [
+    "Mon",
+    "Tue",
+    "Wed",
+    "Thu",
+    "Fri",
+    "Sat",
+    "Sun"
+  ],
+  "grid": [
+    {
+      "name": "Week 1",
+      "cells": [
+        {
+          "label": "Rest"
+        },
+        {
+          "value": 120
+        },
+        {
+          "value": 53
+        },
+        {
+          "value": 106
+        },
+        {
+          "value": 39
+        },
+        {
+          "value": 92
+        },
+        {
+          "value": 145
+        }
+      ]
+    },
+    {
+      "name": "Week 2",
+      "cells": [
+        {
+          "label": "Rest"
+        },
+        {
+          "value": 37
+        },
+        {
+          "value": 90
+        },
+        {
+          "value": 143
+        },
+        {
+          "value": 76
+        },
+        {
+          "value": 129
+        },
+        {
+          "value": 62
+        }
+      ]
+    },
+    {
+      "name": "Week 3",
+      "cells": [
+        {
+          "label": "Rest"
+        },
+        {
+          "value": 74
+        },
+        {
+          "value": 127
+        },
+        {
+          "value": 60
+        },
+        {
+          "value": 113
+        },
+        {
+          "value": 46
+        },
+        {
+          "value": 99
+        }
+      ]
+    },
+    {
+      "name": "Week 4",
+      "cells": [
+        {
+          "label": "Rest"
+        },
+        {
+          "value": 111
+        },
+        {
+          "value": 44
+        },
+        {
+          "value": 97
+        },
+        {
+          "value": 30
+        },
+        {
+          "value": 83
+        },
+        {
+          "value": 136
+        }
+      ]
+    },
+    {
+      "name": "Week 5",
+      "cells": [
+        {
+          "label": "Rest"
+        },
+        {
+          "value": 148
+        },
+        {
+          "value": 81
+        },
+        {
+          "value": 134
+        },
+        {
+          "value": 67
+        },
+        {
+          "value": 120
+        },
+        {
+          "value": 53
+        }
+      ]
+    },
+    {
+      "name": "Week 6",
+      "cells": [
+        {
+          "label": "Rest"
+        },
+        {
+          "value": 65
+        },
+        {
+          "value": 118
+        },
+        {
+          "value": 51
+        },
+        {
+          "value": 104
+        },
+        {
+          "value": 37
+        },
+        {
+          "value": 90
+        }
+      ]
+    },
+    {
+      "name": "Week 7",
+      "cells": [
+        {
+          "label": "Rest"
+        },
+        {
+          "value": 102
+        },
+        {},
+        {
+          "value": 88
+        },
+        {
+          "value": 141
+        },
+        {
+          "value": 74
+        },
+        {
+          "value": 127
+        }
+      ]
+    },
+    {
+      "name": "Week 8",
+      "cells": [
+        {
+          "label": "Rest"
+        },
+        {
+          "value": 139
+        },
+        {
+          "value": 72
+        },
+        {
+          "value": 125
+        },
+        {
+          "value": 58
+        },
+        {
+          "value": 111
+        },
+        {
+          "value": 44
+        }
+      ]
+    }
+  ],
+  "scale": {
+    "unit": "TSS"
+  },
+  "tone": "warn",
+  "selected": {
+    "row": "Week 8",
+    "column": "Sat"
+  },
+  "tap": {
+    "action": "training.day"
+  }
+}
+```
+
+## The tree it draws
+
+```json
+{
+  "kind": "heat",
+  "id": "load",
+  "variant": null,
+  "drawn": "native",
+  "role": "figure",
+  "name": "Training load by day",
+  "children": []
+}
+```

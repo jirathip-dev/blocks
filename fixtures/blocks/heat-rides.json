@@ -1,0 +1,107 @@
+{
+  "type": "heat",
+  "id": "rides",
+  "title": "When you ride",
+  "columns": [
+    "6",
+    "9",
+    "12",
+    "15",
+    "18"
+  ],
+  "grid": [
+    {
+      "name": "Mon",
+      "cells": [
+        {
+          "value": 1
+        },
+        {},
+        {},
+        {},
+        {
+          "value": 5
+        }
+      ]
+    },
+    {
+      "name": "Tue",
+      "cells": [
+        {},
+        {},
+        {},
+        {
+          "value": 5
+        },
+        {}
+      ]
+    },
+    {
+      "name": "Wed",
+      "cells": [
+        {},
+        {},
+        {
+          "value": 5
+        },
+        {},
+        {}
+      ]
+    },
+    {
+      "name": "Thu",
+      "cells": [
+        {},
+        {
+          "value": 5
+        },
+        {},
+        {},
+        {}
+      ]
+    },
+    {
+      "name": "Fri",
+      "cells": [
+        {
+          "value": 5
+        },
+        {},
+        {},
+        {},
+        {
+          "value": 3
+        }
+      ]
+    },
+    {
+      "name": "Sat",
+      "cells": [
+        {},
+        {},
+        {},
+        {
+          "value": 3
+        },
+        {}
+      ]
+    },
+    {
+      "name": "Sun",
+      "cells": [
+        {},
+        {},
+        {
+          "value": 3
+        },
+        {},
+        {}
+      ]
+    }
+  ],
+  "scale": {
+    "unit": "rides"
+  },
+  "tone": "info",
+  "edges": "ends"
+}

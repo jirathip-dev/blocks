@@ -1,0 +1,116 @@
+{
+  "drawn": {
+    "band": "20–30 kg",
+    "last": [
+      "20.25 kg"
+    ],
+    "lines": [
+      [
+        0,
+        1,
+        2
+      ]
+    ],
+    "x": [
+      0.0,
+      10.0
+    ],
+    "xTicks": [
+      {
+        "at": -0.0,
+        "odd": false,
+        "text": "0:00"
+      },
+      {
+        "at": 2.0,
+        "odd": true,
+        "text": "0:02"
+      },
+      {
+        "at": 4.0,
+        "odd": false,
+        "text": "0:04"
+      },
+      {
+        "at": 6.0,
+        "odd": true,
+        "text": "0:06"
+      },
+      {
+        "at": 8.0,
+        "odd": false,
+        "text": "0:08"
+      },
+      {
+        "at": 10.0,
+        "odd": true,
+        "text": "0:10"
+      }
+    ],
+    "y": [
+      0.0,
+      40.0
+    ],
+    "yTicks": [
+      {
+        "at": -0.0,
+        "odd": false,
+        "text": "0"
+      },
+      {
+        "at": 10.0,
+        "odd": true,
+        "text": "10"
+      },
+      {
+        "at": 20.0,
+        "odd": false,
+        "text": "20"
+      },
+      {
+        "at": 30.0,
+        "odd": true,
+        "text": "30"
+      },
+      {
+        "at": 40.0,
+        "odd": false,
+        "text": "40"
+      }
+    ]
+  },
+  "plot": {
+    "id": "p",
+    "series": [
+      {
+        "name": "Force",
+        "x": [
+          0,
+          0.5,
+          1
+        ],
+        "y": [
+          0,
+          10.5,
+          20.25
+        ]
+      }
+    ],
+    "target": {
+      "max": 30,
+      "min": 20
+    },
+    "title": "Pull",
+    "type": "plot",
+    "window": 10,
+    "x": {
+      "scale": "time"
+    },
+    "y": {
+      "max": 40,
+      "min": 0,
+      "unit": "kg"
+    }
+  },
+  "why": "a window not yet full: the first point plus the window, the line fills from the left"
+}

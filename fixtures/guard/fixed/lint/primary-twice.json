@@ -1,0 +1,28 @@
+{
+  "type": "screen",
+  "id": "s",
+  "title": "Queue",
+  "blocks": [
+    {
+      "type": "card",
+      "id": "c",
+      "title": "Deploy",
+      "buttons": [
+        {
+          "type": "button",
+          "id": "ship",
+          "label": "Ship",
+          "action": "ship",
+          "style": "primary"
+        },
+        {
+          "type": "button",
+          "id": "stage",
+          "label": "Stage",
+          "action": "stage",
+          "style": "plain"
+        }
+      ]
+    }
+  ]
+}

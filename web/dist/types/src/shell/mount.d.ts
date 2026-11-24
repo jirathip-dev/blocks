@@ -22,6 +22,7 @@ export type Mount = {
     css?: string[];
     theme?: Theme;
     schemes?: Record<string, Scheme>;
+    look?: string;
     store?: Store;
     edit?: Editing;
     file?: OnFile;

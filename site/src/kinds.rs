@@ -5,8 +5,9 @@ use blocks::{
     Accept, Act, Bar, Block, Built, Button, ButtonStyle, Card, CardKind, ChipOption, Chips, Choice, ChoiceOption,
     Composer, ComposerChip, Diagram, Diff, Editor, Fallback, Field, FieldValue, Form, Hero, Hunk, Image, Images,
     Island, IslandSize, Label, Lane, LaneState, LineError, List, Mark, MarkKind, Media, Modal, Nav, NavLink, Node,
-    Other, Pages, Part, PickerField, Prose, Queued, Row, Run, ScanField, Scene, Screen, Secret, SecretField, Shown,
-    Span, Stage, Stat, Steps, Submit, Tap, Text, TextField, Tile, ToggleField, Tone, UploadField, Web,
+    Other, Pages, Part, PickerField, Prose, Queued, Row, Run, ScanField, Scene, Screen, SearchField, Secret,
+    SecretField, Shown, SliderField, Span, Stage, Stat, Steps, Submit, Tap, Text, TextField, Tile, ToggleField, Tone,
+    UploadField, Web,
 };
 use serde_json::{Number, Value};
 
@@ -24,7 +25,7 @@ const GROUPS: [(&str, &[&str]); 4] = [
     (
         "Lists and figures",
         &[
-            "list", "row", "stat", "chart", "boxplot", "table", "steps", "chips", "timeline",
+            "list", "row", "stat", "chart", "heat", "plot", "boxplot", "table", "steps", "chips", "timeline",
         ],
     ),
     (
@@ -68,7 +69,7 @@ fn markup() -> Vec<Mark> {
     ]
 }
 
-fn about(kind: &str) -> &'static str {
+pub fn about(kind: &str) -> &'static str {
     match kind {
         "screen" => "A whole screen: its title and its blocks.",
         "section" => "A titled group of blocks.",
@@ -91,6 +92,8 @@ fn about(kind: &str) -> &'static str {
         "stat" => "Figures: one tile, or a list of tiles.",
         "steps" => "A stepper with its current step, or progress bars.",
         "chart" => "Bars, stacked bars, a line, a combo or a donut, with its legend and table.",
+        "heat" => "A grid of cells coloured by value, with row and column labels and a legend.",
+        "plot" => "Lines over a number or time axis that stream in, with a window, a target band and a peak.",
         "boxplot" => "One box per category: median, quartiles, range and outliers, with its table.",
         "chips" => "A row of chips, one or many picked.",
         "button" => "A button that posts its action.",
@@ -443,6 +446,12 @@ fn others() -> Vec<Block> {
         picker("region", "Region", &["eu-west", "us-east"]),
         field("retries", "Retries", FieldValue::Number(3.into())),
         toggle("notify", "Notify", false),
+        SliderField::new("size", 80, 130)
+            .label("Text size")
+            .step(5)
+            .unit("%")
+            .value(110)
+            .into(),
     ])
     .id("settings")
     .action("save-settings");
@@ -546,6 +555,8 @@ pub fn samples() -> Vec<(String, Vec<Block>)> {
         picked("tool"),
         picked("modal"),
         picked("sidebar"),
+        picked("heat"),
+        picked("plot"),
         picked("boxplot"),
         vec![paperwork()],
     ]
@@ -683,8 +694,13 @@ fn fallback_of(kind: &str, sample: &[Block]) -> Vec<Block> {
 }
 
 /// One kind's page: its sample drawn, its Rust and JSON, its fallback, its style hooks and the kinds either side.
-pub fn kind_page(all: &[(String, Vec<Block>)], at: usize) -> Option<Page> {
+pub fn kind_page(all: &[(String, Vec<Block>)], at: usize, fields: &str) -> Option<Page> {
     let (kind, sample) = all.get(at)?;
+    let md = crate::llms::kind(kind, sample, fields);
+    let copy = Tap {
+        copy: Some(md.clone()),
+        ..Tap::default()
+    };
     let json = play::json(&play::screen(kind, sample));
     let prev = all.get(at.checked_sub(1).unwrap_or(all.len() - 1))?;
     let next = all.get((at + 1) % all.len())?;
@@ -735,6 +751,7 @@ pub fn kind_page(all: &[(String, Vec<Block>)], at: usize) -> Option<Page> {
     }
     let body = vec![
         text("about", about(kind)),
+        b!(Button(Button::new("Copy page").id("copy-page").tap(copy))),
         section(
             "pair-sample",
             "",
@@ -765,6 +782,7 @@ pub fn kind_page(all: &[(String, Vec<Block>)], at: usize) -> Option<Page> {
     Some(page("gallery", &format!("kind-{kind}.html"), kind, &description, body)).map(|p| Page {
         screen: p.screen.id(format!("kind-{kind}")),
         js: "play.js",
+        md: Some(md),
         ..p
     })
 }
@@ -778,8 +796,9 @@ fn paperwork() -> Block {
         .mb(10u32);
     let note = ScanField::new("note").label("Delivery note").max(20u32);
     let pin = SecretField::new("pin").label("Order PIN").placeholder("4 digits");
+    let order = SearchField::new("order").label("Order").placeholder("Search orders");
     b!(Form(
-        Form::new(vec![photos.into(), note.into(), pin.into()])
+        Form::new(vec![order.into(), photos.into(), note.into(), pin.into()])
             .id("claim")
             .submit(Submit {
                 label: "send claim".into(),

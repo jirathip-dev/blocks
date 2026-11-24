@@ -1,0 +1,49 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="../neutral-default/tokens.css"><link rel="stylesheet" href="../../../web/dist/blocks.css"><link rel="stylesheet" href="search.css"><link rel="stylesheet" href="page.css">
+<script src="search.js"></script><title>search: filters, a local filter</title></head>
+<body><main class="scr">
+<div class="top"><div class="tabh"><span class="tw">People · admin's home, usage.md part 2</span></div></div>
+
+<h2>1 · A table, "3 of 12" <small>· filters: "people"; nothing is sent; a row stays when every typed word is in its drawn text, any case</small></h2>
+<div data-scope="a">
+<div data-b='{"kind":"form","id":"find","fields":[{"type":"search","name":"q","label":"Search people","placeholder":"name, team or site","filters":"people","value":"ops BANGKOK"}]}'></div>
+<div data-b='{"kind":"table","id":"people","filter":false,"columns":[{"id":"n","label":"Name"},{"id":"t","label":"Team"},{"id":"s","label":"Site"},{"id":"d","label":"Since","end":1}],"rows":[
+ {"n":"Anong Srisuk","t":"Ops","s":"Bangkok","d":"2019"},
+ {"n":"Ben Hartley","t":"Finance","s":"Bangkok","d":"2021"},
+ {"n":"Chai Wongsa","t":"Ops","s":"Chiang Mai","d":"2020"},
+ {"n":"Dara Phan","t":"Ops","s":"Bangkok","d":"2023"},
+ {"n":"Emma Clarke","t":"Sales","s":"Phuket","d":"2018"},
+ {"n":"Fah Kittisak","t":"Ops","s":"Phuket","d":"2022"},
+ {"n":"Gus Moreno","t":"Ops","s":"Bangkok","d":"2024"},
+ {"n":"Hana Ito","t":"Design","s":"Bangkok","d":"2020"},
+ {"n":"Ira Tanaka","t":"Finance","s":"Chiang Mai","d":"2017"},
+ {"n":"Jon Pell","t":"Sales","s":"Bangkok","d":"2025"},
+ {"n":"Kanya Boon","t":"HR","s":"Bangkok","d":"2016"},
+ {"n":"Lek Somchai","t":"Ops","s":"Khon Kaen","d":"2021"}]}'></div>
+</div>
+
+<h2>2 · A list <small>· the same rule over a list's rows: title, subtitle and value as drawn</small></h2>
+<div data-scope="b">
+<div data-b='{"kind":"form","id":"find2","fields":[{"type":"search","name":"q","label":"Search sites","placeholder":"site or manager","filters":"sites","value":"anong"}]}'></div>
+<div data-b='{"kind":"list","id":"sites","rows":[
+ {"title":"Bangkok depot","subtitle":"manager Anong Srisuk","value":"42 people"},
+ {"title":"Chiang Mai yard","subtitle":"manager Chai Wongsa","value":"11 people"},
+ {"title":"Phuket store","subtitle":"manager Emma Clarke","value":"8 people"},
+ {"title":"Khon Kaen office","subtitle":"manager Lek Somchai","value":"6 people"},
+ {"title":"Bangna warehouse","subtitle":"acting: Anong Srisuk","value":"19 people"}]}'></div>
+</div>
+
+<h2>3 · No match <small>· the box says "no match"; the table and the list say what was typed, with [clear]</small></h2>
+<div class="cases">
+<div data-scope="c">
+<div data-b='{"kind":"form","id":"find","fields":[{"type":"search","name":"q","label":"Search people","placeholder":"name, team or site","filters":"people","value":"ops hanoi"}]}'></div>
+<div data-b='{"kind":"table","id":"people","filter":false,"columns":[{"id":"n","label":"Name"},{"id":"t","label":"Team"},{"id":"s","label":"Site"}],"rows":[
+ {"n":"Anong Srisuk","t":"Ops","s":"Bangkok"},{"n":"Ben Hartley","t":"Finance","s":"Bangkok"},{"n":"Chai Wongsa","t":"Ops","s":"Chiang Mai"}]}'></div>
+</div>
+<div data-scope="d">
+<div data-b='{"kind":"form","id":"find2","fields":[{"type":"search","name":"q","label":"Search sites","placeholder":"site or manager","filters":"sites","value":"hanoi"}]}'></div>
+<div data-b='{"kind":"list","id":"sites","rows":[
+ {"title":"Bangkok depot","subtitle":"manager Anong Srisuk"},{"title":"Chiang Mai yard","subtitle":"manager Chai Wongsa"}]}'></div>
+</div>
+</div>
+</main><script>draw()</script></body></html>

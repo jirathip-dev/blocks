@@ -1,0 +1,36 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>heat: a training page</title>
+<link rel="stylesheet" href="../neutral-default/tokens.css"><link rel="stylesheet" href="../../../web/dist/blocks.css"><link rel="stylesheet" href="heat.css"><link rel="stylesheet" href="page.css">
+<script src="heat.js"></script></head>
+<body><main id="page">
+<div class="top"><b>Training</b><span class="m">Sep 2 – Nov 24 · 12 weeks</span></div>
+<div id="load"></div><div id="times" class="half"></div><div id="sleep" class="half"></div>
+</main>
+<script>
+const days = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+const kinds = { 1: "Easy", 2: "Tempo", 3: "Intervals", 5: "Long" };
+const load = Array.from({ length: 12 }, (_, w) => ({
+  name: "Week " + (w + 1),
+  cells: days.map((_, d) => {
+    if (d === 0 || (d === 4 && w % 3 === 0)) return { label: "Rest" };
+    if (w === 6 && d === 2) return null;
+    const base = d === 5 ? 110 : d === 2 ? 80 : 45, ramp = w < 8 ? w * 4 : (11 - w) * 6;
+    const v = Math.round(base + ramp + rnd() * 25 - (w === 11 ? 40 : 0));
+    return kinds[d] && w % 2 === 0 ? { value: v, label: kinds[d] } : { value: v };
+  }),
+}));
+const slots = ["05","07","09","11","13","15","17","19","21"];
+const hit = { "0,1": 2, "1,7": 1, "2,1": 3, "3,6": 1, "4,1": 1, "5,2": 4, "5,3": 2, "6,2": 1, "6,3": 3, "6,4": 1 };
+const times = days.map((d, ri) => ({ name: d, cells: slots.map((_, ci) => hit[ri + "," + ci] ? { value: hit[ri + "," + ci] } : null) }));
+const sleepv = [82, 74, 91, 68, null, 58, 88];
+const blocks = {
+  load: { type: "heat", id: "load", title: "Training load by day", tone: "warn", columns: days, rows: load,
+    scale: { unit: "TSS" }, selected: { row: "Week 8", column: "Sat" }, tap: { action: "training.day" } },
+  times: { type: "heat", id: "times", title: "When you ride", tone: "info", columns: slots, rows: times, scale: { unit: "rides" }, edges: "ends" },
+  sleep: { type: "heat", id: "sleep", title: "Sleep score this week", tone: "accent", columns: days,
+    rows: [{ name: "Sleep", cells: sleepv.map(v => v == null ? null : { value: v, label: String(v) }) }], scale: { min: 50, max: 100, unit: "score" } },
+};
+for (const id in blocks) { const t = document.getElementById(id), c = heat(blocks[id]); c.className += " " + t.className; t.replaceWith(c); }
+document.body.dataset.h = Math.ceil(document.documentElement.scrollHeight);
+</script></body></html>

@@ -13,7 +13,7 @@ macro_rules! core {
     };
 }
 
-const CRATE: [(&str, &str); 11] = [
+const CRATE: [(&str, &str); 13] = [
     core!("chart"),
     core!("import"),
     core!("lines"),
@@ -24,6 +24,8 @@ const CRATE: [(&str, &str); 11] = [
     core!("timeline"),
     core!("tool"),
     core!("sidebar"),
+    core!("heat"),
+    core!("plot"),
     core!("boxplot"),
 ];
 

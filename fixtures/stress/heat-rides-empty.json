@@ -1,0 +1,18 @@
+{
+  "columns": [
+    "6",
+    "9",
+    "12",
+    "15",
+    "18"
+  ],
+  "edges": "ends",
+  "grid": [],
+  "id": "rides",
+  "scale": {
+    "unit": "rides"
+  },
+  "title": "When you ride",
+  "tone": "info",
+  "type": "heat"
+}

@@ -1,4 +1,52 @@
 extension Block {
     package static let hosts: [String: String] = ["screen": "blocks", "modal": "blocks", "sheet": "blocks", "section": "blocks", "card": "blocks", "message": "blocks", "list": "rows", "scene": "lanes", "row": "rounds", "table": "rows"]
     package static let walked = ["blocks", "rows", "buttons", "rounds", "lanes"]
+
+    package var typeAndID: (type: String, id: String?) {
+        switch self {
+        case .screen(let b): ("screen", b.id)
+        case .modal(let b): ("modal", b.id)
+        case .sheet(let b): ("sheet", b.id)
+        case .section(let b): ("section", b.id)
+        case .list(let b): ("list", b.id)
+        case .row(let b): ("row", b.id)
+        case .card(let b): ("card", b.id)
+        case .choice(let b): ("choice", b.id)
+        case .form(let b): ("form", b.id)
+        case .config(let b): ("config", b.id)
+        case .secret(let b): ("secret", b.id)
+        case .run(let b): ("run", b.id)
+        case .button(let b): ("button", b.id)
+        case .chips(let b): ("chips", b.id)
+        case .stat(let b): ("stat", b.id)
+        case .text(let b): ("text", b.id)
+        case .images(let b): ("images", b.id)
+        case .web(let b): ("web", b.id)
+        case .diff(let b): ("diff", b.id)
+        case .editor(let b): ("editor", b.id)
+        case .scene(let b): ("scene", b.id)
+        case .diagram(let b): ("diagram", b.id)
+        case .composer(let b): ("composer", b.id)
+        case .lines(let b): ("lines", b.id)
+        case .prose(let b): ("prose", b.id)
+        case .hero(let b): ("hero", b.id)
+        case .media(let b): ("media", b.id)
+        case .nav(let b): ("nav", b.id)
+        case .island(let b): ("island", b.id)
+        case .table(let b): ("table", b.id)
+        case .steps(let b): ("steps", b.id)
+        case .chart(let b): ("chart", b.id)
+        case .toast(let b): ("toast", b.id)
+        case .pages(let b): ("pages", b.id)
+        case .timeline(let b): ("timeline", b.id)
+        case .import(let b): ("import", b.id)
+        case .message(let b): ("message", b.id)
+        case .tool(let b): ("tool", b.id)
+        case .sidebar(let b): ("sidebar", b.id)
+        case .boxplot(let b): ("boxplot", b.id)
+        case .heat(let b): ("heat", b.id)
+        case .plot(let b): ("plot", b.id)
+        case .appBlock(let b): (b.type, b.id)
+        }
+    }
 }

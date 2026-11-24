@@ -12,7 +12,7 @@ const note = (x: Field, was: string): [string, string] => (x.error ? ["fn err", 
 
 type Wait = { up: number; failed: number };
 /// Where a form's fields put what they send and the files they wait on.
-export type Held = { sent: Record<string, unknown>; wait(name: string, w: Wait): void; block?: string | undefined };
+export type Held = { sent: Record<string, unknown>; wait(name: string, w: Wait): void; block?: string | undefined; send?: ((name: string, v: unknown) => unknown) | undefined; solo?: boolean };
 
 /// A field as a `.fd` label: its name and note (`shown` over it), then the control its type's view draws.
 export function field(x: Field, key: string, cx: Ctx, held: Held, shown?: [string, string]) {
@@ -25,9 +25,9 @@ export function field(x: Field, key: string, cx: Ctx, held: Held, shown?: [strin
     held.wait(x.name, w);
     cx.put(x.name, lit(x, sent));
   };
-  const c = { locale: cx.locale, key, value: cx.state[x.name] ?? null, put: (to: Lit) => cx.put(x.name, to), screen: cx.screen, block: held.block, file: cx.file, hold };
+  const c = { locale: cx.locale, key, value: cx.state[x.name] ?? null, put: (to: Lit) => cx.put(x.name, to), screen: cx.screen, block: held.block, file: cx.file, hold, send: held.send && ((v: unknown) => held.send?.(x.name, v)), found: "filters" in x && typeof x.filters === "string" ? cx.seek[x.filters] : undefined };
   const control = v.draw(x, c, attrs);
-  const l = `fd${v.row ?? ""}${x.error ? " err" : ""}${x.open ? " open" : ""}`;
+  const l = `fd${v.row ?? ""}${held.solo ? " solo" : ""}${x.error ? " err" : ""}${x.open ? " open" : ""}`;
   return h(v.group ? "div" : "label", l, { key: x.name, hidden: cx.v.hidden.has(x.name) || undefined }, h("span", "fl", null, h("span", "fk", null, x.label ?? x.name), h("span", cls, null, say)), control, said ? h("span", "fe", null, said) : null);
 }
 
@@ -47,7 +47,9 @@ export function form({ b, hooks }: V<Form>) {
   const s = b.submit;
   const sent = useRef<Record<string, unknown>>({});
   const [waits, setWaits] = useState<Record<string, Wait>>({});
-  const held: Held = { sent: sent.current, wait: (n, w) => setWaits((o) => ({ ...o, [n]: w })), block: b.id ?? undefined };
+  const live = s ? undefined : b.action;
+  const out = live ? (name: string, v: unknown) => cx.act({ action: live, block: b.id, values: { [name]: v } }) : undefined;
+  const held: Held = { sent: sent.current, wait: (n, w) => setWaits((o) => ({ ...o, [n]: w })), block: b.id ?? undefined, send: out, solo: !s && b.fields.length === 1 };
   const rows = b.fields.map((x) => field(x, `draft:${cx.screen}:${String(b.id)}:`, cx, held));
   if (!s) return h("div", "form", { ...hooks, "data-id": b.id ?? "" }, ...rows);
   const send = () => {
@@ -65,6 +67,6 @@ export function form({ b, hooks }: V<Form>) {
   const off = (b.id != null && cx.v.disabled.has(b.id)) || up > 0 || bad;
   const go = btn(busy ? "sending…" : s.label, "", undefined, s.action, { "data-submit": "", onClick: send }, off);
   const line = bad ? word(cx, "stuck") : up ? fill(word(cx, up > 1 ? "waitN" : "wait1"), { n: up }) : "";
-  const wait = b.fields.some((x) => viewOf(x).group) ? h("span", `say-busy${bad ? " bad" : ""}`, null, line) : null;
+  const wait = b.fields.some((x) => viewOf(x).waits) ? h("span", `say-busy${bad ? " bad" : ""}`, null, line) : null;
   return h("div", "form say", { ...hooks, "data-id": b.id ?? "", onKeyDown: enter }, ...rows, wait, go);
 }

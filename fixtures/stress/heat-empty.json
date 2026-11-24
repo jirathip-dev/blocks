@@ -1,0 +1,26 @@
+{
+  "columns": [
+    "Mon",
+    "Tue",
+    "Wed",
+    "Thu",
+    "Fri",
+    "Sat",
+    "Sun"
+  ],
+  "grid": [],
+  "id": "load",
+  "scale": {
+    "unit": "TSS"
+  },
+  "selected": {
+    "column": "Sat",
+    "row": "Week 8"
+  },
+  "tap": {
+    "action": "training.day"
+  },
+  "title": "Training load by day",
+  "tone": "warn",
+  "type": "heat"
+}

@@ -1,10 +1,12 @@
 import Blocks
 
-/// How a row edits its field: a tap flips it, an alert types it, a dialog picks one of its options, it lists files, or it scans pages.
+/// How a row edits its field: a tap flips it, an alert types it, a dialog picks one of its options, a thumb slides it, it searches, it lists files, or it scans pages.
 internal enum FieldEdit {
     case flip
     case type(secure: Bool, hint: String?, number: Bool)
     case pick([String])
+    case slide(SliderField)
+    case search(SearchField)
     #if !os(watchOS)
         case files(UploadField)
         case scan(ScanField)
@@ -37,6 +39,8 @@ extension Field {
         case .toggle(let f): f
         case .picker(let f): f
         case .secret(let f): f
+        case .slider(let f): f
+        case .search(let f): f
         #if os(watchOS)
             case .upload(let f): PlainField(json: (try? JSONValue(f)) ?? .null)
             case .scan(let f): PlainField(json: (try? JSONValue(f)) ?? .null)

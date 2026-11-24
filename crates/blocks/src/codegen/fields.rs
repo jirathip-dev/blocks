@@ -4,7 +4,7 @@ use serde_json::Value;
 
 use super::Files;
 use crate::kind::Word;
-use crate::{site, tree, Block, Built, Field, Form, Import, Lang, Locale, Screen, Submit};
+use crate::{site, tree, Block, Built, Field, Form, Import, Lang, Locale, Screen, Submit, ToggleField, ToggleLook};
 
 const STATES: [(&str, &str); 4] = [
     ("error", "Check this one"),
@@ -26,13 +26,12 @@ pub(super) fn files(root: &Path) -> std::io::Result<Files> {
     out.push(views("web/react/src/gen/fields.ts", "../fields", &react));
     let swift = drawn(root, "swift/Sources/BlocksUI/Field", "Field.swift")?;
     let swift: Vec<&str> = swift.iter().map(String::as_str).collect();
-    for f in Field::samples() {
+    let check = ToggleField::sample().look(ToggleLook::Check);
+    for f in Field::samples().into_iter().chain([check.into()]) {
         let filled = serde_json::to_value(&f)?;
-        let kind = filled
-            .get("type")
-            .and_then(Value::as_str)
-            .unwrap_or_default()
-            .to_string();
+        let text = |k| filled.get(k).and_then(Value::as_str);
+        let kind = text("type").unwrap_or_default();
+        let kind = text("as").map_or_else(|| kind.to_string(), |a| format!("{kind}-{a}"));
         let screen = Built::of(&screen(&kind, &filled)?);
         let start = crate::behave::start(&screen);
         let tree = tree::expect_fields(&screen, Block::KINDS, &types, &start);
@@ -56,7 +55,8 @@ fn screen(kind: &str, filled: &Value) -> std::io::Result<Screen> {
     let name = filled.get("name").and_then(Value::as_str).unwrap_or_default();
     let mut empty = filled.clone();
     if let Some(o) = empty.as_object_mut() {
-        o.retain(|k, _| ["type", "name", "label", "options"].contains(&k.as_str()));
+        let need: &[&str] = if kind == "slider" { &["min", "max"] } else { &[] };
+        o.retain(|k, _| ["type", "name", "label", "options", "as"].contains(&k.as_str()) || need.contains(&k.as_str()));
         o.insert("name".into(), format!("{name}-empty").into());
     }
     let mut fields = vec![empty, filled.clone()];

@@ -41,4 +41,6 @@ kinds! {
     tool { Tool(Tool) = "tool" }
     sidebar { Sidebar(Sidebar) = "sidebar" }
     boxplot { Boxplot(Boxplot) = "boxplot" }
+    heat { Heat(Heat) = "heat" }
+    plot { Plot(Plot) = "plot" }
 }

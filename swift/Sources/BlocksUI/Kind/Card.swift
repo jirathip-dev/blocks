@@ -44,7 +44,7 @@ internal struct CardBlock: View {
     }
 
     @ViewBuilder private var card: some View {
-        let tint = kind?.tint ?? look.palette.tone(block.tone?.rawValue) ?? look.palette.lead
+        let tint = kind?.tint ?? look.palette.fleet(block.color) ?? look.palette.tone(block.tone?.rawValue) ?? look.palette.lead
         VStack(alignment: .leading, spacing: 10) {
             if let fold = block.fold { line(fold) }
             if block.fold == nil || open { content(tint) }

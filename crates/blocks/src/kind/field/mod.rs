@@ -5,16 +5,20 @@ use crate::expr::Expr;
 
 mod picker;
 mod scan;
+mod search;
 mod secret;
+mod slider;
 mod text;
 mod toggle;
 mod upload;
 
 pub use picker::PickerField;
 pub use scan::ScanField;
+pub use search::SearchField;
 pub use secret::SecretField;
+pub use slider::{Num, SliderField};
 pub use text::TextField;
-pub use toggle::ToggleField;
+pub use toggle::{ToggleField, ToggleLook};
 pub use upload::{Accept, FileRef, UploadField};
 
 /// One word a field draws itself: its key, then English and Thai.
@@ -27,8 +31,10 @@ fields! {
     Toggle(ToggleField) = "toggle",
     Picker(PickerField) = "picker",
     Secret(SecretField) = "secret",
+    Search(SearchField) = "search",
     Upload(UploadField) = "upload",
     Scan(ScanField) = "scan",
+    Slider(SliderField) = "slider",
 }
 
 field! {
