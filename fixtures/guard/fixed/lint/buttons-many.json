@@ -1,0 +1,32 @@
+{
+  "type": "screen",
+  "id": "s",
+  "title": "Queue",
+  "blocks": [
+    {
+      "type": "card",
+      "id": "c",
+      "title": "Lane",
+      "buttons": [
+        {
+          "type": "button",
+          "id": "stop",
+          "label": "Stop",
+          "action": "stop"
+        },
+        {
+          "type": "button",
+          "id": "kill",
+          "label": "Kill",
+          "action": "kill"
+        },
+        {
+          "type": "button",
+          "id": "clean",
+          "label": "Clean",
+          "action": "clean"
+        }
+      ]
+    }
+  ]
+}

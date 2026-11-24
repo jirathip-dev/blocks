@@ -1,0 +1,17 @@
+{
+  "type": "screen",
+  "id": "inbox",
+  "title": "Inbox",
+  "blocks": [
+    {
+      "type": "list",
+      "id": "messages",
+      "rows": []
+    },
+    {
+      "type": "text",
+      "id": "none",
+      "markdown": "New messages will show here."
+    }
+  ]
+}
