@@ -45,8 +45,8 @@ export function adopt(o: { theme?: Theme; store?: Store; blocks?: AppBlocks } = 
     if (!lk.box.isConnected) document.body.append(lk.box);
   };
   document.addEventListener("click", (e) => {
-    const s = e.target instanceof Element ? e.target.closest<HTMLElement>("[data-sheet]") : null;
-    if (s) tap({ sheet: s.dataset["sheet"] });
+    const s = e.target instanceof Element ? e.target.closest<HTMLElement>("[data-sheet],[data-copy]") : null;
+    if (s) tap({ sheet: s.dataset["sheet"], copy: s.dataset["copy"] });
   });
   const act = async (a: Post): Promise<boolean> => {
     if (isBlk(a.confirm) && !confirm(String(a.confirm["title"] ?? ""))) return false;
@@ -67,6 +67,7 @@ export function adopt(o: { theme?: Theme; store?: Store; blocks?: AppBlocks } = 
     else if (typeof x["action"] === "string") void act({ action: x["action"], values: x["values"] });
     else if (x["sheet"] === "look") lookSheet();
     else if (typeof x["sheet"] === "string" && x["sheet"].startsWith("look:")) wear(x["sheet"].slice(5), store);
+    else if (typeof x["copy"] === "string") void navigator.clipboard?.writeText(x["copy"]);
   };
   const page = host({ theme, store, apps: o.blocks }, { screen: () => screen, act, tap });
   const p = page.patch(root, () => model);

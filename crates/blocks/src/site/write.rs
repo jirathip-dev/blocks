@@ -67,6 +67,7 @@ pub(crate) enum Go {
     Open(String),
     Post(String, String),
     Sheet(String),
+    Copy(String),
     Stay,
 }
 
@@ -223,6 +224,10 @@ impl<'a> W<'a> {
                 all.extend([("type", "button"), ("data-sheet", s.as_str())]);
                 false
             }
+            Go::Copy(s) => {
+                all.extend([("type", "button"), ("data-copy", s.as_str())]);
+                false
+            }
             Go::Stay => {
                 all.push(("type", "button"));
                 false
@@ -275,6 +280,9 @@ impl<'a> W<'a> {
         }
         if let Some(s) = get(t, "sheet") {
             return Go::Sheet(s.into());
+        }
+        if let Some(c) = get(t, "copy") {
+            return Go::Copy(c.into());
         }
         match get(t, "action") {
             Some(a) => Go::Post(self.post(block, a, &fields(&[t.get("values")])), a.into()),
