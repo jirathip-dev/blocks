@@ -28,7 +28,8 @@ const plan = (name, runs) => {
 const bad = at("../../fixtures/guard/bad/");
 const rules = (seen) => [...new Set(seen.map((s) => s.rule))];
 
-test("each bad fixture fires its probe and no other in WebKit, all in one --plan launch; every probe has one", () => {
+test("each bad fixture fires its probe and no other in WebKit, its fixed one (rules.md's Correct) none, all in one --plan launch", () => {
+  const fixed = at("../../fixtures/guard/fixed/");
   const draw = readdirSync(join(bad, "render")).filter((f) => f.endsWith(".json")).map((f) => f.replace(/\.json$/, ""));
   const sheets = readdirSync(join(bad, "css")).map((f) => f.replace(/\.css$/, ""));
   const probes = readdirSync(at("../shot/probe/")).map((f) => f.replace(/\.ts$/, ""));
@@ -37,27 +38,18 @@ test("each bad fixture fires its probe and no other in WebKit, all in one --plan
   const runs = [
     ...draw.map((n) => ({ ...RUN, name: n, screen: join(bad, "render", `${n}.json`), css: own(n, "css"), scripts: own(n, "js"), kinds: ["gauge"] })),
     ...sheets.map((n) => ({ ...RUN, name: n, screen: join(blocks, "text.json"), css: [join(bad, "css", `${n}.css`)] })),
+    ...draw.map((n) => ({ ...RUN, name: `fixed/${n}`, screen: join(fixed, "render", `${n}.json`), kinds: ["gauge"] })),
+    ...sheets.map((n) => ({ ...RUN, name: `fixed/${n}`, screen: join(blocks, "text.json"), css: [join(fixed, "css", `${n}.css`)] })),
   ];
+  deepStrictEqual(readdirSync(join(fixed, "render")).length + readdirSync(join(fixed, "css")).length, draw.length + sheets.length);
   const seen = plan("bad", runs);
+  deepStrictEqual(seen.filter((s) => s.run?.startsWith("fixed/") || s.file?.startsWith(fixed)).map((s) => [s.run, s.rule]), []);
   for (const n of draw) deepStrictEqual(rules(seen.filter((s) => s.run === n)), [`render/${n}`], n);
   for (const n of sheets) deepStrictEqual(rules(seen.filter((s) => s.run === n || s.file === join(bad, "css", `${n}.css`))), [`css/${n}`], n);
   deepStrictEqual(seen.filter((s) => s.file).map((s) => [s.rule, s.line, s.at]), sheets.map((n) => [`css/${n}`, 3, ""]));
   const tree = ["render/no-name", "render/no-size", "render/overflow", "render/overlap"];
   const snap = JSON.parse(readFileSync(at("../../fixtures/guard/seen.json"), "utf8"));
   deepStrictEqual(seen.filter((s) => tree.includes(s.rule)).map((s) => ({ rule: s.rule, run: s.run, at: s.at })), snap, "blocks-snap's test holds SwiftUI to the same file");
-});
-
-test("each fixed fixture, the Correct half of its rule's pair in the skill's rules.md, draws with no finding", () => {
-  const fixed = at("../../fixtures/guard/fixed/");
-  const draw = readdirSync(join(bad, "render")).filter((f) => f.endsWith(".json")).map((f) => f.replace(/\.json$/, ""));
-  const sheets = readdirSync(join(bad, "css")).map((f) => f.replace(/\.css$/, ""));
-  deepStrictEqual(readdirSync(join(fixed, "render")).sort(), draw.map((n) => `${n}.json`).sort());
-  deepStrictEqual(readdirSync(join(fixed, "css")).sort(), sheets.map((n) => `${n}.css`).sort());
-  const runs = [
-    ...draw.map((n) => ({ ...RUN, name: n, screen: join(fixed, "render", `${n}.json`), kinds: ["gauge"] })),
-    ...sheets.map((n) => ({ ...RUN, name: n, screen: join(blocks, "text.json"), css: [join(fixed, "css", `${n}.css`)] })),
-  ];
-  deepStrictEqual(plan("fixed", runs).map((s) => [s.run, s.rule, s.detail]), []);
 });
 
 test("a plan's script registers an app kind's view on window.blocksApps: the gauge draws natively and render/tree is quiet", () => {

@@ -81,10 +81,7 @@ fn misses(case: &Case, reply: &Value) -> Vec<String> {
         }
     }
     let mut drawn = BTreeSet::new();
-    kinds(
-        &tree::expect(&screen, Block::KINDS, &blocks::expr::State::new()),
-        &mut drawn,
-    );
+    kinds(&tree::expect(&screen, Block::KINDS, &Default::default()), &mut drawn);
     out.extend(
         case.kinds
             .iter()
