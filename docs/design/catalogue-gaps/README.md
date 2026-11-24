@@ -2,7 +2,7 @@
 
 Decision: of the eleven common-UI gaps, only two have an app that needs them today, and both are small additions to what already exists. A list gets empty text, like table, lines, chart and sidebar already have, and every kind's empty text gets one shared look. The shell draws a trail of the screens it came through on wide screens; on a phone, the back button names the screen it goes back to (no wire change). Accordion, popover and pagination already exist. Tabs, tooltip, combobox, date picker, command palette and skeleton have no app asking for them yet, so they stay out.
 Screens: a list's empty state (drover threads, cooee queue, the shared look across kinds); the trail on a cooee settings screen three levels deep; a sheet of states and stress cases. Each is drawn light and dark, at 1440 and 390.
-Open questions: (1) Should empty text also carry one action (the existing fallback shape: title, subtitle, tap) for every kind, or stay plain text with the screen's own button? (2) drover's issue screen uses single-select chips to show its stage (impl, rev, gates). Should drover move that to the new `steps` kind (drover's change, not blocks')? If it really wants tabs, the rung would be a `tabs` look of `chips`.
+Decided (approved 2026-11-24): empty text stays plain, with no action; the screen's own button carries any action. drover's stage chips are drover's to move to the `steps` kind, not a blocks change; a `tabs` look of `chips` waits for an app that switches views with them.
 
 ## The gaps on the ladder
 
@@ -10,7 +10,7 @@ The ladder (`docs/extending.md`): 1 token, 2 named variant, 3 new core kind (two
 
 | Gap | Rung | Apps needing it today (evidence) | Decision |
 |---|---|---|---|
-| Tabs inside a screen | none now (2 later: a `tabs` look of `chips`) | none. `drover/issue.json` and `issue-rounds.json` have `stage` chips with no action, a `selected` that follows the issue's stage, and no section `show` bound to them. That is a stage indicator, not a view switch. Every other chips block (`drover/queue.json` repo, `drover/events.json` kind, cooee's copies) is a filter | not in blocks now; open question 2 |
+| Tabs inside a screen | none now (2 later: a `tabs` look of `chips`) | none. `drover/issue.json` and `issue-rounds.json` have `stage` chips with no action, a `selected` that follows the issue's stage, and no section `show` bound to them. That is a stage indicator, not a view switch. Every other chips block (`drover/queue.json` repo, `drover/events.json` kind, cooee's copies) is a filter | not in blocks now |
 | Popover | already in blocks | `Act.menu` on screen actions and rows (`drover/queue.json` "More", `cooee/queue-scene-queue.json`); `tap.sheet` for anything bigger | exists: menu and sheet |
 | Tooltip | not in blocks | `drover/queue.json` "Legend [?]" opens a sheet; `drover/thread-new.json` puts its hint in a muted text block. Neither needs hover | not in blocks: hover-only help doesn't work on touch or in VoiceOver; help goes in a sheet or muted text |
 | Combobox | none now (2 later: a `search` look of the picker field) | none. The largest picker has 6 options (`cooee/fleets-config-global.json` review_rounds); no search field in any screen | not in blocks until a picker outgrows a list |
@@ -37,7 +37,7 @@ The ladder (`docs/extending.md`): 1 token, 2 named variant, 3 new core kind (two
 - Empty: `list` gets `empty` (text), the same field and type as `table`, `lines`, `chart`, `heat`, `boxplot` and `sidebar`. When a list has no rows, it draws that text; when it has no text either, it draws nothing, as today. One look (`.empty` in `gaps.css`) replaces each kind's own (`tr.tbe`, `.lqz`, `.sde`). Inside a card or sheet, the text sits in its parent with no tile of its own. SwiftUI draws the same tile; the static site writes the same markup. The text is a plain paragraph inside the list's group, named by the list's section header. The list's stress fixtures gain the empty case.
 - Trail: drawn by the shell from the back stack it already keeps (`web/src/shell/mount.ts`), plus the title of each screen it passed through. Nothing changes in the wire or the schema. Up to 4 levels are shown in full; beyond that, the first, a "…" button with the hidden levels as a menu, then the last two. Each title ends in "…" past 20 characters, and the full title is the link's accessible name. It is a `nav` named "Breadcrumb" holding an ordered list, and the current screen has `aria-current="page"`. Under 600 px, and in a sheet, the trail becomes the existing back button, which reads "‹ <previous title>" in the case written instead of "‹ back". With no stack (a deep link), there is no trail or back, as today. SwiftUI keeps its NavigationStack back button, which already names its target.
 - Colours and sizes are tokens only (`--card`, `--edge`, `--mute`, `--link`, `--fg`, `--l`, `--hit`, `--s*`, `--radius`).
-- Follow-ups after approval: one issue for list `empty` and the shared look, one for the shell trail. The gaps left out need no issue.
+- Follow-ups (approved): #394 list `empty` text and the one shared empty look; #395 the shell's breadcrumb trail. The gaps left out need no issue.
 
 ## Files
 
