@@ -69,7 +69,7 @@ fn markup() -> Vec<Mark> {
     ]
 }
 
-fn about(kind: &str) -> &'static str {
+pub fn about(kind: &str) -> &'static str {
     match kind {
         "screen" => "A whole screen: its title and its blocks.",
         "section" => "A titled group of blocks.",
@@ -694,8 +694,13 @@ fn fallback_of(kind: &str, sample: &[Block]) -> Vec<Block> {
 }
 
 /// One kind's page: its sample drawn, its Rust and JSON, its fallback, its style hooks and the kinds either side.
-pub fn kind_page(all: &[(String, Vec<Block>)], at: usize) -> Option<Page> {
+pub fn kind_page(all: &[(String, Vec<Block>)], at: usize, fields: &str) -> Option<Page> {
     let (kind, sample) = all.get(at)?;
+    let md = crate::llms::kind(kind, sample, fields);
+    let copy = Tap {
+        copy: Some(md.clone()),
+        ..Tap::default()
+    };
     let json = play::json(&play::screen(kind, sample));
     let prev = all.get(at.checked_sub(1).unwrap_or(all.len() - 1))?;
     let next = all.get((at + 1) % all.len())?;
@@ -746,6 +751,7 @@ pub fn kind_page(all: &[(String, Vec<Block>)], at: usize) -> Option<Page> {
     }
     let body = vec![
         text("about", about(kind)),
+        b!(Button(Button::new("Copy page").id("copy-page").tap(copy))),
         section(
             "pair-sample",
             "",
@@ -776,6 +782,7 @@ pub fn kind_page(all: &[(String, Vec<Block>)], at: usize) -> Option<Page> {
     Some(page("gallery", &format!("kind-{kind}.html"), kind, &description, body)).map(|p| Page {
         screen: p.screen.id(format!("kind-{kind}")),
         js: "play.js",
+        md: Some(md),
         ..p
     })
 }

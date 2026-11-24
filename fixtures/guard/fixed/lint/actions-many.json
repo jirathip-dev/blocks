@@ -1,0 +1,63 @@
+{
+  "type": "screen",
+  "id": "s",
+  "title": "Queue",
+  "actions": [
+    {
+      "label": "Do 0",
+      "action": "do-0"
+    },
+    {
+      "label": "Do 1",
+      "action": "do-1"
+    },
+    {
+      "label": "Do 2",
+      "action": "do-2"
+    },
+    {
+      "label": "Do 3",
+      "action": "do-3"
+    },
+    {
+      "label": "Do 4",
+      "action": "do-4"
+    },
+    {
+      "label": "Do 5",
+      "action": "do-5"
+    },
+    {
+      "label": "Do 6",
+      "action": "do-6"
+    },
+    {
+      "label": "Do 7",
+      "action": "do-7"
+    },
+    {
+      "label": "Do 8",
+      "action": "do-8"
+    },
+    {
+      "label": "Do 9",
+      "action": "do-9"
+    },
+    {
+      "label": "Do 10",
+      "action": "do-10"
+    },
+    {
+      "label": "More",
+      "tap": {
+        "sheet": "more"
+      }
+    }
+  ],
+  "blocks": [
+    {
+      "type": "text",
+      "markdown": "Pick one."
+    }
+  ]
+}

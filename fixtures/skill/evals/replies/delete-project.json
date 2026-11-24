@@ -1,0 +1,23 @@
+{
+  "type": "screen",
+  "id": "project",
+  "title": "Atlas",
+  "blocks": [
+    {
+      "type": "text",
+      "id": "about",
+      "markdown": "The Atlas project and its 14 runs."
+    },
+    {
+      "type": "button",
+      "id": "delete",
+      "label": "Delete project",
+      "action": "delete-project",
+      "style": "destructive",
+      "confirm": {
+        "title": "Delete Atlas and its runs?",
+        "ok": "Delete"
+      }
+    }
+  ]
+}

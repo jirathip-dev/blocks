@@ -5,6 +5,7 @@ mod files;
 mod new;
 mod read;
 mod skill;
+mod skill_eval;
 
 mod gen {
     pub(crate) mod skill;
@@ -16,7 +17,7 @@ use std::process::ExitCode;
 
 use blocks::guard::{self, Baseline, Finding, Held, Outcome, Scope, Severity};
 
-const USAGE: &str = "usage: blocks check [--base <ref>] [--all] [--render] [--explore [--seed <n>] [--minutes <n>]] [--tighten] [--format text|json|sarif] [--out <file>] | blocks check --replay <steps.json> [--render] | blocks check --shot <fixture>… | blocks skill --to <dir> | blocks new kind <name> | blocks read <catalog.json> < reply.txt | blocks prompt <catalog.json> | blocks eval <dir> --replies <dir> [--model <command> [--system <file>]]";
+const USAGE: &str = "usage: blocks check [--base <ref>] [--all] [--render] [--explore [--seed <n>] [--minutes <n>]] [--tighten] [--format text|json|sarif] [--out <file>] | blocks check --replay <steps.json> [--render] | blocks check --shot <fixture>… | blocks skill --to <dir> | blocks new kind <name> | blocks read <catalog.json> < reply.txt | blocks prompt <catalog.json> | blocks eval <dir> --replies <dir> [--model <command> [--system <file>]] | blocks eval --skill <evals dir> --replies <dir>";
 
 #[derive(Default)]
 enum Format {
@@ -41,7 +42,7 @@ struct Flags {
     out: Option<String>,
 }
 
-/// `blocks check` lints, draws with `--render` and judges the screens `.blocks/guard.json` names; `blocks skill` writes the usage skill; `blocks new kind` writes a kind's five files; `blocks read` reads a model's reply on stdin under a catalog; `blocks prompt` prints a catalog's system prompt; `blocks eval` scores recorded model replies; exit 0 ok, 1 a finding, 2 a broken setup.
+/// `blocks check` lints, draws with `--render` and judges the screens `.blocks/guard.json` names; `blocks skill` writes the usage skill; `blocks new kind` writes a kind's five files; `blocks read` reads a model's reply on stdin under a catalog; `blocks prompt` prints a catalog's system prompt; `blocks eval` scores recorded model replies, or with `--skill` recorded screens against the skill's evals; exit 0 ok, 1 a finding, 2 a broken setup.
 pub fn main() -> ExitCode {
     let args: Vec<String> = std::env::args().skip(1).collect();
     match run(&args) {
@@ -100,6 +101,7 @@ fn run(args: &[String]) -> Result<bool, String> {
         Some((cmd, rest)) if cmd == "skill" => skill::run(rest),
         Some((cmd, rest)) if cmd == "new" => new::run(rest),
         Some((cmd, rest)) if cmd == "read" => read::run(rest),
+        Some((cmd, [flag, rest @ ..])) if cmd == "eval" && flag == "--skill" => skill_eval::run(rest),
         Some((cmd, rest)) if cmd == "eval" => eval::run(rest),
         Some((cmd, [file])) if cmd == "prompt" => prompt(file),
         _ => Err(USAGE.into()),

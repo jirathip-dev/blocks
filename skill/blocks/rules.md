@@ -55,3 +55,2102 @@ Guard version 4. A new error fails `blocks check`; a warning never fails.
 | `explore/unstable` | error | 1 | the answerer gave another answer to the same walk | Make the answerer a function of its seed and the actions so far. |
 | `lint/untitled` | warn | 1 | a screen with no title | Give the screen a title of one to three words. |
 | `guard/unused-ignore` | error | 1 | an ignore matches no finding | Delete the ignore. |
+
+## Incorrect and Correct
+
+Each rule a screen can hit, as a screen that hits it and the same screen fixed. A `render/` half is drawn with the app CSS or script under it; a `css/` half is an app style sheet over any screen. A `catalog/` pair is held to this catalog:
+
+```json
+{
+  "name": "fixture",
+  "kinds": {
+    "text": {
+      "fields": [
+        "markdown"
+      ]
+    },
+    "section": {},
+    "button": {
+      "fields": [
+        "label",
+        "action",
+        "style",
+        "values",
+        "tap"
+      ],
+      "actions": [
+        "pick"
+      ]
+    },
+    "form": {
+      "actions": [
+        "save"
+      ],
+      "inputs": [
+        "text"
+      ]
+    },
+    "row": {
+      "fields": [
+        "title",
+        "subtitle",
+        "tap"
+      ]
+    },
+    "media": {}
+  },
+  "links": [
+    "https://"
+  ],
+  "media": [
+    "https://cdn.example/"
+  ],
+  "max": {
+    "blocks": 4
+  }
+}
+```
+
+### `lint/action-no-id`
+
+Incorrect:
+
+```json
+{
+  "blocks": [
+    {
+      "action": "drive",
+      "label": "Drive",
+      "type": "button"
+    }
+  ],
+  "id": "s",
+  "title": "Queue",
+  "type": "screen"
+}
+```
+
+Correct:
+
+```json
+{
+  "blocks": [
+    {
+      "action": "drive",
+      "id": "drive",
+      "label": "Drive",
+      "type": "button"
+    }
+  ],
+  "id": "s",
+  "title": "Queue",
+  "type": "screen"
+}
+```
+
+### `lint/actions-many`
+
+Incorrect:
+
+```json
+{
+  "actions": [
+    {
+      "action": "do-0",
+      "label": "Do 0"
+    },
+    {
+      "action": "do-1",
+      "label": "Do 1"
+    },
+    {
+      "action": "do-2",
+      "label": "Do 2"
+    },
+    {
+      "action": "do-3",
+      "label": "Do 3"
+    },
+    {
+      "action": "do-4",
+      "label": "Do 4"
+    },
+    {
+      "action": "do-5",
+      "label": "Do 5"
+    },
+    {
+      "action": "do-6",
+      "label": "Do 6"
+    },
+    {
+      "action": "do-7",
+      "label": "Do 7"
+    },
+    {
+      "action": "do-8",
+      "label": "Do 8"
+    },
+    {
+      "action": "do-9",
+      "label": "Do 9"
+    },
+    {
+      "action": "do-10",
+      "label": "Do 10"
+    },
+    {
+      "action": "do-11",
+      "label": "Do 11"
+    },
+    {
+      "action": "do-12",
+      "label": "Do 12"
+    }
+  ],
+  "blocks": [
+    {
+      "markdown": "Pick one.",
+      "type": "text"
+    }
+  ],
+  "id": "s",
+  "title": "Queue",
+  "type": "screen"
+}
+```
+
+Correct:
+
+```json
+{
+  "actions": [
+    {
+      "action": "do-0",
+      "label": "Do 0"
+    },
+    {
+      "action": "do-1",
+      "label": "Do 1"
+    },
+    {
+      "action": "do-2",
+      "label": "Do 2"
+    },
+    {
+      "action": "do-3",
+      "label": "Do 3"
+    },
+    {
+      "action": "do-4",
+      "label": "Do 4"
+    },
+    {
+      "action": "do-5",
+      "label": "Do 5"
+    },
+    {
+      "action": "do-6",
+      "label": "Do 6"
+    },
+    {
+      "action": "do-7",
+      "label": "Do 7"
+    },
+    {
+      "action": "do-8",
+      "label": "Do 8"
+    },
+    {
+      "action": "do-9",
+      "label": "Do 9"
+    },
+    {
+      "action": "do-10",
+      "label": "Do 10"
+    },
+    {
+      "label": "More",
+      "tap": {
+        "sheet": "more"
+      }
+    }
+  ],
+  "blocks": [
+    {
+      "markdown": "Pick one.",
+      "type": "text"
+    }
+  ],
+  "id": "s",
+  "title": "Queue",
+  "type": "screen"
+}
+```
+
+### `lint/buttons-many`
+
+Incorrect:
+
+```json
+{
+  "blocks": [
+    {
+      "buttons": [
+        {
+          "action": "stop",
+          "id": "stop",
+          "label": "Stop",
+          "type": "button"
+        },
+        {
+          "action": "kill",
+          "id": "kill",
+          "label": "Kill",
+          "type": "button"
+        },
+        {
+          "action": "clean",
+          "id": "clean",
+          "label": "Clean",
+          "type": "button"
+        },
+        {
+          "action": "spawn",
+          "id": "spawn",
+          "label": "Spawn",
+          "type": "button"
+        }
+      ],
+      "id": "c",
+      "title": "Lane",
+      "type": "card"
+    }
+  ],
+  "id": "s",
+  "title": "Queue",
+  "type": "screen"
+}
+```
+
+Correct:
+
+```json
+{
+  "blocks": [
+    {
+      "buttons": [
+        {
+          "action": "stop",
+          "id": "stop",
+          "label": "Stop",
+          "type": "button"
+        },
+        {
+          "action": "kill",
+          "id": "kill",
+          "label": "Kill",
+          "type": "button"
+        },
+        {
+          "action": "clean",
+          "id": "clean",
+          "label": "Clean",
+          "type": "button"
+        }
+      ],
+      "id": "c",
+      "title": "Lane",
+      "type": "card"
+    }
+  ],
+  "id": "s",
+  "title": "Queue",
+  "type": "screen"
+}
+```
+
+### `catalog/action`
+
+Incorrect:
+
+```json
+{
+  "blocks": [
+    {
+      "action": "wipe",
+      "id": "b",
+      "label": "Go",
+      "type": "button"
+    }
+  ],
+  "id": "s",
+  "title": "Queue",
+  "type": "screen"
+}
+```
+
+Correct:
+
+```json
+{
+  "blocks": [
+    {
+      "action": "pick",
+      "id": "b",
+      "label": "Go",
+      "type": "button"
+    }
+  ],
+  "id": "s",
+  "title": "Queue",
+  "type": "screen"
+}
+```
+
+### `catalog/field`
+
+Incorrect:
+
+```json
+{
+  "blocks": [
+    {
+      "id": "t",
+      "markdown": "Hi",
+      "tone": "ok",
+      "type": "text"
+    }
+  ],
+  "id": "s",
+  "title": "Queue",
+  "type": "screen"
+}
+```
+
+Correct:
+
+```json
+{
+  "blocks": [
+    {
+      "id": "t",
+      "markdown": "Hi",
+      "type": "text"
+    }
+  ],
+  "id": "s",
+  "title": "Queue",
+  "type": "screen"
+}
+```
+
+### `catalog/input`
+
+Incorrect:
+
+```json
+{
+  "blocks": [
+    {
+      "action": "save",
+      "fields": [
+        {
+          "label": "On",
+          "name": "on",
+          "type": "toggle"
+        }
+      ],
+      "id": "f",
+      "type": "form"
+    }
+  ],
+  "id": "s",
+  "title": "Queue",
+  "type": "screen"
+}
+```
+
+Correct:
+
+```json
+{
+  "blocks": [
+    {
+      "action": "save",
+      "fields": [
+        {
+          "label": "On",
+          "name": "on",
+          "type": "text"
+        }
+      ],
+      "id": "f",
+      "type": "form"
+    }
+  ],
+  "id": "s",
+  "title": "Queue",
+  "type": "screen"
+}
+```
+
+### `catalog/kind`
+
+Incorrect:
+
+```json
+{
+  "blocks": [
+    {
+      "id": "c",
+      "title": "Plans",
+      "type": "card"
+    }
+  ],
+  "id": "s",
+  "title": "Queue",
+  "type": "screen"
+}
+```
+
+Correct:
+
+```json
+{
+  "blocks": [
+    {
+      "id": "c",
+      "markdown": "Plans",
+      "type": "text"
+    }
+  ],
+  "id": "s",
+  "title": "Queue",
+  "type": "screen"
+}
+```
+
+### `catalog/link`
+
+Incorrect:
+
+```json
+{
+  "blocks": [
+    {
+      "id": "r",
+      "tap": {
+        "url": "http://docs.example/"
+      },
+      "title": "Docs",
+      "type": "row"
+    }
+  ],
+  "id": "s",
+  "title": "Queue",
+  "type": "screen"
+}
+```
+
+Correct:
+
+```json
+{
+  "blocks": [
+    {
+      "id": "r",
+      "tap": {
+        "url": "https://docs.example/"
+      },
+      "title": "Docs",
+      "type": "row"
+    }
+  ],
+  "id": "s",
+  "title": "Queue",
+  "type": "screen"
+}
+```
+
+### `catalog/media`
+
+Incorrect:
+
+```json
+{
+  "blocks": [
+    {
+      "alt": "A cat",
+      "height": 10,
+      "id": "m",
+      "src": "https://evil.example/a.png",
+      "type": "media",
+      "width": 10
+    }
+  ],
+  "id": "s",
+  "title": "Queue",
+  "type": "screen"
+}
+```
+
+Correct:
+
+```json
+{
+  "blocks": [
+    {
+      "alt": "A cat",
+      "height": 10,
+      "id": "m",
+      "src": "https://cdn.example/a.png",
+      "type": "media",
+      "width": 10
+    }
+  ],
+  "id": "s",
+  "title": "Queue",
+  "type": "screen"
+}
+```
+
+### `catalog/open`
+
+Incorrect:
+
+```json
+{
+  "blocks": [
+    {
+      "id": "b",
+      "label": "Settings",
+      "tap": {
+        "open": "settings"
+      },
+      "type": "button"
+    }
+  ],
+  "id": "s",
+  "title": "Queue",
+  "type": "screen"
+}
+```
+
+Correct:
+
+```json
+{
+  "blocks": [
+    {
+      "id": "b",
+      "label": "Settings",
+      "tap": {
+        "action": "pick"
+      },
+      "type": "button"
+    }
+  ],
+  "id": "s",
+  "title": "Queue",
+  "type": "screen"
+}
+```
+
+### `catalog/size`
+
+Incorrect:
+
+```json
+{
+  "blocks": [
+    {
+      "id": "t0",
+      "markdown": "Line 0.",
+      "type": "text"
+    },
+    {
+      "id": "t1",
+      "markdown": "Line 1.",
+      "type": "text"
+    },
+    {
+      "id": "t2",
+      "markdown": "Line 2.",
+      "type": "text"
+    },
+    {
+      "id": "t3",
+      "markdown": "Line 3.",
+      "type": "text"
+    },
+    {
+      "id": "t4",
+      "markdown": "Line 4.",
+      "type": "text"
+    }
+  ],
+  "id": "s",
+  "title": "Queue",
+  "type": "screen"
+}
+```
+
+Correct:
+
+```json
+{
+  "blocks": [
+    {
+      "id": "t0",
+      "markdown": "Line 0.",
+      "type": "text"
+    },
+    {
+      "id": "t1",
+      "markdown": "Line 1.",
+      "type": "text"
+    },
+    {
+      "id": "t2",
+      "markdown": "Line 2.",
+      "type": "text"
+    },
+    {
+      "id": "t3",
+      "markdown": "Line 3.",
+      "type": "text"
+    }
+  ],
+  "id": "s",
+  "title": "Queue",
+  "type": "screen"
+}
+```
+
+### `render/clipped-text`
+
+Incorrect:
+
+```json
+{
+  "blocks": [
+    {
+      "id": "a",
+      "markdown": "A note that is long enough to fill more than one line of the screen at 390 px wide",
+      "type": "text"
+    }
+  ],
+  "id": "s",
+  "title": "Bad",
+  "type": "screen"
+}
+```
+```css
+.b-text{white-space:nowrap;overflow:hidden}
+```
+
+Correct:
+
+```json
+{
+  "blocks": [
+    {
+      "id": "a",
+      "markdown": "A note that is long enough to fill more than one line of the screen at 390 px wide",
+      "type": "text"
+    }
+  ],
+  "id": "s",
+  "title": "Bad",
+  "type": "screen"
+}
+```
+
+### `render/console`
+
+Incorrect:
+
+```json
+{
+  "blocks": [
+    {
+      "id": "note",
+      "markdown": "The app's script throws as the page loads.",
+      "type": "text"
+    }
+  ],
+  "id": "s",
+  "title": "Console",
+  "type": "screen"
+}
+```
+```js
+throw new Error("the app script broke");
+```
+
+Correct:
+
+```json
+{
+  "blocks": [
+    {
+      "id": "note",
+      "markdown": "The app's script throws as the page loads.",
+      "type": "text"
+    }
+  ],
+  "id": "s",
+  "title": "Console",
+  "type": "screen"
+}
+```
+
+### `render/contrast`
+
+Incorrect:
+
+```json
+{
+  "blocks": [
+    {
+      "id": "a",
+      "markdown": "A note that is long enough to fill more than one line of the screen at 390 px wide",
+      "type": "text"
+    }
+  ],
+  "id": "s",
+  "title": "Bad",
+  "type": "screen"
+}
+```
+```css
+:root{--fg:#bbb}
+```
+
+Correct:
+
+```json
+{
+  "blocks": [
+    {
+      "id": "a",
+      "markdown": "A note that is long enough to fill more than one line of the screen at 390 px wide",
+      "type": "text"
+    }
+  ],
+  "id": "s",
+  "title": "Bad",
+  "type": "screen"
+}
+```
+
+### `lint/depth`
+
+Incorrect:
+
+```json
+{
+  "blocks": [
+    {
+      "blocks": [
+        {
+          "blocks": [
+            {
+              "blocks": [
+                {
+                  "blocks": [
+                    {
+                      "blocks": [
+                        {
+                          "blocks": [
+                            {
+                              "markdown": "Seven levels down.",
+                              "type": "text"
+                            }
+                          ],
+                          "header": "More",
+                          "type": "section"
+                        }
+                      ],
+                      "header": "More",
+                      "type": "section"
+                    }
+                  ],
+                  "header": "More",
+                  "type": "section"
+                }
+              ],
+              "header": "More",
+              "type": "section"
+            }
+          ],
+          "header": "More",
+          "type": "section"
+        }
+      ],
+      "header": "More",
+      "type": "section"
+    }
+  ],
+  "id": "s",
+  "title": "Queue",
+  "type": "screen"
+}
+```
+
+Correct:
+
+```json
+{
+  "blocks": [
+    {
+      "blocks": [
+        {
+          "blocks": [
+            {
+              "blocks": [
+                {
+                  "blocks": [
+                    {
+                      "blocks": [
+                        {
+                          "markdown": "Six levels down.",
+                          "type": "text"
+                        }
+                      ],
+                      "header": "More",
+                      "type": "section"
+                    }
+                  ],
+                  "header": "More",
+                  "type": "section"
+                }
+              ],
+              "header": "More",
+              "type": "section"
+            }
+          ],
+          "header": "More",
+          "type": "section"
+        }
+      ],
+      "header": "More",
+      "type": "section"
+    }
+  ],
+  "id": "s",
+  "title": "Queue",
+  "type": "screen"
+}
+```
+
+### `lint/destructive-unconfirmed`
+
+Incorrect:
+
+```json
+{
+  "blocks": [
+    {
+      "action": "remove",
+      "id": "rm",
+      "label": "Remove fleet",
+      "style": "destructive",
+      "type": "button"
+    }
+  ],
+  "id": "s",
+  "title": "Queue",
+  "type": "screen"
+}
+```
+
+Correct:
+
+```json
+{
+  "blocks": [
+    {
+      "action": "remove",
+      "confirm": {
+        "title": "Remove the fleet and its lanes?"
+      },
+      "id": "rm",
+      "label": "Remove fleet",
+      "style": "destructive",
+      "type": "button"
+    }
+  ],
+  "id": "s",
+  "title": "Queue",
+  "type": "screen"
+}
+```
+
+### `render/dropped`
+
+Incorrect:
+
+```json
+{
+  "blocks": [
+    {
+      "events": [],
+      "fallback": {
+        "title": "No echo"
+      },
+      "id": "e",
+      "name": "x-echo",
+      "props": {
+        "zoom": 3
+      },
+      "type": "island"
+    }
+  ],
+  "id": "s",
+  "title": "Bad",
+  "type": "screen"
+}
+```
+
+Correct:
+
+```json
+{
+  "blocks": [
+    {
+      "events": [
+        "echo"
+      ],
+      "fallback": {
+        "title": "No echo"
+      },
+      "id": "e",
+      "name": "x-echo",
+      "props": {
+        "zoom": 3
+      },
+      "size": {
+        "height": 240,
+        "width": 390
+      },
+      "type": "island"
+    }
+  ],
+  "id": "s",
+  "title": "Bad",
+  "type": "screen"
+}
+```
+
+### `lint/empty-state`
+
+Incorrect:
+
+```json
+{
+  "blocks": [
+    {
+      "id": "rows",
+      "rows": [],
+      "type": "list"
+    }
+  ],
+  "id": "s",
+  "title": "Queue",
+  "type": "screen"
+}
+```
+
+Correct:
+
+```json
+{
+  "blocks": [
+    {
+      "id": "rows",
+      "rows": [],
+      "type": "list"
+    },
+    {
+      "markdown": "Queued lanes will show here.",
+      "type": "text"
+    }
+  ],
+  "id": "s",
+  "title": "Queue",
+  "type": "screen"
+}
+```
+
+### `lint/fault`
+
+Incorrect:
+
+```json
+{
+  "blocks": [
+    {
+      "id": "g",
+      "type": "gizmo"
+    }
+  ],
+  "id": "s",
+  "title": "Queue",
+  "type": "screen"
+}
+```
+
+Correct:
+
+```json
+{
+  "blocks": [
+    {
+      "id": "g",
+      "markdown": "A note.",
+      "type": "text"
+    }
+  ],
+  "id": "s",
+  "title": "Queue",
+  "type": "screen"
+}
+```
+
+### `css/fixed-width`
+
+Incorrect:
+
+```css
+.b-diagram{
+  max-width:500px;
+  min-width:400px
+}
+```
+
+Correct:
+
+```css
+.b-diagram{
+  max-width:100%
+}
+```
+
+### `lint/island-unsized`
+
+Incorrect:
+
+```json
+{
+  "blocks": [
+    {
+      "fallback": {
+        "title": "Fleet map"
+      },
+      "id": "map",
+      "name": "fleet-map",
+      "type": "island"
+    }
+  ],
+  "id": "s",
+  "title": "Queue",
+  "type": "screen"
+}
+```
+
+Correct:
+
+```json
+{
+  "blocks": [
+    {
+      "fallback": {
+        "title": "Fleet map"
+      },
+      "id": "map",
+      "name": "fleet-map",
+      "size": {
+        "height": 240,
+        "width": 390
+      },
+      "type": "island"
+    }
+  ],
+  "id": "s",
+  "title": "Queue",
+  "type": "screen"
+}
+```
+
+### `lint/label-empty`
+
+Incorrect:
+
+```json
+{
+  "blocks": [
+    {
+      "action": "go",
+      "id": "go",
+      "label": " ",
+      "type": "button"
+    }
+  ],
+  "id": "s",
+  "title": "Queue",
+  "type": "screen"
+}
+```
+
+Correct:
+
+```json
+{
+  "blocks": [
+    {
+      "action": "go",
+      "id": "go",
+      "label": "Go",
+      "type": "button"
+    }
+  ],
+  "id": "s",
+  "title": "Queue",
+  "type": "screen"
+}
+```
+
+### `lint/label-long`
+
+Incorrect:
+
+```json
+{
+  "blocks": [
+    {
+      "action": "merge",
+      "id": "go",
+      "label": "Merge every pull request that is green",
+      "type": "button"
+    }
+  ],
+  "id": "s",
+  "title": "Queue",
+  "type": "screen"
+}
+```
+
+Correct:
+
+```json
+{
+  "blocks": [
+    {
+      "action": "merge",
+      "id": "go",
+      "label": "Merge green PRs",
+      "type": "button"
+    }
+  ],
+  "id": "s",
+  "title": "Queue",
+  "type": "screen"
+}
+```
+
+### `lint/label-twice`
+
+Incorrect:
+
+```json
+{
+  "blocks": [
+    {
+      "buttons": [
+        {
+          "action": "ship",
+          "id": "a",
+          "label": "Go",
+          "type": "button"
+        },
+        {
+          "action": "stage",
+          "id": "b",
+          "label": "Go",
+          "type": "button"
+        }
+      ],
+      "id": "c",
+      "title": "Next",
+      "type": "card"
+    }
+  ],
+  "id": "s",
+  "title": "Queue",
+  "type": "screen"
+}
+```
+
+Correct:
+
+```json
+{
+  "blocks": [
+    {
+      "buttons": [
+        {
+          "action": "ship",
+          "id": "a",
+          "label": "Ship",
+          "type": "button"
+        },
+        {
+          "action": "stage",
+          "id": "b",
+          "label": "Stage",
+          "type": "button"
+        }
+      ],
+      "id": "c",
+      "title": "Next",
+      "type": "card"
+    }
+  ],
+  "id": "s",
+  "title": "Queue",
+  "type": "screen"
+}
+```
+
+### `lint/level-blocks`
+
+Incorrect:
+
+```json
+{
+  "blocks": [
+    {
+      "markdown": "Line 0.",
+      "type": "text"
+    },
+    {
+      "markdown": "Line 1.",
+      "type": "text"
+    },
+    {
+      "markdown": "Line 2.",
+      "type": "text"
+    },
+    {
+      "markdown": "Line 3.",
+      "type": "text"
+    },
+    {
+      "markdown": "Line 4.",
+      "type": "text"
+    },
+    {
+      "markdown": "Line 5.",
+      "type": "text"
+    },
+    {
+      "markdown": "Line 6.",
+      "type": "text"
+    },
+    {
+      "markdown": "Line 7.",
+      "type": "text"
+    },
+    {
+      "markdown": "Line 8.",
+      "type": "text"
+    },
+    {
+      "markdown": "Line 9.",
+      "type": "text"
+    },
+    {
+      "markdown": "Line 10.",
+      "type": "text"
+    },
+    {
+      "markdown": "Line 11.",
+      "type": "text"
+    },
+    {
+      "markdown": "Line 12.",
+      "type": "text"
+    }
+  ],
+  "id": "s",
+  "title": "Queue",
+  "type": "screen"
+}
+```
+
+Correct:
+
+```json
+{
+  "blocks": [
+    {
+      "markdown": "Line 0.",
+      "type": "text"
+    },
+    {
+      "markdown": "Line 1.",
+      "type": "text"
+    },
+    {
+      "markdown": "Line 2.",
+      "type": "text"
+    },
+    {
+      "markdown": "Line 3.",
+      "type": "text"
+    },
+    {
+      "markdown": "Line 4.",
+      "type": "text"
+    },
+    {
+      "markdown": "Line 5.",
+      "type": "text"
+    },
+    {
+      "markdown": "Line 6.",
+      "type": "text"
+    },
+    {
+      "markdown": "Line 7.",
+      "type": "text"
+    },
+    {
+      "markdown": "Line 8.",
+      "type": "text"
+    },
+    {
+      "markdown": "Line 9.",
+      "type": "text"
+    },
+    {
+      "markdown": "Line 10.",
+      "type": "text"
+    },
+    {
+      "markdown": "Line 11.",
+      "type": "text"
+    }
+  ],
+  "id": "s",
+  "title": "Queue",
+  "type": "screen"
+}
+```
+
+### `css/motion`
+
+Incorrect:
+
+```css
+.b-card{transition:opacity .2s, transform .2s}
+@keyframes in{from{opacity:0;transform:none}to{opacity:1}}
+.b-card{transition:height .2s}
+```
+
+Correct:
+
+```css
+.b-card{transition:opacity .2s, transform .2s}
+```
+
+### `render/no-name`
+
+Incorrect:
+
+```json
+{
+  "blocks": [
+    {
+      "type": ""
+    }
+  ],
+  "id": "s",
+  "title": "Bad",
+  "type": "screen"
+}
+```
+
+Correct:
+
+```json
+{
+  "blocks": [
+    {
+      "id": "a",
+      "markdown": "A note.",
+      "type": "text"
+    }
+  ],
+  "id": "s",
+  "title": "Bad",
+  "type": "screen"
+}
+```
+
+### `render/no-size`
+
+Incorrect:
+
+```json
+{
+  "blocks": [
+    {
+      "id": "a",
+      "markdown": "A note that is long enough to fill more than one line of the screen at 390 px wide",
+      "type": "text"
+    }
+  ],
+  "id": "s",
+  "title": "Bad",
+  "type": "screen"
+}
+```
+```css
+.b-text{height:0;padding:0;margin:0}
+```
+
+Correct:
+
+```json
+{
+  "blocks": [
+    {
+      "id": "a",
+      "markdown": "A note that is long enough to fill more than one line of the screen at 390 px wide",
+      "type": "text"
+    }
+  ],
+  "id": "s",
+  "title": "Bad",
+  "type": "screen"
+}
+```
+
+### `render/overflow`
+
+Incorrect:
+
+```json
+{
+  "blocks": [
+    {
+      "id": "a",
+      "markdown": "A note that is long enough to fill more than one line of the screen at 390 px wide",
+      "type": "text"
+    }
+  ],
+  "id": "s",
+  "title": "Bad",
+  "type": "screen"
+}
+```
+```css
+.b-text{margin-left:200px;width:300px}
+```
+
+Correct:
+
+```json
+{
+  "blocks": [
+    {
+      "id": "a",
+      "markdown": "A note that is long enough to fill more than one line of the screen at 390 px wide",
+      "type": "text"
+    }
+  ],
+  "id": "s",
+  "title": "Bad",
+  "type": "screen"
+}
+```
+
+### `render/overlap`
+
+Incorrect:
+
+```json
+{
+  "blocks": [
+    {
+      "id": "a",
+      "markdown": "A note that is long enough to fill more than one line of the screen at 390 px wide",
+      "type": "text"
+    },
+    {
+      "id": "b",
+      "markdown": "A second note",
+      "type": "text"
+    }
+  ],
+  "id": "s",
+  "title": "Bad",
+  "type": "screen"
+}
+```
+```css
+.b-text{position:relative}
+.b-text + .b-text{top:-30px}
+```
+
+Correct:
+
+```json
+{
+  "blocks": [
+    {
+      "id": "a",
+      "markdown": "A note that is long enough to fill more than one line of the screen at 390 px wide",
+      "type": "text"
+    },
+    {
+      "id": "b",
+      "markdown": "A second note",
+      "type": "text"
+    }
+  ],
+  "id": "s",
+  "title": "Bad",
+  "type": "screen"
+}
+```
+
+### `lint/primary-twice`
+
+Incorrect:
+
+```json
+{
+  "blocks": [
+    {
+      "buttons": [
+        {
+          "action": "ship",
+          "id": "ship",
+          "label": "Ship",
+          "style": "primary",
+          "type": "button"
+        },
+        {
+          "action": "stage",
+          "id": "stage",
+          "label": "Stage",
+          "style": "primary",
+          "type": "button"
+        }
+      ],
+      "id": "c",
+      "title": "Deploy",
+      "type": "card"
+    }
+  ],
+  "id": "s",
+  "title": "Queue",
+  "type": "screen"
+}
+```
+
+Correct:
+
+```json
+{
+  "blocks": [
+    {
+      "buttons": [
+        {
+          "action": "ship",
+          "id": "ship",
+          "label": "Ship",
+          "style": "primary",
+          "type": "button"
+        },
+        {
+          "action": "stage",
+          "id": "stage",
+          "label": "Stage",
+          "style": "plain",
+          "type": "button"
+        }
+      ],
+      "id": "c",
+      "title": "Deploy",
+      "type": "card"
+    }
+  ],
+  "id": "s",
+  "title": "Queue",
+  "type": "screen"
+}
+```
+
+### `css/private-selector`
+
+Incorrect:
+
+```css
+.b-card{color:var(--fg)}
+/* .b-nope{} */
+.b-card__title, .b-card__nope{color:var(--fg)}
+```
+
+Correct:
+
+```css
+.b-card__title{color:var(--fg)}
+```
+
+### `css/raw-colour`
+
+Incorrect:
+
+```css
+.b-card{color:var(--fg);background:var(--card) url(#red);border:1px solid currentColor;--brand:#1a73e8}
+.b-card__title{display:grid;gap:8px;padding:4px;position:relative;outline:2px solid transparent;box-shadow:0 0 0 1px var(--edge, inherit)}
+.b-card{border-color:#1a73e8}
+```
+
+Correct:
+
+```css
+.b-card{color:var(--fg);background:var(--card);border:1px solid currentColor}
+```
+
+### `lint/stream-no-id`
+
+Incorrect:
+
+```json
+{
+  "blocks": [
+    {
+      "blocks": [
+        {
+          "id": "t1-a",
+          "parts": [
+            {
+              "part": "para",
+              "spans": [
+                {
+                  "text": "Done."
+                }
+              ]
+            }
+          ],
+          "type": "prose"
+        }
+      ],
+      "name": "Scout",
+      "role": "agent",
+      "type": "message"
+    }
+  ],
+  "id": "s",
+  "title": "Thread",
+  "type": "screen"
+}
+```
+
+Correct:
+
+```json
+{
+  "blocks": [
+    {
+      "blocks": [
+        {
+          "id": "t1-a",
+          "parts": [
+            {
+              "part": "para",
+              "spans": [
+                {
+                  "text": "Done."
+                }
+              ]
+            }
+          ],
+          "type": "prose"
+        }
+      ],
+      "id": "t1",
+      "name": "Scout",
+      "role": "agent",
+      "type": "message"
+    }
+  ],
+  "id": "s",
+  "title": "Thread",
+  "type": "screen"
+}
+```
+
+### `lint/summary-long`
+
+Incorrect:
+
+```json
+{
+  "blocks": [
+    {
+      "blocks": [
+        {
+          "id": "t1-b",
+          "name": "Test",
+          "state": "done",
+          "summary": "ran every test in the workspace with all features and the locked lockfile, all passed",
+          "type": "tool"
+        }
+      ],
+      "id": "t1",
+      "name": "Scout",
+      "role": "agent",
+      "type": "message"
+    }
+  ],
+  "id": "s",
+  "title": "Thread",
+  "type": "screen"
+}
+```
+
+Correct:
+
+```json
+{
+  "blocks": [
+    {
+      "blocks": [
+        {
+          "id": "t1-b",
+          "name": "Test",
+          "state": "done",
+          "summary": "ran every test, all passed",
+          "type": "tool"
+        }
+      ],
+      "id": "t1",
+      "name": "Scout",
+      "role": "agent",
+      "type": "message"
+    }
+  ],
+  "id": "s",
+  "title": "Thread",
+  "type": "screen"
+}
+```
+
+### `lint/tap-empty`
+
+Incorrect:
+
+```json
+{
+  "blocks": [
+    {
+      "blocks": [
+        {
+          "id": "t1-a",
+          "parts": [
+            {
+              "part": "para",
+              "spans": [
+                {
+                  "text": "Done."
+                }
+              ]
+            }
+          ],
+          "type": "prose"
+        }
+      ],
+      "files": [
+        {
+          "name": "plan.pdf",
+          "tap": {}
+        }
+      ],
+      "id": "t1",
+      "name": "You",
+      "role": "owner",
+      "type": "message"
+    }
+  ],
+  "id": "s",
+  "title": "Thread",
+  "type": "screen"
+}
+```
+
+Correct:
+
+```json
+{
+  "blocks": [
+    {
+      "blocks": [
+        {
+          "id": "t1-a",
+          "parts": [
+            {
+              "part": "para",
+              "spans": [
+                {
+                  "text": "Done."
+                }
+              ]
+            }
+          ],
+          "type": "prose"
+        }
+      ],
+      "files": [
+        {
+          "name": "plan.pdf",
+          "tap": {
+            "url": "https://example.com/plan.pdf"
+          }
+        }
+      ],
+      "id": "t1",
+      "name": "You",
+      "role": "owner",
+      "type": "message"
+    }
+  ],
+  "id": "s",
+  "title": "Thread",
+  "type": "screen"
+}
+```
+
+### `render/tap-target`
+
+Incorrect:
+
+```json
+{
+  "blocks": [
+    {
+      "action": "go",
+      "id": "go",
+      "label": "Go",
+      "type": "button"
+    }
+  ],
+  "id": "s",
+  "title": "Bad",
+  "type": "screen"
+}
+```
+
+Correct:
+
+```json
+{
+  "blocks": [
+    {
+      "id": "go",
+      "tap": {
+        "action": "go"
+      },
+      "title": "Go",
+      "type": "row"
+    }
+  ],
+  "id": "s",
+  "title": "Bad",
+  "type": "screen"
+}
+```
+
+### `lint/text-wall`
+
+Incorrect:
+
+```json
+{
+  "blocks": [
+    {
+      "markdown": "The lane waits for its review. The lane waits for its review. The lane waits for its review. The lane waits for its review. The lane waits for its review. The lane waits for its review. The lane waits for its review. The lane waits for its review. The lane waits for its review. The lane waits for its review. The lane waits for its review. The lane waits for its review. The lane waits for its review. The lane waits for its review. The lane waits for its review. The lane waits for its review. The lane waits for its review. The lane waits for its review. The lane waits for its review. The lane waits for its review. The lane waits for its review.",
+      "type": "text"
+    }
+  ],
+  "id": "s",
+  "title": "Queue",
+  "type": "screen"
+}
+```
+
+Correct:
+
+```json
+{
+  "blocks": [
+    {
+      "markdown": "The lane waits for its review.",
+      "type": "text"
+    }
+  ],
+  "id": "s",
+  "title": "Queue",
+  "type": "screen"
+}
+```
+
+### `lint/title-long`
+
+Incorrect:
+
+```json
+{
+  "blocks": [
+    {
+      "markdown": "Nothing queued.",
+      "type": "text"
+    }
+  ],
+  "id": "s",
+  "title": "Every lane that waits on the owner, the reviewer or the CI runner",
+  "type": "screen"
+}
+```
+
+Correct:
+
+```json
+{
+  "blocks": [
+    {
+      "markdown": "Nothing queued.",
+      "type": "text"
+    }
+  ],
+  "id": "s",
+  "title": "Waiting lanes",
+  "type": "screen"
+}
+```
+
+### `render/tree`
+
+Incorrect:
+
+```json
+{
+  "blocks": [
+    {
+      "id": "g",
+      "title": "Load",
+      "type": "gauge"
+    }
+  ],
+  "id": "s",
+  "title": "Bad",
+  "type": "screen"
+}
+```
+
+Correct:
+
+```json
+{
+  "blocks": [
+    {
+      "id": "g",
+      "title": "Load",
+      "type": "card"
+    }
+  ],
+  "id": "s",
+  "title": "Bad",
+  "type": "screen"
+}
+```
+
+### `render/truncated`
+
+Incorrect:
+
+```json
+{
+  "blocks": [
+    {
+      "id": "a",
+      "markdown": "A note that is long enough to fill more than one line of the screen at 390 px wide",
+      "type": "text"
+    }
+  ],
+  "id": "s",
+  "title": "Bad",
+  "type": "screen"
+}
+```
+```css
+.b-text{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+```
+
+Correct:
+
+```json
+{
+  "blocks": [
+    {
+      "id": "a",
+      "markdown": "A note that is long enough to fill more than one line of the screen at 390 px wide",
+      "type": "text"
+    }
+  ],
+  "id": "s",
+  "title": "Bad",
+  "type": "screen"
+}
+```
+
+### `lint/untitled`
+
+Incorrect:
+
+```json
+{
+  "blocks": [
+    {
+      "markdown": "Nothing queued.",
+      "type": "text"
+    }
+  ],
+  "id": "s",
+  "type": "screen"
+}
+```
+
+Correct:
+
+```json
+{
+  "blocks": [
+    {
+      "markdown": "Nothing queued.",
+      "type": "text"
+    }
+  ],
+  "id": "s",
+  "title": "Queue",
+  "type": "screen"
+}
+```
+
+No pair: `guard/baseline-grew`, `guard/baseline-stale`, `explore/error-screen`, `render/frame-budget`, `guard/seed-missing`, `explore/sent-differs`, `explore/unanswered`, `explore/unstable`, `guard/unused-ignore`. Each judges a baseline, an app's answerer or the time a draw takes, not a screen.
