@@ -1,3 +1,9 @@
+var __defProp = Object.defineProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+
 // src/gen/hooks.ts
 var hooks = {
   screen: { variant: null, parts: ["title", "badge", "actions"] },
@@ -483,6 +489,103 @@ function css(look, style = {}) {
 }
 var tiles = `:where(:root){${vars(defaultStyle).join(";")}}`;
 var choose = (setting, dark, schemes = {}) => (setting !== null && Object.prototype.hasOwnProperty.call(schemes, setting) ? schemes[setting] : void 0) ?? defaultPair[dark ? "dark" : "light"];
+
+// src/core/code.ts
+var code_exports = {};
+__export(code_exports, {
+  decode: () => decode,
+  encode: () => encode
+});
+var TYPES = ["default", "mono", "serif"];
+var EASINGS = ["standard", "calm", "bouncy"];
+var SURFACES = ["glass", "dashed", "solid"];
+var FILLS = ["tint", "outline", "solid"];
+var BUTTONS = ["plain", "filled"];
+var MARKS = ["symbols", "text"];
+var SECTIONS = ["title", "quiet"];
+var CASES = ["as-is", "lower", "upper"];
+var ROLES = ["kind", "header", "group", "section", "title", "button", "chip", "back", "said", "picked"];
+var STEPS = Array.from({ length: 17 }, (_, i) => i / 4);
+var SPAN = 3 * 17 ** 3 * 3 ** 3 * 2 ** 3;
+var MARK = /^[!-/:-@[-`{-~ ‹›·•]{0,4}$/u;
+var b64 = (bytes) => btoa(String.fromCharCode(...bytes)).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+var unb64 = (t) => Array.from(atob(t.replace(/-/g, "+").replace(/_/g, "/")), (c) => c.charCodeAt(0));
+function step(x, axis) {
+  const i = STEPS.indexOf(x);
+  if (i < 0) throw new Error(`${axis} is off the code's quarter steps`);
+  return i;
+}
+function encode(style, scheme = null) {
+  const digits = [
+    [TYPES.indexOf(style.type ?? "default"), 3],
+    [step(style.space ?? 1, "space"), 17],
+    [step(style.radius ?? 0, "radius"), 17],
+    [step(style.motion ?? 1, "motion"), 17],
+    [EASINGS.indexOf(style.easing ?? "standard"), 3],
+    [SURFACES.indexOf(style.surface ?? "glass"), 3],
+    [FILLS.indexOf(style.fills ?? "tint"), 3],
+    [BUTTONS.indexOf(style.buttons ?? "plain"), 2],
+    [MARKS.indexOf(style.marks ?? "symbols"), 2],
+    [SECTIONS.indexOf(style.sections ?? "title"), 2]
+  ];
+  let out = "1" + digits.reduceRight((n, [d, radix]) => n * radix + d, 0).toString(36).padStart(5, "0");
+  const bytes = [];
+  const utf8 = new TextEncoder();
+  for (const [r, role2] of ROLES.entries()) {
+    const l = style.labels?.[role2];
+    if (!l) continue;
+    bytes.push(r * 3 + CASES.indexOf(l.case ?? "as-is"));
+    for (const t of [l.prefix ?? "", l.suffix ?? ""]) bytes.push(utf8.encode(t).length, ...utf8.encode(t));
+  }
+  if (bytes.length) out += "~" + b64(bytes);
+  return scheme === null ? out : `${out}.${scheme}`;
+}
+function labels(bytes) {
+  const out = {};
+  const utf8 = new TextDecoder("utf-8", { fatal: true });
+  let at2 = 0;
+  const take = () => {
+    const len = bytes[at2++];
+    if (len === void 0 || at2 + len > bytes.length) throw new Error();
+    const t = utf8.decode(new Uint8Array(bytes.slice(at2, at2 + len)));
+    at2 += len;
+    if (!MARK.test(t)) throw new Error();
+    return t;
+  };
+  while (at2 < bytes.length) {
+    const rc = bytes[at2++] ?? 0;
+    const role2 = ROLES[Math.floor(rc / 3)];
+    const c = CASES[rc % 3];
+    if (!role2 || !c) throw new Error();
+    out[role2] = { prefix: take(), suffix: take(), case: c };
+  }
+  return out;
+}
+function decode(code) {
+  const m = /^([0-9a-z])([0-9a-z]{5})(?:~([A-Za-z0-9_-]+))?(?:\.(.*))?$/.exec(code);
+  if (!m || m[1] === void 0 || m[2] === void 0) throw new Error("not a look code");
+  if (m[1] !== "1") throw new Error(`version ${m[1]}: this reader takes 1`);
+  const scheme = m[4] ?? null;
+  if (scheme !== null && (scheme === "default" || !/^[a-z0-9][a-z0-9-]{0,31}$/.test(scheme)))
+    throw new Error("a scheme name is a-z, 0-9 and -, at most 32, and never default");
+  let n = parseInt(m[2], 36);
+  if (n >= SPAN) throw new Error("an axis value this reader does not know: made by a newer blocks");
+  const take = (all) => {
+    const v = all[n % all.length];
+    n = Math.floor(n / all.length);
+    if (v === void 0) throw new Error("not a look code");
+    return v;
+  };
+  const style = { type: take(TYPES), space: take(STEPS), radius: take(STEPS), motion: take(STEPS), easing: take(EASINGS), surface: take(SURFACES), fills: take(FILLS), buttons: take(BUTTONS), marks: take(MARKS), sections: take(SECTIONS), labels: {} };
+  const bad = new Error("the labels part does not decode");
+  try {
+    if (m[3]) style.labels = labels(unb64(m[3]));
+  } catch {
+    throw bad;
+  }
+  if (encode(style, scheme) !== code) throw bad;
+  return { style, scheme };
+}
 
 // src/gen/builders.ts
 var screen = (fields) => ({ type: "screen", ...fields });
@@ -9276,6 +9379,7 @@ export {
   linkable,
   list2 as list,
   lit,
+  code_exports as lookCode,
   media,
   message,
   modal,

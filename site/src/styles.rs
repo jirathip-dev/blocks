@@ -1,9 +1,10 @@
 use blocks::site::Look;
-use blocks::{Block, ButtonStyle, Card, ChipOption, Chips, List, Prose, Section, Tone};
+use blocks::theme::{LookCode, SchemeName};
+use blocks::{Block, ButtonStyle, Card, ChipOption, Chips, List, Prose, Section, Tap, Tone};
 use serde_json::Value;
 
 use crate::pages::panel;
-use crate::ui::{b, code, heading, listing, marked, page, para, row, section, span, text, Page};
+use crate::ui::{b, code, heading, link_row, listing, marked, page, para, row, section, span, text, Page};
 
 type Named = (&'static str, &'static str, Look);
 
@@ -49,6 +50,41 @@ fn value(axis: &str, l: &Look) -> String {
 
 fn button(id: &str, label: &str, style: ButtonStyle) -> Block {
     b!(Button(blocks::Button::new(label).id(id).style(style)))
+}
+
+fn code_of(name: &str, l: &Look) -> String {
+    LookCode::new(l.style.clone(), SchemeName::new(name).ok())
+        .map(|c| c.to_string())
+        .unwrap_or_default()
+}
+
+fn copy(id: &str, label: &str, what: &str, style: ButtonStyle) -> Block {
+    let tap = Tap {
+        sheet: Some(format!("look:{what}")),
+        ..Tap::default()
+    };
+    b!(Button(blocks::Button::new(label).id(id).style(style).tap(tap)))
+}
+
+fn codes(looks: &[Named]) -> Block {
+    let four: Vec<Block> = looks
+        .iter()
+        .map(|(n, label, l)| {
+            let c = code_of(n, l);
+            link_row(&format!("code-{n}"), label, "", &c, &format!("styles.html?look={c}"))
+        })
+        .collect();
+    let worn = looks.first().map(|(n, _, l)| code_of(n, l)).unwrap_or_default();
+    section(
+        "code",
+        "Code",
+        vec![
+            text("look-code", &format!("`{worn}`")),
+            copy("copy-code", "copy code", "code", ButtonStyle::Primary),
+            copy("copy-link", "copy link", "link", ButtonStyle::Plain),
+            section("code-four", "The four", vec![b!(List(List::new(four).id("four")))]),
+        ],
+    )
 }
 
 fn chips(id: &str) -> Block {
@@ -169,8 +205,9 @@ pub fn styles(looks: &[Named]) -> Page {
     let body = [
         vec![text(
             "intro",
-            "A look is a light and a dark scheme plus a `Style`. Pick one in the nav: every page changes in place and keeps it. The device picks light or dark. Each sample below wears the look you picked; its list gives the value in all four.",
+            "A look is a light and a dark scheme plus a `Style`. Pick one in the nav: every page changes in place and keeps it. The device picks light or dark. Each sample below wears the look you picked; its list gives the value in all four. [The look code](look-code.html) carries a whole look in one line.",
         )],
+        vec![codes(looks)],
         AXES.iter().map(|a| axis(looks, *a)).collect(),
         vec![b!(Prose(own))],
     ]
@@ -180,6 +217,76 @@ pub fn styles(looks: &[Named]) -> Page {
         "styles.html",
         "Styles",
         "Four looks, each a scheme pair and a style: every axis, a sample of it, and its value in each look.",
+        body,
+    )
+}
+
+const PARTS: [(&str, &str, &str); 4] = [
+    ("version", "one character; this reader takes 1", "1"),
+    (
+        "style",
+        "5 characters, 0-9 a-z: the ten axes packed as one number",
+        "0lspy",
+    ),
+    (
+        "labels",
+        "~ then the role labels, URL-safe; left out when none",
+        "~BAMv…",
+    ),
+    ("scheme", ". then a name; left out for blocks' own pair", ".console"),
+];
+
+const ORDER: [(&str, &str); 10] = [
+    ("type", "default 0 · mono 1 · serif 2"),
+    ("space", "0, 0.25, 0.5 … 4 (17 steps)"),
+    ("radius", "0, 0.25, 0.5 … 4 (17 steps)"),
+    ("motion", "0, 0.25, 0.5 … 4 (17 steps)"),
+    ("easing", "standard 0 · calm 1 · bouncy 2"),
+    ("surface", "glass 0 · dashed 1 · solid 2"),
+    ("fills", "tint 0 · outline 1 · solid 2"),
+    ("buttons", "plain 0 · filled 1"),
+    ("marks", "symbols 0 · text 1"),
+    ("sections", "title 0 · quiet 1"),
+];
+
+/// The look code page: its parts, the axes in order, the labels and scheme rules, the four's codes and app usage.
+pub fn format(looks: &[Named]) -> Page {
+    let parts: Vec<Block> = PARTS
+        .iter()
+        .map(|(t, s, v)| b!(Row(row(&format!("fp-{t}"), t, s, v))))
+        .collect();
+    let axes: Vec<Block> = ORDER
+        .iter()
+        .enumerate()
+        .map(|(i, (t, v))| b!(Row(row(&format!("ax-{t}"), &format!("{}. {t}", i + 1), "", v))))
+        .collect();
+    let four: Vec<Block> = looks
+        .iter()
+        .map(|(n, label, l)| b!(Row(row(&format!("ex-{n}"), label, "", &code_of(n, l)))))
+        .collect();
+    let usage = Prose::new(vec![
+        listing("rust", "let look: LookCode = \"108bd0.paper\".parse()?;\nlook.style();   // a Style, every axis set\nlook.scheme();  // Some(\"paper\"): the app resolves it; None is theme::default()\nlook.to_string() == \"108bd0.paper\""),
+        listing("ts", "mount({ root, layout, schemes, look: \"108bd0.paper\" });  // the app's own look\nlookCode.decode(\"108bd0.paper\");   // { style, scheme: \"paper\" }; throws on a bad code\nlookCode.encode(style, \"paper\");    // \"108bd0.paper\""),
+    ])
+    .id("f-usage");
+    let body = vec![
+        text("f-intro", "One code carries a whole look: the style on every axis, and the name of a scheme pair. It is short enough for a link, a chat line or an app's config."),
+        section("f-code", "The code", vec![b!(List(List::new(parts).id("f-parts")))]),
+        section("f-axes", "Style axes, in order", vec![
+            text("f-axes-what", "Each axis is a digit of one number, the first the lowest; its first value is the default. A newer blocks adds an axis as a higher digit, so every old code reads the same. Space, radius and motion go in quarter steps; a style off a step has no code, and encoding it names the axis."),
+            b!(List(List::new(axes).id("f-axis-list"))),
+        ]),
+        section("f-labels", "Labels", vec![text("f-labels-what", "For each decorated role, in the order kind, header, group, section, title, button, chip, back, said, picked: one byte of role × 3 + case (as-is, lower, upper), then the prefix and the suffix, each a length byte and its UTF-8, all as URL-safe base64.")]),
+        section("f-scheme", "Scheme", vec![text("f-scheme-what", "The part after the dot only names a pair: a swag pack, or the app's own. blocks keeps no list of names and carries no colours. An app with no pair by that name wears the style on blocks' own pair and says so.")]),
+        section("f-examples", "The four", vec![b!(List(List::new(four).id("f-ex")))]),
+        section("f-use", "In an app", vec![b!(Prose(usage))]),
+        text("f-wrong", "A code this reader cannot read (not a code, another version, made by a newer blocks, a bad labels part or scheme name) keeps the look you had and says why."),
+    ];
+    page(
+        "look-code",
+        "look-code.html",
+        "Look code",
+        "A whole blocks look in one short versioned code: its parts, the axes in order, labels, the scheme name and how an app reads it.",
         body,
     )
 }

@@ -30,6 +30,7 @@ export type Mount = {
   css?: string[];
   theme?: Theme;
   schemes?: Record<string, Scheme>;
+  look?: string;
   store?: Store;
   edit?: Editing;
   file?: OnFile;
@@ -54,7 +55,7 @@ export function mount(o: Mount): { layout(next: Layout): void; close(): void } {
   const store = o.store ?? local();
   const theme = o.theme ?? plain;
   for (const href of o.css ?? []) document.head.append(Object.assign(el("link"), { rel: "stylesheet", href }));
-  const { look, wear } = wearer(o.schemes ?? {}, theme);
+  const { look, wear } = wearer(o.schemes ?? {}, theme, null, o.look ?? null);
   wear(store.get("b:look"));
   const wide = matchMedia("(min-width: 1000px)");
   const ed = o.edit && editor(o.edit, o.root);
