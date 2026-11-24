@@ -1,4 +1,4 @@
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
 use std::path::Path;
 
 use blocks::guard::{self, Severity};
@@ -81,7 +81,7 @@ fn misses(case: &Case, reply: &Value) -> Vec<String> {
         }
     }
     let mut drawn = BTreeSet::new();
-    kinds(&tree::expect(&screen, Block::KINDS, &Default::default()), &mut drawn);
+    kinds(&tree::expect(&screen, Block::KINDS, &BTreeMap::new()), &mut drawn);
     out.extend(
         case.kinds
             .iter()
