@@ -1,0 +1,37 @@
+{
+  "type": "screen",
+  "id": "s",
+  "title": "Thread",
+  "blocks": [
+    {
+      "type": "message",
+      "id": "t1",
+      "role": "owner",
+      "name": "You",
+      "blocks": [
+        {
+          "type": "prose",
+          "id": "t1-a",
+          "parts": [
+            {
+              "part": "para",
+              "spans": [
+                {
+                  "text": "Done."
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "files": [
+        {
+          "name": "plan.pdf",
+          "tap": {
+            "url": "https://example.com/plan.pdf"
+          }
+        }
+      ]
+    }
+  ]
+}

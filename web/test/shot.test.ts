@@ -47,6 +47,19 @@ test("each bad fixture fires its probe and no other in WebKit, all in one --plan
   deepStrictEqual(seen.filter((s) => tree.includes(s.rule)).map((s) => ({ rule: s.rule, run: s.run, at: s.at })), snap, "blocks-snap's test holds SwiftUI to the same file");
 });
 
+test("each fixed fixture, the Correct half of its rule's pair in the skill's rules.md, draws with no finding", () => {
+  const fixed = at("../../fixtures/guard/fixed/");
+  const draw = readdirSync(join(bad, "render")).filter((f) => f.endsWith(".json")).map((f) => f.replace(/\.json$/, ""));
+  const sheets = readdirSync(join(bad, "css")).map((f) => f.replace(/\.css$/, ""));
+  deepStrictEqual(readdirSync(join(fixed, "render")).sort(), draw.map((n) => `${n}.json`).sort());
+  deepStrictEqual(readdirSync(join(fixed, "css")).sort(), sheets.map((n) => `${n}.css`).sort());
+  const runs = [
+    ...draw.map((n) => ({ ...RUN, name: n, screen: join(fixed, "render", `${n}.json`), kinds: ["gauge"] })),
+    ...sheets.map((n) => ({ ...RUN, name: n, screen: join(blocks, "text.json"), css: [join(fixed, "css", `${n}.css`)] })),
+  ];
+  deepStrictEqual(plan("fixed", runs).map((s) => [s.run, s.rule, s.detail]), []);
+});
+
 test("a plan's script registers an app kind's view on window.blocksApps: the gauge draws natively and render/tree is quiet", () => {
   const script = join(out, "gauge.js");
   writeFileSync(script, 'window.blocksApps = { gauge: (b) => Object.assign(document.createElement("div"), { textContent: b.title }) };');

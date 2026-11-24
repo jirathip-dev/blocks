@@ -1,0 +1,33 @@
+{
+  "type": "screen",
+  "id": "sales",
+  "title": "Sales",
+  "blocks": [
+    {
+      "type": "chart",
+      "id": "weekly",
+      "title": "Weekly sales",
+      "chart": "bar",
+      "x": [
+        "W44",
+        "W45",
+        "W46",
+        "W47"
+      ],
+      "series": [
+        {
+          "name": "Sales",
+          "values": [
+            120400,
+            98300,
+            131200,
+            117800
+          ]
+        }
+      ],
+      "tap": {
+        "action": "sales.week"
+      }
+    }
+  ]
+}
