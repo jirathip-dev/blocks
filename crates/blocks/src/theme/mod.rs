@@ -1,9 +1,11 @@
+mod code;
 mod css;
 mod gate;
 mod pack;
 mod scheme;
 mod style;
 
+pub use code::{CodeError, LookCode, SchemeName};
 pub use css::css;
 pub use gate::{gate, Miss};
 pub use pack::{check_pack, Theme};

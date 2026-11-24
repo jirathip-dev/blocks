@@ -48,7 +48,7 @@ const tree = (page) =>
 const files = SITE ? readdirSync(SITE).filter((f) => f.endsWith(".html")).sort() : [];
 
 test("every page is the same PNG and tree before and after blocks.js adopts it, all under /blocks/", async () => {
-  strictEqual(files.length, 51);
+  strictEqual(files.length, 52);
   const warm = await open("index.html", { js: false });
   await warm.page.screenshot({ fullPage: true });
   await warm.close();
@@ -143,6 +143,43 @@ test("JS off: Styles pins each look's colours side by side; JS on: the nav's swi
   strictEqual(await bg(dark), "#0e0e11");
   strictEqual(await rise(dark), "0.65s", "Playful's motion 1.25 scales the 520 ms rise");
   await ctx.close();
+});
+
+test("Styles shows the worn look's code and copies it or its link; a link with ?look= wears that look, keeps it and offers undo; a bad one changes nothing", async () => {
+  const on = await open("styles.html", { width: 1440 });
+  const { page } = on;
+  await page.evaluate(() => {
+    window.copied = [];
+    Object.defineProperty(navigator, "clipboard", { value: { writeText: async (t) => window.copied.push(t) } });
+  });
+  const shown = () => page.textContent('[data-id="look-code"]');
+  const state = () => page.evaluate(() => [document.documentElement.dataset.look ?? null, "shared" in document.documentElement.dataset, localStorage.getItem("b:look"), location.search]);
+  const toast = () => page.textContent(".tsts .tsx");
+  strictEqual((await shown()).trim(), "101yx6");
+  deepStrictEqual(await page.$$eval('[data-id="four"] a', (as) => as.map((a) => a.getAttribute("href"))), ["styles.html?look=101yx6", "styles.html?look=11hioq~BQAA.paper", "styles.html?look=10lspy~BAMvLyAAEAFbAV0.console", "styles.html?look=108bd0.playful"]);
+  await page.click('[data-id="look-console"]');
+  strictEqual(await shown(), "10lspy~BAMvLyAAEAFbAV0.console");
+  await page.click('[data-id="copy-code"]');
+  await page.click('[data-id="copy-link"]');
+  deepStrictEqual(await page.evaluate(() => window.copied), ["10lspy~BAMvLyAAEAFbAV0.console", `${BASE}styles.html?look=10lspy~BAMvLyAAEAFbAV0.console`]);
+  await page.goto(`${BASE}styles.html?look=108bd0.paper`);
+  deepStrictEqual(await state(), ["paper", true, "108bd0.paper", ""]);
+  deepStrictEqual([await bg(page), await shown(), await toast()], ["#f4ecdc", "108bd0.paper", "Wearing a shared look"]);
+  strictEqual(await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue("--radius").trim()), "24px", "Playful's radius on Paper's colours");
+  ok(await page.isVisible('[data-id="look-shared"]'), "the Shared button shows");
+  await page.reload();
+  deepStrictEqual([...(await state()).slice(0, 3), await bg(page)], ["paper", true, "108bd0.paper", "#f4ecdc"]);
+  await page.goto(`${BASE}styles.html?look=10lspy~BAMvLyAAEAFbAV0.console`);
+  await page.click(".tsts button:has-text('undo')");
+  deepStrictEqual(await state(), ["paper", true, "108bd0.paper", ""]);
+  await page.goto(`${BASE}styles.html?look=11hioq~BQAA.paper`);
+  deepStrictEqual(await state(), ["paper", false, "paper", ""]);
+  ok(!(await page.isVisible('[data-id="look-shared"]')), "a named look is no shared one");
+  await page.goto(`${BASE}styles.html?look=901yx6`);
+  deepStrictEqual([await state(), await toast()], [["paper", false, "paper", ""], "version 9: this reader takes 1: your look is unchanged"]);
+  await page.goto(`${BASE}styles.html?look=101yx6.dusk`);
+  deepStrictEqual([await state(), await bg(page), await toast()], [["default", true, "101yx6.dusk", ""], "#f6f6f6", "No scheme “dusk” here: wearing the shared style on the default colours"]);
+  await on.close();
 });
 
 const screenOf = (f) => JSON.parse(readFileSync(join(SITE, f), "utf8").match(/id="blocks-screen"[^>]*>(.*?)<\/script>/s)[1]);
