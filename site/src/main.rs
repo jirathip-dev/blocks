@@ -48,10 +48,10 @@ fn css(looks: &[Named]) -> String {
     }
     let worn: Vec<String> = looks
         .iter()
-        .map(|(id, _, _)| format!("html[data-look={id}] [data-sheet=\"look:{id}\"]"))
+        .map(|(id, _, _)| format!("html[data-look={id}]:not([data-shared]) [data-sheet=\"look:{id}\"]"))
         .collect();
     out.push_str(&format!(
-        "html:not([data-look]) [data-sheet=\"look:default\"],{}{{background:var(--l);border-color:var(--l);color:var(--bg)}}\n",
+        "html:not([data-look]) [data-sheet=\"look:default\"],html[data-shared] [data-sheet=\"look:shared\"],{}{{background:var(--l);border-color:var(--l);color:var(--bg)}}\nhtml:not([data-shared]) [data-sheet=\"look:shared\"]{{display:none}}\n",
         worn.join(",")
     ));
     for (i, t) in pages::SWATCHES.iter().enumerate() {
@@ -71,6 +71,7 @@ fn pages(bench: Option<&Value>, looks: &[Named]) -> Result<Vec<Page>, String> {
         home,
         kinds::gallery(&all),
         styles::styles(looks),
+        styles::format(looks),
         pages::numbers(bench),
         live::behaviours(),
         live::islands(),

@@ -41,6 +41,7 @@ fn nav(current: &str) -> Block {
     let nav = b!(Nav(Nav::new(links).id("site-nav").brand(link("blocks", "index.html"))));
     let looks = NAMES
         .iter()
+        .chain([&("shared", "Shared")])
         .map(|(name, label)| {
             let tap = Tap {
                 sheet: Some(format!("look:{name}")),
