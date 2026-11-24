@@ -340,3 +340,27 @@ test("kind pages: the sample's Rust tab is shown first and the JSON tab swaps in
   strictEqual(page.url(), `${BASE}kind-stat.html`);
   await close();
 });
+
+test("llms.txt resolves and so does every link in it: site pages in the build, repo files in the checkout", async () => {
+  const text = readFileSync(join(SITE, "llms.txt"), "utf8");
+  const links = [...text.matchAll(/\]\((https?:[^)]+)\)/g)].map((m) => m[1]);
+  ok(links.length > files.length / 2, `${links.length} links`);
+  const repo = "https://github.com/jirathip-dev/blocks/blob/main/";
+  const root = join(import.meta.dirname, "..", "..", "..");
+  const site = "https://jirathip-dev.github.io/blocks/";
+  const where = (l) => {
+    if (l.startsWith(site)) return join(SITE, l.slice(site.length));
+    if (l.startsWith(repo)) return join(root, l.slice(repo.length));
+    return "";
+  };
+  for (const l of links) ok(where(l) && existsSync(where(l)), `llms.txt: ${l} goes nowhere`);
+  for (const f of files.filter((f) => f.startsWith("kind-"))) ok(links.includes(`${site}${f.replace(/html$/, "md")}`), `llms.txt: no ${f}`);
+});
+
+test("kind pages: Copy page puts the page's markdown on the clipboard", async () => {
+  const { page, close } = await open("kind-stat.html");
+  await page.evaluate(() => Object.defineProperty(navigator, "clipboard", { value: { writeText: async (t) => void (window.copied = t) } }));
+  await page.click('[data-id="copy-page"]');
+  strictEqual(await page.evaluate(() => window.copied), readFileSync(join(SITE, "kind-stat.md"), "utf8"));
+  await close();
+});

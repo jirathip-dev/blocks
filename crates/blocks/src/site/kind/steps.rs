@@ -26,7 +26,7 @@ fn step(w: &mut W<'_>, s: &Value, i: usize, n: usize, at: usize) {
             attrs.push(("href", u.as_str()));
             "a"
         }
-        Go::Post(..) | Go::Sheet(_) | Go::Stay => {
+        Go::Post(..) | Go::Sheet(_) | Go::Copy(_) | Go::Stay => {
             if tap.is_some() {
                 attrs.extend([("role", "button"), ("tabindex", "0")]);
                 attrs.extend(sends(tap).map(|a| ("data-action", a)));

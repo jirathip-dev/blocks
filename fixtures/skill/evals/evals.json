@@ -1,0 +1,131 @@
+{
+  "cases": [
+    {
+      "id": "settings-secret",
+      "prompt": "A settings screen with a secret field for the API key and a save button.",
+      "kinds": [
+        "secret",
+        "button"
+      ],
+      "absent": [
+        "table"
+      ],
+      "avoid": [
+        "lint/untitled",
+        "lint/primary-twice"
+      ],
+      "actions": [
+        "save"
+      ]
+    },
+    {
+      "id": "delete-project",
+      "prompt": "A project page with a button that deletes the project for good.",
+      "kinds": [
+        "button"
+      ],
+      "avoid": [
+        "lint/destructive-unconfirmed",
+        "lint/action-no-id"
+      ],
+      "actions": [
+        "delete-project"
+      ]
+    },
+    {
+      "id": "empty-inbox",
+      "prompt": "An inbox that has no messages yet.",
+      "kinds": [
+        "list",
+        "text"
+      ],
+      "avoid": [
+        "lint/empty-state",
+        "lint/untitled"
+      ]
+    },
+    {
+      "id": "sign-up",
+      "prompt": "A sign-up form with a name, an email and a password field, sent as sign-up.",
+      "kinds": [
+        "form"
+      ],
+      "absent": [
+        "table"
+      ],
+      "actions": [
+        "sign-up"
+      ]
+    },
+    {
+      "id": "agent-thread",
+      "prompt": "A chat thread where the agent is still writing its answer.",
+      "kinds": [
+        "message",
+        "prose"
+      ],
+      "avoid": [
+        "lint/stream-no-id"
+      ]
+    },
+    {
+      "id": "deploy-card",
+      "prompt": "A deploy card with a ship and a stage button, ship the main one.",
+      "kinds": [
+        "card",
+        "button"
+      ],
+      "avoid": [
+        "lint/primary-twice",
+        "lint/label-twice",
+        "lint/buttons-many"
+      ],
+      "actions": [
+        "ship",
+        "stage"
+      ]
+    },
+    {
+      "id": "weekly-sales",
+      "prompt": "Weekly sales as a chart, tapping a week opens its orders.",
+      "kinds": [
+        "chart"
+      ],
+      "absent": [
+        "table"
+      ],
+      "avoid": [
+        "lint/title-long"
+      ],
+      "actions": [
+        "sales.week"
+      ]
+    },
+    {
+      "id": "orders-table",
+      "prompt": "A table of today's orders with their totals.",
+      "kinds": [
+        "table"
+      ],
+      "absent": [
+        "chart"
+      ],
+      "avoid": [
+        "lint/level-blocks",
+        "lint/text-wall"
+      ]
+    },
+    {
+      "id": "long-help",
+      "prompt": "A help page that explains the refund policy in several parts.",
+      "kinds": [
+        "section"
+      ],
+      "avoid": [
+        "lint/text-wall",
+        "lint/depth",
+        "lint/title-long"
+      ]
+    }
+  ]
+}

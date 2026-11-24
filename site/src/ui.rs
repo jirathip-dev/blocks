@@ -17,6 +17,7 @@ pub struct Page {
     pub description: String,
     pub screen: Screen,
     pub js: &'static str,
+    pub md: Option<String>,
 }
 
 const LINKS: [(&str, &str); 8] = [
@@ -65,6 +66,7 @@ pub fn page(id: &str, file: &str, title: &str, description: &str, body: Vec<Bloc
         description: description.into(),
         screen: Screen::new().id(id).title(title).blocks(blocks),
         js: "blocks.js",
+        md: None,
     }
 }
 

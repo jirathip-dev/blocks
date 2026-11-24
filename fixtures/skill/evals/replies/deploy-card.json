@@ -1,0 +1,28 @@
+{
+  "type": "screen",
+  "id": "deploy",
+  "title": "Deploy",
+  "blocks": [
+    {
+      "type": "card",
+      "id": "release",
+      "title": "Release 4.2",
+      "buttons": [
+        {
+          "type": "button",
+          "id": "ship",
+          "label": "Ship",
+          "action": "ship",
+          "style": "primary"
+        },
+        {
+          "type": "button",
+          "id": "stage",
+          "label": "Stage",
+          "action": "stage",
+          "style": "plain"
+        }
+      ]
+    }
+  ]
+}

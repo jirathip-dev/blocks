@@ -1,0 +1,43 @@
+{
+  "type": "screen",
+  "id": "thread",
+  "title": "Thread",
+  "blocks": [
+    {
+      "type": "message",
+      "id": "t1",
+      "role": "owner",
+      "name": "You",
+      "blocks": [
+        {
+          "type": "prose",
+          "id": "t1-a",
+          "parts": [
+            {
+              "part": "para",
+              "spans": [
+                {
+                  "text": "Why did the build fail?"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "message",
+      "id": "t2",
+      "role": "agent",
+      "name": "Scout",
+      "blocks": [
+        {
+          "type": "prose",
+          "id": "t2-a",
+          "parts": [],
+          "streaming": true
+        }
+      ]
+    }
+  ]
+}

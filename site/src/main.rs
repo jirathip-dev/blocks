@@ -1,5 +1,6 @@
 mod kinds;
 mod live;
+mod llms;
 mod looks;
 mod pages;
 mod play;
@@ -63,7 +64,7 @@ fn css(looks: &[Named]) -> String {
     out + include_str!("../site.css") + &sizes::css()
 }
 
-fn pages(bench: Option<&Value>, looks: &[Named]) -> Result<Vec<Page>, String> {
+fn pages(root: &Path, bench: Option<&Value>, looks: &[Named]) -> Result<Vec<Page>, String> {
     let all = kinds::samples();
     let home = pages::home(all.len(), bench);
     let mut out = vec![
@@ -78,7 +79,9 @@ fn pages(bench: Option<&Value>, looks: &[Named]) -> Result<Vec<Page>, String> {
         live::streams(),
         sizes::layout()?,
     ];
-    out.extend((0..all.len()).filter_map(|i| kinds::kind_page(&all, i)));
+    for (i, (kind, _)) in all.iter().enumerate() {
+        out.extend(kinds::kind_page(&all, i, &llms::fields(root, kind)?));
+    }
     Ok(out)
 }
 
@@ -113,6 +116,9 @@ fn write(out: &Path, p: &Page, look: &Look, looks: &[(&str, &Look)]) -> Result<(
         }),
     };
     fs::write(out.join(&p.file), site::page(&built, &s) + "\n")?;
+    if let Some(md) = &p.md {
+        fs::write(out.join(&p.file).with_extension("md"), md)?;
+    }
     Ok(())
 }
 
@@ -139,7 +145,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         return Err("no looks".into());
     };
     fs::create_dir_all(out.join("media"))?;
-    for p in pages(bench.as_ref(), &looks)? {
+    for p in pages(&root, bench.as_ref(), &looks)? {
         write(&out, &p, look, &live)?;
     }
     for f in ["blocks.js", "blocks.css", "play.js", "import.js"] {
@@ -150,5 +156,6 @@ fn main() -> Result<(), Box<dyn Error>> {
         fs::copy(f.path(), out.join("media").join(f.file_name()))?;
     }
     fs::write(out.join("site.css"), css(&looks))?;
+    fs::write(out.join("llms.txt"), llms::index(&root)?)?;
     Ok(())
 }

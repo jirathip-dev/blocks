@@ -1,0 +1,28 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="../neutral-default/tokens.css"><link rel="stylesheet" href="../../../web/dist/blocks.css"><link rel="stylesheet" href="gaps.css"><link rel="stylesheet" href="page.css"><title>catalogue gaps: states and stress cases</title></head>
+<body><main class="scr">
+<h2>1 · Trail: the shell's own stack <small>· no wire change; titles come from the screens it came through</small></h2>
+<div class="cases">
+<div><p class="note">Two deep: one link, then the screen</p>
+<div class="frame"><nav class="b-trail" aria-label="Breadcrumb"><ol><li><a href="#">Queue</a></li><li><span aria-current="page">Map</span></li></ol><button type="button" class="b-back"><span>‹ Queue</span></button></nav></div></div>
+<div><p class="note">Keyboard focus on a link: a 2 px ink ring</p>
+<div class="frame"><nav class="b-trail" aria-label="Breadcrumb"><ol><li><a href="#">Queue</a></li><li><a href="#" class="fv">Map</a></li><li><span aria-current="page">Fix #12</span></li></ol><button type="button" class="b-back"><span>‹ Map</span></button></nav></div></div>
+<div><p class="note">Six deep: the first, a "…" menu, the last two</p>
+<div class="frame"><nav class="b-trail" aria-label="Breadcrumb"><ol><li><a href="#">Queue</a></li><li><button type="button" aria-label="3 more screens" aria-expanded="true"><span>…</span></button></li><li><a href="#">rev</a></li><li><span aria-current="page">accounts</span></li></ol><button type="button" class="b-back"><span>‹ rev</span></button></nav>
+<div class="menu" role="menu"><a href="#" role="menuitem">Fleets</a><a href="#" role="menuitem">cooee</a><a href="#" role="menuitem">roles</a></div></div></div>
+<div><p class="note">Long titles end in "…" at 20 characters; the full title is the link's name</p>
+<div class="frame"><nav class="b-trail" aria-label="Breadcrumb"><ol><li><a href="#">Queue</a></li><li><a href="#" title="herdsman-staging-mirror-west">herdsman-staging-mirror-west</a></li><li><span aria-current="page" title="worktree budget and reclaim">worktree budget and reclaim</span></li></ol><button type="button" class="b-back"><span>‹ herdsman-staging-mirror-west</span></button></nav></div></div>
+<div><p class="note">Opened straight from a link (no stack): no trail, as today</p>
+<div class="frame"><div class="tabh"><span class="tw">rev</span></div></div></div>
+<div><p class="note">A sheet keeps its own "‹ back" in the sheet's frame; no trail</p>
+<div class="frame"><div class="tabh"><button type="button"><span>‹ back</span></button><span class="tw">lane sendmeter-rev-12-r2</span></div></div></div>
+</div>
+
+<h2>2 · Empty: a list's <i>empty</i> text in the shared look</h2>
+<div class="cases">
+<div><p class="note">Long text wraps; it never ends in "…"</p><p class="empty">No threads yet. Your first message starts the thread and its orchestrator, and titles it with its first line. Nothing is logged until you send.</p></div>
+<div><p class="note">A list with no rows and no empty text: drawn as nothing, as today</p><div class="list"></div><p class="m">(nothing drawn)</p></div>
+<div><p class="note">A list whose rows a filter hides keeps the table's wording</p><p class="empty">No rows match “sendmeter”.</p></div>
+<div><p class="note">Inside a card: no second tile, the text sits in the card</p><div class="card"><div class="ch"><b>archived</b></div><p class="m" style="padding:var(--s3) 0">No archived threads.</p></div></div>
+</div>
+</main><script>document.body.dataset.h=Math.ceil(document.documentElement.getBoundingClientRect().height)</script></body></html>

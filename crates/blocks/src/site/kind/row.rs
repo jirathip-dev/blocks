@@ -83,7 +83,7 @@ pub(super) fn row_of(w: &mut W<'_>, b: &Value, hooked: bool) {
             attrs.push(("href", u.as_str()));
             "a"
         }
-        Go::Post(..) | Go::Sheet(_) | Go::Stay => "div",
+        Go::Post(..) | Go::Sheet(_) | Go::Copy(_) | Go::Stay => "div",
     };
     if tag == "a" || b.get("tap").is_some() || !swipe.is_empty() {
         cls.push_str(" tap");
