@@ -33,6 +33,10 @@ fn file(w: &mut W<'_>, b: &Value, f: &Value) {
             at.extend([("type", "button"), ("data-sheet", s.as_str())]);
             "button"
         }
+        Go::Copy(s) => {
+            at.extend([("type", "button"), ("data-copy", s.as_str())]);
+            "button"
+        }
         Go::Stay => {
             at.push(("type", "button"));
             "button"
