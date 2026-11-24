@@ -1,0 +1,41 @@
+{
+  "type": "screen",
+  "id": "orders",
+  "title": "Orders",
+  "blocks": [
+    {
+      "type": "table",
+      "id": "today",
+      "title": "Today",
+      "columns": [
+        {
+          "id": "order",
+          "kind": "text",
+          "label": "Order"
+        },
+        {
+          "id": "total",
+          "kind": "money",
+          "label": "Total",
+          "digits": 2
+        }
+      ],
+      "rows": [
+        {
+          "id": "A-1041",
+          "cells": {
+            "order": "A-1041",
+            "total": 420
+          }
+        },
+        {
+          "id": "A-1042",
+          "cells": {
+            "order": "A-1042",
+            "total": 85.5
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "type": "screen",
+  "id": "s",
+  "title": "Bad",
+  "blocks": [
+    {
+      "type": "row",
+      "id": "go",
+      "title": "Go",
+      "tap": {
+        "action": "go"
+      }
+    }
+  ]
+}

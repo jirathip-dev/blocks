@@ -1,0 +1,25 @@
+{
+  "type": "screen",
+  "id": "s",
+  "title": "Bad",
+  "blocks": [
+    {
+      "type": "island",
+      "id": "e",
+      "name": "x-echo",
+      "props": {
+        "zoom": 3
+      },
+      "events": [
+        "echo"
+      ],
+      "fallback": {
+        "title": "No echo"
+      },
+      "size": {
+        "width": 390,
+        "height": 240
+      }
+    }
+  ]
+}

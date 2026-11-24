@@ -1,0 +1,41 @@
+{
+  "type": "screen",
+  "id": "s",
+  "title": "Queue",
+  "blocks": [
+    {
+      "type": "section",
+      "header": "More",
+      "blocks": [
+        {
+          "type": "section",
+          "header": "More",
+          "blocks": [
+            {
+              "type": "section",
+              "header": "More",
+              "blocks": [
+                {
+                  "type": "section",
+                  "header": "More",
+                  "blocks": [
+                    {
+                      "type": "section",
+                      "header": "More",
+                      "blocks": [
+                        {
+                          "type": "text",
+                          "markdown": "Six levels down."
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "type": "screen",
+  "id": "s",
+  "title": "Waiting lanes",
+  "blocks": [
+    {
+      "type": "text",
+      "markdown": "Nothing queued."
+    }
+  ]
+}

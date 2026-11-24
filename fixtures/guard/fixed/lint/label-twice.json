@@ -1,0 +1,26 @@
+{
+  "type": "screen",
+  "id": "s",
+  "title": "Queue",
+  "blocks": [
+    {
+      "type": "card",
+      "id": "c",
+      "title": "Next",
+      "buttons": [
+        {
+          "type": "button",
+          "id": "a",
+          "label": "Ship",
+          "action": "ship"
+        },
+        {
+          "type": "button",
+          "id": "b",
+          "label": "Stage",
+          "action": "stage"
+        }
+      ]
+    }
+  ]
+}

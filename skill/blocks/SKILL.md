@@ -56,3 +56,4 @@ A screen is data: a `screen` or `modal` block of typed blocks, checked, then dra
 
 - `rules.md`: every guard rule, what fires it and its fix
 - `examples/`: whole screens with no finding
+- `evals/`: prompts and what a screen built for each must hold

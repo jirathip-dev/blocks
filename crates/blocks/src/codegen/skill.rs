@@ -9,6 +9,9 @@ use crate::{guard, Block, Built};
 
 const DIR: &str = "skill/blocks";
 const OK: &str = "fixtures/guard/ok";
+const BAD: &str = "fixtures/guard/bad";
+const FIXED: &str = "fixtures/guard/fixed";
+const EVALS: &str = "fixtures/skill/evals";
 const BIN: &str = "crates/blocks-cli/src/gen/skill.rs";
 
 const HEAD: &str = "---\nname: blocks\ndescription: Build a blocks screen as data: the kinds and their fields, the guard's rules, and \
@@ -24,8 +27,12 @@ pub(super) fn files(root: &Path, s: &Value) -> std::io::Result<Files> {
         _ => {}
     }
     let mut out = kinds(s)?;
-    out.push(("rules.md".into(), rules()));
+    out.push(("rules.md".into(), rules(root)?));
     out.extend(examples(root)?);
+    for name in ["evals.json", "README.md"] {
+        let text = std::fs::read_to_string(root.join(EVALS).join(name))?;
+        out.push((format!("evals/{name}"), text));
+    }
     let paths: String = out.iter().map(|(p, _)| format!("    {p:?},\n")).collect();
     let texts: String = out.iter().map(|(_, t)| format!("    {t:?},\n")).collect();
     let bin = format!(
@@ -70,12 +77,12 @@ fn kinds(s: &Value) -> std::io::Result<Files> {
         }
         out.push((format!("kinds/{kind}.md"), page));
     }
-    index.push_str("\n## More\n\n- `rules.md`: every guard rule, what fires it and its fix\n- `examples/`: whole screens with no finding\n");
+    index.push_str("\n## More\n\n- `rules.md`: every guard rule, what fires it and its fix\n- `examples/`: whole screens with no finding\n- `evals/`: prompts and what a screen built for each must hold\n");
     out.insert(0, ("SKILL.md".into(), index));
     Ok(out)
 }
 
-fn rules() -> String {
+fn rules(root: &Path) -> std::io::Result<String> {
     let mut out = format!(
         "# The guard's rules\n\nGuard version {}. A new error fails `blocks check`; a warning never fails.\n\n\
          | rule | severity | since | fires on | fix |\n|---|---|---|---|---|\n",
@@ -96,7 +103,51 @@ fn rules() -> String {
             cell(r.fix)
         ));
     }
-    out
+    let catalog = std::fs::read_to_string(root.join(BAD).join("catalog.json")).unwrap_or_default();
+    out.push_str(&format!(
+        "\n## Incorrect and Correct\n\nEach rule a screen can hit, as a screen that hits it and the same screen fixed. \
+         A `render/` half is drawn with the app CSS or script under it; a `css/` half is an app style sheet over any screen. \
+         A `catalog/` pair is held to this catalog:\n\n```json\n{}\n```\n",
+        catalog.trim()
+    ));
+    let mut none = vec![];
+    for r in guard::RULES {
+        let fixed = half(root, FIXED, r.id)?;
+        if fixed.is_empty() {
+            none.push(format!("`{}`", r.id));
+            continue;
+        }
+        let bad = half(root, BAD, r.id)?;
+        if bad.is_empty() {
+            return Err(std::io::Error::other(format!(
+                "{FIXED}/{}: a Correct with no Incorrect in {BAD}",
+                r.id
+            )));
+        }
+        out.push_str(&format!("\n### `{}`\n\nIncorrect:\n\n{bad}\nCorrect:\n\n{fixed}", r.id));
+    }
+    out.push_str(&format!(
+        "\nNo pair: {}. Each judges a baseline, an app's answerer or the time a draw takes, not a screen.\n",
+        none.join(", ")
+    ));
+    Ok(out)
+}
+
+fn half(root: &Path, dir: &str, id: &str) -> std::io::Result<String> {
+    let mut out = String::new();
+    for (ext, lang) in [("json", "json"), ("css", "css"), ("js", "js")] {
+        let text = match std::fs::read_to_string(root.join(dir).join(format!("{id}.{ext}"))) {
+            Err(e) if e.kind() == std::io::ErrorKind::NotFound => continue,
+            t => t?,
+        };
+        let text = if ext == "json" {
+            serde_json::to_string_pretty(&serde_json::from_str::<Value>(&text)?)?
+        } else {
+            text.trim().to_string()
+        };
+        out.push_str(&format!("```{lang}\n{text}\n```\n"));
+    }
+    Ok(out)
 }
 
 fn examples(root: &Path) -> std::io::Result<Files> {

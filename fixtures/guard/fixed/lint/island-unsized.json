@@ -1,0 +1,19 @@
+{
+  "type": "screen",
+  "id": "s",
+  "title": "Queue",
+  "blocks": [
+    {
+      "type": "island",
+      "id": "map",
+      "name": "fleet-map",
+      "fallback": {
+        "title": "Fleet map"
+      },
+      "size": {
+        "width": 390,
+        "height": 240
+      }
+    }
+  ]
+}
