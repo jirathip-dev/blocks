@@ -1,0 +1,12 @@
+/* The host page for these previews only. */
+body{margin:0;color:var(--fg);font:13px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--bg)}
+main.pv{padding:var(--s4)}
+h2.cap{font-size:var(--fs);font-weight:600;color:var(--mute);margin:calc(2 * var(--dot-gap)) 0 var(--s2)}
+h2.cap:first-child{margin-top:0}
+h2.cap small{font-weight:400;font-size:var(--fs-meta)}
+.frame{border:1px dashed var(--edge);padding:var(--s2);max-width:100%}
+.frame.w600{width:600px}
+.fault{font:12px/1.5 ui-monospace,Menlo,monospace;background:var(--card);border:1px solid var(--edge);padding:var(--s2) var(--s3);white-space:pre-wrap}
+.fault b{color:var(--r)}
+.guide{outline:1px dashed var(--l);outline-offset:2px}
+@media (max-width:600px){main.pv{padding:var(--s2)}}

@@ -246,7 +246,18 @@ impl Walk<'_> {
             let top = shallow(o);
             self.sends(sent_once(&top).as_ref().unwrap_or(&top), at, scope);
             self.core(&k, o, top);
-            placed(o).for_each(|(p, c)| self.block(c, &format!("{at}/{p}"), scope));
+            let own = k == "screen" && o.get("focus") != Some(&Value::Bool(true));
+            for (p, c) in placed(o) {
+                let side = c.get("type") == Some(&"section".into()) && c.get("side") == Some(&Value::Bool(true));
+                if side && !(own && p.starts_with("blocks/")) {
+                    let why = "side is set on a section that is not a non-focus screen's own block".into();
+                    self.out.push(Fault::Shape {
+                        kind: "section".into(),
+                        why,
+                    });
+                }
+                self.block(c, &format!("{at}/{p}"), scope);
+            }
         } else if !self.app.contains(&k.as_str()) {
             self.out.push(Fault::Unknown { kind: k });
         }

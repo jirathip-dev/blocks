@@ -10,6 +10,7 @@ kind! {
         header: Option<String>,
         footer: Option<String>,
         blocks: Vec<Block>,
+        side: Option<bool>,
     }
 }
 

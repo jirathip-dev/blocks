@@ -1,0 +1,114 @@
+{
+  "type": "screen",
+  "id": "side",
+  "title": "Run 14 · Harbour Rd",
+  "blocks": [
+    {
+      "type": "section",
+      "id": "lines",
+      "header": "Lines · 4 of 6",
+      "blocks": [
+        {
+          "type": "list",
+          "id": "line-rows",
+          "rows": [
+            {
+              "type": "row",
+              "id": "l1",
+              "title": "Sourdough loaf × 24",
+              "value": "24"
+            },
+            {
+              "type": "row",
+              "id": "l2",
+              "title": "Rye bread × 12",
+              "value": "12"
+            },
+            {
+              "type": "row",
+              "id": "l3",
+              "title": "Croissant tray × 4",
+              "value": "4"
+            },
+            {
+              "type": "row",
+              "id": "l4",
+              "title": "Oat milk 1 L × 10",
+              "value": "8"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "section",
+      "id": "trip",
+      "header": "Trip summary",
+      "blocks": [
+        {
+          "type": "stat",
+          "id": "trip-stops",
+          "label": "stops left",
+          "value": 6
+        },
+        {
+          "type": "list",
+          "id": "trip-rows",
+          "rows": [
+            {
+              "type": "row",
+              "id": "trip-van",
+              "title": "Vehicle",
+              "value": "Van 7 · LB-221"
+            },
+            {
+              "type": "row",
+              "id": "trip-km",
+              "title": "Distance",
+              "value": "42 km"
+            },
+            {
+              "type": "row",
+              "id": "trip-next",
+              "title": "Next stop",
+              "value": "10:25"
+            }
+          ]
+        }
+      ],
+      "side": true
+    },
+    {
+      "type": "button",
+      "id": "report",
+      "label": "Report a problem",
+      "action": "report"
+    },
+    {
+      "type": "button",
+      "id": "next",
+      "label": "Next: proof",
+      "action": "next"
+    },
+    {
+      "type": "section",
+      "id": "customer",
+      "header": "Customer",
+      "blocks": [
+        {
+          "type": "list",
+          "id": "cust-rows",
+          "rows": [
+            {
+              "type": "row",
+              "id": "cust-who",
+              "title": "Ana Marlow",
+              "value": "owner"
+            }
+          ]
+        }
+      ],
+      "side": true
+    }
+  ]
+}

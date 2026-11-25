@@ -3,7 +3,7 @@ export * from "../gen/hooks.ts";
 export * from "../gen/schemes.ts";
 export { actionOf, evaluate, lit, start, view, type State, type View } from "./eval.ts";
 export { figured, value } from "./text.ts";
-export { expect, named, role, tree } from "./tree.ts";
+export { columns, expect, named, role, tree } from "./tree.ts";
 export { gate, type Miss } from "./gate.ts";
 export { choose, css, gated, tiles, type Look, type Pair, type Scale } from "./look.ts";
 export * as lookCode from "./code.ts";
