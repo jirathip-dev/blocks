@@ -161,7 +161,7 @@ fn every_value_of_every_style_enum_writes_its_own_rule_and_nothing_else() {
             )
         };
         walk(LabelCase::ALL, labelled, |case| {
-            Finish::Label(role).selector().map_or_else(String::new, |at| {
+            Finish::Label(*role).selector().map_or_else(String::new, |at| {
                 format!(
                     "{at}{{text-transform:{}}}{at}::before{{content:\"\\\"\"}}{at}::after{{content:\"]\"}}",
                     case.css()
@@ -171,7 +171,7 @@ fn every_value_of_every_style_enum_writes_its_own_rule_and_nothing_else() {
         let plain = css(default(), &with("labels", serde_json::json!({})));
         assert_eq!(
             css(default(), &labelled(LabelCase::AsIs)) == plain,
-            Finish::Label(role).selector().is_none(),
+            Finish::Label(*role).selector().is_none(),
             "{role:?}"
         );
     }
