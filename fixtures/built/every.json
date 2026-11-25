@@ -104,6 +104,150 @@
     {
       "blocks": [
         {
+          "blocks": [
+            {
+              "fallback": {
+                "title": "list"
+              },
+              "id": "line-rows",
+              "rows": [
+                {
+                  "id": "l1",
+                  "title": "Sourdough loaf × 24",
+                  "type": "row",
+                  "value": "24"
+                },
+                {
+                  "id": "l2",
+                  "title": "Rye bread × 12",
+                  "type": "row",
+                  "value": "12"
+                },
+                {
+                  "id": "l3",
+                  "title": "Croissant tray × 4",
+                  "type": "row",
+                  "value": "4"
+                },
+                {
+                  "id": "l4",
+                  "title": "Oat milk 1 L × 10",
+                  "type": "row",
+                  "value": "8"
+                }
+              ],
+              "type": "list"
+            }
+          ],
+          "fallback": {
+            "title": "Lines · 4 of 6"
+          },
+          "header": "Lines · 4 of 6",
+          "id": "lines",
+          "type": "section"
+        },
+        {
+          "blocks": [
+            {
+              "fallback": {
+                "title": "stops left"
+              },
+              "id": "trip-stops",
+              "label": "stops left",
+              "type": "stat",
+              "value": 6
+            },
+            {
+              "fallback": {
+                "title": "list"
+              },
+              "id": "trip-rows",
+              "rows": [
+                {
+                  "id": "trip-van",
+                  "title": "Vehicle",
+                  "type": "row",
+                  "value": "Van 7 · LB-221"
+                },
+                {
+                  "id": "trip-km",
+                  "title": "Distance",
+                  "type": "row",
+                  "value": "42 km"
+                },
+                {
+                  "id": "trip-next",
+                  "title": "Next stop",
+                  "type": "row",
+                  "value": "10:25"
+                }
+              ],
+              "type": "list"
+            }
+          ],
+          "fallback": {
+            "title": "Trip summary"
+          },
+          "header": "Trip summary",
+          "id": "trip",
+          "side": true,
+          "type": "section"
+        },
+        {
+          "action": "report",
+          "fallback": {
+            "title": "Report a problem"
+          },
+          "id": "report",
+          "label": "Report a problem",
+          "type": "button"
+        },
+        {
+          "action": "next",
+          "fallback": {
+            "title": "Next: proof"
+          },
+          "id": "next",
+          "label": "Next: proof",
+          "type": "button"
+        },
+        {
+          "blocks": [
+            {
+              "fallback": {
+                "title": "list"
+              },
+              "id": "cust-rows",
+              "rows": [
+                {
+                  "id": "cust-who",
+                  "title": "Ana Marlow",
+                  "type": "row",
+                  "value": "owner"
+                }
+              ],
+              "type": "list"
+            }
+          ],
+          "fallback": {
+            "title": "Customer"
+          },
+          "header": "Customer",
+          "id": "customer",
+          "side": true,
+          "type": "section"
+        }
+      ],
+      "fallback": {
+        "title": "Run 14 · Harbour Rd"
+      },
+      "id": "side",
+      "title": "Run 14 · Harbour Rd",
+      "type": "screen"
+    },
+    {
+      "blocks": [
+        {
           "id": "modal-note",
           "markdown": "Pick a name",
           "type": "text"

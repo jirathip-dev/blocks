@@ -7000,6 +7000,12 @@
               "type": "null"
             }
           ]
+        },
+        "side": {
+          "type": [
+            "boolean",
+            "null"
+          ]
         }
       },
       "required": [

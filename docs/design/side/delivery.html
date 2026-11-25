@@ -1,0 +1,191 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="../neutral-default/tokens.css"><link rel="stylesheet" href="../../../web/dist/blocks.css"><link rel="stylesheet" href="side.css"><link rel="stylesheet" href="page.css">
+<title>side column: a delivery stop</title></head><body><main class="pv">
+<script type="application/json" data-screen>
+{
+  "type": "screen",
+  "id": "stop",
+  "title": "Run 14 · Harbour Rd",
+  "actions": [
+    {
+      "label": "map",
+      "action": "map"
+    },
+    {
+      "label": "call",
+      "action": "call"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "steps",
+      "id": "stop-steps",
+      "title": "Stop 3 of 8 · Marlow Bakery",
+      "current": "lines",
+      "steps": [
+        {
+          "id": "stop",
+          "label": "Stop",
+          "sub": "arrived 09:42",
+          "tap": {
+            "open": "stop"
+          }
+        },
+        {
+          "id": "lines",
+          "label": "Lines",
+          "sub": "4 of 6 checked"
+        },
+        {
+          "id": "proof",
+          "label": "Proof",
+          "sub": "photo and signature"
+        }
+      ]
+    },
+    {
+      "type": "section",
+      "id": "trip",
+      "header": "Trip summary",
+      "side": true,
+      "blocks": [
+        {
+          "type": "stat",
+          "id": "trip-stops",
+          "label": "stops left",
+          "value": 6
+        },
+        {
+          "type": "list",
+          "id": "trip-rows",
+          "rows": [
+            {
+              "type": "row",
+              "id": "trip-van",
+              "title": "Vehicle",
+              "value": "Van 7 · LB-221"
+            },
+            {
+              "type": "row",
+              "id": "trip-km",
+              "title": "Distance",
+              "subtitle": "18 km to go",
+              "value": "42 km"
+            },
+            {
+              "type": "row",
+              "id": "trip-next",
+              "title": "Next stop",
+              "subtitle": "Quay Deli, 2.1 km",
+              "value": "10:25"
+            },
+            {
+              "type": "row",
+              "id": "trip-back",
+              "title": "Back at depot",
+              "value": "13:40"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "section",
+      "id": "lines",
+      "header": "Lines · 4 of 6",
+      "blocks": [
+        {
+          "type": "list",
+          "id": "line-rows",
+          "rows": [
+            {
+              "type": "row",
+              "id": "l1",
+              "title": "Sourdough loaf × 24",
+              "subtitle": "crate 1",
+              "value": "24"
+            },
+            {
+              "type": "row",
+              "id": "l2",
+              "title": "Rye bread × 12",
+              "subtitle": "crate 1",
+              "value": "12"
+            },
+            {
+              "type": "row",
+              "id": "l3",
+              "title": "Croissant tray × 4",
+              "subtitle": "crate 2",
+              "value": "4"
+            },
+            {
+              "type": "row",
+              "id": "l4",
+              "title": "Oat milk 1 L × 10",
+              "subtitle": {
+                "text": "8 delivered · 2 short",
+                "tone": "bad"
+              },
+              "value": "8"
+            },
+            {
+              "type": "row",
+              "id": "l5",
+              "title": "Butter 250 g × 20",
+              "subtitle": "chiller",
+              "value": "–"
+            },
+            {
+              "type": "row",
+              "id": "l6",
+              "title": "Eggs, tray of 30 × 6",
+              "subtitle": "chiller",
+              "value": "–"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "section",
+      "id": "customer",
+      "header": "Customer",
+      "side": true,
+      "blocks": [
+        {
+          "type": "list",
+          "id": "cust-rows",
+          "rows": [
+            {
+              "type": "row",
+              "id": "cust-who",
+              "title": "Ana Marlow",
+              "subtitle": "owner"
+            },
+            {
+              "type": "row",
+              "id": "cust-door",
+              "title": "Back door, ring twice",
+              "subtitle": "drop note"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "button",
+      "id": "report",
+      "label": "Report a problem",
+      "action": "report"
+    },
+    {
+      "type": "button",
+      "id": "next",
+      "label": "Next: proof",
+      "action": "next"
+    }
+  ]
+}
+</script>
+</main><script type="module" src="side.js"></script></body></html>
