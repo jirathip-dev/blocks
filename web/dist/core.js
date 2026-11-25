@@ -47,9 +47,10 @@ var hooks = {
   sidebar: { variant: null, parts: [] },
   boxplot: { variant: null, parts: ["title"] },
   heat: { variant: null, parts: ["title"] },
-  plot: { variant: null, parts: ["title"] }
+  plot: { variant: null, parts: ["title"] },
+  glance: { variant: null, parts: ["title", "subtitle", "value", "figure"] }
 };
-var roles = { modal: "dialog", sheet: "dialog", section: "region", form: "form", config: "form", nav: "navigation", chart: "figure", plot: "figure", toast: "status", message: "article", sidebar: "navigation", heat: "figure", boxplot: "figure" };
+var roles = { modal: "dialog", sheet: "dialog", section: "region", form: "form", config: "form", nav: "navigation", chart: "figure", plot: "figure", toast: "status", message: "article", sidebar: "navigation", heat: "figure", boxplot: "figure", glance: "status" };
 var names = ["label", "title", "header", "question", "alt", "file", "command", "placeholder", "name"];
 var hosts = { screen: "blocks", modal: "blocks", sheet: "blocks", section: "blocks", card: "blocks", message: "blocks", list: "rows", scene: "lanes", row: "rounds", table: "rows" };
 var walked = ["blocks", "rows", "buttons", "rounds", "lanes"];
@@ -639,6 +640,7 @@ var sidebar = (fields) => ({ type: "sidebar", ...fields });
 var boxplot = (fields) => ({ type: "boxplot", ...fields });
 var heat = (fields) => ({ type: "heat", ...fields });
 var plot = (fields) => ({ type: "plot", ...fields });
+var glance = (fields) => ({ type: "glance", ...fields });
 var expr = {
   get: (v) => ({ get: v }),
   not: (v) => ({ not: v }),
@@ -948,6 +950,7 @@ var kinds = {
   "diff": "Diff",
   "editor": "Editor",
   "form": "Form",
+  "glance": "Glance",
   "heat": "Heat",
   "hero": "Hero",
   "images": "Images",
@@ -1165,7 +1168,8 @@ var defs = {
             "sidebar",
             "boxplot",
             "heat",
-            "plot"
+            "plot",
+            "glance"
           ]
         },
         "type": "string"
@@ -1823,6 +1827,19 @@ var defs = {
         "properties": {
           "type": {
             "const": "plot",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      {
+        "$ref": "#/$defs/Glance",
+        "properties": {
+          "type": {
+            "const": "glance",
             "type": "string"
           }
         },
@@ -3630,6 +3647,257 @@ var defs = {
       "action",
       "name"
     ],
+    "type": "object"
+  },
+  "Glance": {
+    "additionalProperties": true,
+    "properties": {
+      "expanded": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/GlanceBody"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "figure": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Figure"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "id": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "leading": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/GlanceSide"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "medium": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/GlanceBody"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "show": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "small": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/GlanceBody"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "subtitle": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "tap": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Tap"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "title": {
+        "type": "string"
+      },
+      "tone": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Tone"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "trailing": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/GlanceSide"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "value": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Shown"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      }
+    },
+    "required": [
+      "title"
+    ],
+    "type": "object"
+  },
+  "GlanceBody": {
+    "properties": {
+      "acts": {
+        "items": {
+          "$ref": "#/$defs/Act"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "foot": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "line": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "rows": {
+        "items": {
+          "$ref": "#/$defs/GlanceRow"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      }
+    },
+    "type": "object"
+  },
+  "GlanceRow": {
+    "properties": {
+      "figure": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Figure"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "subtitle": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "tap": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Tap"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "title": {
+        "type": "string"
+      },
+      "tone": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Tone"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "value": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Shown"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      }
+    },
+    "required": [
+      "title"
+    ],
+    "type": "object"
+  },
+  "GlanceSide": {
+    "properties": {
+      "figure": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Figure"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "text": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Shown"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "tone": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Tone"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      }
+    },
     "type": "object"
   },
   "Heat": {
@@ -9383,6 +9651,7 @@ export {
   form,
   gate,
   gated,
+  glance,
   glyph,
   heat,
   held,

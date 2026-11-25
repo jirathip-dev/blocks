@@ -5,7 +5,7 @@ import Foundation
 
 let usage =
     "usage: blocks-snap --plan <plan.json> | --screen <file> [--size 390x844] [--scheme light|dark] [--script <steps.json>]"
-    + " [--expect <tree.json>] [--ids <ids.json>] [--check] [--measure] --out <dir>\n"
+    + " [--expect <tree.json>] [--ids <ids.json>] [--check] [--measure] [--form <glance form>] --out <dir>\n"
 
 func fail(_ text: String, _ code: Int32) -> Never {
     FileHandle.standardError.write(Data(text.utf8))
@@ -48,6 +48,28 @@ if let name = options["scheme"] {
     guard let scheme = ["light": blocksDefaultLight, "dark": blocksDefaultDark][name], let palette = Palette(tokens: scheme.tokens, dark: scheme.mode == .dark)
     else { fail("blocks-snap: no scheme \(name)\n", 2) }
     look.palette = palette
+}
+func glance(in block: Block) -> Glance? {
+    switch block {
+    case .glance(let glance): glance
+    case .screen(let screen): (screen.blocks ?? []).lazy.compactMap(glance(in:)).first
+    default: nil
+    }
+}
+
+if let name = options["form"] {
+    guard let form = GlanceForm(rawValue: name), let block = glance(in: read(Block.self, screenFile)) else {
+        fail("blocks-snap: no form \(name), or no glance in \(screenFile)\n", 2)
+    }
+    let shot = Snapshot.form(block, form, look: look)
+    do {
+        try FileManager.default.createDirectory(atPath: out, withIntermediateDirectories: true)
+        try shot.png.write(to: URL(fileURLWithPath: out).appendingPathComponent("\(form.rawValue).png"))
+    } catch {
+        fail("blocks-snap: \(error)\n", 1)
+    }
+    for fault in shot.faults { FileHandle.standardError.write(Data("\(fault)\n".utf8)) }
+    exit(shot.faults.isEmpty ? 0 : 1)
 }
 let snapshot = Snapshot(
     read(Block.self, screenFile), size: CGSize(width: sides[0], height: sides[1]), look: look)

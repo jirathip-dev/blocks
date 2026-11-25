@@ -2310,6 +2310,7 @@ var kinds = {
   "diff": "Diff",
   "editor": "Editor",
   "form": "Form",
+  "glance": "Glance",
   "heat": "Heat",
   "hero": "Hero",
   "images": "Images",

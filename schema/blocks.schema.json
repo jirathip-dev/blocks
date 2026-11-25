@@ -244,7 +244,8 @@
               "sidebar",
               "boxplot",
               "heat",
-              "plot"
+              "plot",
+              "glance"
             ]
           },
           "type": "string"
@@ -906,6 +907,19 @@
           "properties": {
             "type": {
               "const": "plot",
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": "object"
+        },
+        {
+          "$ref": "#/$defs/Glance",
+          "properties": {
+            "type": {
+              "const": "glance",
               "type": "string"
             }
           },
@@ -2934,6 +2948,261 @@
         "action",
         "name"
       ],
+      "type": "object"
+    },
+    "Glance": {
+      "additionalProperties": true,
+      "description": "What an island and a widget show of one thing: a head every form draws from, and each form's own part.",
+      "properties": {
+        "expanded": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/GlanceBody"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "figure": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Figure"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "leading": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/GlanceSide"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "medium": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/GlanceBody"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "show": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Expr"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "small": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/GlanceBody"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "subtitle": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "tap": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Tap"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "title": {
+          "type": "string"
+        },
+        "tone": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Tone"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "trailing": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/GlanceSide"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "value": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Shown"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "type": "object"
+    },
+    "GlanceBody": {
+      "description": "What a roomy form draws under the head: rows or a line, a foot and its acts.",
+      "properties": {
+        "acts": {
+          "items": {
+            "$ref": "#/$defs/Act"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "foot": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "line": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "rows": {
+          "items": {
+            "$ref": "#/$defs/GlanceRow"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "GlanceRow": {
+      "description": "One row of a glance: a thing that runs or waits, and its value.",
+      "properties": {
+        "figure": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Figure"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "subtitle": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "tap": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Tap"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "title": {
+          "type": "string"
+        },
+        "tone": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Tone"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "value": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Shown"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "type": "object"
+    },
+    "GlanceSide": {
+      "description": "One side of the closed island: a figure, a short text, or both.",
+      "properties": {
+        "figure": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Figure"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "text": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Shown"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "tone": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Tone"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
       "type": "object"
     },
     "Handler": {

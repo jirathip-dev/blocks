@@ -1,0 +1,92 @@
+{
+  "expanded": {
+    "acts": [
+      {
+        "action": "stop",
+        "label": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+        "tone": "bad",
+        "values": {
+          "thread": "t-42"
+        }
+      },
+      {
+        "label": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+        "tap": {
+          "thread": "t-42"
+        }
+      }
+    ],
+    "foot": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+    "line": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it"
+  },
+  "figure": {
+    "avatar": "ana",
+    "state": "working"
+  },
+  "id": "turn",
+  "leading": {
+    "figure": {
+      "avatar": "ana",
+      "state": "working"
+    }
+  },
+  "medium": {
+    "acts": [
+      {
+        "label": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+        "tap": {
+          "thread": "t-42"
+        }
+      }
+    ],
+    "foot": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+    "rows": [
+      {
+        "figure": {
+          "state": "working"
+        },
+        "subtitle": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+        "tap": {
+          "thread": "t-42"
+        },
+        "title": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+        "tone": "working",
+        "value": {
+          "since": "2026-11-25T09:41:00Z"
+        }
+      },
+      {
+        "figure": {
+          "state": "working"
+        },
+        "subtitle": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+        "tap": {
+          "thread": "t-43"
+        },
+        "title": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+        "tone": "working",
+        "value": {
+          "since": "2026-11-25T09:44:00Z"
+        }
+      }
+    ]
+  },
+  "small": {
+    "foot": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+    "line": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it"
+  },
+  "subtitle": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+  "tap": {
+    "thread": "t-42"
+  },
+  "title": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+  "tone": "working",
+  "trailing": {
+    "text": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+    "tone": "bad"
+  },
+  "type": "glance",
+  "value": {
+    "since": "2026-11-25T09:41:00Z"
+  }
+}

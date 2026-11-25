@@ -35,6 +35,7 @@ extension Block {
         case .import(let b): Source(action: b.action)
         case .boxplot(let b): Source(tap: b.tap)
         case .heat(let b): Source(tap: b.tap)
+        case .glance(let b): Source(tap: b.tap)
         default: Source()
         }
     }
@@ -75,11 +76,12 @@ extension Block {
         case .boxplot(let b): [b.title]
         case .heat(let b): [b.title]
         case .plot(let b): [b.title]
+        case .glance(let b): [b.title]
         default: []
         }
     }
 
-    internal static let roles = ["modal": "dialog", "sheet": "dialog", "section": "region", "form": "form", "config": "form", "nav": "navigation", "chart": "figure", "plot": "figure", "toast": "status", "message": "article", "sidebar": "navigation", "heat": "figure", "boxplot": "figure"]
+    internal static let roles = ["modal": "dialog", "sheet": "dialog", "section": "region", "form": "form", "config": "form", "nav": "navigation", "chart": "figure", "plot": "figure", "toast": "status", "message": "article", "sidebar": "navigation", "heat": "figure", "boxplot": "figure", "glance": "status"]
     internal static let names = ["label", "title", "header", "question", "alt", "file", "command", "placeholder", "name"]
 }
 
@@ -99,6 +101,7 @@ internal struct KindView: View {
         case .diagram(let block): DiagramBlock(block: block)
         case .diff(let block): DiffBlock(block: block)
         case .form(let block): FormBlock(block: block)
+        case .glance(let block): GlanceBlock(block: block)
         case .heat(let block): HeatBlock(block: block)
         case .hero(let block): HeroBlock(block: block)
         case .images(let block): ImagesBlock(block: block)

@@ -1,0 +1,19 @@
+about = "blocks-snap --form: every form of every glance fixture and its long-text variants, light and dark, inside its box"
+fix = "fix the form the check names so it draws inside its box: drop or cut a part, never shrink the type"
+budget_secs = 600
+leg = "swift"
+paths = ["Package.swift", "swift/**", "fixtures/blocks/glance*.json", "fixtures/stress/glance*.json", ".gatekeeper/gates/swift-glance.toml"]
+run = """
+if [ -z "${CI:-}" ]; then echo "swift-glance: CI's swift leg runs it"; exit 0; fi
+set -e
+export BLOCKS_STRICT=1
+swift build --product blocks-snap
+snap="$(swift build --show-bin-path)/blocks-snap"
+for f in fixtures/blocks/glance*.json fixtures/stress/glance*-long.json; do
+  for form in leading trailing expanded small medium; do
+    for scheme in light dark; do
+      "$snap" --screen "$f" --form "$form" --scheme "$scheme" --out "shots/glance/$(basename "$f" .json)/$scheme"
+    done
+  done
+done
+"""

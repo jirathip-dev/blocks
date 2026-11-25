@@ -1,0 +1,9 @@
+{
+  "kind": "glance",
+  "id": "needs",
+  "variant": null,
+  "drawn": "native",
+  "role": "status",
+  "name": "Needs you",
+  "children": []
+}

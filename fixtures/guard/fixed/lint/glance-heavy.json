@@ -1,0 +1,29 @@
+{
+  "type": "screen",
+  "id": "s",
+  "title": "Builds",
+  "blocks": [
+    {
+      "type": "glance",
+      "id": "builds",
+      "title": "Builds",
+      "value": "2 running",
+      "medium": {
+        "rows": [
+          {
+            "title": "Build 1 of the orders service",
+            "subtitle": "main \u00b7 linux-arm64",
+            "value": "1m",
+            "tone": "working"
+          },
+          {
+            "title": "Build 2 of the orders service",
+            "subtitle": "main \u00b7 linux-arm64",
+            "value": "2m",
+            "tone": "working"
+          }
+        ]
+      }
+    }
+  ]
+}

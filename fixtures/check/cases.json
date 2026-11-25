@@ -1450,6 +1450,169 @@
   {
     "app": [],
     "faults": [],
+    "name": "fixtures/blocks/glance-bare.json",
+    "screen": {
+      "id": "bare",
+      "title": "Builds",
+      "type": "glance",
+      "value": "4 running"
+    }
+  },
+  {
+    "app": [],
+    "faults": [],
+    "name": "fixtures/blocks/glance-needs.json",
+    "screen": {
+      "figure": {
+        "state": "needs"
+      },
+      "id": "needs",
+      "medium": {
+        "foot": "2 threads wait",
+        "rows": [
+          {
+            "figure": {
+              "state": "working"
+            },
+            "subtitle": "orders",
+            "tap": {
+              "thread": "t-40"
+            },
+            "title": "Approve the deploy",
+            "tone": "needs",
+            "value": {
+              "since": "2026-11-25T09:30:00Z"
+            }
+          },
+          {
+            "figure": {
+              "state": "working"
+            },
+            "subtitle": "billing",
+            "tap": {
+              "thread": "t-39"
+            },
+            "title": "Pick a schema name",
+            "tone": "needs",
+            "value": {
+              "since": "2026-11-25T09:12:00Z"
+            }
+          }
+        ]
+      },
+      "small": {
+        "foot": "2 threads wait",
+        "line": "Approve the deploy"
+      },
+      "tap": {
+        "open": "needs"
+      },
+      "title": "Needs you",
+      "tone": "needs",
+      "type": "glance",
+      "value": 2
+    }
+  },
+  {
+    "app": [],
+    "faults": [],
+    "name": "fixtures/blocks/glance.json",
+    "screen": {
+      "expanded": {
+        "acts": [
+          {
+            "action": "stop",
+            "label": "Stop",
+            "tone": "bad",
+            "values": {
+              "thread": "t-42"
+            }
+          },
+          {
+            "label": "Open",
+            "tap": {
+              "thread": "t-42"
+            }
+          }
+        ],
+        "foot": "working · 3 tools",
+        "line": "cargo test -p orders"
+      },
+      "figure": {
+        "avatar": "ana",
+        "state": "working"
+      },
+      "id": "turn",
+      "leading": {
+        "figure": {
+          "avatar": "ana",
+          "state": "working"
+        }
+      },
+      "medium": {
+        "acts": [
+          {
+            "label": "Open",
+            "tap": {
+              "thread": "t-42"
+            }
+          }
+        ],
+        "foot": "working · 3 tools",
+        "rows": [
+          {
+            "figure": {
+              "state": "working"
+            },
+            "subtitle": "orders",
+            "tap": {
+              "thread": "t-42"
+            },
+            "title": "Run the order tests",
+            "tone": "working",
+            "value": {
+              "since": "2026-11-25T09:41:00Z"
+            }
+          },
+          {
+            "figure": {
+              "state": "working"
+            },
+            "subtitle": "sync",
+            "tap": {
+              "thread": "t-43"
+            },
+            "title": "Read the sync log",
+            "tone": "working",
+            "value": {
+              "since": "2026-11-25T09:44:00Z"
+            }
+          }
+        ]
+      },
+      "small": {
+        "foot": "3 tools",
+        "line": "cargo test -p orders"
+      },
+      "subtitle": "Order sync",
+      "tap": {
+        "thread": "t-42"
+      },
+      "title": "Ana",
+      "tone": "working",
+      "trailing": {
+        "text": "ask",
+        "tone": "bad"
+      },
+      "type": "glance",
+      "value": {
+        "since": "2026-11-25T09:41:00Z"
+      }
+    }
+  },
+  {
+    "app": [],
+    "faults": [],
     "name": "fixtures/blocks/heat-rides.json",
     "screen": {
       "columns": [
@@ -8636,6 +8799,170 @@
             "min": 0,
             "unit": "kg"
           }
+        },
+        {
+          "expanded": {
+            "acts": [
+              {
+                "action": "stop",
+                "label": "Stop",
+                "tone": "bad",
+                "values": {
+                  "thread": "t-42"
+                }
+              },
+              {
+                "label": "Open",
+                "tap": {
+                  "thread": "t-42"
+                }
+              }
+            ],
+            "foot": "working · 3 tools",
+            "line": "cargo test -p orders"
+          },
+          "fallback": {
+            "subtitle": "Order sync",
+            "tap": {
+              "thread": "t-42"
+            },
+            "title": "Ana"
+          },
+          "figure": {
+            "avatar": "ana",
+            "state": "working"
+          },
+          "id": "turn",
+          "leading": {
+            "figure": {
+              "avatar": "ana",
+              "state": "working"
+            }
+          },
+          "medium": {
+            "acts": [
+              {
+                "label": "Open",
+                "tap": {
+                  "thread": "t-42"
+                }
+              }
+            ],
+            "foot": "working · 3 tools",
+            "rows": [
+              {
+                "figure": {
+                  "state": "working"
+                },
+                "subtitle": "orders",
+                "tap": {
+                  "thread": "t-42"
+                },
+                "title": "Run the order tests",
+                "tone": "working",
+                "value": {
+                  "since": "2026-11-25T09:41:00Z"
+                }
+              },
+              {
+                "figure": {
+                  "state": "working"
+                },
+                "subtitle": "sync",
+                "tap": {
+                  "thread": "t-43"
+                },
+                "title": "Read the sync log",
+                "tone": "working",
+                "value": {
+                  "since": "2026-11-25T09:44:00Z"
+                }
+              }
+            ]
+          },
+          "small": {
+            "foot": "3 tools",
+            "line": "cargo test -p orders"
+          },
+          "subtitle": "Order sync",
+          "tap": {
+            "thread": "t-42"
+          },
+          "title": "Ana",
+          "tone": "working",
+          "trailing": {
+            "text": "ask",
+            "tone": "bad"
+          },
+          "type": "glance",
+          "value": {
+            "since": "2026-11-25T09:41:00Z"
+          }
+        },
+        {
+          "fallback": {
+            "tap": {
+              "open": "needs"
+            },
+            "title": "Needs you"
+          },
+          "figure": {
+            "state": "needs"
+          },
+          "id": "needs",
+          "medium": {
+            "foot": "2 threads wait",
+            "rows": [
+              {
+                "figure": {
+                  "state": "working"
+                },
+                "subtitle": "orders",
+                "tap": {
+                  "thread": "t-40"
+                },
+                "title": "Approve the deploy",
+                "tone": "needs",
+                "value": {
+                  "since": "2026-11-25T09:30:00Z"
+                }
+              },
+              {
+                "figure": {
+                  "state": "working"
+                },
+                "subtitle": "billing",
+                "tap": {
+                  "thread": "t-39"
+                },
+                "title": "Pick a schema name",
+                "tone": "needs",
+                "value": {
+                  "since": "2026-11-25T09:12:00Z"
+                }
+              }
+            ]
+          },
+          "small": {
+            "foot": "2 threads wait",
+            "line": "Approve the deploy"
+          },
+          "tap": {
+            "open": "needs"
+          },
+          "title": "Needs you",
+          "tone": "needs",
+          "type": "glance",
+          "value": 2
+        },
+        {
+          "fallback": {
+            "title": "Builds"
+          },
+          "id": "bare",
+          "title": "Builds",
+          "type": "glance",
+          "value": "4 running"
         }
       ],
       "fallback": {

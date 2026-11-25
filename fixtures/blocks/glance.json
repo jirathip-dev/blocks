@@ -1,0 +1,92 @@
+{
+  "type": "glance",
+  "id": "turn",
+  "title": "Ana",
+  "subtitle": "Order sync",
+  "figure": {
+    "state": "working",
+    "avatar": "ana"
+  },
+  "value": {
+    "since": "2026-11-25T09:41:00Z"
+  },
+  "tone": "working",
+  "tap": {
+    "thread": "t-42"
+  },
+  "leading": {
+    "figure": {
+      "state": "working",
+      "avatar": "ana"
+    }
+  },
+  "trailing": {
+    "text": "ask",
+    "tone": "bad"
+  },
+  "expanded": {
+    "line": "cargo test -p orders",
+    "foot": "working · 3 tools",
+    "acts": [
+      {
+        "label": "Stop",
+        "action": "stop",
+        "values": {
+          "thread": "t-42"
+        },
+        "tone": "bad"
+      },
+      {
+        "label": "Open",
+        "tap": {
+          "thread": "t-42"
+        }
+      }
+    ]
+  },
+  "small": {
+    "line": "cargo test -p orders",
+    "foot": "3 tools"
+  },
+  "medium": {
+    "rows": [
+      {
+        "title": "Run the order tests",
+        "subtitle": "orders",
+        "figure": {
+          "state": "working"
+        },
+        "value": {
+          "since": "2026-11-25T09:41:00Z"
+        },
+        "tone": "working",
+        "tap": {
+          "thread": "t-42"
+        }
+      },
+      {
+        "title": "Read the sync log",
+        "subtitle": "sync",
+        "figure": {
+          "state": "working"
+        },
+        "value": {
+          "since": "2026-11-25T09:44:00Z"
+        },
+        "tone": "working",
+        "tap": {
+          "thread": "t-43"
+        }
+      }
+    ],
+    "foot": "working · 3 tools",
+    "acts": [
+      {
+        "label": "Open",
+        "tap": {
+          "thread": "t-42"
+        }
+      }
+    ]
+  }
+}

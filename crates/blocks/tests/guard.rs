@@ -47,7 +47,7 @@ fn every_rule_has_a_what_a_fix_an_engine_and_a_unique_id() {
         );
         assert_eq!(guard::rule(r.id), Some(*r));
     }
-    assert_eq!(RULES.len(), 51);
+    assert_eq!(RULES.len(), 52);
     assert_eq!(guard::rule("lint/nope"), None);
 }
 
@@ -58,7 +58,7 @@ fn every_lint_rule_has_a_bad_fixture_that_fires_it_and_no_other() {
         .filter(|r| r.id.starts_with("lint/"))
         .map(|r| r.id.to_string())
         .collect();
-    assert_eq!(lint.len(), 19);
+    assert_eq!(lint.len(), 20);
     let bad: BTreeSet<String> = files("fixtures/guard/bad/lint")
         .iter()
         .map(|p| format!("lint/{}", p.file_stem().unwrap().to_string_lossy()))

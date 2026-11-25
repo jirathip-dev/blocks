@@ -137,7 +137,7 @@ public struct Snapshot {
         return seen
     }
 
-    private static func png(_ image: CGImage) -> Data {
+    internal static func png(_ image: CGImage) -> Data {
         let data = NSMutableData()
         guard let out = CGImageDestinationCreateWithData(data, UTType.png.identifier as CFString, 1, nil) else {
             return Data()

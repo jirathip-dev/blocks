@@ -48,13 +48,13 @@ extension Snapshot {
         return CGRect(x: r[0], y: r[1], width: r[2], height: r[3])
     }
 
-    private static func rgb(_ color: Color) -> [Int] {
+    internal static func rgb(_ color: Color) -> [Int] {
         let c = color.resolve(in: EnvironmentValues())
         return [c.red, c.green, c.blue].map { Int(($0 * 255).rounded()) }
     }
 }
 
-private struct Pixels {
+internal struct Pixels {
     let bytes: [UInt8]
     let width: Int
     let height: Int

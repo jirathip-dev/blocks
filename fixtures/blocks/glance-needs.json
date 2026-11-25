@@ -1,0 +1,50 @@
+{
+  "type": "glance",
+  "id": "needs",
+  "title": "Needs you",
+  "figure": {
+    "state": "needs"
+  },
+  "value": 2,
+  "tone": "needs",
+  "tap": {
+    "open": "needs"
+  },
+  "small": {
+    "line": "Approve the deploy",
+    "foot": "2 threads wait"
+  },
+  "medium": {
+    "rows": [
+      {
+        "title": "Approve the deploy",
+        "subtitle": "orders",
+        "figure": {
+          "state": "working"
+        },
+        "value": {
+          "since": "2026-11-25T09:30:00Z"
+        },
+        "tone": "needs",
+        "tap": {
+          "thread": "t-40"
+        }
+      },
+      {
+        "title": "Pick a schema name",
+        "subtitle": "billing",
+        "figure": {
+          "state": "working"
+        },
+        "value": {
+          "since": "2026-11-25T09:12:00Z"
+        },
+        "tone": "needs",
+        "tap": {
+          "thread": "t-39"
+        }
+      }
+    ],
+    "foot": "2 threads wait"
+  }
+}

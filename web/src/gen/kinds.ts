@@ -12,6 +12,7 @@ import { diagram } from "../render/kind/diagram.ts";
 import { diff } from "../render/kind/diff.ts";
 import { editor } from "../render/kind/editor.ts";
 import { form } from "../render/kind/form.ts";
+import { glance } from "../render/kind/glance.ts";
 import { heat } from "../render/kind/heat.ts";
 import { hero } from "../render/kind/hero.ts";
 import { images } from "../render/kind/images.ts";
@@ -88,6 +89,7 @@ export const R: { [K in Kind]: (b: Of<K>, c: Ctx) => HTMLElement | null } = {
   boxplot,
   heat,
   plot,
+  glance,
 };
 
-export const native: readonly Kind[] = ["screen", "modal", "sheet", "section", "list", "row", "card", "choice", "form", "config", "secret", "run", "button", "chips", "stat", "text", "images", "web", "diff", "editor", "scene", "diagram", "composer", "lines", "prose", "hero", "media", "nav", "table", "steps", "chart", "toast", "pages", "timeline", "import", "message", "tool", "sidebar", "boxplot", "heat", "plot"];
+export const native: readonly Kind[] = ["screen", "modal", "sheet", "section", "list", "row", "card", "choice", "form", "config", "secret", "run", "button", "chips", "stat", "text", "images", "web", "diff", "editor", "scene", "diagram", "composer", "lines", "prose", "hero", "media", "nav", "table", "steps", "chart", "toast", "pages", "timeline", "import", "message", "tool", "sidebar", "boxplot", "heat", "plot", "glance"];

@@ -11,6 +11,7 @@
   "diff": { "long": ["file", "lines"], "empty": "hunks", "many": "hunks" },
   "editor": { "long": ["text"], "why": "one text buffer: no rows to empty or repeat" },
   "form": { "long": ["label"], "empty": "fields", "many": "fields" },
+  "glance": { "long": ["title", "subtitle", "line", "foot", "text", "label"], "why": "its rows sit inside a form, which draws at most two: the no-row and the 200-row blocks are in GlanceTests" },
   "heat": { "long": ["title", "name", "label", "columns"], "empty": "grid", "many": "grid" },
   "hero": { "long": ["title", "subtitle", "caption", "label"], "empty": "actions", "why": "a hero has a few calls to action, never hundreds" },
   "images": { "empty": "items", "many": "items", "why": "an image's alt is not drawn as text" },

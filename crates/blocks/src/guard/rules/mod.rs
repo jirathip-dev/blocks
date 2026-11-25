@@ -22,6 +22,7 @@ mod error_screen;
 mod fault;
 mod fixed_width;
 mod frame_budget;
+mod glance_heavy;
 mod island_unsized;
 mod label_empty;
 mod label_long;
@@ -79,6 +80,7 @@ pub static RULES: &[&Rule] = &[
     &fault::RULE,
     &fixed_width::RULE,
     &frame_budget::RULE,
+    &glance_heavy::RULE,
     &island_unsized::RULE,
     &label_empty::RULE,
     &label_long::RULE,
@@ -124,6 +126,7 @@ pub(super) const CHECKS: &[fn(&Cx, &mut Vec<Seen>)] = &[
     destructive_unconfirmed::check,
     empty_state::check,
     fault::check,
+    glance_heavy::check,
     island_unsized::check,
     label_empty::check,
     label_long::check,

@@ -375,6 +375,19 @@ pub(crate) static KINDS: &[Card] = &[
         Slot { name: "x", ty: "PlotAxis", need: false, names: &["PlotAxis"], sends: false },
         Slot { name: "y", ty: "PlotAxis", need: false, names: &["PlotAxis"], sends: false },
     ] },
+    Card { kind: "glance", about: "What an island and a widget show of one thing", fields: &[
+        Slot { name: "title", ty: "string", need: true, names: &[], sends: false },
+        Slot { name: "expanded", ty: "GlanceBody", need: false, names: &["GlanceBody"], sends: false },
+        Slot { name: "figure", ty: "Figure", need: false, names: &["Figure"], sends: false },
+        Slot { name: "leading", ty: "GlanceSide", need: false, names: &["GlanceSide"], sends: false },
+        Slot { name: "medium", ty: "GlanceBody", need: false, names: &["GlanceBody"], sends: false },
+        Slot { name: "small", ty: "GlanceBody", need: false, names: &["GlanceBody"], sends: false },
+        Slot { name: "subtitle", ty: "string", need: false, names: &[], sends: false },
+        Slot { name: "tap", ty: "Tap", need: false, names: &["Tap"], sends: true },
+        Slot { name: "tone", ty: "Tone", need: false, names: &["Tone"], sends: false },
+        Slot { name: "trailing", ty: "GlanceSide", need: false, names: &["GlanceSide"], sends: false },
+        Slot { name: "value", ty: "Shown", need: false, names: &["Shown"], sends: false },
+    ] },
 ];
 
 #[rustfmt::skip]
@@ -400,6 +413,9 @@ pub(crate) static PARTS: &[Part] = &[
     Part { name: "Fold", input: "", line: "{line: string, main?: FoldMain}", names: &["FoldMain"] },
     Part { name: "FoldMain", input: "", line: "{action: string, label: string, block?: string, value?: string, values?: {}}", names: &[] },
     Part { name: "Gesture", input: "", line: "{action: string, name: string}", names: &[] },
+    Part { name: "GlanceBody", input: "", line: "{acts?: Act[], foot?: string, line?: string, rows?: GlanceRow[]}", names: &["Act", "GlanceRow"] },
+    Part { name: "GlanceRow", input: "", line: "{title: string, figure?: Figure, subtitle?: string, tap?: Tap, tone?: Tone, value?: Shown}", names: &["Figure", "Shown", "Tap", "Tone"] },
+    Part { name: "GlanceSide", input: "", line: "{figure?: Figure, text?: Shown, tone?: Tone}", names: &["Figure", "Shown", "Tone"] },
     Part { name: "HeatCell", input: "", line: "{label?: string, value?: number}", names: &[] },
     Part { name: "HeatPick", input: "", line: "{column: string, row: string}", names: &[] },
     Part { name: "HeatRow", input: "", line: "{cells: HeatCell[], name: string}", names: &["HeatCell"] },

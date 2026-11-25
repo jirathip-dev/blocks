@@ -15,6 +15,7 @@ export const kinds: Record<string, string> = {
   "diff": "Diff",
   "editor": "Editor",
   "form": "Form",
+  "glance": "Glance",
   "heat": "Heat",
   "hero": "Hero",
   "images": "Images",
@@ -233,7 +234,8 @@ export const defs: Record<string, Shape> = {
             "sidebar",
             "boxplot",
             "heat",
-            "plot"
+            "plot",
+            "glance"
           ]
         },
         "type": "string"
@@ -891,6 +893,19 @@ export const defs: Record<string, Shape> = {
         "properties": {
           "type": {
             "const": "plot",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      {
+        "$ref": "#/$defs/Glance",
+        "properties": {
+          "type": {
+            "const": "glance",
             "type": "string"
           }
         },
@@ -2698,6 +2713,257 @@ export const defs: Record<string, Shape> = {
       "action",
       "name"
     ],
+    "type": "object"
+  },
+  "Glance": {
+    "additionalProperties": true,
+    "properties": {
+      "expanded": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/GlanceBody"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "figure": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Figure"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "id": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "leading": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/GlanceSide"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "medium": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/GlanceBody"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "show": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Expr"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "small": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/GlanceBody"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "subtitle": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "tap": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Tap"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "title": {
+        "type": "string"
+      },
+      "tone": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Tone"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "trailing": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/GlanceSide"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "value": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Shown"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      }
+    },
+    "required": [
+      "title"
+    ],
+    "type": "object"
+  },
+  "GlanceBody": {
+    "properties": {
+      "acts": {
+        "items": {
+          "$ref": "#/$defs/Act"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      },
+      "foot": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "line": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "rows": {
+        "items": {
+          "$ref": "#/$defs/GlanceRow"
+        },
+        "type": [
+          "array",
+          "null"
+        ]
+      }
+    },
+    "type": "object"
+  },
+  "GlanceRow": {
+    "properties": {
+      "figure": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Figure"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "subtitle": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "tap": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Tap"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "title": {
+        "type": "string"
+      },
+      "tone": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Tone"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "value": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Shown"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      }
+    },
+    "required": [
+      "title"
+    ],
+    "type": "object"
+  },
+  "GlanceSide": {
+    "properties": {
+      "figure": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Figure"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "text": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Shown"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "tone": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/Tone"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      }
+    },
     "type": "object"
   },
   "Heat": {

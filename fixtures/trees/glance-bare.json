@@ -1,0 +1,9 @@
+{
+  "kind": "glance",
+  "id": "bare",
+  "variant": null,
+  "drawn": "native",
+  "role": "status",
+  "name": "Builds",
+  "children": []
+}
