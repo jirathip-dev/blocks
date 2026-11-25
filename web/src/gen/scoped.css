@@ -1,6 +1,6 @@
 @layer blocks{@scope (.b-view) to (:is(.b-island, .b-app):not([data-fallback]) > *){
 .bar{display:flex;flex-wrap:wrap;gap:var(--s2) var(--s4);align-items:center;margin:var(--s2) 0}
-.scr>button,.msgs>button,.sec>button,.mdb>button,.card>button{margin:var(--s2) var(--s4) var(--s2) 0}
+.scr>button,.scr-main>button,.scr-side>button,.msgs>button,.sec>button,.mdb>button,.card>button{margin:var(--s2) var(--s4) var(--s2) 0}
 button,a.btn{text-decoration:none;position:relative;display:inline-flex;align-items:center;justify-content:center;flex:none;height:var(--ctl);min-width:28px;max-width:100%;margin:0;padding:0 1ch;border:0;border-radius:var(--radius);background:none;color:var(--l);font:inherit;font-size:var(--fs);line-height:1;white-space:nowrap;text-transform:lowercase}
 button>span,a.btn>span{min-width:0;overflow:hidden;text-overflow:ellipsis}
 button::before,a.btn::before{content:"[";position:absolute;left:0}
@@ -792,6 +792,12 @@ dialog.md:not([data-live]){position:relative;z-index:auto;inset:auto;transform:n
 .tabh{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s4) var(--s4);margin:var(--s3) 0 var(--s2);padding:0 var(--s2)}
 .tabh>.tw{margin-right:auto}
 .scr>.msgs{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding-bottom:var(--s2)}
+.scr.split{container:scr/inline-size}
+.scr-main,.scr-side{min-width:0}
+@container scr (min-width:720px){
+.scr-cols{display:grid;grid-template-columns:minmax(0,1fr) calc(20 * var(--s4));gap:0 calc(2 * var(--dot-gap));align-items:start}
+.scr-main>.sec:first-child,.scr-side>.sec:first-child{margin-top:0}
+}
 .secret .fd input{border-radius:var(--radius);letter-spacing:.12em}
 .secret .fd input::placeholder{letter-spacing:0;color:var(--mute)}
 .secret .fd input:focus{outline:2px solid var(--l);outline-offset:-1px;border-color:var(--l)}

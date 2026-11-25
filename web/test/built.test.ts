@@ -22,7 +22,7 @@ function rebuild(v: unknown): unknown {
 
 test("the builders give every fixtures/blocks file back, type and all", () => {
   const files = readdirSync(at("blocks")).filter((f) => f.endsWith(".json"));
-  strictEqual(files.length, 53);
+  strictEqual(files.length, 54);
   for (const f of files) deepStrictEqual(rebuild(json(`blocks/${f}`)), json(`blocks/${f}`), f);
 });
 

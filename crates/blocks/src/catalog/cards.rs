@@ -47,6 +47,7 @@ pub(crate) static KINDS: &[Card] = &[
         Slot { name: "blocks", ty: "Block[]", need: true, names: &[], sends: false },
         Slot { name: "footer", ty: "string", need: false, names: &[], sends: false },
         Slot { name: "header", ty: "string", need: false, names: &[], sends: false },
+        Slot { name: "side", ty: "bool", need: false, names: &[], sends: false },
     ] },
     Card { kind: "list", about: "A list of rows.", fields: &[
         Slot { name: "rows", ty: "Block[]", need: true, names: &[], sends: false },

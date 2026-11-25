@@ -322,9 +322,18 @@ var named2 = (b, t) => String(names.map((k) => b[k]).find((v) => typeof v === "s
 var isLit = (v) => v === null || ["boolean", "number", "string"].includes(typeof v);
 var isExpr = (v) => v !== void 0 && !Array.isArray(v);
 var str = (b, k) => typeof b[k] === "string" && b[k] !== "" ? String(b[k]) : null;
+var aside = (x) => x["type"] === "section" && x["side"] === true;
+function columns(b) {
+  if (b["type"] !== "screen" || b["focus"] === true) return null;
+  const all = blks(b["blocks"]);
+  const side = all.filter(aside);
+  return side.length && side.length < all.length ? [all.filter((x) => !aside(x)), side] : null;
+}
 function under(b, drawn2) {
   if (drawn2 === "fallback") return Array.isArray(b["blocks"]) ? b["blocks"] : [];
   if (drawn2 === "hidden") return [];
+  const split = columns(b);
+  if (split) return split.flat();
   const lists = ["blocks", b["type"] === "table" ? "" : "rows", "buttons"].flatMap((k) => Array.isArray(b[k]) ? b[k] : []);
   return lists.concat(blks(b["rounds"]).flatMap((r) => Array.isArray(r["blocks"]) ? r["blocks"] : []));
 }
@@ -7105,6 +7114,12 @@ var defs = {
             "type": "null"
           }
         ]
+      },
+      "side": {
+        "type": [
+          "boolean",
+          "null"
+        ]
       }
     },
     "required": [
@@ -9125,7 +9140,12 @@ var Walk = class {
       const top = shallow(v);
       this.sends(sentOnce(top), at2, inner);
       this.core(kind, v, top);
-      for (const [p, c] of placed(v)) this.block(c, `${at2}/${p}`, inner);
+      const own2 = kind === "screen" && v["focus"] !== true;
+      for (const [p, c] of placed(v)) {
+        if (isObj3(c) && c["type"] === "section" && c["side"] === true && !(own2 && p.startsWith("blocks/")))
+          this.out.push({ fault: "shape", kind: "section", why: "side is set on a section that is not a non-focus screen's own block" });
+        this.block(c, `${at2}/${p}`, inner);
+      }
     } else if (!this.app.includes(kind)) this.out.push({ fault: "unknown", kind });
   }
   sends(v, at2, scope) {
@@ -9349,6 +9369,7 @@ export {
   chips,
   choice,
   choose,
+  columns,
   composer,
   config,
   css,

@@ -2776,13 +2776,15 @@ public struct Section: Codable, Equatable, Sendable {
     public var header: String?
     public var id: String?
     public var show: Expr?
+    public var side: Bool?
 
-    public init(blocks: [Block], footer: String? = nil, header: String? = nil, id: String? = nil, show: Expr? = nil) {
+    public init(blocks: [Block], footer: String? = nil, header: String? = nil, id: String? = nil, show: Expr? = nil, side: Bool? = nil) {
         self.blocks = blocks
         self.footer = footer
         self.header = header
         self.id = id
         self.show = show
+        self.side = side
     }
 }
 

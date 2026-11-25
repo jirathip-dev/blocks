@@ -288,7 +288,7 @@ export type Secret = { action: string; id?: string | null; label?: string | null
 
 export type SecretField = { checks?: Check[] | null; doc?: string | null; enabled?: Expr | null; error?: string | null; label?: string | null; name: string; open?: boolean | null; placeholder?: string | null; set?: boolean | null; show?: Expr | null; value?: string | null; was?: string | null };
 
-export type Section = { blocks: Block[]; footer?: string | null; header?: string | null; id?: string | null; show?: Expr | null };
+export type Section = { blocks: Block[]; footer?: string | null; header?: string | null; id?: string | null; show?: Expr | null; side?: boolean | null };
 
 export type Seen = { at: string; detail: string; file?: string | null; line?: number | null; rule: string; run?: string | null; shot?: string | null };
 

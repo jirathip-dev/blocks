@@ -6182,6 +6182,12 @@ export const defs: Record<string, Shape> = {
             "type": "null"
           }
         ]
+      },
+      "side": {
+        "type": [
+          "boolean",
+          "null"
+        ]
       }
     },
     "required": [

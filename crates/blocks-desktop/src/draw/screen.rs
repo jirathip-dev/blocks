@@ -1,4 +1,4 @@
-use blocks::Screen;
+use blocks::{Block, Screen};
 use egui::{Button, RichText, Ui};
 
 use crate::bidi;
@@ -29,5 +29,12 @@ fn draw(b: &Screen, ui: &mut Ui, cx: &mut Cx<'_>) {
             }
         });
     }
-    cx.blocks(ui, b.blocks.as_deref().unwrap_or_default());
+    let all = b.blocks.as_deref().unwrap_or_default();
+    let aside = |x: &&Block| matches!(x, Block::Section(s) if s.side == Some(true));
+    let (side, main): (Vec<&Block>, Vec<&Block>) = all.iter().partition(aside);
+    if b.focus == Some(true) || side.is_empty() || main.is_empty() {
+        return cx.blocks(ui, all);
+    }
+    let read: Vec<Block> = main.into_iter().chain(side).cloned().collect();
+    cx.blocks(ui, &read);
 }
