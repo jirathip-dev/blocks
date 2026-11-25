@@ -1,0 +1,8 @@
+/* What #380 adds to web/src/css/kind/screen.css (and bar.css's loose-button rule): a screen with a side section splits in two from 720 px of its own width. */
+.scr.split{container:scr/inline-size}
+.scr-main,.scr-side{min-width:0}
+.scr-main>button,.scr-side>button{margin:var(--s2) var(--s4) var(--s2) 0}
+@container scr (min-width:720px){
+.scr-cols{display:grid;grid-template-columns:minmax(0,1fr) calc(20 * var(--s4));gap:0 calc(2 * var(--dot-gap));align-items:start}
+.scr-side>.sec:first-child{margin-top:0}
+}

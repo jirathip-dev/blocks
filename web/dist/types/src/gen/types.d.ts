@@ -1082,6 +1082,7 @@ export type Section = {
     header?: string | null;
     id?: string | null;
     show?: Expr | null;
+    side?: boolean | null;
 };
 export type Seen = {
     at: string;

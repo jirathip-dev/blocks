@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import type { Block, Screen } from "../../../src/core/index.ts";
+import { type Block, columns, type Screen } from "../../../src/core/index.ts";
 import { Cx } from "../act.ts";
 import { kids } from "../block.ts";
 import { act, urlOf, type V } from "../draw.ts";
@@ -14,6 +14,21 @@ export function screen({ b, hooks }: V<Screen>) {
   const head = h("p", "tabh", null, h("span", "tw b-screen__title", null, b.title ?? ""), ...acts);
   const attrs = { ...hooks, "data-id": String(b.id) };
   const bs = b.blocks ?? [];
+  const split = columns(b);
+  if (split)
+    return h(
+      "div",
+      "scr split",
+      attrs,
+      head,
+      h(
+        "div",
+        "scr-cols",
+        null,
+        h("div", "scr-main", { "data-kids": "" }, ...kids(split[0])),
+        h("aside", "scr-side", { "aria-label": split[1].map((x) => String(x["header"] ?? "")).join(", ") }, ...kids(split[1])),
+      ),
+    );
   if (!b.focus) return h("div", "scr", attrs, head, ...kids(bs));
   const kept = bs.filter(stays);
   const at = kept.findIndex((x) => x.type === "composer");

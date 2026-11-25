@@ -13,9 +13,21 @@ const isExpr = (v: unknown) => v !== undefined && !Array.isArray(v);
 
 const str = (b: Blk, k: string) => (typeof b[k] === "string" && b[k] !== "" ? String(b[k]) : null);
 
+const aside = (x: Blk) => x["type"] === "section" && x["side"] === true;
+
+/// A screen's main and side blocks when its side sections split it in two columns, each in source order, as the crate's `tree::columns`.
+export function columns(b: Blk): [Blk[], Blk[]] | null {
+  if (b["type"] !== "screen" || b["focus"] === true) return null;
+  const all = blks(b["blocks"]);
+  const side = all.filter(aside);
+  return side.length && side.length < all.length ? [all.filter((x) => !aside(x)), side] : null;
+}
+
 function under(b: Blk, drawn: TreeDrawn): unknown[] {
   if (drawn === "fallback") return Array.isArray(b["blocks"]) ? b["blocks"] : [];
   if (drawn === "hidden") return [];
+  const split = columns(b);
+  if (split) return split.flat();
   const lists = ["blocks", b["type"] === "table" ? "" : "rows", "buttons"].flatMap((k) => (Array.isArray(b[k]) ? b[k] : []));
   return lists.concat(blks(b["rounds"]).flatMap((r) => (Array.isArray(r["blocks"]) ? r["blocks"] : [])));
 }

@@ -1,0 +1,114 @@
+{
+  "blocks": [
+    {
+      "blocks": [
+        {
+          "id": "line-rows",
+          "rows": [
+            {
+              "id": "l1",
+              "title": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+              "type": "row",
+              "value": "24"
+            },
+            {
+              "id": "l2",
+              "title": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+              "type": "row",
+              "value": "12"
+            },
+            {
+              "id": "l3",
+              "title": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+              "type": "row",
+              "value": "4"
+            },
+            {
+              "id": "l4",
+              "title": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+              "type": "row",
+              "value": "8"
+            }
+          ],
+          "type": "list"
+        }
+      ],
+      "header": "Lines · 4 of 6",
+      "id": "lines",
+      "type": "section"
+    },
+    {
+      "blocks": [
+        {
+          "id": "trip-stops",
+          "label": "stops left",
+          "type": "stat",
+          "value": 6
+        },
+        {
+          "id": "trip-rows",
+          "rows": [
+            {
+              "id": "trip-van",
+              "title": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+              "type": "row",
+              "value": "Van 7 · LB-221"
+            },
+            {
+              "id": "trip-km",
+              "title": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+              "type": "row",
+              "value": "42 km"
+            },
+            {
+              "id": "trip-next",
+              "title": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+              "type": "row",
+              "value": "10:25"
+            }
+          ],
+          "type": "list"
+        }
+      ],
+      "header": "Trip summary",
+      "id": "trip",
+      "side": true,
+      "type": "section"
+    },
+    {
+      "action": "report",
+      "id": "report",
+      "label": "Report a problem",
+      "type": "button"
+    },
+    {
+      "action": "next",
+      "id": "next",
+      "label": "Next: proof",
+      "type": "button"
+    },
+    {
+      "blocks": [
+        {
+          "id": "cust-rows",
+          "rows": [
+            {
+              "id": "cust-who",
+              "title": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+              "type": "row",
+              "value": "owner"
+            }
+          ],
+          "type": "list"
+        }
+      ],
+      "header": "Customer",
+      "id": "customer",
+      "side": true,
+      "type": "section"
+    }
+  ],
+  "id": "side",
+  "title": "A much longer text than this kind's sample, one that keeps going well past the width of a phone so it has to wrap, then an unbroken token: blocks-stress-fixtures-long-text-without-any-break-in-it",
+  "type": "screen"
+}

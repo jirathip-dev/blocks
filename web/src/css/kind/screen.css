@@ -2,3 +2,9 @@
 .tabh>.tw{margin-right:auto}
 .scr>.msgs{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding-bottom:var(--s2)}
 .b-screen__title{text-transform:lowercase}
+.scr.split{container:scr/inline-size}
+.scr-main,.scr-side{min-width:0}
+@container scr (min-width:720px){
+.scr-cols{display:grid;grid-template-columns:minmax(0,1fr) calc(20 * var(--s4));gap:0 calc(2 * var(--dot-gap));align-items:start}
+.scr-main>.sec:first-child,.scr-side>.sec:first-child{margin-top:0}
+}
