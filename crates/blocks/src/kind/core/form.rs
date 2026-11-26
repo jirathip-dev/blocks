@@ -1,7 +1,7 @@
 use crate::kind::sample::field;
 use crate::kind::{Block, Field, Submit};
 
-listed! { 7: Form(Form) = "form", 8: Config(Form) = "config" }
+listed! { 7: Form(Form) = "form", 8: #[doc = "Settings as fields: the form kind under its settings name."] Config(Form) = "config" }
 
 kind! {
     /// A form of fields; also the `config` kind.

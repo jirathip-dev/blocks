@@ -23,7 +23,7 @@ pub(super) fn files(root: &Path, _: &Value) -> std::io::Result<Files> {
                 "{DIR}/{stem}.rs has no `listed! {{ N: Kind(Type) = \"name\" }}`"
             ))
         })?;
-        listed.sort();
+        listed.sort_by_key(|(at, _)| *at);
         let kinds: Vec<String> = listed.iter().map(|(_, k)| k.clone()).collect();
         mods.push((listed.first().map(|(at, _)| *at), stem, kinds.join(", ")));
     }
@@ -37,12 +37,16 @@ pub(super) fn files(root: &Path, _: &Value) -> std::io::Result<Files> {
 fn listed(text: &str) -> Option<Vec<(u32, String)>> {
     let (_, rest) = text.split_once("listed! {")?;
     let (body, _) = rest.split_once('}')?;
-    body.split(',')
-        .map(str::trim)
-        .filter(|e| !e.is_empty())
-        .map(|e| {
-            let (at, kind) = e.split_once(':')?;
-            Some((at.trim().parse().ok()?, kind.trim().to_string()))
-        })
-        .collect()
+    let mut quoted = false;
+    body.split(|c| {
+        quoted ^= c == '"';
+        c == ',' && !quoted
+    })
+    .map(str::trim)
+    .filter(|e| !e.is_empty())
+    .map(|e| {
+        let (at, kind) = e.split_once(':')?;
+        Some((at.trim().parse().ok()?, kind.trim().to_string()))
+    })
+    .collect()
 }

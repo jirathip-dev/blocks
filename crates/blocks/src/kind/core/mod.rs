@@ -4,13 +4,13 @@ use super::{AppBlock, Fields};
 
 kinds! {
     screen { Screen(Screen) = "screen" }
-    modal { Modal(Modal) = "modal", Sheet(Modal) = "sheet" }
+    modal { Modal(Modal) = "modal", #[doc = "The modal kind under its older name, drawn the same way: write `modal` in a new screen."] Sheet(Modal) = "sheet" }
     section { Section(Section) = "section" }
     list { List(List) = "list" }
     row { Row(Row) = "row" }
     card { Card(Card) = "card" }
     choice { Choice(Choice) = "choice" }
-    form { Form(Form) = "form", Config(Form) = "config" }
+    form { Form(Form) = "form", #[doc = "Settings as fields: the form kind under its settings name."] Config(Form) = "config" }
     secret { Secret(Secret) = "secret" }
     run { Run(Run) = "run" }
     button { Button(Button) = "button" }

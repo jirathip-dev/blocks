@@ -5,6 +5,9 @@ import { box as modal } from "../render/kind/modal.ts";
 /// A sheet: a modal over the page around a body; `closed` runs before it closes or shows anew.
 export type Sheet = ReturnType<typeof sheet>;
 
+/// Where a sheet's back button goes, and the title it names.
+export type Back = { title: string; go: () => void };
+
 /// The sheet, hidden; it closes when its modal does.
 export function sheet(closed: () => void) {
   const box = el("div", "b-sheet");
@@ -16,15 +19,13 @@ export function sheet(closed: () => void) {
     box.replaceChildren();
   };
   box.addEventListener("close", close, true);
-  const frame = (title: string, prev?: () => void, own = false) => {
-    const b = btn("‹ back", "b-back");
-    if (prev) b.onclick = prev;
-    const lead = prev ? b : undefined;
+  const frame = (title: string, prev?: Back, own = false) => {
+    const lead = prev && Object.assign(btn(`‹ ${prev.title}`, "b-back"), { onclick: prev.go });
     if (own && lead) body.querySelector(".mdt")?.before(lead);
     box.replaceChildren(own ? body : modal({ title, blocks: [] }, [body], { done: async () => true, lead }));
     box.hidden = false;
   };
-  const show = (title: string, kids: HTMLElement[], prev?: () => void) => {
+  const show = (title: string, kids: HTMLElement[], prev?: Back) => {
     closed();
     body.replaceChildren(...kids);
     frame(title, prev);
