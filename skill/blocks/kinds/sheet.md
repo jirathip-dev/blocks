@@ -1,6 +1,6 @@
 # `sheet`
 
-A box over a screen: a dialog dragged by its header, a fixed confirm or alert, or a tool window that resizes and folds to a pill.
+The modal kind under its older name, drawn the same way: write `modal` in a new screen.
 
 The Rust type `Modal`; in TS, `sheet(fields: Modal)` from `web/src/gen/builders.ts`.
 

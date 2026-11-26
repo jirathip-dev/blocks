@@ -11,14 +11,14 @@ A screen is data: a `screen` or `modal` block of typed blocks, checked, then dra
 
 - [`screen`](kinds/screen.md): A whole screen.
 - [`modal`](kinds/modal.md): A box over a screen: a dialog dragged by its header, a fixed confirm or alert, or a tool window that resizes and folds to a pill.
-- [`sheet`](kinds/sheet.md): A box over a screen: a dialog dragged by its header, a fixed confirm or alert, or a tool window that resizes and folds to a pill.
+- [`sheet`](kinds/sheet.md): The modal kind under its older name, drawn the same way: write `modal` in a new screen.
 - [`section`](kinds/section.md): A titled group of blocks.
 - [`list`](kinds/list.md): A list of rows.
 - [`row`](kinds/row.md): One row of a list.
 - [`card`](kinds/card.md): A card: an ask, a run, a config or a proposal.
 - [`choice`](kinds/choice.md): A question with options, a free answer and a default.
 - [`form`](kinds/form.md): A form of fields; also the `config` kind.
-- [`config`](kinds/config.md): A form of fields; also the `config` kind.
+- [`config`](kinds/config.md): Settings as fields: the form kind under its settings name.
 - [`secret`](kinds/secret.md): A secret's input: its value is never sent back.
 - [`run`](kinds/run.md): A command the owner approves to run.
 - [`button`](kinds/button.md): A button.

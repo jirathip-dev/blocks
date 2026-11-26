@@ -1,11 +1,15 @@
 import type { Blk } from "../core/tree.ts";
 export type Sheet = ReturnType<typeof sheet>;
+export type Back = {
+    title: string;
+    go: () => void;
+};
 export declare function sheet(closed: () => void): {
     box: HTMLDivElement;
     body: HTMLDivElement;
     close: () => void;
-    frame: (title: string, prev?: () => void, own?: boolean) => void;
-    show: (title: string, kids: HTMLElement[], prev?: () => void) => void;
+    frame: (title: string, prev?: Back, own?: boolean) => void;
+    show: (title: string, kids: HTMLElement[], prev?: Back) => void;
 };
 export declare function confirmer(): {
     box: HTMLDivElement;
