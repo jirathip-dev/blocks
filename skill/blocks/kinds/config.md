@@ -1,6 +1,6 @@
 # `config`
 
-A form of fields; also the `config` kind.
+Settings as fields: the form kind under its settings name.
 
 The Rust type `Form`; in TS, `config(fields: Form)` from `web/src/gen/builders.ts`.
 
