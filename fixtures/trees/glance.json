@@ -2,7 +2,7 @@
   "kind": "glance",
   "id": "turn",
   "variant": null,
-  "drawn": "native",
+  "drawn": "fallback",
   "role": "status",
   "name": "Ana",
   "children": []

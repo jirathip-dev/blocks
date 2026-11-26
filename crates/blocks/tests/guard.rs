@@ -374,5 +374,5 @@ fn rules_md_shows_a_pair_for_every_rule_a_screen_can_hit_and_the_guard_flags_eac
         assert_eq!(lint(good), BTreeSet::new(), "{id}: Correct");
         judged += 1;
     }
-    assert_eq!(judged, 27);
+    assert_eq!(judged, 28);
 }

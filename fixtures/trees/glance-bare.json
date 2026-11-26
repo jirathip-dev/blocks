@@ -2,7 +2,7 @@
   "kind": "glance",
   "id": "bare",
   "variant": null,
-  "drawn": "native",
+  "drawn": "fallback",
   "role": "status",
   "name": "Builds",
   "children": []
