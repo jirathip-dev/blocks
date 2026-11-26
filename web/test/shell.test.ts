@@ -243,3 +243,73 @@ test("a refused edit leaves the layout as it was and shows why; a saved one is d
   ok(again.hidden);
   shell.close();
 });
+
+const chain = (titles) =>
+  titles.forEach((title, i) => kept.set(`b:core/screens/${i ? `s${i}` : "queue"}`, JSON.stringify({ type: "screen", id: `s${i}`, title, blocks: [{ type: "button", id: `next${i}`, label: "next", tap: { open: `/screens/s${i + 1}` } }] })));
+const deep = (root, n) => {
+  for (let i = 0; i < n; i++) byId(root, `next${i}`).onclick();
+};
+const trailOf = (root) => find(root, (x) => x.tagName === "NAV" && x.getAttribute("aria-label") === "Breadcrumb");
+const crumbs = (nav) => find(nav, (x) => x.tagName === "OL").children.map((li) => li.children[0]);
+const backOf = (e) => find(e, (x) => x.classList.contains("b-back"));
+
+test("a screen three deep draws its trail: earlier screens are links, the current one is the page, and back names the screen before", () => {
+  const root = fresh();
+  chain(["Queue", "Fleets", "cooee", "rev"]);
+  const shell = mount({ root, layout, url });
+  strictEqual(trailOf(root), undefined);
+  strictEqual(backOf(root), undefined);
+  deep(root, 3);
+  const nav = trailOf(root);
+  const items = crumbs(nav);
+  deepStrictEqual(items.map((e) => [e.tagName, e.textContent, e.getAttribute("aria-current")]), [["A", "Queue", null], ["A", "Fleets", null], ["A", "cooee", null], ["SPAN", "rev", "page"]]);
+  strictEqual(backOf(nav).textContent, "‹ cooee");
+  items[1].onclick({ preventDefault() {} });
+  ok(byId(root, "next1"));
+  deepStrictEqual(crumbs(trailOf(root)).map((e) => e.textContent), ["Queue", "Fleets"]);
+  backOf(root).onclick();
+  ok(byId(root, "next0"));
+  strictEqual(trailOf(root), undefined);
+  shell.close();
+});
+
+test("six deep, the trail keeps the first, a menu of the hidden screens and the last two; a long title ends in … and keeps its full name", () => {
+  const root = fresh();
+  chain(["Queue", "Fleets", "cooee", "roles", "herdsman-staging-mirror-west", "accounts"]);
+  const shell = mount({ root, layout, url });
+  deep(root, 5);
+  const items = crumbs(trailOf(root));
+  deepStrictEqual(items.map((e) => e.textContent), ["Queue", "…", "herdsman-staging-mi…", "accounts"]);
+  deepStrictEqual([items[2].getAttribute("aria-label"), items[0].getAttribute("aria-label")], ["herdsman-staging-mirror-west", null]);
+  strictEqual(backOf(root).textContent, "‹ herdsman-staging-mirror-west");
+  const more = items[1];
+  const menu = find(more.parentNode, (x) => x.getAttribute("role") === "menu");
+  deepStrictEqual([more.getAttribute("aria-label"), more.getAttribute("aria-expanded"), menu.hidden], ["3 more screens", "false", true]);
+  more.onclick();
+  deepStrictEqual([more.getAttribute("aria-expanded"), menu.hidden], ["true", false]);
+  const hidden = menu.children;
+  deepStrictEqual(hidden.map((a) => [a.textContent, a.getAttribute("role")]), [["Fleets", "menuitem"], ["cooee", "menuitem"], ["roles", "menuitem"]]);
+  hidden[1].onclick({ preventDefault() {} });
+  ok(byId(root, "next2"));
+  deepStrictEqual(crumbs(trailOf(root)).map((e) => e.textContent), ["Queue", "Fleets", "cooee"]);
+  shell.close();
+});
+
+test("in a sheet there is no trail and back names the screen before; the look sheet's back names the menu", () => {
+  const root = fresh();
+  kept.set("b:core/screens/about", JSON.stringify({ type: "screen", id: "about", title: "About", blocks: [{ type: "button", id: "more", label: "more", tap: { open: "/screens/credits" } }] }));
+  kept.set("b:core/screens/credits", JSON.stringify({ type: "screen", id: "credits", title: "Credits", blocks: [] }));
+  const shell = mount({ root, layout, url });
+  find(root, (x) => x.classList.contains("b-menu")).onclick();
+  const sheet = find(root, (x) => x.classList.contains("b-sheet"));
+  find(sheet, (x) => x.classList.contains("rt") && x.textContent === "About").parentNode.parentNode.onclick();
+  strictEqual(backOf(sheet), undefined);
+  byId(sheet, "more").onclick();
+  deepStrictEqual([backOf(sheet).textContent, trailOf(sheet)], ["‹ About", undefined]);
+  backOf(sheet).onclick();
+  ok(byId(sheet, "more"));
+  find(root, (x) => x.classList.contains("b-menu")).onclick();
+  find(sheet, (x) => x.classList.contains("rt") && x.textContent === "look").parentNode.parentNode.onclick();
+  strictEqual(backOf(sheet).textContent, "‹ menu");
+  shell.close();
+});
