@@ -37,7 +37,8 @@ export type Mount = {
 } & (FromServers | FromTheApp);
 
 type Wear = (name: string | null, keep?: Store) => void;
-type View = { source: string; path: string; back: string[]; box: HTMLElement; body: HTMLElement; model?: Block | undefined; built: Set<string>; host: Host; stop?: (() => void) | undefined; sync: () => void };
+type Step = { path: string; title: string };
+type View = { source: string; path: string; back: Step[]; box: HTMLElement; body: HTMLElement; model?: Block | undefined; built: Set<string>; host: Host; stop?: (() => void) | undefined; sync: () => void };
 type Tab = { node: Resolved; button: HTMLElement; pane: HTMLElement; view?: View | undefined };
 type Shell = {
   o: Mount;
@@ -88,14 +89,57 @@ const say = (s: Shell, v: View, t: Toast, first = false) => {
   s.notes.say(t, u ? (b) => act(s, v, { action: u.action, values: u.values, confirm: u.confirm }, b, true) : undefined, first);
 };
 
+const titled = (v: View) => String(obj(v.model)["title"] ?? "") || v.path;
+
+const named = <E extends HTMLElement>(e: E, title: string) => {
+  e.append(title.length > 20 ? `${title.slice(0, 19)}…` : title);
+  if (title.length > 20) e.setAttribute("aria-label", title);
+  return e;
+};
+
+function trail(s: Shell, v: View, prev: Step) {
+  const links = v.back.map((step, i) => {
+    const a = named(el("a"), step.title);
+    a.href = "#";
+    a.onclick = (e) => {
+      e.preventDefault();
+      jump(s, v, i);
+    };
+    return a;
+  });
+  const hidden = links.length > 3 ? links.splice(1, links.length - 2) : [];
+  const here = named(el("span"), titled(v));
+  here.setAttribute("aria-current", "page");
+  const items = links.map((a) => h("li", "", a));
+  if (hidden.length) {
+    const list = h("div", "b-trail__menu", ...hidden);
+    list.setAttribute("role", "menu");
+    list.hidden = true;
+    for (const a of hidden) a.setAttribute("role", "menuitem");
+    const more = btn("…");
+    more.setAttribute("aria-label", `${hidden.length} more screens`);
+    more.setAttribute("aria-haspopup", "menu");
+    more.setAttribute("aria-expanded", "false");
+    more.onclick = () => {
+      list.hidden = !list.hidden;
+      more.setAttribute("aria-expanded", String(!list.hidden));
+    };
+    items.splice(1, 0, h("li", "", more, list));
+  }
+  const b = btn(`‹ ${prev.title}`, "b-back");
+  b.onclick = () => back(s, v);
+  const nav = h("nav", "b-trail", h("ol", "", ...items, h("li", "", here)), b);
+  nav.setAttribute("aria-label", "Breadcrumb");
+  return nav;
+}
+
 function paint(s: Shell, v: View) {
   const e = v.model ? v.host.draw(v.model) : null;
   v.body.replaceChildren(...(e ? [e] : []));
   v.sync();
-  const b = btn("‹ back", "b-back");
-  b.onclick = () => back(s, v);
-  v.box.replaceChildren(...(v.back.length && v !== s.sheetView ? [b] : []), v.body);
-  if (v === s.sheetView) s.sheet.frame(String(obj(v.model)["title"] ?? ""), v.back.length ? () => back(s, v) : undefined, v.model?.type === "modal" || v.model?.type === "sheet");
+  const prev = v.back[v.back.length - 1];
+  v.box.replaceChildren(...(prev && v !== s.sheetView ? [trail(s, v, prev)] : []), v.body);
+  if (v === s.sheetView) s.sheet.frame(String(obj(v.model)["title"] ?? ""), prev && { title: prev.title, go: () => back(s, v) }, v.model?.type === "modal" || v.model?.type === "sheet");
   if (!e || v.built.has(v.path)) return;
   v.built.add(v.path);
   requestAnimationFrame(() => settle(v.body));
@@ -139,17 +183,21 @@ const hide = (v?: View) => {
 
 function go(s: Shell, v: View, path: string, push = true) {
   hide(v);
-  if (push) v.back.push(v.path);
+  if (push) v.back.push({ path: v.path, title: titled(v) });
   v.path = path;
   v.model = undefined;
   v.host.open.clear();
   show(s, v);
 }
 
-const back = (s: Shell, v: View) => {
-  const p = v.back.pop();
-  if (p !== undefined) go(s, v, p, false);
+const jump = (s: Shell, v: View, i: number) => {
+  const p = v.back[i];
+  if (!p) return;
+  v.back.length = i;
+  go(s, v, p.path, false);
 };
+
+const back = (s: Shell, v: View) => jump(s, v, v.back.length - 1);
 
 function openSheet(s: Shell, source: string, path: string) {
   if (s.sheetView && !s.sheet.box.hidden) return go(s, s.sheetView, path);
@@ -232,10 +280,10 @@ function strip(s: Shell, nodes: Resolved[], main: HTMLElement, bar: HTMLElement)
 }
 
 function menu(s: Shell, listed: Resolved[], wear: Wear, cur: () => Tab | undefined) {
-  const lookSheet = () => s.sheet.show("look", [looks(s.o.schemes ?? {}, s.store, wear, lookSheet)], all);
+  const lookSheet = () => s.sheet.show("look", [looks(s.o.schemes ?? {}, s.store, wear, lookSheet)], { title: "menu", go: all });
   const all = () => {
     const open = (n: Resolved) => () => {
-      if (!isScreen(n)) return s.sheet.show(n.label ?? n.id, [s.o.components?.[n.type]?.(n) ?? el("div")], all);
+      if (!isScreen(n)) return s.sheet.show(n.label ?? n.id, [s.o.components?.[n.type]?.(n) ?? el("div")], { title: "menu", go: all });
       const at = cur()?.view;
       if (n.place === "push" && at) {
         s.sheet.close();

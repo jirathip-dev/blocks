@@ -27,8 +27,8 @@ Guard version 5. A new error fails `blocks check`; a warning never fails.
 | `explore/error-screen` | error | 1 | an answer is an error, its ops do not apply, or the screen they give has a fault | Answer with ops that apply to the screen as it is; `Built::check` the result. |
 | `lint/fault` | error | 1 | Built::check returns a fault | Build the block with its typed constructor; `Built::check` must return nothing. |
 | `css/fixed-width` | error | 2 | a `width` or `min-width` over 390 px | Use `max-width`, or a width in `%`. |
-| `lint/glance-heavy` | warn | 5 | a glance whose JSON is over 3,000 bytes | Send fewer rows or shorter lines: a Live Activity's state is at most 4 KB, and a form draws two rows. |
 | `render/frame-budget` | warn | 1 | first paint over 300 ms, or a frame over 16.7 ms | Draw fewer blocks at first: page the list, or fold the rest. |
+| `lint/glance-heavy` | warn | 5 | a glance whose JSON is over 3,000 bytes | Send fewer rows or shorter lines: a Live Activity's state is at most 4 KB, and a form draws two rows. |
 | `lint/island-unsized` | warn | 1 | an island with no size | Reserve its box with `size`, so the page does not jump when it loads. |
 | `lint/label-empty` | error | 1 | a blank button, act, chip, option or field label, row title, or message, tool or attachment name | Give it a label of one to three words. |
 | `lint/label-long` | error | 1 | a button, act or chip label, or a message's or tool's name, over 30 characters, or a badge over 20 | Shorten it to a verb and its object; move the rest to a `confirm` or a `text` block. |
