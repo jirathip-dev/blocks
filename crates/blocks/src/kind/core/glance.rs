@@ -78,7 +78,7 @@ fn row(title: &str, subtitle: &str, at: &str, thread: &str) -> GlanceRow {
     }
 }
 
-pub(super) fn sample() -> Vec<Block> {
+fn turn() -> Glance {
     let stop = Act {
         label: "Stop".into(),
         action: Some("stop".into()),
@@ -94,7 +94,7 @@ pub(super) fn sample() -> Vec<Block> {
         }),
         ..Act::default()
     };
-    let turn = Glance::new("Ana")
+    Glance::new("Ana")
         .id("turn")
         .subtitle("Order sync")
         .figure(Figure {
@@ -140,8 +140,11 @@ pub(super) fn sample() -> Vec<Block> {
             line: Some("cargo test -p orders".into()),
             foot: Some("3 tools".into()),
             ..GlanceBody::default()
-        });
-    let needs = Glance::new("Needs you")
+        })
+}
+
+fn needs() -> Glance {
+    Glance::new("Needs you")
         .id("needs")
         .figure(Figure {
             state: Some(Tone::Needs),
@@ -171,11 +174,13 @@ pub(super) fn sample() -> Vec<Block> {
             line: Some("Approve the deploy".into()),
             foot: Some("2 threads wait".into()),
             ..GlanceBody::default()
-        });
+        })
+}
+
+pub(super) fn sample() -> Vec<Block> {
     let bare = Glance::new("Builds").id("bare").value("4 running");
-    vec![
-        Block::Glance(Box::new(turn)),
-        Block::Glance(Box::new(needs)),
-        Block::Glance(Box::new(bare)),
-    ]
+    [turn(), needs(), bare]
+        .into_iter()
+        .map(|g| Block::Glance(Box::new(g)))
+        .collect()
 }
