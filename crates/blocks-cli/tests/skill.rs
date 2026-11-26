@@ -87,3 +87,19 @@ fn skill_to_refuses_an_example_with_a_finding_and_writes_nothing() {
     assert_eq!(code, 2, "{err}");
     assert!(err.contains("example `gone` is no fixture"), "{err}");
 }
+
+#[test]
+fn each_kind_in_the_skill_index_has_its_own_description() {
+    let to = tmp("skill-abouts");
+    assert_eq!(skill(&root(), &to), (0, String::new()));
+    let index = std::fs::read_to_string(to.join("SKILL.md")).unwrap();
+    let mut seen: BTreeMap<&str, &str> = BTreeMap::new();
+    for line in index.lines().filter(|l| l.starts_with("- [`")) {
+        let (kind, about) = line.split_once("): ").unwrap();
+        assert!(!about.is_empty(), "{kind} has no description");
+        if let Some(other) = seen.insert(about, kind) {
+            panic!("{other} and {kind} share the description {about:?}");
+        }
+    }
+    assert!(seen.len() > 40, "{index}");
+}

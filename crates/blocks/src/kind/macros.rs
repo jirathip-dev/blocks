@@ -145,22 +145,22 @@ macro_rules! fields {
 }
 
 macro_rules! kinds {
-    ($($m:ident { $($v:ident($t:ty) = $name:literal),+ })*) => {
+    ($($m:ident { $($(#[$a:meta])* $v:ident($t:ty) = $name:literal),+ })*) => {
         $(mod $m; pub use $m::*;)*
 
         pub(super) fn samples() -> Vec<Block> {
             [$($m::sample()),*].concat()
         }
 
-        kinds!(@list $($($v($t) = $name,)+)*);
+        kinds!(@list $($($(#[$a])* $v($t) = $name,)+)*);
     };
-    (@list $($v:ident($t:ty) = $name:literal,)*) => {
+    (@list $($(#[$a:meta])* $v:ident($t:ty) = $name:literal,)*) => {
         /// A block: an object whose `type` names its kind; any other `type` is an app's own.
         #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
         #[cfg_attr(feature = "schema", derive(schemars::JsonSchema))]
         #[serde(tag = "type")]
         pub enum Block {
-            $(#[serde(rename = $name)] $v(Box<$t>),)*
+            $($(#[$a])* #[serde(rename = $name)] $v(Box<$t>),)*
             #[serde(untagged)]
             App(Box<AppBlock>),
         }
@@ -208,5 +208,5 @@ macro_rules! kinds {
 }
 
 macro_rules! listed {
-    ($($at:literal: $v:ident($t:ty) = $name:literal),+ $(,)?) => {};
+    ($($at:literal: $(#[$a:meta])* $v:ident($t:ty) = $name:literal),+ $(,)?) => {};
 }

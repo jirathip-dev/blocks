@@ -3,7 +3,7 @@ use std::path::Path;
 use serde_json::Value;
 
 use super::fixtures::tree_of;
-use super::model::{defs, js, Case, Def};
+use super::model::{about, defs, js, Case, Def};
 use super::Files;
 use crate::{guard, Block, Built};
 
@@ -52,10 +52,7 @@ fn kinds(s: &Value) -> std::io::Result<Files> {
     let (mut index, mut out) = (String::from(HEAD), vec![]);
     for (kind, case) in cases {
         let Case::Ref(n) = case else { continue };
-        let about = s
-            .pointer(&format!("/$defs/{n}/description"))
-            .and_then(Value::as_str)
-            .unwrap_or_default();
+        let about = about(s, kind);
         index.push_str(&format!("- [`{kind}`](kinds/{kind}.md): {about}\n"));
         let mut page = format!(
             "# `{kind}`\n\n{about}\n\nThe Rust type `{n}`; in TS, `{}(fields: {n})` from `web/src/gen/builders.ts`.\n\n\
