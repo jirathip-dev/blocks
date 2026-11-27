@@ -184,3 +184,16 @@ fn a_link_that_is_not_http_https_mailto_or_relative_is_dropped_and_its_text_draw
         );
     }
 }
+
+#[test]
+fn a_list_with_no_rows_writes_its_empty_text_in_the_shared_look_and_nothing_without_it() {
+    let list = |b: serde_json::Value| site::fragment(&Built::new(b), "/act");
+    let empty = list(serde_json::json!({"type": "list", "id": "q", "rows": [], "empty": "Queue empty."}));
+    assert!(empty.contains("<p class=\"empty\">Queue empty.</p></div>"), "{empty}");
+    let none = list(serde_json::json!({"type": "list", "id": "q", "rows": []}));
+    assert!(!none.contains("class=\"empty\""), "{none}");
+    let full = list(
+        serde_json::json!({"type": "list", "id": "q", "rows": [{"type": "row", "id": "a", "title": "A"}], "empty": "Queue empty."}),
+    );
+    assert!(!full.contains("Queue empty."), "{full}");
+}

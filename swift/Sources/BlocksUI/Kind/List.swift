@@ -19,7 +19,9 @@ internal struct ListBlock: View {
 
     internal var body: some View {
         Group {
-            if let tiles = look.tiles {
+            if block.rows.isEmpty, let empty = block.empty {
+                EmptyText(text: empty)
+            } else if let tiles = look.tiles {
                 VStack(spacing: tiles.seam) {
                     ForEach(rows, id: \.key) { item in
                         if case .row(let line) = item.row {

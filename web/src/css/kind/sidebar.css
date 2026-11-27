@@ -8,7 +8,7 @@
 .sdg{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding:0 var(--s2)}
 .sdgr{padding:var(--s2) 0}
 .sdgr+.sdgr{border-top:1px solid var(--line)}
-.sdgt,.sde{margin:0;padding:var(--s1) var(--s3);min-height:var(--s4);color:var(--mute);font-size:var(--fs-meta);font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sdgt{margin:0;padding:var(--s1) var(--s3);min-height:var(--s4);color:var(--mute);font-size:var(--fs-meta);font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sdk{position:relative;display:flex;align-items:center;gap:var(--s3);width:100%;height:auto;min-height:var(--hit);padding:0 var(--s3);color:var(--l);text-decoration:none;text-transform:none;font-size:var(--fs);white-space:nowrap;justify-content:flex-start;text-align:left}
 .sdk::before,.sdk::after{content:none}
 .sdk:hover{background:var(--bg)}

@@ -1,4 +1,5 @@
-use super::{LabelRole, PerMode, Scheme, Style, DEFAULT_STYLE};
+use super::finish::write;
+use super::{At, Finish, PerMode, Scheme, Style, AXES, DEFAULT_STYLE};
 
 fn vars(s: &Scheme) -> String {
     s.tokens
@@ -26,44 +27,20 @@ pub fn css(schemes: &PerMode<Scheme>, style: &Style) -> String {
 }
 
 fn axes(style: &Style) -> String {
-    let mut out = [
-        style.type_.css(),
-        style.surface.css(),
-        style.fills.css(),
-        style.buttons.css(),
-        style.marks.css(),
-        style.sections.css(),
-    ]
-    .concat();
+    let mut out = style.type_.css().to_owned();
+    for rule in AXES.iter().flat_map(|a| (a.of)(style)) {
+        out.push_str(&rule.css());
+    }
     for (role, label) in &style.labels {
-        let Some(at) = role.selector() else {
-            continue;
-        };
-        out.push_str(&format!("{at}{{text-transform:{}}}", label.case.css()));
-        for (side, affix) in [("before", &label.prefix), ("after", &label.suffix)] {
+        let on = Finish::Label(*role);
+        out.push_str(&write(on, At::Part, &format!("text-transform:{}", label.case.css())));
+        for (at, affix) in [(At::Before, &label.prefix), (At::After, &label.suffix)] {
             let text = String::from(affix.clone());
             if !text.is_empty() {
                 let text = text.replace('\\', "\\\\").replace('"', "\\\"");
-                out.push_str(&format!("{at}::{side}{{content:\"{text}\"}}"));
+                out.push_str(&write(on, at, &format!("content:\"{text}\"")));
             }
         }
     }
     out
-}
-
-impl LabelRole {
-    /// The selector a style's decoration of this label lands on; `None` for a label no renderer decorates.
-    #[must_use]
-    pub const fn selector(self) -> Option<&'static str> {
-        match self {
-            Self::Header => Some(".sec>.sh"),
-            Self::Section => Some(":is(.sp,.pg,.scn)>.sh"),
-            Self::Title => Some(":is(.ch>b,.rt)"),
-            Self::Button => Some(".b-button>span"),
-            Self::Chip => Some(".chips button>span"),
-            Self::Picked => Some(".dgn.picked .dgl"),
-            Self::Screen => Some(".tabh>.b-screen__title"),
-            Self::Kind | Self::Group | Self::Back | Self::Said => None,
-        }
-    }
 }

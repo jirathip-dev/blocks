@@ -25,7 +25,6 @@
 .lqb::before{content:"";width:8px;height:8px;flex:none}
 .lqb.ok{color:var(--fk-g)}.lqb.ok::before{background:var(--g)}
 .lqb.off{color:var(--r);font-weight:600}.lqb.off::before{background:var(--r)}
-.lqz{padding:var(--s3) 0;color:var(--mute);border-bottom:1px solid var(--line)}
 @container (max-width:560px){
 .lqh{display:none}
 .lqr{grid-template-columns:1fr 1fr;row-gap:var(--s2);padding:var(--s2) 0 var(--s3)}

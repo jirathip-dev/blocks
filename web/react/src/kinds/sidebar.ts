@@ -83,7 +83,7 @@ export function sidebar({ b, hooks }: V<Sidebar>) {
       "sdp",
       { id },
       h("div", "sdh", null, b.brand ? link(b.brand, false, "sdk sdb") : null, button("sdpin", "pin sidebar", "pin", "unpin"), button("sdx", "close menu", "×")),
-      h("div", "sdg", null, ...(groups.length ? groups : [h("p", "sde", null, b.empty ?? "No pages yet")])),
+      h("div", "sdg", null, ...(groups.length ? groups : [h("p", "empty", null, b.empty ?? "No pages yet")])),
       foot,
     ),
   );

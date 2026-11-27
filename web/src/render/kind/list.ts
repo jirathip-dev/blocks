@@ -13,6 +13,7 @@ export function list(b: List, c: Ctx): HTMLElement {
   const rows = kids(b.rows, c);
   const at = (id: string) => rows.find((e) => e.dataset["id"] === id);
   const out = b.rows.map((r) => r.id && held(c, { block: b, rules, grab: r.id, item: r.id })).find(ids);
+  if (!b.rows.length && b.empty) l.append(h("p", "empty", b.empty));
   l.append(...(out ? out.flatMap((id) => at(id) ?? []) : rows));
   const page = typeof b.more === "object" ? b.more : null;
   const lifted = () => !!l.querySelector(".b-hd:is([data-phase=pressed],[data-phase=previewing],[data-phase=dragging])");
