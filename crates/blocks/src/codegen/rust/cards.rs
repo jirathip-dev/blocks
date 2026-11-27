@@ -3,7 +3,7 @@ use std::path::Path;
 
 use serde_json::Value;
 
-use super::super::model::{alts, named};
+use super::super::model::{about, alts, named};
 use super::super::Files;
 
 const OUT: &str = "crates/blocks/src/catalog/cards.rs";
@@ -157,8 +157,7 @@ pub(super) fn files(_: &Path, s: &Value) -> std::io::Result<Files> {
     let mut todo: Vec<String> = tagged(g.def("Field")).into_iter().map(|(_, n)| n.into()).collect();
     for (kind, def) in &g.kinds {
         let v = g.def(def);
-        let about = v.get("description").and_then(Value::as_str).unwrap_or_default();
-        let about = about.split([':', ';']).next().unwrap_or_default();
+        let about = about(s, kind).split([':', ';']).next().unwrap_or_default();
         out.push_str(&format!("    Card {{ kind: {kind:?}, about: {about:?}, fields: &[\n"));
         let mut skip = vec!["type", "id"];
         skip.extend(HIDDEN);

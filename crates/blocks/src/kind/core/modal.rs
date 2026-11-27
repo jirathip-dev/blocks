@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use crate::kind::sample::text;
 use crate::kind::{Block, Locale, Submit};
 
-listed! { 1: Modal(Modal) = "modal", 1: Sheet(Modal) = "sheet" }
+listed! { 1: Modal(Modal) = "modal", 1: #[doc = "The modal kind under its older name, drawn the same way: write `modal` in a new screen."] Sheet(Modal) = "sheet" }
 
 words!(ModalVariant { Dialog, Alert, Tool });
 
