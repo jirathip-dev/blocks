@@ -220,10 +220,11 @@ function body(v: View, d: Shown): HTMLElement {
   const out = el("tbody");
   d.rows.forEach((r, i) => out.append(r.group ? group(v, d, i) : item(v, d, r)));
   if (!d.items.length) {
-    const td = h("td", "", b.rows.length ? `No rows match “${st.q}”. ` : (b.empty ?? "No rows yet."));
+    const p = h("p", "empty", b.rows.length ? `No rows match “${st.q}”. ` : (b.empty ?? "No rows yet."));
+    if (b.rows.length) p.append(go(v, btn("clear"), () => ((st.q = v.q.value = ""), v.box.dispatchEvent(new Event("unseek")))));
+    const td = h("td", "", p);
     td.colSpan = d.cols.length + (d.pick ? 1 : 0) + (d.handles ? 1 : 0);
-    if (b.rows.length) td.append(go(v, btn("clear"), () => ((st.q = v.q.value = ""), v.box.dispatchEvent(new Event("unseek")))));
-    out.append(h("tr", "tbe", td));
+    out.append(h("tr", "", td));
   }
   return out;
 }

@@ -21,7 +21,7 @@ public struct BlockNode: View {
 
     private var bare: Bool {
         switch block {
-        case .list(let list): list.rows.isEmpty
+        case .list(let list): list.rows.isEmpty && list.empty == nil
         case .chips(let chips): chips.options.isEmpty
         case .images(let images): images.items.isEmpty
         case .prose(let prose): prose.parts.isEmpty && prose.streaming != true

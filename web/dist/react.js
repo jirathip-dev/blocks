@@ -1941,7 +1941,8 @@ function list2({ b, hooks: hooks4 }) {
   const s = cx.seek[b.id ?? ""];
   const rows2 = s?.q ? b.rows.filter((r) => hits(said2(r), s.q)) : b.rows;
   const none2 = s?.q && !s.n ? h("div", "lsm sm", null, fill4(word(cx, "nomatch"), { q: s.q }), " ", btn(word(cx, "clear"), "", void 0, void 0, { onClick: () => cx.put(s.name, "") })) : null;
-  return h("div", "list", { ...hooks4, ref: ref3 }, ...kids2(rows2), none2);
+  const empty = !b.rows.length && b.empty ? h("p", "empty", null, b.empty) : null;
+  return h("div", "list", { ...hooks4, ref: ref3 }, empty, ...kids2(rows2), none2);
 }
 
 // react/src/kinds/message.ts
@@ -2948,7 +2949,7 @@ function sidebar({ b, hooks: hooks4 }) {
       "sdp",
       { id },
       h("div", "sdh", null, b.brand ? link2(b.brand, false, "sdk sdb") : null, button2("sdpin", "pin sidebar", "pin", "unpin"), button2("sdx", "close menu", "\xD7")),
-      h("div", "sdg", null, ...groups.length ? groups : [h("p", "sde", null, b.empty ?? "No pages yet")]),
+      h("div", "sdg", null, ...groups.length ? groups : [h("p", "empty", null, b.empty ?? "No pages yet")]),
       foot2
     )
   );
@@ -3428,8 +3429,8 @@ function body(v, d2) {
   const rows2 = d2.rows.map((r, i) => r.group ? group(v, d2, i) : item2(v, d2, r));
   if (!d2.items.length) {
     const clear = b.rows.length ? btn("clear", "", void 0, void 0, go(v, () => (st.q = "", v.unseek()))) : null;
-    const td = h("td", "", { colSpan: d2.cols.length + (d2.pick ? 1 : 0) + (d2.handles ? 1 : 0) }, b.rows.length ? `No rows match \u201C${st.q}\u201D. ` : b.empty ?? "No rows yet.", clear);
-    rows2.push(h("tr", "tbe", { key: "~" }, td));
+    const p = h("p", "empty", null, b.rows.length ? `No rows match \u201C${st.q}\u201D. ` : b.empty ?? "No rows yet.", clear);
+    rows2.push(h("tr", "", { key: "~" }, h("td", "", { colSpan: d2.cols.length + (d2.pick ? 1 : 0) + (d2.handles ? 1 : 0) }, p)));
   }
   return h("tbody", "", d2.ed ? keys2(v) : null, ...rows2);
 }

@@ -4684,6 +4684,12 @@ var defs = {
   "List": {
     "additionalProperties": true,
     "properties": {
+      "empty": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
       "id": {
         "type": [
           "string",

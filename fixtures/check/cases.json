@@ -2053,6 +2053,7 @@
     "faults": [],
     "name": "fixtures/blocks/list.json",
     "screen": {
+      "empty": "No rows yet.",
       "id": "rows",
       "rows": [
         {
@@ -5161,6 +5162,7 @@
           "type": "section"
         },
         {
+          "empty": "No rows yet.",
           "fallback": {
             "title": "list"
           },

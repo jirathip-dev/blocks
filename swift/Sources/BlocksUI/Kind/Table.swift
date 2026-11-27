@@ -123,8 +123,7 @@ internal struct TableBlock: View {
             TableBar(block: block, cols: cols, shown: items.count, sort: $sort, q: $q, hidden: $hidden, ticked: $ticked, ticks: ticks, send: send)
             Rectangle().fill(look.palette.line).frame(height: 1)
             if items.isEmpty {
-                Text(block.rows.isEmpty ? block.empty ?? "No rows yet." : "No rows match “\(sought)”.")
-                    .ui(14, .regular, look).foregroundStyle(look.palette.mute).padding(12)
+                EmptyText(text: block.rows.isEmpty ? block.empty ?? "No rows yet." : "No rows match “\(sought)”.")
             } else {
                 let handles = block.reorder != nil && sort == nil && q.isEmpty
                 ViewThatFits(in: .horizontal) {

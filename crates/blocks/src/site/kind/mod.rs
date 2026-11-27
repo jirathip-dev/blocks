@@ -1,6 +1,6 @@
 use serde_json::Value;
 
-use super::write::{get, list, W};
+use super::write::{get, W};
 
 mod fallback;
 mod marks;
@@ -31,12 +31,6 @@ pub(crate) fn kids(w: &mut W<'_>, bs: &[Value]) {
         }
         was = Some(b);
     }
-}
-
-fn holder(w: &mut W<'_>, b: &Value, tag: &str, cls: &str, under: &str) {
-    w.open_block(tag, cls, b, &[]);
-    kids(w, list(b, under));
-    w.close(tag);
 }
 
 pub(crate) fn fallback(w: &mut W<'_>, b: &Value) {

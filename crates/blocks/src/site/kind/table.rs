@@ -142,9 +142,9 @@ pub(super) fn draw(w: &mut W<'_>, b: &Value) {
     let rows: Vec<&TableRow> = rows.iter().filter(|r| !r.is_group()).collect();
     if rows.is_empty() {
         let span = cols.len().to_string();
-        w.raw("<tr class=\"tbe\">");
+        w.raw("<tr>");
         w.open("td", "", &[("colspan", &span)]);
-        w.text(t.empty.as_deref().unwrap_or("No rows yet."));
+        w.el("p", "empty", t.empty.as_deref().unwrap_or("No rows yet."));
         w.raw("</td></tr>");
     }
     w.raw("</tbody>");

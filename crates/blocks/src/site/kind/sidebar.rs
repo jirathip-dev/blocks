@@ -103,7 +103,7 @@ pub(super) fn draw(w: &mut W<'_>, b: &Value) {
     w.close("div");
     w.open("div", "sdg", &[]);
     if groups.iter().all(|g| list(g, "links").is_empty()) {
-        w.el("p", "sde", get(b, "empty").unwrap_or("No pages yet"));
+        w.el("p", "empty", get(b, "empty").unwrap_or("No pages yet"));
     }
     for (gi, g) in groups.iter().enumerate().filter(|(_, g)| !list(g, "links").is_empty()) {
         let t = format!("{id}-t{gi}");

@@ -263,7 +263,7 @@ pub(super) fn draw(w: &mut W<'_>, b: &Value) {
     w.open_block("div", "lq", b, &[("style", &style)]);
     head(w, &k, fixed);
     if rows.is_empty() {
-        w.el("p", "lqz", get(b, "empty").unwrap_or("no lines yet"));
+        w.el("p", "empty", get(b, "empty").unwrap_or("no lines yet"));
     }
     let min = b.get("min").and_then(Value::as_u64).unwrap_or(0);
     let few = u64::try_from(rows.len()).unwrap_or(u64::MAX) <= min;
