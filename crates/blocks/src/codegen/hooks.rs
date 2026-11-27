@@ -4,7 +4,7 @@ use serde_json::Value;
 
 use super::model::{defs, kinds, Out};
 use super::Files;
-use crate::{patch, tree};
+use crate::{patch, theme, tree};
 
 pub(super) fn files(_: &Path, s: &Value) -> std::io::Result<Files> {
     Ok(vec![(
@@ -41,11 +41,12 @@ fn hooks(s: &Value) -> Out {
     let walked = patch::WALKED.map(|l| format!("\"{l}\""));
     out.push_str(&format!(
         "}};\n\nexport const roles: Record<string, string> = {{ {} }};\n\nexport const names = [{}] as const;\n\n\
-         export const hosts: Record<string, string> = {{ {} }};\n\nexport const walked = [{}] as const;\n",
+         export const hosts: Record<string, string> = {{ {} }};\n\nexport const walked = [{}] as const;\n\nexport const finishes = [{}] as const;\n",
         roles.join(", "),
         names.join(", "),
         hosts.join(", "),
-        walked.join(", ")
+        walked.join(", "),
+        theme::Finish::ALL.map(|f| format!("\"{}\"", f.name())).join(", ")
     ));
     Ok(out)
 }

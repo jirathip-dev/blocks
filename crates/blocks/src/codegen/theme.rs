@@ -24,7 +24,7 @@ fn schemes_ts() -> serde_json::Result<String> {
          export type Scheme = {{ label: string; \"color-scheme\": Mode; tokens: Record<Token, string> }};\n\n\
          export const defaultPair: Record<Mode, Scheme> = {};\n\n\
          export const defaultStyle: Record<string, string> = {};\n\n\
-         export const rules = {{\n  type: {},\n  surface: {},\n  fills: {},\n  buttons: {},\n  marks: {},\n  sections: {},\n}};\n\n\
+         export const rules = {{\n  type: {},\n{}}};\n\n\
          export const curves = {};\n\n\
          export const cases = {};\n\n\
          export const drawn = {};\n\n\
@@ -33,22 +33,26 @@ fn schemes_ts() -> serde_json::Result<String> {
          export type Scale = Axes & {{ space?: number; motion?: number; radius?: number; easing?: keyof typeof curves; labels?: Record<string, Label> }};\n",
         serde_json::to_string_pretty(theme::default())?,
         serde_json::to_string_pretty(&std::collections::BTreeMap::from(theme::DEFAULT_STYLE))?,
-        table(theme::TypeDesign::ALL, |v| Some(v.css()))?,
-        table(theme::Surface::ALL, |v| Some(v.css()))?,
-        table(theme::Fills::ALL, |v| Some(v.css()))?,
-        table(theme::Buttons::ALL, |v| Some(v.css()))?,
-        table(theme::Marks::ALL, |v| Some(v.css()))?,
-        table(theme::Sections::ALL, |v| Some(v.css()))?,
-        table(theme::Easing::ALL, |v| Some(v.curve()))?,
-        table(theme::LabelCase::ALL, |v| Some(v.css()))?,
-        table(theme::LabelRole::ALL, theme::LabelRole::selector)?,
+        table(theme::TypeDesign::ALL.iter().map(|v| (v, v.css())))?,
+        theme::AXES
+            .iter()
+            .map(|a| Ok(format!("  {}: {},\n", a.name, table(a.values.iter().map(|(v, rows)| (v, rows.iter().map(|r| r.css()).collect::<String>())))?)))
+            .collect::<serde_json::Result<String>>()?,
+        table(theme::Easing::ALL.iter().map(|v| (v, v.curve())))?,
+        table(theme::LabelCase::ALL.iter().map(|v| (v, v.css())))?,
+        table(theme::LabelRole::ALL.iter().filter_map(|r| Some((r, theme::Finish::Label(*r).selector()?))))?,
     ))
 }
 
-fn table<T: Copy + serde::Serialize>(all: &[T], css: impl Fn(T) -> Option<&'static str>) -> serde_json::Result<String> {
-    let rows = all
-        .iter()
-        .filter_map(|v| css(*v).map(|c| Ok(format!("{}: {}", serde_json::to_string(v)?, serde_json::to_string(c)?))))
+fn table<K: serde::Serialize, V: serde::Serialize>(rows: impl Iterator<Item = (K, V)>) -> serde_json::Result<String> {
+    let rows = rows
+        .map(|(k, v)| {
+            Ok(format!(
+                "{}: {}",
+                serde_json::to_string(&k)?,
+                serde_json::to_string(&v)?
+            ))
+        })
         .collect::<serde_json::Result<Vec<_>>>()?;
     Ok(format!("{{ {} }}", rows.join(", ")))
 }
