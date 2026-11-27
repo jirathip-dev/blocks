@@ -20,6 +20,7 @@ generated = [
     "skill/blocks/**", "crates/blocks-cli/src/gen/skill.rs",
     "web/src/gen/fields.ts", "web/react/src/gen/fields.ts", "web/src/gen/words.ts", "web/src/gen/words-import.ts",
     "fixtures/fields/*.json", "fixtures/fields/trees/*.json", "crates/blocks/src/catalog/cards.rs",
+    "crates/blocks/src/theme/axis/mod.rs",
 ]
 generate = "sh scripts/arch-gen.sh"
 shared = [
@@ -55,6 +56,7 @@ shared = [
     "swift/Tests/BlocksTests/RenderTests.swift",
     "swift/Sources/BlocksUI/BlockNode.swift",
     "crates/blocks/src/theme/scheme.rs", "web/src/core/look.ts",
+    "crates/blocks/src/theme/style.rs",
 ]
 
 [[collect]]
@@ -136,6 +138,10 @@ glob = "site_*.rs"
 [[collect]]
 dir = "crates/blocks/tests"
 glob = "theme_*.rs"
+
+[[collect]]
+dir = "crates/blocks/src/theme/axis"
+glob = "*.rs"
 
 [comments]
 policy = "strict"
@@ -612,6 +618,10 @@ max_file_lines = 140
 [[size]]
 paths = ["swift/Sources/BlocksUI/BlocksView.swift", "site/src/main.rs"]
 max_file_lines = 170
+
+[[size]]
+paths = ["crates/blocks/src/theme/style.rs"]
+max_file_lines = 160
 
 [[size]]
 paths = ["crates/blocks-desktop/src/stage.rs", "site/tests/pages.rs", "crates/blocks/src/theme/scheme.rs"]

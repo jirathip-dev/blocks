@@ -54,6 +54,7 @@ var roles = { modal: "dialog", sheet: "dialog", section: "region", form: "form",
 var names = ["label", "title", "header", "question", "alt", "file", "command", "placeholder", "name"];
 var hosts = { screen: "blocks", modal: "blocks", sheet: "blocks", section: "blocks", card: "blocks", message: "blocks", list: "rows", scene: "lanes", row: "rounds", table: "rows" };
 var walked = ["blocks", "rows", "buttons", "rounds", "lanes"];
+var finishes = ["surface", "tint", "button", "mark", "kind-label", "header-label", "group-label", "section-label", "title-label", "button-label", "chip-label", "back-label", "said-label", "picked-label"];
 
 // src/gen/schemes.ts
 var defaultPair = {
@@ -131,7 +132,7 @@ var rules = {
 };
 var curves = { "standard": "cubic-bezier(0.2, 0, 0, 1)", "calm": "cubic-bezier(0.4, 0, 0.2, 1)", "bouncy": "cubic-bezier(0.34, 1.3, 0.64, 1)" };
 var cases = { "as-is": "none", "lower": "lowercase", "upper": "uppercase" };
-var drawn = { "header": ".sec>.sh", "section": ":is(.sp,.pg,.scn)>.sh", "title": ":is(.ch>b,.rt)", "button": ".b-button>span", "chip": ".chips button>span", "picked": ".dgn.picked .dgl" };
+var drawn = { "header": ".sec>.sh", "section": ".sh", "title": ":is(.ch>b,.rt)", "button": ".b-button>span", "chip": ".chips button>span", "picked": ".dgn.picked .dgl" };
 
 // src/core/gesture.ts
 var WORDS = ["reorder", "move", "stretch", "edit", "draw", "remove"];
@@ -9654,6 +9655,7 @@ export {
   ext,
   figured,
   fill2 as fill,
+  finishes,
   form,
   gate,
   gated,

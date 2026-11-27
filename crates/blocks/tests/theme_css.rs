@@ -1,8 +1,7 @@
 use std::path::{Path, PathBuf};
 
 use blocks::theme::{
-    css, default, Buttons, Easing, Fills, LabelCase, LabelRole, Marks, Mode, PerMode, Scheme, Sections, Style, Surface,
-    TypeDesign, DEFAULT_STYLE,
+    css, default, Easing, Finish, LabelCase, LabelRole, Mode, PerMode, Scheme, Style, TypeDesign, AXES, DEFAULT_STYLE,
 };
 
 fn root() -> PathBuf {
@@ -145,11 +144,13 @@ fn value<T: serde::Serialize>(axis: &'static str) -> impl Fn(T) -> Style {
 #[test]
 fn every_value_of_every_style_enum_writes_its_own_rule_and_nothing_else() {
     walk(TypeDesign::ALL, value("type"), |v| v.css().to_owned());
-    walk(Surface::ALL, value("surface"), |v| v.css().to_owned());
-    walk(Fills::ALL, value("fills"), |v| v.css().to_owned());
-    walk(Buttons::ALL, value("buttons"), |v| v.css().to_owned());
-    walk(Marks::ALL, value("marks"), |v| v.css().to_owned());
-    walk(Sections::ALL, value("sections"), |v| v.css().to_owned());
+    for axis in AXES {
+        walk(
+            axis.values,
+            |(v, _)| with(axis.name, v.into()),
+            |(_, rows)| rows.iter().map(|r| r.css()).collect(),
+        );
+    }
     walk(Easing::ALL, value("easing"), |v| format!("--ease:{};", v.curve()));
     for role in LabelRole::ALL {
         let labelled = |case: LabelCase| {
@@ -160,7 +161,7 @@ fn every_value_of_every_style_enum_writes_its_own_rule_and_nothing_else() {
             )
         };
         walk(LabelCase::ALL, labelled, |case| {
-            role.selector().map_or_else(String::new, |at| {
+            Finish::Label(*role).selector().map_or_else(String::new, |at| {
                 format!(
                     "{at}{{text-transform:{}}}{at}::before{{content:\"\\\"\"}}{at}::after{{content:\"]\"}}",
                     case.css()
@@ -170,7 +171,7 @@ fn every_value_of_every_style_enum_writes_its_own_rule_and_nothing_else() {
         let plain = css(default(), &with("labels", serde_json::json!({})));
         assert_eq!(
             css(default(), &labelled(LabelCase::AsIs)) == plain,
-            role.selector().is_none(),
+            Finish::Label(*role).selector().is_none(),
             "{role:?}"
         );
     }

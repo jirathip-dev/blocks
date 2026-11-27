@@ -125,3 +125,20 @@ public struct LabelRole: RawRepresentable, Hashable, Codable, Equatable, Sendabl
     public static let picked = Self(rawValue: "picked")
     public static let all: [Self] = [.kind, .header, .group, .section, .title, .button, .chip, .back, .said, .picked]
 }
+
+public enum Finish: String, Sendable, CaseIterable {
+    case surface = "surface"
+    case tint = "tint"
+    case button = "button"
+    case mark = "mark"
+    case kindLabel = "kind-label"
+    case headerLabel = "header-label"
+    case groupLabel = "group-label"
+    case sectionLabel = "section-label"
+    case titleLabel = "title-label"
+    case buttonLabel = "button-label"
+    case chipLabel = "chip-label"
+    case backLabel = "back-label"
+    case saidLabel = "said-label"
+    case pickedLabel = "picked-label"
+}
