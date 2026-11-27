@@ -68,13 +68,15 @@ fn the_gallery_counts_every_kind_once_and_finds_its_fallback_group_from_the_rend
     let mut fallback: Vec<String> = fs::read_dir(root.join("fixtures/html"))
         .unwrap()
         .map(|f| f.unwrap().path())
-        .filter(|p| {
+        .filter_map(|p| {
             let html = fs::read_to_string(p).unwrap();
-            html.split('>').next().unwrap().contains("data-fallback")
+            let open = html.split('>').next().unwrap().to_string();
+            let kind = open.split("data-block=\"").nth(1)?.split('"').next()?.to_string();
+            open.contains("data-fallback").then_some(kind)
         })
-        .map(|p| p.file_stem().unwrap().to_string_lossy().into_owned())
         .collect();
     fallback.sort();
+    fallback.dedup();
     assert_ne!(fallback, Vec::<String>::new());
     let n = blocks::Block::KINDS.len();
     assert!(gallery.contains(&format!("All {n} core kinds")));

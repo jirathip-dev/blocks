@@ -153,7 +153,7 @@ fn needs() -> Glance {
         .value(Shown::Number(2.into()))
         .tone(Tone::Needs)
         .tap(Tap {
-            open: Some("needs".into()),
+            thread: Some("t-40".into()),
             ..Tap::default()
         })
         .medium(GlanceBody {

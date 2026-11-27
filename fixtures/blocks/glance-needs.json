@@ -8,7 +8,7 @@
   "value": 2,
   "tone": "needs",
   "tap": {
-    "open": "needs"
+    "thread": "t-40"
   },
   "small": {
     "line": "Approve the deploy",

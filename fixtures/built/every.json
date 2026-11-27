@@ -3911,7 +3911,7 @@
     {
       "fallback": {
         "tap": {
-          "open": "needs"
+          "thread": "t-40"
         },
         "title": "Needs you"
       },
@@ -3957,7 +3957,7 @@
         "line": "Approve the deploy"
       },
       "tap": {
-        "open": "needs"
+        "thread": "t-40"
       },
       "title": "Needs you",
       "tone": "needs",

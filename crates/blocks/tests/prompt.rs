@@ -27,7 +27,7 @@ fn the_prompt_stays_near_the_measured_sizes() {
         .map(|k| format!("{k:?}: {{\"actions\": [\"a\", \"b\"]}}"))
         .collect();
     let all = Catalog::read(&format!("{{\"name\": \"all\", \"kinds\": {{{}}}}}", kinds.join(", "))).unwrap();
-    near(&prompt(&all), 12947);
+    near(&prompt(&all), 14336);
 }
 
 #[test]

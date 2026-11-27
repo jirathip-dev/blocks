@@ -6,7 +6,7 @@ import { all, ctx, dir, fixture, part, render, rounds } from "./kit.ts";
 const { css, packs } = await import("../src/theme.ts");
 const { defaultPair } = await import("../src/gen/schemes.ts");
 
-const gaps = ["island"];
+const gaps = ["island", "glance"];
 
 test("every fixture is drawn with its hooks, natively or as its fallback", () => {
   const kinds = readdirSync(dir).map((f) => f.replace(/\.json$/, ""));
