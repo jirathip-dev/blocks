@@ -1665,13 +1665,15 @@ public struct Link: Codable, Equatable, Sendable {
 }
 
 public struct List: Codable, Equatable, Sendable {
+    public var empty: String?
     public var id: String?
     public var more: More?
     public var reorder: Gesture?
     public var rows: [Block]
     public var show: Expr?
 
-    public init(id: String? = nil, more: More? = nil, reorder: Gesture? = nil, rows: [Block], show: Expr? = nil) {
+    public init(empty: String? = nil, id: String? = nil, more: More? = nil, reorder: Gesture? = nil, rows: [Block], show: Expr? = nil) {
+        self.empty = empty
         self.id = id
         self.more = more
         self.reorder = reorder

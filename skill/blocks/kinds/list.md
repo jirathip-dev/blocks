@@ -8,6 +8,7 @@ The Rust type `List`; in TS, `list(fields: List)` from `web/src/gen/builders.ts`
 
 | field | type | |
 |---|---|---|
+| `empty` | `string` | optional |
 | `id` | `string` | optional |
 | `more` | `More` | optional |
 | `reorder` | `Gesture` | optional |
@@ -66,7 +67,8 @@ The Rust type `List`; in TS, `list(fields: List)` from `web/src/gen/builders.ts`
         }
       ]
     }
-  ]
+  ],
+  "empty": "No rows yet."
 }
 ```
 

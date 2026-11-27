@@ -169,7 +169,7 @@ function draw(k: K, focus?: (e: HTMLElement) => HTMLElement | null) {
   const head = h("div", "lqh", el("span"), ...b.columns.map((x) => h("span", num(k, x) ? "num" : "", label(x))), ...(fixed(k) ? [] : [el("span")]));
   head.setAttribute("aria-hidden", "true");
   root.replaceChildren(head);
-  if (!d.rows.length) root.append(h("p", "lqz", b.empty ?? "no lines yet"));
+  if (!d.rows.length) root.append(h("p", "empty", b.empty ?? "no lines yet"));
   d.rows.forEach((r, i) => root.append(...line(k, r, i)));
   root.append(...errors(k).filter((e) => e.row == null).map((e) => h("p", "lqe", e.message)));
   if (!fixed(k)) {

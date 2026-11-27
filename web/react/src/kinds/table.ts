@@ -246,8 +246,8 @@ function body(v: View, d: Shown): ReactNode {
   const rows = d.rows.map((r, i) => (r.group ? group(v, d, i) : item(v, d, r)));
   if (!d.items.length) {
     const clear = b.rows.length ? btn("clear", "", undefined, undefined, go(v, () => ((st.q = ""), v.unseek()))) : null;
-    const td = h("td", "", { colSpan: d.cols.length + (d.pick ? 1 : 0) + (d.handles ? 1 : 0) }, b.rows.length ? `No rows match “${st.q}”. ` : (b.empty ?? "No rows yet."), clear);
-    rows.push(h("tr", "tbe", { key: "~" }, td));
+    const p = h("p", "empty", null, b.rows.length ? `No rows match “${st.q}”. ` : (b.empty ?? "No rows yet."), clear);
+    rows.push(h("tr", "", { key: "~" }, h("td", "", { colSpan: d.cols.length + (d.pick ? 1 : 0) + (d.handles ? 1 : 0) }, p)));
   }
   return h("tbody", "", d.ed ? keys(v) : null, ...rows);
 }

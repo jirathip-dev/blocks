@@ -39,7 +39,8 @@
 .tbl tr.chg>:first-child{box-shadow:inset 3px 0 0 var(--l)}
 .tbl tfoot :is(th,td){border-top:1px solid var(--edge);border-bottom:0;font-weight:600}
 .tbl .agg{color:var(--mute);font-size:var(--fs-meta);font-weight:400}
-.tbl tr.tbe>td{padding:var(--s4) var(--s3);color:var(--mute);white-space:normal}
+.tbl td:has(>.empty){padding:0;border:0;white-space:normal}
+.tbl td>.empty{margin:0}
 .tbl.ed tbody td,.tbl.ed tfoot :is(th,td){height:var(--hit);box-sizing:border-box;padding-block:0}
 .tbl .tbg{width:var(--hit);padding:0;text-align:center}
 .tbl .tbg+:is(th,td){position:sticky;left:var(--hit);z-index:1}
@@ -109,8 +110,9 @@
 .tbl tfoot tr{border-top:1px solid var(--edge);border-bottom:0}
 .tbl tfoot :is(th,td){border:0;box-shadow:none}
 .tbl tfoot .p-meta{font-weight:400}
-.tbl tr.tbe::before{content:none}
-.tbl tr.tbe>td{display:block;flex:1;padding:var(--s2) 0}
+.tbl tr:has(>td>.empty){padding:0;border:0}
+.tbl tr:has(>td>.empty)::before{content:none}
+.tbl td:has(>.empty){display:block;flex:1}
 .tbl.ed tbody td,.tbl.ed tfoot :is(th,td){height:auto}
 .tbl .tbg{display:block;order:0;width:auto;margin-inline-start:calc(var(--s3) * -1)}
 .tbl .tbg .b-hd{min-height:var(--hit);margin-block:calc(var(--s2) * -1)}

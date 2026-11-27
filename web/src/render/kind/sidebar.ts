@@ -57,7 +57,7 @@ export function sidebar(b: Sidebar, c: Ctx): HTMLElement {
     sec.append(h("ul", "", ...g.links.map((l, li) => h("li", "", ...(l.children ? parent(l, `${id}-g${gi}-${li}`, c) : [link(l, false)])))));
     return [sec];
   });
-  panel.append(h("div", "sdh", ...brand, button("sdpin", "pin sidebar", "pin", "unpin"), button("sdx", "close menu", "×")), h("div", "sdg", ...(groups.length ? groups : [h("p", "sde", b.empty ?? "No pages yet")])));
+  panel.append(h("div", "sdh", ...brand, button("sdpin", "pin sidebar", "pin", "unpin"), button("sdx", "close menu", "×")), h("div", "sdg", ...(groups.length ? groups : [h("p", "empty", b.empty ?? "No pages yet")])));
   if (b.footer?.length) panel.append(h("div", "sdf", h("ul", "", ...b.footer.map((l) => h("li", "", link(l, false))))));
   root.append(menu, h("span", "sdn", sideTitle(b)), hidden(el("div", "sdscrim")), hidden(el("div", "sdedge")), panel);
   behave(root, `sidebar-pin:${b.id ?? "side"}`, c.store, c.open);

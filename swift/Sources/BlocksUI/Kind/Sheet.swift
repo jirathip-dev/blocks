@@ -19,6 +19,7 @@ internal struct SheetBlock: View {
                 }
             }
             BlockStack(blocks: block.blocks, spacing: 14).environment(\.form, $values)
+                .environment(\.onSurface, true)
         }
     }
 }

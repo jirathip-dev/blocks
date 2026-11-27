@@ -77,8 +77,8 @@ test("the filter keeps rows with every word, counts them, totals only them, and 
   strictEqual(await total(), "Total 48,750.00");
   strictEqual(await page.evaluate(() => document.activeElement?.className), "tbq");
   await page.fill(".tbq", "nobody");
-  strictEqual(await page.$eval("tr.tbe", (e) => e.textContent), "No rows match “nobody”. clear");
-  await page.click("tr.tbe button");
+  strictEqual(await page.$eval("tbody .empty", (e) => e.textContent), "No rows match “nobody”. clear");
+  await page.click("tbody .empty button");
   strictEqual((await ids()).length, 5);
   await page.close();
 });

@@ -159,5 +159,5 @@ fn averages_counts_digits_and_an_empty_table_draw_as_designed() {
     assert!(html.contains("<span class=\"agg\">avg</span> 618.3<"));
     assert!(html.contains("<span class=\"agg\">count</span> 2<"));
     let empty = page(Table { rows: vec![], ..t }.empty("Nothing yet."), "en");
-    assert!(empty.contains("<tr class=\"tbe\"><td colspan=\"3\">Nothing yet.</td></tr></tbody></table>"));
+    assert!(empty.contains("<tr><td colspan=\"3\"><p class=\"empty\">Nothing yet.</p></td></tr></tbody></table>"));
 }

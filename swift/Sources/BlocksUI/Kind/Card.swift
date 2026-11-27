@@ -102,7 +102,8 @@ internal struct CardBlock: View {
             }
         }
         BlockStack(blocks: block.blocks ?? []).environment(
-            \.card, CardContext(poster: context.poster, tint: tint))
+            \.card, CardContext(poster: context.poster, tint: tint)
+        ).environment(\.onSurface, true)
     }
 
     @ViewBuilder

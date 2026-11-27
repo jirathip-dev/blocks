@@ -51,5 +51,6 @@ export function list({ b, hooks }: V<List>) {
   const s = cx.seek[b.id ?? ""];
   const rows = s?.q ? b.rows.filter((r) => hits(said(r), s.q)) : b.rows;
   const none = s?.q && !s.n ? h("div", "lsm sm", null, fill(word(cx, "nomatch"), { q: s.q }), " ", btn(word(cx, "clear"), "", undefined, undefined, { onClick: () => cx.put(s.name, "") })) : null;
-  return h("div", "list", { ...hooks, ref }, ...kids(rows), none);
+  const empty = !b.rows.length && b.empty ? h("p", "empty", null, b.empty) : null;
+  return h("div", "list", { ...hooks, ref }, empty, ...kids(rows), none);
 }
