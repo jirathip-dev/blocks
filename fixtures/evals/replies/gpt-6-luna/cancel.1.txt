@@ -1,0 +1,1 @@
+{"blocks":[{"type":"prose","markdown":"I can help with that, but I can’t access your subscription from this chat. Please open the service where you subscribed and cancel it in **Account** or **Billing** settings. If you tell me which service, I can point you to the right steps."}]}

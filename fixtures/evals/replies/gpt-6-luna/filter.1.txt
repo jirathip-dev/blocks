@@ -1,0 +1,1 @@
+{"blocks":[{"type":"chips","name":"status","options":[{"label":"Open","value":"open"},{"label":"In progress","value":"in_progress"},{"label":"Resolved","value":"resolved"},{"label":"Closed","value":"closed"}],"action":"filter"}]}

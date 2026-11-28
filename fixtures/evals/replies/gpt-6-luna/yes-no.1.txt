@@ -1,0 +1,1 @@
+{"blocks":[{"type":"choice","action":"answer","question":"Should I deploy now?","options":[{"label":"Yes, deploy now","value":"yes"},{"label":"No, not yet","value":"no"}]}]}

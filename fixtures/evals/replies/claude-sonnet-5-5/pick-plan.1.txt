@@ -1,0 +1,1 @@
+{"blocks":[{"type":"choice","action":"answer","question":"Which plan would you like?","options":[{"label":"Pro (for one person)","value":"pro"},{"label":"Team (for a group, with shared workspace and member management)","value":"team"}],"recommended":"pro"}]}
