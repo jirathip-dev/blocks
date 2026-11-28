@@ -4,6 +4,6 @@ budget_secs = 600
 setup = ["rust"]
 paths = ["crates/blocks/**", "Cargo.*", "rust-toolchain.toml", ".gatekeeper/gates/soak.toml"]
 run = """
-if [ -z "${CI:-}" ]; then echo "soak: CI runs it; a lane's host is shared, so its release build and long run don't belong in the done check"; exit 0; fi
+if [ "${GATEKEEPER_HOST:-}" != ci ]; then echo "soak: CI runs it; a lane's host is shared, so its release build and long run don't belong in the done check"; exit 0; fi
 cargo test --release --locked -p blocks --test soak -- --ignored --nocapture
 """

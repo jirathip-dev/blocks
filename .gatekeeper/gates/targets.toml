@@ -4,7 +4,7 @@ budget_secs = 600
 setup = ["rust"]
 paths = ["crates/blocks/**", "Cargo.*", "rust-toolchain.toml", ".gatekeeper/gates/targets.toml"]
 run = """
-if [ -z "${CI:-}" ]; then echo "targets: CI runs it; a lane's host has neither target"; exit 0; fi
+if [ "${GATEKEEPER_HOST:-}" != ci ]; then echo "targets: CI runs it; a lane's host has neither target"; exit 0; fi
 set -e
 rustup target add wasm32-unknown-unknown aarch64-apple-ios
 cargo build --locked -p blocks --lib --target wasm32-unknown-unknown

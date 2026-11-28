@@ -3,7 +3,7 @@ fix = "rerun just gen and commit what it writes; never hand-edit a generated fil
 budget_secs = 600
 setup = ["rust", "node"]
 run = """
-if [ -z "${CI:-}" ]; then echo "gen: core/arch runs scripts/gen.sh on this host"; exit 0; fi
+if [ "${GATEKEEPER_HOST:-}" != ci ]; then echo "gen: core/arch runs scripts/gen.sh on this host"; exit 0; fi
 sh scripts/gen.sh
 if [ -n "$(git status --porcelain)" ]; then git status --short; git diff --stat; echo "a generated file differs from what scripts/gen.sh writes"; exit 1; fi
 """

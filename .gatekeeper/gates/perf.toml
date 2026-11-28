@@ -4,7 +4,7 @@ budget_secs = 600
 setup = ["rust"]
 paths = ["crates/blocks/**", "fixtures/**", "Cargo.*", "rust-toolchain.toml", ".gatekeeper/gates/perf.toml"]
 run = """
-if [ -z "${CI:-}" ]; then echo "perf: CI runs it; a lane's host is shared, so its timings and release build don't belong in the done check"; exit 0; fi
+if [ "${GATEKEEPER_HOST:-}" != ci ]; then echo "perf: CI runs it; a lane's host is shared, so its timings and release build don't belong in the done check"; exit 0; fi
 if [ -n "${GITHUB_STEP_SUMMARY:-}" ]; then printf '### perf (release)\\n\\n| case | took | budget |\\n|---|---|---|\\n' >> "$GITHUB_STEP_SUMMARY"; fi
 cargo test --release --locked -p blocks --test perf -- --ignored --nocapture --test-threads=1
 """

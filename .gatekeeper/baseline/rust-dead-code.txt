@@ -1,0 +1,40 @@
+crates/blocks-desktop/src/art.rs: pub struct Pack: only tests name it
+crates/blocks-desktop/src/bidi.rs: pub fn caret: no other crate names it
+crates/blocks-desktop/src/bidi.rs: pub fn index_at: no other crate names it
+crates/blocks-desktop/src/bidi.rs: pub fn reads_rtl: no other crate names it
+crates/blocks-desktop/src/bidi.rs: pub fn rtl_at: no other crate names it
+crates/blocks-desktop/src/bidi.rs: pub fn sensing: no other crate names it
+crates/blocks-desktop/src/words.rs: pub fn sensing: no other crate names it
+crates/blocks/src/behave.rs: pub fn hints: no other crate names it
+crates/blocks/src/kind/core/chart.rs: pub fn is_line: no other crate names it
+crates/blocks/src/kind/core/media.rs: pub fn ninth: no other crate names it
+crates/blocks/src/kind/core/table.rs: pub fn bar_max: no other crate names it
+crates/blocks/src/kind/core/table.rs: pub fn editable: no other crate names it
+crates/blocks/src/kind/core/table.rs: pub fn roles: no other crate names it
+crates/blocks/src/kind/field/picker.rs: pub const ROLE: no other crate names it
+crates/blocks/src/kind/field/scan.rs: pub const ROLE: no other crate names it
+crates/blocks/src/kind/field/search.rs: pub const ROLE: no other crate names it
+crates/blocks/src/kind/field/secret.rs: pub const ROLE: no other crate names it
+crates/blocks/src/kind/field/slider.rs: pub const ROLE: no other crate names it
+crates/blocks/src/kind/field/text.rs: pub const ROLE: no other crate names it
+crates/blocks/src/kind/field/toggle.rs: pub const ROLE: no other crate names it
+crates/blocks/src/kind/field/upload.rs: pub const ROLE: no other crate names it
+crates/blocks/src/kind/macros.rs: pub const ROLES: no other crate names it
+crates/blocks/src/lib.rs: pub const SCHEMA_VERSION: no other crate names it
+crates/blocks/src/mirror.rs: pub fn synced: only tests name it
+crates/blocks/src/mirror.rs: pub struct Mirror: only tests name it
+crates/blocks/src/shelf.rs: pub struct Shelf: only tests name it
+crates/blocks/src/theme/pack.rs: pub fn check_pack: only tests name it
+crates/blocks/src/tree.rs: pub fn a11y: no other crate names it
+crates/blocks/src/web.rs: pub const IMPORT: only tests name it
+crates/blocks/src/web.rs: pub const SCAN: no other crate names it
+crates/blocks/src/wire.rs: pub fn from_form: only tests name it
+docs/architecture/gpui/proto/gpui/Cargo.toml: unused dependency: serde_json
+site/src/kinds.rs: pub fn fallback_only: no other crate names it
+site/src/kinds.rs: pub fn kind_page: no other crate names it
+site/src/live.rs: pub fn behaviours: no other crate names it
+site/src/pages.rs: pub const SWATCHES: no other crate names it
+site/src/pages.rs: pub fn numbers: no other crate names it
+site/src/play.rs: pub fn source_url: no other crate names it
+site/src/ui.rs: pub const REPO: no other crate names it
+site/src/ui.rs: pub fn link_row: no other crate names it

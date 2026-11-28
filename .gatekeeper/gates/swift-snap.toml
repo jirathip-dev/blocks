@@ -1,10 +1,10 @@
 about = "blocks-snap --check on every fixtures/blocks file against its fixtures/trees/swift tree at 390 and 1440"
 fix = "fix the view or the tree the check names; rerun just gen when a generated tree is behind"
 budget_secs = 900
-leg = "swift"
+leg = "apple"
 paths = ["Package.swift", "swift/**", "schema/sample.json", "fixtures/**", ".gatekeeper/gates/swift-snap.toml"]
 run = """
-if [ -z "${CI:-}" ]; then echo "swift-snap: CI's swift leg runs it"; exit 0; fi
+if [ "${GATEKEEPER_HOST:-}" != ci ]; then echo "swift-snap: CI's swift leg runs it"; exit 0; fi
 set -e
 export BLOCKS_STRICT=1
 swift build --product blocks-snap

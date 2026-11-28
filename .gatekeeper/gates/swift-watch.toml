@@ -1,10 +1,10 @@
 about = "every Swift library target builds for the watchOS simulator, so a view watchOS lacks cannot slip into the watch kit"
 fix = "fix the error the watchOS build names; put a SwiftUI API watchOS lacks behind #if !os(watchOS), or a whole kind's file when it needs WebKit, PDFKit, Vision or CoreImage"
 budget_secs = 900
-leg = "swift"
+leg = "apple"
 paths = ["Package.swift", "swift/**", ".gatekeeper/gates/swift-watch.toml"]
 run = """
-if [ -z "${CI:-}" ]; then echo "swift-watch: CI's swift leg runs it"; exit 0; fi
+if [ "${GATEKEEPER_HOST:-}" != ci ]; then echo "swift-watch: CI's swift leg runs it"; exit 0; fi
 set -e
 sdk="$(xcrun --sdk watchsimulator --show-sdk-path)"
 for t in Blocks BlocksUI BlocksSnapshot; do

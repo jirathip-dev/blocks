@@ -1,10 +1,10 @@
 about = "blocks-snap --check at 390 on every fixtures/stress variant: inside the width, over no sibling"
 fix = "fix the view the check names so the variant fits its width and overlaps no sibling"
 budget_secs = 900
-leg = "swift"
+leg = "apple"
 paths = ["Package.swift", "swift/**", "schema/sample.json", "fixtures/**", ".gatekeeper/gates/swift-stress.toml"]
 run = """
-if [ -z "${CI:-}" ]; then echo "swift-stress: CI's swift leg runs it"; exit 0; fi
+if [ "${GATEKEEPER_HOST:-}" != ci ]; then echo "swift-stress: CI's swift leg runs it"; exit 0; fi
 set -e
 export BLOCKS_STRICT=1
 swift build --product blocks-snap
