@@ -53,6 +53,7 @@ export declare const drawn: {
     button: string;
     chip: string;
     picked: string;
+    screen: string;
 };
 type Label = {
     prefix?: string;

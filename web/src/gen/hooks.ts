@@ -56,4 +56,4 @@ export const hosts: Record<string, string> = { screen: "blocks", modal: "blocks"
 
 export const walked = ["blocks", "rows", "buttons", "rounds", "lanes"] as const;
 
-export const finishes = ["surface", "tint", "button", "mark", "kind-label", "header-label", "group-label", "section-label", "title-label", "button-label", "chip-label", "back-label", "said-label", "picked-label"] as const;
+export const finishes = ["surface", "tint", "button", "mark", "kind-label", "header-label", "group-label", "section-label", "title-label", "button-label", "chip-label", "back-label", "said-label", "picked-label", "screen-label"] as const;

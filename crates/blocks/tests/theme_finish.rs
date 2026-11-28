@@ -34,9 +34,9 @@ fn a_row_lands_on_every_selector_of_its_finish() {
 }
 
 #[test]
-fn the_fourteen_finishes_have_distinct_names() {
+fn the_fifteen_finishes_have_distinct_names() {
     let mut names: Vec<&str> = Finish::ALL.map(Finish::name).to_vec();
     names.sort_unstable();
     names.dedup();
-    assert_eq!(names.len(), 14);
+    assert_eq!(names.len(), 15);
 }

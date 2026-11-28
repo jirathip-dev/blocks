@@ -5,7 +5,7 @@ import { decode, encode } from "../src/core/code.ts";
 
 const looks = JSON.parse(readFileSync(new URL("../../site/looks.json", import.meta.url), "utf8"));
 const FOUR = { default: "101yx6", paper: "11hioq~BQAA.paper", console: "10lspy~BAMvLyAAEAFbAV0.console", playful: "108bd0.playful" };
-const ALL_ROLES = "11u0yw~AAFbAAQD4oC5A-KAuggBWwPigLoJA-KAuQANAVsD4oC6EQPigLkD4oC6EgFbABYD4oC5A-KAuhoBWwPigLobA-KAuQA.swag-1";
+const ALL_ROLES = "11u0yw~AAFbAAQD4oC5A-KAuggBWwPigLoJA-KAuQANAVsD4oC6EQPigLkD4oC6EgFbABYD4oC5A-KAuhoBWwPigLobA-KAuQAfAVsD4oC6.swag-1";
 const plain = decode("101yx6").style;
 const round = (style) => deepStrictEqual(decode(encode(style)).style, style);
 
@@ -28,7 +28,7 @@ test("each axis round-trips every value, space, radius and motion on each quarte
 });
 
 test("labels on every role with a multi-byte affix round-trip to the code Rust pins", () => {
-  const roles = ["kind", "header", "group", "section", "title", "button", "chip", "back", "said", "picked"];
+  const roles = ["kind", "header", "group", "section", "title", "button", "chip", "back", "said", "picked", "screen"];
   const labels = Object.fromEntries(roles.map((r, i) => [r, { prefix: i % 2 ? "‹" : "[", suffix: i % 3 ? "›" : "", case: ["as-is", "lower", "upper"][i % 3] }]));
   const style = { type: "serif", space: 4, radius: 0.25, motion: 0, easing: "bouncy", surface: "glass", fills: "solid", buttons: "filled", marks: "text", sections: "quiet", labels };
   strictEqual(encode(style, "swag-1"), ALL_ROLES);
