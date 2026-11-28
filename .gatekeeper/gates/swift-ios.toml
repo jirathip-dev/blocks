@@ -1,10 +1,10 @@
 about = "every Swift library target builds for the iOS simulator, so an #if os(iOS) branch cannot break unseen"
 fix = "fix the error the iOS build names; qualify a SwiftUI type the generated Blocks types shadow (SwiftUI.Gesture)"
 budget_secs = 900
-leg = "swift"
+leg = "apple"
 paths = ["Package.swift", "swift/**", ".gatekeeper/gates/swift-ios.toml"]
 run = """
-if [ -z "${CI:-}" ]; then echo "swift-ios: CI's swift leg runs it"; exit 0; fi
+if [ "${GATEKEEPER_HOST:-}" != ci ]; then echo "swift-ios: CI's swift leg runs it"; exit 0; fi
 set -e
 sdk="$(xcrun --sdk iphonesimulator --show-sdk-path)"
 for t in Blocks BlocksUI BlocksSnapshot; do

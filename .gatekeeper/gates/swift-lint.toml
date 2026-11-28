@@ -1,11 +1,11 @@
 about = "the token lint on swift/Sources/BlocksUI against ci/tokens/baseline.txt, and each ci/lint-fixtures/swift file fails it (clean.swift passes)"
 fix = "use a scheme or style token, never a raw colour or size; never grow ci/tokens/baseline.txt"
 budget_secs = 120
-leg = "swift"
+leg = "apple"
 setup = ["node"]
 paths = ["Package.swift", "swift/**", "schema/sample.json", "fixtures/**", "web/lint.mjs", "ci/tokens/**", "ci/lint-fixtures/swift/**", "scripts/lint-fixtures.sh", ".gatekeeper/gates/swift-lint.toml"]
 run = """
-if [ -z "${CI:-}" ]; then echo "swift-lint: CI's swift leg runs it"; exit 0; fi
+if [ "${GATEKEEPER_HOST:-}" != ci ]; then echo "swift-lint: CI's swift leg runs it"; exit 0; fi
 set -e
 node --no-warnings web/lint.mjs swift/Sources/BlocksUI
 scripts/lint-fixtures.sh swift
