@@ -15,6 +15,7 @@ refs=$(gh api "repos/$REPO/git/matching-refs/tags/v$v." --jq '.[] | "\(.ref) \(.
 if echo "$refs" | grep -q " $SHA$"; then echo "release: $SHA is tagged already"; exit 0; fi
 n=$(echo "$refs" | grep -c . || true)
 tag="v$v.$n"
+sh "$(dirname "$0")/publish.sh" --check "$tag" || { echo "release: no tag, no release" >&2; exit 1; }
 prev=$(gh api "repos/$REPO/releases/latest" --jq .tag_name 2>/dev/null) || prev=
 if [ -n "$prev" ]; then
   subjects=$(gh api --paginate "repos/$REPO/compare/$prev...$SHA?per_page=100" --jq '.commits[].commit.message | split("\n")[0]')
@@ -39,3 +40,4 @@ done
 notes="blocks $tag @ $SHA$nl$nl## For apps$nl${apps:-${nl}Nothing to do: no pull request here changes what an app sees.}$nl$nl## Pull requests since ${prev:-the start}$nl${list:-${nl}none}"
 gh release create "$tag" -R "$REPO" --target "$SHA" --title "$tag" --notes "$notes"
 echo "release: published $tag"
+[ -z "${GITHUB_ENV:-}" ] || echo "TAG=$tag" >> "$GITHUB_ENV"

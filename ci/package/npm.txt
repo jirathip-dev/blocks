@@ -1,0 +1,11 @@
+LICENSE
+README.md
+package.json
+web/dist/blocks.css
+web/dist/blocks.js
+web/dist/blocks.scoped.css
+web/dist/core.js
+web/dist/import.js
+web/dist/react.js
+web/dist/scan.js
+web/dist/types/*.d.ts

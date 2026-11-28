@@ -4,11 +4,16 @@ description = "`blocks check`: the guard's lint and ratchet over an app's screen
 version.workspace = true
 edition.workspace = true
 license.workspace = true
-publish.workspace = true
+publish = true
 repository.workspace = true
+homepage.workspace = true
+keywords = ["ui", "lint", "cli", "fixtures", "blocks"]
+categories = ["command-line-utilities", "development-tools"]
+readme = "README.md"
+include = ["src/**", "templates/**", "README.md", "LICENSE"]
 
 [dependencies]
-blocks = { path = "../blocks" }
+blocks = { path = "../blocks", version = "=2.2.0" }
 serde.workspace = true
 serde_json.workspace = true
 

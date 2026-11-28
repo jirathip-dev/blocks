@@ -4,20 +4,27 @@ on:
     workflows: [ci, swift, compat, desktop, egui-demo]
     types: [completed]
     branches: [main]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "an existing v<S>.<n> tag whose npm and crates.io publish runs again (a failed or partial one)"
+        required: true
+        type: string
 
 permissions:
   contents: read
 
 concurrency:
-  group: release-${{ github.event.workflow_run.head_sha }}
+  group: release-${{ github.event.workflow_run.head_sha || inputs.tag }}
 
 jobs:
   publish:
-    if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push'
+    if: github.event_name == 'workflow_dispatch' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push')
     runs-on: ubuntu-latest
     permissions:
       contents: write
       actions: read
+      id-token: write
     env:
       GH_TOKEN: ${{ github.token }}
       REPO: ${{ github.repository }}
@@ -25,9 +32,27 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ env.SHA }}
-      - name: "tag v<SCHEMA_VERSION>.<n> once every push workflow at this sha is green (docs/consume.md)"
+          ref: ${{ inputs.tag || env.SHA }}
+      - name: "tag v<SCHEMA_VERSION>.<n> once every push workflow at this sha is green and the manifests carry <S>.<n>.0 (docs/consume.md)"
+        if: github.event_name == 'workflow_run'
         run: scripts/release.sh
+      - name: "publish an existing tag again"
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          INPUT_TAG: ${{ inputs.tag }}
+        run: echo "TAG=$INPUT_TAG" >> "$GITHUB_ENV"
+      - uses: actions/setup-node@v4
+        if: env.TAG != ''
+        with:
+          node-version: 24
+      - uses: rust-lang/crates-io-auth-action@v1
+        if: env.TAG != ''
+        id: crates-io
+      - name: "npm publish --provenance, then cargo publish blocks and blocks-cli, from the tagged files; a version already there is skipped"
+        if: env.TAG != ''
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ steps.crates-io.outputs.token }}
+        run: scripts/publish.sh "$TAG"
 
   scan-perf:
     if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' && github.event.workflow_run.name == 'ci'

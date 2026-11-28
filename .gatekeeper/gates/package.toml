@@ -1,0 +1,10 @@
+about = "one version in Cargo.toml and package.json; the npm tarball and the blocks and blocks-cli crates hold exactly ci/package/*.txt; publint and attw (esm-only) pass on the tarball; scripts/publish.test.sh holds the tag, mismatch and already-published rules"
+fix = "bump Cargo.toml and package.json together; keep a package's files and its ci/package list in step (package.json `files`, a crate's `include`); fix what publint or attw names"
+budget_secs = 300
+setup = ["rust", "node"]
+run = """
+set -e
+npm --prefix web ci --no-audit --no-fund
+sh scripts/publish.test.sh
+sh scripts/package.sh
+"""
