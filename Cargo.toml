@@ -3,11 +3,12 @@ members = ["crates/*", "site"]
 resolver = "2"
 
 [workspace.package]
-version = "0.1.0"
+version = "2.2.0"
 edition = "2021"
 license = "MIT"
 publish = false
 repository = "https://github.com/jirathip-dev/blocks"
+homepage = "https://github.com/jirathip-dev/blocks/blob/main/docs/consume.md"
 
 [workspace.lints.clippy]
 pedantic = { level = "warn", priority = -1 }

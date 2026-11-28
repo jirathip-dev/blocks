@@ -10,7 +10,8 @@ kit, and not shelf, mirror, the stream, wire versioning or site.
 Shipped: the crate (typed blocks, their row diff and ops, the device stream protocol) with the codegen that turns its
 Rust types into JSON Schema, TS and Swift; the theme rules (scheme tokens, the gate, styles, the pack check) and one
 neutral default pair; the SwiftUI package; the HTML renderer and shell, the static site renderer, and the headless
-harnesses (`docs/architecture/blocks/migration.md`).
+harnesses (`docs/architecture/blocks/migration.md`). Install: `npm install @jirathip-dev/blocks`, `cargo add blocks`,
+`cargo install blocks-cli`; how an app pins and upgrades blocks: [docs/consume.md](docs/consume.md).
 
 ## Intent
 
@@ -35,7 +36,7 @@ Rust, node 24 and WebKit for the web gates. `./.gatekeeper/run list` names them;
   lint floor and its fixtures, cargo-deny) and `ts` (tsc strict, oxlint, knip; their old findings in
   `.gatekeeper/baseline/`, which only shrinks)
 - `.gatekeeper/gates/`, blocks' own: `test`, `gen` (in CI; core/arch runs the generator on a lane), `guard` (`blocks check`), `perf` and `soak` in release, `no-egui` (the
-  `blocks` crate's tree), `for-apps`, `web` (`web/lint.mjs`, the node tests, the lint fixtures, the token baseline),
+  `blocks` crate's tree), `for-apps`, `package` (one version, the npm tarball's and the crates' files against `ci/package/`, publint and attw), `web` (`web/lint.mjs`, the node tests, the lint fixtures, the token baseline),
   `react` (the adapter's contract), `bench` (`bench/` builds) and, on the macOS `swift` leg in CI only, `swift-lint`, `swift-test`,
   `swift-snap`, `swift-plan` and `swift-stress`
 - `just sim 2000`: random op sequences on random screens, then one seeded corpus through Rust, TS and Swift; also run

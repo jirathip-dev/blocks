@@ -36,6 +36,10 @@
         "dist/**",
         "lint-fixtures/**"
       ],
+      "ignoreDependencies": [
+        "publint",
+        "@arethetypeswrong/cli"
+      ],
       "ignoreBinaries": [
         "esbuild",
         "tsc"

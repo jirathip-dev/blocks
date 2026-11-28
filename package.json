@@ -1,7 +1,20 @@
 {
   "name": "@jirathip-dev/blocks",
-  "version": "0.0.0",
+  "version": "2.2.0",
   "description": "The framework-neutral blocks core (generated types, builders, check, the evaluator, tree tests, choose and the scheme CSS writer), its React adapter, and the HTML renderer and shell a page mounts",
+  "keywords": [
+    "ui",
+    "server-driven-ui",
+    "renderer",
+    "react",
+    "design-system",
+    "blocks"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jirathip-dev/blocks.git"
+  },
+  "homepage": "https://github.com/jirathip-dev/blocks/blob/main/docs/consume.md",
   "type": "module",
   "license": "MIT",
   "exports": {
@@ -27,5 +40,9 @@
     "react": {
       "optional": true
     }
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
   }
 }
