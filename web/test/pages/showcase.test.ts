@@ -4,6 +4,7 @@ import { extname, join } from "node:path";
 import { after, before, test } from "node:test";
 import { webkit } from "playwright";
 import { shot } from "../../shot/shot.ts";
+import { R } from "../../src/gen/kinds.ts";
 
 const SITE = process.env.SITE ?? "";
 const BASE = "http://site.test/blocks/";
@@ -48,7 +49,7 @@ const tree = (page) =>
 const files = SITE ? readdirSync(SITE).filter((f) => f.endsWith(".html")).sort() : [];
 
 test("every page is the same PNG and tree before and after blocks.js adopts it, all under /blocks/", async () => {
-  strictEqual(files.length, 52);
+  strictEqual(files.length, 10 + Object.keys(R).length);
   const warm = await open("index.html", { js: false });
   await warm.page.screenshot({ fullPage: true });
   await warm.close();
