@@ -1,5 +1,6 @@
 crates/blocks/tests/perf.rs: Instant::now( #1
 web/react/test/markup.test.ts: setTimeout( #1
+web/react/test/title.test.ts: setTimeout( #1
 web/test/adopt.test.ts: setTimeout( #1
 web/test/kind/scene.test.ts: Date.now( #1
 web/test/look.test.ts: setTimeout( #1
