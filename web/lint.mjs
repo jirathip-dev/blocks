@@ -1,6 +1,7 @@
 import { stripTypeScriptTypes } from "node:module";
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative, resolve } from "node:path";
+import { finishes } from "./src/gen/hooks.ts";
 
 const typed = [
   [/^as\s+(?!const\b)/, "an `as` cast (only `as const`)"],
@@ -73,6 +74,7 @@ const moves = (p) => p === "transform" || p === "opacity" || p === "none";
 
 function lintCss(path, src) {
   const bad = [];
+  for (const m of src.matchAll(/\.as-([\w-]+)/g)) if (!finishes.includes(m[1])) bad.push(`${path}:${lineOf(src, m.index)}: \`.as-${m[1]}\` is no finish (gen/hooks.ts lists them)`);
   const at = (i, what) => bad.push(`${path}:${lineOf(src, i)}: motion of \`${what}\` (animate only transform and opacity)`);
   for (const m of src.matchAll(/\btransition(?:-property)?\s*:([^;}]+)/g))
     for (const item of m[1].split(/,(?![^(]*\))/)) if (!moves(item.trim().split(/[\s!]+/)[0])) at(m.index, item.trim());

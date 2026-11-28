@@ -244,6 +244,8 @@ pub struct Report {
     pub sent: Vec<Action>,
     pub dropped: Vec<String>,
     pub timings: Timings,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub worn: Option<std::collections::BTreeMap<String, Vec<String>>>,
 }
 
 /// The tree a renderer that draws `kinds` natively must draw for `screen` in `state`, roles and names included: no rect, no text.

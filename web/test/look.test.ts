@@ -105,6 +105,7 @@ test("a screen's first load settles its first screen of tiles in reading order w
   const ops = [{ op: "merge", id: "r0", fields: { title: "patched" } }, { op: "insert", into: "rows", after: "r0", block: { type: "row", id: "late", title: "late" } }];
   const update = await page.evaluate((o) => (window.emit("message", { k: "/screens/queue", from: 1, rev: 2, ops: o }), window.settled()), ops);
   deepStrictEqual(settles(update), []);
+  strictEqual(await page.evaluate(() => document.querySelectorAll(".list>:is(.row,.rw):not(.as-surface)").length), 0, "a row a patch redrew or inserted in a list still wears the surface");
   deepStrictEqual(
     update.map((r) => [r.name, r.id, r.duration]),
     [["b-enter", "late", parseFloat(defaultStyle["--enter"])]],

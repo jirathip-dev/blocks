@@ -78,6 +78,8 @@ pub(crate) struct W<'a> {
     pub(super) out: String,
     pub(super) forms: String,
     pub(crate) multipart: bool,
+    pub(crate) listed: bool,
+    pub(crate) label: &'static str,
     n: u32,
     screen: String,
     action: &'a str,
@@ -96,6 +98,8 @@ impl<'a> W<'a> {
             out: String::new(),
             forms: String::new(),
             multipart: false,
+            listed: false,
+            label: "",
             n: 0,
             screen,
             action,
@@ -242,7 +246,8 @@ impl<'a> W<'a> {
             Some(b) => self.open_block(tag, &cls, b, &all),
             None => self.open(tag, &cls, &all),
         }
-        self.el("span", "", label);
+        let part = std::mem::take(&mut self.label);
+        self.el("span", part, label);
         self.close(tag);
     }
 

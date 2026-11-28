@@ -12,7 +12,8 @@ pub(super) fn draw(w: &mut W<'_>, b: &Value) {
         let pressed = sel.contains(&v);
         let at = [("aria-pressed", if pressed { "true" } else { "false" })];
         let v = Map::from_iter([(shown(b.get("name")), v)]);
-        let (label, cls) = (shown(o.get("label")), if pressed { "on" } else { "" });
+        let (label, cls) = (shown(o.get("label")), if pressed { "on as-tint" } else { "" });
+        w.label = "as-chip-label";
         w.submit(&label, cls, b.get("id"), &shown(b.get("action")), &v, &at);
     }
     w.close("div");

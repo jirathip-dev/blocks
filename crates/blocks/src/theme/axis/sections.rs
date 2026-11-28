@@ -5,10 +5,16 @@ pick!(
     pub Sections { Title, Quiet }
 );
 
-const QUIET: &[Rule] = &[Rule::on(
-    Finish::Label(LabelRole::Section),
-    "font-size:var(--fs-meta);font-weight:400",
-)];
+const QUIET: &[Rule] = &[
+    Rule::on(
+        Finish::Label(LabelRole::Header),
+        "font-size:var(--fs-meta);font-weight:400",
+    ),
+    Rule::on(
+        Finish::Label(LabelRole::Section),
+        "font-size:var(--fs-meta);font-weight:400",
+    ),
+];
 
 pub(super) const AXIS: Axis = Axis {
     name: "sections",

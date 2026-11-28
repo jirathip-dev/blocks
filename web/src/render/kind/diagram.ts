@@ -18,7 +18,7 @@ function state(p: Place, c: Ctx): HTMLElement {
     e = h("div", p.cls, mark, h("span", "", h("span", "dgl", p.name), h("span", "dgv", p.timer.value)));
   } else {
     const note = p.count?.note;
-    e = h("div", p.cls, h("span", "dgl", p.name), h("span", "dgc", p.count?.n ?? "", ...(note ? [h("small", note.cls, note.text)] : [])));
+    e = h("div", p.cls, h("span", p.cls.split(" ").includes("picked") ? "dgl as-picked-label" : "dgl", p.name), h("span", "dgc", p.count?.n ?? "", ...(note ? [h("small", note.cls, note.text)] : [])));
   }
   e.setAttribute("aria-label", p.aria);
   e.style.cssText = `left:${p.at.x}px;top:${p.at.y}px;width:${p.at.w}px;height:${p.at.h}px`;

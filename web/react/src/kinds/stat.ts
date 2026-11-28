@@ -12,7 +12,7 @@ export function stat({ b, hooks }: V<Stat>) {
     const points = sp.map((v, x) => `${x},${10 - (v / hi) * 10}`).join(" ");
     const spark = h("svg", "spark", { viewBox: `0 0 ${sp.length - 1} 10`, preserveAspectRatio: "none", "aria-hidden": "true" }, h("polyline", "", { points }));
     const unit = i.unit ? [" ", h("small", "", null, i.unit)] : [];
-    return h("div", `st ${i.tone ?? ""}`, null, h("b", "b-stat__value", null, ticked(i.value, cx)), ...unit, h("span", "m", null, i.label ?? ""), sp.length > 1 ? spark : null);
+    return h("div", `st as-surface ${i.tone ?? ""}`, null, h("b", "b-stat__value", null, ticked(i.value, cx)), ...unit, h("span", "m", null, i.label ?? ""), sp.length > 1 ? spark : null);
   };
   return h("div", "stats", hooks, ...(b.items ?? [b]).map(tile));
 }

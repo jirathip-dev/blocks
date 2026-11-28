@@ -18,5 +18,5 @@ function lane(l: Lane, cx: Ctx) {
 export function scene({ b, hooks }: V<Scene>) {
   const cx = useContext(Cx);
   const lanes = b.lanes ?? [];
-  return h("div", "scn", hooks, b.label ? h("div", "sh", null, b.label) : null, lanes.length ? h("ul", "scl", null, ...lanes.map((l) => h("li", "", { key: l.id }, lane(l, cx)))) : null);
+  return h("div", "scn", hooks, b.label ? h("div", "sh as-section-label", null, b.label) : null, lanes.length ? h("ul", "scl", null, ...lanes.map((l) => h("li", "", { key: l.id }, lane(l, cx)))) : null);
 }

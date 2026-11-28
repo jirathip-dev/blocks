@@ -51,7 +51,7 @@ export function form({ b, hooks }: V<Form>) {
   const out = live ? (name: string, v: unknown) => cx.act({ action: live, block: b.id, values: { [name]: v } }) : undefined;
   const held: Held = { sent: sent.current, wait: (n, w) => setWaits((o) => ({ ...o, [n]: w })), block: b.id ?? undefined, send: out, solo: !s && b.fields.length === 1 };
   const rows = b.fields.map((x) => field(x, `draft:${cx.screen}:${String(b.id)}:`, cx, held));
-  if (!s) return h("div", "form", { ...hooks, "data-id": b.id ?? "" }, ...rows);
+  if (!s) return h("div", "form as-surface", { ...hooks, "data-id": b.id ?? "" }, ...rows);
   const send = () => {
     const v = values(b.fields, sent.current, cx);
     if (Object.values(v).every((x) => !String(x || "").trim())) return;

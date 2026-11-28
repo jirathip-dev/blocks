@@ -11,7 +11,7 @@ export function section(b: Section, c: Ctx): HTMLElement {
   const w = (b.header ?? "").split(" ")[0] ?? "";
   const k = GROUP[w] ?? w;
   if (b.header) {
-    const head = el("h3", `sh ${SH[k] ?? ""}`);
+    const head = el("h3", `sh as-header-label ${SH[k] ?? ""}`);
     head.append(c.theme.word(k, b.header));
     s.append(head);
   }

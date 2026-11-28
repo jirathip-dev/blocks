@@ -1215,6 +1215,6 @@ dialog.md:not([data-live]){position:relative;z-index:auto;inset:auto;transform:n
 @keyframes s{to{transform:rotate(1turn)}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 .form:not(.say),.secret,.run{padding:var(--s2);margin:var(--seam) 0}
-:is(.card,.st,.list>.row,.list>.rw,.form:not(.say),.choice,.secret,.run,.tbl){background:var(--card);border:1px solid var(--edge);border-radius:var(--radius)}
+.as-surface{background:var(--card);border:1px solid var(--edge);border-radius:var(--radius)}
 :is(.card,.st,.form,.choice,.secret,.run) :is(.card,.st,.form,.choice,.secret,.run){margin:0;padding:0;border:0;background:none}
 }}

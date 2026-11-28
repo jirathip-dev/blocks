@@ -3,7 +3,7 @@ use serde_json::Value;
 use crate::site::write::{fields, get, one, shown, W};
 
 pub(super) fn draw(w: &mut W<'_>, b: &Value) {
-    w.open_block("div", "run", b, &[]);
+    w.open_block("div", "run as-surface", b, &[]);
     w.el("pre", "cmd", &shown(b.get("command")));
     let sha = get(b, "sha").filter(|s| !s.is_empty()).map(|s| format!("sha {s}"));
     let meta: Vec<String> = [

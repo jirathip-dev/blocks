@@ -3,7 +3,7 @@ use serde_json::Value;
 use crate::site::write::{fields, get, list, one, shown, ticked, Go, W};
 
 pub(super) fn draw(w: &mut W<'_>, b: &Value) {
-    w.open_block("div", "choice", b, &[]);
+    w.open_block("div", "choice as-surface", b, &[]);
     let rec = b.get("recommended");
     let mut opts: Vec<&Value> = list(b, "options").iter().filter(|o| o.is_object()).collect();
     opts.sort_by_key(|o| o.get("value") != rec || rec.is_none());

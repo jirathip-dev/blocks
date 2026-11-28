@@ -8,7 +8,7 @@ import { btn, el } from "../dom.ts";
 export function screen(b: Screen, c: Ctx): HTMLElement {
   const s = el("div", "scr");
   s.dataset["id"] = String(b.id);
-  const title = el("span", "tw b-screen__title");
+  const title = el("span", "tw b-screen__title as-screen-label");
   title.append(c.theme.word(`tab-${b.id}`, b.title ?? ""));
   const head = el("p", "tabh");
   head.append(title);

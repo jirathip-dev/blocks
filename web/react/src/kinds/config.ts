@@ -43,5 +43,5 @@ export function config({ b, hooks }: V<Form>) {
   const s = b.submit;
   const go = () => s && void cx.act({ action: s.action, block: b.id, values: { ...s.values, ...values(b.fields, sent.current, cx) } }).then((ok) => ok && b.fields.forEach((x) => cx.put(x.name, undefined)));
   const bar = s ? h("div", "bar", null, btn(s.label, "", undefined, s.action, { onClick: go }, !!s.off)) : null;
-  return h("div", "form cfg", { ...hooks, ref: root, "data-id": b.id ?? "" }, ...rows, bar);
+  return h("div", "form cfg as-surface", { ...hooks, ref: root, "data-id": b.id ?? "" }, ...rows, bar);
 }

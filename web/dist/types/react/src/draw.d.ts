@@ -21,7 +21,7 @@ export declare const press: (go: () => void) => {
         key: string;
     }) => void | false;
 };
-export declare const btn: (label: unknown, cls: string, url: string | undefined, action: unknown, attrs: Attrs, off?: boolean) => import("react").ReactElement<{
+export declare const btn: (label: unknown, cls: string, url: string | undefined, action: unknown, attrs: Attrs, off?: boolean, part?: string) => import("react").ReactElement<{
     className: string | undefined;
 }, string | import("react").JSXElementConstructor<any>>;
 export declare const act: (a: Act, cls: string, cx: Ctx, url: string | undefined, go: (() => void) | undefined) => import("react").ReactElement<{

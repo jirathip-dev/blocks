@@ -408,7 +408,7 @@ function sheet(v: View, d: Shown): HTMLElement[] {
 }
 
 export function table(b: Table, c: Ctx): HTMLElement {
-  const box = el("div", "tbl");
+  const box = el("div", "tbl as-surface");
   const st = state(b);
   const q = Object.assign(el("input", "tbq"), { type: "search", placeholder: "filter", value: st.q });
   q.setAttribute("aria-label", `Filter ${b.title ?? "rows"}`);

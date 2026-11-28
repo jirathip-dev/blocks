@@ -74,23 +74,29 @@ impl Finish {
         }
     }
 
-    /// The selector the web draws this finish on; `None` for a finish no part wears yet.
+    /// The selector the web draws this finish on: its `as-<name>` class, or the `button` elements; `None` for a finish no part wears yet.
     #[must_use]
     pub const fn selector(self) -> Option<&'static str> {
         match self {
-            Self::Surface => Some(":is(.card,.st,.list>.row,.list>.rw,.form:not(.say),.choice,.secret,.run,.tbl)"),
-            Self::Tint => Some(".chips button.on,.spi.done .spm"),
+            Self::Surface => Some(".as-surface"),
+            Self::Tint => Some(".as-tint"),
             Self::Button => Some("button,a.btn"),
-            Self::Mark => Some(".spi.done .spm"),
-            Self::Label(LabelRole::Header) => Some(".sec>.sh"),
-            Self::Label(LabelRole::Section) => Some(".sh"),
-            Self::Label(LabelRole::Title) => Some(":is(.ch>b,.rt)"),
-            Self::Label(LabelRole::Button) => Some(".b-button>span"),
-            Self::Label(LabelRole::Chip) => Some(".chips button>span"),
-            Self::Label(LabelRole::Picked) => Some(".dgn.picked .dgl"),
-            Self::Label(LabelRole::Screen) => Some(".tabh>.b-screen__title"),
+            Self::Mark => Some(".as-mark"),
+            Self::Label(LabelRole::Header) => Some(".as-header-label"),
+            Self::Label(LabelRole::Section) => Some(".as-section-label"),
+            Self::Label(LabelRole::Title) => Some(".as-title-label"),
+            Self::Label(LabelRole::Button) => Some(".as-button-label"),
+            Self::Label(LabelRole::Chip) => Some(".as-chip-label"),
+            Self::Label(LabelRole::Picked) => Some(".as-picked-label"),
+            Self::Label(LabelRole::Screen) => Some(".as-screen-label"),
             Self::Label(LabelRole::Kind | LabelRole::Group | LabelRole::Back | LabelRole::Said) => None,
         }
+    }
+
+    /// The finish named `name`, as an `as-<name>` class names it.
+    #[must_use]
+    pub fn named(name: &str) -> Option<Self> {
+        Self::ALL.into_iter().find(|f| f.name() == name)
     }
 }
 

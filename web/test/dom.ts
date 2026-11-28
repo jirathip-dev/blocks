@@ -169,6 +169,9 @@ export function install() {
   g.HTMLElement = El;
   g.HTMLInputElement = El;
   g.CustomEvent = class {};
+  g.MutationObserver = class {
+    observe() {}
+  };
   g.customElements = { get: () => undefined, whenDefined: () => new Promise(() => {}) };
   g.DOMParser = class {
     parseFromString(html) {

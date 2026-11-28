@@ -21,9 +21,9 @@ export function Arrange(p: ArrangeProps): ReactNode {
   const row = (r: ReturnType<typeof rows>[number]) =>
     h(
       "div",
-      "row",
+      "row as-surface",
       { key: r.id, "data-id": r.id, style: { paddingInlineStart: `calc(var(--s3) * ${r.depth + 1})` } },
-      h("span", "rm", null, h("span", "rt", null, r.label)),
+      h("span", "rm", null, h("span", "rt as-title-label", null, r.label)),
       h("select", "", { "aria-label": `${r.label} shows on ${size} as` }, ...r.places.map((x) => h("option", "", { key: x, value: x }, x))),
     );
   return h("div", "b-sheet__body", null, h("div", "list b-arrange", { ref, "aria-label": `layout on ${size}` }, ...rows(tree).map(row)), h("p", "m", { role: "alert" }, why));

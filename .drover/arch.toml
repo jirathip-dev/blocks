@@ -21,6 +21,7 @@ generated = [
     "web/src/gen/fields.ts", "web/react/src/gen/fields.ts", "web/src/gen/words.ts", "web/src/gen/words-import.ts",
     "fixtures/fields/*.json", "fixtures/fields/trees/*.json", "crates/blocks/src/catalog/cards.rs",
     "crates/blocks/src/theme/axis/mod.rs",
+    "fixtures/look/worn.json",
 ]
 generate = "sh scripts/arch-gen.sh"
 shared = [
@@ -302,6 +303,11 @@ name = "desk"
 paths = ["crates/blocks-desk/src/**"]
 mods = ["blocks_desk"]
 may_use = ["desktop-stage", "expr", "tree"]
+
+[[ban]]
+pattern = "gen/schemes"
+paths = ["web/src/render/**", "web/react/src/**"]
+reason = "a view tags a part with its finish; only core/look.ts knows what a look does to it"
 
 [[ban]]
 pattern = "fetch("

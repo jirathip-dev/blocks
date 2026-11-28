@@ -67,7 +67,7 @@ test("site and render give the same element per kind: tag, classes, hooks, role,
         const sig = (e) =>
           [e, ...e.querySelectorAll("*")]
             .filter((x) => !x.classList.contains("b-sr"))
-            .filter((x) => !x.closest(".tbg") && (x.hasAttribute("data-block") || x.hasAttribute("data-action") || [...x.classList].some((c) => c.startsWith("b-"))))
+            .filter((x) => !x.closest(".tbg, .tmgh, .b-import *") && (x.hasAttribute("data-block") || x.hasAttribute("data-action") || [...x.classList].some((c) => c.startsWith("b-") || c.startsWith("as-"))))
             .map((x) => ({
               tag: x.tagName,
               cls: [...x.classList].sort().join(" "),

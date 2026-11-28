@@ -7,6 +7,7 @@ import { el, h } from "../dom.ts";
 import { paged } from "../more.ts";
 
 const ids = (v: unknown): v is string[] => Array.isArray(v) && v.every((x) => typeof x === "string");
+const tile = (e: Node) => e instanceof HTMLElement && (e.classList.contains("row") || e.classList.contains("rw")) && e.classList.add("as-surface");
 
 export function list(b: List, c: Ctx): HTMLElement {
   const l = el("div", "list");
@@ -15,6 +16,8 @@ export function list(b: List, c: Ctx): HTMLElement {
   const out = b.rows.map((r) => r.id && held(c, { block: b, rules, grab: r.id, item: r.id })).find(ids);
   if (!b.rows.length && b.empty) l.append(h("p", "empty", b.empty));
   l.append(...(out ? out.flatMap((id) => at(id) ?? []) : rows));
+  rows.forEach(tile);
+  new MutationObserver((done) => done.forEach((m) => m.addedNodes.forEach(tile))).observe(l, { childList: true });
   const page = typeof b.more === "object" ? b.more : null;
   const lifted = () => !!l.querySelector(".b-hd:is([data-phase=pressed],[data-phase=previewing],[data-phase=dragging])");
   const mo = paged(c, { id: String(b.id ?? ""), page, n: b.rows.length, root: l, held: lifted, wrap: (k, no) => h("div", no ? "lsm no" : "lsm", ...k) });

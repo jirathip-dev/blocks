@@ -12,8 +12,8 @@ fn a_stepper_writes_done_now_and_to_do_steps_and_links_only_a_done_step_that_ope
         ]}),
     );
     let h = site::fragment(&b, "/act");
-    assert!(h.starts_with("<div class=\"sp b b-steps\" data-block=\"steps\" data-id=\"s\" role=\"group\" aria-label=\"Stop 3\"><div class=\"sh\">Stop 3</div><ol class=\"spl\">"), "{h}");
-    assert!(h.contains("<li class=\"spi done\"><a class=\"spc tap\" aria-label=\"Stop, step 1 of 4, done\" title=\"Stop\" href=\"stop\"><span class=\"spr\" aria-hidden=\"true\"><i class=\"spm\">✓</i><span class=\"spk\"></span></span><span class=\"spn\">Stop</span><span class=\"sps\">09:42</span></a></li>"), "{h}");
+    assert!(h.starts_with("<div class=\"sp b b-steps\" data-block=\"steps\" data-id=\"s\" role=\"group\" aria-label=\"Stop 3\"><div class=\"sh as-section-label\">Stop 3</div><ol class=\"spl\">"), "{h}");
+    assert!(h.contains("<li class=\"spi done\"><a class=\"spc tap\" aria-label=\"Stop, step 1 of 4, done\" title=\"Stop\" href=\"stop\"><span class=\"spr\" aria-hidden=\"true\"><i class=\"spm as-mark as-tint\" data-mark=\"done\">✓</i><span class=\"spk\"></span></span><span class=\"spn\">Stop</span><span class=\"sps\">09:42</span></a></li>"), "{h}");
     assert!(h.contains("<div class=\"spc tap\" aria-label=\"Lines, step 2 of 4, done\" title=\"Lines\" role=\"button\" tabindex=\"0\" data-action=\"lines\">"), "{h}");
     assert!(h.contains("<li class=\"spi now\" aria-current=\"step\"><div class=\"spc\" aria-label=\"Proof, step 3 of 4, current\" title=\"Proof\"><span class=\"spr\" aria-hidden=\"true\"><i class=\"spm\">3</i><span class=\"spk\"></span></span><span class=\"spn\">Proof</span><span class=\"sps\">step 3 of 4</span></div></li>"), "{h}");
     assert!(
@@ -46,7 +46,7 @@ fn bars_write_a_clamped_progressbar_each_and_no_steps_or_no_bars_write_the_fallb
         ]}),
     );
     let h = site::fragment(&b, "/act");
-    assert!(h.starts_with("<div class=\"pg b b-steps\" data-block=\"steps\" data-id=\"p\" role=\"group\" aria-label=\"Week 47\"><div class=\"sh\">Week 47</div><div class=\"pgl rows\">"), "{h}");
+    assert!(h.starts_with("<div class=\"pg b b-steps\" data-block=\"steps\" data-id=\"p\" role=\"group\" aria-label=\"Week 47\"><div class=\"sh as-section-label\">Week 47</div><div class=\"pgl rows\">"), "{h}");
     assert!(h.contains("<div class=\"pgr ok\" role=\"progressbar\" aria-valuemin=\"0\" aria-valuemax=\"100\" aria-valuenow=\"100\" aria-label=\"Boiler\" aria-valuetext=\"100%, done Mon\"><span class=\"pgn\">Boiler</span><span class=\"pgv\">100%</span><span class=\"pgt\" style=\"--v:100\"><b></b></span><span class=\"pgs\">done Mon</span></div>"), "{h}");
     assert!(h.contains("<div class=\"pgr zero\" role=\"progressbar\" aria-valuemin=\"0\" aria-valuemax=\"100\" aria-valuenow=\"0\" aria-label=\"Lights\"><span class=\"pgn\">Lights</span><span class=\"pgv\">0%</span>"), "{h}");
     let one = site::fragment(

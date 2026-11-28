@@ -11,7 +11,7 @@ import { btn, el, h } from "../dom.ts";
 export type Drawn = { row: HTMLElement; name: string; sent(): unknown; busy?: (() => { up: number; failed: number }) | undefined };
 
 export function form(b: Form, c: Ctx): HTMLElement {
-  const f = el("div", `form${b.submit ? " say" : ""}`);
+  const f = el("div", `form${b.submit ? " say" : " as-surface"}`);
   f.dataset["id"] = b.id ?? "";
   const s = b.submit;
   const live = s ? undefined : b.action;

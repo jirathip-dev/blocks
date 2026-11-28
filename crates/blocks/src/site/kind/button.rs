@@ -8,5 +8,6 @@ pub(super) fn draw(w: &mut W<'_>, b: &Value) {
         (None, Some(a)) => Go::Post(w.post(b.get("id"), a, &fields(&[b.get("values")])), a.into()),
         (None, None) => Go::Stay,
     };
+    w.label = "as-button-label";
     w.btn(&shown(b.get("label")), &shown(b.get("style")), &go, &[], Some(b));
 }

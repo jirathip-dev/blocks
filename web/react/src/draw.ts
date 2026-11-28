@@ -17,9 +17,9 @@ export const out = (url: string) => ({ href: url, target: "_blank", rel: "noopen
 export const press = (go: () => void) => ({ role: "button", tabIndex: 0, onClick: go, onKeyDown: (e: { key: string }) => e.key === "Enter" && go() });
 
 /// A button as the HTML renderer's `btn` draws one: a link when it has a url, its label in a span; `off` disables a button.
-export const btn = (label: unknown, cls: string, url: string | undefined, action: unknown, attrs: Attrs, off = false) => {
+export const btn = (label: unknown, cls: string, url: string | undefined, action: unknown, attrs: Attrs, off = false, part = "") => {
   const own = { "data-action": typeof action === "string" && action ? action : undefined, ...attrs };
-  const span = h("span", "", null, String(label ?? ""));
+  const span = h("span", part, null, String(label ?? ""));
   return url ? h("a", `btn ${cls}`, { ...own, ...out(url) }, span) : h("button", cls, { type: "button", ...own, disabled: off || undefined }, span);
 };
 

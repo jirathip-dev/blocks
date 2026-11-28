@@ -421,16 +421,16 @@ function Arrange(p) {
   }, [tree, size]);
   const row5 = (r) => h(
     "div",
-    "row",
+    "row as-surface",
     { key: r.id, "data-id": r.id, style: { paddingInlineStart: `calc(var(--s3) * ${r.depth + 1})` } },
-    h("span", "rm", null, h("span", "rt", null, r.label)),
+    h("span", "rm", null, h("span", "rt as-title-label", null, r.label)),
     h("select", "", { "aria-label": `${r.label} shows on ${size} as` }, ...r.places.map((x) => h("option", "", { key: x, value: x }, x)))
   );
   return h("div", "b-sheet__body", null, h("div", "list b-arrange", { ref: ref3, "aria-label": `layout on ${size}` }, ...rows(tree).map(row5)), h("p", "m", { role: "alert" }, why));
 }
 
 // react/src/view.ts
-import { createElement as createElement17, useMemo as useMemo3, useRef as useRef20, useSyncExternalStore } from "react";
+import { createElement as createElement18, useMemo as useMemo3, useRef as useRef20, useSyncExternalStore } from "react";
 import { hooks as hooks3, share } from "./core.js";
 
 // react/src/act.ts
@@ -505,7 +505,7 @@ function useCx(p, screen2) {
 }
 
 // react/src/block.ts
-import { Component, createElement as createElement16, memo, useContext as useContext27 } from "react";
+import { Component, createElement as createElement17, memo, useContext as useContext27 } from "react";
 import { hooks as hooks2, named as named3, role } from "./core.js";
 
 // react/src/draw.ts
@@ -517,9 +517,9 @@ var sends = (t, action) => {
 };
 var out = (url2) => ({ href: url2, target: "_blank", rel: "noopener" });
 var press = (go2) => ({ role: "button", tabIndex: 0, onClick: go2, onKeyDown: (e) => e.key === "Enter" && go2() });
-var btn = (label2, cls, url2, action, attrs, off = false) => {
+var btn = (label2, cls, url2, action, attrs, off = false, part3 = "") => {
   const own3 = { "data-action": typeof action === "string" && action ? action : void 0, ...attrs };
-  const span2 = h("span", "", null, String(label2 ?? ""));
+  const span2 = h("span", part3, null, String(label2 ?? ""));
   return url2 ? h("a", `btn ${cls}`, { ...own3, ...out(url2) }, span2) : h("button", cls, { type: "button", ...own3, disabled: off || void 0 }, span2);
 };
 var act = (a, cls, cx, url2, go2) => {
@@ -566,7 +566,7 @@ function button({ b, hooks: hooks4 }) {
   const cx = useContext(Cx);
   const url2 = urlOf(b.tap);
   const go2 = () => b.tap ? cx.tap(b.tap) : void cx.act({ action: b.action ?? "", block: b.id, values: b.values ?? {}, confirm: b.confirm });
-  return btn(b.label, b.style ?? "", url2, sends(b.tap, b.action), { ...hooks4, "data-id": b.id ?? "", onClick: url2 ? void 0 : go2 }, b.id != null && cx.v.disabled.has(b.id));
+  return btn(b.label, b.style ?? "", url2, sends(b.tap, b.action), { ...hooks4, "data-id": b.id ?? "", onClick: url2 ? void 0 : go2 }, b.id != null && cx.v.disabled.has(b.id), "as-button-label");
 }
 
 // react/src/kinds/card.ts
@@ -574,7 +574,7 @@ import { useContext as useContext2, useState as useState3 } from "react";
 function card({ b, hooks: hooks4 }) {
   const cx = useContext2(Cx);
   const [open2, setOpen] = useState3(false);
-  const cls = `card ${b.tone ?? ""} k-${b.kind ?? ""}`;
+  const cls = `card as-surface ${b.tone ?? ""} k-${b.kind ?? ""}`;
   const attrs = { ...hooks4, "data-id": b.id ?? "" };
   const fold2 = b.fold ?? null;
   const main = fold2?.main ?? null;
@@ -586,7 +586,7 @@ function card({ b, hooks: hooks4 }) {
   if (shut) return h("div", cls, attrs, line);
   const badge2 = b.badge ? [" ", h("span", `tag b-card__badge ${b.badge.tone ?? ""}`, null, ticked(b.badge.text, cx))] : [];
   const meta = b.meta ? [" ", h("span", "m", null, ticked(b.meta, cx))] : [];
-  const head4 = b.title || b.badge ? h("div", "ch", null, h("b", "b-card__title", null, b.title ?? ""), ...badge2, ...meta) : null;
+  const head4 = b.title || b.badge ? h("div", "ch", null, h("b", "b-card__title as-title-label", null, b.title ?? ""), ...badge2, ...meta) : null;
   const buttons = b.buttons ?? [];
   const bar6 = buttons.length ? h("div", "bar b-card__actions", null, ...kids2(buttons)) : null;
   const s = !b.subtitle ? null : typeof b.subtitle === "string" ? { text: b.subtitle, tone: null } : b.subtitle;
@@ -603,7 +603,7 @@ function chips({ b, hooks: hooks4 }) {
     const next = !b.multi || v === "all" ? [v] : sel.includes(v) ? sel.filter((x) => x !== v) : [...sel.filter((x) => x !== "all"), v];
     void cx.act({ action: b.action ?? "", block: b.id, values: { [b.name]: next.length ? next : ["all"] } });
   };
-  const chip = (o) => btn(o.label, sel.includes(o.value) ? "on" : "", void 0, b.action, { key: o.value, "aria-pressed": String(sel.includes(o.value)), onClick: () => pick2(o.value) });
+  const chip = (o) => btn(o.label, sel.includes(o.value) ? "on as-tint" : "", void 0, b.action, { key: o.value, "aria-pressed": String(sel.includes(o.value)), onClick: () => pick2(o.value) }, false, "as-chip-label");
   return h("div", "chips", hooks4, ...b.options.map(chip));
 }
 
@@ -626,7 +626,7 @@ function choice({ b, hooks: hooks4 }) {
   const input3 = h("input", "", { name: "other", value: v, placeholder: other?.placeholder ?? "other\u2026", autoComplete: "off", "data-draft": draft, onChange: (e) => setV(e.target.value) });
   const form2 = other ? h("form", "other", { onSubmit: submit }, input3, btn("send", "", void 0, b.action, { type: "submit" })) : null;
   const d2 = b.default;
-  return h("div", "choice", hooks4, ...picks, d2 ? h("p", "m", null, ticked({ until: d2.until, label: d2.label }, cx)) : null, form2);
+  return h("div", "choice as-surface", hooks4, ...picks, d2 ? h("p", "m", null, ticked({ until: d2.until, label: d2.label }, cx)) : null, form2);
 }
 
 // react/src/kinds/composer.ts
@@ -1099,7 +1099,7 @@ function form({ b, hooks: hooks4 }) {
   const out2 = live3 ? (name, v) => cx.act({ action: live3, block: b.id, values: { [name]: v } }) : void 0;
   const held3 = { sent: sent2.current, wait: (n, w) => setWaits((o) => ({ ...o, [n]: w })), block: b.id ?? void 0, send: out2, solo: !s && b.fields.length === 1 };
   const rows2 = b.fields.map((x) => field(x, `draft:${cx.screen}:${String(b.id)}:`, cx, held3));
-  if (!s) return h("div", "form", { ...hooks4, "data-id": b.id ?? "" }, ...rows2);
+  if (!s) return h("div", "form as-surface", { ...hooks4, "data-id": b.id ?? "" }, ...rows2);
   const send4 = () => {
     const v = values(b.fields, sent2.current, cx);
     if (Object.values(v).every((x) => !String(x || "").trim())) return;
@@ -1157,7 +1157,7 @@ function config({ b, hooks: hooks4 }) {
   const s = b.submit;
   const go2 = () => s && void cx.act({ action: s.action, block: b.id, values: { ...s.values, ...values(b.fields, sent2.current, cx) } }).then((ok) => ok && b.fields.forEach((x) => cx.put(x.name, void 0)));
   const bar6 = s ? h("div", "bar", null, btn(s.label, "", void 0, s.action, { onClick: go2 }, !!s.off)) : null;
-  return h("div", "form cfg", { ...hooks4, ref: root, "data-id": b.id ?? "" }, ...rows2, bar6);
+  return h("div", "form cfg as-surface", { ...hooks4, ref: root, "data-id": b.id ?? "" }, ...rows2, bar6);
 }
 
 // react/src/kinds/diagram.ts
@@ -1308,7 +1308,7 @@ function diagrams(b) {
 var isTap = (v) => typeof v === "object" && v !== null;
 function state(p, cx) {
   const note2 = p.count?.note;
-  const body2 = p.timer ? [h("span", "", { "aria-hidden": "true" }, "\u29D7"), h("span", "", null, h("span", "dgl", null, p.name), h("span", "dgv", null, p.timer.value))] : [h("span", "dgl", null, p.name), h("span", "dgc", null, p.count?.n ?? "", note2 ? h("small", note2.cls, null, note2.text) : null)];
+  const body2 = p.timer ? [h("span", "", { "aria-hidden": "true" }, "\u29D7"), h("span", "", null, h("span", "dgl", null, p.name), h("span", "dgv", null, p.timer.value))] : [h("span", p.cls.split(" ").includes("picked") ? "dgl as-picked-label" : "dgl", null, p.name), h("span", "dgc", null, p.count?.n ?? "", note2 ? h("small", note2.cls, null, note2.text) : null)];
   const tap = p.tap;
   const own3 = { key: p.id, "aria-label": p.aria, title: p.title, style: { left: p.at.x, top: p.at.y, width: p.at.w, height: p.at.h } };
   return h("div", `${p.cls}${tap ? " tap" : ""}`, { ...own3, ...isTap(tap) ? press(() => cx.tap(tap)) : null }, ...body2);
@@ -1858,7 +1858,7 @@ function import_({ b, hooks: hooks4 }) {
 }
 
 // react/src/kinds/list.ts
-import { useContext as useContext13, useLayoutEffect as useLayoutEffect5, useRef as useRef12 } from "react";
+import { createContext as createContext2, createElement as createElement13, useContext as useContext13, useLayoutEffect as useLayoutEffect5, useRef as useRef12 } from "react";
 import { fill as fill4, hits, said as said2 } from "./core.js";
 
 // src/core/kind/list.ts
@@ -1900,6 +1900,7 @@ var list = {
 
 // react/src/kinds/list.ts
 var rec2 = (v) => typeof v === "object" && v !== null;
+var Tiles = createContext2([]);
 function list2({ b, hooks: hooks4 }) {
   const cx = useContext13(Cx);
   const ref3 = useRef12(null);
@@ -1942,7 +1943,7 @@ function list2({ b, hooks: hooks4 }) {
   const rows2 = s?.q ? b.rows.filter((r) => hits(said2(r), s.q)) : b.rows;
   const none2 = s?.q && !s.n ? h("div", "lsm sm", null, fill4(word(cx, "nomatch"), { q: s.q }), " ", btn(word(cx, "clear"), "", void 0, void 0, { onClick: () => cx.put(s.name, "") })) : null;
   const empty = !b.rows.length && b.empty ? h("p", "empty", null, b.empty) : null;
-  return h("div", "list", { ...hooks4, ref: ref3 }, empty, ...kids2(rows2), none2);
+  return h("div", "list", { ...hooks4, ref: ref3 }, empty, createElement13(Tiles.Provider, { value: rows2 }, ...kids2(rows2)), none2);
 }
 
 // react/src/kinds/message.ts
@@ -2294,7 +2295,7 @@ function nav({ b, hooks: hooks4 }) {
 }
 
 // react/src/kinds/pages.ts
-import { createElement as createElement13, Fragment as Fragment2, useLayoutEffect as useLayoutEffect7, useRef as useRef14 } from "react";
+import { createElement as createElement14, Fragment as Fragment2, useLayoutEffect as useLayoutEffect7, useRef as useRef14 } from "react";
 import { linkable as linkable7 } from "./core.js";
 
 // src/gen/shapes.ts
@@ -2565,7 +2566,7 @@ function pages({ b, hooks: hooks4 }) {
   const sheet2 = (p, i) => h("figure", "dc", { style: { "--pw": p.width / wide, "--a": `${p.width} / ${p.height}` } }, h("img", "", { loading: "lazy", alt: `Page ${i + 1} of ${n}. ${p.alt}`, width: p.width, height: p.height, src: linkable7(p.src) ? p.src : "" }));
   const body2 = n ? h("div", "dcw", { role: "region", "aria-label": `${title}, ${n} pages`, tabIndex: 0 }, h("div", "dck", null, ...b.pages.map(sheet2))) : h("div", "dce", null, "No pages yet");
   const head4 = h("div", "dch", null, h("b", "dct", null, title), h("span", "dcc", null, n ? null : "no pages"), bar6.length ? h("div", "dcb", null, ...bar6) : null);
-  return h("section", "dcs", { ...hooks4, ref: root }, createElement13(Fragment2, { key: JSON.stringify(b) }, head4, b.note ? h("p", "dcn", null, b.note) : null, body2));
+  return h("section", "dcs", { ...hooks4, ref: root }, createElement14(Fragment2, { key: JSON.stringify(b) }, head4, b.note ? h("p", "dcn", null, b.note) : null, body2));
 }
 
 // react/src/kinds/prose.ts
@@ -2614,6 +2615,7 @@ function round2(d2, now, cx) {
 }
 function row2({ b, hooks: hooks4 }) {
   const cx = useContext16(Cx);
+  const tile = useContext16(Tiles).includes(b) ? " as-surface" : "";
   const [flip, setFlip] = useState13(false);
   const x0 = useRef15(0);
   const toggle2 = () => setFlip((f) => !f);
@@ -2623,7 +2625,7 @@ function row2({ b, hooks: hooks4 }) {
   const open2 = last !== void 0 && last.state === "needs" !== flip;
   const sub = b.subtitle == null || open2 ? null : typeof b.subtitle === "string" ? { text: b.subtitle, tone: null } : b.subtitle;
   const badge2 = b.badge ? [" ", h("span", `tag b-row__badge ${b.badge.tone ?? ""}`, null, ticked(b.badge.text, cx))] : [];
-  const main = h("span", "rm", null, h("span", "rt b-row__title", null, b.title ?? ""), ...badge2, sub ? h("span", `rs b-row__subtitle ${sub.tone ?? ""}`, null, ticked(sub.text, cx)) : null);
+  const main = h("span", "rm", null, h("span", "rt b-row__title as-title-label", null, b.title ?? ""), ...badge2, sub ? h("span", `rs b-row__subtitle ${sub.tone ?? ""}`, null, ticked(sub.text, cx)) : null);
   const parts2 = [b.figure ? figure(b.figure, "b-row__figure") : null, main, b.value != null ? h("span", "rv b-row__value", null, ticked(b.value, cx)) : null];
   const id = { "data-id": b.id ?? "" };
   if (last) {
@@ -2635,11 +2637,11 @@ function row2({ b, hooks: hooks4 }) {
   const tapped = !url2 && (b.tap != null || swipe2.length > 0);
   const own3 = { ...id, ...tapped ? { "data-action": sends(b.tap), ...press(() => b.tap ? cx.tap(b.tap) : toggle2()) } : null };
   const rc = url2 || tapped ? `${cls} tap` : cls;
-  if (!swipe2.length) return url2 ? h("a", rc, { ...hooks4, ...own3, ...out(url2) }, ...parts2) : h("div", rc, { ...hooks4, ...own3 }, ...parts2);
+  if (!swipe2.length) return url2 ? h("a", `${rc}${tile}`, { ...hooks4, ...own3, ...out(url2) }, ...parts2) : h("div", `${rc}${tile}`, { ...hooks4, ...own3 }, ...parts2);
   const touch = { onTouchStart: (e) => x0.current = e.touches[0]?.clientX ?? x0.current, onTouchEnd: (e) => x0.current - (e.changedTouches[0]?.clientX ?? x0.current) > 40 && !flip && toggle2() };
   const go2 = (s) => () => void cx.act({ action: s.action ?? "", block: b.id, values: s.values ?? {}, confirm: s.confirm });
   const bar6 = h("div", "ra b-row__actions", { hidden: !flip }, ...swipe2.map((s) => act(s, s.tone === "bad" ? "bad" : "", cx, void 0, go2(s))));
-  return h("div", "rw", hooks4, h("div", rc, { ...own3, ...touch }, ...parts2), bar6);
+  return h("div", `rw${tile}`, hooks4, h("div", rc, { ...own3, ...touch }, ...parts2), bar6);
 }
 
 // react/src/kinds/run.ts
@@ -2649,7 +2651,7 @@ function run({ b, hooks: hooks4 }) {
   const go2 = (choice2) => () => void cx.act({ action: b.action, block: b.id, values: { choice: choice2, sha: b.sha } });
   const meta = [b.dir, b.touches, b.sha && `sha ${b.sha}`].filter(Boolean).join(" \xB7 ");
   const bar6 = h("div", "bar", null, ...["approve", "deny"].map((c) => btn(c, c === "deny" ? "bad" : "primary", void 0, b.action, { key: c, onClick: go2(c) })));
-  return h("div", "run", hooks4, h("pre", "cmd", null, b.command), h("p", "m", null, meta), bar6);
+  return h("div", "run as-surface", hooks4, h("pre", "cmd", null, b.command), h("p", "m", null, meta), bar6);
 }
 
 // react/src/kinds/scene.ts
@@ -2667,7 +2669,7 @@ function lane(l, cx) {
 function scene({ b, hooks: hooks4 }) {
   const cx = useContext18(Cx);
   const lanes2 = b.lanes ?? [];
-  return h("div", "scn", hooks4, b.label ? h("div", "sh", null, b.label) : null, lanes2.length ? h("ul", "scl", null, ...lanes2.map((l) => h("li", "", { key: l.id }, lane(l, cx)))) : null);
+  return h("div", "scn", hooks4, b.label ? h("div", "sh as-section-label", null, b.label) : null, lanes2.length ? h("ul", "scl", null, ...lanes2.map((l) => h("li", "", { key: l.id }, lane(l, cx)))) : null);
 }
 
 // react/src/kinds/screen.ts
@@ -2678,7 +2680,7 @@ function screen({ b, hooks: hooks4 }) {
   const cx = useContext19(Cx);
   const go2 = (m) => () => m.tap ? cx.tap(m.tap) : void cx.act({ action: m.action ?? "", values: m.values, confirm: m.confirm });
   const acts2 = (b.actions ?? []).flatMap((a) => a.menu ?? [a]).map((m) => act(m, "b-screen__actions", cx, urlOf(m.tap), urlOf(m.tap) ? void 0 : go2(m)));
-  const head4 = h("p", "tabh", null, h("span", "tw b-screen__title", null, b.title ?? ""), ...acts2);
+  const head4 = h("p", "tabh", null, h("span", "tw b-screen__title as-screen-label", null, b.title ?? ""), ...acts2);
   const attrs = { ...hooks4, "data-id": String(b.id) };
   const bs = b.blocks ?? [];
   const split = columns(b);
@@ -2724,7 +2726,7 @@ function secret2({ b, hooks: hooks4 }) {
   const input3 = h("input", "", { ...own3, onChange: (e) => setV(e.target.value), onKeyDown: enter });
   const k = h("span", "fk", null, b.label ?? b.name, b.set ? h("span", "set", null, "set \u2713") : null);
   const note2 = h("div", "ra", null, h("p", "m sn", null, "sent to the app only, never to the agent"), btn(sending ? "sending\u2026" : "send", "", void 0, b.action, { onClick: send4 }));
-  return h("div", "secret", hooks4, h("label", "fd", null, k, input3), note2);
+  return h("div", "secret as-surface", hooks4, h("label", "fd", null, k, input3), note2);
 }
 
 // react/src/kinds/section.ts
@@ -2733,7 +2735,7 @@ var SH = { needs: "r", working: "g" };
 function section({ b, hooks: hooks4 }) {
   const w = (b.header ?? "").split(" ")[0] ?? "";
   const k = GROUP[w] ?? w;
-  return h("section", "sec", hooks4, b.header ? h("h3", `sh ${SH[k] ?? ""}`, null, b.header) : null, ...kids2(b.blocks), b.footer ? h("p", "m foot", null, b.footer) : null);
+  return h("section", "sec", hooks4, b.header ? h("h3", `sh as-header-label ${SH[k] ?? ""}`, null, b.header) : null, ...kids2(b.blocks), b.footer ? h("p", "m foot", null, b.footer) : null);
 }
 
 // react/src/kinds/sidebar.ts
@@ -2965,20 +2967,20 @@ function stat({ b, hooks: hooks4 }) {
     const points2 = sp.map((v, x) => `${x},${10 - v / hi * 10}`).join(" ");
     const spark = h("svg", "spark", { viewBox: `0 0 ${sp.length - 1} 10`, preserveAspectRatio: "none", "aria-hidden": "true" }, h("polyline", "", { points: points2 }));
     const unit2 = i.unit ? [" ", h("small", "", null, i.unit)] : [];
-    return h("div", `st ${i.tone ?? ""}`, null, h("b", "b-stat__value", null, ticked(i.value, cx)), ...unit2, h("span", "m", null, i.label ?? ""), sp.length > 1 ? spark : null);
+    return h("div", `st as-surface ${i.tone ?? ""}`, null, h("b", "b-stat__value", null, ticked(i.value, cx)), ...unit2, h("span", "m", null, i.label ?? ""), sp.length > 1 ? spark : null);
   };
   return h("div", "stats", hooks4, ...(b.items ?? [b]).map(tile));
 }
 
 // react/src/kinds/steps.ts
-import { createElement as createElement14, useContext as useContext22 } from "react";
+import { createElement as createElement15, useContext as useContext22 } from "react";
 var WORD = { done: "done", now: "current", todo: "to do" };
 function stage(s, i, n, at2, cx) {
   const state3 = ["done", "now", "todo"][Math.sign(i - at2) + 1] ?? "todo";
   const tap = state3 === "done" ? s.tap ?? null : null;
   const url2 = urlOf(tap);
   const own3 = { "aria-label": `${s.label}, step ${i + 1} of ${n}, ${WORD[state3]}`, title: s.label };
-  const mark2 = h("span", "spr", { "aria-hidden": "true" }, h("i", "spm", null, i < at2 ? "\u2713" : String(i + 1)), h("span", "spk", null));
+  const mark2 = h("span", "spr", { "aria-hidden": "true" }, i < at2 ? h("i", "spm as-mark as-tint", { "data-mark": "done" }, "\u2713") : h("i", "spm", null, String(i + 1)), h("span", "spk", null));
   const sub = s.sub || (i === at2 ? `step ${i + 1} of ${n}` : "");
   const kids3 = [mark2, h("span", "spn", null, s.label), sub ? h("span", "sps", null, sub) : null];
   const pressed = tap && !url2 ? { "data-action": sends(tap), ...press(() => cx.tap(tap)) } : null;
@@ -2999,8 +3001,8 @@ function steps({ b, hooks: hooks4 }) {
   const n = list3.length;
   const end = b.done ? n : -1;
   const at2 = b.current != null ? list3.findIndex((s) => s.id === b.current) : end;
-  if (n ? at2 < 0 : !bars.length) return createElement14(Fallen, { b });
-  const title = b.title ? h("div", "sh", null, b.title) : null;
+  if (n ? at2 < 0 : !bars.length) return createElement15(Fallen, { b });
+  const title = b.title ? h("div", "sh as-section-label", null, b.title) : null;
   if (!n) return h("div", "pg", hooks4, title, h("div", bars.length > 1 ? "pgl rows" : "pgl", null, ...bars.map(bar2)));
   const cur = list3[at2];
   const tail = cur?.sub ? ` \xB7 ${cur.sub}` : "";
@@ -3577,7 +3579,7 @@ function table({ b, hooks: hooks4 }) {
   });
   const d2 = shows(v);
   const t = h("table", "", d2.ed ? { role: "grid" } : null, h("caption", "", null, b.title ?? "Table"), head3(v, d2), body(v, d2), foot(v, d2));
-  const cls = ["tbl", d2.sel > 0 ? "bulk" : "", b.edit || b.reorder ? "ed" : ""].filter(Boolean).join(" ");
+  const cls = ["tbl as-surface", d2.sel > 0 ? "bulk" : "", b.edit || b.reorder ? "ed" : ""].filter(Boolean).join(" ");
   return h("div", cls, { ...hooks4, ref: box }, ...bar3(v, d2), h("div", "tbw", { key: `w${st.gen}` }, t), sheet(v, d2));
 }
 
@@ -3827,7 +3829,7 @@ function draw2(b, r, ax, gesture, wires) {
     if (isSpan(out2)) show(out2);
     if (ax.z > 1) ht.addEventListener("pointerdown", (p) => p.stopImmediatePropagation(), { capture: true });
   });
-  return [h("div", "tmbb", { ref: hit, "aria-label": `${r.title}, Add a bar`, role: "button", tabIndex: -1 }), h("div", "tmgh st", { ref: ghost, ...vars({ ...home, y: 0 }) }), h("span", "tmtag", { ref: tag, ...vars({ o: 0, y: 0 }) })];
+  return [h("div", "tmbb", { ref: hit, "aria-label": `${r.title}, Add a bar`, role: "button", tabIndex: -1 }), h("div", "tmgh st as-surface", { ref: ghost, ...vars({ ...home, y: 0 }) }), h("span", "tmtag", { ref: tag, ...vars({ o: 0, y: 0 }) })];
 }
 function track2(b, r, ax, off, wires) {
   const L = lanes(r.bars);
@@ -3946,7 +3948,7 @@ function web({ b, hooks: hooks4 }) {
 var views3 = { button, card, chips, choice, composer, config, diagram, diff, editor, form, hero, images, import: import_, list: list2, media: media2, message, modal: modal2, nav, pages, prose, row: row2, run, scene, screen, secret: secret2, section, sheet: modal2, sidebar, stat, steps, table, text: text3, timeline: timeline2, tool, web };
 
 // react/src/island.ts
-import { createElement as createElement15, Suspense, useContext as useContext26, useLayoutEffect as useLayoutEffect11, useState as useState17 } from "react";
+import { createElement as createElement16, Suspense, useContext as useContext26, useLayoutEffect as useLayoutEffect11, useState as useState17 } from "react";
 function Mark({ on }) {
   useLayoutEffect11(() => {
     on(true);
@@ -3962,7 +3964,7 @@ function Isle({ b, attrs }) {
   const id = b.id ?? "";
   const emit = (name, values2) => b.events?.includes(name) ? void cx.act({ action: name, block: id, values: values2 ?? {} }) : cx.report({ what: "dropped", block: id, event: name });
   const style = { overflow: "hidden", aspectRatio: b.size?.aspect ?? void 0, width: b.size?.width ?? void 0, height: b.size?.height ?? void 0 };
-  const inner = C && createElement15(Boundary, { b, report: cx.report, fallback }, createElement15(Suspense, { fallback }, createElement15(Mark, { on: setLive }), createElement15(C, { props: b.props ?? {}, emit })));
+  const inner = C && createElement16(Boundary, { b, report: cx.report, fallback }, createElement16(Suspense, { fallback }, createElement16(Mark, { on: setLive }), createElement16(C, { props: b.props ?? {}, emit })));
   return h("div", "", { ...attrs, "data-fallback": C && live3 ? void 0 : "", style }, inner || fallback);
 }
 
@@ -3992,12 +3994,12 @@ function row4(f, cx) {
   const tap = f.tap;
   const pressed = tap ? press(() => cx.tap(tap)) : null;
   const sub = f.subtitle != null ? h("span", "rs b-row__subtitle", null, f.subtitle) : null;
-  return h("div", tap ? "row tap" : "row", pressed, h("span", "rm", null, h("span", "rt b-row__title", null, f.title), sub));
+  return h("div", tap ? "row tap" : "row", pressed, h("span", "rm", null, h("span", "rt b-row__title as-title-label", null, f.title), sub));
 }
 var said4 = (a, b) => b["type"] === "message" && a?.["type"] === "message" && a["role"] === b["role"] && a["name"] === b["name"];
 var kids2 = (bs) => {
   const all = Array.isArray(bs) ? bs.filter(isBlk2) : [];
-  return all.map((b, i) => createElement16(Block, { key: typeof b["id"] === "string" ? b["id"] : `~${i}`, b, cont: said4(all[i - 1], b) }));
+  return all.map((b, i) => createElement17(Block, { key: typeof b["id"] === "string" ? b["id"] : `~${i}`, b, cont: said4(all[i - 1], b) }));
 };
 function Fallen({ b }) {
   const cx = useContext27(Cx);
@@ -4024,19 +4026,19 @@ var Boundary = class extends Component {
 };
 var own2 = (t, b, attrs) => {
   const V = views3[t];
-  return V ? createElement16(V, { b, hooks: attrs }) : void 0;
+  return V ? createElement17(V, { b, hooks: attrs }) : void 0;
 };
 function Draw({ b, cont }) {
   const cx = useContext27(Cx);
-  if (isIsland(b)) return createElement16(Isle, { b, attrs: hooksOf(b, cx, false) });
-  if (core(b)) return own2(b.type, b, hooksOf(b, cx, false, cont)) ?? createElement16(Fallen, { b });
+  if (isIsland(b)) return createElement17(Isle, { b, attrs: hooksOf(b, cx, false) });
+  if (core(b)) return own2(b.type, b, hooksOf(b, cx, false, cont)) ?? createElement17(Fallen, { b });
   const K = cx.kinds[String(b["type"])];
   const act2 = (a) => cx.act({ ...a, block: typeof b["id"] === "string" ? b["id"] : null });
-  return K ? h("div", "", hooksOf(b, cx, false), createElement16(K, { block: { ...b, type: String(b["type"]) }, act: act2 })) : createElement16(Fallen, { b });
+  return K ? h("div", "", hooksOf(b, cx, false), createElement17(K, { block: { ...b, type: String(b["type"]) }, act: act2 })) : createElement17(Fallen, { b });
 }
 var Block = memo(function Block2({ b, cont = false }) {
   const cx = useContext27(Cx);
-  return createElement16(Boundary, { b, report: cx.report, fallback: createElement16(Fallen, { b }) }, createElement16(Draw, { b, cont }));
+  return createElement17(Boundary, { b, report: cx.report, fallback: createElement17(Fallen, { b }) }, createElement17(Draw, { b, cont }));
 });
 
 // react/src/view.ts
@@ -4054,7 +4056,7 @@ function BlocksView(p) {
   const dark = useSyncExternalStore(watch, () => matchMedia(DARK).matches, () => false);
   const s = p.look?.[p.mode === "dark" || p.mode !== "light" && dark ? "dark" : "light"];
   const style = s ? { ...s.tokens, colorScheme: s["color-scheme"] } : void 0;
-  return h("div", "b-view", { style }, createElement17(Cx.Provider, { value: cx }, createElement17(Block, { b: screen2 })), ask);
+  return h("div", "b-view", { style }, createElement18(Cx.Provider, { value: cx }, createElement18(Block, { b: screen2 })), ask);
 }
 export {
   Arrange,

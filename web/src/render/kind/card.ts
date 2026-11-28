@@ -6,7 +6,7 @@ import { btn, el, h } from "../dom.ts";
 import { ticked, tone } from "../text.ts";
 
 export function card(b: Card, c: Ctx): HTMLElement {
-  const k = el("div", `card ${b.tone ?? ""} k-${b.kind ?? ""}`);
+  const k = el("div", `card as-surface ${b.tone ?? ""} k-${b.kind ?? ""}`);
   k.dataset["id"] = b.id ?? "";
   const fold = b.fold ?? null;
   const main = fold?.main ?? null;
@@ -28,7 +28,7 @@ export function card(b: Card, c: Ctx): HTMLElement {
     k.append(line);
     if (shut) return k;
   }
-  const head = h("div", "ch", h("b", "b-card__title", b.title ?? ""));
+  const head = h("div", "ch", h("b", "b-card__title as-title-label", b.title ?? ""));
   if (b.badge) head.append(" ", h("span", `tag b-card__badge ${b.badge.tone ?? ""}`, ticked(b.badge.text)));
   if (b.meta) head.append(" ", h("span", "m", ticked(b.meta)));
   if (b.title || b.badge) k.append(head);

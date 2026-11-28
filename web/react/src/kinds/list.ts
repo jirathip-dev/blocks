@@ -1,4 +1,4 @@
-import { useContext, useLayoutEffect, useRef } from "react";
+import { createContext, createElement, useContext, useLayoutEffect, useRef } from "react";
 import { fill, hits, type List, said } from "../../../src/core/index.ts";
 import { list as rules } from "../../../src/core/kind/list.ts";
 import { gestured } from "../../../src/gesture.ts";
@@ -9,6 +9,8 @@ import { word } from "../fields/_view.ts";
 import { h } from "../h.ts";
 
 const rec = (v: unknown): v is Record<string, unknown> => typeof v === "object" && v !== null;
+/// The rows a list draws as its own tiles: a row among them wears the surface finish.
+export const Tiles = createContext<readonly unknown[]>([]);
 
 export function list({ b, hooks }: V<List>) {
   const cx = useContext(Cx);
@@ -52,5 +54,5 @@ export function list({ b, hooks }: V<List>) {
   const rows = s?.q ? b.rows.filter((r) => hits(said(r), s.q)) : b.rows;
   const none = s?.q && !s.n ? h("div", "lsm sm", null, fill(word(cx, "nomatch"), { q: s.q }), " ", btn(word(cx, "clear"), "", undefined, undefined, { onClick: () => cx.put(s.name, "") })) : null;
   const empty = !b.rows.length && b.empty ? h("p", "empty", null, b.empty) : null;
-  return h("div", "list", { ...hooks, ref }, empty, ...kids(rows), none);
+  return h("div", "list", { ...hooks, ref }, empty, createElement(Tiles.Provider, { value: rows }, ...kids(rows)), none);
 }

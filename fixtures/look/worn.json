@@ -1,0 +1,191 @@
+{
+  "kinds": {
+    "boxplot": [
+      "button",
+      "surface"
+    ],
+    "button": [
+      "button",
+      "button-label"
+    ],
+    "card": [
+      "surface",
+      "title-label"
+    ],
+    "chart": [
+      "button",
+      "surface"
+    ],
+    "chips": [
+      "button",
+      "chip-label"
+    ],
+    "choice": [
+      "button",
+      "surface"
+    ],
+    "composer": [
+      "button"
+    ],
+    "config": [
+      "surface"
+    ],
+    "diagram": [],
+    "diff": [],
+    "editor": [],
+    "form": [
+      "button",
+      "surface"
+    ],
+    "heat": [
+      "button",
+      "surface"
+    ],
+    "hero": [
+      "button"
+    ],
+    "images": [],
+    "import": [
+      "button",
+      "section-label"
+    ],
+    "island": [
+      "title-label"
+    ],
+    "lines": [
+      "button"
+    ],
+    "list": [],
+    "media": [],
+    "message": [],
+    "modal": [
+      "button"
+    ],
+    "nav": [],
+    "pages": [
+      "button"
+    ],
+    "plot": [
+      "surface"
+    ],
+    "prose": [],
+    "row": [
+      "button",
+      "surface",
+      "title-label"
+    ],
+    "run": [
+      "button",
+      "surface"
+    ],
+    "scene": [
+      "section-label"
+    ],
+    "screen": [
+      "screen-label"
+    ],
+    "secret": [
+      "button",
+      "surface"
+    ],
+    "section": [
+      "header-label"
+    ],
+    "sheet": [
+      "button"
+    ],
+    "sidebar": [
+      "button"
+    ],
+    "stat": [
+      "surface"
+    ],
+    "steps": [
+      "mark",
+      "section-label",
+      "tint"
+    ],
+    "table": [
+      "surface"
+    ],
+    "text": [],
+    "timeline": [],
+    "toast": [],
+    "tool": [],
+    "web": []
+  },
+  "values": {
+    "buttons": {
+      "filled": [
+        "button"
+      ],
+      "plain": []
+    },
+    "fills": {
+      "outline": [
+        "tint"
+      ],
+      "solid": [
+        "tint"
+      ],
+      "tint": []
+    },
+    "labels": {
+      "back": [
+        "back-label"
+      ],
+      "button": [
+        "button-label"
+      ],
+      "chip": [
+        "chip-label"
+      ],
+      "group": [
+        "group-label"
+      ],
+      "header": [
+        "header-label"
+      ],
+      "kind": [
+        "kind-label"
+      ],
+      "picked": [
+        "picked-label"
+      ],
+      "said": [
+        "said-label"
+      ],
+      "screen": [
+        "screen-label"
+      ],
+      "section": [
+        "section-label"
+      ],
+      "title": [
+        "title-label"
+      ]
+    },
+    "marks": {
+      "symbols": [],
+      "text": [
+        "mark"
+      ]
+    },
+    "sections": {
+      "quiet": [
+        "header-label",
+        "section-label"
+      ],
+      "title": []
+    },
+    "surface": {
+      "dashed": [
+        "surface"
+      ],
+      "glass": [],
+      "solid": [
+        "surface"
+      ]
+    }
+  }
+}

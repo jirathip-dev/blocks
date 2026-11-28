@@ -26,7 +26,7 @@ function lane(l: Lane, c: Ctx): HTMLElement {
 
 export function scene(b: Scene, c: Ctx): HTMLElement {
   const root = el("div", "scn");
-  if (b.label) root.append(h("div", "sh", b.label));
+  if (b.label) root.append(h("div", "sh as-section-label", b.label));
   const lanes = b.lanes ?? [];
   if (lanes.length) root.append(h("ul", "scl", ...lanes.map((l) => h("li", "", lane(l, c)))));
   return root;

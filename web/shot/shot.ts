@@ -10,7 +10,7 @@ import { at, blocks } from "./at.ts";
 import { leaks, pick } from "./file.ts";
 import { slide } from "./slide.ts";
 import { gesture } from "./gesture.ts";
-import { declared, measure } from "./look.ts";
+import { declared, measure, wore } from "./look.ts";
 
 const BASE = "http://blocks.test/";
 const BUDGET_MS = 16.7;
@@ -117,7 +117,7 @@ const patched = (patch) => {
   return { longest_patch_ms: sorted.at(-1), p99_patch_ms: sorted[Math.ceil(sorted.length * 0.99) - 1] };
 };
 
-/// Draws `screen` in WebKit in `scheme`, runs `steps`, and gives each shot's PNG and tree, the report, what the probes saw and the failed checks.
+/// Draws `screen` in WebKit in `scheme`, runs `steps`, and gives each shot's PNG and tree, the report, what the probes saw, the failed checks and, with `look`, each shot's whole page and its finishes' rects.
 export async function shot({ screen, steps = [], name = "shot", size = "390x844", css = [], scripts = [], kinds = [], expect, ids, check = false, probes = false, scheme = "light", look = false, adapter = "html", browser }) {
   const [width, height] = size.split("x").map(Number);
   const own = browser ?? (await webkit.launch());
@@ -140,7 +140,7 @@ export async function shot({ screen, steps = [], name = "shot", size = "390x844"
     await page.waitForFunction(() => window.B);
     const report = { shots: [], sent: [], dropped: [], timings: { first_paint_ms: await page.evaluate(boot, screen), steps_ms: [] } };
     if (steps.some((s) => s.wait)) await page.clock.install({ time: 0 }).then(() => page.clock.pauseAt(1000));
-    const pngs = {}, trees = {}, seen = [], faults = [], frames = [];
+    const pngs = {}, trees = {}, seen = [], faults = [], frames = [], parts = {};
     const script = steps.some((s) => s.shot) ? steps : [...steps, { shot: { name } }];
     for (let i = 0; i < script.length; i++) {
       const s = script[i];
@@ -169,8 +169,7 @@ export async function shot({ screen, steps = [], name = "shot", size = "390x844"
       await (s.gesture || s.refuse ? gesture(page, s) : s.file ? pick(page, s.file, report.dropped) : s.slide ? slide(page, s.slide, report.dropped) : s.wait ? page.clock.runFor(s.wait.ms) : null);
       if (s.shot) {
         const n = s.shot.name;
-        pngs[n] = await page.screenshot();
-        trees[n] = await page.evaluate(() => window.h.dump());
+        [pngs[n], trees[n], parts[n]] = [await page.screenshot(), await page.evaluate(() => window.h.dump()), await wore(page, report, look)];
         report.shots.push(n);
         const f = await page.evaluate(() => (document.activeElement instanceof HTMLInputElement ? `${document.activeElement.name}@${document.activeElement.selectionStart}` : ""));
         if (f) (report.focus ??= {})[n] = f;
@@ -192,7 +191,7 @@ export async function shot({ screen, steps = [], name = "shot", size = "390x844"
     const patch = await page.evaluate(() => window.h.patch);
     if (patch.length) Object.assign(report.timings, patched(patch));
     faults.unshift(...seen.map((s) => `${s.shot}: ${s.rule} ${s.at}: ${s.detail}`), ...leaks(report.sent));
-    return { report, pngs, trees, seen, faults };
+    return { report, pngs, trees, seen, faults, parts };
   } finally {
     await page.close();
     if (!browser) await own.close();

@@ -185,7 +185,7 @@ pub(super) fn draw(w: &mut W<'_>, b: &Value) {
     let Ok(h) = serde_json::from_value::<Heat>(b.clone()) else {
         return fallback(w, b);
     };
-    w.open_block("div", &format!("card heat{}", tone(&h)), b, &[]);
+    w.open_block("div", &format!("card heat as-surface{}", tone(&h)), b, &[]);
     w.el("div", "hmt", &h.title);
     readout(w, &h);
     if h.drawn() {

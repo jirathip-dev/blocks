@@ -5901,6 +5901,18 @@
         },
         "timings": {
           "$ref": "#/$defs/Timings"
+        },
+        "worn": {
+          "additionalProperties": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "type": [
+            "object",
+            "null"
+          ]
         }
       },
       "required": [

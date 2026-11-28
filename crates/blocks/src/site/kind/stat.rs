@@ -10,7 +10,7 @@ pub(super) fn draw(w: &mut W<'_>, b: &Value) {
         .iter()
         .filter(|i| i.is_object())
     {
-        w.open("div", &format!("st {}", shown(i.get("tone"))), &[]);
+        w.open("div", &format!("st as-surface {}", shown(i.get("tone"))), &[]);
         ticked(w, "b", "b-stat__value", i.get("value"));
         if let Some(u) = get(i, "unit").filter(|u| !u.is_empty()) {
             w.raw(" ");

@@ -9,6 +9,8 @@ use crate::{
     Queued, Row, Screen, Tap, Text, Tone,
 };
 
+mod worn;
+
 pub(super) fn files(root: &Path, _: &Value) -> std::io::Result<Files> {
     let sample = serde_json::to_string_pretty(&sample())?;
     let mut out: Files = vec![
@@ -30,6 +32,8 @@ pub(super) fn files(root: &Path, _: &Value) -> std::io::Result<Files> {
     out.extend(trees(root)?);
     out.extend(html(root)?);
     out.extend(super::fields::files(root)?);
+    let worn = worn::file(&out)?;
+    out.push(worn);
     Ok(out)
 }
 

@@ -12,7 +12,7 @@ function state(p: Place, cx: Ctx) {
   const note = p.count?.note;
   const body = p.timer
     ? [h("span", "", { "aria-hidden": "true" }, "⧗"), h("span", "", null, h("span", "dgl", null, p.name), h("span", "dgv", null, p.timer.value))]
-    : [h("span", "dgl", null, p.name), h("span", "dgc", null, p.count?.n ?? "", note ? h("small", note.cls, null, note.text) : null)];
+    : [h("span", p.cls.split(" ").includes("picked") ? "dgl as-picked-label" : "dgl", null, p.name), h("span", "dgc", null, p.count?.n ?? "", note ? h("small", note.cls, null, note.text) : null)];
   const tap = p.tap;
   const own = { key: p.id, "aria-label": p.aria, title: p.title, style: { left: p.at.x, top: p.at.y, width: p.at.w, height: p.at.h } };
   return h("div", `${p.cls}${tap ? " tap" : ""}`, { ...own, ...(isTap(tap) ? press(() => cx.tap(tap)) : null) }, ...body);

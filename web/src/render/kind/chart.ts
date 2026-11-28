@@ -188,7 +188,7 @@ const inner = (c: Chart) => tag("div", "cht", c.title) + (c.chart === "donut" ? 
 
 export function chart(b: Chart, ctx: Ctx): HTMLElement {
   const root = document.createElement("div");
-  root.className = "card chart";
+  root.className = "card chart as-surface";
   let now: Chart = b;
   const keys = () => (now.chart === "donut" ? slices(now).map((p) => p.name) : now.x);
   const draw = () => {

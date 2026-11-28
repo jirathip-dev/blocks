@@ -215,7 +215,7 @@ class Play extends HTMLElement {
     const prev = h(
       "section",
       "pg-prev",
-      h("h3", "sh", "Preview"),
+      h("h3", "sh as-section-label", "Preview"),
       h("div", "pg-tools", seg("look", named, view.state.look, (v) => void view.set("look", v)).el, seg("", [["light", "light"], ["dark", "dark"]], "light", (v) => void view.set("mode", v)).el, width.el),
       note,
       view.stage,

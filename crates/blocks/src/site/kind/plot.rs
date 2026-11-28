@@ -131,7 +131,7 @@ pub(super) fn draw(w: &mut W<'_>, b: &Value) {
     let (x0, x1, y0, y1) = (d.x.0, d.x.1, d.y.0, d.y.1);
     let xf = |v: f64| (v - x0) / (x1 - x0);
     let yf = |v: f64| 1.0 - (v - y0) / (y1 - y0);
-    w.open_block("div", "card plot", b, &[]);
+    w.open_block("div", "card plot as-surface", b, &[]);
     w.el("div", "plt", &p.title);
     legend(w, &p, &d);
     w.open("div", "plg", &[]);

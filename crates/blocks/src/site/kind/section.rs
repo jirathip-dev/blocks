@@ -16,7 +16,7 @@ pub(super) fn draw(w: &mut W<'_>, b: &Value) {
             "working" => "g",
             _ => "",
         };
-        w.el("h3", &format!("sh {sh}"), head);
+        w.el("h3", &format!("sh as-header-label {sh}"), head);
     }
     kids(w, list(b, "blocks"));
     if let Some(f) = get(b, "footer").filter(|f| !f.is_empty()) {

@@ -406,6 +406,6 @@ export function table({ b, hooks }: V<Table>) {
   });
   const d = shows(v);
   const t = h("table", "", d.ed ? { role: "grid" } : null, h("caption", "", null, b.title ?? "Table"), head(v, d), body(v, d), foot(v, d));
-  const cls = ["tbl", d.sel > 0 ? "bulk" : "", b.edit || b.reorder ? "ed" : ""].filter(Boolean).join(" ");
+  const cls = ["tbl as-surface", d.sel > 0 ? "bulk" : "", b.edit || b.reorder ? "ed" : ""].filter(Boolean).join(" ");
   return h("div", cls, { ...hooks, ref: box }, ...bar(v, d), h("div", "tbw", { key: `w${st.gen}` }, t), sheet(v, d));
 }

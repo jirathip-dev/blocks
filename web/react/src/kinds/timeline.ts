@@ -123,7 +123,7 @@ function draw(b: Timeline, r: TimeRow, ax: Axis, gesture: Gesture, wires: Wire[]
     if (isSpan(out)) show(out);
     if (ax.z > 1) ht.addEventListener("pointerdown", (p) => p.stopImmediatePropagation(), { capture: true });
   });
-  return [h("div", "tmbb", { ref: hit, "aria-label": `${r.title}, Add a bar`, role: "button", tabIndex: -1 }), h("div", "tmgh st", { ref: ghost, ...vars({ ...home, y: 0 }) }), h("span", "tmtag", { ref: tag, ...vars({ o: 0, y: 0 }) })];
+  return [h("div", "tmbb", { ref: hit, "aria-label": `${r.title}, Add a bar`, role: "button", tabIndex: -1 }), h("div", "tmgh st as-surface", { ref: ghost, ...vars({ ...home, y: 0 }) }), h("span", "tmtag", { ref: tag, ...vars({ o: 0, y: 0 }) })];
 }
 
 function track(b: Timeline, r: TimeRow, ax: Axis, off: Set<number>, wires: Wire[]): ReactNode {

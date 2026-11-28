@@ -101,7 +101,7 @@ pub(super) fn draw(w: &mut W<'_>, b: &Value) {
     };
     let n = t.rows.iter().filter(|r| !r.is_group()).count();
     let ed = t.edit.is_some() || t.reorder.is_some();
-    w.open_block("div", if ed { "tbl ed" } else { "tbl" }, b, &[]);
+    w.open_block("div", if ed { "tbl as-surface ed" } else { "tbl as-surface" }, b, &[]);
     w.open("div", "tbh", &[]);
     if let Some(title) = &t.title {
         w.el("b", "tbt", title);

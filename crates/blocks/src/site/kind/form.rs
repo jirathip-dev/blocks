@@ -6,7 +6,7 @@ pub(super) fn draw(w: &mut W<'_>, b: &Value) {
     let cls = if b.get("submit").is_some_and(Value::is_object) {
         "form say"
     } else {
-        "form"
+        "form as-surface"
     };
     form_of(w, b, cls, false);
 }

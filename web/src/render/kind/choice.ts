@@ -4,7 +4,7 @@ import { btn, el, h } from "../dom.ts";
 import { ticked } from "../text.ts";
 
 export function choice(b: Choice, c: Ctx): HTMLElement {
-  const s = el("div", "choice");
+  const s = el("div", "choice as-surface");
   const opts = [...b.options].sort((x, y) => Number(y.value === b.recommended) - Number(x.value === b.recommended));
   for (const o of opts) {
     const x = btn(`${o.label}${o.value === b.recommended ? " · recommended" : ""}`, "pick", undefined, b.action);

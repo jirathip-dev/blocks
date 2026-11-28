@@ -2408,12 +2408,14 @@ public struct Report: Codable, Equatable, Sendable {
     public var sent: [Action]
     public var shots: [String]
     public var timings: Timings
+    public var worn: [String: [String]]?
 
-    public init(dropped: [String], sent: [Action], shots: [String], timings: Timings) {
+    public init(dropped: [String], sent: [Action], shots: [String], timings: Timings, worn: [String: [String]]? = nil) {
         self.dropped = dropped
         self.sent = sent
         self.shots = shots
         self.timings = timings
+        self.worn = worn
     }
 }
 

@@ -64,7 +64,7 @@ fn lane(w: &mut W<'_>, l: &Value) {
 pub(super) fn draw(w: &mut W<'_>, b: &Value) {
     w.open_block("div", "scn", b, &[]);
     if let Some(l) = get(b, "label").filter(|l| !l.is_empty()) {
-        w.el("div", "sh", l);
+        w.el("div", "sh as-section-label", l);
     }
     let lanes = list(b, "lanes");
     if !lanes.is_empty() {

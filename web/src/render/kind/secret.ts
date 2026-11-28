@@ -22,5 +22,5 @@ export function secret(b: Secret, c: Ctx): HTMLElement {
     e.preventDefault();
     send();
   });
-  return h("div", "secret", h("label", "fd", k, i), h("div", "ra", h("p", "m sn", "sent to the app only, never to the agent"), go));
+  return h("div", "secret as-surface", h("label", "fd", k, i), h("div", "ra", h("p", "m sn", "sent to the app only, never to the agent"), go));
 }

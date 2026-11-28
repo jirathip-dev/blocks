@@ -10,7 +10,7 @@ export type Worn = Scheme | (Pair & { style?: Scale });
 
 /// A tappable row of a sheet's list, ticked when `on`.
 export const row = (label: string, f: () => void, on = false) => {
-  const r = h("div", `row tap${on ? " on" : ""}`, h("span", "rm", h("span", "rt", `${on ? "✓ " : ""}${label}`)));
+  const r = h("div", `row tap as-surface${on ? " on" : ""}`, h("span", "rm", h("span", "rt as-title-label", `${on ? "✓ " : ""}${label}`)));
   r.tabIndex = 0;
   r.setAttribute("role", "button");
   r.onclick = f;

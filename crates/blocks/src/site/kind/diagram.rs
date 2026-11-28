@@ -415,7 +415,7 @@ fn node(w: &mut W<'_>, g: &Chart, b: &Value, id: &String, p: Box, counts: &HashM
         let aria = format!("{name}, {count} issue{plural}{}", if opt { ", optional" } else { "" });
         at.push(("aria-label", &aria));
         w.open("div", &cls, &at);
-        w.el("span", "dgl", name);
+        w.el("span", if cls.contains(" picked") { "dgl as-picked-label" } else { "dgl" }, name);
         w.open("span", "dgc", &[]);
         w.text(&count.to_string());
         if opt {

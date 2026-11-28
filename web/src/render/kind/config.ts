@@ -6,7 +6,7 @@ import { btn, el, h } from "../dom.ts";
 const focused = new Set<string>();
 
 export function config(b: Form, c: Ctx): HTMLElement {
-  const f = el("div", "form cfg");
+  const f = el("div", "form cfg as-surface");
   f.dataset["id"] = b.id ?? "";
   const key = `draft:${c.screen}:${String(b.id)}:`;
   const live = (d: Drawn) => {

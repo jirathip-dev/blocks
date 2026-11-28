@@ -11,7 +11,7 @@ export function screen({ b, hooks }: V<Screen>) {
   const cx = useContext(Cx);
   const go = (m: NonNullable<Screen["actions"]>[number]) => () => (m.tap ? cx.tap(m.tap) : void cx.act({ action: m.action ?? "", values: m.values, confirm: m.confirm }));
   const acts = (b.actions ?? []).flatMap((a) => a.menu ?? [a]).map((m) => act(m, "b-screen__actions", cx, urlOf(m.tap), urlOf(m.tap) ? undefined : go(m)));
-  const head = h("p", "tabh", null, h("span", "tw b-screen__title", null, b.title ?? ""), ...acts);
+  const head = h("p", "tabh", null, h("span", "tw b-screen__title as-screen-label", null, b.title ?? ""), ...acts);
   const attrs = { ...hooks, "data-id": String(b.id) };
   const bs = b.blocks ?? [];
   const split = columns(b);

@@ -90,7 +90,7 @@ function legend(b: Heat): HTMLElement {
 }
 
 export function heat(b: Heat, ctx: Ctx): HTMLElement {
-  const root = h("div", `card heat${b.tone && TONES.includes(b.tone) ? ` hk-${b.tone}` : ""}`, h("div", "hmt", b.title));
+  const root = h("div", `card heat as-surface${b.tone && TONES.includes(b.tone) ? ` hk-${b.tone}` : ""}`, h("div", "hmt", b.title));
   const o = h("div", "hmo");
   o.setAttribute("aria-live", "polite");
   root.append(o);

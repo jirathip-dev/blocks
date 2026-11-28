@@ -132,7 +132,7 @@ function mapping(x: X): HTMLElement {
   }
   const skip = v.extra.length ? w("imSkip", { list: v.extra.join(", ") }) : "";
   const sum = h("p", "imc", w("imSum", { n: v.got, m: x.b.columns.length }) + (skip ? ` · ${skip}` : ""), press(w("imChange"), () => ((st.open = true), x.draw()), !live));
-  return h("div", `imm${v.missing ? "" : " ok"}${st.open ? " open" : ""}`, h("h4", "sh", w("imCols")), sum, ul, ...(skip ? [h("span", "m", skip)] : []));
+  return h("div", `imm${v.missing ? "" : " ok"}${st.open ? " open" : ""}`, h("h4", "sh as-section-label", w("imCols")), sum, ul, ...(skip ? [h("span", "m", skip)] : []));
 }
 
 function line(x: X, r: ImportRow, role: (c: ImportColumn) => string): HTMLElement[] {
@@ -150,7 +150,7 @@ function line(x: X, r: ImportRow, role: (c: ImportColumn) => string): HTMLElemen
 }
 
 function rows(x: X): HTMLElement {
-  const { st, v, w } = x, cols = x.b.columns, live = v.phase === "review", t = h("div", "imt", h("h4", "sh", w("imPreview")));
+  const { st, v, w } = x, cols = x.b.columns, live = v.phase === "review", t = h("div", "imt", h("h4", "sh as-section-label", w("imPreview")));
   if (v.bad.length) {
     const all = press(w("imAll", { n: v.sheet?.file.rows ?? 0 }), () => ((st.show = "all"), x.draw()), !live);
     const bad = press(w("imErrs", { n: v.bad.length }), () => ((st.show = "errors"), x.draw()), !live, "bad");
@@ -200,7 +200,7 @@ export function draw(box: HTMLElement, b: Import, c: Ctx): void {
     box.classList.toggle("busy", wait);
     if (wait) box.setAttribute("aria-busy", "true");
     else box.removeAttribute("aria-busy");
-    const head = h("div", "imh", h("h3", "sh", b.title));
+    const head = h("div", "imh", h("h3", "sh as-section-label", b.title));
     if (b.template && phase !== "done" && phase !== "off") head.append(link(x.w("imTemplate"), b.template, `${x.w("imTemplate")}: ${b.title}`));
     const errs = b.error && phase !== "up" && phase !== "reading" ? [h("p", "fe", b.error)] : [];
     if (phase === "done") box.replaceChildren(head, ...(x.v.sheet ? [fileLine(x)] : []), done(x));

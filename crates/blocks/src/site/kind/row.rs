@@ -25,8 +25,9 @@ fn figure(w: &mut W<'_>, f: &Value) {
 }
 
 pub(super) fn draw(w: &mut W<'_>, b: &Value) {
+    let tile = std::mem::take(&mut w.listed);
     if list(b, "rounds").is_empty() {
-        row_of(w, b, true);
+        row_of(w, b, Some(tile));
     } else {
         rounds::row(w, b);
     }
@@ -37,7 +38,7 @@ pub(super) fn face(w: &mut W<'_>, b: &Value, sub: bool) {
         figure(w, f);
     }
     w.open("span", "rm", &[]);
-    w.el("span", "rt b-row__title", &shown(b.get("title")));
+    w.el("span", "rt b-row__title as-title-label", &shown(b.get("title")));
     badge(w, "b-row__badge", b.get("badge"));
     if let Some(sub) = b.get("subtitle").filter(|v| sub && !v.is_null()) {
         let cls = format!("rs b-row__subtitle {}", toned(Some(sub)).1);
@@ -64,7 +65,9 @@ pub(super) fn classes(b: &Value) -> String {
     )
 }
 
-pub(super) fn row_of(w: &mut W<'_>, b: &Value, hooked: bool) {
+pub(super) fn row_of(w: &mut W<'_>, b: &Value, root: Option<bool>) {
+    let hooked = root.is_some();
+    let tile = if root == Some(true) { " as-surface" } else { "" };
     let mut cls = classes(b);
     let swipe = list(b, "swipe");
     let go = match b.get("tap") {
@@ -93,10 +96,10 @@ pub(super) fn row_of(w: &mut W<'_>, b: &Value, hooked: bool) {
         attrs.extend(sends(b.get("tap")).map(|a| ("data-action", a)));
     }
     if !swipe.is_empty() && hooked {
-        w.open_block("div", "rw", b, &[]);
+        w.open_block("div", &format!("rw{tile}"), b, &[]);
     }
     if own {
-        w.open_block(tag, &cls, b, &attrs);
+        w.open_block(tag, &format!("{cls}{tile}"), b, &attrs);
     } else {
         w.open(tag, &cls, &attrs);
     }

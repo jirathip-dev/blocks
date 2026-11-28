@@ -7,7 +7,7 @@ pick!(
 
 const TEXT: &[Rule] = &[
     Rule::on(Finish::Mark, "width:auto;font-size:0"),
-    Rule::on(Finish::Mark, "content:\"done\";font-size:var(--fs-meta)").at(At::After),
+    Rule::on(Finish::Mark, "content:attr(data-mark);font-size:var(--fs-meta)").at(At::After),
 ];
 
 pub(super) const AXIS: Axis = Axis {

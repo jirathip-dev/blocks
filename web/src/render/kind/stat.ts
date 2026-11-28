@@ -7,7 +7,7 @@ export function stat(b: Stat): HTMLElement {
   for (const i of b.items ?? [b]) {
     const sp = i.spark ?? [];
     const hi = Math.max(1, ...sp);
-    const tile = h("div", `st ${i.tone ?? ""}`, h("b", "b-stat__value", ticked(i.value)));
+    const tile = h("div", `st as-surface ${i.tone ?? ""}`, h("b", "b-stat__value", ticked(i.value)));
     if (i.unit) tile.append(" ", h("small", "", i.unit));
     tile.append(h("span", "m", i.label ?? ""));
     const points = sp.map((v, x) => `${x},${10 - (v / hi) * 10}`).join(" ");

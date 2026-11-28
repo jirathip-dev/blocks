@@ -39,7 +39,7 @@ export function row(f: Fallback, cx: Ctx): ReactNode {
   const tap = f.tap;
   const pressed = tap ? press(() => cx.tap(tap)) : null;
   const sub = f.subtitle != null ? h("span", "rs b-row__subtitle", null, f.subtitle) : null;
-  return h("div", tap ? "row tap" : "row", pressed, h("span", "rm", null, h("span", "rt b-row__title", null, f.title), sub));
+  return h("div", tap ? "row tap" : "row", pressed, h("span", "rm", null, h("span", "rt b-row__title as-title-label", null, f.title), sub));
 }
 
 const said = (a: Blk | undefined, b: Blk) => b["type"] === "message" && a?.["type"] === "message" && a["role"] === b["role"] && a["name"] === b["name"];

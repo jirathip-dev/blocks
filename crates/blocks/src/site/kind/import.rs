@@ -11,7 +11,7 @@ pub(super) fn draw(w: &mut W<'_>, b: &Value) {
     let title = get(b, "title").unwrap_or_default();
     w.open_block("section", "im", b, &[]);
     w.open("div", "imh", &[]);
-    w.el("h3", "sh", title);
+    w.el("h3", "sh as-section-label", title);
     if let Some(t) = b.get("template") {
         let name = format!("{}: {title}", word("imTemplate"));
         let file = get(t, "name").unwrap_or_default();

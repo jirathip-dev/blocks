@@ -95,7 +95,7 @@ function inner(p: Plot, d: PlotDrawn): string {
 
 export function plot(b: Plot): HTMLElement {
   const root = document.createElement("div");
-  root.className = "card plot";
+  root.className = "card plot as-surface";
   const d = drawn(b);
   root.replaceChildren(...nodes(inner(b, d)));
   shapes.set(root, shape(b, d));

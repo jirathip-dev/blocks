@@ -131,7 +131,7 @@ function draw(b: Timeline, r: TimeRow, ax: Axis, c: Ctx, lane: HTMLElement, gest
   hit.setAttribute("aria-label", `${r.title}, Add a bar`);
   hit.setAttribute("role", "button");
   const home = { o: 0, d: 1 };
-  const ghost = vars(el("div", "tmgh st"), { ...home, y: 0 });
+  const ghost = vars(el("div", "tmgh st as-surface"), { ...home, y: 0 });
   const tag = vars(el("span", "tmtag"), { o: 0, y: 0 });
   lane.append(hit, ghost, tag);
   let from: string | null = null;

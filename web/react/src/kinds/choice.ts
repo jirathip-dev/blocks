@@ -21,5 +21,5 @@ export function choice({ b, hooks }: V<Choice>) {
   const input = h("input", "", { name: "other", value: v, placeholder: other?.placeholder ?? "other…", autoComplete: "off", "data-draft": draft, onChange: (e: { target: { value: string } }) => setV(e.target.value) });
   const form = other ? h("form", "other", { onSubmit: submit }, input, btn("send", "", undefined, b.action, { type: "submit" })) : null;
   const d = b.default;
-  return h("div", "choice", hooks, ...picks, d ? h("p", "m", null, ticked({ until: d.until, label: d.label }, cx)) : null, form);
+  return h("div", "choice as-surface", hooks, ...picks, d ? h("p", "m", null, ticked({ until: d.until, label: d.label }, cx)) : null, form);
 }

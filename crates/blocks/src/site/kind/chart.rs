@@ -423,7 +423,7 @@ pub(super) fn draw(w: &mut W<'_>, b: &Value) {
     let Ok(c) = serde_json::from_value::<Chart>(b.clone()) else {
         return fallback(w, b);
     };
-    w.open_block("div", "card chart", b, &[]);
+    w.open_block("div", "card chart as-surface", b, &[]);
     w.el("div", "cht", &c.title);
     if c.chart == ChartKind::Donut {
         donut(w, &c, b);

@@ -256,7 +256,7 @@ export type Prose = { id?: string | null; parts: Part[]; show?: Expr | null; str
 
 export type Queued = { q: number; text: string };
 
-export type Report = { dropped: string[]; sent: Action[]; shots: string[]; timings: Timings };
+export type Report = { dropped: string[]; sent: Action[]; shots: string[]; timings: Timings; worn?: Record<string, string[]> | null };
 
 export type Role = "agent" | "owner" | "system";
 

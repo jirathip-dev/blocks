@@ -186,6 +186,7 @@ impl Live {
                 longest_patch_ms: None,
                 p99_patch_ms: None,
             },
+            worn: None,
         };
         let run = Run {
             report,

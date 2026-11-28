@@ -72,7 +72,7 @@ function table(p: Boxplot): HTMLElement {
 }
 
 export function boxplot(b: Boxplot, ctx: Ctx): HTMLElement {
-  const root = h("div", "card chart bxp");
+  const root = h("div", "card chart bxp as-surface");
   const n = b.boxes.length;
   const draw = (selected: string | null | undefined) => {
     const at = b.boxes.findIndex((x) => x.name === selected);

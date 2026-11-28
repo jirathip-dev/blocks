@@ -13,7 +13,7 @@ pub(super) fn fallback_as(w: &mut W<'_>, b: &Value, tag: &str, attrs: &[(&str, &
         for k in ["subtitle", "tap"] {
             r.extend(f.and_then(|f| f.get(k)).map(|v| (k.into(), v.clone())));
         }
-        super::row::row_of(w, &Value::Object(r), false);
+        super::row::row_of(w, &Value::Object(r), None);
     }
     super::kids(w, list(b, "blocks"));
     w.close(tag);

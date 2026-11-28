@@ -3,7 +3,7 @@ use serde_json::Value;
 use crate::site::write::{fields, get, on, shown, Go, W};
 
 pub(super) fn draw(w: &mut W<'_>, b: &Value) {
-    w.open_block("div", "secret", b, &[]);
+    w.open_block("div", "secret as-surface", b, &[]);
     let name = shown(b.get("name"));
     let f = w.post(b.get("id"), &shown(b.get("action")), &fields(&[b.get("values")]));
     let set = on(b, "set");

@@ -123,15 +123,15 @@ var defaultStyle = {
 };
 var rules = {
   type: { "default": ':root{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}', "mono": "", "serif": ":root{font-family:ui-serif,Georgia,Cambria,serif}" },
-  surface: { "glass": "", "dashed": ":is(.card,.st,.list>.row,.list>.rw,.form:not(.say),.choice,.secret,.run,.tbl){border-style:dashed}", "solid": ":is(.card,.st,.list>.row,.list>.rw,.form:not(.say),.choice,.secret,.run,.tbl){border-width:2px}" },
-  fills: { "tint": "", "outline": ".chips button.on,.spi.done .spm{background:none;color:var(--l);box-shadow:inset 0 0 0 1px var(--l)}", "solid": "" },
+  surface: { "glass": "", "dashed": ".as-surface{border-style:dashed}", "solid": ".as-surface{border-width:2px}" },
+  fills: { "tint": "", "outline": ".as-tint{background:none;color:var(--l);box-shadow:inset 0 0 0 1px var(--l)}", "solid": "" },
   buttons: { "plain": "", "filled": 'button::before,a.btn::before{content:none}button::after,a.btn::after{content:""}button.primary,a.btn.primary{background:var(--l);color:var(--bg);padding:0 var(--s3);font-weight:600}' },
-  marks: { "symbols": "", "text": '.spi.done .spm{width:auto;font-size:0}.spi.done .spm::after{content:"done";font-size:var(--fs-meta)}' },
-  sections: { "title": "", "quiet": ".sh{font-size:var(--fs-meta);font-weight:400}" }
+  marks: { "symbols": "", "text": ".as-mark{width:auto;font-size:0}.as-mark::after{content:attr(data-mark);font-size:var(--fs-meta)}" },
+  sections: { "title": "", "quiet": ".as-header-label{font-size:var(--fs-meta);font-weight:400}.as-section-label{font-size:var(--fs-meta);font-weight:400}" }
 };
 var curves = { "standard": "cubic-bezier(0.2, 0, 0, 1)", "calm": "cubic-bezier(0.4, 0, 0.2, 1)", "bouncy": "cubic-bezier(0.34, 1.3, 0.64, 1)" };
 var cases = { "as-is": "none", "lower": "lowercase", "upper": "uppercase" };
-var drawn = { "header": ".sec>.sh", "section": ".sh", "title": ":is(.ch>b,.rt)", "button": ".b-button>span", "chip": ".chips button>span", "picked": ".dgn.picked .dgl", "screen": ".tabh>.b-screen__title" };
+var drawn = { "header": ".as-header-label", "section": ".as-section-label", "title": ".as-title-label", "button": ".as-button-label", "chip": ".as-chip-label", "picked": ".as-picked-label", "screen": ".as-screen-label" };
 
 // src/core/gesture.ts
 var WORDS = ["reorder", "move", "stretch", "edit", "draw", "remove"];

@@ -37,6 +37,7 @@ ts)
     raw-colour) want='raw `color #ff0000`' ;;
     raw-size) want='raw `padding 6px`' ;;
     stale) want='shrink the baseline' ;;
+    unknown-finish) want='`.as-tile` is no finish' ;;
     *) want=$name ;;
     esac
     expect "$name" "$code" "$out" "$f:.*$want"
@@ -51,6 +52,7 @@ swift)
     raw-colour) want='raw `Color.red`' ;;
     raw-size) want='raw `spacing: 6`' ;;
     stale) want='shrink the baseline' ;;
+    unknown-finish) want='`.as-tile` is no finish' ;;
     *) want=$name ;;
     esac
     expect "$name" "$code" "$out" "$f:.*$want"

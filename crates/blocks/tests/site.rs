@@ -137,7 +137,7 @@ fn a_live_page_carries_the_screen_and_the_module_and_nothing_else() {
 #[test]
 fn an_action_is_a_submit_of_a_form_that_posts_its_values() {
     let p = page(None);
-    assert!(p.contains("<button class=\"b b-button\" data-block=\"button\" data-id=\"go\" type=\"submit\" form=\"b-f1\" data-action=\"go\" role=\"button\" aria-label=\"Go\"><span>Go</span></button>"), "{p}");
+    assert!(p.contains("<button class=\"b b-button\" data-block=\"button\" data-id=\"go\" type=\"submit\" form=\"b-f1\" data-action=\"go\" role=\"button\" aria-label=\"Go\"><span class=\"as-button-label\">Go</span></button>"), "{p}");
     assert!(p.contains("<form id=\"b-f1\" method=\"post\" action=\"/act\" hidden><input type=\"hidden\" name=\"_screen\" value=\"home\"><input type=\"hidden\" name=\"_block\" value=\"go\"><input type=\"hidden\" name=\"_action\" value=\"go\"></form>"), "{p}");
 }
 

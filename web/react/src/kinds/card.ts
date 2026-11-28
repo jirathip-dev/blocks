@@ -8,7 +8,7 @@ import { h } from "../h.ts";
 export function card({ b, hooks }: V<Card>) {
   const cx = useContext(Cx);
   const [open, setOpen] = useState(false);
-  const cls = `card ${b.tone ?? ""} k-${b.kind ?? ""}`;
+  const cls = `card as-surface ${b.tone ?? ""} k-${b.kind ?? ""}`;
   const attrs = { ...hooks, "data-id": b.id ?? "" };
   const fold = b.fold ?? null;
   const main = fold?.main ?? null;
@@ -20,7 +20,7 @@ export function card({ b, hooks }: V<Card>) {
   if (shut) return h("div", cls, attrs, line);
   const badge = b.badge ? [" ", h("span", `tag b-card__badge ${b.badge.tone ?? ""}`, null, ticked(b.badge.text, cx))] : [];
   const meta = b.meta ? [" ", h("span", "m", null, ticked(b.meta, cx))] : [];
-  const head = b.title || b.badge ? h("div", "ch", null, h("b", "b-card__title", null, b.title ?? ""), ...badge, ...meta) : null;
+  const head = b.title || b.badge ? h("div", "ch", null, h("b", "b-card__title as-title-label", null, b.title ?? ""), ...badge, ...meta) : null;
   const buttons = b.buttons ?? [];
   const bar = buttons.length ? h("div", "bar b-card__actions", null, ...kids(buttons)) : null;
   const s = !b.subtitle ? null : typeof b.subtitle === "string" ? { text: b.subtitle, tone: null } : b.subtitle;

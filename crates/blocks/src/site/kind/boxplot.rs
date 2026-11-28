@@ -183,7 +183,7 @@ pub(super) fn draw(w: &mut W<'_>, b: &Value) {
     };
     let n = p.boxes.len();
     let picked = p.selected.as_ref().and_then(|s| p.boxes.iter().position(|x| x.name == *s));
-    w.open_block("div", "card chart bxp", b, &[]);
+    w.open_block("div", "card chart bxp as-surface", b, &[]);
     w.el("div", "cht", &p.title);
     readout(w, &p, picked.and_then(|i| p.boxes.get(i)));
     let style = format!("--n:{};--sw:{};--sp:{}", n.max(1), n.div_ceil(12).max(1), n.div_ceil(8).max(1));

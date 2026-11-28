@@ -41,7 +41,13 @@ fn step(w: &mut W<'_>, s: &Value, i: usize, n: usize, at: usize) {
     );
     w.open(tag, if tap.is_some() { "spc tap" } else { "spc" }, &attrs);
     w.open("span", "spr", &[("aria-hidden", "true")]);
-    w.el("i", "spm", &if i < at { "✓".into() } else { (i + 1).to_string() });
+    if i < at {
+        w.open("i", "spm as-mark as-tint", &[("data-mark", "done")]);
+        w.text("✓");
+        w.close("i");
+    } else {
+        w.el("i", "spm", &(i + 1).to_string());
+    }
     w.el("span", "spk", "");
     w.close("span");
     w.el("span", "spn", label);
@@ -57,7 +63,7 @@ fn stepper(w: &mut W<'_>, b: &Value, steps: &[Value], at: usize) {
     let n = steps.len();
     w.open_block("div", "sp", b, &[]);
     if let Some(t) = get(b, "title").filter(|t| !t.is_empty()) {
-        w.el("div", "sh", t);
+        w.el("div", "sh as-section-label", t);
     }
     w.open("ol", "spl", &[]);
     for (i, s) in steps.iter().enumerate() {
@@ -125,7 +131,7 @@ pub(super) fn draw(w: &mut W<'_>, b: &Value) {
     }
     w.open_block("div", "pg", b, &[]);
     if let Some(t) = get(b, "title").filter(|t| !t.is_empty()) {
-        w.el("div", "sh", t);
+        w.el("div", "sh as-section-label", t);
     }
     w.open("div", if bars.len() > 1 { "pgl rows" } else { "pgl" }, &[]);
     for r in bars {

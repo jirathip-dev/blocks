@@ -4,6 +4,7 @@ import { type Ctx, Cx } from "../act.ts";
 import { kids } from "../block.ts";
 import { act, btn, figure, out, press, sends, ticked, urlOf, type V } from "../draw.ts";
 import { h } from "../h.ts";
+import { Tiles } from "./list.ts";
 
 function round(d: Round, now: boolean, cx: Ctx) {
   const tap = now ? null : (d.tap ?? null);
@@ -22,6 +23,7 @@ function round(d: Round, now: boolean, cx: Ctx) {
 
 export function row({ b, hooks }: V<Row>) {
   const cx = useContext(Cx);
+  const tile = useContext(Tiles).includes(b) ? " as-surface" : "";
   const [flip, setFlip] = useState(false);
   const x0 = useRef(0);
   const toggle = () => setFlip((f) => !f);
@@ -31,7 +33,7 @@ export function row({ b, hooks }: V<Row>) {
   const open = last !== undefined && (last.state === "needs") !== flip;
   const sub = b.subtitle == null || open ? null : typeof b.subtitle === "string" ? { text: b.subtitle, tone: null } : b.subtitle;
   const badge = b.badge ? [" ", h("span", `tag b-row__badge ${b.badge.tone ?? ""}`, null, ticked(b.badge.text, cx))] : [];
-  const main = h("span", "rm", null, h("span", "rt b-row__title", null, b.title ?? ""), ...badge, sub ? h("span", `rs b-row__subtitle ${sub.tone ?? ""}`, null, ticked(sub.text, cx)) : null);
+  const main = h("span", "rm", null, h("span", "rt b-row__title as-title-label", null, b.title ?? ""), ...badge, sub ? h("span", `rs b-row__subtitle ${sub.tone ?? ""}`, null, ticked(sub.text, cx)) : null);
   const parts = [b.figure ? figure(b.figure, "b-row__figure") : null, main, b.value != null ? h("span", "rv b-row__value", null, ticked(b.value, cx)) : null];
   const id = { "data-id": b.id ?? "" };
   if (last) {
@@ -43,9 +45,9 @@ export function row({ b, hooks }: V<Row>) {
   const tapped = !url && (b.tap != null || swipe.length > 0);
   const own = { ...id, ...(tapped ? { "data-action": sends(b.tap), ...press(() => (b.tap ? cx.tap(b.tap) : toggle())) } : null) };
   const rc = url || tapped ? `${cls} tap` : cls;
-  if (!swipe.length) return url ? h("a", rc, { ...hooks, ...own, ...out(url) }, ...parts) : h("div", rc, { ...hooks, ...own }, ...parts);
+  if (!swipe.length) return url ? h("a", `${rc}${tile}`, { ...hooks, ...own, ...out(url) }, ...parts) : h("div", `${rc}${tile}`, { ...hooks, ...own }, ...parts);
   const touch = { onTouchStart: (e: TouchEvent) => (x0.current = e.touches[0]?.clientX ?? x0.current), onTouchEnd: (e: TouchEvent) => x0.current - (e.changedTouches[0]?.clientX ?? x0.current) > 40 && !flip && toggle() };
   const go = (s: (typeof swipe)[number]) => () => void cx.act({ action: s.action ?? "", block: b.id, values: s.values ?? {}, confirm: s.confirm });
   const bar = h("div", "ra b-row__actions", { hidden: !flip }, ...swipe.map((s) => act(s, s.tone === "bad" ? "bad" : "", cx, undefined, go(s))));
-  return h("div", "rw", hooks, h("div", rc, { ...own, ...touch }, ...parts), bar);
+  return h("div", `rw${tile}`, hooks, h("div", rc, { ...own, ...touch }, ...parts), bar);
 }

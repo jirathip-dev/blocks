@@ -29,7 +29,7 @@ fn a_row_lands_on_every_selector_of_its_finish() {
     assert_eq!(put(At::Variant(Variant::Primary)), "button.primary,a.btn.primary{x:y}");
     assert_eq!(
         Rule::on(Finish::Surface, "x:y").at(At::After).css(),
-        ":is(.card,.st,.list>.row,.list>.rw,.form:not(.say),.choice,.secret,.run,.tbl)::after{x:y}"
+        ".as-surface::after{x:y}"
     );
 }
 

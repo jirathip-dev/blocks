@@ -4,7 +4,7 @@ use super::kids;
 use crate::site::write::{badge, fields, get, list, one, shown, ticked, toned, W};
 
 pub(super) fn draw(w: &mut W<'_>, b: &Value) {
-    let cls = format!("card {} k-{}", shown(b.get("tone")), shown(b.get("kind")));
+    let cls = format!("card as-surface {} k-{}", shown(b.get("tone")), shown(b.get("kind")));
     w.open_block("div", &cls, b, &[]);
     if let Some(fold) = b.get("fold").filter(|f| f.is_object()) {
         w.open(
@@ -31,7 +31,7 @@ pub(super) fn draw(w: &mut W<'_>, b: &Value) {
     let mark = b.get("badge").filter(|v| !v.is_null());
     if get(b, "title").is_some_and(|t| !t.is_empty()) || mark.is_some() {
         w.open("div", "ch", &[]);
-        w.el("b", "b-card__title", &shown(b.get("title")));
+        w.el("b", "b-card__title as-title-label", &shown(b.get("title")));
         badge(w, "b-card__badge", mark);
         if let Some(m) = b.get("meta").filter(|v| !v.is_null()) {
             w.raw(" ");

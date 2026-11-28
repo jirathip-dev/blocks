@@ -1,0 +1,4 @@
+[
+  {"type":"list","id":"tiles","rows":[{"type":"row","id":"a","title":"A plain row"},{"type":"row","id":"b","title":"A swiped row","swipe":[{"label":"Drop","action":"drop","tone":"bad"}]},{"type":"row","id":"c","title":"A linked row","tap":{"url":"https://x.test/c"}},{"type":"card","id":"k","title":"A card","blocks":[{"type":"row","id":"d","title":"A row in a card"}]}]},
+  {"type":"chips","id":"picked","name":"f","action":"filter","options":[{"label":"All","value":"all"},{"label":"Open","value":"open"}],"selected":["open"]}
+]

@@ -17,7 +17,9 @@ function stage(s: Stage, i: number, n: number, at: number, c: Ctx): HTMLElement 
     x.onclick = () => c.tap(tap);
     x.onkeydown = (e) => e.key === "Enter" && c.tap(tap);
   }
-  const mark = h("span", "spr", h("i", "spm", i < at ? "✓" : String(i + 1)), el("span", "spk"));
+  const spm = i < at ? h("i", "spm as-mark as-tint", "✓") : h("i", "spm", String(i + 1));
+  if (i < at) spm.dataset["mark"] = "done";
+  const mark = h("span", "spr", spm, el("span", "spk"));
   mark.setAttribute("aria-hidden", "true");
   x.append(mark, h("span", "spn", s.label));
   const sub = s.sub || (i === at ? `step ${i + 1} of ${n}` : "");
@@ -46,7 +48,7 @@ export function steps(b: Steps, c: Ctx): HTMLElement {
   const at = b.current != null ? list.findIndex((s) => s.id === b.current) : b.done ? n : -1;
   if (n ? at < 0 : !bars.length) return fallback(b, c);
   const box = el("div", n ? "sp" : "pg");
-  if (b.title) box.append(h("div", "sh", b.title));
+  if (b.title) box.append(h("div", "sh as-section-label", b.title));
   if (!n) {
     box.append(h("div", bars.length > 1 ? "pgl rows" : "pgl", ...bars.map(bar)));
     return box;

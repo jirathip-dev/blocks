@@ -1,1 +1,2 @@
 .a{border:1px solid var(--edge);min-height:44px;width:100%;margin:0;padding:calc(var(--s1) * 2);color:var(--fg)}
+.as-surface .as-chip-label{color:var(--fg)}

@@ -17,7 +17,7 @@ fn a_config_writes_each_field_as_a_settings_row_with_its_note_and_a_save_bar() {
     });
     let html = site::fragment(&Built::new(b), "/act");
     for part in [
-        r#"<div class="form cfg b b-config" data-block="config" data-id="edgar" role="form" aria-label="edgar">"#,
+        r#"<div class="form cfg as-surface b b-config" data-block="config" data-id="edgar" role="form" aria-label="edgar">"#,
         r#"<label class="fd"><span class="fl"><span class="fk">agent</span><span class="fn">sent to SEC</span></span><input name="agent" form="b-f1" type="text" autocomplete="off" placeholder="" value="cooee"></label>"#,
         r#"<span class="fn was">was https://www.sec.gov</span></span><input name="base" form="b-f1" type="url" autocomplete="off" inputmode="url""#,
         r#"<label class="fd err"><span class="fl"><span class="fk">every</span><span class="fn err">must be under 4</span></span><input name="every" form="b-f1" aria-invalid="true" type="text" autocomplete="off" inputmode="decimal" placeholder="" value="4.5">"#,

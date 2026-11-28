@@ -26,5 +26,5 @@ export function secret({ b, hooks }: V<Secret>) {
   const input = h("input", "", { ...own, onChange: (e: { target: { value: string } }) => setV(e.target.value), onKeyDown: enter });
   const k = h("span", "fk", null, b.label ?? b.name, b.set ? h("span", "set", null, "set ✓") : null);
   const note = h("div", "ra", null, h("p", "m sn", null, "sent to the app only, never to the agent"), btn(sending ? "sending…" : "send", "", undefined, b.action, { onClick: send }));
-  return h("div", "secret", hooks, h("label", "fd", null, k, input), note);
+  return h("div", "secret as-surface", hooks, h("label", "fd", null, k, input), note);
 }

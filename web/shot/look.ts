@@ -67,3 +67,51 @@ export function measure(png, tree, colours, style, scale = 1) {
 
 /// The page's tile tokens as its root declares them, for `measure`.
 export const declared = (page) => page.evaluate((keys) => Object.fromEntries(keys.map((k) => [k, getComputedStyle(document.documentElement).getPropertyValue(k).trim()])), TOKENS);
+
+const wearing = () => {
+  const kinds = {}, rects = {};
+  for (const e of document.querySelectorAll("#root :is([class*='as-'], button, a.btn)")) {
+    const kind = e.closest("[data-block]")?.dataset.block, r = e.getBoundingClientRect();
+    const fs = [...e.classList].filter((c) => c.startsWith("as-")).map((c) => c.slice(3)).concat(e.matches("button, a.btn") ? ["button"] : []);
+    for (const f of fs) {
+      if (kind) (kinds[kind] ??= new Set()).add(f);
+      if (r.width && r.height) (rects[f] ??= []).push([r.x + scrollX, r.y + scrollY, r.width, r.height]);
+    }
+  }
+  return { kinds: Object.fromEntries(Object.entries(kinds).map(([k, s]) => [k, [...s]])), rects };
+};
+
+/// Adds what the page's parts wear to `report.worn` (each kind to its finishes, sorted); with `look`, gives the whole page and each finish's rects.
+export async function wore(page, report, look) {
+  const { kinds, rects } = await page.evaluate(wearing);
+  const all = { ...report.worn };
+  for (const [k, fs] of Object.entries(kinds)) all[k] = [...new Set([...(all[k] ?? []), ...fs])].sort();
+  report.worn = Object.fromEntries(Object.entries(all).sort());
+  return look ? { png: await page.screenshot({ fullPage: true }), rects } : undefined;
+}
+
+const LABEL = { prefix: "› " };
+const seen = new WeakMap();
+const decoded = (png) => (seen.has(png) ? seen.get(png) : seen.set(png, pixels(png)).get(png));
+const alike = (a, b) => {
+  if (a.rects.length !== b.rects.length) return false;
+  const pa = decoded(a.png), pb = decoded(b.png);
+  return a.rects.every((r, i) => {
+    const [x, y, w, h] = r, s = b.rects[i];
+    if (r.some((v, j) => Math.abs(v - s[j]) > 0.5)) return false;
+    for (let dy = 0; dy < h; dy++) for (let dx = 0; dx < w; dx++) if (pa(x + dx, y + dy).join() !== pb(x + dx, y + dy).join()) return false;
+    return true;
+  });
+};
+const on = (part, f) => ({ png: part.png, rects: part.rects[f] ?? [] });
+
+/// The finish fact: each style value of `values` (worn.json's) and each label's decoration drawn by `draw(style)` against the default; each finish it names whose parts draw alike is `look: <axis> <value> changes no <finish>`.
+export async function unchanged(draw, values) {
+  const base = await draw({}), out = [];
+  for (const [axis, all] of Object.entries(values))
+    for (const [value, fs] of Object.entries(all).filter(([, fs]) => fs.length)) {
+      const now = await draw(axis === "labels" ? { labels: { [value]: LABEL } } : { [axis]: value });
+      out.push(...fs.filter((f) => alike(on(base, f), on(now, f))).map((f) => `look: ${axis} ${value} changes no ${f}`));
+    }
+  return out;
+}

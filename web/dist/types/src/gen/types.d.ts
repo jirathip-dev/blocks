@@ -919,6 +919,7 @@ export type Report = {
     sent: Action[];
     shots: string[];
     timings: Timings;
+    worn?: Record<string, string[]> | null;
 };
 export type Role = "agent" | "owner" | "system";
 export type Round = {

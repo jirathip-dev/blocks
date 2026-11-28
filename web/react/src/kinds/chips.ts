@@ -11,6 +11,6 @@ export function chips({ b, hooks }: V<Chips>) {
     const next = !b.multi || v === "all" ? [v] : sel.includes(v) ? sel.filter((x) => x !== v) : [...sel.filter((x) => x !== "all"), v];
     void cx.act({ action: b.action ?? "", block: b.id, values: { [b.name]: next.length ? next : ["all"] } });
   };
-  const chip = (o: Chips["options"][number]) => btn(o.label, sel.includes(o.value) ? "on" : "", undefined, b.action, { key: o.value, "aria-pressed": String(sel.includes(o.value)), onClick: () => pick(o.value) });
+  const chip = (o: Chips["options"][number]) => btn(o.label, sel.includes(o.value) ? "on as-tint" : "", undefined, b.action, { key: o.value, "aria-pressed": String(sel.includes(o.value)), onClick: () => pick(o.value) }, false, "as-chip-label");
   return h("div", "chips", hooks, ...b.options.map(chip));
 }

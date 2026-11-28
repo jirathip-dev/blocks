@@ -12,7 +12,7 @@ function stage(s: Stage, i: number, n: number, at: number, cx: Ctx) {
   const tap = state === "done" ? (s.tap ?? null) : null;
   const url = urlOf(tap);
   const own = { "aria-label": `${s.label}, step ${i + 1} of ${n}, ${WORD[state]}`, title: s.label };
-  const mark = h("span", "spr", { "aria-hidden": "true" }, h("i", "spm", null, i < at ? "✓" : String(i + 1)), h("span", "spk", null));
+  const mark = h("span", "spr", { "aria-hidden": "true" }, i < at ? h("i", "spm as-mark as-tint", { "data-mark": "done" }, "✓") : h("i", "spm", null, String(i + 1)), h("span", "spk", null));
   const sub = s.sub || (i === at ? `step ${i + 1} of ${n}` : "");
   const kids = [mark, h("span", "spn", null, s.label), sub ? h("span", "sps", null, sub) : null];
   const pressed = tap && !url ? { "data-action": sends(tap), ...press(() => cx.tap(tap)) } : null;
@@ -36,7 +36,7 @@ export function steps({ b, hooks }: V<Steps>) {
   const end = b.done ? n : -1;
   const at = b.current != null ? list.findIndex((s) => s.id === b.current) : end;
   if (n ? at < 0 : !bars.length) return createElement(Fallen, { b });
-  const title = b.title ? h("div", "sh", null, b.title) : null;
+  const title = b.title ? h("div", "sh as-section-label", null, b.title) : null;
   if (!n) return h("div", "pg", hooks, title, h("div", bars.length > 1 ? "pgl rows" : "pgl", null, ...bars.map(bar)));
   const cur: Stage | undefined = list[at];
   const tail = cur?.sub ? ` · ${cur.sub}` : "";
