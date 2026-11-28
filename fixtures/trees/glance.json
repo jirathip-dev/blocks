@@ -1,0 +1,9 @@
+{
+  "kind": "glance",
+  "id": "turn",
+  "variant": null,
+  "drawn": "fallback",
+  "role": "status",
+  "name": "Ana",
+  "children": []
+}

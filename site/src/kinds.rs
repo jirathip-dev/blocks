@@ -25,7 +25,7 @@ const GROUPS: [(&str, &[&str]); 4] = [
     (
         "Lists and figures",
         &[
-            "list", "row", "stat", "chart", "heat", "plot", "boxplot", "table", "steps", "chips", "timeline",
+            "list", "row", "stat", "chart", "heat", "plot", "boxplot", "glance", "table", "steps", "chips", "timeline",
         ],
     ),
     (
@@ -95,6 +95,7 @@ pub fn about(kind: &str) -> &'static str {
         "heat" => "A grid of cells coloured by value, with row and column labels and a legend.",
         "plot" => "Lines over a number or time axis that stream in, with a window, a target band and a peak.",
         "boxplot" => "One box per category: median, quartiles, range and outliers, with its table.",
+        "glance" => "What an island and a widget show of one thing: a head and five forms, drawn by SwiftUI.",
         "chips" => "A row of chips, one or many picked.",
         "button" => "A button that posts its action.",
         "choice" => "A question with options and a free answer.",
@@ -558,6 +559,7 @@ pub fn samples() -> Vec<(String, Vec<Block>)> {
         picked("heat"),
         picked("plot"),
         picked("boxplot"),
+        picked("glance"),
         vec![paperwork()],
     ]
     .concat();

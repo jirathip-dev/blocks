@@ -1,6 +1,6 @@
 # The guard's rules
 
-Guard version 4. A new error fails `blocks check`; a warning never fails.
+Guard version 5. A new error fails `blocks check`; a warning never fails.
 
 | rule | severity | since | fires on | fix |
 |---|---|---|---|---|
@@ -28,6 +28,7 @@ Guard version 4. A new error fails `blocks check`; a warning never fails.
 | `lint/fault` | error | 1 | Built::check returns a fault | Build the block with its typed constructor; `Built::check` must return nothing. |
 | `css/fixed-width` | error | 2 | a `width` or `min-width` over 390 px | Use `max-width`, or a width in `%`. |
 | `render/frame-budget` | warn | 1 | first paint over 300 ms, or a frame over 16.7 ms | Draw fewer blocks at first: page the list, or fold the rest. |
+| `lint/glance-heavy` | warn | 5 | a glance whose JSON is over 3,000 bytes | Send fewer rows or shorter lines: a Live Activity's state is at most 4 KB, and a form draws two rows. |
 | `lint/island-unsized` | warn | 1 | an island with no size | Reserve its box with `size`, so the page does not jump when it loads. |
 | `lint/label-empty` | error | 1 | a blank button, act, chip, option or field label, row title, or message, tool or attachment name | Give it a label of one to three words. |
 | `lint/label-long` | error | 1 | a button, act or chip label, or a message's or tool's name, over 30 characters, or a badge over 20 | Shorten it to a verb and its object; move the rest to a `confirm` or a `text` block. |
@@ -1135,6 +1136,304 @@ Correct:
 ```css
 .b-diagram{
   max-width:100%
+}
+```
+
+### `lint/glance-heavy`
+
+Incorrect:
+
+```json
+{
+  "blocks": [
+    {
+      "id": "builds",
+      "medium": {
+        "rows": [
+          {
+            "subtitle": "main · linux-arm64",
+            "title": "Build 1 of the orders service",
+            "tone": "working",
+            "value": "1m"
+          },
+          {
+            "subtitle": "main · linux-arm64",
+            "title": "Build 2 of the orders service",
+            "tone": "working",
+            "value": "2m"
+          },
+          {
+            "subtitle": "main · linux-arm64",
+            "title": "Build 3 of the orders service",
+            "tone": "working",
+            "value": "3m"
+          },
+          {
+            "subtitle": "main · linux-arm64",
+            "title": "Build 4 of the orders service",
+            "tone": "working",
+            "value": "4m"
+          },
+          {
+            "subtitle": "main · linux-arm64",
+            "title": "Build 5 of the orders service",
+            "tone": "working",
+            "value": "5m"
+          },
+          {
+            "subtitle": "main · linux-arm64",
+            "title": "Build 6 of the orders service",
+            "tone": "working",
+            "value": "6m"
+          },
+          {
+            "subtitle": "main · linux-arm64",
+            "title": "Build 7 of the orders service",
+            "tone": "working",
+            "value": "7m"
+          },
+          {
+            "subtitle": "main · linux-arm64",
+            "title": "Build 8 of the orders service",
+            "tone": "working",
+            "value": "8m"
+          },
+          {
+            "subtitle": "main · linux-arm64",
+            "title": "Build 9 of the orders service",
+            "tone": "working",
+            "value": "9m"
+          },
+          {
+            "subtitle": "main · linux-arm64",
+            "title": "Build 10 of the orders service",
+            "tone": "working",
+            "value": "10m"
+          },
+          {
+            "subtitle": "main · linux-arm64",
+            "title": "Build 11 of the orders service",
+            "tone": "working",
+            "value": "11m"
+          },
+          {
+            "subtitle": "main · linux-arm64",
+            "title": "Build 12 of the orders service",
+            "tone": "working",
+            "value": "12m"
+          },
+          {
+            "subtitle": "main · linux-arm64",
+            "title": "Build 13 of the orders service",
+            "tone": "working",
+            "value": "13m"
+          },
+          {
+            "subtitle": "main · linux-arm64",
+            "title": "Build 14 of the orders service",
+            "tone": "working",
+            "value": "14m"
+          },
+          {
+            "subtitle": "main · linux-arm64",
+            "title": "Build 15 of the orders service",
+            "tone": "working",
+            "value": "15m"
+          },
+          {
+            "subtitle": "main · linux-arm64",
+            "title": "Build 16 of the orders service",
+            "tone": "working",
+            "value": "16m"
+          },
+          {
+            "subtitle": "main · linux-arm64",
+            "title": "Build 17 of the orders service",
+            "tone": "working",
+            "value": "17m"
+          },
+          {
+            "subtitle": "main · linux-arm64",
+            "title": "Build 18 of the orders service",
+            "tone": "working",
+            "value": "18m"
+          },
+          {
+            "subtitle": "main · linux-arm64",
+            "title": "Build 19 of the orders service",
+            "tone": "working",
+            "value": "19m"
+          },
+          {
+            "subtitle": "main · linux-arm64",
+            "title": "Build 20 of the orders service",
+            "tone": "working",
+            "value": "20m"
+          },
+          {
+            "subtitle": "main · linux-arm64",
+            "title": "Build 21 of the orders service",
+            "tone": "working",
+            "value": "21m"
+          },
+          {
+            "subtitle": "main · linux-arm64",
+            "title": "Build 22 of the orders service",
+            "tone": "working",
+            "value": "22m"
+          },
+          {
+            "subtitle": "main · linux-arm64",
+            "title": "Build 23 of the orders service",
+            "tone": "working",
+            "value": "23m"
+          },
+          {
+            "subtitle": "main · linux-arm64",
+            "title": "Build 24 of the orders service",
+            "tone": "working",
+            "value": "24m"
+          },
+          {
+            "subtitle": "main · linux-arm64",
+            "title": "Build 25 of the orders service",
+            "tone": "working",
+            "value": "25m"
+          },
+          {
+            "subtitle": "main · linux-arm64",
+            "title": "Build 26 of the orders service",
+            "tone": "working",
+            "value": "26m"
+          },
+          {
+            "subtitle": "main · linux-arm64",
+            "title": "Build 27 of the orders service",
+            "tone": "working",
+            "value": "27m"
+          },
+          {
+            "subtitle": "main · linux-arm64",
+            "title": "Build 28 of the orders service",
+            "tone": "working",
+            "value": "28m"
+          },
+          {
+            "subtitle": "main · linux-arm64",
+            "title": "Build 29 of the orders service",
+            "tone": "working",
+            "value": "29m"
+          },
+          {
+            "subtitle": "main · linux-arm64",
+            "title": "Build 30 of the orders service",
+            "tone": "working",
+            "value": "30m"
+          },
+          {
+            "subtitle": "main · linux-arm64",
+            "title": "Build 31 of the orders service",
+            "tone": "working",
+            "value": "31m"
+          },
+          {
+            "subtitle": "main · linux-arm64",
+            "title": "Build 32 of the orders service",
+            "tone": "working",
+            "value": "32m"
+          },
+          {
+            "subtitle": "main · linux-arm64",
+            "title": "Build 33 of the orders service",
+            "tone": "working",
+            "value": "33m"
+          },
+          {
+            "subtitle": "main · linux-arm64",
+            "title": "Build 34 of the orders service",
+            "tone": "working",
+            "value": "34m"
+          },
+          {
+            "subtitle": "main · linux-arm64",
+            "title": "Build 35 of the orders service",
+            "tone": "working",
+            "value": "35m"
+          },
+          {
+            "subtitle": "main · linux-arm64",
+            "title": "Build 36 of the orders service",
+            "tone": "working",
+            "value": "36m"
+          },
+          {
+            "subtitle": "main · linux-arm64",
+            "title": "Build 37 of the orders service",
+            "tone": "working",
+            "value": "37m"
+          },
+          {
+            "subtitle": "main · linux-arm64",
+            "title": "Build 38 of the orders service",
+            "tone": "working",
+            "value": "38m"
+          },
+          {
+            "subtitle": "main · linux-arm64",
+            "title": "Build 39 of the orders service",
+            "tone": "working",
+            "value": "39m"
+          },
+          {
+            "subtitle": "main · linux-arm64",
+            "title": "Build 40 of the orders service",
+            "tone": "working",
+            "value": "40m"
+          }
+        ]
+      },
+      "title": "Builds",
+      "type": "glance",
+      "value": "40 running"
+    }
+  ],
+  "id": "s",
+  "title": "Builds",
+  "type": "screen"
+}
+```
+
+Correct:
+
+```json
+{
+  "blocks": [
+    {
+      "id": "builds",
+      "medium": {
+        "rows": [
+          {
+            "subtitle": "main · linux-arm64",
+            "title": "Build 1 of the orders service",
+            "tone": "working",
+            "value": "1m"
+          },
+          {
+            "subtitle": "main · linux-arm64",
+            "title": "Build 2 of the orders service",
+            "tone": "working",
+            "value": "2m"
+          }
+        ]
+      },
+      "title": "Builds",
+      "type": "glance",
+      "value": "2 running"
+    }
+  ],
+  "id": "s",
+  "title": "Builds",
+  "type": "screen"
 }
 ```
 

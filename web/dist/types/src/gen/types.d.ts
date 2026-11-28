@@ -140,7 +140,9 @@ export type Block = ({
     type: "heat";
 } & Heat) | ({
     type: "plot";
-} & Plot) | (AppBlock & {
+} & Plot) | ({
+    type: "glance";
+} & Glance) | (AppBlock & {
     [key: string]: unknown;
 });
 export type Bound = {
@@ -446,6 +448,40 @@ export type Gesture = {
     action: string;
     enabled?: Expr | null;
     name: string;
+};
+export type Glance = {
+    expanded?: GlanceBody | null;
+    figure?: Figure | null;
+    id?: string | null;
+    leading?: GlanceSide | null;
+    medium?: GlanceBody | null;
+    show?: Expr | null;
+    small?: GlanceBody | null;
+    subtitle?: string | null;
+    tap?: Tap | null;
+    title: string;
+    tone?: Tone | null;
+    trailing?: GlanceSide | null;
+    value?: Shown | null;
+};
+export type GlanceBody = {
+    acts?: Act[] | null;
+    foot?: string | null;
+    line?: string | null;
+    rows?: GlanceRow[] | null;
+};
+export type GlanceRow = {
+    figure?: Figure | null;
+    subtitle?: string | null;
+    tap?: Tap | null;
+    title: string;
+    tone?: Tone | null;
+    value?: Shown | null;
+};
+export type GlanceSide = {
+    figure?: Figure | null;
+    text?: Shown | null;
+    tone?: Tone | null;
 };
 export type Handler = "answers" | "fails" | "waits";
 export type Have = {
@@ -1476,4 +1512,4 @@ export type Why = "evicted" | "unpaired" | "handover";
 export type Working = {
     since: string;
 };
-export type Kind = "screen" | "modal" | "sheet" | "section" | "list" | "row" | "card" | "choice" | "form" | "config" | "secret" | "run" | "button" | "chips" | "stat" | "text" | "images" | "web" | "diff" | "editor" | "scene" | "diagram" | "composer" | "lines" | "prose" | "hero" | "media" | "nav" | "island" | "table" | "steps" | "chart" | "toast" | "pages" | "timeline" | "import" | "message" | "tool" | "sidebar" | "boxplot" | "heat" | "plot";
+export type Kind = "screen" | "modal" | "sheet" | "section" | "list" | "row" | "card" | "choice" | "form" | "config" | "secret" | "run" | "button" | "chips" | "stat" | "text" | "images" | "web" | "diff" | "editor" | "scene" | "diagram" | "composer" | "lines" | "prose" | "hero" | "media" | "nav" | "island" | "table" | "steps" | "chart" | "toast" | "pages" | "timeline" | "import" | "message" | "tool" | "sidebar" | "boxplot" | "heat" | "plot" | "glance";

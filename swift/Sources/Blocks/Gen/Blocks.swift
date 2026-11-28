@@ -198,9 +198,10 @@ public enum Block: Codable, Equatable, Sendable {
     case boxplot(Boxplot)
     case heat(Heat)
     case plot(Plot)
+    case glance(Glance)
     case appBlock(JSONValue)
 
-    public static let tags: Set<String> = ["screen", "modal", "sheet", "section", "list", "row", "card", "choice", "form", "config", "secret", "run", "button", "chips", "stat", "text", "images", "web", "diff", "editor", "scene", "diagram", "composer", "lines", "prose", "hero", "media", "nav", "island", "table", "steps", "chart", "toast", "pages", "timeline", "import", "message", "tool", "sidebar", "boxplot", "heat", "plot"]
+    public static let tags: Set<String> = ["screen", "modal", "sheet", "section", "list", "row", "card", "choice", "form", "config", "secret", "run", "button", "chips", "stat", "text", "images", "web", "diff", "editor", "scene", "diagram", "composer", "lines", "prose", "hero", "media", "nav", "island", "table", "steps", "chart", "toast", "pages", "timeline", "import", "message", "tool", "sidebar", "boxplot", "heat", "plot", "glance"]
 
     private enum Tag: String, CodingKey { case tag = "type" }
 
@@ -248,6 +249,7 @@ public enum Block: Codable, Equatable, Sendable {
         case "boxplot": self = try (try? Boxplot(from: decoder)).map(Self.boxplot) ?? .appBlock(JSONValue(from: decoder))
         case "heat": self = try (try? Heat(from: decoder)).map(Self.heat) ?? .appBlock(JSONValue(from: decoder))
         case "plot": self = try (try? Plot(from: decoder)).map(Self.plot) ?? .appBlock(JSONValue(from: decoder))
+        case "glance": self = try (try? Glance(from: decoder)).map(Self.glance) ?? .appBlock(JSONValue(from: decoder))
         default: self = .appBlock(try JSONValue(from: decoder))
         }
     }
@@ -296,6 +298,7 @@ public enum Block: Codable, Equatable, Sendable {
         case .boxplot(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("boxplot", forKey: .tag)
         case .heat(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("heat", forKey: .tag)
         case .plot(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("plot", forKey: .tag)
+        case .glance(let v): try v.encode(to: encoder); var c = encoder.container(keyedBy: Tag.self); try c.encode("glance", forKey: .tag)
         case .appBlock(let v): try v.encode(to: encoder)
         }
     }
@@ -1099,6 +1102,82 @@ public struct Gesture: Codable, Equatable, Sendable {
         self.action = action
         self.enabled = enabled
         self.name = name
+    }
+}
+
+public struct Glance: Codable, Equatable, Sendable {
+    public var expanded: GlanceBody?
+    public var figure: Figure?
+    public var id: String?
+    public var leading: GlanceSide?
+    public var medium: GlanceBody?
+    public var show: Expr?
+    public var small: GlanceBody?
+    public var subtitle: String?
+    public var tap: Tap?
+    public var title: String
+    public var tone: Tone?
+    public var trailing: GlanceSide?
+    public var value: Shown?
+
+    public init(expanded: GlanceBody? = nil, figure: Figure? = nil, id: String? = nil, leading: GlanceSide? = nil, medium: GlanceBody? = nil, show: Expr? = nil, small: GlanceBody? = nil, subtitle: String? = nil, tap: Tap? = nil, title: String, tone: Tone? = nil, trailing: GlanceSide? = nil, value: Shown? = nil) {
+        self.expanded = expanded
+        self.figure = figure
+        self.id = id
+        self.leading = leading
+        self.medium = medium
+        self.show = show
+        self.small = small
+        self.subtitle = subtitle
+        self.tap = tap
+        self.title = title
+        self.tone = tone
+        self.trailing = trailing
+        self.value = value
+    }
+}
+
+public struct GlanceBody: Codable, Equatable, Sendable {
+    public var acts: [Act]?
+    public var foot: String?
+    public var line: String?
+    public var rows: [GlanceRow]?
+
+    public init(acts: [Act]? = nil, foot: String? = nil, line: String? = nil, rows: [GlanceRow]? = nil) {
+        self.acts = acts
+        self.foot = foot
+        self.line = line
+        self.rows = rows
+    }
+}
+
+public struct GlanceRow: Codable, Equatable, Sendable {
+    public var figure: Figure?
+    public var subtitle: String?
+    public var tap: Tap?
+    public var title: String
+    public var tone: Tone?
+    public var value: Shown?
+
+    public init(figure: Figure? = nil, subtitle: String? = nil, tap: Tap? = nil, title: String, tone: Tone? = nil, value: Shown? = nil) {
+        self.figure = figure
+        self.subtitle = subtitle
+        self.tap = tap
+        self.title = title
+        self.tone = tone
+        self.value = value
+    }
+}
+
+public struct GlanceSide: Codable, Equatable, Sendable {
+    public var figure: Figure?
+    public var text: Shown?
+    public var tone: Tone?
+
+    public init(figure: Figure? = nil, text: Shown? = nil, tone: Tone? = nil) {
+        self.figure = figure
+        self.text = text
+        self.tone = tone
     }
 }
 

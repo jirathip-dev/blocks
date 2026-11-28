@@ -51,6 +51,7 @@ A screen is data: a `screen` or `modal` block of typed blocks, checked, then dra
 - [`boxplot`](kinds/boxplot.md): A box plot: one upright box per category on a value axis with its label and unit; a tap picks a box.
 - [`heat`](kinds/heat.md): A grid of cells coloured by value on five steps of one tone, with row and column labels and a legend.
 - [`plot`](kinds/plot.md): A line plot of named series over a numeric or time x: points stream in by `points`; a window, a target and a peak.
+- [`glance`](kinds/glance.md): What an island and a widget show of one thing: a head every form draws from, and each form's own part.
 
 ## More
 

@@ -45,9 +45,10 @@ export const hooks: Record<Kind, Hook> = {
     boxplot: { variant: null, parts: ["title"] },
     heat: { variant: null, parts: ["title"] },
     plot: { variant: null, parts: ["title"] },
+    glance: { variant: null, parts: ["title", "subtitle", "value", "figure"] },
 };
 
-export const roles: Record<string, string> = { modal: "dialog", sheet: "dialog", section: "region", form: "form", config: "form", nav: "navigation", chart: "figure", plot: "figure", toast: "status", message: "article", sidebar: "navigation", heat: "figure", boxplot: "figure" };
+export const roles: Record<string, string> = { modal: "dialog", sheet: "dialog", section: "region", form: "form", config: "form", nav: "navigation", chart: "figure", plot: "figure", toast: "status", message: "article", sidebar: "navigation", heat: "figure", boxplot: "figure", glance: "status" };
 
 export const names = ["label", "title", "header", "question", "alt", "file", "command", "placeholder", "name"] as const;
 

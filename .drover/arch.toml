@@ -124,6 +124,10 @@ dir = "swift/Sources/BlocksUI/Part"
 glob = "*.swift"
 
 [[collect]]
+dir = "swift/Sources/BlocksUI/Glance"
+glob = "*.swift"
+
+[[collect]]
 dir = "crates/blocks/src/site/kind"
 glob = "*.rs"
 
@@ -330,6 +334,36 @@ comments = true
 pattern = "import SwiftUI"
 paths = ["swift/Sources/Blocks/**"]
 reason = "Blocks is Foundation only: the views live in BlocksUI"
+
+[[ban]]
+pattern = "import WidgetKit"
+paths = ["swift/Sources/**"]
+reason = "the widget is the host's: BlocksUI draws a glance form into the box it is handed"
+
+[[ban]]
+pattern = "import ActivityKit"
+paths = ["swift/Sources/**"]
+reason = "the activity is the host's: its content state is the Glance block"
+
+[[ban]]
+pattern = "@State"
+paths = ["swift/Sources/BlocksUI/Glance/**"]
+reason = "the system archives a glance form: it holds no state"
+
+[[ban]]
+pattern = "TimelineView"
+paths = ["swift/Sources/BlocksUI/Glance/**"]
+reason = "a glance form reads no clock: a time is the system's timer text"
+
+[[ban]]
+pattern = "ActButton"
+paths = ["swift/Sources/BlocksUI/Glance/**"]
+reason = "a glance's tap leaves as a link or an intent the host maps, never a closure"
+
+[[ban]]
+pattern = ".surface("
+paths = ["swift/Sources/BlocksUI/Glance/**"]
+reason = "a glance form draws no ground: the island, the widget or the notch panel is its tile"
 
 [[ban]]
 pattern = "json!"

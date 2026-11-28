@@ -16,7 +16,7 @@ use crate::built::Built;
 use crate::catalog::Catalog;
 
 /// The guard version: it moves with any new rule or tighter limit.
-pub const VERSION: u16 = 4;
+pub const VERSION: u16 = 5;
 
 /// The table row of rule `id`.
 pub fn rule(id: &str) -> Option<&'static Rule> {

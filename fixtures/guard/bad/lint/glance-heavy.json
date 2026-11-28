@@ -1,0 +1,257 @@
+{
+  "type": "screen",
+  "id": "s",
+  "title": "Builds",
+  "blocks": [
+    {
+      "type": "glance",
+      "id": "builds",
+      "title": "Builds",
+      "value": "40 running",
+      "medium": {
+        "rows": [
+          {
+            "title": "Build 1 of the orders service",
+            "subtitle": "main \u00b7 linux-arm64",
+            "value": "1m",
+            "tone": "working"
+          },
+          {
+            "title": "Build 2 of the orders service",
+            "subtitle": "main \u00b7 linux-arm64",
+            "value": "2m",
+            "tone": "working"
+          },
+          {
+            "title": "Build 3 of the orders service",
+            "subtitle": "main \u00b7 linux-arm64",
+            "value": "3m",
+            "tone": "working"
+          },
+          {
+            "title": "Build 4 of the orders service",
+            "subtitle": "main \u00b7 linux-arm64",
+            "value": "4m",
+            "tone": "working"
+          },
+          {
+            "title": "Build 5 of the orders service",
+            "subtitle": "main \u00b7 linux-arm64",
+            "value": "5m",
+            "tone": "working"
+          },
+          {
+            "title": "Build 6 of the orders service",
+            "subtitle": "main \u00b7 linux-arm64",
+            "value": "6m",
+            "tone": "working"
+          },
+          {
+            "title": "Build 7 of the orders service",
+            "subtitle": "main \u00b7 linux-arm64",
+            "value": "7m",
+            "tone": "working"
+          },
+          {
+            "title": "Build 8 of the orders service",
+            "subtitle": "main \u00b7 linux-arm64",
+            "value": "8m",
+            "tone": "working"
+          },
+          {
+            "title": "Build 9 of the orders service",
+            "subtitle": "main \u00b7 linux-arm64",
+            "value": "9m",
+            "tone": "working"
+          },
+          {
+            "title": "Build 10 of the orders service",
+            "subtitle": "main \u00b7 linux-arm64",
+            "value": "10m",
+            "tone": "working"
+          },
+          {
+            "title": "Build 11 of the orders service",
+            "subtitle": "main \u00b7 linux-arm64",
+            "value": "11m",
+            "tone": "working"
+          },
+          {
+            "title": "Build 12 of the orders service",
+            "subtitle": "main \u00b7 linux-arm64",
+            "value": "12m",
+            "tone": "working"
+          },
+          {
+            "title": "Build 13 of the orders service",
+            "subtitle": "main \u00b7 linux-arm64",
+            "value": "13m",
+            "tone": "working"
+          },
+          {
+            "title": "Build 14 of the orders service",
+            "subtitle": "main \u00b7 linux-arm64",
+            "value": "14m",
+            "tone": "working"
+          },
+          {
+            "title": "Build 15 of the orders service",
+            "subtitle": "main \u00b7 linux-arm64",
+            "value": "15m",
+            "tone": "working"
+          },
+          {
+            "title": "Build 16 of the orders service",
+            "subtitle": "main \u00b7 linux-arm64",
+            "value": "16m",
+            "tone": "working"
+          },
+          {
+            "title": "Build 17 of the orders service",
+            "subtitle": "main \u00b7 linux-arm64",
+            "value": "17m",
+            "tone": "working"
+          },
+          {
+            "title": "Build 18 of the orders service",
+            "subtitle": "main \u00b7 linux-arm64",
+            "value": "18m",
+            "tone": "working"
+          },
+          {
+            "title": "Build 19 of the orders service",
+            "subtitle": "main \u00b7 linux-arm64",
+            "value": "19m",
+            "tone": "working"
+          },
+          {
+            "title": "Build 20 of the orders service",
+            "subtitle": "main \u00b7 linux-arm64",
+            "value": "20m",
+            "tone": "working"
+          },
+          {
+            "title": "Build 21 of the orders service",
+            "subtitle": "main \u00b7 linux-arm64",
+            "value": "21m",
+            "tone": "working"
+          },
+          {
+            "title": "Build 22 of the orders service",
+            "subtitle": "main \u00b7 linux-arm64",
+            "value": "22m",
+            "tone": "working"
+          },
+          {
+            "title": "Build 23 of the orders service",
+            "subtitle": "main \u00b7 linux-arm64",
+            "value": "23m",
+            "tone": "working"
+          },
+          {
+            "title": "Build 24 of the orders service",
+            "subtitle": "main \u00b7 linux-arm64",
+            "value": "24m",
+            "tone": "working"
+          },
+          {
+            "title": "Build 25 of the orders service",
+            "subtitle": "main \u00b7 linux-arm64",
+            "value": "25m",
+            "tone": "working"
+          },
+          {
+            "title": "Build 26 of the orders service",
+            "subtitle": "main \u00b7 linux-arm64",
+            "value": "26m",
+            "tone": "working"
+          },
+          {
+            "title": "Build 27 of the orders service",
+            "subtitle": "main \u00b7 linux-arm64",
+            "value": "27m",
+            "tone": "working"
+          },
+          {
+            "title": "Build 28 of the orders service",
+            "subtitle": "main \u00b7 linux-arm64",
+            "value": "28m",
+            "tone": "working"
+          },
+          {
+            "title": "Build 29 of the orders service",
+            "subtitle": "main \u00b7 linux-arm64",
+            "value": "29m",
+            "tone": "working"
+          },
+          {
+            "title": "Build 30 of the orders service",
+            "subtitle": "main \u00b7 linux-arm64",
+            "value": "30m",
+            "tone": "working"
+          },
+          {
+            "title": "Build 31 of the orders service",
+            "subtitle": "main \u00b7 linux-arm64",
+            "value": "31m",
+            "tone": "working"
+          },
+          {
+            "title": "Build 32 of the orders service",
+            "subtitle": "main \u00b7 linux-arm64",
+            "value": "32m",
+            "tone": "working"
+          },
+          {
+            "title": "Build 33 of the orders service",
+            "subtitle": "main \u00b7 linux-arm64",
+            "value": "33m",
+            "tone": "working"
+          },
+          {
+            "title": "Build 34 of the orders service",
+            "subtitle": "main \u00b7 linux-arm64",
+            "value": "34m",
+            "tone": "working"
+          },
+          {
+            "title": "Build 35 of the orders service",
+            "subtitle": "main \u00b7 linux-arm64",
+            "value": "35m",
+            "tone": "working"
+          },
+          {
+            "title": "Build 36 of the orders service",
+            "subtitle": "main \u00b7 linux-arm64",
+            "value": "36m",
+            "tone": "working"
+          },
+          {
+            "title": "Build 37 of the orders service",
+            "subtitle": "main \u00b7 linux-arm64",
+            "value": "37m",
+            "tone": "working"
+          },
+          {
+            "title": "Build 38 of the orders service",
+            "subtitle": "main \u00b7 linux-arm64",
+            "value": "38m",
+            "tone": "working"
+          },
+          {
+            "title": "Build 39 of the orders service",
+            "subtitle": "main \u00b7 linux-arm64",
+            "value": "39m",
+            "tone": "working"
+          },
+          {
+            "title": "Build 40 of the orders service",
+            "subtitle": "main \u00b7 linux-arm64",
+            "value": "40m",
+            "tone": "working"
+          }
+        ]
+      }
+    }
+  ]
+}

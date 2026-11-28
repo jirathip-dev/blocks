@@ -43,4 +43,5 @@ kinds! {
     boxplot { Boxplot(Boxplot) = "boxplot" }
     heat { Heat(Heat) = "heat" }
     plot { Plot(Plot) = "plot" }
+    glance { Glance(Glance) = "glance" }
 }
