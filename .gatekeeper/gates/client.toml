@@ -4,8 +4,8 @@ budget_secs = 900
 leg = "web"
 setup = ["rust", "node"]
 paths = ["demo/client/**", "crates/blocks/**", "web/**", "fixtures/client/**", "Cargo.*", "rust-toolchain.toml", ".gatekeeper/gates/client.toml"]
+needs = ["quiet-host"]
 run = """
-if [ -z "${CI:-}" ]; then echo "client: CI's web leg runs it; a lane's host has no wasm32 target"; exit 0; fi
 set -e
 rustup target add wasm32-unknown-unknown
 cargo test --locked --manifest-path demo/client/Cargo.toml

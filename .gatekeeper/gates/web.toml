@@ -7,7 +7,7 @@ paths = ["web/**", "fixtures/**", "ci/tokens/**", "scripts/lint-fixtures.sh", ".
 run = """
 set -e
 npm --prefix web ci --no-audit --no-fund
-if [ "${CI:-}" = true ]; then npx --prefix web playwright install --with-deps webkit; fi
+if [ "${GATEKEEPER_HOST:-}" = ci ]; then npx --prefix web playwright install --with-deps webkit; fi
 npm --prefix web run lint
 npm --prefix web run test
 scripts/lint-fixtures.sh ts
