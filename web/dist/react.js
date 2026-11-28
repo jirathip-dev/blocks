@@ -2678,7 +2678,7 @@ function screen({ b, hooks: hooks4 }) {
   const cx = useContext19(Cx);
   const go2 = (m) => () => m.tap ? cx.tap(m.tap) : void cx.act({ action: m.action ?? "", values: m.values, confirm: m.confirm });
   const acts2 = (b.actions ?? []).flatMap((a) => a.menu ?? [a]).map((m) => act(m, "b-screen__actions", cx, urlOf(m.tap), urlOf(m.tap) ? void 0 : go2(m)));
-  const head4 = h("p", "tabh", null, h("span", "tw b-screen__title", null, (b.title ?? "").toLowerCase()), ...acts2);
+  const head4 = h("p", "tabh", null, h("span", "tw b-screen__title", null, b.title ?? ""), ...acts2);
   const attrs = { ...hooks4, "data-id": String(b.id) };
   const bs = b.blocks ?? [];
   const split = columns(b);

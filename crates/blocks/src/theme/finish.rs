@@ -19,7 +19,7 @@ impl LabelCase {
 
 pick!(
     /// A label a style may decorate.
-    pub LabelRole { Kind, Header, Group, Section, Title, Button, Chip, Back, Said, Picked }
+    pub LabelRole { Kind, Header, Group, Section, Title, Button, Chip, Back, Said, Picked, Screen }
 );
 
 /// A named way the look draws a part.
@@ -34,7 +34,7 @@ pub enum Finish {
 
 impl Finish {
     /// Every finish: the four parts, then a label for each `LabelRole`.
-    pub const ALL: [Self; 14] = [
+    pub const ALL: [Self; 15] = [
         Self::Surface,
         Self::Tint,
         Self::Button,
@@ -49,6 +49,7 @@ impl Finish {
         Self::Label(LabelRole::Back),
         Self::Label(LabelRole::Said),
         Self::Label(LabelRole::Picked),
+        Self::Label(LabelRole::Screen),
     ];
 
     /// The finish's name: `surface`, `tint`, `button`, `mark` or `<role>-label`.
@@ -69,6 +70,7 @@ impl Finish {
             Self::Label(LabelRole::Back) => "back-label",
             Self::Label(LabelRole::Said) => "said-label",
             Self::Label(LabelRole::Picked) => "picked-label",
+            Self::Label(LabelRole::Screen) => "screen-label",
         }
     }
 
@@ -86,6 +88,7 @@ impl Finish {
             Self::Label(LabelRole::Button) => Some(".b-button>span"),
             Self::Label(LabelRole::Chip) => Some(".chips button>span"),
             Self::Label(LabelRole::Picked) => Some(".dgn.picked .dgl"),
+            Self::Label(LabelRole::Screen) => Some(".tabh>.b-screen__title"),
             Self::Label(LabelRole::Kind | LabelRole::Group | LabelRole::Back | LabelRole::Said) => None,
         }
     }

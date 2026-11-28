@@ -6,7 +6,7 @@ import { defaultPair } from "../src/gen/schemes.ts";
 import { css } from "../src/core/index.ts";
 
 const read = (p) => readFileSync(new URL(p, import.meta.url), "utf8");
-const body = ["card", "section", "steps", "button"].map((k) => read(`../../fixtures/html/${k}.html`)).join("") + '<i class="b-late"></i><button class="b b-button primary"><span>Drive now</span></button>';
+const body = ["card", "section", "steps", "button", "screen"].map((k) => read(`../../fixtures/html/${k}.html`)).join("") + '<i class="b-late"></i><button class="b b-button primary"><span>Drive now</span></button>';
 const sheet = read("../dist/blocks.css");
 
 const rows = [
@@ -23,6 +23,7 @@ const rows = [
   ["easing calm", { easing: "calm" }, ".b-late", "", "animationTimingFunction", (v) => v === "cubic-bezier(0.4, 0, 0.2, 1)"],
   ["easing bouncy", { easing: "bouncy" }, ".b-late", "", "animationTimingFunction", (v) => v === "cubic-bezier(0.34, 1.3, 0.64, 1)"],
   ["label case", { labels: { header: { case: "upper" } } }, ".sec>.sh", "", "textTransform", (v) => v === "uppercase"],
+  ["screen title case", { labels: { screen: { case: "as-is" } } }, ".b-screen__title", "", "textTransform", (v) => v === "none"],
   ["label prefix", { labels: { header: { prefix: "[" } } }, ".sec>.sh", "::before", "content", (v) => v === '"["'],
   ["label suffix", { labels: { button: { suffix: ' "' } } }, ".b-button>span", "::after", "content", (v) => v === '" \\""'],
 ];
