@@ -3,6 +3,7 @@ integration = "staging"
 
 [budgets]
 "core/arch" = 600
+"rust/dead-code" = 180
 
 [pin]
 version = "1.7.0"
@@ -21,3 +22,6 @@ platform = "linux"
 
 [legs.apple]
 platform = "macos"
+
+[docs]
+skip = [".drover/**"]

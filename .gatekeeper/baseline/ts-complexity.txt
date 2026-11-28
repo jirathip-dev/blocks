@@ -1,0 +1,44 @@
+web/react/src/act.ts: function useCx: over 60 lines
+web/react/src/kinds/card.ts: function card: complexity over 20
+web/react/src/kinds/composer.ts: function composer: over 60 lines
+web/react/src/kinds/media.ts: function marked: complexity over 20
+web/react/src/kinds/modal.ts: function modal: complexity over 20
+web/react/src/kinds/row.ts: function round: complexity over 20
+web/react/src/kinds/row.ts: function row: complexity over 20
+web/react/src/kinds/table.ts: function bar: complexity over 20
+web/react/src/kinds/table.ts: function: complexity over 20
+web/react/src/kinds/timeline.ts: function bar: complexity over 20
+web/shot/shot.ts: function boot: over 60 lines
+web/shot/shot.ts: function shot: complexity over 20
+web/shot/shot.ts: function shot: over 60 lines
+web/src/core/apply.ts: function apply: complexity over 20
+web/src/core/check.ts: function block: complexity over 20
+web/src/core/check.ts: function core: complexity over 20
+web/src/core/check.ts: function fits: complexity over 20
+web/src/core/code.ts: function encode: complexity over 20
+web/src/core/eval.ts: function ev: complexity over 20
+web/src/core/gesture.ts: function step: complexity over 20
+web/src/core/kind/diagram.ts: function chart: complexity over 20
+web/src/core/kind/diagram.ts: function chart: over 60 lines
+web/src/core/kind/import.ts: function view: complexity over 20
+web/src/gesture.ts: function gestured: over 60 lines
+web/src/lazy/import.ts: function fileLine: complexity over 20
+web/src/modal.ts: function framed: complexity over 20
+web/src/patch.ts: function one: complexity over 20
+web/src/play/index.ts: function connectedCallback: over 60 lines
+web/src/render/kind/card.ts: function card: complexity over 20
+web/src/render/kind/composer.ts: function composer: over 60 lines
+web/src/render/kind/composer.ts: function draw: complexity over 20
+web/src/render/kind/heat.ts: function heat: over 60 lines
+web/src/render/kind/media.ts: function marked: complexity over 20
+web/src/render/kind/modal.ts: function box: complexity over 20
+web/src/render/kind/row.ts: function row: complexity over 20
+web/src/render/kind/table.ts: function bar: complexity over 20
+web/src/render/kind/table.ts: function: complexity over 20
+web/src/render/kind/timeline.ts: function bar: complexity over 20
+web/src/scan/index.ts: function adjust: over 60 lines
+web/src/scan/page.ts: function corners: complexity over 20
+web/src/shell/adopt.ts: function adopt: over 60 lines
+web/src/shell/look.ts: function: complexity over 20
+web/src/sidebar.ts: function behave: over 60 lines
+web/src/stream.ts: function stream: over 60 lines

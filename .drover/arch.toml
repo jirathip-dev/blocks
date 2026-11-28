@@ -143,10 +143,6 @@ glob = "*.rs"
 policy = "strict"
 except = ["ci/lint-fixtures/**", "web/lint-fixtures/**"]
 
-[docs]
-paths = ["docs/*.md", "docs/schema/*.md", "README.md"]
-skip = [".drover/**"]
-
 [[layer]]
 name = "expr"
 paths = ["crates/blocks/src/expr.rs"]
