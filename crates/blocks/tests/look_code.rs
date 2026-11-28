@@ -12,7 +12,7 @@ const FOUR: [(&str, &str); 4] = [
     ("playful", "108bd0.playful"),
 ];
 const ALL_ROLES: &str =
-    "11u0yw~AAFbAAQD4oC5A-KAuggBWwPigLoJA-KAuQANAVsD4oC6EQPigLkD4oC6EgFbABYD4oC5A-KAuhoBWwPigLobA-KAuQA.swag-1";
+    "11u0yw~AAFbAAQD4oC5A-KAuggBWwPigLoJA-KAuQANAVsD4oC6EQPigLkD4oC6EgFbABYD4oC5A-KAuhoBWwPigLobA-KAuQAfAVsD4oC6.swag-1";
 
 fn plain() -> Style {
     "101yx6".parse::<LookCode>().unwrap().style().clone()
